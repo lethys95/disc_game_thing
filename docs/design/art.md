@@ -35,3 +35,10 @@ Nothing generated yet. **Model chosen by the user (2026-09-25): Krea 2** (12B Di
 - The user updated ComfyUI to 0.37, which loads Krea 2 natively (CLIP type `krea2`). We use Comfy-Org's repackaged files (public, downloaded anonymously into ComfyUI's model folders): `krea2_turbo_fp8_scaled` (13 GB, fits one card), `qwen3vl_4b_fp8_scaled`, `qwen_image_vae`. Graph as ComfyUI's own Turbo blueprint: 8 steps, cfg 1, euler/simple. ~15 s per image.
 - Tooling: `pnpm art <batch> [seeds]` (`scripts/art/`): prompt templates per asset kind in `prompts.ts`, candidates plus a manifest (prompt, seed, model) and a contact sheet in `art/candidates/<batch>/` (not committed; keepers will be).
 - First batch (style anchors, 11 subjects × 2 seeds) came out cohesive: the material look and palette land. Weak: the mana accent is too timid (the Nexus teal almost vanishes), icons are all tarnished-metal monochrome (they'd blur together at 48 px), the Apprentice drifts toward anime, and the Zealot reads tired rather than burning. Order still: style anchors → icons → portraits → UI ornaments.
+
+## User verdict on the first batch (2026-09-25)
+- Overall: "very forgettable", "kinda boring", "a bit generic". The style needs fishing. The user's taste: Giger and Shichigoro-Shingo (never named in prompts; we describe qualities).
+- Liked: **all icons**, **the ornaments** ("seriously awesome"), both Punishers, both Custodians. Favourites: `custodian-1000`, `punisher-1001`.
+- Disliked: the Zealot ("a depressed tired old man"; zealots should be "batshit insane"), the Apprentice ("a depressed anime boy"). Paladins "cool if a bit forgettable".
+- Congregants came out as rugged knights; they're meant to be an **angry mob** (their passive stacks with numbers).
+- "It's not intended that everyone is supposed to be sad just because the universe is dark." Cause: the global prompt said "solemn, tragic and oppressive"; emotion now belongs to each subject.
