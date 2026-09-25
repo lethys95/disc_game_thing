@@ -14,7 +14,7 @@ src/rules/
   effects.ts         effect definitions
   units/             unit catalogue by faction + index (UNITS, roots, recruit costs, evolutions)
   nodes.ts           city node kinds (income, battle effects)
-  doctrine.ts        forks per faction, commitments, allowed units
+  forks.ts           per-line forks: commitments (fork → branch), allowed units, starting-squad checks
   progression.ts     XP value and evolution
   balance.ts         provisional numbers that aren't unit stats or ability params
   ai.ts              battle AI (one ply, generic valuation + traits' aiValue), autoplay

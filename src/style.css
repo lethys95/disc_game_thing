@@ -163,6 +163,12 @@ button.action:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 #mapbanner .title { font: 700 48px var(--display); letter-spacing: 0.05em; }
 #mapbanner .subtitle { color: var(--muted); margin-bottom: 16px; }
+#forkprompt {
+  position: fixed; left: 50%; top: 38%; transform: translate(-50%, -50%); text-align: center;
+  display: flex; flex-direction: column; gap: 8px; padding: 20px 32px; max-width: 460px;
+}
+#forkprompt .title { font: 700 28px var(--display); letter-spacing: 0.04em; }
+#forkprompt .subtitle { color: var(--muted); margin-bottom: 8px; }
 .leader-label { font: 600 11px var(--text); padding: 1px 6px; background: rgba(10, 9, 9, 0.75); border: 1px solid #3a2e28; white-space: nowrap; }
 .leader-label.side0 { color: var(--side0); }
 .leader-label.side1 { color: #b8aca4; }

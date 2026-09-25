@@ -4,13 +4,13 @@ import { chooseWorldAction } from "#rules/world/ai";
 import { concludeBattle } from "#rules/world/battles";
 import { createWorld } from "#rules/world/create";
 import type { WorldAction } from "#rules/world/state";
-import { doctrine } from "#rules/doctrine";
+import { commitmentOf } from "#rules/forks";
 import type { Playable } from "#rules/units/index";
 import { NEXUS_PRESETS, PRESETS } from "#view/squads";
 
 /**
  * Whole games with the map AI on both sides: `A=punishment B=nexus:overload pnpm sim:world [seeds...]`.
- * A side is a Jilliath doctrine key, or `nexus[:doctrine]`; default `uncommitted` Jilliath.
+ * A side is a Jilliath preset key, or `nexus[:preset]`; default `uncommitted` Jilliath.
  */
 const parse = (spec: string | undefined): { faction: Playable; key: string } => {
   const [head = "uncommitted", tail] = (spec ?? "uncommitted").split(":");
@@ -27,7 +27,7 @@ for (const seed of seeds.length > 0 ? seeds : [1, 2, 3, 4, 5]) {
   let world = createWorld(
     seed,
     [squadOf(sides[0]), squadOf(sides[1])],
-    [doctrine(sides[0].faction, sides[0].key).commitment, doctrine(sides[1].faction, sides[1].key).commitment],
+    [commitmentOf(squadOf(sides[0]).map((p) => p.defId)) ?? {}, commitmentOf(squadOf(sides[1]).map((p) => p.defId)) ?? {}],
     [sides[0].faction, sides[1].faction],
   );
   const tally: Record<string, number> = {};

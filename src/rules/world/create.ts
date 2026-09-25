@@ -1,6 +1,6 @@
 import { LEADER_MOVEMENT, STARTING_GOLD, STARTING_LEADERSHIP } from "#rules/balance";
 import type { Placement } from "#rules/battle/engine";
-import type { Commitment } from "#rules/doctrine";
+import type { Commitment } from "#rules/forks";
 import { sameHex } from "#rules/hex";
 import { generateMap } from "#rules/map";
 import type { Side } from "#rules/battle/types";

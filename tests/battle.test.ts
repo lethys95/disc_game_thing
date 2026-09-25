@@ -3,7 +3,7 @@ import { PUNISHMENT_MAX_STACKS } from "#rules/balance";
 import { actionsPerRound, applyAction, createBattle, effectiveStats, legalActions } from "#rules/battle/engine";
 import type { Placement } from "#rules/battle/engine";
 import type { Battle, BattleEvent, Col, Row } from "#rules/battle/types";
-import { doctrine, squadProblems } from "#rules/doctrine";
+import { squadProblems } from "#rules/forks";
 import { COLS, ROWS } from "#rules/battle/grid";
 import { describe, expect, test } from "vitest";
 
@@ -222,13 +222,14 @@ describe("whole battles", () => {
   });
 });
 
-describe("doctrine", () => {
-  test("a squad may only field units from its doctrine, at most a new leader's Leadership", () => {
+describe("starting squads", () => {
+  test("one faction, no two branches of the same fork, at most a new leader's Leadership", () => {
     const preserve = [p("congregant", 0, 0), p("paladin", 0, 1)];
-    expect(squadProblems(preserve, "jilliath", doctrine("jilliath", "preserve").commitment)).toEqual([]);
-    expect(squadProblems([...preserve, p("zealot", 1, 1)], "jilliath", doctrine("jilliath", "preserve").commitment)).toEqual(["outsideDoctrine"]);
-    expect(squadProblems([], "jilliath", doctrine("jilliath", "sacrifice").commitment)).toEqual(["empty"]);
+    expect(squadProblems(preserve, "jilliath")).toEqual([]);
+    expect(squadProblems([...preserve, p("zealot", 1, 1)], "jilliath")).toEqual(["conflictingBranches"]);
+    expect(squadProblems([...preserve, p("custodian", 1, 1)], "jilliath")).toEqual(["otherFaction"]);
+    expect(squadProblems([], "jilliath")).toEqual(["empty"]);
     const seven = ROWS.flatMap((row) => COLS.map((col) => p("congregant", row, col))).slice(0, 7);
-    expect(squadProblems(seven, "jilliath", doctrine("jilliath", "punishment").commitment)).toEqual(["tooMany"]);
+    expect(squadProblems(seven, "jilliath")).toEqual(["tooMany"]);
   });
 });

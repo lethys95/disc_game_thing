@@ -6,7 +6,7 @@ import { Campaign } from "#view/campaign";
 import { MapView } from "#view/map";
 import { BattleScene } from "#view/scene";
 import { Setup } from "#view/setup";
-import { BANDIT_GROUP, NEXUS_PRESET, NEXUS_PRESETS, PRESETS } from "#view/squads";
+import { BANDIT_GROUP, NEXUS_PRESETS, PRESETS } from "#view/squads";
 import { Stage } from "#view/stage";
 
 const params = new URLSearchParams(window.location.search);
@@ -46,12 +46,13 @@ const presets = [PRESETS.preserve, PRESETS.punishment] as const;
 if (params.has("map")) {
   setup.hide();
   const nexus = params.get("map") === "nexus";
-  campaign.start([PRESETS.uncommitted, nexus ? NEXUS_PRESET : PRESETS.uncommitted], ["jilliath", nexus ? "nexus" : "jilliath"], [[], []], Number(params.get("seed") ?? 1));
+  campaign.start([PRESETS.uncommitted, nexus ? NEXUS_PRESETS.uncommitted : PRESETS.uncommitted], ["jilliath", nexus ? "nexus" : "jilliath"], [{}, {}], Number(params.get("seed") ?? 1));
+  if (params.has("xp")) campaign.startingXp(Number(params.get("xp")));
 } else if (params.has("steps") || params.has("auto") || params.has("fight")) {
   setup.hide();
   const fight = params.get("fight") ?? "";
   const nexusKey = fight.startsWith("nexus:") ? fight.slice(6) : "uncommitted";
-  const enemy = fight.startsWith("nexus") ? (nexusKey === "scheme" || nexusKey === "overload" ? NEXUS_PRESETS[nexusKey] : NEXUS_PRESET) : fight === "bandits" ? BANDIT_GROUP : presets[1];
+  const enemy = fight.startsWith("nexus") ? (nexusKey === "scheme" || nexusKey === "overload" ? NEXUS_PRESETS[nexusKey] : NEXUS_PRESETS.uncommitted) : fight === "bandits" ? BANDIT_GROUP : presets[1];
   app.start([presets[0], enemy], params.get("auto") === "1" ? null : 0, Number(params.get("steps") ?? 0));
 } else {
   showSetup();

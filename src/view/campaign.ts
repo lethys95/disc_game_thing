@@ -2,15 +2,15 @@ import { sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { tileAt, TERRAIN_COST } from "#rules/map";
 import type { Battle, Side } from "#rules/battle/types";
-import { INVESTMENT_COST, openBranches } from "#rules/doctrine";
-import type { Commitment } from "#rules/doctrine";
+import { forkOptions, openForks } from "#rules/forks";
+import type { Commitment } from "#rules/forks";
 import { nextForm, xpToEvolve } from "#rules/progression";
-import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
-import type { Branch, Playable } from "#rules/units/index";
+import { EVOLUTIONS, FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
+import type { Playable } from "#rules/units/index";
 import { applyWorldAction } from "#rules/world/actions";
 import { concludeBattle, playersIn } from "#rules/world/battles";
 import { createWorld } from "#rules/world/create";
-import { elevateProblem, income, investProblem, recruitProblem, resurrectionCost, resurrectProblem } from "#rules/world/economy";
+import { chooseBranchProblem, elevateProblem, income, recruitProblem, resurrectionCost, resurrectProblem, waitingForks } from "#rules/world/economy";
 import { planMove, reachable } from "#rules/world/movement";
 import { capitolOf, cityById, lairById, leaderAt } from "#rules/world/state";
 import type { MovePlan, MoveTarget } from "#rules/world/movement";
@@ -27,27 +27,13 @@ const AI_STEP_MS = 350;
 
 const unitName = (defId: string) => UNITS[defId]?.name ?? defId;
 
-const BRANCH_NAMES: Readonly<Record<Branch, string>> = {
-  preserve: "Faith preserves (Paladin line)",
-  consume: "Faith consumes (Zealot line)",
-  punishment: "Punishment (Punisher line)",
-  sacrifice: "Self-sacrifice (Fanatic line)",
-  scheme: "Scheme (Battery, Justiciar)",
-  overload: "Overload (Mutant, Thaumaturge)",
-};
-
-const BRANCH_SHORT: Readonly<Record<Branch, string>> = {
-  preserve: "Faith preserves",
-  consume: "Faith consumes",
-  punishment: "Punishment",
-  sacrifice: "Self-sacrifice",
-  scheme: "Scheme",
-  overload: "Overload",
-};
-
-function doctrineName(commitment: Commitment): string {
-  return commitment.length === 0 ? "Uncommitted" : commitment.map((b) => BRANCH_SHORT[b]).join(": ");
+/** "Paladin (Faith preserves)": a branch by the unit it leads to and the dichotomy it stands for. */
+function branchName(fork: string, to: string): string {
+  const label = EVOLUTIONS[fork]?.find((e) => e.to === to)?.label;
+  return label ? `${unitName(to)} (${label})` : unitName(to);
 }
+
+const LOCK_WARNING = (fork: string) => `Permanent: every ${unitName(fork)} in your army will take this branch.`;
 
 const maxHp = (defId: string) => UNITS[defId]?.stats.maxHp ?? 0;
 
@@ -82,6 +68,9 @@ export class Campaign {
   private readonly endTurn = buttonById("endturn");
   private readonly banner = byId("mapbanner");
   private readonly peek = byId("peek");
+  private readonly prompt = byId("forkprompt");
+  /** Forks the player put off with "Decide later", keyed by turn so the prompt returns next turn. */
+  private deferred = new Set<string>();
 
   constructor(
     private readonly stage: Stage,
@@ -113,6 +102,15 @@ export class Campaign {
     this.view.build(this.world.map);
     this.view.buildSites(this.world);
     this.enterMap();
+  }
+
+  /** Screenshots and playtests: every unit of ours starts with this much XP, to reach a fork at once. */
+  startingXp(xp: number): void {
+    const world = this.world;
+    if (!world) return;
+    const leaders = world.leaders.map((l) => (l.side === PLAYER ? { ...l, squad: l.squad.map((m) => ({ ...m, xp })) } : l));
+    this.world = { ...world, leaders };
+    this.render();
   }
 
   stop(): void {
@@ -291,6 +289,7 @@ export class Campaign {
     this.renderCapitol(world, leader);
     this.hint.textContent = this.hintText(world, leader, plan);
     this.renderBanner(world);
+    this.renderPrompt(world);
     this.stage.renderer.domElement.style.cursor = plan && (plan.steps > 0 || plan.target) ? "pointer" : "default";
   }
 
@@ -336,7 +335,7 @@ export class Campaign {
       const xp = element("div", `xp${m.xp >= needed ? " ready" : ""}`);
       const xpFill = element("div", "fill");
       xpFill.style.width = `${(100 * Math.min(m.xp, needed)) / needed}%`;
-      const label = next ? `XP ${m.xp} / ${needed} → ${unitName(next)}` : m.xp >= needed ? "Ready: invest at the Capitol to evolve" : `XP ${m.xp} / ${needed} → (choose a doctrine)`;
+      const label = next ? `XP ${m.xp} / ${needed} → ${unitName(next)}` : m.xp >= needed ? "Ready: choose a branch to evolve" : `XP ${m.xp} / ${needed} → (branch not chosen)`;
       xp.append(xpFill, element("span", "value", label));
       row.appendChild(xp);
     }
@@ -400,14 +399,18 @@ export class Campaign {
 
     const commitment = world.commitment[PLAYER];
     const faction = world.factions[PLAYER];
-    this.city.appendChild(element("div", "section", `Doctrine: ${doctrineName(commitment)}`));
-    for (const branch of openBranches(faction, commitment)) {
-      const problem = investProblem(world, branch);
-      const invest = element("button", "action small", `Commit: ${BRANCH_NAMES[branch]} (${INVESTMENT_COST[branch]})`);
-      invest.disabled = !mayAct || problem !== null;
-      invest.title = problem ?? "Irreversible. Units waiting at this fork evolve at once.";
-      invest.addEventListener("click", () => void this.act({ type: "invest", branch }));
-      this.city.appendChild(invest);
+    const forks = openForks(faction, commitment);
+    if (forks.length > 0) this.city.appendChild(element("div", "section", "Branches (free, permanent)"));
+    for (const fork of forks) {
+      this.city.appendChild(element("div", "note", `${unitName(fork)} evolves into:`));
+      for (const to of forkOptions(fork)) {
+        const problem = chooseBranchProblem(world, fork, to);
+        const choose = element("button", "action small", branchName(fork, to));
+        choose.disabled = !mayAct || problem !== null;
+        choose.title = problem ?? `${LOCK_WARNING(fork)} Units waiting at this fork evolve at once.`;
+        choose.addEventListener("click", () => void this.act({ type: "choose", fork, to }));
+        this.city.appendChild(choose);
+      }
     }
 
     const fallen = world.graveyard[PLAYER];
@@ -426,6 +429,27 @@ export class Campaign {
       row.appendChild(raise);
       this.city.appendChild(row);
     });
+  }
+
+  /** A unit of ours reached an undecided fork: ask now rather than let it sit at full XP unnoticed. */
+  private renderPrompt(world: World): void {
+    const fork = this.myTurn() ? waitingForks(world, PLAYER).find((f) => !this.deferred.has(`${world.turn}:${f}`)) : undefined;
+    this.prompt.hidden = fork === undefined;
+    if (fork === undefined) return;
+    this.prompt.replaceChildren();
+    this.prompt.appendChild(element("div", "title", `A ${unitName(fork)} is ready to evolve`));
+    this.prompt.appendChild(element("div", "subtitle", LOCK_WARNING(fork)));
+    for (const to of forkOptions(fork)) {
+      const choose = element("button", "action", branchName(fork, to));
+      choose.addEventListener("click", () => void this.act({ type: "choose", fork, to }));
+      this.prompt.appendChild(choose);
+    }
+    const later = element("button", "small", "Decide later");
+    later.addEventListener("click", () => {
+      this.deferred.add(`${world.turn}:${fork}`);
+      this.render();
+    });
+    this.prompt.appendChild(later);
   }
 
   private renderBanner(world: World): void {

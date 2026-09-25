@@ -1,11 +1,10 @@
 import { LEADER_MOVEMENT, STARTING_LEADERSHIP } from "#rules/balance";
-import { INVESTMENT_COST, openBranches } from "#rules/doctrine";
+import { forkOptions, openForks } from "#rules/forks";
 import { sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
-import type { Branch } from "#rules/units/index";
 import { forecast } from "#rules/world/battles";
-import { elevateProblem, income, investProblem, recruitProblem, resurrectionCost, resurrectProblem } from "#rules/world/economy";
+import { chooseBranchProblem, elevateProblem, income, recruitProblem, resurrectionCost, resurrectProblem } from "#rules/world/economy";
 import { destination, planMove } from "#rules/world/movement";
 import type { MovePlan, MoveTarget } from "#rules/world/movement";
 import { capitolOf, fullHp, leaderAt } from "#rules/world/state";
@@ -46,8 +45,8 @@ function threatened(world: World, leader: Leader, hex: Hex, wins: Wins): boolean
   });
 }
 
-/** Provisional AI taste: the doctrine pnpm sim rates strongest first. */
-const AI_BRANCH_PREFERENCE: readonly Branch[] = ["consume", "punishment", "preserve", "sacrifice", "overload", "scheme"];
+/** Provisional AI taste at each fork: the branches pnpm sim rates strongest first. */
+const AI_PREFERRED_BRANCHES: readonly string[] = ["zealot", "punisher", "mutant", "thaumaturge"];
 
 const strength = (squad: readonly SquadMember[]) => squad.reduce((sum, m) => sum + m.hp, 0);
 const fullStrength = (squad: readonly SquadMember[]) => squad.reduce((sum, m) => sum + fullHp(m.defId), 0);
@@ -70,12 +69,14 @@ export function chooseWorldAction(world: World): WorldAction {
 
   if (capitol) {
     const home = mine.find((l) => sameHex(l.hex, capitol.hex));
-    // Commit at the next fork as soon as it's affordable; save for it otherwise (unless there's no army at all).
-    const open = AI_BRANCH_PREFERENCE.filter((b) => openBranches(world.factions[side], world.commitment[side]).includes(b));
-    const branch = open[0];
-    if (branch && !investProblem(world, branch)) return { type: "invest", branch };
-    const reserve = branch && mine.length > 0 ? INVESTMENT_COST[branch] : 0;
-    const spare = (price: number) => world.gold[side] - price >= reserve;
+    // Choosing is free, so the AI settles every fork it can reach right away.
+    const fork = openForks(world.factions[side], world.commitment[side])[0];
+    if (fork) {
+      const options = forkOptions(fork);
+      const to = options.find((o) => AI_PREFERRED_BRANCHES.includes(o)) ?? options[0];
+      if (to && !chooseBranchProblem(world, fork, to)) return { type: "choose", fork, to };
+    }
+    const spare = (price: number) => world.gold[side] >= price;
 
     const into: RecruitInto = home ? { kind: "leader", leaderId: home.id } : { kind: "garrison" };
     const bargain = world.graveyard[side]

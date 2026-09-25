@@ -1,6 +1,7 @@
 import { autoplay } from "#rules/ai";
 import type { Placement } from "#rules/battle/engine";
-import { allowedUnits, doctrine, INVESTMENT_COST } from "#rules/doctrine";
+import { allowedUnits, commitmentOf, openForks } from "#rules/forks";
+import type { Commitment } from "#rules/forks";
 import { COLS } from "#rules/battle/grid";
 import { neighbors, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
@@ -10,14 +11,14 @@ import { RESURRECTION_BASE } from "#rules/balance";
 import { applyWorldAction } from "#rules/world/actions";
 import { concludeBattle } from "#rules/world/battles";
 import { createWorld } from "#rules/world/create";
-import { resurrectionCost } from "#rules/world/economy";
+import { resurrectionCost, waitingForks } from "#rules/world/economy";
 import { capitolOf, leaderById } from "#rules/world/state";
 import type { Leader, World } from "#rules/world/state";
 import { describe, expect, test } from "vitest";
 
-const uncommitted = doctrine("jilliath", "uncommitted").commitment;
-const preserve = doctrine("jilliath", "preserve").commitment;
-const punishment = doctrine("jilliath", "punishment").commitment;
+const uncommitted: Commitment = {};
+const preserve: Commitment = { congregant: "paladin" };
+const punishment: Commitment = { congregant: "zealot", zealot: "punisher" };
 
 const congregants: Placement[] = COLS.map((col) => ({ defId: "congregant", tile: { row: 0, col } }));
 const punishers: Placement[] = [
@@ -46,12 +47,18 @@ function fight(world: World): ReturnType<typeof concludeBattle> {
   return concludeBattle(next, autoplay(battle));
 }
 
-describe("doctrine", () => {
-  test("the tree a faction can field follows its investments", () => {
-    expect(allowedUnits("jilliath", uncommitted)).toEqual(["congregant"]);
+describe("forks", () => {
+  test("undecided forks keep both branches open; a choice closes the other", () => {
     expect(allowedUnits("jilliath", preserve)).toEqual(["congregant", "paladin", "templar", "immortal"]);
     expect(allowedUnits("jilliath", punishment)).toEqual(["congregant", "zealot", "punisher", "torturer"]);
-    expect(allowedUnits("nexus", uncommitted)).toEqual(["custodian", "arcane_engineer", "apprentice"]);
+    expect(allowedUnits("jilliath", { congregant: "zealot" })).toEqual(["congregant", "zealot", "punisher", "torturer", "fanatic", "chosen", "avatar_of_vengeance"]);
+    expect(openForks("jilliath", uncommitted)).toEqual(["congregant", "zealot"]);
+    expect(openForks("jilliath", preserve)).toEqual([]);
+  });
+
+  test("a set of units implies the choices on their way, and two branches of one fork conflict", () => {
+    expect(commitmentOf(["congregant", "torturer"])).toEqual(punishment);
+    expect(commitmentOf(["paladin", "zealot"])).toBeNull();
   });
 });
 
@@ -67,15 +74,17 @@ describe("evolution", () => {
     expect(grow("immortal", 0, 5000, preserve).evolvedInto).toEqual([]);
   });
 
-  test("at an uninvested fork a unit waits with a full bar, and evolves when the faction commits", () => {
+  test("at an undecided fork a unit waits with a full bar, and evolves the moment its owner chooses, for free", () => {
     expect(grow("congregant", 0, 500, uncommitted)).toEqual({ defId: "congregant", xp: 100, evolvedInto: [] });
     let world = createWorld(1, [congregants, congregants], [uncommitted, uncommitted], ["jilliath", "jilliath"]);
     world = withLeader(world, "leader0", { squad: leaderById(world, "leader0").squad.map((m) => ({ ...m, xp: 100 })) });
     world = { ...world, gold: [500, 500] };
-    const step = applyWorldAction(world, { type: "invest", branch: "consume" });
-    expect(step.world.gold[0]).toBe(500 - INVESTMENT_COST.consume);
+    expect(waitingForks(world, 0)).toEqual(["congregant"]);
+    const step = applyWorldAction(world, { type: "choose", fork: "congregant", to: "zealot" });
+    expect(waitingForks(step.world, 0)).toEqual([]);
+    expect(step.world.gold[0]).toBe(500);
     expect(leaderById(step.world, "leader0").squad.map((m) => m.defId)).toEqual(["zealot", "zealot", "zealot"]);
-    expect(() => applyWorldAction(step.world, { type: "invest", branch: "preserve" })).toThrow(/fork/);
+    expect(() => applyWorldAction(step.world, { type: "choose", fork: "congregant", to: "paladin" })).toThrow(/open fork/);
   });
 
   test("the winners split the fallen enemies' worth; the fallen go to the graveyard", () => {

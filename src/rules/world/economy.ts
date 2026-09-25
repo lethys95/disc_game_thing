@@ -1,17 +1,16 @@
 import { CAPITOL_HEALING, CAPITOL_INCOME, GARRISON_LIMIT, LEADER_MOVEMENT, RESURRECTION_BASE, RESURRECTION_PREMIUM } from "#rules/balance";
 import type { Side, Tile } from "#rules/battle/types";
-import { INVESTMENT_COST, openBranches } from "#rules/doctrine";
-import type { Commitment } from "#rules/doctrine";
+import { chooseProblem, isFork, openForks } from "#rules/forks";
+import type { Commitment } from "#rules/forks";
 import { COLS, ROWS, sameTile } from "#rules/battle/grid";
 import { sameHex } from "#rules/hex";
 import { NODES } from "#rules/nodes";
-import { grow } from "#rules/progression";
+import { grow, xpToEvolve } from "#rules/progression";
 import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
-import type { Branch } from "#rules/units/index";
 import { capitolOf, fullHp, leaderAt, leaderById } from "#rules/world/state";
 import type { City, RecruitInto, SquadMember, World, WorldEvent } from "#rules/world/state";
 
-/** Gold, recruiting, investing, resurrection, elevation, and the start of a side's turn. */
+/** Gold, recruiting, branch choices, resurrection, elevation, and the start of a side's turn. */
 
 export function income(world: World, side: Side): number {
   const nodes = world.cities.filter((c) => c.owner === side).flatMap((c) => c.nodes);
@@ -35,10 +34,17 @@ export function recruitProblem(world: World, defId: string, into: RecruitInto): 
   return roomProblem(world, capitol, into);
 }
 
-export function investProblem(world: World, branch: Branch): string | null {
+/** Why this side can't choose `to` at `fork` now, or null. */
+export function chooseBranchProblem(world: World, fork: string, to: string): string | null {
   const side = world.activeSide;
-  if (!openBranches(world.factions[side], world.commitment[side]).includes(branch)) return "not an open fork";
-  return world.gold[side] < INVESTMENT_COST[branch] ? "not enough gold" : null;
+  if (!openForks(world.factions[side], world.commitment[side]).includes(fork)) return "not an open fork";
+  return chooseProblem(world.commitment[side], fork, to);
+}
+
+/** Forks where one of this side's units waits, XP full, for a choice. The view prompts; the AI just chooses. */
+export function waitingForks(world: World, side: Side): string[] {
+  const forks = squadsOf(world, side).flatMap((squad) => squad.filter((m) => isFork(m.defId) && world.commitment[side][m.defId] === undefined && m.xp >= (xpToEvolve(m.defId) ?? Infinity)).map((m) => m.defId));
+  return [...new Set(forks)];
 }
 
 export function resurrectionCost(world: World, side: Side, index: number): number | null {

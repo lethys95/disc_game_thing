@@ -1,12 +1,12 @@
 import type { Placement } from "#rules/battle/engine";
 import type { Battle, Side, Tile } from "#rules/battle/types";
-import type { Commitment } from "#rules/doctrine";
+import type { Commitment } from "#rules/forks";
 import { hexDistance, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import type { WorldMap } from "#rules/map";
 import type { CityNode } from "#rules/nodes";
 import { UNITS } from "#rules/units/index";
-import type { Branch, Playable } from "#rules/units/index";
+import type { Playable } from "#rules/units/index";
 
 /** The world's data (warbands, cities, lairs, graveyards) and lookups over it. */
 
@@ -91,7 +91,8 @@ export type WorldAction =
   | { type: "endTurn" }
   | { type: "recruit"; defId: string; into: RecruitInto }
   | { type: "elevate"; tile: Tile }
-  | { type: "invest"; branch: Branch }
+  /** Choose a branch at a fork: free and permanent, for every unit of that kind. */
+  | { type: "choose"; fork: string; to: string }
   | { type: "resurrect"; index: number; into: RecruitInto };
 
 export type WorldEvent =
@@ -105,7 +106,7 @@ export type WorldEvent =
   | { type: "xp"; side: Side; pool: number; each: number }
   | { type: "evolved"; side: Side; from: string; to: string }
   | { type: "fell"; side: Side; defId: string }
-  | { type: "invested"; side: Side; branch: Branch }
+  | { type: "chose"; side: Side; fork: string; to: string }
   | { type: "cleared"; lairId: string; side: Side }
   | { type: "looted"; lairId: string; side: Side; gold: number; joins: string | null }
   | { type: "resurrected"; side: Side; defId: string }

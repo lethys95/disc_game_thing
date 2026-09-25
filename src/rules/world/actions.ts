@@ -1,10 +1,10 @@
-import { INVESTMENT_COST, commit } from "#rules/doctrine";
+import { choose } from "#rules/forks";
 import { sameTile } from "#rules/battle/grid";
 import { stepCost } from "#rules/map";
 import { RECRUIT_COST } from "#rules/units/index";
 import { LEADER_MOVEMENT, STARTING_LEADERSHIP } from "#rules/balance";
 import { defenderOf, engagementBattle } from "#rules/world/battles";
-import { elevateProblem, freeTile, growSquad, investProblem, recruitProblem, resurrectionCost, resurrectProblem, squadFor, squadsOf, startTurn } from "#rules/world/economy";
+import { chooseBranchProblem, elevateProblem, freeTile, growSquad, recruitProblem, resurrectionCost, resurrectProblem, squadFor, squadsOf, startTurn } from "#rules/world/economy";
 import { planMove } from "#rules/world/movement";
 import { capitolOf, cityById, leaderById, member } from "#rules/world/state";
 import type { World, WorldAction, WorldEvent, WorldStep } from "#rules/world/state";
@@ -70,12 +70,12 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       events.push({ type: "elevated", leaderId: id });
       break;
     }
-    case "invest": {
-      const problem = investProblem(draft, action.branch);
-      if (problem) throw new Error(`cannot invest: ${problem}`);
-      draft.gold[side] -= INVESTMENT_COST[action.branch];
-      draft.commitment[side] = commit(draft.factions[side], draft.commitment[side], action.branch);
-      events.push({ type: "invested", side, branch: action.branch });
+    case "choose": {
+      const problem = chooseBranchProblem(draft, action.fork, action.to);
+      if (problem) throw new Error(`cannot choose: ${problem}`);
+      draft.commitment[side] = choose(draft.commitment[side], action.fork, action.to);
+      events.push({ type: "chose", side, fork: action.fork, to: action.to });
+      // Units already waiting at this fork evolve now.
       for (const squad of squadsOf(draft, side)) growSquad(squad, 0, side, draft.commitment[side], events);
       break;
     }
