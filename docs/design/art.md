@@ -20,9 +20,11 @@ The world looks like **something sacred that has been used up**: devotional obje
 - **UI**: dark, ornate-but-sparse frames. Serif display type for names; clean sans-serif for numbers.
 
 ## Pipeline (planned, not started)
+Full research and the two candidate routes: `asset-pipeline.md`.
+
 ComfyUI concept art → image-to-3D mesh → **Blender headless** (`blender -b -P script.py`: cleanup, decimate, normals, bake, rig/animate, turntable renders to inspect) → glTF 2.0 (+ Draco/KTX2) → three.js (`GLTFLoader`, `AnimationMixer` crossfades, bones for props, custom shaders for glow/dissolve/auras).
 - Auto-rigging generated characters is the weakest link; expect the most iteration there.
-- Blender is not installed yet; the user offered to set it up (`sudo pacman -S blender`) when art work starts.
+- Blender 5.2.2 is installed but fails to start (partial upgrade: needs openexr 3.5); the user needs to run `sudo pacman -Syu`.
 
 ## Status
 Nothing generated yet. ComfyUI is on the box, but its models are outdated. Pick current models when art work starts (check what's current then; don't rely on memory).
