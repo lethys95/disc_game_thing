@@ -1,7 +1,10 @@
 import { COLS, meleeTargets, opponent, ROWS } from "#rules/battle/grid";
-import type { Behavior, BattleUnit, Col, Cost, Ctx, Row, TargetChoice, TraitSelf } from "#rules/battle/types";
+import type { Behavior, BattleUnit, Col, Cost, Ctx, Params, Row, TargetChoice, TraitSelf } from "#rules/battle/types";
 
 /** Shared targeting helpers and the universal verbs every unit has. */
+
+/** "Once per combat" / "2 uses per combat", for rules text. */
+export const uses = (p: Params) => (p["charges"] === 1 ? "Once per combat" : `${p["charges"]} uses per combat`);
 
 export function at(anchor: BattleUnit, affected: readonly string[], cost: Cost): TargetChoice {
   return { anchor: { side: anchor.side, tile: anchor.tile }, affected, cost };
@@ -38,6 +41,8 @@ export const core: Readonly<Record<string, Behavior>> = {
   attack: {
     kind: "active",
     name: "Attack",
+    describe: () =>
+      "Strike an enemy in the front line, at most one column away.",
     tags: ["attack", "basic", "melee", "damage"],
     choices: (ctx, self) => meleeTargets(ctx.living(), ctx.unit(self.unitId)).map((t) => single(t, "main")),
     resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self, ["attack", "melee", "damage"])),
@@ -45,6 +50,8 @@ export const core: Readonly<Record<string, Behavior>> = {
   shoot: {
     kind: "active",
     name: "Shoot",
+    describe: () =>
+      "Ranged: hit any enemy.",
     tags: ["attack", "basic", "ranged", "damage"],
     choices: rangedChoices,
     resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self, ["attack", "ranged", "damage"])),
@@ -52,6 +59,8 @@ export const core: Readonly<Record<string, Behavior>> = {
   defend: {
     kind: "active",
     name: "Defend",
+    describe: () =>
+      "End the turn. Damage taken is halved until this unit acts again.",
     tags: ["basic"],
     choices: (ctx, self) => [single(ctx.unit(self.unitId), "main")],
     resolve: (ctx, self) => ctx.addEffect(self.unitId, { def: "defending" }),
@@ -59,6 +68,8 @@ export const core: Readonly<Record<string, Behavior>> = {
   wait: {
     kind: "active",
     name: "Wait",
+    describe: () =>
+      "Act again at the end of this pass.",
     tags: ["basic"],
     reschedules: true,
     choices: (ctx, self) => [single(ctx.unit(self.unitId), "main")],

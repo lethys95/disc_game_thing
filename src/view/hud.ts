@@ -1,9 +1,8 @@
-import { BEHAVIORS, paramsOf } from "#rules/abilities/index";
+import { BEHAVIORS, describeAbility, paramsOf } from "#rules/abilities/index";
 import { effectDef } from "#rules/effects";
 import { abilityRef, actionsPerRound, effectiveStats, upcomingSlots } from "#rules/battle/engine";
-import type { Battle, BattleEvent, BattleUnit, LegalAbility, Side } from "#rules/battle/types";
+import type { Battle, BattleEvent, BattleUnit, EffectInstance, LegalAbility, Side } from "#rules/battle/types";
 import { UNITS } from "#rules/units/index";
-import { abilityText, effectLabel, effectText } from "#view/text";
 import { byId, element } from "#view/dom";
 
 export interface HudHandlers {
@@ -109,7 +108,7 @@ export class Hud {
       const effects = element("div", "effects");
       for (const effect of shown) {
         const tag = element("span", `effect ${effect.def}`, effectLabel(effect));
-        tag.title = effectText(effect);
+        tag.title = effectDef(effect.def).describe(effect);
         effects.appendChild(tag);
       }
       this.card.appendChild(effects);
@@ -123,7 +122,7 @@ export class Hud {
       item.appendChild(element("span", "name", slot.ref.name ?? behavior.name));
       const charges = paramsOf(slot.ref)["charges"];
       if (charges !== undefined) item.appendChild(element("span", "charges", ` ${charges - slot.chargesUsed}/${charges}`));
-      item.appendChild(element("div", "text", abilityText(slot.ref)));
+      item.appendChild(element("div", "text", describeAbility(slot.ref)));
       abilities.appendChild(item);
     }
     this.card.appendChild(abilities);
@@ -141,7 +140,7 @@ export class Hud {
       const charges = paramsOf(ref)["charges"];
       const used = unit.abilities.find((s) => s.ref.id === option.abilityId)?.chargesUsed ?? 0;
       if (charges !== undefined) button.appendChild(element("span", "tag", `${charges - used}/${charges}`));
-      button.title = abilityText(ref);
+      button.title = describeAbility(ref);
       button.addEventListener("click", () => this.handlers.onAbility(option.abilityId));
       this.actions.appendChild(button);
     }
@@ -191,6 +190,13 @@ export class Hud {
       this.banner.append(button, " ");
     }
   }
+}
+
+/** "Punished ×2", "Bleeding 30": an effect's name with its stacks and amount. */
+function effectLabel(effect: EffectInstance): string {
+  const stacks = effect.stacks > 1 ? ` ×${effect.stacks}` : "";
+  const amount = effect.amount > 0 ? ` ${effect.amount}` : "";
+  return `${effectDef(effect.def).name}${stacks}${amount}`;
 }
 
 function describe(event: BattleEvent, name: (id: string) => string, playerSide: Side | null): string | null {

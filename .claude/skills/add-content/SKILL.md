@@ -14,6 +14,7 @@ The rules model is in `docs/design/architecture.md`; read it if you haven't this
 
 ## 2. Implement through the architecture
 - **Unit**: `src/rules/units/<faction>.ts` (stats, `abilities` as `{ id, params?, name? }`). If it's in a tree, update `EVOLUTIONS` / `FACTION_ROOTS` in `units/index.ts`, and add a fork to `FORKS` in `doctrine.ts` (plus `INVESTMENT_COST` and the setup `DOCTRINES`) if the tree branches.
+- Every ability and effect definition has a required `describe` (its rules text, written from its own params or numbers). Numbers shared by a rule and its text are constants next to the definition (e.g. `PUNISHED_PER_STACK`), never repeated.
 - **Active ability**: `src/rules/abilities/<faction>.ts` with `tags` (`attack`, `basic`, `melee`, `ranged`, `spell`, `damage`, `heal`, `area`), `defaults` (`power`, `charges`, amounts), `choices`, `resolve`. Deal damage with `ctx.hit(self.unitId, targets, ctx.hitSpec(self, tags))`. A variant of an existing ability is usually **params on the unit**, not new code.
 - **Passive ability**: `kind: "passive"` with `hooks` (see `Hooks` in `src/rules/battle/types.ts`).
 - **Effect**: `src/rules/effects.ts`: stacking (`unique` / `merge` with an optional cap / `perSource`), lifetime (`battle`, `untilOwnTurn`, `untilRoundEnd`, `untilSourceTurn`), visibility (`hiddenFromBearerSide` for secrets), `quiet` for bookkeeping, `aiValue` if the AI should care. Apply it with `ctx.addEffect(target, { def, source, amount, stacks })`.
@@ -24,7 +25,6 @@ The rules model is in `docs/design/architecture.md`; read it if you haven't this
 - Balance numbers that aren't unit stats or ability params go in `src/rules/balance.ts`.
 
 ## 3. The view
-- Rules text: `src/view/text.ts`, written from params (`(p) => \`…${p["power"]}…\``).
 - A figure in `src/view/figures.ts` (silhouette by unit; the accent comes from the faction).
 - Presets in `src/view/squads.ts` if the setup screen should offer it.
 

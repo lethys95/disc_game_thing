@@ -1,4 +1,5 @@
-import { areaChoices, at, rangedChoices, single } from "#rules/abilities/core";
+import { areaChoices, at, rangedChoices, single, uses } from "#rules/abilities/core";
+import { MUTATED_PER_STACK } from "#rules/effects";
 import { opponent } from "#rules/battle/grid";
 import type { Behavior } from "#rules/battle/types";
 
@@ -8,6 +9,8 @@ export const nexus: Readonly<Record<string, Behavior>> = {
   bolt: {
     kind: "active",
     name: "Bolt",
+    describe: () =>
+      "Very weak ranged hit on any enemy. Unlimited.",
     tags: ["attack", "ranged", "spell", "damage"],
     choices: rangedChoices,
     resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self, ["attack", "ranged", "spell", "damage"])),
@@ -17,6 +20,8 @@ export const nexus: Readonly<Record<string, Behavior>> = {
   plus_burst: {
     kind: "active",
     name: "Burst",
+    describe: (p) =>
+      `${uses(p)}: a burst of ${p["power"]} hitting every enemy in a plus shape.`,
     tags: ["attack", "ranged", "spell", "damage", "area"],
     defaults: { power: 40, charges: 2 },
     choices: (ctx, self) =>
@@ -28,6 +33,8 @@ export const nexus: Readonly<Record<string, Behavior>> = {
   restore_shield: {
     kind: "active",
     name: "Restore Shield",
+    describe: (p) =>
+      `Restore ${p["amount"]} of an ally's shield. Healing can't restore shields.`,
     tags: [],
     defaults: { amount: 40 },
     choices: (ctx, self) =>
@@ -47,6 +54,8 @@ export const nexus: Readonly<Record<string, Behavior>> = {
   negate: {
     kind: "active",
     name: "Negate",
+    describe: () =>
+      "Free action, once per combat: secretly mark an enemy; the next ability it uses is cancelled.",
     tags: ["spell"],
     defaults: { charges: 1 },
     secretTarget: true,
@@ -64,6 +73,8 @@ export const nexus: Readonly<Record<string, Behavior>> = {
   homing_lightning: {
     kind: "active",
     name: "Homing Lightning",
+    describe: (p) =>
+      `${uses(p)}: lightning (${p["power"]}) strikes every unit with the target's name, friend and foe alike.`,
     tags: ["attack", "ranged", "spell", "damage", "area"],
     defaults: { power: 45, charges: 2 },
     choices: (ctx, self) => {
@@ -79,6 +90,8 @@ export const nexus: Readonly<Record<string, Behavior>> = {
   equalize: {
     kind: "active",
     name: "Equalize",
+    describe: () =>
+      "Share shield with an ally until both are equal. The lent shield perishes when this unit's next turn starts.",
     tags: [],
     choices: (ctx, self) => {
       const user = ctx.unit(self.unitId);
@@ -106,6 +119,8 @@ export const nexus: Readonly<Record<string, Behavior>> = {
   mutate: {
     kind: "passive",
     name: "Mutate",
+    describe: () =>
+      `If its shield is restored while already full, it gains +${MUTATED_PER_STACK} damage for the rest of combat.`,
     hooks: {
       restored: (ctx, self, restored) => {
         if (restored === 0) ctx.addEffect(self.unitId, { def: "mutated", source: self.unitId });

@@ -1,4 +1,4 @@
-import { BEHAVIORS } from "#rules/abilities/index";
+import { BEHAVIORS, describeAbility } from "#rules/abilities/index";
 import type { Placement } from "#rules/battle/engine";
 import { STARTING_LEADERSHIP } from "#rules/balance";
 import { allowedUnits, doctrine, DOCTRINES, squadProblems } from "#rules/doctrine";
@@ -8,7 +8,6 @@ import type { Side, Tile } from "#rules/battle/types";
 import { UNITS } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
 import { NEXUS_PRESETS, PRESETS } from "#view/squads";
-import { abilityText } from "#view/text";
 import { element } from "#view/dom";
 
 export type Squads = readonly [readonly Placement[], readonly Placement[]];
@@ -202,7 +201,7 @@ export class Setup {
       });
       const label = (a: (typeof special)[number]) => a.name ?? BEHAVIORS[a.id]?.name ?? a.id;
       card.appendChild(element("div", "abilities", special.map(label).join(" · ")));
-      card.title = special.map((a) => `${label(a)}: ${abilityText(a)}`).join("\n");
+      card.title = special.map((a) => `${label(a)}: ${describeAbility(a)}`).join("\n");
       card.addEventListener("click", (e) => {
         e.stopPropagation();
         this.brush = this.brush === defId ? null : defId;

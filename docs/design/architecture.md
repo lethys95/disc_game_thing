@@ -51,6 +51,8 @@ An **effect definition** (registered by id, like abilities) holds the hooks plus
 - `visibility`: `public`, or `hiddenFromBearerSide` (Negate's mark). The view reads this flag; nothing checks effect names.
 - `onExpire`: cleanup, e.g. a lent shield takes back what's left of the loan.
 
+Every definition also carries `describe`: its rules text, computed from its own numbers, so the words can't drift from the rule.
+
 An **effect instance** on a unit is plain data: `{ def, source, stacks, amount }`. It stays serializable, so battles can still be cloned, forecast and saved.
 
 ### 3. Damage is a typed packet through an ordered pipeline

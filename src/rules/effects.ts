@@ -1,6 +1,11 @@
 import { PUNISHMENT_MAX_STACKS } from "#rules/balance";
 import type { EffectDef } from "#rules/battle/types";
 
+/** Punishment's per-stack penalty to damage and initiative. */
+export const PUNISHED_PER_STACK = 10;
+/** Mutate's per-stack damage bonus. */
+export const MUTATED_PER_STACK = 10;
+
 /**
  * Effect definitions. An effect on a unit is plain data (`EffectInstance`); what it does lives here as hooks.
  * The engine never checks for a particular effect.
@@ -9,6 +14,7 @@ const effects: readonly EffectDef[] = [
   {
     id: "defending",
     name: "Defending",
+    describe: () => "Damage that gets past its shield is halved until this unit's next turn.",
     stacking: { mode: "unique" },
     lifetime: "untilOwnTurn",
     visibility: "public",
@@ -22,6 +28,7 @@ const effects: readonly EffectDef[] = [
   {
     id: "stunned",
     name: "Stunned",
+    describe: () => "Loses its next turn.",
     stacking: { mode: "unique" },
     lifetime: "untilOwnTurn",
     visibility: "public",
@@ -30,20 +37,22 @@ const effects: readonly EffectDef[] = [
   {
     id: "punished",
     name: "Punished",
+    describe: (e) => `−${PUNISHED_PER_STACK * e.stacks} damage and −${PUNISHED_PER_STACK * e.stacks} initiative for the rest of combat (at most ${PUNISHMENT_MAX_STACKS} stacks).`,
     stacking: { mode: "merge", cap: PUNISHMENT_MAX_STACKS },
     lifetime: "battle",
     visibility: "public",
     hooks: {
       stats: (_ctx, self, subjectId, stats) => {
         if (subjectId !== self.unitId || !self.effect) return;
-        stats.damage -= 10 * self.effect.stacks;
-        stats.initiative -= 10 * self.effect.stacks;
+        stats.damage -= PUNISHED_PER_STACK * self.effect.stacks;
+        stats.initiative -= PUNISHED_PER_STACK * self.effect.stacks;
       },
     },
   },
   {
     id: "bleeding",
     name: "Bleeding",
+    describe: (e) => `Loses ${e.amount} HP at the start of each of its turns.`,
     stacking: { mode: "merge" },
     lifetime: "battle",
     visibility: "public",
@@ -58,6 +67,7 @@ const effects: readonly EffectDef[] = [
     id: "deathward",
     quiet: true,
     name: "Spared by death",
+    describe: () => "Cannot drop below 1 HP until the round ends.",
     stacking: { mode: "unique" },
     lifetime: "untilRoundEnd",
     visibility: "public",
@@ -66,6 +76,7 @@ const effects: readonly EffectDef[] = [
   {
     id: "negated",
     name: "Negated",
+    describe: () => "The next ability it uses will be cancelled.",
     stacking: { mode: "unique" },
     lifetime: "battle",
     visibility: "hiddenFromBearerSide",
@@ -82,6 +93,7 @@ const effects: readonly EffectDef[] = [
     id: "lent_shield",
     quiet: true,
     name: "Lent shield",
+    describe: (e) => `${e.amount} shield lent by a Battery; it perishes when the Battery's next turn starts.`,
     stacking: { mode: "perSource" },
     lifetime: "untilSourceTurn",
     visibility: "public",
@@ -97,12 +109,13 @@ const effects: readonly EffectDef[] = [
   {
     id: "mutated",
     name: "Mutated",
+    describe: (e) => `+${MUTATED_PER_STACK * e.stacks} damage for the rest of combat.`,
     stacking: { mode: "merge" },
     lifetime: "battle",
     visibility: "public",
     hooks: {
       stats: (_ctx, self, subjectId, stats) => {
-        if (subjectId === self.unitId && self.effect) stats.damage += 10 * self.effect.stacks;
+        if (subjectId === self.unitId && self.effect) stats.damage += MUTATED_PER_STACK * self.effect.stacks;
       },
       aiValue: (_ctx, self) => 15 * (self.effect?.stacks ?? 0),
     },
@@ -112,6 +125,7 @@ const effects: readonly EffectDef[] = [
     // will grant it.
     id: "fire_shield",
     name: "Fire shield",
+    describe: (e) => `Absorbs the next ${e.amount} fire damage.`,
     stacking: { mode: "merge" },
     lifetime: "battle",
     visibility: "public",
@@ -134,6 +148,7 @@ const effects: readonly EffectDef[] = [
     id: "blacksmith",
     quiet: true,
     name: "Blacksmith",
+    describe: (e) => `Damaging abilities deal +${e.amount} (from a Blacksmith this side holds).`,
     stacking: { mode: "merge" },
     lifetime: "battle",
     visibility: "public",

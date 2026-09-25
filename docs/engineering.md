@@ -24,7 +24,7 @@ src/view/
   stage.ts           the one renderer/camera/bloom/labels/tween loop
   scene.ts, map.ts   BattleScene, MapView
   app.ts, campaign.ts battle and map controllers
-  hud.ts, setup.ts   panels; dom.ts shared helpers; text.ts rules text from params
+  hud.ts, setup.ts   panels; dom.ts shared helpers
   secrecy.ts         what a player may see (hidden effects, secret targets)
   ai.worker.ts, ai-client.ts, ai-protocol.ts   the AI off the main thread
 ```
@@ -36,6 +36,7 @@ The step-by-step recipes (units, abilities, effects, nodes, forks, recording the
 ## Conventions
 - `applyAction` / `applyWorldAction` structuredClone the state, mutate the draft, and return `{ state, events }`. Events drive animation and the log. Everything is plain data, which is why the AI can run in a worker and battles can be forecast.
 - `applyAction` has **already advanced** to the next slot when it returns (start-of-turn bleed, stun skips). Tests about one action should assert on the returned events.
+- A definition carries its own rules text (`describe`), so an ability or effect is one place to read and change; `tests/descriptions.test.ts` checks every text renders.
 - Nothing outside `abilities/` and `effects.ts` names an ability or effect id. The engine, AI and view use tags, flags (`reschedules`, `secretTarget`, `visibility`, `quiet`) and hooks.
 - Anything the design doesn't specify is marked provisional where it's defined and listed in `docs/questions.md`.
 - `pnpm verify` before calling anything done: types, tests, a screenshot, and both click-through playtests.

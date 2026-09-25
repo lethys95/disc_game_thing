@@ -237,6 +237,8 @@ export interface EffectDef {
   readonly hooks: Hooks;
   readonly absorbPriority?: number;
   onExpire?(ctx: Ctx, self: TraitSelf): void;
+  /** What it does, from its own numbers; shown when hovering it. */
+  describe(effect: EffectInstance): string;
 }
 
 export interface ActiveBehavior {
@@ -251,6 +253,8 @@ export interface ActiveBehavior {
   readonly reschedules?: boolean;
   /** The target is secret from the other side (Negate). */
   readonly secretTarget?: boolean;
+  /** Rules text, written from the ability's effective params. */
+  describe(params: Params): string;
   choices(ctx: Ctx, self: TraitSelf): TargetChoice[];
   resolve(ctx: Ctx, self: TraitSelf, choice: TargetChoice): void;
 }
@@ -259,6 +263,8 @@ export interface PassiveBehavior {
   readonly kind: "passive";
   readonly name: string;
   readonly defaults?: Params;
+  /** Rules text, written from the ability's effective params. */
+  describe(params: Params): string;
   readonly hooks: Hooks;
 }
 

@@ -1,4 +1,6 @@
-import { at, single } from "#rules/abilities/core";
+import { at, single, uses } from "#rules/abilities/core";
+import { PUNISHMENT_MAX_STACKS } from "#rules/balance";
+import { PUNISHED_PER_STACK } from "#rules/effects";
 import { adjacent, frontLine, meleeTargets, occupant, opponent } from "#rules/battle/grid";
 import type { Behavior, Row, TargetChoice } from "#rules/battle/types";
 
@@ -8,6 +10,8 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
   flail: {
     kind: "active",
     name: "Flail",
+    describe: () =>
+      "One swing hits the entire enemy front line.",
     tags: ["attack", "melee", "damage", "area"],
     choices: (ctx, self) => {
       const units = ctx.living();
@@ -24,6 +28,8 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
   congregation: {
     kind: "passive",
     name: "Congregation",
+    describe: (p) =>
+      `+${p["bonus"]} damage for each other Congregant in the squad.`,
     defaults: { bonus: 10 },
     hooks: {
       stats: (ctx, self, subjectId, stats) => {
@@ -39,6 +45,10 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
   lay_on_hands: {
     kind: "active",
     name: "Lay on Hands",
+    describe: (p) =>
+      p["allies"]
+        ? `${uses(p)}. Heal for ${p["multiplier"]}× this unit's damage: self as a free action, an ally as the main action.`
+        : `Free action, ${uses(p).toLowerCase()}: heal self for ${p["multiplier"]}× this unit's damage.`,
     tags: ["heal"],
     defaults: { charges: 1, multiplier: 2, allies: 0 },
     choices: (ctx, self) => {
@@ -55,6 +65,8 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
   devotion_aura: {
     kind: "passive",
     name: "Devotion Aura",
+    describe: (p) =>
+      `Adjacent allies gain +${p["armor"]} armor.`,
     defaults: { armor: 20 },
     hooks: {
       stats: (ctx, self, subjectId, stats) => {
@@ -68,6 +80,8 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
   guardian_spirit: {
     kind: "passive",
     name: "Guardian Spirit",
+    describe: () =>
+      "Once per combat, a killing blow leaves this unit at 1 HP, and it cannot die until the round ends.",
     defaults: { charges: 1 },
     hooks: {
       preventDeath: (ctx, self) => {
@@ -81,6 +95,8 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
   must_attack: {
     kind: "passive",
     name: "Must Attack",
+    describe: () =>
+      "Must attack every turn: cannot defend, wait, or use other abilities.",
     hooks: {
       restrict: (ctx, self, subjectId, allowed) => {
         if (subjectId !== self.unitId) return;
@@ -93,6 +109,8 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
   zeal: {
     kind: "passive",
     name: "Zeal",
+    describe: () =>
+      "Each attack costs half of this unit's damage in health.",
     hooks: {
       afterAttack: (ctx, self) => {
         ctx.lose(self.unitId, Math.floor(ctx.stats(self.unitId).damage / 2), self.unitId);
@@ -104,6 +122,8 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
   fanaticism: {
     kind: "passive",
     name: "Fanaticism",
+    describe: () =>
+      "Takes self-damage equal to half the damage it deals.",
     hooks: {
       afterAttack: (ctx, self, dealt) => {
         const multiplier = ctx.battle.current?.penaltyMultiplier ?? 1;
@@ -116,6 +136,8 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
   hysteria: {
     kind: "passive",
     name: "Hysteria",
+    describe: () =>
+      "A kill grants a free extra attack at double self-damage, up to twice per turn.",
     hooks: {
       afterAttack: (ctx, self, _dealt, kills) => {
         const slot = ctx.battle.current;
@@ -130,6 +152,8 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
   fanaticism_aura: {
     kind: "passive",
     name: "Fanaticism Aura",
+    describe: () =>
+      "Every unit on the battlefield suffers Fanaticism and Hysteria, and nobody can defend.",
     hooks: {
       grants: () => ["fanaticism", "hysteria"],
       restrict: (_ctx, _self, _subjectId, allowed) => {
@@ -141,6 +165,8 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
   punishment: {
     kind: "passive",
     name: "Punishment",
+    describe: () =>
+      `Every enemy struck loses ${PUNISHED_PER_STACK} damage and ${PUNISHED_PER_STACK} initiative for the rest of combat. Stacks up to ${PUNISHMENT_MAX_STACKS} times.`,
     hooks: {
       afterHit: (ctx, self, targetId) => ctx.addEffect(targetId, { def: "punished", source: self.unitId }),
     },
@@ -150,6 +176,8 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
   domination: {
     kind: "passive",
     name: "Domination",
+    describe: (p) =>
+      `${Math.round((p["share"] ?? 0) * 100)}% of this unit's damage becomes bleed, which strikes at the start of the victim's turns.`,
     defaults: { share: 0.5 },
     hooks: {
       convert: (_ctx, self, packet) => {
@@ -164,6 +192,8 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
   hook: {
     kind: "active",
     name: "Hook",
+    describe: () =>
+      "Once per combat: pull the first enemy behind an empty front tile into the front row and stun it.",
     tags: [],
     defaults: { charges: 1 },
     choices: (ctx, self) => {

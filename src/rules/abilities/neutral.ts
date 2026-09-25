@@ -8,6 +8,8 @@ export const neutral: Readonly<Record<string, Behavior>> = {
   area_2x2: {
     kind: "active",
     name: "Area Spell",
+    describe: () =>
+      "Ranged spell: hits every enemy in a 2x2 block.",
     tags: ["attack", "ranged", "spell", "damage", "area"],
     choices: (ctx, self) =>
       areaChoices(ctx, self, (row, col) => {
@@ -22,6 +24,8 @@ export const neutral: Readonly<Record<string, Behavior>> = {
   stun_front: {
     kind: "active",
     name: "Stun",
+    describe: () =>
+      "Once per combat: stun the enemy directly in front for one turn.",
     tags: ["melee"],
     defaults: { charges: 1 },
     choices: (ctx, self) => {
@@ -39,6 +43,8 @@ export const neutral: Readonly<Record<string, Behavior>> = {
   anti_armor: {
     kind: "passive",
     name: "Anti-armor",
+    describe: (p) =>
+      `+${p["bonus"]} damage against targets that have armor.`,
     defaults: { bonus: 10 },
     hooks: {
       outgoing: (ctx, self, packet) => {
