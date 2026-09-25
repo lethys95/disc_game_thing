@@ -40,3 +40,12 @@ Muted world, faction mana color as the only saturated accent, organic and made t
 
 **2026-09-25 — Notes are written continuously.**
 Update status with every commit, not at session end (user's suggestion; sessions end unpredictably).
+
+**2026-09-25 — Skirmish squads obey branch investment.**
+Each squad commits to one doctrine (preserve / punishment / sacrifice) and fields only that branch's units. It's the canon rule, and it makes squad-building a real choice. The squad limit of 6 is provisional (D2's default leadership).
+
+**2026-09-25 — Hovering a target previews the exact outcome.**
+No RNG means the preview can run the real rules on a copy of the state and show exactly what will happen. This is a design strength of no-RNG, so the UI leans on it.
+
+**2026-09-25 — Playtesting is automated too.**
+`pnpm playtest` drives real clicks in a headless browser (`?debug` exposes tile screen positions). Use it after UI changes; it found the initiative-tie bias.

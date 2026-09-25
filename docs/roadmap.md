@@ -2,7 +2,7 @@
 
 Every milestone ends with something **playable in the browser**. No milestone is only infrastructure. Build a system when a milestone needs it, not before.
 
-## M1 — One battle
+## M1 — One battle ✅ (2026-09-25)
 Two 3x3 squads fight to the end in the browser. Player controls one side; a dumb AI controls the other.
 - Mirror match: Jilliath Congregant, Paladin, Zealot on both sides (`design/units/jilliath-melee-line.md`).
 - Combat built on the modular ability model (`design/abilities.md`); attack/defend/wait are abilities.
