@@ -5,18 +5,19 @@ _Rewritten (not appended) with every commit. Keep under ~50 lines._
 **Updated:** 2026-09-25
 
 ## Where we are
-Git: tags `m2-playable`, `m3-whole-game`, `m4-progression`, `m5-neutrals` mark tested states. Work happens on a branch per milestone, merged into `main` when it works.
+Git: tags `m2-playable` … `m6-nexus-forks` mark tested states. Work happens on a branch per milestone, merged into `main` when it works.
 
-**M1–M5 done.** Setup → pick each side's faction (**Jilliath** with a doctrine, or **Ral-Vitahl**) → **Fight** or **March**.
+**M1–M6 done.** Setup → pick each side's faction (**Jilliath** or **Ral-Vitahl**) and doctrine → **Fight** or **March**.
 - March: a 61-hex map with Capitols and Guardians, neutral cities guarded by **bandits**, bandit **camps**, and guarded **dungeons** with one-time rewards.
 - Also gold, recruiting, elevation, XP and evolution, branch investment, and the graveyard.
-- Engine: shields, ranged, area spells (2x2, plus), stun, anti-armor. Punishment is capped at 3 stacks.
+- Engine: shields (and lent shields), ranged, area spells, stun, anti-armor, secret Negate marks, same-name lightning, Mutate. Punishment is capped at 3 stacks.
+- Nexus forks scheme vs overload (Battery, Mutant, Justiciar, Thaumaturge). The Negate mark is hidden from the marked side (`src/view/secrecy.ts`, tested).
 - Unit designs from the user: `design/units/*.md`. Numbers are provisional (`questions.md`).
 
-Rules: `src/rules/` (48 tests). View: `src/view/`. Tools: the `verify` skill; `A=<doctrine|nexus> B=… pnpm sim:world`.
+Rules: `src/rules/` (56 tests). View: `src/view/`. Tools: the `verify` skill; `A=<doctrine|nexus> B=… pnpm sim:world`.
 
 ## Next
-1. **Spar with the user on Nexus** (only tier 1 exists; the melee line is "short"; casters are the strongest line) and the other factions.
+1. **Sparring on factions**: Nexus's Arcane Engineer has no tier 2; tiers 3+ are open; Sylvan and Vexumphat have no units yet (`design/dichotomies.md`).
 2. Open design questions: finite neutral XP and cold wars (#19), a gold sink (#20), provisional numbers (#21).
 3. Polish for human play: compact the warband panel, show enemy composition before attacking, add evolution feedback.
 4. Art spike: on hold for the user's image-model research.
@@ -25,6 +26,7 @@ Rules: `src/rules/` (48 tests). View: `src/view/`. Tools: the `verify` skill; `A
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.
 
 ## Recently done
+- 2026-09-25: M6: per-faction forks; Nexus scheme vs overload with Battery, Mutant, Justiciar, Thaumaturge.
 - 2026-09-25: M5: bandit neutrals (guarded cities, camps, dungeons with rewards), Ral-Vitahl tier 1, shields/ranged/area engine, Punishment cap.
 - 2026-09-25: M4 done: XP, evolution, branch investment, graveyard/resurrection; AI invests and resurrects; cold wars persist (design gap).
 - 2026-09-25: M3 done: Capitols and Guardian, cities and gold, recruiting, elevation, healing, map forecast, safer map AI; Guardian tuned by simulation.

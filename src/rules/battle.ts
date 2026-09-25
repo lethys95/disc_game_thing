@@ -104,7 +104,14 @@ export function applyAction(battle: Battle, action: Action): Step {
   const bonus = slot.bonusAttacks.shift();
   slot.penaltyMultiplier = bonus ?? 1;
   ctx.emit({ type: "ability", unitId, abilityId: action.abilityId, targets: choice.affected });
-  found.resolve(ctx, unitId, choice);
+  const actor = ctx.unit(unitId);
+  // Wait only reschedules the unit; it isn't an ability a Justiciar can cancel.
+  if (action.abilityId !== "wait" && actor.effects.some((e) => e.kind === "negated")) {
+    actor.effects = actor.effects.filter((e) => e.kind !== "negated");
+    ctx.emit({ type: "negated", unitId, abilityId: action.abilityId });
+  } else {
+    found.resolve(ctx, unitId, choice);
+  }
   slot.penaltyMultiplier = 1;
 
   if (bonus === undefined && choice.cost === "free") slot.freeUsed.push(action.abilityId);
@@ -176,6 +183,7 @@ function advance(ctx: Ctx): void {
     if (!unit.alive) continue;
     unit.effects = unit.effects.filter((e) => e.kind !== "defending");
     ctx.emit({ type: "turnStart", unitId: next });
+    recallLoans(ctx, next);
 
     const bleeding = unit.effects.find((e) => e.kind === "bleeding");
     if (bleeding?.kind === "bleeding") {
@@ -256,6 +264,21 @@ export function upcomingSlots(battle: Battle): string[] {
   return order;
 }
 
+/** A Battery's lent shields perish when its next turn starts (whatever of them hasn't been shot away). */
+function recallLoans(ctx: Ctx, lenderId: string): void {
+  for (const holder of ctx.living()) {
+    const lent = holder.effects.find((e) => e.kind === "lentShield");
+    if (lent?.kind !== "lentShield") continue;
+    const mine = lent.loans.filter((l) => l.from === lenderId).reduce((sum, l) => sum + l.amount, 0);
+    if (mine === 0) continue;
+    const lost = Math.min(mine, holder.shield);
+    holder.shield -= lost;
+    lent.loans = lent.loans.filter((l) => l.from !== lenderId);
+    if (lent.loans.length === 0) holder.effects = holder.effects.filter((e) => e !== lent);
+    if (lost > 0) ctx.emit({ type: "shieldHit", unitId: holder.id, amount: lost });
+  }
+}
+
 function checkOutcome(ctx: Ctx): void {
   const battle = ctx.battle;
   if (battle.outcome) return;
@@ -312,6 +335,7 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
         result.damage -= 10 * effect.stacks;
         result.initiative -= 10 * effect.stacks;
       }
+      if (effect.kind === "mutated") result.damage += 10 * effect.stacks;
     }
     result.damage = Math.max(0, result.damage);
     result.initiative = Math.max(0, result.initiative);
@@ -359,6 +383,8 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
     const existing = target.effects.find((e) => e.kind === effect.kind);
     if (existing?.kind === "punished" && effect.kind === "punished") existing.stacks = Math.min(PUNISHMENT_MAX_STACKS, existing.stacks + effect.stacks);
     else if (existing?.kind === "bleeding" && effect.kind === "bleeding") existing.perTurn += effect.perTurn;
+    else if (existing?.kind === "mutated" && effect.kind === "mutated") existing.stacks += effect.stacks;
+    else if (existing?.kind === "lentShield" && effect.kind === "lentShield") existing.loans.push(...effect.loans);
     else if (!existing) target.effects.push({ ...effect });
     ctx.emit({ type: "effect", unitId: targetId, effect: effect.kind });
   };
@@ -401,8 +427,13 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
     addEffect,
     restoreShield: (targetId, amount) => {
       const target = unit(targetId);
+      if (!target.alive) return;
+      if (target.shield >= stats(targetId).shield) {
+        for (const b of passives(ctx, targetId)) b.onShieldOvercharge?.(ctx, targetId);
+        return;
+      }
       const restored = Math.min(amount, stats(targetId).shield - target.shield);
-      if (!target.alive || restored <= 0) return;
+      if (restored <= 0) return;
       target.shield += restored;
       ctx.emit({ type: "shieldRestored", unitId: targetId, amount: restored });
     },

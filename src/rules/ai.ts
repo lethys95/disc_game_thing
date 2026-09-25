@@ -29,6 +29,13 @@ function evaluate(battle: Battle, side: Side): number {
   for (const unit of Object.values(battle.units)) {
     const sign = unit.side === side ? 1 : -1;
     score += sign * (unit.alive ? unit.hp : -100);
+    if (!unit.alive) continue;
+    // Shields are worth less than health (they return after battle, and lent ones perish).
+    score += sign * 0.5 * unit.shield;
+    // A pending negation costs its bearer roughly one action's worth of damage.
+    if (unit.effects.some((e) => e.kind === "negated")) score -= sign * 2 * unit.base.damage;
+    const mutated = unit.effects.find((e) => e.kind === "mutated");
+    if (mutated?.kind === "mutated") score += sign * 15 * mutated.stacks;
     // Spent charges count against their owner so once-per-combat heals aren't burned on scratches.
     score -= sign * 40 * unit.abilities.reduce((sum, a) => sum + a.chargesUsed, 0);
   }

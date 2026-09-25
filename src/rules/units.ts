@@ -81,6 +81,28 @@ export const UNITS: Readonly<Record<string, UnitDef>> = {
     abilities: kit("plus_burst", "bolt", "defend", "wait"),
   },
 
+  // Ral-Vitahl tier 2, docs/design/dichotomies.md (scheme = automata/Justiciar, overload = mutants/Thaumaturge).
+  battery: {
+    id: "battery", name: "Battery", faction: "nexus", tier: 2, damageType: "weapon",
+    stats: { maxHp: 70, shield: 160, damage: 30, armor: 0, initiative: 45 },
+    abilities: kit("attack", "equalize", "defend", "wait"),
+  },
+  mutant: {
+    id: "mutant", name: "Mutant", faction: "nexus", tier: 2, damageType: "weapon",
+    stats: { maxHp: 150, shield: 60, damage: 40, armor: 0, initiative: 50 },
+    abilities: kit("attack", "mutate", "defend", "wait"),
+  },
+  justiciar: {
+    id: "justiciar", name: "Justiciar", faction: "nexus", tier: 2, damageType: "weapon",
+    stats: { maxHp: 70, shield: 0, damage: 12, armor: 0, initiative: 55 },
+    abilities: kit("negate", "plus_burst", "bolt", "defend", "wait"),
+  },
+  thaumaturge: {
+    id: "thaumaturge", name: "Thaumaturge", faction: "nexus", tier: 2, damageType: "weapon",
+    stats: { maxHp: 65, shield: 0, damage: 12, armor: 0, initiative: 50 },
+    abilities: kit("homing_lightning", "plus_burst", "bolt", "defend", "wait"),
+  },
+
   // Neutral bandits, docs/design/units/neutrals-bandits.md. Mechanics are the user's; stats are provisional.
   brigand: {
     id: "brigand", name: "Brigand", faction: "neutral", tier: 1, damageType: "weapon",
@@ -138,4 +160,6 @@ export const EVOLUTIONS: Readonly<Record<string, readonly Evolution[]>> = {
   punisher: [{ to: "torturer", requires: null }],
   fanatic: [{ to: "chosen", requires: null }],
   chosen: [{ to: "avatar_of_vengeance", requires: null }],
+  custodian: [{ to: "battery", requires: "scheme" }, { to: "mutant", requires: "overload" }],
+  apprentice: [{ to: "justiciar", requires: "scheme" }, { to: "thaumaturge", requires: "overload" }],
 };

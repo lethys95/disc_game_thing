@@ -143,8 +143,8 @@ function axe(material: THREE.Material, edge: THREE.Material): THREE.Group {
   return g;
 }
 
-/** Custodian: a blocky golem; its shield shows as glowing plates. */
-function golem(m: Parts): THREE.Group {
+/** Custodian and Battery: blocky golems; their shields show as glowing plates (the Battery carries cells). */
+function golem(m: Parts, battery: boolean): THREE.Group {
   const g = new THREE.Group();
   g.add(mesh(new THREE.BoxGeometry(0.5, 0.35, 0.4), m.trim, 0, 0.18, 0));
   g.add(mesh(new THREE.BoxGeometry(0.62, 0.6, 0.56), m.body, 0, 0.65, 0));
@@ -155,6 +155,25 @@ function golem(m: Parts): THREE.Group {
   }
   g.add(mesh(new THREE.BoxGeometry(0.04, 0.4, 0.4), m.glow, 0.33, 0.7, 0));
   g.add(eyes(1.1, m.glow));
+  if (battery) {
+    for (const z of [-0.18, 0, 0.18]) g.add(mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.34, 8), m.glow, -0.36, 0.78, z));
+  }
+  return g;
+}
+
+/** Mutant: a hunched, lopsided mass of flesh with a glowing growth. */
+function mutantBody(m: Parts): THREE.Group {
+  const g = new THREE.Group();
+  const torso = mesh(new THREE.SphereGeometry(0.42, 8, 6), m.body, 0, 0.62, 0);
+  torso.scale.set(1, 1.15, 0.9);
+  g.add(torso);
+  g.add(mesh(new THREE.SphereGeometry(0.2, 7, 5), m.body, 0.2, 1.08, 0.08));
+  g.add(mesh(new THREE.SphereGeometry(0.26, 7, 5), m.trim, 0.12, 0.72, -0.34));
+  const arm = mesh(new THREE.CylinderGeometry(0.1, 0.16, 0.7, 6), m.body, 0.3, 0.45, 0.32);
+  arm.rotation.z = -0.4;
+  g.add(arm);
+  g.add(mesh(new THREE.IcosahedronGeometry(0.14, 0), m.glow, -0.1, 0.95, -0.22));
+  g.add(eyes(1.12, m.glow));
   return g;
 }
 
@@ -167,8 +186,8 @@ export function buildFigure(defId: string, side: Side): THREE.Group {
   const height = 1.1;
   const top = height;
 
-  if (defId === "custodian") {
-    g.add(golem(m));
+  if (defId === "custodian" || defId === "battery" || defId === "mutant") {
+    g.add(defId === "mutant" ? mutantBody(m) : golem(m, defId === "battery"));
     g.scale.setScalar(scale);
     return g;
   }
@@ -221,6 +240,17 @@ export function buildFigure(defId: string, side: Side): THREE.Group {
       g.add(helm(top - 0.05, 0.14, m.trim));
       g.add(eyes(top + 0.1, m.glow));
       g.add(staff(m.trim, m.glow));
+      break;
+    case "justiciar":
+      g.add(helm(top - 0.05, 0.15, m.trim));
+      g.add(eyes(top + 0.1, m.glow));
+      g.add(staff(m.trim, m.glow));
+      g.add(halo(top + 0.3, 0.24, m.glow));
+      break;
+    case "thaumaturge":
+      g.add(hood(top - 0.1, 0.18, m.body));
+      g.add(eyes(top + 0.05, m.glow));
+      for (const [y, z] of [[1.2, 0.25], [0.95, -0.3], [1.4, -0.05]] as const) g.add(mesh(new THREE.IcosahedronGeometry(0.08, 0), m.glow, 0.25, y, z));
       break;
     case "apprentice":
       g.add(hood(top - 0.1, 0.17, m.body));

@@ -40,7 +40,13 @@ export type Effect =
   | { kind: "stunned" }
   | { kind: "punished"; stacks: number }
   | { kind: "bleeding"; perTurn: number }
-  | { kind: "deathward" };
+  | { kind: "deathward" }
+  /** Justiciar: this unit's next ability is cancelled. Secret from the unit's own side. */
+  | { kind: "negated" }
+  /** Battery: shields lent by each lender, which perish when that lender's next turn starts. */
+  | { kind: "lentShield"; loans: { from: string; amount: number }[] }
+  /** Mutant: +10 damage per stack, from shields restored while already full. */
+  | { kind: "mutated"; stacks: number };
 
 export interface AbilitySlot {
   readonly ref: AbilityRef;
@@ -119,6 +125,7 @@ export type BattleEvent =
   | { type: "effect"; unitId: string; effect: Effect["kind"] }
   | { type: "move"; unitId: string; from: Tile; to: Tile }
   | { type: "skipped"; unitId: string; reason: "stunned" | "noActions" }
+  | { type: "negated"; unitId: string; abilityId: string }
   | { type: "battleEnd"; outcome: Outcome };
 
 /**
@@ -178,6 +185,8 @@ export interface PassiveBehavior {
   onHit?(ctx: Ctx, ownerId: string, targetId: string, dealt: number): void;
   /** Called after the owner's attack resolves, if the owner is still alive. */
   afterAttack?(ctx: Ctx, ownerId: string, dealt: number, kills: number): void;
+  /** Called when a shield restoration reaches the owner while its shield is already full. */
+  onShieldOvercharge?(ctx: Ctx, ownerId: string): void;
   /** Called when the owner would die; return true to prevent it. */
   preventDeath?(ctx: Ctx, ownerId: string): boolean;
 }

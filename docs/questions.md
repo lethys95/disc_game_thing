@@ -35,3 +35,8 @@ The user is in a "suggest" role: they answer when they have time, so nothing her
 20. Gold has no sink beyond tier-1 recruits (the winning AI banks ~17k). Canon has city upgrades (linear, gold, raising fortification/armor/regen). Should those come next, or something else?
 21. Bandit and Nexus stats, recruit prices (Custodian 60, Engineer 50, Apprentice 60), group sizes, dungeon rewards (200 gold, or 50 gold + a Hedge Mage joins) are all provisional. Ranged units hit any enemy (D2 archers); fine?
 
+## Nexus tier 2 (M6; provisional answers in code)
+22. Negate cancels the marked unit's next *ability* (attack, defend, spells), not Wait; the cancelled ability still spends the action and any charges. The Justiciar keeps the Apprentice's Burst and Bolt, and the Thaumaturge keeps them too. Right?
+23. Equalize targets allies only, and only those with less shield than the Battery; units without a shield stat can receive lent shields. Mutate: +10 damage per overcharge, stacking, for the rest of combat. Restore Shield may now target full shields (needed to feed a Mutant).
+24. Tier-2 stats: Battery 70 HP / 160 shield / 30 dmg; Mutant 150 HP / 60 shield / 40 dmg; Justiciar 70 HP, 55 init; Thaumaturge 65 HP; Homing Lightning 45 per hit. All placeholders.
+

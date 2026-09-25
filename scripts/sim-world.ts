@@ -3,7 +3,7 @@ import { applyWorldAction, chooseWorldAction, concludeBattle, createWorld } from
 import type { WorldAction } from "#rules/world";
 import { doctrine } from "#rules/doctrine";
 import type { Playable } from "#rules/units";
-import { NEXUS_PRESET, PRESETS } from "#view/squads";
+import { NEXUS_PRESETS, PRESETS } from "#view/squads";
 
 /**
  * Whole games with the map AI on both sides: `A=punishment B=nexus:overload pnpm sim:world [seeds...]`.
@@ -14,7 +14,9 @@ const parse = (spec: string | undefined): { faction: Playable; key: string } => 
   return head === "nexus" ? { faction: "nexus", key: tail ?? "uncommitted" } : { faction: "jilliath", key: head };
 };
 const isJilliathPreset = (key: string): key is keyof typeof PRESETS => key in PRESETS;
-const squadOf = (s: { faction: Playable; key: string }) => (s.faction === "nexus" ? NEXUS_PRESET : isJilliathPreset(s.key) ? PRESETS[s.key] : PRESETS.uncommitted);
+const isNexusPreset = (key: string): key is keyof typeof NEXUS_PRESETS => key in NEXUS_PRESETS;
+const squadOf = (s: { faction: Playable; key: string }) =>
+  s.faction === "nexus" ? (isNexusPreset(s.key) ? NEXUS_PRESETS[s.key] : NEXUS_PRESETS.uncommitted) : isJilliathPreset(s.key) ? PRESETS[s.key] : PRESETS.uncommitted;
 
 const seeds = process.argv.slice(2).map(Number);
 const sides = [parse(process.env["A"]), parse(process.env["B"])] as const;

@@ -322,10 +322,13 @@ export class BattleScene {
           this.float(event.unitId, "Spared", "spared");
           break;
         case "effect":
-          if (event.effect !== "deathward") this.float(event.unitId, EFFECT_TEXT[event.effect], "effect");
+          if (event.effect !== "deathward" && event.effect !== "lentShield") this.float(event.unitId, EFFECT_TEXT[event.effect], "effect");
           break;
         case "move":
           pending.push(this.slide(event.unitId, battle.units[event.unitId]?.side ?? 0, event.to));
+          break;
+        case "negated":
+          this.float(event.unitId, "Negated!", "spared");
           break;
         case "skipped":
           this.float(event.unitId, event.reason === "stunned" ? "Stunned" : "No action", "effect");

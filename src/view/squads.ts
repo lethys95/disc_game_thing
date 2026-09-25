@@ -24,11 +24,23 @@ export const PRESETS: Readonly<Record<"uncommitted" | "preserve" | "punishment" 
   ],
 };
 
-/** A starting Nexus formation of its three tier-1 units. Not canon. */
-export const NEXUS_PRESET: readonly Placement[] = [
-  at("custodian", 0, 0), at("custodian", 0, 1), at("custodian", 0, 2),
-  at("arcane_engineer", 1, 0), at("apprentice", 1, 1), at("apprentice", 1, 2),
-];
+/** Nexus formations by doctrine key, made of its units. Not canon. */
+export const NEXUS_PRESETS: Readonly<Record<"uncommitted" | "scheme" | "overload", readonly Placement[]>> = {
+  uncommitted: [
+    at("custodian", 0, 0), at("custodian", 0, 1), at("custodian", 0, 2),
+    at("arcane_engineer", 1, 0), at("apprentice", 1, 1), at("apprentice", 1, 2),
+  ],
+  scheme: [
+    at("battery", 0, 0), at("custodian", 0, 1), at("battery", 0, 2),
+    at("arcane_engineer", 1, 0), at("justiciar", 1, 1), at("apprentice", 1, 2),
+  ],
+  overload: [
+    at("mutant", 0, 0), at("custodian", 0, 1), at("mutant", 0, 2),
+    at("arcane_engineer", 1, 0), at("thaumaturge", 1, 1), at("apprentice", 1, 2),
+  ],
+};
+
+export const NEXUS_PRESET = NEXUS_PRESETS.uncommitted;
 
 /** A bandit group using all four of the user's bandit units. The formation is not canon. */
 export const BANDIT_GROUP: readonly Placement[] = [

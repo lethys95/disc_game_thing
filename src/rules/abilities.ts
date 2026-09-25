@@ -286,11 +286,85 @@ const restoreShield: Behavior = {
   choices: (ctx, userId) =>
     ctx
       .living(ctx.unit(userId).side)
-      .filter((u) => ctx.stats(u.id).shield > 0 && u.shield < ctx.stats(u.id).shield)
+      // Full shields are valid targets too: that's how a Mutant is fed (Mutate).
+      .filter((u) => ctx.stats(u.id).shield > 0)
       .map((u) => single(u, "main")),
   resolve: (ctx, _userId, choice) => {
     for (const id of choice.affected) ctx.restoreShield(id, SHIELD_RESTORE);
   },
+};
+
+/**
+ * Justiciar (scheme): mark a unit; the next ability it uses is cancelled. A free action, once per combat. The mark
+ * is secret from the marked unit's side (the view hides it).
+ */
+const negate: Behavior = {
+  kind: "active",
+  name: "Negate",
+  charges: 1,
+  choices: (ctx, userId) => {
+    const enemy = opponent(ctx.unit(userId).side);
+    return ctx
+      .living(enemy)
+      .filter((u) => !u.effects.some((e) => e.kind === "negated"))
+      .map((u) => single(u, "free"));
+  },
+  resolve: (ctx, _userId, choice) => {
+    for (const id of choice.affected) ctx.addEffect(id, { kind: "negated" });
+  },
+};
+
+/** Provisional: the Thaumaturge's lightning hits each struck unit for this much. */
+const HOMING_LIGHTNING_POWER = 45;
+
+/** Thaumaturge (overload): lightning that strikes every unit sharing the target's name, on both sides. Two uses. */
+const homingLightning: Behavior = {
+  kind: "active",
+  name: "Homing Lightning",
+  isAttack: true,
+  charges: 2,
+  choices: (ctx, userId) => {
+    const enemy = opponent(ctx.unit(userId).side);
+    const everyone = ctx.living();
+    return ctx.living(enemy).map((target) => at(target, everyone.filter((u) => u.defId === target.defId).map((u) => u.id), "main"));
+  },
+  resolve: (ctx, userId, choice) => ctx.attack(userId, choice.affected, HOMING_LIGHTNING_POWER),
+};
+
+/**
+ * Battery (scheme): share shields with a unit until both are equal. What it hands over is a loan that perishes when
+ * the Battery's next turn starts.
+ */
+const equalize: Behavior = {
+  kind: "active",
+  name: "Equalize",
+  choices: (ctx, userId) => {
+    const user = ctx.unit(userId);
+    return ctx
+      .living(user.side)
+      .filter((u) => u.id !== userId && u.shield + 1 < user.shield)
+      .map((u) => single(u, "main"));
+  },
+  resolve: (ctx, userId, choice) => {
+    const user = ctx.unit(userId);
+    for (const id of choice.affected) {
+      const target = ctx.unit(id);
+      const given = Math.floor((user.shield - target.shield) / 2);
+      if (given <= 0) continue;
+      user.shield -= given;
+      target.shield += given;
+      ctx.addEffect(id, { kind: "lentShield", loans: [{ from: userId, amount: given }] });
+      ctx.emit({ type: "shieldRestored", unitId: id, amount: given });
+      ctx.emit({ type: "shieldHit", unitId: userId, amount: given });
+    }
+  },
+};
+
+/** Mutant (overload): restoring a shield that's already full makes it stronger instead. */
+const mutate: Behavior = {
+  kind: "passive",
+  name: "Mutate",
+  onShieldOvercharge: (ctx, ownerId) => ctx.addEffect(ownerId, { kind: "mutated", stacks: 1 }),
 };
 
 export const BEHAVIORS: Readonly<Record<string, Behavior>> = {
@@ -318,6 +392,10 @@ export const BEHAVIORS: Readonly<Record<string, Behavior>> = {
   stun_front: stunFront,
   anti_armor: antiArmor,
   restore_shield: restoreShield,
+  negate,
+  homing_lightning: homingLightning,
+  equalize,
+  mutate,
 };
 
 export function behavior(id: string): Behavior {

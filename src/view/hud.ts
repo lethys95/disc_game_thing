@@ -113,9 +113,11 @@ export class Hud {
     table.appendChild(element("span", "value", `${actionsPerRound(stats.initiative)} per round`));
     this.card.appendChild(table);
 
-    if (unit.effects.length > 0) {
+    // A Justiciar's mark stays secret from the marked unit's own side.
+    const shown = unit.effects.filter((e) => !(e.kind === "negated" && unit.side === playerSide));
+    if (shown.length > 0) {
       const effects = element("div", "effects");
-      for (const effect of unit.effects) effects.appendChild(element("span", `effect ${effect.kind}`, effectLabel(effect)));
+      for (const effect of shown) effects.appendChild(element("span", `effect ${effect.kind}`, effectLabel(effect)));
       this.card.appendChild(effects);
     }
 
@@ -224,6 +226,8 @@ function describe(event: BattleEvent, name: (id: string) => string, playerSide: 
       return event.effect === "defending" ? null : `${name(event.unitId)}: ${event.effect}`;
     case "move":
       return `${name(event.unitId)} is dragged to the front`;
+    case "negated":
+      return `${name(event.unitId)}'s action is negated!`;
     case "skipped":
       return event.reason === "stunned" ? `${name(event.unitId)} is stunned` : `${name(event.unitId)} cannot act`;
     case "battleEnd":

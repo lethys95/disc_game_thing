@@ -3,6 +3,7 @@ import { applyAction, createBattle, legalActions } from "#rules/battle";
 import { sameTile } from "#rules/grid";
 import type { Action, Battle, BattleEvent, LegalAbility, Side, TargetChoice } from "#rules/types";
 import { Hud, unitLabel } from "#view/hud";
+import { asKnown, masked } from "#view/secrecy";
 import type { BannerButton } from "#view/hud";
 import type { BattleScene, PreviewMark, TileRef } from "#view/scene";
 import type { Squads } from "#view/setup";
@@ -85,12 +86,12 @@ export class App {
     this.scene.show();
     this.hud.setVisible(true);
     this.hud.clearLog();
-    this.hud.appendLog(events, battle, playerSide);
+    this.hud.appendLog(masked(events, battle, playerSide), battle, playerSide);
     for (let i = 0; i < fastForward && !battle.outcome; i++) {
       const action = chooseAction(battle);
       if (!action) break;
       const next = applyAction(battle, action);
-      this.hud.appendLog(next.events, next.battle, playerSide);
+      this.hud.appendLog(masked(next.events, next.battle, playerSide), next.battle, playerSide);
       battle = next.battle;
     }
     this.battle = battle;
@@ -183,9 +184,10 @@ export class App {
     this.preview = null;
     this.render();
     const step = applyAction(battle, action);
-    this.hud.appendLog(step.events, step.battle, this.playerSide);
+    const visible = masked(step.events, step.battle, this.playerSide);
+    this.hud.appendLog(visible, step.battle, this.playerSide);
     this.battle = step.battle;
-    await this.scene.play(step.events, step.battle);
+    await this.scene.play(visible, step.battle);
     if (generation !== this.generation) return;
     this.busy = false;
     this.selectDefault();
@@ -217,7 +219,7 @@ export class App {
       totals.set(id, found);
       return found;
     };
-    for (const event of ownEvents(applyAction(battle, action).events)) {
+    for (const event of ownEvents(applyAction(asKnown(battle, this.playerSide), action).events)) {
       if (event.type === "damage") entry(event.unitId).harm += event.amount;
       if (event.type === "heal") entry(event.unitId).heal += event.amount;
       if (event.type === "death") entry(event.unitId).dies = true;

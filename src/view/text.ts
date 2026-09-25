@@ -26,6 +26,10 @@ export const ABILITY_TEXT: Readonly<Record<string, string>> = {
   stun_front: "Once per combat: stun the enemy directly in front for one turn.",
   anti_armor: "+10 damage against targets that have armor.",
   restore_shield: "Restore an ally's shield. Healing can't restore shields.",
+  negate: "Free action, once per combat: secretly mark an enemy; the next ability it uses is cancelled.",
+  homing_lightning: "Two uses per combat: lightning strikes every unit with the target's name, friend and foe alike.",
+  equalize: "Share shield with an ally until both are equal. The lent shield perishes when this unit's next turn starts.",
+  mutate: "If its shield is restored while already full, it gains +10 damage for the rest of combat.",
 };
 
 export const EFFECT_TEXT: Readonly<Record<Effect["kind"], string>> = {
@@ -34,6 +38,9 @@ export const EFFECT_TEXT: Readonly<Record<Effect["kind"], string>> = {
   punished: "Punished",
   bleeding: "Bleeding",
   deathward: "Spared by death",
+  negated: "Negated",
+  lentShield: "Lent shield",
+  mutated: "Mutated",
 };
 
 export function effectLabel(effect: Effect): string {
@@ -42,6 +49,10 @@ export function effectLabel(effect: Effect): string {
       return `Punished ×${effect.stacks}`;
     case "bleeding":
       return `Bleeding ${effect.perTurn}/turn`;
+    case "mutated":
+      return `Mutated +${10 * effect.stacks} damage`;
+    case "lentShield":
+      return `Lent shield ${effect.loans.reduce((s, l) => s + l.amount, 0)}`;
     default:
       return EFFECT_TEXT[effect.kind];
   }

@@ -6,7 +6,7 @@ import { COLS, ROWS, sameTile } from "#rules/grid";
 import type { Side, Tile } from "#rules/types";
 import { UNITS } from "#rules/units";
 import type { Playable } from "#rules/units";
-import { NEXUS_PRESET, PRESETS } from "#view/squads";
+import { NEXUS_PRESETS, PRESETS } from "#view/squads";
 import { ABILITY_TEXT } from "#view/text";
 
 export type Squads = readonly [readonly Placement[], readonly Placement[]];
@@ -20,8 +20,10 @@ export interface SetupHandlers {
 const FACTION_NAMES: Readonly<Record<Playable, string>> = { jilliath: "Jilliath", nexus: "Ral-Vitahl" };
 
 const isJilliathPreset = (key: string): key is keyof typeof PRESETS => key in PRESETS;
+const isNexusPreset = (key: string): key is keyof typeof NEXUS_PRESETS => key in NEXUS_PRESETS;
 
-const presetFor = (faction: Playable, key: string) => [...(faction === "nexus" ? NEXUS_PRESET : isJilliathPreset(key) ? PRESETS[key] : PRESETS.uncommitted)];
+const presetFor = (faction: Playable, key: string) =>
+  faction === "nexus" ? [...(isNexusPreset(key) ? NEXUS_PRESETS[key] : NEXUS_PRESETS.uncommitted)] : [...(isJilliathPreset(key) ? PRESETS[key] : PRESETS.uncommitted)];
 
 function element<K extends keyof HTMLElementTagNameMap>(tag: K, className: string, text?: string): HTMLElementTagNameMap[K] {
   const el = document.createElement(tag);

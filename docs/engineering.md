@@ -15,6 +15,8 @@ How the code is laid out and what has bitten before. Keep it short; add a gotcha
 
 - The map AI and the map's forecast both use `autoplay` (battle AI on both sides) to predict fights. It's deterministic, so a forecast is exact *for AI play*; a human can do better.
 
+- Hidden information (the Justiciar's mark) is masked in the view, not the rules: `src/view/secrecy.ts` filters events and gives previews a battle without the player's own marks. Every log and animation path must go through it. The AI sees everything.
+
 ## Gotchas
 - **CSS2DRenderer positions labels through `transform`.** A CSS animation on `transform` silently overrides it (every float drew at the top-left). Animate an inner element.
 - **`[hidden]` loses to author `display:` rules.** A global `[hidden] { display: none !important }` is in `style.css`; keep it.
