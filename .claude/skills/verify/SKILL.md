@@ -8,6 +8,7 @@ description: Run, screenshot, and play-test the disc game to verify a change act
 Tests prove the rules; only a rendered frame proves the view. Always look at the PNG you produce (Read it). Don't claim visual work is done unseen.
 
 ## Order of checks
+0. `pnpm verify` runs 1–4 in one go. Use it before calling anything done.
 1. `pnpm check`: typecheck + unit tests. Must be green first.
 2. `pnpm shot <out.png> "<route>"`: headless render. Exits non-zero on any console error or page error.
 3. `pnpm playtest`: clicks through four real player turns in a battle (`shots/playtest-*.png`).

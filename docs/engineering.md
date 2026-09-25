@@ -1,38 +1,71 @@
 # Engineering notes
 
-How the code is laid out and what has bitten before. Keep it short; add a gotcha when one costs real time.
+How the code is laid out, how to extend it, and what has bitten before. The rules model itself is explained in `design/architecture.md`; read that first when touching `src/rules/battle/`.
 
 ## Map
-- `src/rules/`: pure, deterministic, plain data. `battle.ts` (engine: passes, attack pipeline, effects), `abilities.ts` (behavior registry; behaviors see the engine only through `Ctx`), `units.ts` (canon unit data), `ai.ts` (greedy: simulate every legal action and score it), `doctrine.ts`, `hex.ts` / `map.ts` (seeded generation, A*), `world.ts` (leaders, cities, gold, recruiting, elevation, engagements, XP/graveyard, map AI), `progression.ts` (XP value, evolution), `doctrine.ts` (commitments, allowed units).
-- `src/view/`: `stage.ts` (the one renderer/camera/bloom/labels/tween loop), `scene.ts` (`BattleScene`), `map.ts` (`MapView`), `app.ts` (battle controller), `campaign.ts` (map controller), `hud.ts`, `setup.ts`, `figures.ts` (placeholder statues), `text.ts` (rules text shown in UI; mirrors the design docs).
-- Imports use `#rules/*` and `#view/*` (package.json `imports`), never `../`.
+```
+src/rules/
+  battle/types.ts    battle data, events, Hooks (the trait interface), EffectDef, Behavior, Ctx
+  battle/engine.ts   turn flow, legality, actions, effect lifetimes, createBattle (with context), makeCtx
+  battle/damage.ts   the damage pipeline (hit, receive, lose)
+  battle/traits.ts   which traits apply: a unit's effects, then its passives (own and granted)
+  battle/grid.ts     3x3 geometry, front lines, melee reach
+  abilities/         behaviors by faction (core, jilliath, nexus, neutral) + index (registry, paramsOf)
+  effects.ts         effect definitions
+  units/             unit catalogue by faction + index (UNITS, roots, recruit costs, evolutions)
+  nodes.ts           city node kinds (income, battle effects)
+  doctrine.ts        forks per faction, commitments, allowed units
+  progression.ts     XP value and evolution
+  balance.ts         provisional numbers that aren't unit stats or ability params
+  ai.ts              battle AI (one ply, generic valuation + traits' aiValue), autoplay
+  hex.ts, map.ts     hex math; seeded map generation (sites, nodes, lairs), A*
+  world/             state (data + lookups), create, movement, economy, battles (map→battle→map), actions, ai
+src/view/
+  stage.ts           the one renderer/camera/bloom/labels/tween loop
+  scene.ts, map.ts   BattleScene, MapView
+  app.ts, campaign.ts battle and map controllers
+  hud.ts, setup.ts   panels; dom.ts shared helpers; text.ts rules text from params
+  secrecy.ts         what a player may see (hidden effects, secret targets)
+  ai.worker.ts, ai-client.ts, ai-protocol.ts   the AI off the main thread
+```
+Imports use `#rules/…`, `#view/…`, `#tests/…` (package.json `imports`), never `../`.
 
-## Rules-engine conventions
-- `applyAction` / `applyWorldAction` structuredClone the state, mutate the draft, and return `{ state, events }`. Events drive animation and the log.
-- `applyAction` has **already advanced** to the next slot when it returns (start-of-turn bleed, stun skips). Tests about one action should assert on the returned events, not on the state after.
-- Add an ability: behavior in `abilities.ts`, text in `view/text.ts`, a test. Add an engine hook only when a real ability needs it.
-- Anything the design doesn't specify is marked provisional in code and listed in `docs/design/combat.md` or `docs/questions.md`.
+## Recipes
+- **A new ability.** Add a behavior to the right `abilities/<faction>.ts`: `active` with `tags`, `defaults` (params such as `power`, `charges`), `choices` and `resolve`; or `passive` with `hooks`. Deal damage through `ctx.hit(self.unitId, targets, ctx.hitSpec(self, tags))`. Add its rules text to `view/text.ts` (written from params) and a test. A variant is usually the same behavior with other params on the unit (`{ id, params, name }`), not new code.
+- **A new effect.** Add a definition to `effects.ts`: stacking, lifetime, visibility, `quiet` if the view shouldn't announce it, hooks, and `aiValue` if the AI should care. Apply it with `ctx.addEffect(target, { def, source, amount, stacks })`.
+- **A new mechanic that needs a new hook point.** Add the hook to `Hooks` in `battle/types.ts` and call it from one place in the engine or the damage pipeline. That's the only reason to touch the engine.
+- **World → battle.** Anything the world gives a battle (a node, an item, a spell on a warband) becomes effects: side-wide through `BattleContext.sideEffects`, or per unit through `Placement.effects`.
+- **A new node kind.** Add it to `nodes.ts` (income, battle effects) and give the map view a model for it.
+- **A new unit.** Add it to `units/<faction>.ts`, and to `EVOLUTIONS` / `FACTION_ROOTS` in `units/index.ts` if it's in a tree. Add a figure in `view/figures.ts`.
 
-- The map AI and the map's forecast both use `autoplay` (battle AI on both sides) to predict fights. It's deterministic, so a forecast is exact *for AI play*; a human can do better.
-
-- Hidden information (the Justiciar's mark) is masked in the view, not the rules: `src/view/secrecy.ts` filters events and gives previews a battle without the player's own marks. Every log and animation path must go through it. The AI sees everything.
+## Conventions
+- `applyAction` / `applyWorldAction` structuredClone the state, mutate the draft, and return `{ state, events }`. Events drive animation and the log. Everything is plain data, which is why the AI can run in a worker and battles can be forecast.
+- `applyAction` has **already advanced** to the next slot when it returns (start-of-turn bleed, stun skips). Tests about one action should assert on the returned events.
+- Nothing outside `abilities/` and `effects.ts` names an ability or effect id. The engine, AI and view use tags, flags (`reschedules`, `secretTarget`, `visibility`, `quiet`) and hooks.
+- Anything the design doesn't specify is marked provisional where it's defined and listed in `docs/questions.md`.
+- `pnpm verify` before calling anything done: types, tests, a screenshot, and both click-through playtests.
 
 ## Gotchas
 - **CSS2DRenderer positions labels through `transform`.** A CSS animation on `transform` silently overrides it (every float drew at the top-left). Animate an inner element.
 - **`[hidden]` loses to author `display:` rules.** A global `[hidden] { display: none !important }` is in `style.css`; keep it.
 - CSS2DRenderer only updates labels in the scene it renders; `Stage.show` hides the outgoing scene's labels.
-- A local variable named like a module helper (`key`) shadowed it: tsc reports "not callable".
-- pnpm needs build scripts approved (`pnpm approve-builds <pkg>`); esbuild is approved.
-- TypeScript is v7 (`tsc`); config is strict with `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes`.
+- **Hidden information goes through `view/secrecy.ts`.** Every log and animation path must be masked, and previews use a battle without the player's own hidden effects. The AI sees everything.
+- Tests about one unit's behavior usually need `until(battle, id)` (`#tests/helpers`): turn order is by initiative, and it's easy to query the wrong unit.
+- A local variable named like a module helper shadows it: tsc says "not callable".
+- pnpm needs build scripts approved (`pnpm approve-builds <pkg>`); esbuild is approved. TypeScript is v7; the config is strict and rejects unused locals and parameters.
 
-## Known debt (self-review 2026-09-25, after M6)
-Ranked by how badly it scales. Plan: a consolidation milestone before more content.
-1. **AI cost.** One `autoplay` forecast is about 66 ms; the map AI runs one per goal plus threat checks, on the main thread. That's seconds of frozen UI late in a game, and 48 s for 8 simulated games. Fix: run the AI in a web worker, cache forecasts, and stop structuredCloning whole battles per candidate move.
-2. **Hand-tuned AI scoring.** It's one ply deep, with a special weight per mechanic (charges, shields, negation, mutation). Every mechanic needs a patch.
-3. **No ability params.** The design says `{ id, params }`, but only `id` exists. Variants are separate behaviors, and tuning numbers are constants inside `abilities.ts`.
-4. **Effects scattered.** Each effect kind is handled by hand in 3–5 places in `battle.ts` (26 kind checks). It needs a registry like abilities.
-5. **`world.ts` is too big** (~750 lines: state, movement, economy, battle aftermath, map AI). Split it.
-6. **Hard-coded ability ids outside abilities.** `"wait"` in the engine; `"attack"`/`"flail"` in `app.ts` selectDefault (**bug**: shooters and casters get no default attack selection); literal lists in `hud.ts`/`setup.ts`. Use behavior flags.
-7. **View.** DOM helpers (`element`, `byId`) are copy-pasted into three files; `App`/`Campaign` are large and mix input, state and rendering; playtests aren't part of `pnpm check`.
-8. **Balance numbers scattered** across `units.ts`, `abilities.ts`, `world.ts`, `progression.ts`, `doctrine.ts`. Gather them before balancing.
+## Debt: status after the consolidation (2026-09-25)
+Resolved:
+- Effects scattered through the engine → effect definitions with hooks, lifetimes and stacking.
+- No ability params → `{ id, params, name }` with behavior defaults.
+- Hard-coded ids outside abilities → tags and flags (this also fixed casters and archers having no default attack).
+- `world.ts` monolith → seven modules.
+- AI special cases → generic valuation plus traits' `aiValue`.
+- AI on the main thread → a worker, with per-decision forecast memoisation.
+- Duplicated DOM helpers; playtests outside the check → `pnpm verify`.
+- Balance numbers scattered → `balance.ts`, plus params and unit stats.
 
+Still open:
+- **The AI is one ply deep.** It plays greedily. A better AI (look-ahead, or rollouts with the forecast machinery) is its own milestone.
+- **`App` and `Campaign` are still big controllers** mixing input, state and rendering. Fine at this size; split them when the next screen (e.g. a city screen) arrives.
+- **Stats are recomputed often** (`stats()` walks every trait on the battlefield). It's fast enough at 18 units; memoise per action if battles grow.

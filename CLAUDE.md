@@ -17,12 +17,14 @@ A deterministic, Disciples II–inspired turn-based strategy game: squads on 3x3
 - **Playable first.** Build only what the current milestone needs. No speculative systems: no save framework, event bus, plugin registry, or catalog loader until a milestone requires one.
 - **Never invent mechanics, names, or lore.** If the design is silent, implement the simplest provisional rule, mark it provisional where it's defined, and add a question to `docs/questions.md`. Placeholder names stay plainly placeholder ("Capitol A", "unit_1"). Past AIs filled this project with invented content (see `docs/prior-attempts.md`).
 - **`src/rules/` is pure.** Plain serializable data + pure functions. It never imports three.js, the DOM, or `src/view/`. No randomness; the game is deterministic.
-- **Verify what you build.** `pnpm check` for rules; for anything visual or interactive use the `verify` skill (screenshots, click-driven playtests) and look at the PNGs. Don't call visual work done without having seen it.
+- **Verify what you build.** `pnpm verify` (types, tests, screenshot, playtests) before calling anything done; for visual work use the `verify` skill and look at the PNGs. Don't call visual work done without having seen it.
+- **Extend through the architecture** (`docs/design/architecture.md`, recipes in `docs/engineering.md`): new mechanics are traits, effect definitions, params and tags. The engine, AI and view never name an ability or effect id.
 - Git: commit at natural checkpoints (work chunk done, tests green) with descriptive messages. Never push.
 
 ## Commands
 ```bash
 pnpm dev --host   # vite dev server; the user connects over Tailscale
+pnpm verify       # everything: tsc + vitest + screenshot + both playtests
 pnpm check        # tsc + vitest
 pnpm shot [out.png] [route]      # headless render (routes/params: see the verify skill)
 pnpm playtest / playtest:map     # scripted clicks through a battle / a march
@@ -38,7 +40,7 @@ Package manager is pnpm; build scripts need approval (`pnpm approve-builds <pkg>
 
 ## Layout
 ```
-src/rules/    game state + rules (pure)
+src/rules/    game state + rules (pure): battle/, abilities/, units/, world/, effects.ts, balance.ts
 src/view/     three.js scene + HTML UI; renders state, turns input into actions
 src/main.ts   entry
 scripts/      dev tooling (shot.ts)

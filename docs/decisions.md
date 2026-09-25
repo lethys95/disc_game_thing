@@ -52,3 +52,9 @@ No RNG means the preview can run the real rules on a copy of the state and show 
 
 **2026-09-25 — Order: gameplay first, one art spike, then a vertical slice.**
 Keep greyboxing with placeholders (M3, M4). After M3, one time-boxed art bake-off (a single unit through each route) to de-risk the look and the pipeline. The full pipeline, the style LoRA and production come with the vertical slice. Why: rules and unit lists still change and art made now would be redone, but the art route should be proven before anything depends on it. The user agrees not to model units by hand in bpy; bpy is for placeholders and for processing generated assets.
+
+**2026-09-25 — Rules architecture: traits, effect definitions, damage pipeline (`design/architecture.md`).**
+The user asked for a foundation that handles complicated mechanics ("bad architecture was one of the fundamental killers of the other projects"). Passive abilities and effects share one hook interface; effects are definitions with stacking, lifetime and visibility; damage is a typed packet through one ordered pipeline; abilities carry params and tags; the world passes context into battles as effects. The engine, AI and view name no mechanic. Verified: the old tests and the preset battle matrix are unchanged, and new tests cover the Blacksmith and a fire-only shield.
+
+**2026-09-25 — The AI runs in a web worker.**
+Map decisions reached ~0.27 s on a fast machine. Plain-data state crosses into the worker unchanged; forecasts are memoised per decision.
