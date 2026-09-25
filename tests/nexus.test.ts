@@ -1,16 +1,17 @@
 import { effectiveStats, legalActions } from "#rules/battle/engine";
-import { allowedUnits, commit, openBranches } from "#rules/doctrine";
+import { allowedUnits, choose, openForks } from "#rules/forks";
 import { grow } from "#rules/progression";
 import { act, anchorKey, p, start, unit, until } from "#tests/helpers";
 import { describe, expect, test } from "vitest";
 
 describe("Nexus forks", () => {
-  test("scheme vs overload is one faction-wide fork", () => {
-    expect(openBranches("nexus", [])).toEqual(["scheme", "overload"]);
-    expect(openBranches("nexus", commit("nexus", [], "scheme"))).toEqual([]);
-    expect(allowedUnits("nexus", ["scheme"])).toEqual(["custodian", "battery", "arcane_engineer", "apprentice", "justiciar"]);
-    expect(grow("custodian", 0, 100, ["overload"]).defId).toBe("mutant");
-    expect(grow("apprentice", 0, 100, ["overload"]).defId).toBe("thaumaturge");
+  test("scheme vs overload is chosen per line: Custodians going Scheme says nothing about Apprentices", () => {
+    expect(openForks("nexus", {})).toEqual(["custodian", "apprentice"]);
+    const scheming = choose({}, "custodian", "battery");
+    expect(openForks("nexus", scheming)).toEqual(["apprentice"]);
+    expect(allowedUnits("nexus", scheming)).toEqual(["custodian", "battery", "arcane_engineer", "apprentice", "justiciar", "thaumaturge"]);
+    expect(grow("custodian", 0, 100, { custodian: "mutant" }).defId).toBe("mutant");
+    expect(grow("apprentice", 0, 100, { ...scheming, apprentice: "thaumaturge" }).defId).toBe("thaumaturge");
   });
 });
 

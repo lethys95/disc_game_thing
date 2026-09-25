@@ -68,7 +68,7 @@ export function createBattle(sides: readonly [readonly Placement[], readonly Pla
         name: def.name,
         side,
         tile,
-        hp: Math.min(hp ?? def.stats.maxHp, def.stats.maxHp),
+        hp: hp ?? Infinity,
         shield: def.stats.shield,
         base: def.stats,
         damageType: def.damageType,
@@ -91,6 +91,8 @@ export function createBattle(sides: readonly [readonly Placement[], readonly Pla
   };
   const events: BattleEvent[] = [];
   const ctx = makeCtx(battle, events);
+  // Capped only now: effects the units bring (a leader's extra health) can raise their max HP.
+  for (const unit of Object.values(units)) unit.hp = Math.min(unit.hp, ctx.stats(unit.id).maxHp);
   checkOutcome(ctx);
   advance(ctx);
   return { battle, events };
@@ -98,6 +100,12 @@ export function createBattle(sides: readonly [readonly Placement[], readonly Pla
 
 export function effectiveStats(battle: Battle, unitId: string): Stats {
   return makeCtx(battle, []).stats(unitId);
+}
+
+/** A unit's stats with only its own traits and effects: what it would bring into a battle, seen on the map. */
+export function ownStats(placement: Placement): Stats {
+  const { battle } = createBattle([[placement], []]);
+  return effectiveStats(battle, `0.${placement.tile.row}.${placement.tile.col}`);
 }
 
 /** What a unit's traits say they're worth to its side (the AI's valuation of marks, mutations, pools). */

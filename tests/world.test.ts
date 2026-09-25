@@ -3,7 +3,7 @@ import type { Placement } from "#rules/battle/engine";
 import { hexagon, hexDistance, hexKey, neighbors, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { findPath, generateMap, stepCost, TERRAIN_COST } from "#rules/map";
-import { doctrine } from "#rules/doctrine";
+import type { Commitment } from "#rules/forks";
 import { GUARDIAN_ID } from "#rules/units/index";
 import { CAPITOL_INCOME, MINE_INCOME, STARTING_GOLD } from "#rules/balance";
 import { applyWorldAction } from "#rules/world/actions";
@@ -31,7 +31,11 @@ const army: Placement[] = [
   { defId: "punisher", tile: { row: 1, col: 2 } },
 ];
 
-const both = (key: string) => [doctrine("jilliath", key).commitment, doctrine("jilliath", key).commitment] as const;
+const COMMITMENTS: Readonly<Record<"preserve" | "punishment", Commitment>> = {
+  preserve: { congregant: "paladin" },
+  punishment: { congregant: "zealot", zealot: "punisher" },
+};
+const both = (key: "preserve" | "punishment") => [COMMITMENTS[key], COMMITMENTS[key]] as const;
 
 function withLeader(world: World, id: string, change: Partial<Leader>): World {
   return { ...world, leaders: world.leaders.map((l) => (l.id === id ? { ...l, ...change } : l)) };

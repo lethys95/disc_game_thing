@@ -21,24 +21,27 @@ export const FACTION_ROOTS: Readonly<Record<Playable, readonly string[]>> = {
 /** Canon: the Congregant costs 40 gold. The Nexus prices are provisional ("costly", quality over quantity). */
 export const RECRUIT_COST: Readonly<Record<string, number>> = { congregant: 40, custodian: 60, arcane_engineer: 50, apprentice: 60 };
 
-/** A fork a faction commits to once, for good (branch investment, docs/design/pillars.md). */
-export type Branch = "preserve" | "consume" | "punishment" | "sacrifice" | "scheme" | "overload";
-
+/** One step up an evolution tree. */
 export interface Evolution {
   readonly to: string;
-  /** The branch the faction must have invested in; null where the line doesn't fork. */
-  readonly requires: Branch | null;
+  /** At a fork, the side of the line's dichotomy this branch stands for (docs/design/dichotomies.md). */
+  readonly label?: string;
 }
 
-/** The canon Jilliath melee tree (docs/design/units/jilliath-melee-line.md). */
+/**
+ * Evolution trees. A unit with more than one evolution is a **fork**: the owner chooses a branch once, for free,
+ * and every unit of that kind follows it (docs/design/pillars.md). Forks are independent of each other.
+ */
 export const EVOLUTIONS: Readonly<Record<string, readonly Evolution[]>> = {
-  congregant: [{ to: "paladin", requires: "preserve" }, { to: "zealot", requires: "consume" }],
-  paladin: [{ to: "templar", requires: null }],
-  templar: [{ to: "immortal", requires: null }],
-  zealot: [{ to: "punisher", requires: "punishment" }, { to: "fanatic", requires: "sacrifice" }],
-  punisher: [{ to: "torturer", requires: null }],
-  fanatic: [{ to: "chosen", requires: null }],
-  chosen: [{ to: "avatar_of_vengeance", requires: null }],
-  custodian: [{ to: "battery", requires: "scheme" }, { to: "mutant", requires: "overload" }],
-  apprentice: [{ to: "justiciar", requires: "scheme" }, { to: "thaumaturge", requires: "overload" }],
+  // The canon Jilliath melee tree (docs/design/units/jilliath-melee-line.md).
+  congregant: [{ to: "paladin", label: "Faith preserves" }, { to: "zealot", label: "Faith consumes" }],
+  paladin: [{ to: "templar" }],
+  templar: [{ to: "immortal" }],
+  zealot: [{ to: "punisher", label: "Punishment" }, { to: "fanatic", label: "Self-sacrifice" }],
+  punisher: [{ to: "torturer" }],
+  fanatic: [{ to: "chosen" }],
+  chosen: [{ to: "avatar_of_vengeance" }],
+  // Ral-Vitahl: scheme vs overload, chosen per line (user, 2026-09-25).
+  custodian: [{ to: "battery", label: "Scheme" }, { to: "mutant", label: "Overload" }],
+  apprentice: [{ to: "justiciar", label: "Scheme" }, { to: "thaumaturge", label: "Overload" }],
 };

@@ -6,9 +6,12 @@ import { sameTile } from "#rules/battle/grid";
 import { NODES } from "#rules/nodes";
 import { xpValue } from "#rules/progression";
 import { GUARDIAN_ID } from "#rules/units/index";
-import { freeTile, growSquad } from "#rules/world/economy";
+import { freeTile, growSquad, newcomer } from "#rules/world/economy";
+import type { Held } from "#rules/world/economy";
+import { leadershipOf } from "#rules/world/leaders";
+import { placementOf } from "#rules/world/record";
 import type { MoveTarget } from "#rules/world/movement";
-import { cityById, lairById, leaderAt, leaderById, member, unitId } from "#rules/world/state";
+import { cityById, lairById, leaderAt, leaderById, unitId } from "#rules/world/state";
 import type { Defender, Engagement, Leader, SquadMember, World, WorldEvent, WorldStep } from "#rules/world/state";
 
 /** Battles started on the map: who fights whom, with what context, and writing the result back. */
@@ -20,24 +23,21 @@ export function defenderOf(target: Exclude<MoveTarget, { kind: "capture" }>): De
 }
 
 /** The defending squad and its battle side. Neutrals take whichever side the attacker leaves free. */
-function defendingSquad(world: World, defender: Defender, attackerSide: Side): { side: Side; squad: SquadMember[]; neutral: boolean } {
+function defendingSquad(world: World, defender: Defender, attackerSide: Side): Held & { side: Side; neutral: boolean } {
   const free: Side = attackerSide === 0 ? 1 : 0;
   if (defender.kind === "leader") {
     const leader = leaderById(world, defender.leaderId);
-    return { side: leader.side, squad: leader.squad, neutral: false };
+    return { side: leader.side, squad: leader.squad, leader, neutral: false };
   }
-  if (defender.kind === "lair") return { side: free, squad: lairById(world, defender.lairId).guards, neutral: true };
+  if (defender.kind === "lair") return { side: free, squad: lairById(world, defender.lairId).guards, leader: undefined, neutral: true };
   const city = cityById(world, defender.cityId);
-  return { side: city.owner ?? free, squad: city.garrison, neutral: city.owner === null };
+  return { side: city.owner ?? free, squad: city.garrison, leader: undefined, neutral: city.owner === null };
 }
 
 export function engagementBattle(world: World, attacker: Leader, defender: Defender): Battle {
   const defending = defendingSquad(world, defender, attacker.side);
-  const led = (leader: Leader | undefined, squad: SquadMember[]): Placement[] =>
-    squad.map((m) => (leader && sameTile(m.tile, leader.leaderTile) ? { ...m, leader: true } : m));
-  const defenderLeader = defender.kind === "leader" ? leaderById(world, defender.leaderId) : undefined;
-  const ours = led(attacker, attacker.squad);
-  const theirs = led(defenderLeader, defending.squad);
+  const ours = attacker.squad.map((m) => placementOf(m, attacker));
+  const theirs = defending.squad.map((m) => placementOf(m, defending.leader));
   const squads: [Placement[], Placement[]] = attacker.side === 0 ? [ours, theirs] : [theirs, ours];
   // Each player side brings the battle effects of the city nodes it holds; neutrals bring none.
   const sideEffects = ([0, 1] as const).map((side) =>
@@ -74,7 +74,7 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
     if (side === defending.side && defending.neutral) continue;
     for (const m of lost[side]) {
       if (m.defId === GUARDIAN_ID) continue;
-      draft.graveyard[side].push({ defId: m.defId, fellOnTurn: draft.turn });
+      draft.graveyard[side].push({ defId: m.defId, fellOnTurn: draft.turn, marks: m.marks });
       events.push({ type: "fell", side, defId: m.defId });
     }
   }
@@ -96,7 +96,7 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
         draft.gold[attacker.side] += lair.reward.gold;
         const joins = lair.reward.joins;
         const tile = joins ? freeTile(attacker.squad) : null;
-        if (joins && tile && attacker.squad.length < attacker.leadership) attacker.squad.push(member(joins, tile));
+        if (joins && tile && attacker.squad.length < leadershipOf(attacker)) attacker.squad.push(newcomer(draft, attacker.side, joins, tile));
         events.push({ type: "looted", lairId: lair.id, side: attacker.side, gold: lair.reward.gold, joins: joins && tile ? joins : null });
       }
     }
@@ -122,11 +122,13 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
   if (winner !== null && !neutralWon) {
     const loser: Side = winner === 0 ? 1 : 0;
     const pool = lost[loser].reduce((sum, m) => sum + xpValue(m.defId), 0);
-    const winners = winner === attacker.side ? attacker.squad : winnerSquad(draft, engagement.defender);
-    if (pool > 0 && winners.length > 0) {
-      const each = Math.ceil(pool / winners.length);
+    const winners = winner === attacker.side ? { squad: attacker.squad, leader: attacker } : winnerSquad(draft, engagement.defender);
+    if (pool > 0 && winners.squad.length > 0) {
+      const each = Math.ceil(pool / winners.squad.length);
       events.push({ type: "xp", side: winner, pool, each });
-      growSquad(winners, each, winner, draft.commitment[winner], events);
+      growSquad(draft, winners, each, winner, events);
+      // The leader earns its share like any unit; it also counts toward the leader tree.
+      if (winners.leader) winners.leader.experience += each;
     }
   }
 
@@ -142,10 +144,13 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
   return { world: draft, events };
 }
 
-function winnerSquad(world: World, defender: Defender): SquadMember[] {
-  if (defender.kind === "leader") return world.leaders.find((l) => l.id === defender.leaderId)?.squad ?? [];
-  if (defender.kind === "lair") return world.lairs.find((l) => l.id === defender.lairId)?.guards ?? [];
-  return cityById(world, defender.cityId).garrison;
+function winnerSquad(world: World, defender: Defender): Held {
+  if (defender.kind === "leader") {
+    const leader = world.leaders.find((l) => l.id === defender.leaderId);
+    return { squad: leader?.squad ?? [], leader };
+  }
+  if (defender.kind === "lair") return { squad: world.lairs.find((l) => l.id === defender.lairId)?.guards ?? [], leader: undefined };
+  return { squad: cityById(world, defender.cityId).garrison, leader: undefined };
 }
 
 /** The players (not neutrals) with a squad in this fight. A player who isn't in it only sees the result. */

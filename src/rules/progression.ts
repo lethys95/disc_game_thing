@@ -1,5 +1,4 @@
-import { hasBranch } from "#rules/doctrine";
-import type { Commitment } from "#rules/doctrine";
+import type { Commitment } from "#rules/forks";
 import { EVOLUTIONS, UNITS } from "#rules/units/index";
 
 /**
@@ -20,9 +19,11 @@ export function xpToEvolve(defId: string): number | null {
   return (EVOLUTIONS[defId]?.length ?? 0) > 0 ? (XP_TO_EVOLVE[tier] ?? null) : null;
 }
 
-/** The form this unit evolves into for a faction with this commitment; null while the fork is uninvested. */
+/** The form this unit evolves into given its owner's choices; null while its fork is undecided. */
 export function nextForm(defId: string, commitment: Commitment): string | null {
-  return EVOLUTIONS[defId]?.find((e) => hasBranch(commitment, e.requires))?.to ?? null;
+  const evolutions = EVOLUTIONS[defId] ?? [];
+  if (evolutions.length === 1) return evolutions[0]?.to ?? null;
+  return commitment[defId] ?? null;
 }
 
 export interface Growth {
@@ -34,7 +35,7 @@ export interface Growth {
 
 /**
  * Adds XP and evolves as far as it reaches. Evolving resets XP to zero (overflow is lost). A unit whose next fork
- * isn't invested yet waits with a full bar and evolves as soon as the faction commits (call with `gained` 0).
+ * isn't decided yet waits with a full bar and evolves as soon as its owner chooses (call with `gained` 0).
  */
 export function grow(defId: string, xp: number, gained: number, commitment: Commitment): Growth {
   let form = defId;

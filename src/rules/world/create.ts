@@ -1,6 +1,6 @@
-import { LEADER_MOVEMENT, STARTING_GOLD, STARTING_LEADERSHIP } from "#rules/balance";
+import { LEADER_MOVEMENT, STARTING_GOLD } from "#rules/balance";
 import type { Placement } from "#rules/battle/engine";
-import type { Commitment } from "#rules/doctrine";
+import type { Commitment } from "#rules/forks";
 import { sameHex } from "#rules/hex";
 import { generateMap } from "#rules/map";
 import type { Side } from "#rules/battle/types";
@@ -28,7 +28,8 @@ export function createWorld(
       side,
       hex: map.starts[side],
       movement: LEADER_MOVEMENT,
-      leadership: STARTING_LEADERSHIP,
+      experience: 0,
+      skills: {},
       squad: squad.map((p) => member(p.defId, p.tile)),
       leaderTile: first.tile,
     };
@@ -66,6 +67,7 @@ export function createWorld(
     factions: [factions[0], factions[1]],
     commitment: [commitment[0], commitment[1]],
     graveyard: [[], []],
+    upgrades: [[], []],
   };
   startTurn(world, []);
   return world;

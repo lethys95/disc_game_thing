@@ -1,12 +1,14 @@
-import { INVESTMENT_COST, commit } from "#rules/doctrine";
+import { choose } from "#rules/forks";
 import { sameTile } from "#rules/battle/grid";
 import { stepCost } from "#rules/map";
 import { RECRUIT_COST } from "#rules/units/index";
-import { LEADER_MOVEMENT, STARTING_LEADERSHIP } from "#rules/balance";
+import { LEADER_MOVEMENT } from "#rules/balance";
 import { defenderOf, engagementBattle } from "#rules/world/battles";
-import { elevateProblem, freeTile, growSquad, investProblem, recruitProblem, resurrectionCost, resurrectProblem, squadFor, squadsOf, startTurn } from "#rules/world/economy";
+import { chooseBranchProblem, elevateProblem, freeTile, growSquad, learnSkillProblem, newcomer, recruitProblem, resurrectionCost, resurrectProblem, squadFor, squadsOf, startTurn, upgradeProblem } from "#rules/world/economy";
+import { movementOf, rankOf } from "#rules/world/leaders";
 import { planMove } from "#rules/world/movement";
-import { capitolOf, cityById, leaderById, member } from "#rules/world/state";
+import { UPGRADES } from "#rules/upgrades";
+import { capitolOf, cityById, leaderById } from "#rules/world/state";
 import type { World, WorldAction, WorldEvent, WorldStep } from "#rules/world/state";
 
 /** Orders a side gives on its turn. */
@@ -52,7 +54,7 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       const squad = squadFor(draft, action.into);
       const tile = squad ? freeTile(squad) : null;
       if (!squad || !tile) throw new Error("no room");
-      squad.push(member(action.defId, tile));
+      squad.push(newcomer(draft, side, action.defId, tile));
       draft.gold[side] -= RECRUIT_COST[action.defId] ?? 0;
       events.push({ type: "recruited", defId: action.defId, into: action.into });
       break;
@@ -66,17 +68,17 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       const tile = { row: 0, col: 1 } as const;
       const id = `leader${draft.nextLeader}`;
       draft.nextLeader += 1;
-      draft.leaders.push({ id, side, hex: capitol.hex, movement: LEADER_MOVEMENT, leadership: STARTING_LEADERSHIP, squad: [{ ...unit, tile }], leaderTile: tile });
+      draft.leaders.push({ id, side, hex: capitol.hex, movement: LEADER_MOVEMENT, experience: 0, skills: {}, squad: [{ ...unit, tile }], leaderTile: tile });
       events.push({ type: "elevated", leaderId: id });
       break;
     }
-    case "invest": {
-      const problem = investProblem(draft, action.branch);
-      if (problem) throw new Error(`cannot invest: ${problem}`);
-      draft.gold[side] -= INVESTMENT_COST[action.branch];
-      draft.commitment[side] = commit(draft.factions[side], draft.commitment[side], action.branch);
-      events.push({ type: "invested", side, branch: action.branch });
-      for (const squad of squadsOf(draft, side)) growSquad(squad, 0, side, draft.commitment[side], events);
+    case "choose": {
+      const problem = chooseBranchProblem(draft, action.fork, action.to);
+      if (problem) throw new Error(`cannot choose: ${problem}`);
+      draft.commitment[side] = choose(draft.commitment[side], action.fork, action.to);
+      events.push({ type: "chose", side, fork: action.fork, to: action.to });
+      // Units already waiting at this fork evolve now.
+      for (const held of squadsOf(draft, side)) growSquad(draft, held, 0, side, events);
       break;
     }
     case "resurrect": {
@@ -88,8 +90,28 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       if (problem || cost === null || !fallen || !squad || !tile) throw new Error(`cannot resurrect: ${problem}`);
       draft.gold[side] -= cost;
       draft.graveyard[side].splice(action.index, 1);
-      squad.push({ defId: fallen.defId, tile, hp: 1, xp: 0 });
+      squad.push({ defId: fallen.defId, tile, hp: 1, xp: 0, marks: fallen.marks });
       events.push({ type: "resurrected", side, defId: fallen.defId });
+      break;
+    }
+    case "learn": {
+      const problem = learnSkillProblem(draft, action.leaderId, action.skill);
+      if (problem) throw new Error(`cannot learn ${action.skill}: ${problem}`);
+      const leader = leaderById(draft, action.leaderId);
+      const before = movementOf(leader);
+      leader.skills[action.skill] = rankOf(leader, action.skill) + 1;
+      // Movement learned mid-turn is usable at once.
+      leader.movement += movementOf(leader) - before;
+      events.push({ type: "learned", leaderId: leader.id, skill: action.skill });
+      break;
+    }
+    case "upgrade": {
+      const problem = upgradeProblem(draft, action.upgrade);
+      const upgrade = UPGRADES.get(action.upgrade);
+      if (problem || !upgrade) throw new Error(`cannot buy ${action.upgrade}: ${problem}`);
+      draft.gold[side] -= upgrade.price;
+      draft.upgrades[side].push(upgrade.id);
+      events.push({ type: "upgraded", side, upgrade: upgrade.id });
       break;
     }
   }

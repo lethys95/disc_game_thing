@@ -1,17 +1,18 @@
-import { CAPITOL_HEALING, CAPITOL_INCOME, GARRISON_LIMIT, LEADER_MOVEMENT, RESURRECTION_BASE, RESURRECTION_PREMIUM } from "#rules/balance";
+import { CAPITOL_HEALING, CAPITOL_INCOME, GARRISON_LIMIT, RESURRECTION_BASE, RESURRECTION_PREMIUM } from "#rules/balance";
 import type { Side, Tile } from "#rules/battle/types";
-import { INVESTMENT_COST, openBranches } from "#rules/doctrine";
-import type { Commitment } from "#rules/doctrine";
+import { chooseProblem, isFork, openForks } from "#rules/forks";
 import { COLS, ROWS, sameTile } from "#rules/battle/grid";
 import { sameHex } from "#rules/hex";
 import { NODES } from "#rules/nodes";
-import { grow } from "#rules/progression";
+import { grow, xpToEvolve } from "#rules/progression";
 import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
-import type { Branch } from "#rules/units/index";
-import { capitolOf, fullHp, leaderAt, leaderById } from "#rules/world/state";
-import type { City, RecruitInto, SquadMember, World, WorldEvent } from "#rules/world/state";
+import { leadershipOf, learnProblem, movementOf, squadHealingOf } from "#rules/world/leaders";
+import { maxHpOf } from "#rules/world/record";
+import { UPGRADES, upgradesFor } from "#rules/upgrades";
+import { capitolOf, leaderAt, leaderById, member } from "#rules/world/state";
+import type { City, Leader, Mark, RecruitInto, SquadMember, World, WorldEvent } from "#rules/world/state";
 
-/** Gold, recruiting, investing, resurrection, elevation, and the start of a side's turn. */
+/** Gold, recruiting, branch choices, resurrection, elevation, and the start of a side's turn. */
 
 export function income(world: World, side: Side): number {
   const nodes = world.cities.filter((c) => c.owner === side).flatMap((c) => c.nodes);
@@ -35,10 +36,17 @@ export function recruitProblem(world: World, defId: string, into: RecruitInto): 
   return roomProblem(world, capitol, into);
 }
 
-export function investProblem(world: World, branch: Branch): string | null {
+/** Why this side can't choose `to` at `fork` now, or null. */
+export function chooseBranchProblem(world: World, fork: string, to: string): string | null {
   const side = world.activeSide;
-  if (!openBranches(world.factions[side], world.commitment[side]).includes(branch)) return "not an open fork";
-  return world.gold[side] < INVESTMENT_COST[branch] ? "not enough gold" : null;
+  if (!openForks(world.factions[side], world.commitment[side]).includes(fork)) return "not an open fork";
+  return chooseProblem(world.commitment[side], fork, to);
+}
+
+/** Forks where one of this side's units waits, XP full, for a choice. The view prompts; the AI just chooses. */
+export function waitingForks(world: World, side: Side): string[] {
+  const forks = squadsOf(world, side).flatMap(({ squad }) => squad.filter((m) => isFork(m.defId) && world.commitment[side][m.defId] === undefined && m.xp >= (xpToEvolve(m.defId) ?? Infinity)).map((m) => m.defId));
+  return [...new Set(forks)];
 }
 
 export function resurrectionCost(world: World, side: Side, index: number): number | null {
@@ -63,28 +71,59 @@ export function roomProblem(world: World, capitol: City, into: RecruitInto): str
   if (into.kind === "garrison") return capitol.garrison.length >= GARRISON_LIMIT ? "garrison full" : null;
   const leader = leaderById(world, into.leaderId);
   if (leader.side !== world.activeSide || !sameHex(leader.hex, capitol.hex)) return "leader not in the Capitol";
-  return leader.squad.length >= leader.leadership ? `squad full (Leadership ${leader.leadership})` : null;
+  const leadership = leadershipOf(leader);
+  return leader.squad.length >= leadership ? `squad full (Leadership ${leadership})` : null;
 }
 
 export function squadFor(world: World, into: RecruitInto): SquadMember[] | undefined {
   return into.kind === "garrison" ? capitolOf(world, world.activeSide)?.garrison : leaderById(world, into.leaderId).squad;
 }
 
+/** A squad and its leader; garrisons have none. */
+export interface Held {
+  readonly squad: SquadMember[];
+  readonly leader: Leader | undefined;
+}
+
 /** Every squad a side owns: its warbands and its garrisons. */
-export function squadsOf(world: World, side: Side): SquadMember[][] {
-  return [...world.leaders.filter((l) => l.side === side).map((l) => l.squad), ...world.cities.filter((c) => c.owner === side).map((c) => c.garrison)];
+export function squadsOf(world: World, side: Side): Held[] {
+  return [
+    ...world.leaders.filter((l) => l.side === side).map((l) => ({ squad: l.squad, leader: l })),
+    ...world.cities.filter((c) => c.owner === side).map((c) => ({ squad: c.garrison, leader: undefined })),
+  ];
+}
+
+/**
+ * The marks a unit receives on becoming `defId`: the side's upgrades for that type. Upgrades bought later never
+ * reach it; a unit that becomes the type later does (the timing rule, docs/design/pillars.md).
+ */
+export function marksOnBecoming(world: World, side: Side, defId: string): Mark[] {
+  return upgradesFor(defId)
+    .filter((u) => world.upgrades[side].includes(u.id))
+    .map((u): Mark => ({ effect: u.effect, source: { kind: "upgrade", upgrade: u.id } }));
+}
+
+/** A new unit for `side`: recruited, joining, or otherwise acquired. */
+export function newcomer(world: World, side: Side, defId: string, tile: Tile): SquadMember {
+  return { ...member(defId, tile), marks: marksOnBecoming(world, side, defId) };
 }
 
 /** Evolves members in place; the new form arrives at full health (provisional). */
-export function growSquad(squad: SquadMember[], gained: number, side: Side, commitment: Commitment, events: WorldEvent[]): void {
+export function growSquad(world: World, { squad, leader }: Held, gained: number, side: Side, events: WorldEvent[]): void {
   squad.forEach((m, i) => {
-    const growth = grow(m.defId, m.xp, gained, commitment);
+    const growth = grow(m.defId, m.xp, gained, world.commitment[side]);
     let from = m.defId;
     for (const to of growth.evolvedInto) {
       events.push({ type: "evolved", side, from, to });
       from = to;
     }
-    squad[i] = growth.evolvedInto.length > 0 ? { ...m, defId: growth.defId, xp: growth.xp, hp: fullHp(growth.defId) } : { ...m, xp: growth.xp };
+    if (growth.evolvedInto.length === 0) {
+      squad[i] = { ...m, xp: growth.xp };
+      return;
+    }
+    const marks = [...m.marks, ...growth.evolvedInto.flatMap((to) => marksOnBecoming(world, side, to))];
+    const evolved = { ...m, defId: growth.defId, xp: growth.xp, marks };
+    squad[i] = { ...evolved, hp: maxHpOf(evolved, leader) };
   });
 }
 
@@ -104,15 +143,32 @@ export function startTurn(world: World, events: WorldEvent[]): void {
   const earned = income(world, side);
   world.gold[side] += earned;
   const capitol = capitolOf(world, side);
-  if (capitol) {
-    const resting = [capitol.garrison, ...world.leaders.filter((l) => l.side === side && sameHex(l.hex, capitol.hex)).map((l) => l.squad)];
-    for (const squad of resting) {
-      squad.forEach((m, i) => {
-        const max = fullHp(m.defId);
-        squad[i] = { ...m, hp: Math.min(max, m.hp + Math.ceil(max * CAPITOL_HEALING)) };
-      });
-    }
+  for (const { squad, leader } of squadsOf(world, side)) {
+    const resting = capitol !== undefined && (leader === undefined ? squad === capitol.garrison : sameHex(leader.hex, capitol.hex));
+    const share = (resting ? CAPITOL_HEALING : 0) + (leader ? squadHealingOf(leader) : 0);
+    if (share === 0) continue;
+    squad.forEach((m, i) => {
+      const max = maxHpOf(m, leader);
+      squad[i] = { ...m, hp: Math.min(max, m.hp + Math.ceil(max * share)) };
+    });
   }
-  for (const leader of world.leaders) if (leader.side === side) leader.movement = LEADER_MOVEMENT;
+  for (const leader of world.leaders) if (leader.side === side) leader.movement = movementOf(leader);
   events.push({ type: "turnStarted", side, turn: world.turn, income: earned });
+}
+
+export function learnSkillProblem(world: World, leaderId: string, skill: string): string | null {
+  const leader = leaderById(world, leaderId);
+  if (leader.side !== world.activeSide) return "not your leader";
+  return learnProblem(leader, skill);
+}
+
+export function upgradeProblem(world: World, id: string): string | null {
+  const side = world.activeSide;
+  const upgrade = UPGRADES.get(id);
+  if (!upgrade) return "no such upgrade";
+  if (UNITS[upgrade.unitType]?.faction !== world.factions[side]) return "another faction's unit";
+  if (world.upgrades[side].includes(id)) return "already bought";
+  if (!capitolOf(world, side)) return "no Capitol";
+  if (world.gold[side] < upgrade.price) return "not enough gold";
+  return null;
 }

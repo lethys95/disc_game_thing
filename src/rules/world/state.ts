@@ -1,25 +1,38 @@
-import type { Placement } from "#rules/battle/engine";
-import type { Battle, Side, Tile } from "#rules/battle/types";
-import type { Commitment } from "#rules/doctrine";
+import type { Battle, EffectSeed, Side, Tile } from "#rules/battle/types";
+import type { Commitment } from "#rules/forks";
 import { hexDistance, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import type { WorldMap } from "#rules/map";
 import type { CityNode } from "#rules/nodes";
 import { UNITS } from "#rules/units/index";
-import type { Branch, Playable } from "#rules/units/index";
+import type { Playable } from "#rules/units/index";
 
 /** The world's data (warbands, cities, lairs, graveyards) and lookups over it. */
 
-/** A unit in a squad on the map; its HP and XP carry from one battle to the next. */
-export interface SquadMember extends Placement {
+/** Where a unit's difference from its baseline came from: the track record (docs/design/pillars.md). */
+export type MarkSource = { readonly kind: "leaderTree"; readonly skill: string } | { readonly kind: "upgrade"; readonly upgrade: string };
+
+/** A lasting difference from the unit's baseline: an effect it brings into every battle, and its source. */
+export interface Mark {
+  readonly effect: EffectSeed;
+  readonly source: MarkSource;
+}
+
+/** A unit in a squad on the map; its HP, XP and marks carry from one battle to the next. */
+export interface SquadMember {
+  readonly defId: string;
+  readonly tile: Tile;
   readonly hp: number;
   readonly xp: number;
+  readonly marks: readonly Mark[];
 }
 
 /** A unit in its side's graveyard, waiting for resurrection at the Capitol. */
 export interface Fallen {
   readonly defId: string;
   readonly fellOnTurn: number;
+  /** Marks survive death: a resurrected unit keeps its track record. */
+  readonly marks: readonly Mark[];
 }
 
 export interface Leader {
@@ -27,8 +40,10 @@ export interface Leader {
   readonly side: Side;
   hex: Hex;
   movement: number;
-  /** How many units the warband holds, the leader included. Grows through the leader tree (docs/design/pillars.md). */
-  leadership: number;
+  /** XP the leader has earned in all; it buys points in the leader tree. */
+  experience: number;
+  /** Ranks learned in the leader tree, by skill id (`world/leaders.ts`). */
+  skills: Record<string, number>;
   squad: SquadMember[];
   /** The squad member who is the leader. Cosmetic for now: it picks the figure shown on the map. */
   leaderTile: Tile;
@@ -82,6 +97,8 @@ export interface World {
   factions: [Playable, Playable];
   commitment: [Commitment, Commitment];
   graveyard: [Fallen[], Fallen[]];
+  /** Unit-type upgrades each side has bought (`rules/upgrades.ts`). */
+  upgrades: [string[], string[]];
 }
 
 export type RecruitInto = { kind: "garrison" } | { kind: "leader"; leaderId: string };
@@ -91,8 +108,12 @@ export type WorldAction =
   | { type: "endTurn" }
   | { type: "recruit"; defId: string; into: RecruitInto }
   | { type: "elevate"; tile: Tile }
-  | { type: "invest"; branch: Branch }
-  | { type: "resurrect"; index: number; into: RecruitInto };
+  /** Choose a branch at a fork: free and permanent, for every unit of that kind. */
+  | { type: "choose"; fork: string; to: string }
+  | { type: "resurrect"; index: number; into: RecruitInto }
+  | { type: "learn"; leaderId: string; skill: string }
+  /** Buy a unit-type upgrade: units that become that type from now on receive it. */
+  | { type: "upgrade"; upgrade: string };
 
 export type WorldEvent =
   | { type: "moved"; leaderId: string; path: readonly Hex[] }
@@ -105,10 +126,12 @@ export type WorldEvent =
   | { type: "xp"; side: Side; pool: number; each: number }
   | { type: "evolved"; side: Side; from: string; to: string }
   | { type: "fell"; side: Side; defId: string }
-  | { type: "invested"; side: Side; branch: Branch }
+  | { type: "chose"; side: Side; fork: string; to: string }
   | { type: "cleared"; lairId: string; side: Side }
   | { type: "looted"; lairId: string; side: Side; gold: number; joins: string | null }
   | { type: "resurrected"; side: Side; defId: string }
+  | { type: "learned"; leaderId: string; skill: string }
+  | { type: "upgraded"; side: Side; upgrade: string }
   | { type: "worldEnd"; winner: Side };
 
 export interface WorldStep {
@@ -119,7 +142,7 @@ export interface WorldStep {
 
 export const fullHp = (defId: string) => UNITS[defId]?.stats.maxHp ?? 0;
 
-export const member = (defId: string, tile: Tile): SquadMember => ({ defId, tile, hp: fullHp(defId), xp: 0 });
+export const member = (defId: string, tile: Tile): SquadMember => ({ defId, tile, hp: fullHp(defId), xp: 0, marks: [] });
 
 export type Strength = "weak" | "medium" | "strong";
 

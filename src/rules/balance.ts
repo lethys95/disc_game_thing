@@ -33,3 +33,18 @@ export const BLACKSMITH_BONUS = 10;
 // Progression.
 /** XP a unit of each tier needs to evolve. */
 export const XP_TO_EVOLVE: Readonly<Record<number, number>> = { 1: 100, 2: 250, 3: 500, 4: 1000 };
+
+// The leader tree (user's v1 skills; every number here is provisional).
+/** The whole 3x3 grid (user: "max 9 or 8"). */
+export const MAX_LEADERSHIP = 9;
+/** XP a leader earns per point in its tree. */
+export const LEADER_XP_PER_POINT = 100;
+/** User: "+10% health". */
+export const LEADER_EXTRA_HEALTH = 10;
+/** Share of max HP the Squad healing skill restores at the start of its side's turn. */
+export const LEADER_HEALING = 0.1;
+/** User: "the squad deals +5% damage". */
+export const LEADER_AURA = 5;
+
+/** Gold per tier for a unit-type upgrade (placeholder; the user tunes upgrade prices after playtests). */
+export const UPGRADE_PRICE_PER_TIER = 50;

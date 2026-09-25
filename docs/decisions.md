@@ -41,8 +41,7 @@ Muted world, faction mana color as the only saturated accent, organic and made t
 **2026-09-25 — Notes are written continuously.**
 Update status with every commit, not at session end (user's suggestion; sessions end unpredictably).
 
-**2026-09-25 — Skirmish squads obey branch investment.**
-Each squad commits to one doctrine (preserve / punishment / sacrifice) and fields only that branch's units. It's the canon rule, and it makes squad-building a real choice. The squad limit of 6 is provisional (D2's default leadership).
+**2026-09-25 — Skirmish squads obey branch investment.** _Superseded by per-line forks, below._
 
 **2026-09-25 — Hovering a target previews the exact outcome.**
 No RNG means the preview can run the real rules on a copy of the state and show exactly what will happen. This is a design strength of no-RNG, so the UI leans on it.
@@ -58,3 +57,12 @@ The user asked for a foundation that handles complicated mechanics ("bad archite
 
 **2026-09-25 — The AI runs in a web worker.**
 Map decisions reached ~0.27 s on a fast machine. Plain-data state crosses into the worker unchanged; forecasts are memoised per decision.
+
+**2026-09-25 — Forks are per line, chosen for free (m8; design in `design/pillars.md`).**
+Any unit with two evolutions is a fork; a side's commitment maps fork → branch. The user rejected faction-wide doctrines ("per tree, not locked across trees") and gold-gated evolution. Implementation choices: the choice is a free world action available any time on your turn (the Capitol panel lists every open fork), and when a unit reaches an undecided fork a prompt asks at once, warning that every unit of that type follows; "Decide later" snoozes it for the turn. The skirmish setup no longer picks a doctrine: the branches your placed units took become your choices, and two branches of one fork in one squad is refused with a reason.
+
+**2026-09-25 — Marks: a unit's lasting differences are effects with a source (m8).**
+The user wants a "track record" per unit: what makes it differ from baseline and where each difference came from (upgrades, holy water, the leader tree). A squad member carries `marks` (an effect seed plus its source); they enter battle as ordinary effects, survive death into the graveyard, and the unit card lists them. The leader tree's bonuses aren't stamped as marks but derived from the leader (`world/record.ts` `recordOf`), because they belong to whoever leads; the card shows both the same way. Upgrades bought at the Capitol will be marks.
+
+**2026-09-25 — Percentage bonuses add a share of the base stat.**
+Stat hooks run in battlefield order, so a multiplier applied before a flat bonus (Congregation) gave a different number than after. Adding `base × percent` is order-independent and matches D2.

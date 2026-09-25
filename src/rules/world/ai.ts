@@ -1,11 +1,13 @@
-import { LEADER_MOVEMENT, STARTING_LEADERSHIP } from "#rules/balance";
-import { INVESTMENT_COST, openBranches } from "#rules/doctrine";
+import { STARTING_LEADERSHIP } from "#rules/balance";
+import { forkOptions, openForks } from "#rules/forks";
 import { sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
+import { nextForm } from "#rules/progression";
 import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
-import type { Branch } from "#rules/units/index";
+import { upgradesOf } from "#rules/upgrades";
 import { forecast } from "#rules/world/battles";
-import { elevateProblem, income, investProblem, recruitProblem, resurrectionCost, resurrectProblem } from "#rules/world/economy";
+import { chooseBranchProblem, elevateProblem, income, learnSkillProblem, recruitProblem, resurrectionCost, resurrectProblem, squadsOf, upgradeProblem } from "#rules/world/economy";
+import { movementOf } from "#rules/world/leaders";
 import { destination, planMove } from "#rules/world/movement";
 import type { MovePlan, MoveTarget } from "#rules/world/movement";
 import { capitolOf, fullHp, leaderAt } from "#rules/world/state";
@@ -39,15 +41,18 @@ function threatened(world: World, leader: Leader, hex: Hex, wins: Wins): boolean
   const moved: World = { ...world, leaders: world.leaders.map((l) => (l.id === leader.id ? { ...l, hex } : l)) };
   return moved.leaders.some((enemy) => {
     if (enemy.side === leader.side) return false;
-    const fresh = { ...moved, leaders: moved.leaders.map((l) => (l.id === enemy.id ? { ...l, movement: LEADER_MOVEMENT } : l)) };
+    const fresh = { ...moved, leaders: moved.leaders.map((l) => (l.id === enemy.id ? { ...l, movement: movementOf(l) } : l)) };
     const plan = planMove(fresh, enemy.id, hex);
     if (plan?.target?.kind !== "leader") return false;
     return wins(fresh, enemy.id, plan.target);
   });
 }
 
-/** Provisional AI taste: the doctrine pnpm sim rates strongest first. */
-const AI_BRANCH_PREFERENCE: readonly Branch[] = ["consume", "punishment", "preserve", "sacrifice", "overload", "scheme"];
+/** Provisional AI taste at each fork: the branches pnpm sim rates strongest first. */
+const AI_PREFERRED_BRANCHES: readonly string[] = ["zealot", "punisher", "mutant", "thaumaturge"];
+
+/** Provisional: the AI buys the tree's skills in this order, a warband's size first. */
+const AI_SKILL_ORDER: readonly string[] = ["leadership", "health", "healing", "movement", "aura"];
 
 const strength = (squad: readonly SquadMember[]) => squad.reduce((sum, m) => sum + m.hp, 0);
 const fullStrength = (squad: readonly SquadMember[]) => squad.reduce((sum, m) => sum + fullHp(m.defId), 0);
@@ -68,14 +73,21 @@ export function chooseWorldAction(world: World): WorldAction {
   const pick = (squad: readonly SquadMember[]) =>
     [...roots].sort((a, b) => squad.filter((m) => m.defId === a).length - squad.filter((m) => m.defId === b).length)[0] ?? roots[0] ?? "";
 
+  for (const leader of mine) {
+    const skill = AI_SKILL_ORDER.find((s) => !learnSkillProblem(world, leader.id, s));
+    if (skill) return { type: "learn", leaderId: leader.id, skill };
+  }
+
   if (capitol) {
     const home = mine.find((l) => sameHex(l.hex, capitol.hex));
-    // Commit at the next fork as soon as it's affordable; save for it otherwise (unless there's no army at all).
-    const open = AI_BRANCH_PREFERENCE.filter((b) => openBranches(world.factions[side], world.commitment[side]).includes(b));
-    const branch = open[0];
-    if (branch && !investProblem(world, branch)) return { type: "invest", branch };
-    const reserve = branch && mine.length > 0 ? INVESTMENT_COST[branch] : 0;
-    const spare = (price: number) => world.gold[side] - price >= reserve;
+    // Choosing is free, so the AI settles every fork it can reach right away.
+    const fork = openForks(world.factions[side], world.commitment[side])[0];
+    if (fork) {
+      const options = forkOptions(fork);
+      const to = options.find((o) => AI_PREFERRED_BRANCHES.includes(o)) ?? options[0];
+      if (to && !chooseBranchProblem(world, fork, to)) return { type: "choose", fork, to };
+    }
+    const spare = (price: number) => world.gold[side] >= price;
 
     const into: RecruitInto = home ? { kind: "leader", leaderId: home.id } : { kind: "garrison" };
     const bargain = world.graveyard[side]
@@ -91,12 +103,19 @@ export function chooseWorldAction(world: World): WorldAction {
       }
     }
     // Under threat, recruits stand with the Guardian; a fresh leader in the Capitol would only be picked off.
-    const underThreat = world.leaders.some((l) => l.side !== side && planMove({ ...world, leaders: world.leaders.map((x) => (x.id === l.id ? { ...x, movement: LEADER_MOVEMENT } : x)) }, l.id, capitol.hex)?.target);
+    const underThreat = world.leaders.some((l) => l.side !== side && planMove({ ...world, leaders: world.leaders.map((x) => (x.id === l.id ? { ...x, movement: movementOf(x) } : x)) }, l.id, capitol.hex)?.target);
     const guard = pick(capitol.garrison);
     if (underThreat && !recruitProblem(world, guard, { kind: "garrison" })) {
       return { type: "recruit", defId: guard, into: { kind: "garrison" } };
     }
     const rich = world.gold[side] >= cost * (STARTING_LEADERSHIP + 1);
+    // Upgrades aren't retroactive: they pay off on units about to become that type, and on future recruits.
+    const everyone = squadsOf(world, side).flatMap((h) => h.squad);
+    const upgrade = upgradesOf(world.factions[side])
+      .map((u) => ({ u, value: everyone.filter((m) => nextForm(m.defId, world.commitment[side]) === u.unitType).length + (roots.includes(u.unitType) ? 1 : 0) }))
+      .filter(({ u, value }) => value > 0 && world.gold[side] >= u.price + cost * STARTING_LEADERSHIP && !upgradeProblem(world, u.id))
+      .sort((a, b) => b.value - a.value)[0];
+    if (upgrade) return { type: "upgrade", upgrade: upgrade.u.id };
     if (!home && !underThreat && (mine.length === 0 || rich)) {
       const spare = capitol.garrison.find((m) => m.defId !== GUARDIAN_ID);
       if (spare && !elevateProblem(world, spare.tile)) return { type: "elevate", tile: spare.tile };

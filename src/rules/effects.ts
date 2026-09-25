@@ -158,6 +158,53 @@ const effects: readonly EffectDef[] = [
       },
     },
   },
+  {
+    // A bought unit-type upgrade (placeholder content until the user designs unique ones).
+    id: "extra_damage",
+    quiet: true,
+    name: "Extra damage",
+    describe: (e) => `+${e.amount} damage.`,
+    stacking: { mode: "merge" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      stats: (_ctx, self, subjectId, stats) => {
+        if (subjectId === self.unitId) stats.damage += self.effect?.amount ?? 0;
+      },
+    },
+  },
+  {
+    // From the leader tree: the leader's own extra health.
+    id: "extra_health",
+    quiet: true,
+    name: "Extra health",
+    describe: (e) => `+${e.amount}% of its base max HP.`,
+    stacking: { mode: "merge" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      // Percentages add a share of the base stat, so they don't depend on the order hooks run in.
+      stats: (ctx, self, subjectId, stats) => {
+        if (subjectId === self.unitId) stats.maxHp += Math.round((ctx.unit(subjectId).base.maxHp * (self.effect?.amount ?? 0)) / 100);
+      },
+    },
+  },
+  {
+    // From the leader tree: while the leader stands, its allies hit harder.
+    id: "leader_aura",
+    quiet: true,
+    name: "Leader's aura",
+    describe: (e) => `While this leader stands, its side's units deal +${e.amount}% of their base damage.`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      stats: (ctx, self, subjectId, stats) => {
+        const subject = ctx.unit(subjectId);
+        if (subject.side === ctx.unit(self.unitId).side) stats.damage += Math.round((subject.base.damage * (self.effect?.amount ?? 0)) / 100);
+      },
+    },
+  },
 ];
 
 export const EFFECTS: ReadonlyMap<string, EffectDef> = new Map(effects.map((e) => [e.id, e]));

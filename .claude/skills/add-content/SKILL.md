@@ -13,7 +13,7 @@ The rules model is in `docs/design/architecture.md`; read it if you haven't this
 - If a detail is ambiguous, pick the simplest reading, note it as provisional, and ask. Don't stall.
 
 ## 2. Implement through the architecture
-- **Unit**: `src/rules/units/<faction>.ts` (stats, `abilities` as `{ id, params?, name? }`). If it's in a tree, update `EVOLUTIONS` / `FACTION_ROOTS` in `units/index.ts`, and add a fork to `FORKS` in `doctrine.ts` (plus `INVESTMENT_COST` and the setup `DOCTRINES`) if the tree branches.
+- **Unit**: `src/rules/units/<faction>.ts` (stats, `abilities` as `{ id, params?, name? }`). If it's in a tree, update `EVOLUTIONS` / `FACTION_ROOTS` in `units/index.ts`, If the tree branches, give each branch a `label` (the dichotomy the user named); `forks.ts` treats any unit with two evolutions as a fork, so nothing else changes. Add a setup formation to `FORMATIONS` in `view/squads.ts` if it helps.
 - Every ability and effect definition has a required `describe` (its rules text, written from its own params or numbers). Numbers shared by a rule and its text are constants next to the definition (e.g. `PUNISHED_PER_STACK`), never repeated.
 - **Active ability**: `src/rules/abilities/<faction>.ts` with `tags` (`attack`, `basic`, `melee`, `ranged`, `spell`, `damage`, `heal`, `area`), `defaults` (`power`, `charges`, amounts), `choices`, `resolve`. Deal damage with `ctx.hit(self.unitId, targets, ctx.hitSpec(self, tags))`. A variant of an existing ability is usually **params on the unit**, not new code.
 - **Passive ability**: `kind: "passive"` with `hooks` (see `Hooks` in `src/rules/battle/types.ts`).

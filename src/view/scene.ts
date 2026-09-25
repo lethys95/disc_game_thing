@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
+import { effectiveStats } from "#rules/battle/engine";
 import { COLS, ROWS } from "#rules/battle/grid";
 import type { Battle, BattleEvent, BattleUnit, Col, Row, Side, Tile } from "#rules/battle/types";
 import { buildFigure } from "#view/figures";
@@ -159,7 +160,7 @@ export class BattleScene {
   sync(battle: Battle): void {
     for (const unit of Object.values(battle.units)) {
       const figure = this.figures.get(unit.id) ?? this.addFigure(unit);
-      figure.maxHp = unit.base.maxHp;
+      figure.maxHp = effectiveStats(battle, unit.id).maxHp;
       figure.shownHp = unit.hp;
       figure.maxShield = unit.base.shield;
       figure.shownShield = unit.shield;

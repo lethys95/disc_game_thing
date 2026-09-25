@@ -14,16 +14,20 @@ src/rules/
   effects.ts         effect definitions
   units/             unit catalogue by faction + index (UNITS, roots, recruit costs, evolutions)
   nodes.ts           city node kinds (income, battle effects)
-  doctrine.ts        forks per faction, commitments, allowed units
+  upgrades.ts        unit-type upgrades (placeholder content: +5 damage per type)
+  forks.ts           per-line forks: commitments (fork → branch), allowed units, starting-squad checks
   progression.ts     XP value and evolution
   balance.ts         provisional numbers that aren't unit stats or ability params
   ai.ts              battle AI (one ply, generic valuation + traits' aiValue), autoplay
   hex.ts, map.ts     hex math; seeded map generation (sites, nodes, lairs), A*
-  world/             state (data + lookups), create, movement, economy, battles (map→battle→map), actions, ai
+  world/             state (data + lookups), create, movement, economy, battles (map→battle→map), actions, ai,
+                     leaders (the leader tree), record (a unit's marks + leader bonuses → battle placement, max HP)
 src/view/
   stage.ts           the one renderer/camera/bloom/labels/tween loop
   scene.ts, map.ts   BattleScene, MapView
   app.ts, campaign.ts battle and map controllers
+  capitol.ts         the Capitol screen (trees with forks and upgrades, recruit, garrison, graveyard)
+  members.ts         a squad member's row: HP, XP, track record
   hud.ts, setup.ts   panels; dom.ts shared helpers
   secrecy.ts         what a player may see (hidden effects, secret targets)
   ai.worker.ts, ai-client.ts, ai-protocol.ts   the AI off the main thread
@@ -47,6 +51,8 @@ The step-by-step recipes (units, abilities, effects, nodes, forks, recording the
 - CSS2DRenderer only updates labels in the scene it renders; `Stage.show` hides the outgoing scene's labels.
 - **Hidden information goes through `view/secrecy.ts`.** Every log and animation path must be masked, and previews use a battle without the player's own hidden effects. The AI sees everything.
 - Tests about one unit's behavior usually need `until(battle, id)` (`#tests/helpers`): turn order is by initiative, and it's easy to query the wrong unit.
+- **Percentage stat bonuses add `base × percent`.** Stat hooks run in battlefield order; multiplying the running total makes the result depend on which trait ran first.
+- A unit's max HP on the map is `maxHpOf(member, leader)` (`world/record.ts`), not the unit type's: effects it brings can raise it. Battles cap starting HP at the effective max.
 - A local variable named like a module helper shadows it: tsc says "not callable".
 - pnpm needs build scripts approved (`pnpm approve-builds <pkg>`); esbuild is approved. TypeScript is v7; the config is strict and rejects unused locals and parameters.
 
@@ -63,5 +69,5 @@ Resolved:
 
 Still open:
 - **The AI is one ply deep.** It plays greedily. A better AI (look-ahead, or rollouts with the forecast machinery) is its own milestone.
-- **`App` and `Campaign` are still big controllers** mixing input, state and rendering. Fine at this size; split them when the next screen (e.g. a city screen) arrives.
+- **`App` and `Campaign` are still big controllers** mixing input, state and rendering. The Capitol screen went into its own class (`view/capitol.ts`); keep new screens out of `Campaign` the same way.
 - **Stats are recomputed often** (`stats()` walks every trait on the battlefield). It's fast enough at 18 units; memoise per action if battles grow.
