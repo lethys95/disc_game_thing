@@ -4,7 +4,7 @@ import { hexKey } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import type { Terrain, WorldMap } from "#rules/map";
 import { UNITS } from "#rules/units";
-import type { Leader, World } from "#rules/world";
+import type { City, Leader, World } from "#rules/world";
 import { buildFigure, PALETTES } from "#view/figures";
 import type { CameraPose, Stage } from "#view/stage";
 
@@ -35,6 +35,14 @@ interface HexTile {
   readonly top: number;
 }
 
+interface SiteModel {
+  readonly group: THREE.Group;
+  readonly banner: THREE.MeshStandardMaterial;
+  readonly label: HTMLDivElement;
+}
+
+const NEUTRAL_BANNER = new THREE.Color(0x4a4744);
+
 interface LeaderFigure {
   readonly group: THREE.Group;
   readonly label: HTMLDivElement;
@@ -64,6 +72,8 @@ export class MapView {
   private readonly terrain = new THREE.Group();
   private readonly hexes = new Map<string, HexTile>();
   private readonly leaders = new Map<string, LeaderFigure>();
+  private readonly sites = new Map<string, SiteModel>();
+  private readonly siteLayer = new THREE.Group();
 
   constructor(private readonly stage: Stage) {
     const dusk = new THREE.Color(0x0b0a0c);
@@ -86,6 +96,7 @@ export class MapView {
     ground.receiveShadow = true;
     this.scene.add(ground);
     this.scene.add(this.terrain);
+    this.scene.add(this.siteLayer);
   }
 
   show(): void {
@@ -147,6 +158,94 @@ export class MapView {
         mound.castShadow = true;
         this.terrain.add(mound);
       }
+    }
+  }
+
+  /** Builds the cities and their gold mines; call after `build`. Ownership colours follow in `syncSites`. */
+  buildSites(world: World): void {
+    for (const site of this.sites.values()) site.label.remove();
+    this.siteLayer.clear();
+    this.sites.clear();
+    const stone = new THREE.MeshStandardMaterial({ color: 0x3b3733, roughness: 0.9 });
+    const dark = new THREE.MeshStandardMaterial({ color: 0x1f1c1a, roughness: 0.85 });
+    const ore = new THREE.MeshStandardMaterial({ color: 0xd9a431, emissive: 0xd9a431, emissiveIntensity: 1.4, roughness: 0.4 });
+    for (const city of world.cities) {
+      const group = new THREE.Group();
+      const banner = new THREE.MeshStandardMaterial({ color: NEUTRAL_BANNER.clone(), emissive: new THREE.Color(0), roughness: 0.6 });
+      if (city.kind === "capitol") {
+        const keep = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.9, 0.62), stone);
+        keep.position.y = 0.45;
+        group.add(keep);
+        const spire = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.9, 4), dark);
+        spire.position.y = 1.35;
+        spire.rotation.y = Math.PI / 4;
+        group.add(spire);
+        for (const [x, z] of [[-0.34, -0.34], [0.34, -0.34], [-0.34, 0.34], [0.34, 0.34]] as const) {
+          const tower = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.12, 0.75, 6), stone);
+          tower.position.set(x, 0.38, z);
+          const cap = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.35, 6), dark);
+          cap.position.set(x, 0.92, z);
+          group.add(tower, cap);
+        }
+        const flag = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.28, 0.2), banner);
+        flag.position.set(0, 1.75, 0.1);
+        group.add(flag);
+      } else {
+        for (const [x, z, h] of [[-0.18, -0.1, 0.55], [0.2, -0.05, 0.4], [0, 0.22, 0.7]] as const) {
+          const tower = new THREE.Mesh(new THREE.BoxGeometry(0.26, h, 0.26), stone);
+          tower.position.set(x, h / 2, z);
+          const roof = new THREE.Mesh(new THREE.ConeGeometry(0.21, 0.3, 4), dark);
+          roof.position.set(x, h + 0.15, z);
+          roof.rotation.y = Math.PI / 4;
+          group.add(tower, roof);
+        }
+        const flag = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.2, 0.16), banner);
+        flag.position.set(0, 1.0, 0.3);
+        group.add(flag);
+      }
+      group.traverse((o) => {
+        o.castShadow = true;
+      });
+      // Towers sit at the back of the hex so a leader standing there stays visible in front.
+      group.position.copy(this.standingPoint(city.hex)).add(new THREE.Vector3(0.1, 0, -0.32));
+      group.userData = { hex: city.hex };
+      const label = document.createElement("div");
+      label.className = "site-label";
+      const tag = new CSS2DObject(label);
+      tag.position.set(0, city.kind === "capitol" ? 2.05 : 1.3, 0);
+      group.add(tag);
+      this.siteLayer.add(group);
+      this.sites.set(city.id, { group, banner, label });
+
+      for (const mine of city.goldMines) {
+        const pile = new THREE.Group();
+        for (let i = 0; i < 4; i++) {
+          const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(0.12 + jitter(mine, i) * 0.06, 0), i === 0 ? ore : dark);
+          rock.position.set((jitter(mine, i + 5) - 0.5) * 0.5, 0.08, (jitter(mine, i + 9) - 0.5) * 0.5);
+          rock.castShadow = true;
+          pile.add(rock);
+        }
+        const crystal = new THREE.Mesh(new THREE.OctahedronGeometry(0.14, 0), ore);
+        crystal.position.y = 0.25;
+        crystal.scale.y = 1.8;
+        pile.add(crystal);
+        pile.position.copy(this.standingPoint(mine));
+        pile.userData = { hex: mine };
+        this.siteLayer.add(pile);
+      }
+    }
+  }
+
+  syncSites(world: World): void {
+    for (const city of world.cities) {
+      const site = this.sites.get(city.id);
+      if (!site) continue;
+      const owner = city.owner;
+      site.banner.color.copy(owner === null ? NEUTRAL_BANNER : PALETTES[owner].body);
+      site.banner.emissive.copy(owner === null ? NONE : PALETTES[owner].accent);
+      site.banner.emissiveIntensity = owner === null ? 0 : 0.8;
+      site.label.textContent = siteName(city);
+      site.label.className = `site-label ${owner === null ? "neutral" : `side${owner}`}`;
     }
   }
 
@@ -214,7 +313,11 @@ export class MapView {
   }
 
   pick(clientX: number, clientY: number): Hex | null {
-    const targets: THREE.Object3D[] = [...[...this.hexes.values()].map((h) => h.mesh), ...[...this.leaders.values()].map((l) => l.group)];
+    const targets: THREE.Object3D[] = [
+      ...[...this.hexes.values()].map((h) => h.mesh),
+      ...[...this.leaders.values()].map((l) => l.group),
+      ...this.siteLayer.children,
+    ];
     for (const hit of this.stage.intersect(clientX, clientY, targets)) {
       let object: THREE.Object3D | null = hit.object;
       while (object) {
@@ -242,6 +345,11 @@ export class MapView {
       });
     }
   }
+}
+
+function siteName(city: City): string {
+  const owner = city.owner === null ? "Neutral" : city.owner === 0 ? "Your" : "Enemy";
+  return city.kind === "capitol" ? `${owner} Capitol` : `${owner} city`;
 }
 
 function figureDef(leader: Leader): string {

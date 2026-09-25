@@ -5,17 +5,21 @@ _Rewritten (not appended) with every commit. Keep under ~50 lines._
 **Updated:** 2026-09-25
 
 ## Where we are
-Git: tag `m2-playable` = the M1+M2 state (untested by the user so far). M3 is developed on branch `m3`; merge into `master` when it works.
+Git: tags `m2-playable` and `m3-whole-game` mark tested states; work happens on a branch per milestone and merges into `main` when it works.
 
-**M1 and M2 done.** Setup screen → **Fight** (a single battle) or **March** (both squads on a 61-hex map). On the map your leader walks by clicking hexes (path and reach shown); walking into the enemy leader, or being walked into, starts a battle. Wounds carry over and the survivor returns to the map. Battles have an **Auto-battle** toggle. Rules: `src/rules/` (26 tests). View: `src/view/` (one `Stage` renderer; `BattleScene` and `MapView` take turns). Tools: `pnpm shot [out] [route]`, `pnpm playtest` (battle clicks), `pnpm playtest:map [seed]` (march → battle → return). Useful URL params: `?fight`, `?map&seed=N`, `?steps=N`, `?auto=1`, `?fast`, `?debug`.
+**M1–M3 done.** Setup → **Fight** (one battle) or **March** (a whole game). The game has a 61-hex map with both Capitols (Guardian = loss condition) and three neutral cities with gold mines. Walk in to capture, recruit Congregants at the Capitol, elevate garrison units into new warbands, and heal at home. The map shows an AI battle forecast before you attack. The map AI forecasts fights both ways (skips losing fights, avoids stopping where it would be caught) and reinforces a threatened Capitol. All M3 numbers are provisional (`questions.md` #12–14).
+Rules: `src/rules/` (29 tests). View: `src/view/`. Tools: see the `verify` skill; `pnpm sim:world` for whole AI-vs-AI games.
 
 ## Next
-**M3: a tiny whole game** (`roadmap.md`): alternating faction turns with a Capitol + guardian (loss condition), neutral cities with gold nodes, recruiting at the Capitol, elevating a unit to leader, more than one leader per side. Needs design calls first; check `design/pillars.md` for cities/Capitol and log questions for gaps (the guardian's stats, recruit costs, income numbers).
+1. **Art spike** (`roadmap.md`): one Paladin through both routes in `design/asset-pipeline.md`, shown in the battle scene. Blender works; ComfyUI runs at :8188. Needs the Qwen-Image models downloaded (~40 GB); check disk first.
+2. Then **M4 progression** (XP → evolution tiers, branch investment, graveyard). Evolution should also break the AI cold wars (`design/combat.md`).
+3. Design gate: a second faction needs unit designs from the user.
 
 ## Waiting on the user
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.
 
 ## Recently done
+- 2026-09-25: M3 done: Capitols and Guardian, cities and gold, recruiting, elevation, healing, map forecast, safer map AI; Guardian tuned by simulation.
 - 2026-09-25: Blender works headless; order decided: M3 next, then the art spike (`roadmap.md`).
 - 2026-09-25: researched the AI asset pipeline (`design/asset-pipeline.md`): two routes to bake off; Blender needs a system upgrade to start.
 - 2026-09-25: added the `verify` skill (`.claude/skills/verify`), `docs/engineering.md`, `pnpm check`, `pnpm sim`.

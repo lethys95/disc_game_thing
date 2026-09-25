@@ -60,7 +60,7 @@ if (params.has("debug")) {
       tileScreen: (side: 0 | 1, row: 0 | 1 | 2, col: 0 | 1 | 2) => battleScene.screenPoint({ side, tile: { row, col } }),
       hexScreen: (q: number, r: number) => campaign.screenPoint({ q, r }),
       leaderHex: (side: 0 | 1) => campaign.hexOfLeader(side),
-      reachable: () => campaign.reachableHexes(),
+      capitolHex: (side: 0 | 1) => campaign.capitolHex(side),
       log: () => [...document.querySelectorAll("#log .entry")].map((e) => e.textContent),
     },
   });

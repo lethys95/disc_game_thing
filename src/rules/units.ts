@@ -2,8 +2,17 @@ import type { UnitDef } from "#rules/types";
 
 const kit = (...ids: string[]) => ids.map((id) => ({ id }));
 
-/** The Jilliath melee line, docs/design/units/jilliath-melee-line.md (canon). */
+/**
+ * The Jilliath melee line (docs/design/units/jilliath-melee-line.md, canon), plus the Capitol Guardian:
+ * canon says it exists, never leaves the Capitol and ends the game when it falls; its stats are provisional.
+ */
 export const UNITS: Readonly<Record<string, UnitDef>> = {
+  capitol_guardian: {
+    id: "capitol_guardian", name: "Capitol Guardian", tier: 0, damageType: "weapon",
+    // Provisional, tuned by simulation to beat any single starting squad except Punishment's (docs/questions.md).
+    stats: { maxHp: 1500, damage: 80, armor: 25, initiative: 60 },
+    abilities: kit("attack", "defend", "wait"),
+  },
   congregant: {
     id: "congregant", name: "Congregant", tier: 1, damageType: "weapon",
     stats: { maxHp: 90, damage: 20, armor: 0, initiative: 50 },
@@ -55,3 +64,11 @@ export const UNITS: Readonly<Record<string, UnitDef>> = {
     abilities: kit("attack", "defend", "wait", "fanaticism_aura"),
   },
 };
+
+export const GUARDIAN_ID = "capitol_guardian";
+
+/** Units that can be bought: tier 1 only, as in D2; higher tiers come from evolution (M4). */
+export const RECRUITS: readonly string[] = ["congregant"];
+
+/** Canon: the Congregant costs 40 gold. */
+export const RECRUIT_COST: Readonly<Record<string, number>> = { congregant: 40 };

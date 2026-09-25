@@ -34,3 +34,14 @@ function evaluate(battle: Battle, side: Side): number {
   }
   return score;
 }
+
+/** Plays a battle to its end with the greedy AI on both sides: the deterministic forecast of a fight. */
+export function autoplay(start: Battle, limit = 5000): Battle {
+  let battle = start;
+  for (let i = 0; i < limit && !battle.outcome; i++) {
+    const action = chooseAction(battle);
+    if (!action) break;
+    battle = applyAction(battle, action).battle;
+  }
+  return battle;
+}

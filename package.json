@@ -11,7 +11,8 @@
     "playtest": "tsx scripts/playtest.ts",
     "playtest:map": "tsx scripts/playtest-map.ts",
     "check": "tsc && vitest run",
-    "sim": "tsx scripts/sim.ts"
+    "sim": "tsx scripts/sim.ts",
+    "sim:world": "tsx scripts/sim-world.ts"
   },
   "devEngines": {
     "packageManager": {

@@ -13,7 +13,7 @@ Two 3x3 squads fight to the end in the browser. Player controls one side; a dumb
 ## M2 — Walk into a fight ✅ (2026-09-25)
 Small hex map with a rotatable camera. One leader per side; click to move (movement points, A*). Moving into the enemy leader starts an M1 battle, and the survivor returns to the map.
 
-## M3 — A tiny whole game
+## M3 — A tiny whole game ✅ (2026-09-25)
 Two players (hotseat or player vs AI) alternate faction turns. Capitol with guardian (loss condition), one or two neutral cities with gold nodes, recruiting at the Capitol, elevating a unit to leader. You can win or lose.
 
 ## Art spike (time-boxed, after M3)

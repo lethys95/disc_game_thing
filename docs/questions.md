@@ -15,3 +15,8 @@ The user is in a "suggest" role: they answer when they have time, so nothing her
 ## Art pipeline (see `design/asset-pipeline.md`)
 11. Route A (rigid-part 3D statues) vs Route B (painted animated sprites in a 3D world, like D2): plan is a bake-off with one unit, but if you already lean one way, say so.
 
+## Capitol and economy (provisional answers in `src/rules/world.ts`, `units.ts`)
+12. **The Guardian vs Punishment.** A lone Guardian loses to the Punishment doctrine at any stats I tried: stacking −10 damage/−10 initiative grinds it to nothing (22+ rounds). Should the Guardian resist debuffs, never fight alone (a stronger garrison), or is "Punishment counters the Capitol" intended? Provisional stats: 1500 HP, 80 damage, 25 armor, 60 initiative.
+13. Economy: 100 starting gold, Capitol +50/turn, each gold mine +25/turn, Congregant 40 (canon). Units resting in their own Capitol heal 25% of max HP per turn. Elevation is free. Neutral cities start unguarded. All placeholders.
+14. Only tier-1 units can be recruited (D2 style), so Jilliath recruits only Congregants; the rest must come from evolution (M4). Right?
+

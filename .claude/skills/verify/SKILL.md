@@ -13,6 +13,7 @@ Tests prove the rules; only a rendered frame proves the view. Always look at the
 3. `pnpm playtest`: clicks through four real player turns in a battle (`shots/playtest-*.png`).
 4. `pnpm playtest:map [seed]`: marches on the map, auto-battles the fight, returns (`shots/map-*.png`).
 5. `pnpm sim`: AI-vs-AI matchup matrix of the presets, for balance changes.
+6. `pnpm sim:world [seeds…]`: whole AI-vs-AI games (winner, turns, battles, gold); a "cold war" means neither side could win a fight its forecast allows.
 
 ## Routes (URL params, combinable)
 | Param | Effect |
@@ -25,7 +26,7 @@ Tests prove the rules; only a rendered frame proves the view. Always look at the
 | `?fast` | animations and AI pauses ×0.1 (for scripted runs) |
 | `?debug` | exposes `window.discDebug` (below) |
 
-`window.discDebug`: `tileScreen(side,row,col)` (a battle figure's chest in client px), `hexScreen(q,r)`, `leaderHex(side)`, `reachable()`, `log()`.
+`window.discDebug`: `tileScreen(side,row,col)` (a battle figure's chest in client px), `hexScreen(q,r)`, `leaderHex(side)`, `capitolHex(side)`, `log()`.
 
 ## Gotchas
 - Click figures at chest height (`tileScreen` does this). A tile's center is often hidden behind a nearer figure from this camera.

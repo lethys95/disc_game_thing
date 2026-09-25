@@ -1,12 +1,23 @@
-import { chooseAction } from "#rules/ai";
-import { applyAction, createBattle } from "#rules/battle";
+import { autoplay } from "#rules/ai";
 import type { Placement } from "#rules/battle";
-import { hexagon, hexDistance, hexKey, neighbors } from "#rules/hex";
-import { findPath, generateMap, TERRAIN_COST } from "#rules/map";
-import type { WorldMap } from "#rules/map";
-import type { Battle } from "#rules/types";
-import { applyWorldAction, chooseWorldAction, concludeBattle, createWorld, leaderById, planMove } from "#rules/world";
-import type { World } from "#rules/world";
+import { hexagon, hexDistance, hexKey, neighbors, sameHex } from "#rules/hex";
+import type { Hex } from "#rules/hex";
+import { findPath, generateMap, stepCost, TERRAIN_COST } from "#rules/map";
+import { GUARDIAN_ID } from "#rules/units";
+import {
+  applyWorldAction,
+  CAPITOL_INCOME,
+  capitolOf,
+  chooseWorldAction,
+  concludeBattle,
+  createWorld,
+  income,
+  leaderById,
+  MINE_INCOME,
+  planMove,
+  STARTING_GOLD,
+} from "#rules/world";
+import type { Leader, World } from "#rules/world";
 import { describe, expect, test } from "vitest";
 
 const squad: Placement[] = [
@@ -14,27 +25,22 @@ const squad: Placement[] = [
   { defId: "congregant", tile: { row: 1, col: 1 } },
 ];
 
-function flatMap(): WorldMap {
-  const tiles = Object.fromEntries(hexagon(4).map((hex) => [hexKey(hex), { hex, terrain: "plain" as const }]));
-  return { radius: 4, tiles, starts: [{ q: -3, r: 3 }, { q: 3, r: -3 }] };
+/** Punishers grind a lone Guardian down (docs/questions.md #12), so this army can take a Capitol. */
+const army: Placement[] = [
+  { defId: "punisher", tile: { row: 0, col: 0 } },
+  { defId: "punisher", tile: { row: 0, col: 1 } },
+  { defId: "punisher", tile: { row: 0, col: 2 } },
+  { defId: "torturer", tile: { row: 1, col: 1 } },
+];
+
+function withLeader(world: World, id: string, change: Partial<Leader>): World {
+  return { ...world, leaders: world.leaders.map((l) => (l.id === id ? { ...l, ...change } : l)) };
 }
 
-function flatWorld(): World {
-  const world = createWorld(1, [squad, squad]);
-  return { ...world, map: flatMap(), leaders: world.leaders.map((l, i) => ({ ...l, hex: flatMap().starts[i === 0 ? 0 : 1] })) };
-}
-
-function placeLeader(world: World, index: number, hex: { q: number; r: number }): World {
-  return { ...world, leaders: world.leaders.map((l, i) => (i === index ? { ...l, hex } : l)) };
-}
-
-function autoplay(battle: Battle): Battle {
-  while (!battle.outcome) {
-    const action = chooseAction(battle);
-    if (!action) throw new Error("stuck");
-    battle = applyAction(battle, action).battle;
-  }
-  return battle;
+function walkableNeighbour(world: World, hex: Hex): Hex {
+  const found = neighbors(hex).find((n) => stepCost(world.map, n) !== null && !world.cities.some((c) => sameHex(c.hex, n)));
+  if (!found) throw new Error("no walkable neighbour");
+  return found;
 }
 
 describe("map", () => {
@@ -42,11 +48,17 @@ describe("map", () => {
     expect(hexagon(4)).toHaveLength(61);
   });
 
-  test("generation is a pure function of the seed, and the two starts are connected", () => {
+  test("generation is a pure function of the seed; capitols sit on the starts; every site is reachable", () => {
     for (const seed of [1, 2, 3, 42, 1234]) {
       const map = generateMap(seed);
       expect(generateMap(seed)).toEqual(map);
-      expect(findPath(map, map.starts[0], map.starts[1], () => false)).not.toBeNull();
+      const capitols = map.sites.filter((s) => s.kind === "capitol").map((s) => s.hex);
+      expect(capitols).toEqual([...map.starts]);
+      for (const site of map.sites.filter((s) => s.kind === "city")) {
+        expect(site.goldMines).toHaveLength(1);
+        expect(findPath(map, map.starts[0], site.hex, () => false)).not.toBeNull();
+        expect(findPath(map, map.starts[1], site.hex, () => false)).not.toBeNull();
+      }
     }
     expect(generateMap(1)).not.toEqual(generateMap(2));
   });
@@ -69,47 +81,79 @@ describe("map", () => {
 });
 
 describe("world", () => {
-  test("a leader walks as far as its movement allows toward a distant hex", () => {
-    const world = flatWorld();
-    const plan = planMove(world, "leader0", { q: 3, r: -3 });
-    expect(plan?.steps).toBe(4);
-    expect(plan?.attacks).toBeNull();
-    const moved = applyWorldAction(world, { type: "move", leaderId: "leader0", to: { q: 3, r: -3 } }).world;
-    expect(hexDistance(leaderById(moved, "leader0").hex, { q: -3, r: 3 })).toBe(4);
-    expect(moved.engagement).toBeNull();
+  test("each side starts with a Capitol guarded by its Guardian, and earns income at the start of its turn", () => {
+    const world = createWorld(1, [squad, squad]);
+    expect(capitolOf(world, 0)?.garrison.map((m) => m.defId)).toEqual([GUARDIAN_ID]);
+    expect(world.gold).toEqual([STARTING_GOLD + CAPITOL_INCOME, STARTING_GOLD]);
+    const next = applyWorldAction(world, { type: "endTurn" }).world;
+    expect(next.gold[1]).toBe(STARTING_GOLD + CAPITOL_INCOME);
   });
 
-  test("walking into an enemy leader starts a battle with both squads", () => {
-    const next = neighbors({ q: 3, r: -3 })[3];
-    if (!next) throw new Error("no neighbour");
-    const world = placeLeader(flatWorld(), 0, next);
-    const step = applyWorldAction(world, { type: "move", leaderId: "leader0", to: { q: 3, r: -3 } });
-    expect(step.events).toContainEqual({ type: "engaged", attackerId: "leader0", defenderId: "leader1" });
-    expect(Object.keys(step.world.engagement?.battle.units ?? {})).toHaveLength(4);
+  test("walking into an empty neutral city captures it and its gold mine", () => {
+    const world = createWorld(1, [squad, squad]);
+    const city = world.cities.find((c) => c.kind === "city");
+    if (!city) throw new Error("no neutral city");
+    const near = withLeader(world, "leader0", { hex: walkableNeighbour(world, city.hex) });
+    const step = applyWorldAction(near, { type: "move", leaderId: "leader0", to: city.hex });
+    expect(step.events).toContainEqual({ type: "captured", cityId: city.id, side: 0 });
+    expect(income(step.world, 0)).toBe(CAPITOL_INCOME + MINE_INCOME);
+    expect(leaderById(step.world, "leader0").hex).toEqual(city.hex);
   });
 
-  test("wounds carry into the next battle, and a wiped-out squad loses the game", () => {
-    let world = placeLeader(flatWorld(), 0, { q: 2, r: -3 });
-    world = applyWorldAction(world, { type: "move", leaderId: "leader0", to: { q: 3, r: -3 } }).world;
-    const battle = world.engagement?.battle;
+  test("recruiting costs gold and needs the leader in the Capitol", () => {
+    const world = createWorld(1, [squad, squad]);
+    const step = applyWorldAction(world, { type: "recruit", defId: "congregant", into: { kind: "leader", leaderId: "leader0" } });
+    expect(step.world.gold[0]).toBe(world.gold[0] - 40);
+    expect(leaderById(step.world, "leader0").squad).toHaveLength(3);
+    const away = withLeader(world, "leader0", { hex: walkableNeighbour(world, world.map.starts[0]) });
+    expect(() => applyWorldAction(away, { type: "recruit", defId: "congregant", into: { kind: "leader", leaderId: "leader0" } })).toThrow(/Capitol/);
+  });
+
+  test("a garrison unit can be elevated to lead a new squad, but never the Guardian", () => {
+    let world = createWorld(1, [squad, squad]);
+    world = applyWorldAction(world, { type: "recruit", defId: "congregant", into: { kind: "garrison" } }).world;
+    world = withLeader(world, "leader0", { hex: walkableNeighbour(world, world.map.starts[0]) });
+    const recruit = capitolOf(world, 0)?.garrison.find((m) => m.defId === "congregant");
+    const guardian = capitolOf(world, 0)?.garrison.find((m) => m.defId === GUARDIAN_ID);
+    if (!recruit || !guardian) throw new Error("garrison missing");
+    expect(() => applyWorldAction(world, { type: "elevate", tile: guardian.tile })).toThrow(/Guardian/);
+    const step = applyWorldAction(world, { type: "elevate", tile: recruit.tile });
+    const created = step.world.leaders.find((l) => l.id === "leader2");
+    expect(created?.squad.map((m) => m.defId)).toEqual(["congregant"]);
+    expect(created?.hex).toEqual(world.map.starts[0]);
+  });
+
+  test("wounded units resting in their Capitol heal at the start of their turn", () => {
+    let world = createWorld(1, [squad, squad]);
+    const leader = leaderById(world, "leader0");
+    world = withLeader(world, "leader0", { squad: leader.squad.map((m) => ({ ...m, hp: 10 })) });
+    world = applyWorldAction(applyWorldAction(world, { type: "endTurn" }).world, { type: "endTurn" }).world;
+    expect(leaderById(world, "leader0").squad.map((m) => m.hp)).toEqual([10 + 38, 10 + 23]);
+  });
+
+  test("storming the enemy Capitol and killing its Guardian wins the game", () => {
+    const world = createWorld(1, [army, squad]);
+    const enemyCapitol = world.map.starts[1];
+    const ready = withLeader(
+      { ...world, leaders: world.leaders.filter((l) => l.side === 0) },
+      "leader0",
+      { hex: walkableNeighbour(world, enemyCapitol) },
+    );
+    const plan = planMove(ready, "leader0", enemyCapitol);
+    expect(plan?.target).toEqual({ kind: "garrison", cityId: "capitol1" });
+    const engaged = applyWorldAction(ready, { type: "move", leaderId: "leader0", to: enemyCapitol }).world;
+    const battle = engaged.engagement?.battle;
     if (!battle) throw new Error("no battle");
-    const concluded = concludeBattle(world, autoplay(battle));
-    const winner = concluded.world.outcome?.winner;
-    expect(winner).toBeDefined();
-    expect(concluded.world.leaders).toHaveLength(1);
-    const survivor = concluded.world.leaders[0];
-    if (!survivor) throw new Error("no survivor");
-    const wounded = createBattle(survivor.side === 0 ? [survivor.squad, []] : [[], survivor.squad]).battle;
-    for (const member of survivor.squad) {
-      expect(wounded.units[`${survivor.side}.${member.tile.row}.${member.tile.col}`]?.hp).toBe(member.hp);
-    }
+    const done = concludeBattle(engaged, autoplay(battle));
+    expect(done.world.outcome).toEqual({ winner: 0 });
   });
 
-  test("the map AI closes in and forces a battle", () => {
-    let world = createWorld(3, [squad, squad]);
-    for (let i = 0; i < 40 && !world.engagement; i++) {
-      world = applyWorldAction(world, chooseWorldAction(world)).world;
+  test("with the AI on both sides, a clearly stronger side marches on and wins the whole game", () => {
+    let world = createWorld(3, [army, squad]);
+    for (let i = 0; i < 600 && !world.outcome; i++) {
+      const battle = world.engagement?.battle;
+      world = battle ? concludeBattle(world, autoplay(battle)).world : applyWorldAction(world, chooseWorldAction(world)).world;
     }
-    expect(world.engagement).not.toBeNull();
-  });
+    expect(world.outcome).toEqual({ winner: 0 });
+  }, 60_000);
 });
