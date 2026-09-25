@@ -30,13 +30,8 @@ src/view/
 ```
 Imports use `#rules/…`, `#view/…`, `#tests/…` (package.json `imports`), never `../`.
 
-## Recipes
-- **A new ability.** Add a behavior to the right `abilities/<faction>.ts`: `active` with `tags`, `defaults` (params such as `power`, `charges`), `choices` and `resolve`; or `passive` with `hooks`. Deal damage through `ctx.hit(self.unitId, targets, ctx.hitSpec(self, tags))`. Add its rules text to `view/text.ts` (written from params) and a test. A variant is usually the same behavior with other params on the unit (`{ id, params, name }`), not new code.
-- **A new effect.** Add a definition to `effects.ts`: stacking, lifetime, visibility, `quiet` if the view shouldn't announce it, hooks, and `aiValue` if the AI should care. Apply it with `ctx.addEffect(target, { def, source, amount, stacks })`.
-- **A new mechanic that needs a new hook point.** Add the hook to `Hooks` in `battle/types.ts` and call it from one place in the engine or the damage pipeline. That's the only reason to touch the engine.
-- **World → battle.** Anything the world gives a battle (a node, an item, a spell on a warband) becomes effects: side-wide through `BattleContext.sideEffects`, or per unit through `Placement.effects`.
-- **A new node kind.** Add it to `nodes.ts` (income, battle effects) and give the map view a model for it.
-- **A new unit.** Add it to `units/<faction>.ts`, and to `EVOLUTIONS` / `FACTION_ROOTS` in `units/index.ts` if it's in a tree. Add a figure in `view/figures.ts`.
+## Adding content
+The step-by-step recipes (units, abilities, effects, nodes, forks, recording the user's design first) live in the `add-content` skill (`.claude/skills/add-content/SKILL.md`), so they come up whenever content is added.
 
 ## Conventions
 - `applyAction` / `applyWorldAction` structuredClone the state, mutate the draft, and return `{ state, events }`. Events drive animation and the log. Everything is plain data, which is why the AI can run in a worker and battles can be forecast.
