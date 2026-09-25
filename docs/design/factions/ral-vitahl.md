@@ -20,3 +20,5 @@ Support units restore shields instead of health, meaning what they get countered
 Reference: check the "Storm" magic keyword — a lot of combo play, countering enemy plans.
 
 Spells: mostly nuke.
+
+First units (user, 2026-09-25): see `../units/nexus-tier1.md`.
