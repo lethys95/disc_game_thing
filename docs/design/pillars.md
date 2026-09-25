@@ -85,3 +85,18 @@ Overworld spells, cast on the map (HoMM3-ish), paid in typed mana. Not combat ab
 
 ## Not porting from D2
 Morale · rod arc system · thief class (RNG; may return as leader upgrade paths) · corruption/purification · Capitol invincibility · faction player limits · hidden timers ("surprise, you were on a clock").
+
+## Leader tree v1 (user, 2026-09-25)
+One shared tree to begin with ("we can explore the other stuff later"; per-unit trees are possible eventually). Keep it simple:
+- **Extra overworld movement.**
+- **+10% health.**
+- **+1 Leadership** = +1 unit in the squad. Max Leadership 9 (the full 3x3 grid, leader included).
+- **"Leader heals the squad a little each turn"** (Claude decides passive or action).
+- At the end of the tree: a **leadership aura**, e.g. the squad deals +5% damage.
+Games aren't expected to last long enough to fill the whole tree.
+
+## Doctrines are per tree, not per faction (user, 2026-09-25)
+The dichotomies are **thematic**, not a faction-wide lock. D2's elves are roughly wild vs nobility, but you can go wild in one tree and noble in another. "Just because I as a Jilliath player go faith in melee, doesn't mean I want faith in support." Each line's fork is chosen independently; the faction's dichotomy flavors the pairs. (This matches the canon branch-investment page: commitments are per divergence point and "do not affect independent evolution lines".)
+
+## The Capitol screen and the economy: open (user, 2026-09-25)
+The Capitol screen holds units, upgrades (unlocking evolutions), spells (a spell tree later), and the rest. The user questions D2's model: city upgrades are "insanely expensive", they lock you in place and push you back, and losing units is expensive too. Unit evolution stays, but should unlocks cost gold at all? What else is gold for? Being sparred on (see decisions.md once settled).
