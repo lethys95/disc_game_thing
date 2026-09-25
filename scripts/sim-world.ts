@@ -1,6 +1,9 @@
 import { autoplay } from "#rules/ai";
-import { applyWorldAction, chooseWorldAction, concludeBattle, createWorld } from "#rules/world";
-import type { WorldAction } from "#rules/world";
+import { applyWorldAction } from "#rules/world/actions";
+import { chooseWorldAction } from "#rules/world/ai";
+import { concludeBattle } from "#rules/world/battles";
+import { createWorld } from "#rules/world/create";
+import type { WorldAction } from "#rules/world/state";
 import { doctrine } from "#rules/doctrine";
 import type { Playable } from "#rules/units/index";
 import { NEXUS_PRESETS, PRESETS } from "#view/squads";

@@ -21,7 +21,7 @@ type Debug = {
   hexScreen: (q: number, r: number) => { x: number; y: number };
   leaderHex: (side: 0 | 1) => Hex | null;
 };
-const debug = <T>(fn: (d: Debug) => T) => page.evaluate(fn as never) as Promise<T>;
+
 const visible = (sel: string) => page.evaluate((s) => { const el = document.querySelector(s); return !!el && !(el as HTMLElement).hidden && !(el as HTMLElement).closest("[hidden]"); }, sel);
 
 let battles = 0;
@@ -44,7 +44,7 @@ for (let step = 0; step < 200; step++) {
     await page.waitForTimeout(500);
     continue;
   }
-  const enemy = await debug((d) => (window as unknown as { discDebug: Debug }).discDebug.leaderHex(1));
+  const enemy = await page.evaluate(() => (window as unknown as { discDebug: Debug }).discDebug.leaderHex(1));
   if (!enemy) break;
   const point = await page.evaluate((h) => (window as unknown as { discDebug: Debug }).discDebug.hexScreen(h.q, h.r), enemy);
   await page.mouse.move(point.x, point.y);

@@ -6,16 +6,13 @@ import { neighbors, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { stepCost } from "#rules/map";
 import { grow, xpValue } from "#rules/progression";
-import {
-  applyWorldAction,
-  capitolOf,
-  concludeBattle,
-  createWorld,
-  leaderById,
-  RESURRECTION_BASE,
-  resurrectionCost,
-} from "#rules/world";
-import type { Leader, World } from "#rules/world";
+import { RESURRECTION_BASE } from "#rules/balance";
+import { applyWorldAction } from "#rules/world/actions";
+import { concludeBattle } from "#rules/world/battles";
+import { createWorld } from "#rules/world/create";
+import { resurrectionCost } from "#rules/world/economy";
+import { capitolOf, leaderById } from "#rules/world/state";
+import type { Leader, World } from "#rules/world/state";
 import { describe, expect, test } from "vitest";
 
 const uncommitted = doctrine("jilliath", "uncommitted").commitment;

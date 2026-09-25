@@ -5,20 +5,15 @@ import type { Hex } from "#rules/hex";
 import { findPath, generateMap, stepCost, TERRAIN_COST } from "#rules/map";
 import { doctrine } from "#rules/doctrine";
 import { GUARDIAN_ID } from "#rules/units/index";
-import {
-  applyWorldAction,
-  CAPITOL_INCOME,
-  capitolOf,
-  chooseWorldAction,
-  concludeBattle,
-  createWorld,
-  income,
-  leaderById,
-  MINE_INCOME,
-  planMove,
-  STARTING_GOLD,
-} from "#rules/world";
-import type { Leader, World } from "#rules/world";
+import { CAPITOL_INCOME, MINE_INCOME, STARTING_GOLD } from "#rules/balance";
+import { applyWorldAction } from "#rules/world/actions";
+import { chooseWorldAction } from "#rules/world/ai";
+import { concludeBattle } from "#rules/world/battles";
+import { createWorld } from "#rules/world/create";
+import { income } from "#rules/world/economy";
+import { planMove } from "#rules/world/movement";
+import { capitolOf, leaderById } from "#rules/world/state";
+import type { Leader, World } from "#rules/world/state";
 import { describe, expect, test } from "vitest";
 
 const squad: Placement[] = [

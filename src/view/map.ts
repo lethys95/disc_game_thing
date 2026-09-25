@@ -4,7 +4,7 @@ import { hexKey } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import type { Terrain, WorldMap } from "#rules/map";
 import { UNITS } from "#rules/units/index";
-import type { City, Leader, World } from "#rules/world";
+import type { City, Leader, World } from "#rules/world/state";
 import { buildFigure, PALETTES } from "#view/figures";
 import type { CameraPose, Stage } from "#view/stage";
 

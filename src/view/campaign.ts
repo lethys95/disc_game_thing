@@ -7,26 +7,15 @@ import type { Commitment } from "#rules/doctrine";
 import { nextForm, xpToEvolve } from "#rules/progression";
 import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
 import type { Branch, Playable } from "#rules/units/index";
-import {
-  applyWorldAction,
-  capitolOf,
-  chooseWorldAction,
-  cityById,
-  concludeBattle,
-  createWorld,
-  elevateProblem,
-  forecast,
-  income,
-  investProblem,
-  lairById,
-  leaderAt,
-  planMove,
-  reachable,
-  recruitProblem,
-  resurrectionCost,
-  resurrectProblem,
-} from "#rules/world";
-import type { Leader, MovePlan, MoveTarget, RecruitInto, SquadMember, World, WorldAction, WorldEvent } from "#rules/world";
+import { applyWorldAction } from "#rules/world/actions";
+import { chooseWorldAction } from "#rules/world/ai";
+import { concludeBattle, forecast } from "#rules/world/battles";
+import { createWorld } from "#rules/world/create";
+import { elevateProblem, income, investProblem, recruitProblem, resurrectionCost, resurrectProblem } from "#rules/world/economy";
+import { planMove, reachable } from "#rules/world/movement";
+import { capitolOf, cityById, lairById, leaderAt } from "#rules/world/state";
+import type { MovePlan, MoveTarget } from "#rules/world/movement";
+import type { Leader, RecruitInto, SquadMember, World, WorldAction, WorldEvent } from "#rules/world/state";
 import type { App } from "#view/app";
 import type { MapView } from "#view/map";
 import type { Squads } from "#view/setup";
