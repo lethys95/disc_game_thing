@@ -1,5 +1,5 @@
 import { chooseAction } from "#rules/ai";
-import { actionsPerRound, applyAction, createBattle, effectiveStats, legalActions } from "#rules/battle";
+import { actionsPerRound, applyAction, createBattle, effectiveStats, legalActions, PUNISHMENT_MAX_STACKS } from "#rules/battle";
 import type { Placement } from "#rules/battle";
 import type { Battle, BattleEvent, Col, Row } from "#rules/types";
 import { squadProblems } from "#rules/doctrine";
@@ -135,6 +135,16 @@ describe("Jilliath abilities", () => {
     const stats = effectiveStats(battle, "1.0.0");
     expect(stats.damage).toBe(20 + 30 - 10);
     expect(actionsPerRound(stats.initiative)).toBe(2);
+  });
+
+  test("Punishment stops stacking at its cap", () => {
+    let battle = start([p("punisher", 0, 1)], [p("immortal", 0, 1)]);
+    for (let i = 0; i < 5; i++) {
+      battle = act(battle, "flail", "1.0.1").battle;
+      if (current(battle) !== "0.0.1") battle = act(battle, "defend").battle;
+    }
+    const stats = effectiveStats(battle, "1.0.1");
+    expect(stats.damage).toBe(80 - 10 * PUNISHMENT_MAX_STACKS);
   });
 
   test("Torturer: half the damage becomes bleed that ticks at the start of the victim's turn", () => {

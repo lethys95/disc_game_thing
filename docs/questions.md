@@ -16,12 +16,12 @@ The user is in a "suggest" role: they answer when they have time, so nothing her
 11. Route A (rigid-part 3D statues) vs Route B (painted animated sprites in a 3D world, like D2): plan is a bake-off with one unit, but if you already lean one way, say so.
 
 ## Capitol and economy (provisional answers in `src/rules/world.ts`, `units.ts`)
-12. **Punishment balance** (user: "we just need to balance Punishment better"). Proposal: cap Punishment at 3 stacks (−30 damage / −30 initiative), tuned by sim. It changes the canon "stackable per hit" rule, so it waits for an OK. Guardian stats are provisional: 1500 HP, 80 damage, 25 armor, 60 initiative.
+12. Punishment balance: **done** (user OK, 2026-09-25): capped at 3 stacks. With the cap, the provisional Guardian (1500 HP / 80 / 25 / 60) beats Congregant armies and most mid-tier presets, and falls to fully evolved armies of every doctrine (`pnpm sim` style check).
 13. Economy: 100 starting gold, Capitol +50/turn, each gold mine +25/turn, Congregant 40 (canon). Units resting in their own Capitol heal 25% of max HP per turn. Elevation is free. Neutral cities start unguarded. All placeholders.
 14. Only tier-1 units can be recruited (D2 style), so Jilliath recruits only Congregants; the rest must come from evolution (M4). Right?
 
 ## Progression (M4; provisional answers in `src/rules/progression.ts`, `doctrine.ts`, `world.ts`)
-15. XP sources: answered (user, 2026-09-25): neutral groups on the map, guarded neutral cities, guarded dungeons (see `design/pillars.md`). Open: **may neutral groups use plainly labelled placeholder units** until the user designs neutrals?
+15. XP sources: answered (user, 2026-09-25): neutral groups on the map, guarded neutral cities, guarded dungeons (`design/pillars.md`). Neutral units: the user's bandits (`design/units/neutrals-bandits.md`); plainly labelled placeholders are OK for anything else.
 16. Numbers: XP to evolve 100/250/500/1000 by tier; a unit is worth maxHP/2 + damage + armor; evolving resets XP and heals to full; investing costs 150 at the tier-2 fork and 300 at the tier-3 fork; resurrection costs 40 × tier, 3× that if done at once and minus one base per turn waited; resurrected units return at 1 HP.
 
 ## Naming

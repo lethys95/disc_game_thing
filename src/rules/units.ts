@@ -9,7 +9,7 @@ const kit = (...ids: string[]) => ids.map((id) => ({ id }));
 export const UNITS: Readonly<Record<string, UnitDef>> = {
   capitol_guardian: {
     id: "capitol_guardian", name: "Capitol Guardian", tier: 0, damageType: "weapon",
-    // Provisional, tuned by simulation to beat any single starting squad except Punishment's (docs/questions.md).
+    // Provisional, tuned by simulation: beats early and most mid armies, falls to fully evolved ones.
     stats: { maxHp: 1500, damage: 80, armor: 25, initiative: 60 },
     abilities: kit("attack", "defend", "wait"),
   },

@@ -26,12 +26,14 @@ const squad: Placement[] = [
   { defId: "congregant", tile: { row: 1, col: 1 } },
 ];
 
-/** Punishers grind a lone Guardian down (docs/questions.md #12), so this army can take a Capitol. */
+/** A fully evolved army: early and mid armies lose to a Guardian, late ones win (tuned by simulation). */
 const army: Placement[] = [
-  { defId: "punisher", tile: { row: 0, col: 0 } },
-  { defId: "punisher", tile: { row: 0, col: 1 } },
-  { defId: "punisher", tile: { row: 0, col: 2 } },
-  { defId: "torturer", tile: { row: 1, col: 1 } },
+  { defId: "torturer", tile: { row: 0, col: 0 } },
+  { defId: "torturer", tile: { row: 0, col: 1 } },
+  { defId: "torturer", tile: { row: 0, col: 2 } },
+  { defId: "punisher", tile: { row: 1, col: 0 } },
+  { defId: "punisher", tile: { row: 1, col: 1 } },
+  { defId: "punisher", tile: { row: 1, col: 2 } },
 ];
 
 const both = (doctrine: keyof typeof DOCTRINES) => [DOCTRINES[doctrine].commitment, DOCTRINES[doctrine].commitment] as const;

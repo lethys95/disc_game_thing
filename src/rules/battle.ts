@@ -27,6 +27,9 @@ export interface Step {
   readonly events: readonly BattleEvent[];
 }
 
+/** Punishment stacks at most this deep (user, 2026-09-25: balance it; the cap itself is provisional). */
+export const PUNISHMENT_MAX_STACKS = 3;
+
 /** Initiative per action in a round; provisional balance constant (docs/design/combat.md). */
 export const INITIATIVE_PER_ACTION = 15;
 
@@ -345,7 +348,7 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
     const target = unit(targetId);
     if (!target.alive) return;
     const existing = target.effects.find((e) => e.kind === effect.kind);
-    if (existing?.kind === "punished" && effect.kind === "punished") existing.stacks += effect.stacks;
+    if (existing?.kind === "punished" && effect.kind === "punished") existing.stacks = Math.min(PUNISHMENT_MAX_STACKS, existing.stacks + effect.stacks);
     else if (existing?.kind === "bleeding" && effect.kind === "bleeding") existing.perTurn += effect.perTurn;
     else if (!existing) target.effects.push({ ...effect });
     ctx.emit({ type: "effect", unitId: targetId, effect: effect.kind });
