@@ -38,14 +38,14 @@ describe("initiative", () => {
     expect([10, 15, 40, 50, 60].map(actionsPerRound)).toEqual([1, 1, 2, 3, 4]);
   });
 
-  test("passes interleave: everyone acts once before anyone acts twice", () => {
+  test("passes interleave, and the side that wins initiative ties alternates every pass", () => {
     let battle = start([p("paladin", 0, 0)], [p("paladin", 0, 0)]);
     const order: string[] = [];
     for (let i = 0; i < 4; i++) {
       order.push(current(battle));
       battle = act(battle, "defend").battle;
     }
-    expect(order).toEqual(["0.0.0", "1.0.0", "0.0.0", "1.0.0"]);
+    expect(order).toEqual(["0.0.0", "1.0.0", "1.0.0", "0.0.0"]);
   });
 
   test("wait moves the unit to the end of the pass, once", () => {
@@ -107,6 +107,8 @@ describe("Jilliath abilities", () => {
     let battle = start([p("paladin", 0, 0)], [p("zealot", 0, 0)]);
     battle = act(battle, "defend").battle;
     battle = act(battle, "attack", "0.0.0").battle;
+    battle = act(battle, "attack", "0.0.0").battle;
+    expect(hp(battle, "0.0.0")).toBe(100);
     battle = act(battle, "lay_on_hands").battle;
     expect(hp(battle, "0.0.0")).toBe(150);
     expect(current(battle)).toBe("0.0.0");
@@ -145,13 +147,8 @@ describe("Jilliath abilities", () => {
     let battle = start([p("torturer", 0, 0)], [p("congregant", 0, 0), p("congregant", 2, 1)]);
     battle = act(battle, "hook", "1.2.1").battle;
     expect(battle.units["1.2.1"]?.tile).toEqual({ row: 0, col: 1 });
-    battle = act(battle, "defend").battle;
-    const turns = [];
-    for (let i = 0; i < 2; i++) {
-      turns.push(current(battle));
-      battle = act(battle, "defend").battle;
-    }
-    expect(turns).not.toContain("1.2.1");
+    const step = act(battle, "defend");
+    expect(step.events).toContainEqual({ type: "skipped", unitId: "1.2.1", reason: "stunned" });
   });
 
   test("Hysteria: a kill grants a free extra attack at double self-damage", () => {

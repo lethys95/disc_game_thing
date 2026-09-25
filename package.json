@@ -7,7 +7,8 @@
     "build": "vite build",
     "test": "vitest run",
     "typecheck": "tsc",
-    "shot": "tsx scripts/shot.ts"
+    "shot": "tsx scripts/shot.ts",
+    "playtest": "tsx scripts/playtest.ts"
   },
   "devEngines": {
     "packageManager": {

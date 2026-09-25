@@ -3,14 +3,21 @@
   <head>
     <meta charset="utf-8" />
     <title>disc</title>
-    <style>
-      html, body { margin: 0; height: 100%; background: #111; overflow: hidden; }
-      canvas { display: block; }
-      #hud { position: fixed; top: 12px; left: 12px; color: #ddd; font: 14px system-ui, sans-serif; }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
-    <div id="hud"></div>
+    <div id="stage"></div>
+    <div id="turns"></div>
+    <div id="card" class="panel" hidden></div>
+    <div id="log" class="panel"></div>
+    <div id="bottom">
+      <div id="hint"></div>
+      <div id="actions"></div>
+    </div>
+    <div id="banner" hidden></div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

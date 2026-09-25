@@ -1,38 +1,24 @@
-import * as THREE from "three";
+import { App } from "#view/app";
+import { BattleScene } from "#view/scene";
+import { DEFAULT_SQUAD } from "#view/squads";
 
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+const params = new URLSearchParams(window.location.search);
+const host = document.getElementById("stage");
+if (!host) throw new Error("missing #stage");
 
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x1a1d22);
-scene.add(new THREE.HemisphereLight(0xdde6ff, 0x302820, 1.2));
-const sun = new THREE.DirectionalLight(0xffffff, 2);
-sun.position.set(4, 8, 3);
-scene.add(sun);
-
-const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
-camera.position.set(0, 7, 7);
-camera.lookAt(0, 0, 0);
-
-const hex = new THREE.CylinderGeometry(0.95, 0.95, 0.25, 6);
-for (let q = -2; q <= 2; q++) {
-  for (let r = -2; r <= 2; r++) {
-    if (Math.abs(q + r) > 2) continue;
-    const tile = new THREE.Mesh(hex, new THREE.MeshStandardMaterial({ color: (q + r) % 2 ? 0x4f7a4a : 0x6b8f5a }));
-    tile.position.set(Math.sqrt(3) * (q + r / 2), 0, 1.5 * r);
-    scene.add(tile);
-  }
-}
-
-document.getElementById("hud")!.textContent = "disc — scaffold";
-
-window.addEventListener("resize", () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
+const scene = new BattleScene(host);
+const app = new App(scene, {
+  playerSide: params.get("auto") === "1" ? null : 0,
+  fastForward: Number(params.get("steps") ?? 0),
+  squads: [DEFAULT_SQUAD, DEFAULT_SQUAD],
 });
-
-renderer.setAnimationLoop(() => renderer.render(scene, camera));
+app.start();
+if (params.has("debug")) {
+  Object.assign(window, {
+    discDebug: {
+      tileScreen: (side: 0 | 1, row: 0 | 1 | 2, col: 0 | 1 | 2) => scene.screenPoint({ side, tile: { row, col } }),
+      log: () => [...document.querySelectorAll("#log .entry")].map((e) => e.textContent),
+    },
+  });
+}
 document.body.dataset.ready = "true";

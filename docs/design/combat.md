@@ -36,7 +36,7 @@ A pattern marks *which tiles can be chosen* (select one) or *which tiles are hit
 - **Hook's "clear path"** is checked in the enemy grid only: the target's front tile must be empty, and Hook grabs the first unit behind it. The Torturer's own column doesn't matter.
 - **Fanaticism Aura** gives every unit Fanaticism (self-damage) and Hysteria and forbids Defend, as the spec lists. It does not force everyone to attack.
 - **Devotion Aura** stacks if two Templars/Immortals are adjacent to the same unit, and "adjacent" means orthogonally adjacent.
-- **Turn-order ties** (equal initiative): side 0 first, then front row to back, then column.
+- **Turn-order ties** (equal initiative): the sides alternate unit by unit (front row to back, then column, within a side), and the side that leads the tie swaps every pass. Originally side 0 simply went first, but in a mirror match that let the player's whole squad act before the enemy every pass.
 - **Stun** skips the next turn slot; **Defend** ends when the unit's next slot starts; **bleed** ticks at the start of each of the victim's slots.
 
 ## Balance observations

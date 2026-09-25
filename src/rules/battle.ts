@@ -215,18 +215,39 @@ function startPass(ctx: Ctx): void {
   const battle = ctx.battle;
   battle.pass += 1;
   battle.waitedThisPass = [];
-  battle.queue = ctx
+  battle.queue = passOrder(ctx, battle.pass);
+}
+
+/**
+ * Fastest first. Equal initiative alternates between the sides, and the side that leads a tie swaps every
+ * pass, so neither side gets a standing first-move advantage (provisional, docs/design/combat.md).
+ */
+function passOrder(ctx: Ctx, pass: number): string[] {
+  const battle = ctx.battle;
+  const lead: Side = (battle.round + pass) % 2 === 0 ? 0 : 1;
+  const acting = ctx
     .living()
-    .filter((u) => (battle.actionsThisRound[u.id] ?? 0) >= battle.pass)
+    .filter((u) => (battle.actionsThisRound[u.id] ?? 0) >= pass)
     .map((u) => ({ u, initiative: ctx.stats(u.id).initiative }))
-    .sort(
-      (a, b) =>
-        b.initiative - a.initiative ||
-        a.u.side - b.u.side ||
-        a.u.tile.row - b.u.tile.row ||
-        a.u.tile.col - b.u.tile.col,
-    )
-    .map(({ u }) => u.id);
+    .sort((a, b) => a.u.tile.row - b.u.tile.row || a.u.tile.col - b.u.tile.col);
+  const speeds = [...new Set(acting.map((a) => a.initiative))].sort((a, b) => b - a);
+  return speeds.flatMap((speed) => {
+    const tied = acting.filter((a) => a.initiative === speed);
+    const first = tied.filter((a) => a.u.side === lead);
+    const second = tied.filter((a) => a.u.side !== lead);
+    return Array.from({ length: Math.max(first.length, second.length) }, (_, i) => [first[i], second[i]])
+      .flat()
+      .flatMap((a) => (a ? [a.u.id] : []));
+  });
+}
+
+/** Slots still to come this round. Later passes are a forecast: Wait and initiative changes can reorder them. */
+export function upcomingSlots(battle: Battle): string[] {
+  const ctx = makeCtx(battle, []);
+  const order = battle.current ? [battle.current.unitId, ...battle.queue] : [...battle.queue];
+  const most = Math.max(0, ...ctx.living().map((u) => battle.actionsThisRound[u.id] ?? 0));
+  for (let pass = battle.pass + 1; pass <= most; pass++) order.push(...passOrder(ctx, pass));
+  return order;
 }
 
 function checkOutcome(ctx: Ctx): void {
