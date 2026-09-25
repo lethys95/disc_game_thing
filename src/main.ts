@@ -1,18 +1,42 @@
+import { createBattle } from "#rules/battle";
 import { App } from "#view/app";
 import { BattleScene } from "#view/scene";
-import { DEFAULT_SQUAD } from "#view/squads";
+import { Setup } from "#view/setup";
+import { PRESETS } from "#view/squads";
 
 const params = new URLSearchParams(window.location.search);
-const host = document.getElementById("stage");
-if (!host) throw new Error("missing #stage");
+const byId = (id: string) => {
+  const el = document.getElementById(id);
+  if (!el) throw new Error(`missing #${id}`);
+  return el;
+};
 
-const scene = new BattleScene(host);
-const app = new App(scene, {
-  playerSide: params.get("auto") === "1" ? null : 0,
-  fastForward: Number(params.get("steps") ?? 0),
-  squads: [DEFAULT_SQUAD, DEFAULT_SQUAD],
+const scene = new BattleScene(byId("stage"));
+const app: App = new App(scene, { onSetup: () => showSetup() });
+const setup = new Setup(byId("setup"), {
+  onChange: (squads) => {
+    scene.reset();
+    scene.sync(createBattle(squads).battle);
+  },
+  onFight: (squads, playerSide) => {
+    setup.hide();
+    app.start(squads, playerSide);
+  },
 });
-app.start();
+
+function showSetup(): void {
+  app.stop();
+  setup.show();
+}
+
+// Screenshots and playtests skip the setup screen and start straight into a battle.
+if (params.has("steps") || params.has("auto") || params.has("fight")) {
+  setup.hide();
+  app.start([PRESETS.preserve, PRESETS.punishment], params.get("auto") === "1" ? null : 0, Number(params.get("steps") ?? 0));
+} else {
+  showSetup();
+}
+
 if (params.has("debug")) {
   Object.assign(window, {
     discDebug: {

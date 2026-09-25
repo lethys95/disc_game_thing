@@ -2,6 +2,8 @@ import { chooseAction } from "#rules/ai";
 import { actionsPerRound, applyAction, createBattle, effectiveStats, legalActions } from "#rules/battle";
 import type { Placement } from "#rules/battle";
 import type { Battle, BattleEvent, Col, Row } from "#rules/types";
+import { squadProblems } from "#rules/doctrine";
+import { COLS, ROWS } from "#rules/grid";
 import { describe, expect, test } from "vitest";
 
 const p = (defId: string, row: Row, col: Col): Placement => ({ defId, tile: { row, col } });
@@ -206,5 +208,16 @@ describe("whole battles", () => {
     const second = autoplay(start(squad, squad));
     expect(first.outcome).not.toBeNull();
     expect(second).toEqual(first);
+  });
+});
+
+describe("doctrine", () => {
+  test("a squad may only field units from its doctrine, at most six", () => {
+    const preserve = [p("congregant", 0, 0), p("paladin", 0, 1)];
+    expect(squadProblems(preserve, "preserve")).toEqual([]);
+    expect(squadProblems([...preserve, p("zealot", 1, 1)], "preserve")).toEqual(["outsideDoctrine"]);
+    expect(squadProblems([], "sacrifice")).toEqual(["empty"]);
+    const seven = ROWS.flatMap((row) => COLS.map((col) => p("congregant", row, col))).slice(0, 7);
+    expect(squadProblems(seven, "punishment")).toEqual(["tooMany"]);
   });
 });

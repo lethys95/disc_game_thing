@@ -1,36 +1,54 @@
 import { chooseAction } from "#rules/ai";
 import { applyAction, createBattle, legalActions } from "#rules/battle";
-import type { Placement } from "#rules/battle";
 import { sameTile } from "#rules/grid";
-import type { Action, Battle, LegalAbility, Side, TargetChoice } from "#rules/types";
-import { Hud } from "#view/hud";
-import type { BattleScene, TileRef } from "#view/scene";
+import type { Action, Battle, BattleEvent, LegalAbility, Side, TargetChoice } from "#rules/types";
+import { Hud, unitLabel } from "#view/hud";
+import type { BattleScene, PreviewMark, TileRef } from "#view/scene";
+import type { Squads } from "#view/setup";
 
 export interface AppOptions {
-  /** The side the human plays; null watches the AI play both sides. */
-  readonly playerSide: Side | null;
-  /** AI moves to apply instantly before the first frame (for screenshots). */
-  readonly fastForward: number;
-  readonly squads: readonly [readonly Placement[], readonly Placement[]];
+  readonly onSetup: () => void;
+}
+
+interface Preview {
+  readonly key: string;
+  readonly marks: readonly PreviewMark[];
+  readonly summary: string;
 }
 
 const AI_DELAY_MS = 450;
 
 const matches = (choice: TargetChoice, ref: TileRef) => choice.anchor.side === ref.side && sameTile(choice.anchor.tile, ref.tile);
 
+/** The consequences of one action: everything before the next unit's turn begins. */
+function ownEvents(events: readonly BattleEvent[]): readonly BattleEvent[] {
+  const end = events.findIndex((e) => e.type === "turnStart");
+  return end < 0 ? events : events.slice(0, end);
+}
+
 export class App {
-  private battle: Battle;
+  private battle: Battle | null = null;
+  private squads: Squads = [[], []];
+  private playerSide: Side | null = 0;
   private selected: string | null = null;
   private hovered: TileRef | null = null;
+  private preview: Preview | null = null;
   private busy = false;
+  /** Bumped on every start/stop so a turn still animating from an old battle can't touch the new one. */
+  private generation = 0;
+  private timer: number | undefined;
   private readonly hud: Hud;
 
   constructor(
     private readonly scene: BattleScene,
     private readonly options: AppOptions,
   ) {
-    this.hud = new Hud({ onAbility: (id) => this.chooseAbility(id), onRestart: () => this.start() });
-    this.battle = createBattle(options.squads).battle;
+    this.hud = new Hud({
+      onAbility: (id) => this.chooseAbility(id),
+      onRestart: () => this.start(this.squads, this.playerSide),
+      onSetup: () => options.onSetup(),
+    });
+    this.hud.setVisible(false);
     const canvas = scene.renderer.domElement;
     canvas.addEventListener("pointermove", (e) => this.hover(e.clientX, e.clientY));
     canvas.addEventListener("click", () => this.click());
@@ -43,37 +61,53 @@ export class App {
     });
   }
 
-  start(): void {
-    const step = createBattle(this.options.squads);
-    this.battle = step.battle;
+  start(squads: Squads, playerSide: Side | null, fastForward = 0): void {
+    this.stop();
+    this.squads = squads;
+    this.playerSide = playerSide;
+    const step = createBattle(squads);
+    let battle = step.battle;
+    this.hud.setVisible(true);
     this.hud.clearLog();
-    this.hud.appendLog(step.events, step.battle, this.options.playerSide);
-    for (let i = 0; i < this.options.fastForward && !this.battle.outcome; i++) {
-      const action = chooseAction(this.battle);
+    this.hud.appendLog(step.events, battle, playerSide);
+    for (let i = 0; i < fastForward && !battle.outcome; i++) {
+      const action = chooseAction(battle);
       if (!action) break;
-      const next = applyAction(this.battle, action);
-      this.hud.appendLog(next.events, next.battle, this.options.playerSide);
-      this.battle = next.battle;
+      const next = applyAction(battle, action);
+      this.hud.appendLog(next.events, next.battle, playerSide);
+      battle = next.battle;
     }
-    this.scene.sync(this.battle);
+    this.battle = battle;
+    this.scene.reset();
+    this.scene.sync(battle);
     this.selectDefault();
     this.render();
     this.schedule();
   }
 
+  stop(): void {
+    this.generation += 1;
+    window.clearTimeout(this.timer);
+    this.battle = null;
+    this.busy = false;
+    this.preview = null;
+    this.scene.showPreview([]);
+    this.hud.setVisible(false);
+  }
+
   private playersTurn(): boolean {
-    const id = this.battle.current?.unitId;
-    const unit = id ? this.battle.units[id] : undefined;
-    return !this.busy && unit !== undefined && unit.side === this.options.playerSide;
+    const battle = this.battle;
+    const id = battle?.current?.unitId;
+    const unit = id ? battle?.units[id] : undefined;
+    return !this.busy && unit !== undefined && unit.side === this.playerSide;
   }
 
   private playerOptions(): LegalAbility[] {
-    return this.playersTurn() ? legalActions(this.battle) : [];
+    return this.battle && this.playersTurn() ? legalActions(this.battle) : [];
   }
 
   private selectDefault(): void {
-    const options = this.playerOptions();
-    const attack = options.find((o) => o.abilityId === "attack" || o.abilityId === "flail");
+    const attack = this.playerOptions().find((o) => o.abilityId === "attack" || o.abilityId === "flail");
     this.selected = attack?.abilityId ?? null;
   }
 
@@ -85,7 +119,7 @@ export class App {
     const option = this.playerOptions().find((o) => o.abilityId === abilityId);
     if (!option) return;
     const only = option.choices[0];
-    const self = this.battle.current?.unitId;
+    const self = this.battle?.current?.unitId;
     if (option.choices.length === 1 && only && self && only.affected.length === 1 && only.affected[0] === self) {
       void this.commit({ abilityId, choice: 0 });
       return;
@@ -95,16 +129,22 @@ export class App {
   }
 
   private hover(x: number, y: number): void {
+    if (!this.battle) return;
     this.hovered = this.scene.pick(x, y, this.battle);
     this.render();
   }
 
-  private click(): void {
+  private hoveredAction(): Action | null {
     const option = this.selectedOption();
     const hovered = this.hovered;
-    if (!option || !hovered) return;
+    if (!option || !hovered) return null;
     const choice = option.choices.findIndex((c) => matches(c, hovered));
-    if (choice >= 0) void this.commit({ abilityId: option.abilityId, choice });
+    return choice < 0 ? null : { abilityId: option.abilityId, choice };
+  }
+
+  private click(): void {
+    const action = this.hoveredAction();
+    if (action) void this.commit(action);
   }
 
   private cancel(): void {
@@ -113,13 +153,17 @@ export class App {
   }
 
   private async commit(action: Action): Promise<void> {
-    if (this.busy || this.battle.outcome) return;
+    const battle = this.battle;
+    if (!battle || this.busy || battle.outcome) return;
+    const generation = this.generation;
     this.busy = true;
+    this.preview = null;
     this.render();
-    const step = applyAction(this.battle, action);
-    this.hud.appendLog(step.events, step.battle, this.options.playerSide);
+    const step = applyAction(battle, action);
+    this.hud.appendLog(step.events, step.battle, this.playerSide);
     this.battle = step.battle;
     await this.scene.play(step.events, step.battle);
+    if (generation !== this.generation) return;
     this.busy = false;
     this.selectDefault();
     this.render();
@@ -127,51 +171,89 @@ export class App {
   }
 
   private schedule(): void {
-    if (this.battle.outcome || this.busy) return;
-    const id = this.battle.current?.unitId;
-    const unit = id ? this.battle.units[id] : undefined;
-    if (!unit || unit.side === this.options.playerSide) return;
-    window.setTimeout(() => {
+    const battle = this.battle;
+    if (!battle || battle.outcome || this.busy) return;
+    const id = battle.current?.unitId;
+    const unit = id ? battle.units[id] : undefined;
+    if (!unit || unit.side === this.playerSide) return;
+    const generation = this.generation;
+    this.timer = window.setTimeout(() => {
+      if (generation !== this.generation || !this.battle) return;
       const action = chooseAction(this.battle);
       if (action) void this.commit(action);
     }, AI_DELAY_MS);
   }
 
+  /** Runs the hovered action on a copy of the battle: with no randomness, the preview is exactly what will happen. */
+  private previewOf(battle: Battle, action: Action): Preview {
+    const key = `${action.abilityId}:${action.choice}`;
+    if (this.preview?.key === key) return this.preview;
+    const totals = new Map<string, { harm: number; heal: number; dies: boolean; spared: boolean }>();
+    const entry = (id: string) => {
+      const found = totals.get(id) ?? { harm: 0, heal: 0, dies: false, spared: false };
+      totals.set(id, found);
+      return found;
+    };
+    for (const event of ownEvents(applyAction(battle, action).events)) {
+      if (event.type === "damage") entry(event.unitId).harm += event.amount;
+      if (event.type === "heal") entry(event.unitId).heal += event.amount;
+      if (event.type === "death") entry(event.unitId).dies = true;
+      if (event.type === "deathPrevented") entry(event.unitId).spared = true;
+    }
+    const marks: PreviewMark[] = [];
+    const parts: string[] = [];
+    for (const [unitId, t] of totals) {
+      const unit = battle.units[unitId];
+      if (!unit) continue;
+      const change = t.harm > 0 ? `−${t.harm}` : t.heal > 0 ? `+${t.heal}` : "";
+      const fate = t.dies ? " †" : t.spared ? " (spared)" : "";
+      marks.push({ unitId, text: `${change}${fate}`, kind: t.dies ? "death" : t.heal > 0 ? "heal" : "harm" });
+      parts.push(`${unitLabel(unit, this.playerSide)} ${change}${t.dies ? ", dies" : t.spared ? ", spared" : ""}`);
+    }
+    this.preview = { key, marks, summary: parts.join(" · ") };
+    return this.preview;
+  }
+
   private render(): void {
     const battle = this.battle;
-    const playerSide = this.options.playerSide;
+    if (!battle) return;
+    const playerSide = this.playerSide;
     const currentId = battle.current?.unitId ?? null;
     const current = currentId ? battle.units[currentId] : undefined;
     const option = this.selectedOption();
-    const hovered = this.hovered;
-    const hoveredChoice = option && hovered ? option.choices.find((c) => matches(c, hovered)) : undefined;
+    const action = this.hoveredAction();
+    const hoveredChoice = action ? option?.choices[action.choice] : undefined;
     const affected = (hoveredChoice?.affected ?? []).flatMap((id) => {
       const unit = battle.units[id];
       return unit ? [{ side: unit.side, tile: unit.tile }] : [];
     });
+    const preview = action ? this.previewOf(battle, action) : null;
+    if (!action) this.preview = null;
 
     this.scene.setHighlights({
       current: current ? { side: current.side, tile: current.tile } : null,
       candidates: option ? option.choices.map((c) => c.anchor) : [],
       affected,
     });
+    this.scene.showPreview(preview?.marks ?? []);
 
+    const hovered = this.hovered;
     const inspected = hovered
       ? Object.values(battle.units).find((u) => u.alive && u.side === hovered.side && sameTile(u.tile, hovered.tile))
       : undefined;
     this.hud.renderTurns(battle, playerSide);
     this.hud.renderCard(battle, inspected?.id ?? currentId, playerSide);
-    this.hud.renderActions(this.playerOptions(), this.selected, this.playersTurn());
+    this.hud.renderActions(battle, this.playerOptions(), this.selected, this.playersTurn());
     this.hud.showOutcome(battle, playerSide);
-    this.hud.setHint(this.hint(option));
+    this.hud.setHint(preview ? `${option?.name}: ${preview.summary}` : this.hint(option));
     this.scene.renderer.domElement.style.cursor = hoveredChoice ? "pointer" : "default";
   }
 
   private hint(option: LegalAbility | undefined): string {
-    if (this.battle.outcome) return "";
-    if (this.busy) return "";
-    if (!this.playersTurn()) return this.options.playerSide === null ? "The AI plays both sides." : "The enemy is acting…";
-    const name = this.battle.current ? this.battle.units[this.battle.current.unitId]?.name : undefined;
+    const battle = this.battle;
+    if (!battle || battle.outcome || this.busy) return "";
+    if (!this.playersTurn()) return this.playerSide === null ? "The AI plays both sides." : "The enemy is acting…";
+    const name = battle.current ? battle.units[battle.current.unitId]?.name : undefined;
     if (!option) return `${name}: choose an action.`;
     return `${name}: choose a target for ${option.name}. Right-click to cancel.`;
   }

@@ -95,3 +95,52 @@ button.action .tag { font: 600 9px var(--text); text-transform: uppercase; lette
 .float.effect { color: #c9a0f0; font-size: 15px; }
 .float.spared { color: #e8c877; font-size: 17px; }
 @keyframes rise { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-38px); opacity: 0; } }
+
+.preview { font: 700 17px var(--display); text-shadow: 0 1px 4px #000, 0 0 8px #000; white-space: nowrap; }
+.preview.harm { color: #f0e0cc; }
+.preview.heal { color: #e8c877; }
+.preview.death { color: #ff5a44; }
+
+#setup {
+  position: fixed; inset: 0; display: flex; flex-direction: column; justify-content: space-between;
+  pointer-events: none; padding: 18px;
+}
+#setup[hidden] { display: none; }
+#setup > * { pointer-events: auto; }
+.setup-header { text-align: center; align-self: center; text-shadow: 0 2px 6px #000; }
+.setup-header .title { font: 700 40px var(--display); letter-spacing: 0.08em; }
+.setup-header .subtitle { color: var(--muted); }
+.setup-body { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; }
+.setup-body .panel { padding: 12px 14px; }
+.squad { width: 290px; cursor: default; opacity: 0.85; }
+.squad.active { opacity: 1; border-color: #9b7c52; }
+.squad .title, .palette .title { font: 700 20px var(--display); }
+.squad .doctrines { display: flex; flex-direction: column; gap: 3px; margin: 8px 0 10px; }
+button.doctrine {
+  font: 500 14px var(--display); text-align: left; color: var(--muted); background: #171311; border: 1px solid #2c2622;
+  padding: 4px 8px; cursor: pointer;
+}
+button.doctrine.selected { color: var(--ink); border-color: var(--blood); }
+.squad .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+button.cell {
+  height: 44px; font: 600 11px var(--text); color: var(--ink); background: #141110; border: 1px dashed #3a2e28; cursor: pointer;
+}
+button.cell.filled { border-style: solid; background: #221b17; }
+button.cell.front { border-color: #6b2a20; }
+button.cell:hover { border-color: #9b7c52; }
+.squad .count { color: var(--muted); font-size: 11px; margin-top: 6px; }
+.palette { width: 330px; max-height: 58vh; overflow-y: auto; }
+.palette .subtitle { color: var(--muted); font-size: 11px; margin-bottom: 8px; }
+button.recruit {
+  display: block; width: 100%; text-align: left; margin-bottom: 4px; padding: 6px 8px; color: var(--ink);
+  background: #171311; border: 1px solid #2c2622; cursor: pointer; font: 12px var(--text);
+}
+button.recruit.selected { border-color: var(--blood); box-shadow: 0 0 10px rgba(192, 40, 28, 0.4); }
+button.recruit .head { display: flex; justify-content: space-between; }
+button.recruit .name { font: 700 16px var(--display); }
+button.recruit .tier, button.recruit .stats { color: var(--muted); font-size: 11px; }
+button.recruit .abilities { color: #b9a98c; font-size: 11px; }
+.setup-footer { display: flex; gap: 16px; align-items: center; justify-content: center; align-self: center; }
+.setup-footer .mode { color: var(--muted); }
+button.action.fight { font-size: 22px; padding: 8px 40px; }
+button.action:disabled { opacity: 0.4; cursor: not-allowed; }

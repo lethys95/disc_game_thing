@@ -16,6 +16,12 @@ export interface TileRef {
   readonly tile: Tile;
 }
 
+export interface PreviewMark {
+  readonly unitId: string;
+  readonly text: string;
+  readonly kind: "harm" | "heal" | "death";
+}
+
 export interface Highlights {
   readonly current: TileRef | null;
   readonly candidates: readonly TileRef[];
@@ -27,6 +33,7 @@ interface Figure {
   readonly bar: HTMLDivElement;
   readonly fill: HTMLDivElement;
   readonly label: CSS2DObject;
+  readonly preview: HTMLDivElement;
   readonly materials: THREE.MeshStandardMaterial[];
   shownHp: number;
   maxHp: number;
@@ -251,9 +258,15 @@ export class BattleScene {
     const label = new CSS2DObject(bar);
     label.position.set(0, 1.75, 0);
     group.add(label);
+    const preview = document.createElement("div");
+    preview.className = "preview";
+    preview.hidden = true;
+    const previewLabel = new CSS2DObject(preview);
+    previewLabel.position.set(0, 2.15, 0);
+    group.add(previewLabel);
 
     this.scene.add(group);
-    const figure: Figure = { group, bar, fill, label, materials, shownHp: unit.hp, maxHp: unit.base.maxHp, fallen: false };
+    const figure: Figure = { group, bar, fill, label, preview, materials, shownHp: unit.hp, maxHp: unit.base.maxHp, fallen: false };
     this.figures.set(unit.id, figure);
     return figure;
   }
@@ -278,6 +291,29 @@ export class BattleScene {
       return Promise.resolve();
     }
     return this.tween(duration, (t) => apply(1 - (1 - t) ** 3));
+  }
+
+  /** Removes every figure, for a fresh battle or a new formation preview. */
+  reset(): void {
+    for (const figure of this.figures.values()) {
+      this.scene.remove(figure.group);
+      figure.group.traverse((child) => {
+        if (child instanceof CSS2DObject) child.element.remove();
+      });
+    }
+    this.figures.clear();
+    this.setHighlights({ current: null, candidates: [], affected: [] });
+  }
+
+  /** Shows the exact outcome of the hovered action above each figure it touches. */
+  showPreview(marks: readonly PreviewMark[]): void {
+    for (const [unitId, figure] of this.figures) {
+      const mark = marks.find((m) => m.unitId === unitId);
+      figure.preview.hidden = !mark;
+      if (!mark) continue;
+      figure.preview.textContent = mark.text;
+      figure.preview.className = `preview ${mark.kind}`;
+    }
   }
 
   setHighlights(highlights: Highlights): void {

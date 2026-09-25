@@ -12,7 +12,7 @@ const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
 const errors: string[] = [];
 page.on("pageerror", (e) => errors.push(e.message));
 page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
-await page.goto(new URL("/?debug", base).href);
+await page.goto(new URL("/?debug&fight", base).href);
 await page.waitForSelector("body[data-ready=true]");
 await mkdir("shots", { recursive: true });
 

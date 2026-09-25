@@ -7,6 +7,7 @@ import { ABILITY_TEXT, effectLabel } from "#view/text";
 export interface HudHandlers {
   onAbility(abilityId: string): void;
   onRestart(): void;
+  onSetup(): void;
 }
 
 const ROW_NAMES = ["front", "middle", "back"] as const;
@@ -43,6 +44,14 @@ export class Hud {
   private readonly banner = byId("banner");
 
   constructor(private readonly handlers: HudHandlers) {}
+
+  setVisible(visible: boolean): void {
+    for (const el of [this.turns, this.log, this.hint, this.actions]) el.hidden = !visible;
+    if (!visible) {
+      this.card.hidden = true;
+      this.banner.hidden = true;
+    }
+  }
 
   renderTurns(battle: Battle, playerSide: Side | null): void {
     this.turns.replaceChildren();
@@ -109,12 +118,17 @@ export class Hud {
     this.card.appendChild(abilities);
   }
 
-  renderActions(options: readonly LegalAbility[], selected: string | null, enabled: boolean): void {
+  renderActions(battle: Battle, options: readonly LegalAbility[], selected: string | null, enabled: boolean): void {
     this.actions.replaceChildren();
-    if (!enabled) return;
+    const unitId = battle.current?.unitId;
+    const unit = unitId ? battle.units[unitId] : undefined;
+    if (!enabled || !unit) return;
     for (const option of options) {
       const button = element("button", `action${option.abilityId === selected ? " selected" : ""}`);
       button.appendChild(element("span", "name", option.name));
+      const charges = BEHAVIORS[option.abilityId]?.charges;
+      const used = unit.abilities.find((s) => s.ref.id === option.abilityId)?.chargesUsed ?? 0;
+      if (charges !== undefined) button.appendChild(element("span", "tag", `${charges - used}/${charges}`));
       if (option.choices.every((c) => c.cost === "free")) button.appendChild(element("span", "tag", "free"));
       button.title = ABILITY_TEXT[option.abilityId] ?? "";
       button.addEventListener("click", () => this.handlers.onAbility(option.abilityId));
@@ -162,7 +176,9 @@ export class Hud {
     this.banner.appendChild(element("div", "subtitle", `after ${battle.round} round${battle.round === 1 ? "" : "s"}`));
     const again = element("button", "action", "Fight again");
     again.addEventListener("click", () => this.handlers.onRestart());
-    this.banner.appendChild(again);
+    const setup = element("button", "action", "Change squads");
+    setup.addEventListener("click", () => this.handlers.onSetup());
+    this.banner.append(again, " ", setup);
   }
 }
 
