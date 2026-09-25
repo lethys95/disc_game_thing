@@ -53,6 +53,7 @@ export function createBattle(sides: readonly [readonly Placement[], readonly Pla
         side,
         tile,
         hp: Math.min(hp ?? def.stats.maxHp, def.stats.maxHp),
+        shield: def.stats.shield,
         base: def.stats,
         damageType: def.damageType,
         abilities: def.abilities.map((ref) => ({ ref, chargesUsed: 0 })),
@@ -339,9 +340,17 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
 
   const strike = (sourceId: string, targetId: string, raw: number): number => {
     const target = unit(targetId);
-    let amount = Math.max(1, raw - stats(targetId).armor);
-    if (target.effects.some((e) => e.kind === "defending")) amount = Math.max(1, Math.floor(amount / 2));
-    return lose(targetId, amount, sourceId);
+    if (!target.alive) return 0;
+    const amount = Math.max(1, raw - stats(targetId).armor);
+    const absorbed = Math.min(target.shield, amount);
+    if (absorbed > 0) {
+      target.shield -= absorbed;
+      ctx.emit({ type: "shieldHit", unitId: targetId, amount: absorbed });
+    }
+    // Faction notes: shields "don't get bonuses from defend", so Defend only halves what gets past the shield.
+    let rest = amount - absorbed;
+    if (rest > 0 && target.effects.some((e) => e.kind === "defending")) rest = Math.max(1, Math.floor(rest / 2));
+    return absorbed + (rest > 0 ? lose(targetId, rest, sourceId) : 0);
   };
 
   const addEffect = (targetId: string, effect: Effect) => {
@@ -354,14 +363,15 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
     ctx.emit({ type: "effect", unitId: targetId, effect: effect.kind });
   };
 
-  const attack = (userId: string, targetIds: readonly string[]) => {
-    const raw = stats(userId).damage;
+  const attack = (userId: string, targetIds: readonly string[], power?: number) => {
+    const base = power ?? stats(userId).damage;
     const own = passives(ctx, userId);
     const bleedShare = Math.min(1, own.reduce((sum, b) => sum + (b.bleedShare ?? 0), 0));
     let dealt = 0;
     let kills = 0;
     for (const targetId of targetIds) {
       if (!unit(targetId).alive) continue;
+      const raw = base + own.reduce((sum, b) => sum + (b.bonusAgainst?.(ctx, userId, targetId) ?? 0), 0);
       const bleed = Math.floor(raw * bleedShare);
       const hit = strike(userId, targetId, raw - bleed);
       if (bleed > 0) addEffect(targetId, { kind: "bleeding", perTurn: bleed });
@@ -389,6 +399,13 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
       ctx.emit({ type: "heal", unitId: targetId, amount: healed });
     },
     addEffect,
+    restoreShield: (targetId, amount) => {
+      const target = unit(targetId);
+      const restored = Math.min(amount, stats(targetId).shield - target.shield);
+      if (!target.alive || restored <= 0) return;
+      target.shield += restored;
+      ctx.emit({ type: "shieldRestored", unitId: targetId, amount: restored });
+    },
     move: (unitId, to) => {
       const moving = unit(unitId);
       const from = moving.tile;

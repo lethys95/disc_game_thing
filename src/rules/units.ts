@@ -8,60 +8,99 @@ const kit = (...ids: string[]) => ids.map((id) => ({ id }));
  */
 export const UNITS: Readonly<Record<string, UnitDef>> = {
   capitol_guardian: {
-    id: "capitol_guardian", name: "Capitol Guardian", tier: 0, damageType: "weapon",
+    id: "capitol_guardian", name: "Capitol Guardian", faction: "neutral", tier: 0, damageType: "weapon",
     // Provisional, tuned by simulation: beats early and most mid armies, falls to fully evolved ones.
-    stats: { maxHp: 1500, damage: 80, armor: 25, initiative: 60 },
+    stats: { maxHp: 1500, shield: 0, damage: 80, armor: 25, initiative: 60 },
     abilities: kit("attack", "defend", "wait"),
   },
   congregant: {
-    id: "congregant", name: "Congregant", tier: 1, damageType: "weapon",
-    stats: { maxHp: 90, damage: 20, armor: 0, initiative: 50 },
+    id: "congregant", name: "Congregant", faction: "jilliath", tier: 1, damageType: "weapon",
+    stats: { maxHp: 90, shield: 0, damage: 20, armor: 0, initiative: 50 },
     abilities: kit("attack", "defend", "wait", "congregation"),
   },
   paladin: {
-    id: "paladin", name: "Paladin", tier: 2, damageType: "weapon",
-    stats: { maxHp: 150, damage: 40, armor: 20, initiative: 50 },
+    id: "paladin", name: "Paladin", faction: "jilliath", tier: 2, damageType: "weapon",
+    stats: { maxHp: 150, shield: 0, damage: 40, armor: 20, initiative: 50 },
     abilities: kit("attack", "defend", "wait", "lay_on_hands"),
   },
   templar: {
-    id: "templar", name: "Templar", tier: 3, damageType: "weapon",
-    stats: { maxHp: 200, damage: 60, armor: 20, initiative: 50 },
+    id: "templar", name: "Templar", faction: "jilliath", tier: 3, damageType: "weapon",
+    stats: { maxHp: 200, shield: 0, damage: 60, armor: 20, initiative: 50 },
     abilities: kit("attack", "defend", "wait", "lay_on_hands", "devotion_aura"),
   },
   immortal: {
-    id: "immortal", name: "Immortal", tier: 4, damageType: "weapon",
-    stats: { maxHp: 260, damage: 80, armor: 20, initiative: 50 },
+    id: "immortal", name: "Immortal", faction: "jilliath", tier: 4, damageType: "weapon",
+    stats: { maxHp: 260, shield: 0, damage: 80, armor: 20, initiative: 50 },
     abilities: kit("attack", "defend", "wait", "divine_lay_on_hands", "devotion_aura", "guardian_spirit"),
   },
   zealot: {
-    id: "zealot", name: "Zealot", tier: 2, damageType: "weapon",
-    stats: { maxHp: 180, damage: 70, armor: 0, initiative: 50 },
+    id: "zealot", name: "Zealot", faction: "jilliath", tier: 2, damageType: "weapon",
+    stats: { maxHp: 180, shield: 0, damage: 70, armor: 0, initiative: 50 },
     abilities: kit("attack", "defend", "wait", "must_attack", "zeal"),
   },
   punisher: {
-    id: "punisher", name: "Punisher", tier: 3, damageType: "weapon",
-    stats: { maxHp: 200, damage: 45, armor: 0, initiative: 50 },
+    id: "punisher", name: "Punisher", faction: "jilliath", tier: 3, damageType: "weapon",
+    stats: { maxHp: 200, shield: 0, damage: 45, armor: 0, initiative: 50 },
     abilities: kit("flail", "defend", "wait", "punishment"),
   },
   torturer: {
-    id: "torturer", name: "Torturer", tier: 4, damageType: "weapon",
-    stats: { maxHp: 220, damage: 60, armor: 0, initiative: 50 },
+    id: "torturer", name: "Torturer", faction: "jilliath", tier: 4, damageType: "weapon",
+    stats: { maxHp: 220, shield: 0, damage: 60, armor: 0, initiative: 50 },
     abilities: kit("flail", "defend", "wait", "hook", "punishment", "domination"),
   },
   fanatic: {
-    id: "fanatic", name: "Fanatic", tier: 3, damageType: "weapon",
-    stats: { maxHp: 280, damage: 110, armor: 0, initiative: 50 },
+    id: "fanatic", name: "Fanatic", faction: "jilliath", tier: 3, damageType: "weapon",
+    stats: { maxHp: 280, shield: 0, damage: 110, armor: 0, initiative: 50 },
     abilities: kit("attack", "defend", "wait", "must_attack", "fanaticism", "hysteria"),
   },
   chosen: {
-    id: "chosen", name: "Chosen", tier: 4, damageType: "fire",
-    stats: { maxHp: 320, damage: 150, armor: 0, initiative: 60 },
+    id: "chosen", name: "Chosen", faction: "jilliath", tier: 4, damageType: "fire",
+    stats: { maxHp: 320, shield: 0, damage: 150, armor: 0, initiative: 60 },
     abilities: kit("attack", "defend", "wait", "must_attack", "fanaticism", "hysteria"),
   },
   avatar_of_vengeance: {
-    id: "avatar_of_vengeance", name: "Avatar of Vengeance", tier: 5, damageType: "fire",
-    stats: { maxHp: 400, damage: 150, armor: 0, initiative: 60 },
+    id: "avatar_of_vengeance", name: "Avatar of Vengeance", faction: "jilliath", tier: 5, damageType: "fire",
+    stats: { maxHp: 400, shield: 0, damage: 150, armor: 0, initiative: 60 },
     abilities: kit("attack", "defend", "wait", "fanaticism_aura"),
+  },
+
+  // Ral-Vitahl (Nexus) tier 1, docs/design/units/nexus-tier1.md. Mechanics are the user's; stats are provisional.
+  custodian: {
+    id: "custodian", name: "Custodian", faction: "nexus", tier: 1, damageType: "weapon",
+    stats: { maxHp: 60, shield: 90, damage: 25, armor: 0, initiative: 45 },
+    abilities: kit("attack", "defend", "wait"),
+  },
+  arcane_engineer: {
+    id: "arcane_engineer", name: "Arcane Engineer", faction: "nexus", tier: 1, damageType: "weapon",
+    stats: { maxHp: 60, shield: 0, damage: 10, armor: 0, initiative: 45 },
+    abilities: kit("shoot", "restore_shield", "defend", "wait"),
+  },
+  apprentice: {
+    id: "apprentice", name: "Apprentice", faction: "nexus", tier: 1, damageType: "weapon",
+    stats: { maxHp: 55, shield: 0, damage: 8, armor: 0, initiative: 45 },
+    abilities: kit("plus_burst", "bolt", "defend", "wait"),
+  },
+
+  // Neutral bandits, docs/design/units/neutrals-bandits.md. Mechanics are the user's; stats are provisional.
+  brigand: {
+    id: "brigand", name: "Brigand", faction: "neutral", tier: 1, damageType: "weapon",
+    stats: { maxHp: 100, shield: 0, damage: 20, armor: 0, initiative: 45 },
+    abilities: kit("attack", "stun_front", "defend", "wait"),
+  },
+  marauder: {
+    id: "marauder", name: "Marauder", faction: "neutral", tier: 1, damageType: "weapon",
+    stats: { maxHp: 110, shield: 0, damage: 22, armor: 5, initiative: 45 },
+    abilities: kit("attack", "anti_armor", "defend", "wait"),
+  },
+  bandit: {
+    id: "bandit", name: "Bandit", faction: "neutral", tier: 1, damageType: "weapon",
+    stats: { maxHp: 70, shield: 0, damage: 18, armor: 0, initiative: 70 },
+    abilities: kit("shoot", "defend", "wait"),
+  },
+  hedge_mage: {
+    id: "hedge_mage", name: "Hedge Mage", faction: "neutral", tier: 1, damageType: "fire",
+    stats: { maxHp: 50, shield: 0, damage: 20, armor: 0, initiative: 40 },
+    abilities: kit("area_2x2", "defend", "wait"),
   },
 };
 

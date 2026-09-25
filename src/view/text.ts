@@ -16,9 +16,16 @@ export const ABILITY_TEXT: Readonly<Record<string, string>> = {
   fanaticism: "Takes self-damage equal to half the damage it deals.",
   hysteria: "A kill grants a free extra attack at double self-damage, up to twice per turn.",
   fanaticism_aura: "Every unit on the battlefield suffers Fanaticism and Hysteria, and nobody can defend.",
-  punishment: "Every enemy struck loses 10 damage and 10 initiative for the rest of combat. Stacks.",
+  punishment: "Every enemy struck loses 10 damage and 10 initiative for the rest of combat. Stacks up to 3 times.",
   domination: "Half of this unit's damage becomes bleed, which strikes at the start of the victim's turns.",
   hook: "Once per combat: pull the first enemy behind an empty front tile into the front row and stun it.",
+  shoot: "Ranged: hit any enemy.",
+  bolt: "Very weak ranged hit on any enemy. Unlimited.",
+  area_2x2: "Ranged spell: hits every enemy in a 2x2 block.",
+  plus_burst: "Two uses per combat: a burst hitting every enemy in a plus shape.",
+  stun_front: "Once per combat: stun the enemy directly in front for one turn.",
+  anti_armor: "+10 damage against targets that have armor.",
+  restore_shield: "Restore an ally's shield. Healing can't restore shields.",
 };
 
 export const EFFECT_TEXT: Readonly<Record<Effect["kind"], string>> = {

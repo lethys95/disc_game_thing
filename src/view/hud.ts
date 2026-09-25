@@ -102,6 +102,10 @@ export class Hud {
       const delta = value - base;
       table.appendChild(element("span", `value${delta > 0 ? " up" : delta < 0 ? " down" : ""}`, delta === 0 ? `${value}` : `${value} (${delta > 0 ? "+" : ""}${delta})`));
     };
+    if (stats.shield > 0) {
+      table.appendChild(element("span", "name", "Shield"));
+      table.appendChild(element("span", "value shield", `${unit.shield} / ${stats.shield}`));
+    }
     row("Damage", stats.damage, unit.base.damage);
     row("Armor", stats.armor, unit.base.armor);
     row("Initiative", stats.initiative, unit.base.initiative);
@@ -118,7 +122,7 @@ export class Hud {
     const abilities = element("ul", "abilities");
     for (const slot of unit.abilities) {
       const id = slot.ref.id;
-      if (id === "attack" || id === "defend" || id === "wait") continue;
+      if (id === "attack" || id === "shoot" || id === "defend" || id === "wait") continue;
       const behavior = BEHAVIORS[id];
       if (!behavior) continue;
       const item = element("li", behavior.kind);
@@ -208,6 +212,10 @@ function describe(event: BattleEvent, name: (id: string) => string, playerSide: 
       return event.source === null ? `${name(event.unitId)} bleeds ${event.amount}` : `${name(event.unitId)} takes ${event.amount}`;
     case "heal":
       return `${name(event.unitId)} heals ${event.amount}`;
+    case "shieldHit":
+      return `${name(event.unitId)}'s shield absorbs ${event.amount}`;
+    case "shieldRestored":
+      return `${name(event.unitId)}'s shield restored by ${event.amount}`;
     case "death":
       return `${name(event.unitId)} falls`;
     case "deathPrevented":

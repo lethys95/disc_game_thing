@@ -1,5 +1,5 @@
-import { adjacent, frontLine, meleeTargets, occupant, opponent } from "#rules/grid";
-import type { Behavior, BattleUnit, Cost, Ctx, Row, TargetChoice } from "#rules/types";
+import { adjacent, COLS, frontLine, meleeTargets, occupant, opponent, ROWS } from "#rules/grid";
+import type { Behavior, BattleUnit, Col, Cost, Ctx, Row, TargetChoice } from "#rules/types";
 
 function at(unit: BattleUnit, affected: readonly string[], cost: Cost): TargetChoice {
   return { anchor: { side: unit.side, tile: unit.tile }, affected, cost };
@@ -187,6 +187,112 @@ const hook: Behavior = {
   },
 };
 
+/** Ranged: any living enemy (D2 archers; provisional). */
+function rangedChoices(ctx: Ctx, userId: string): TargetChoice[] {
+  const enemy = opponent(ctx.unit(userId).side);
+  return ctx.living(enemy).map((u) => single(u, "main"));
+}
+
+const shoot: Behavior = {
+  kind: "active",
+  name: "Shoot",
+  isAttack: true,
+  choices: rangedChoices,
+  resolve: (ctx, userId, choice) => ctx.attack(userId, choice.affected),
+};
+
+/** Apprentice's very weak single-target secondary: the unit's own (low) damage, unlimited. */
+const bolt: Behavior = { ...shoot, name: "Bolt" };
+
+/**
+ * An area spell on the enemy grid. Every enemy tile is a clickable anchor; the shape is laid around it, clipped to
+ * the grid. Ranged, so the caster can be anywhere.
+ */
+function areaSpell(name: string, shape: (row: Row, col: Col) => { row: number; col: number }[], power: (ctx: Ctx, userId: string) => number, charges?: number): Behavior {
+  return {
+    kind: "active",
+    name,
+    isAttack: true,
+    ...(charges === undefined ? {} : { charges }),
+    choices: (ctx, userId) => {
+      const enemy = opponent(ctx.unit(userId).side);
+      const units = ctx.living(enemy);
+      const choices: TargetChoice[] = [];
+      for (const row of ROWS) {
+        for (const col of COLS) {
+          const cells = shape(row, col);
+          const affected = units.filter((u) => cells.some((c) => c.row === u.tile.row && c.col === u.tile.col)).map((u) => u.id);
+          if (affected.length > 0) choices.push({ anchor: { side: enemy, tile: { row, col } }, affected, cost: "main" });
+        }
+      }
+      return choices;
+    },
+    resolve: (ctx, userId, choice) => ctx.attack(userId, choice.affected, power(ctx, userId)),
+  };
+}
+
+/** Hedge Mage: the 2x2 block that contains the chosen tile. */
+const area2x2 = areaSpell(
+  "Area Spell",
+  (row, col) => {
+    const r = Math.min(row, 1);
+    const c = Math.min(col, 1);
+    return [{ row: r, col: c }, { row: r + 1, col: c }, { row: r, col: c + 1 }, { row: r + 1, col: c + 1 }];
+  },
+  (ctx, userId) => ctx.stats(userId).damage,
+);
+
+/** Provisional: the Apprentice's burst hits for this much, independent of its weak personal damage. */
+const PLUS_BURST_POWER = 40;
+
+/** Apprentice: a plus shape around the chosen tile, two uses per combat. */
+const plusBurst = areaSpell(
+  "Burst",
+  (row, col) => [{ row, col }, { row: row - 1, col }, { row: row + 1, col }, { row, col: col - 1 }, { row, col: col + 1 }],
+  () => PLUS_BURST_POWER,
+  2,
+);
+
+/** Brigand: once per combat, stun the enemy directly in front (same column, enemy front line). */
+const stunFront: Behavior = {
+  kind: "active",
+  name: "Stun",
+  charges: 1,
+  choices: (ctx, userId) => {
+    const user = ctx.unit(userId);
+    return meleeTargets(ctx.living(), user)
+      .filter((t) => t.tile.col === user.tile.col)
+      .map((t) => single(t, "main"));
+  },
+  resolve: (ctx, _userId, choice) => {
+    for (const id of choice.affected) ctx.addEffect(id, { kind: "stunned" });
+  },
+};
+
+/** Marauder: +10 damage against a target that has armor. */
+const antiArmor: Behavior = {
+  kind: "passive",
+  name: "Anti-armor",
+  bonusAgainst: (ctx, _ownerId, targetId) => (ctx.stats(targetId).armor > 0 ? 10 : 0),
+};
+
+/** Provisional amount the Arcane Engineer restores. */
+const SHIELD_RESTORE = 40;
+
+/** Arcane Engineer: restore an ally's shield. Only units with a shield stat can be targeted. */
+const restoreShield: Behavior = {
+  kind: "active",
+  name: "Restore Shield",
+  choices: (ctx, userId) =>
+    ctx
+      .living(ctx.unit(userId).side)
+      .filter((u) => ctx.stats(u.id).shield > 0 && u.shield < ctx.stats(u.id).shield)
+      .map((u) => single(u, "main")),
+  resolve: (ctx, _userId, choice) => {
+    for (const id of choice.affected) ctx.restoreShield(id, SHIELD_RESTORE);
+  },
+};
+
 export const BEHAVIORS: Readonly<Record<string, Behavior>> = {
   attack,
   defend,
@@ -205,6 +311,13 @@ export const BEHAVIORS: Readonly<Record<string, Behavior>> = {
   punishment,
   domination,
   hook,
+  shoot,
+  bolt,
+  area_2x2: area2x2,
+  plus_burst: plusBurst,
+  stun_front: stunFront,
+  anti_armor: antiArmor,
+  restore_shield: restoreShield,
 };
 
 export function behavior(id: string): Behavior {

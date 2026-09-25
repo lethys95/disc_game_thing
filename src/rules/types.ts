@@ -12,6 +12,8 @@ export type DamageType = "weapon" | "fire";
 
 export interface Stats {
   maxHp: number;
+  /** A separate pool that absorbs hits before health (Nexus automatons). Full at the start of every battle. */
+  shield: number;
   damage: number;
   armor: number;
   initiative: number;
@@ -21,8 +23,11 @@ export interface AbilityRef {
   readonly id: string;
 }
 
+export type Faction = "jilliath" | "nexus" | "neutral";
+
 export interface UnitDef {
   readonly id: string;
+  readonly faction: Faction;
   readonly name: string;
   readonly tier: number;
   readonly stats: Readonly<Stats>;
@@ -49,6 +54,7 @@ export interface BattleUnit {
   readonly side: Side;
   tile: Tile;
   hp: number;
+  shield: number;
   readonly base: Readonly<Stats>;
   readonly damageType: DamageType;
   abilities: AbilitySlot[];
@@ -106,6 +112,8 @@ export type BattleEvent =
   | { type: "ability"; unitId: string; abilityId: string; targets: readonly string[] }
   | { type: "damage"; unitId: string; amount: number; source: string | null }
   | { type: "heal"; unitId: string; amount: number }
+  | { type: "shieldHit"; unitId: string; amount: number }
+  | { type: "shieldRestored"; unitId: string; amount: number }
   | { type: "death"; unitId: string }
   | { type: "deathPrevented"; unitId: string }
   | { type: "effect"; unitId: string; effect: Effect["kind"] }
@@ -129,7 +137,9 @@ export interface Ctx {
   heal(targetId: string, amount: number): void;
   addEffect(targetId: string, effect: Effect): void;
   /** The standard attack pipeline: strikes each target, then runs on-hit and after-attack passives. */
-  attack(userId: string, targetIds: readonly string[]): void;
+  attack(userId: string, targetIds: readonly string[], power?: number): void;
+  /** Shields only come back through this; healing never touches them. */
+  restoreShield(targetId: string, amount: number): void;
   /** Uses one charge of the unit's ability; false when none are left. */
   consumeCharge(unitId: string, abilityId: string, max: number): boolean;
   chargesLeft(unitId: string, abilityId: string, max: number): number;
@@ -160,6 +170,8 @@ export interface PassiveBehavior {
   grants?(ctx: Ctx, ownerId: string, subjectId: string): readonly string[];
   /** Removes ability ids the subject may not use; called for every living owner. */
   restrict?(ctx: Ctx, ownerId: string, subjectId: string, allowed: Set<string>): void;
+  /** Extra damage the owner's attacks deal to this target. */
+  bonusAgainst?(ctx: Ctx, ownerId: string, targetId: string): number;
   /** Share of the owner's attack damage that becomes bleed instead of an immediate hit. */
   bleedShare?: number;
   /** Called for each target the owner's attack struck. */
