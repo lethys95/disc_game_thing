@@ -107,6 +107,9 @@ The dichotomies are **thematic**, not a faction-wide lock. D2's elves are roughl
 - In the Capitol you buy upgrades for a unit type, e.g. Congregants +5 attack. **Not retroactive**: units you already have don't get it; new ones do. That rewards early action.
 - The upgrade **stays with the unit through evolution** (an upgraded Congregant keeps its +5 as a Paladin).
 - Upgrades can target what makes a unit unique, not just stats: "punish stacks one more time", "all new arcane engineers get a stun grenade".
+- **Timing rule (user, 2026-09-25):** an upgrade for type T reaches a unit when it *becomes* a T after the purchase: recruited as T, evolved into T, or acquired as T another way (merc camps, recruiting neutrals in rare situations as D2 allowed; both later). A unit that became a Punisher before you bought the Punisher upgrade doesn't get it. A Congregant recruited *before* the Punisher upgrade still gets it if it evolves into a Punisher *after*. Each step up the ladder offers upgrades for the next rank.
+- **Track record (user, 2026-09-25):** a unit shows what makes it differ from baseline and *where each difference came from*: upgrades, stat changes, and e.g. abilities from where it was recruited ("a Sacred Cathedral … gives all units recruited there … 'holy water', once per battle heals a unit by 20"; an example of the idea, not a designed building).
+- Balance of upgrades (risk/reward) is tuned after more playtesting.
 
 ## The Capitol screen and the economy (user, 2026-09-25)
 The Capitol screen holds units, upgrades (unlocking evolutions), spells (a spell tree later), and the rest. The user questions D2's model: city upgrades are "insanely expensive", they lock you in place and push you back, and losing units is expensive too. Unit evolution stays, but should unlocks cost gold at all? What else is gold for? Being sparred on (see decisions.md once settled).
