@@ -98,5 +98,15 @@ Games aren't expected to last long enough to fill the whole tree.
 ## Doctrines are per tree, not per faction (user, 2026-09-25)
 The dichotomies are **thematic**, not a faction-wide lock. D2's elves are roughly wild vs nobility, but you can go wild in one tree and noble in another. "Just because I as a Jilliath player go faith in melee, doesn't mean I want faith in support." Each line's fork is chosen independently; the faction's dichotomy flavors the pairs. (This matches the canon branch-investment page: commitments are per divergence point and "do not affect independent evolution lines".)
 
-## The Capitol screen and the economy: open (user, 2026-09-25)
+## Evolution is never gated by resources (user, 2026-09-25)
+- D2's worst part: you couldn't go from tier 1 to tier 2 without paying an obscene amount, so you froze, waited for gold and stopped fighting neutrals: "the game encouraging you NOT to play". Shared resources for units and upgrades are fine (WC3, HoMM3); gating the *level-up itself* is not.
+- **Branch choice is free.** Choose each line's branch in the Capitol for free. If a unit reaches a fork before you've chosen, you choose at that moment, with a warning that it locks that branch for all similar units.
+- **Shrines (later):** map sites that unlock *hidden* evolution routes you otherwise couldn't get, as an alternative to the baseline. Never a gate on the baseline, which would be "screwed by rng".
+
+## Unit-type upgrades: what gold buys (user, 2026-09-25)
+- In the Capitol you buy upgrades for a unit type, e.g. Congregants +5 attack. **Not retroactive**: units you already have don't get it; new ones do. That rewards early action.
+- The upgrade **stays with the unit through evolution** (an upgraded Congregant keeps its +5 as a Paladin).
+- Upgrades can target what makes a unit unique, not just stats: "punish stacks one more time", "all new arcane engineers get a stun grenade".
+
+## The Capitol screen and the economy (user, 2026-09-25)
 The Capitol screen holds units, upgrades (unlocking evolutions), spells (a spell tree later), and the rest. The user questions D2's model: city upgrades are "insanely expensive", they lock you in place and push you back, and losing units is expensive too. Unit evolution stays, but should unlocks cost gold at all? What else is gold for? Being sparred on (see decisions.md once settled).
