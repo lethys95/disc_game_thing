@@ -1,5 +1,6 @@
 import { hexagon, hexDistance, hexKey, neighbors, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
+import type { CityNode, NodeKind } from "#rules/nodes";
 
 /** Provisional terrain (docs/design/pillars.md leaves terrain to the map model): costs are placeholders. */
 export type Terrain = "plain" | "forest" | "hills" | "mountain" | "water";
@@ -22,7 +23,7 @@ export interface Site {
   readonly id: string;
   readonly kind: "capitol" | "city";
   readonly hex: Hex;
-  readonly goldMines: readonly Hex[];
+  readonly nodes: readonly CityNode[];
 }
 
 /** A neutral group's spot: a camp (just the group) or a dungeon (a group guarding a one-time reward). */
@@ -111,9 +112,9 @@ export function generateMap(seed: number, radius = 4): WorldMap {
 
 /** Capitols on the starts; neutral cities spread over the middle ground, each with one gold mine beside it. */
 function placeSites(map: WorldMap, seed: number): Site[] {
-  const sites: Site[] = map.starts.map((hex, side) => ({ id: `capitol${side}`, kind: "capitol", hex, goldMines: [] }));
+  const sites: Site[] = map.starts.map((hex, side) => ({ id: `capitol${side}`, kind: "capitol", hex, nodes: [] }));
   const walkable = (hex: Hex) => stepCost(map, hex) !== null;
-  const taken = (hex: Hex) => sites.some((s) => sameHex(s.hex, hex) || s.goldMines.some((m) => sameHex(m, hex)));
+  const taken = (hex: Hex) => sites.some((s) => sameHex(s.hex, hex) || s.nodes.some((n) => sameHex(n.hex, hex)));
   const candidates = Object.values(map.tiles)
     .map((t) => t.hex)
     .filter((hex) => walkable(hex) && map.starts.every((s) => hexDistance(s, hex) >= 3))
@@ -125,7 +126,9 @@ function placeSites(map: WorldMap, seed: number): Site[] {
       .filter((n) => walkable(n) && !taken(n) && !map.starts.some((s) => sameHex(s, n)))
       .sort((a, b) => noise(seed + 37, a.q, a.r) - noise(seed + 37, b.q, b.r))[0];
     if (!mine) continue;
-    sites.push({ id: `city${sites.length - 1}`, kind: "city", hex, goldMines: [mine] });
+    // Provisional: the second neutral city has a Blacksmith, the others a gold mine.
+    const kind: NodeKind = sites.length - 2 === 1 ? "blacksmith" : "gold";
+    sites.push({ id: `city${sites.length - 1}`, kind: "city", hex, nodes: [{ kind, hex: mine }] });
   }
   return sites;
 }
@@ -134,7 +137,7 @@ function placeSites(map: WorldMap, seed: number): Site[] {
 function placeLairs(map: WorldMap, sites: readonly Site[], seed: number): LairSite[] {
   const lairs: LairSite[] = [];
   const used = (hex: Hex) =>
-    sites.some((s) => hexDistance(s.hex, hex) < 2 || s.goldMines.some((m) => sameHex(m, hex))) || lairs.some((l) => hexDistance(l.hex, hex) < 2);
+    sites.some((s) => hexDistance(s.hex, hex) < 2 || s.nodes.some((n) => sameHex(n.hex, hex))) || lairs.some((l) => hexDistance(l.hex, hex) < 2);
   const candidates = Object.values(map.tiles)
     .map((t) => t.hex)
     .filter((hex) => stepCost(map, hex) !== null && map.starts.every((s) => hexDistance(s, hex) >= 2))

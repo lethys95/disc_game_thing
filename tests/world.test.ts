@@ -55,7 +55,7 @@ describe("map", () => {
       const capitols = map.sites.filter((s) => s.kind === "capitol").map((s) => s.hex);
       expect(capitols).toEqual([...map.starts]);
       for (const site of map.sites.filter((s) => s.kind === "city")) {
-        expect(site.goldMines).toHaveLength(1);
+        expect(site.nodes).toHaveLength(1);
         expect(findPath(map, map.starts[0], site.hex, () => false)).not.toBeNull();
         expect(findPath(map, map.starts[1], site.hex, () => false)).not.toBeNull();
       }
@@ -91,8 +91,8 @@ describe("world", () => {
 
   test("neutral cities are guarded; once emptied, walking in captures the city and its gold mine", () => {
     const world = createWorld(1, [squad, squad], both("preserve"), ["jilliath", "jilliath"]);
-    const city = world.cities.find((c) => c.kind === "city");
-    if (!city) throw new Error("no neutral city");
+    const city = world.cities.find((c) => c.kind === "city" && c.nodes.every((n) => n.kind === "gold"));
+    if (!city) throw new Error("no neutral gold city");
     const near = withLeader(world, "leader0", { hex: walkableNeighbour(world, city.hex) });
     expect(planMove(near, "leader0", city.hex)?.target).toEqual({ kind: "garrison", cityId: city.id });
 
@@ -101,6 +101,19 @@ describe("world", () => {
     expect(step.events).toContainEqual({ type: "captured", cityId: city.id, side: 0 });
     expect(income(step.world, 0)).toBe(CAPITOL_INCOME + MINE_INCOME);
     expect(leaderById(step.world, "leader0").hex).toEqual(city.hex);
+  });
+
+  test("holding a Blacksmith city brings its bonus into your battles, and never to neutrals", () => {
+    const world = createWorld(1, [army, squad], both("punishment"), ["jilliath", "jilliath"]);
+    const smithy = world.cities.find((c) => c.nodes.some((n) => n.kind === "blacksmith"));
+    const camp = world.lairs.find((l) => l.kind === "camp");
+    if (!smithy || !camp) throw new Error("no blacksmith city or camp");
+    const owned = { ...world, cities: world.cities.map((c) => (c.id === smithy.id ? { ...c, owner: 0 as const } : c)) };
+    const ready = withLeader(owned, "leader0", { hex: walkableNeighbour(owned, camp.hex) });
+    const battle = applyWorldAction(ready, { type: "move", leaderId: "leader0", to: camp.hex }).world.engagement?.battle;
+    const effects = (side: number) => Object.values(battle?.units ?? {}).filter((u) => u.side === side).map((u) => u.effects.map((e) => e.def));
+    expect(effects(0).every((defs) => defs.includes("blacksmith"))).toBe(true);
+    expect(effects(1).every((defs) => defs.length === 0)).toBe(true);
   });
 
   test("beating a bandit camp clears it and pays XP; bandits never enter a graveyard", () => {

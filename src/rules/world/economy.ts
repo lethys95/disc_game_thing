@@ -1,9 +1,10 @@
-import { CAPITOL_HEALING, CAPITOL_INCOME, GARRISON_LIMIT, LEADER_MOVEMENT, MINE_INCOME, RESURRECTION_BASE, RESURRECTION_PREMIUM } from "#rules/balance";
+import { CAPITOL_HEALING, CAPITOL_INCOME, GARRISON_LIMIT, LEADER_MOVEMENT, RESURRECTION_BASE, RESURRECTION_PREMIUM } from "#rules/balance";
 import type { Side, Tile } from "#rules/battle/types";
 import { INVESTMENT_COST, openBranches, SQUAD_LIMIT } from "#rules/doctrine";
 import type { Commitment } from "#rules/doctrine";
 import { COLS, ROWS, sameTile } from "#rules/battle/grid";
 import { sameHex } from "#rules/hex";
+import { NODES } from "#rules/nodes";
 import { grow } from "#rules/progression";
 import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
 import type { Branch } from "#rules/units/index";
@@ -13,8 +14,8 @@ import type { City, RecruitInto, SquadMember, World, WorldEvent } from "#rules/w
 /** Gold, recruiting, investing, resurrection, elevation, and the start of a side's turn. */
 
 export function income(world: World, side: Side): number {
-  const mines = world.cities.filter((c) => c.owner === side).reduce((sum, c) => sum + c.goldMines.length, 0);
-  return (capitolOf(world, side) ? CAPITOL_INCOME : 0) + mines * MINE_INCOME;
+  const nodes = world.cities.filter((c) => c.owner === side).flatMap((c) => c.nodes);
+  return (capitolOf(world, side) ? CAPITOL_INCOME : 0) + nodes.reduce((sum, n) => sum + NODES[n.kind].income, 0);
 }
 
 

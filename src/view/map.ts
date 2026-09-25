@@ -172,6 +172,7 @@ export class MapView {
     const stone = new THREE.MeshStandardMaterial({ color: 0x3b3733, roughness: 0.9 });
     const dark = new THREE.MeshStandardMaterial({ color: 0x1f1c1a, roughness: 0.85 });
     const ore = new THREE.MeshStandardMaterial({ color: 0xd9a431, emissive: 0xd9a431, emissiveIntensity: 1.4, roughness: 0.4 });
+    const forge = new THREE.MeshStandardMaterial({ color: 0xff6a1a, emissive: 0xff6a1a, emissiveIntensity: 2, roughness: 0.5 });
     for (const city of world.cities) {
       const group = new THREE.Group();
       const banner = new THREE.MeshStandardMaterial({ color: NEUTRAL_BANNER.clone(), emissive: new THREE.Color(0), roughness: 0.6 });
@@ -220,21 +221,14 @@ export class MapView {
       this.siteLayer.add(group);
       this.sites.set(city.id, { group, banner, label });
 
-      for (const mine of city.goldMines) {
-        const pile = new THREE.Group();
-        for (let i = 0; i < 4; i++) {
-          const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(0.12 + jitter(mine, i) * 0.06, 0), i === 0 ? ore : dark);
-          rock.position.set((jitter(mine, i + 5) - 0.5) * 0.5, 0.08, (jitter(mine, i + 9) - 0.5) * 0.5);
-          rock.castShadow = true;
-          pile.add(rock);
-        }
-        const crystal = new THREE.Mesh(new THREE.OctahedronGeometry(0.14, 0), ore);
-        crystal.position.y = 0.25;
-        crystal.scale.y = 1.8;
-        pile.add(crystal);
-        pile.position.copy(this.standingPoint(mine));
-        pile.userData = { hex: mine };
-        this.siteLayer.add(pile);
+      for (const node of city.nodes) {
+        const model = node.kind === "blacksmith" ? anvil(dark, forge) : orePile(node.hex, ore, dark);
+        model.position.copy(this.standingPoint(node.hex));
+        model.userData = { hex: node.hex };
+        model.traverse((o) => {
+          o.castShadow = true;
+        });
+        this.siteLayer.add(model);
       }
     }
   }
@@ -403,6 +397,36 @@ export class MapView {
       });
     }
   }
+}
+
+/** A gold mine: a heap of rock around a glowing seam. */
+function orePile(hex: Hex, ore: THREE.Material, rock: THREE.Material): THREE.Group {
+  const pile = new THREE.Group();
+  for (let i = 0; i < 4; i++) {
+    const stone = new THREE.Mesh(new THREE.DodecahedronGeometry(0.12 + jitter(hex, i) * 0.06, 0), i === 0 ? ore : rock);
+    stone.position.set((jitter(hex, i + 5) - 0.5) * 0.5, 0.08, (jitter(hex, i + 9) - 0.5) * 0.5);
+    pile.add(stone);
+  }
+  const crystal = new THREE.Mesh(new THREE.OctahedronGeometry(0.14, 0), ore);
+  crystal.position.y = 0.25;
+  crystal.scale.y = 1.8;
+  pile.add(crystal);
+  return pile;
+}
+
+/** A Blacksmith: an anvil on a block beside a glowing forge. */
+function anvil(iron: THREE.Material, fire: THREE.Material): THREE.Group {
+  const g = new THREE.Group();
+  const block = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.18, 0.22), iron);
+  block.position.y = 0.09;
+  const top = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.08, 0.16), iron);
+  top.position.y = 0.22;
+  const hearth = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.16, 0.12, 6), iron);
+  hearth.position.set(-0.28, 0.06, 0.12);
+  const coals = new THREE.Mesh(new THREE.IcosahedronGeometry(0.09, 0), fire);
+  coals.position.set(-0.28, 0.14, 0.12);
+  g.add(block, top, hearth, coals);
+  return g;
 }
 
 function siteName(city: City): string {

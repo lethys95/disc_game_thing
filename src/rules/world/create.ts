@@ -38,7 +38,7 @@ export function createWorld(
       id: site.id,
       kind: site.kind,
       hex: site.hex,
-      goldMines: site.goldMines,
+      nodes: site.nodes,
       owner,
       garrison: site.kind === "capitol" ? [member(GUARDIAN_ID, { row: 0, col: 1 })] : banditGroup(strengthAt(map, site.hex, "medium")),
     };

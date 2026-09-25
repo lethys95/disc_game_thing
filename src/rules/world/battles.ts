@@ -3,6 +3,7 @@ import { createBattle } from "#rules/battle/engine";
 import type { Battle, Side } from "#rules/battle/types";
 import { sameTile } from "#rules/battle/grid";
 import { SQUAD_LIMIT } from "#rules/doctrine";
+import { NODES } from "#rules/nodes";
 import { xpValue } from "#rules/progression";
 import { GUARDIAN_ID } from "#rules/units/index";
 import { freeTile, growSquad } from "#rules/world/economy";
@@ -33,7 +34,11 @@ function defendingSquad(world: World, defender: Defender, attackerSide: Side): {
 export function engagementBattle(world: World, attacker: Leader, defender: Defender): Battle {
   const defending = defendingSquad(world, defender, attacker.side);
   const squads: [SquadMember[], SquadMember[]] = attacker.side === 0 ? [attacker.squad, defending.squad] : [defending.squad, attacker.squad];
-  return createBattle(squads).battle;
+  // Each player side brings the battle effects of the city nodes it holds; neutrals bring none.
+  const sideEffects = ([0, 1] as const).map((side) =>
+    side === defending.side && defending.neutral ? [] : world.cities.filter((c) => c.owner === side).flatMap((c) => c.nodes.flatMap((n) => NODES[n.kind].battleEffects)),
+  );
+  return createBattle(squads, { sideEffects: [sideEffects[0] ?? [], sideEffects[1] ?? []] }).battle;
 }
 
 function survivors(squad: readonly SquadMember[], side: Side, battle: Battle): SquadMember[] {

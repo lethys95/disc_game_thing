@@ -4,6 +4,7 @@ import type { Commitment } from "#rules/doctrine";
 import { hexDistance, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import type { WorldMap } from "#rules/map";
+import type { CityNode } from "#rules/nodes";
 import { UNITS } from "#rules/units/index";
 import type { Branch, Playable } from "#rules/units/index";
 
@@ -35,7 +36,7 @@ export interface City {
   readonly id: string;
   readonly kind: "capitol" | "city";
   readonly hex: Hex;
-  readonly goldMines: readonly Hex[];
+  readonly nodes: readonly CityNode[];
   owner: Side | null;
   /** The leaderless fortification squad. A Capitol's includes its Guardian. */
   garrison: SquadMember[];
