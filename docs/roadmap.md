@@ -29,4 +29,4 @@ Only the Jilliath melee line has units. A second faction needs a unit design fro
 One faction fully arted, animated and polished across a small complete game. The style LoRA and asset pipeline harden here; then production.
 
 ## Later (not ordered yet)
-Second faction · overworld spells + mana · city upgrades & nodes · fog of war · save/load (plain-data state → JSON) · better AI · procedural maps · art pipeline (ComfyUI concept art / 3D assets) · audio · desktop packaging (Tauri/Electron).
+**Cinematics between missions** (user idea, 2026-09-25): image-to-video (Wan 2.2 / LTX-2.3, both installed) from style-consistent key art, edited into short narrated sequences; depends on the art pipeline and campaign; story from the user (the Ton'Arilliet story is ready material). A cheap early use: an animated backdrop for the title screen. · Second faction · overworld spells + mana · city upgrades & nodes · fog of war · save/load (plain-data state → JSON) · better AI · procedural maps · art pipeline (ComfyUI concept art / 3D assets) · audio · desktop packaging (Tauri/Electron).
