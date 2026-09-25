@@ -55,3 +55,8 @@ Same three subjects (a frenzied Zealot, a Congregant mob, the Custodian as contr
 
 ## The Zealot test (2026-09-25)
 The user's design and palette held fixed; only the stroke varies (`pnpm art zealot`, `pnpm art zealotMask`): painterly realism, ink brush, pen-and-ink, airbrush. Full-body: the palette lands in all four, but the mask came out wrong (the hand smeared over the whole face, not burning, slit eyes). A head-and-shoulders pass with a more exact mask description fixed that: a burning hand on the forehead, black eye holes, a blank face. Remaining gaps: the eye holes aren't yet wide and staring enough, and the painterly masks still carry a nose ridge.
+
+## User's picks from the Zealot test (2026-09-25)
+- Picks: `zealot_inkBrush` 1000 (but its sword is broken), **1001**, 1002, `zealot_painterly` 1001, 1002. "We can straight up just use zealot inkBrush 1001", or very close. The mask close-ups: none liked.
+- So the look is: **bold black ink brush and washes, dry-brush edges, lots of untouched pale paper; a pale palette with hard black and one or two strong faction colors.**
+- The user's worry: does it scale? Next test: the Grove's Psychopomp (`units/sylvan-psychopomp.md`), a completely different message in the same style. Grove colors from the user: greens, with purples for pulses.
