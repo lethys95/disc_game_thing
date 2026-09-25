@@ -657,7 +657,7 @@ function threatened(world: World, leader: Leader, hex: Hex): boolean {
 }
 
 /** Provisional AI taste: the doctrine pnpm sim rates strongest first. */
-const AI_BRANCH_PREFERENCE: readonly Branch[] = ["consume", "punishment", "preserve", "sacrifice"];
+const AI_BRANCH_PREFERENCE: readonly Branch[] = ["consume", "punishment", "preserve", "sacrifice", "overload", "scheme"];
 
 const strength = (squad: readonly SquadMember[]) => squad.reduce((sum, m) => sum + m.hp, 0);
 const fullStrength = (squad: readonly SquadMember[]) => squad.reduce((sum, m) => sum + fullHp(m.defId), 0);

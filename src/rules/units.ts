@@ -121,7 +121,7 @@ export const FACTION_ROOTS: Readonly<Record<Playable, readonly string[]>> = {
 export const RECRUIT_COST: Readonly<Record<string, number>> = { congregant: 40, custodian: 60, arcane_engineer: 50, apprentice: 60 };
 
 /** A fork a faction commits to once, for good (branch investment, docs/design/pillars.md). */
-export type Branch = "preserve" | "consume" | "punishment" | "sacrifice";
+export type Branch = "preserve" | "consume" | "punishment" | "sacrifice" | "scheme" | "overload";
 
 export interface Evolution {
   readonly to: string;

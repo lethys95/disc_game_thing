@@ -1,7 +1,7 @@
 import { BEHAVIORS } from "#rules/abilities";
 import type { Placement } from "#rules/battle";
-import { allowedUnits, DOCTRINES, SQUAD_LIMIT, squadProblems } from "#rules/doctrine";
-import type { Doctrine } from "#rules/doctrine";
+import { allowedUnits, doctrine, DOCTRINES, SQUAD_LIMIT, squadProblems } from "#rules/doctrine";
+import type { Commitment } from "#rules/doctrine";
 import { COLS, ROWS, sameTile } from "#rules/grid";
 import type { Side, Tile } from "#rules/types";
 import { UNITS } from "#rules/units";
@@ -14,14 +14,14 @@ export type Squads = readonly [readonly Placement[], readonly Placement[]];
 export interface SetupHandlers {
   onChange(squads: Squads): void;
   onFight(squads: Squads, playerSide: Side | null): void;
-  onMarch(squads: Squads, factions: readonly [Playable, Playable], doctrines: readonly [Doctrine, Doctrine]): void;
+  onMarch(squads: Squads, factions: readonly [Playable, Playable], commitments: readonly [Commitment, Commitment]): void;
 }
 
 const FACTION_NAMES: Readonly<Record<Playable, string>> = { jilliath: "Jilliath", nexus: "Ral-Vitahl" };
 
-const presetFor = (faction: Playable, doctrine: Doctrine) => [...(faction === "nexus" ? NEXUS_PRESET : PRESETS[doctrine])];
+const isJilliathPreset = (key: string): key is keyof typeof PRESETS => key in PRESETS;
 
-const DOCTRINE_ORDER: readonly Doctrine[] = ["uncommitted", "preserve", "punishment", "sacrifice"];
+const presetFor = (faction: Playable, key: string) => [...(faction === "nexus" ? NEXUS_PRESET : isJilliathPreset(key) ? PRESETS[key] : PRESETS.uncommitted)];
 
 function element<K extends keyof HTMLElementTagNameMap>(tag: K, className: string, text?: string): HTMLElementTagNameMap[K] {
   const el = document.createElement(tag);
@@ -33,7 +33,7 @@ function element<K extends keyof HTMLElementTagNameMap>(tag: K, className: strin
 /** Skirmish setup: pick a doctrine and a formation for both squads. The arena behind previews them live. */
 export class Setup {
   private squads: [Placement[], Placement[]] = [[...PRESETS.preserve], [...PRESETS.punishment]];
-  private doctrines: [Doctrine, Doctrine] = ["preserve", "punishment"];
+  private doctrines: [string, string] = ["preserve", "punishment"];
   private factions: [Playable, Playable] = ["jilliath", "jilliath"];
   private active: Side = 0;
   private brush: string | null = null;
@@ -56,16 +56,20 @@ export class Setup {
 
   private setFaction(side: Side, faction: Playable): void {
     this.factions[side] = faction;
-    this.doctrines[side] = faction === "nexus" ? "uncommitted" : this.doctrines[side];
+    this.doctrines[side] = "uncommitted";
     this.squads[side] = presetFor(faction, this.doctrines[side]);
     this.active = side;
     this.brush = null;
     this.changed();
   }
 
-  private setDoctrine(side: Side, doctrine: Doctrine): void {
-    this.doctrines[side] = doctrine;
-    this.squads[side] = presetFor(this.factions[side], doctrine);
+  private commitmentOf(side: Side): Commitment {
+    return doctrine(this.factions[side], this.doctrines[side]).commitment;
+  }
+
+  private setDoctrine(side: Side, key: string): void {
+    this.doctrines[side] = key;
+    this.squads[side] = presetFor(this.factions[side], key);
     this.active = side;
     this.brush = null;
     this.changed();
@@ -93,7 +97,7 @@ export class Setup {
     this.root.replaceChildren();
     const header = element("div", "setup-header");
     header.appendChild(element("div", "title", "Skirmish"));
-    header.appendChild(element("div", "subtitle", "Pick each side's faction and formation. Jilliath squads commit to a doctrine."));
+    header.appendChild(element("div", "subtitle", "Pick each side's faction, doctrine and formation."));
     this.root.appendChild(header);
 
     const body = element("div", "setup-body");
@@ -111,14 +115,14 @@ export class Setup {
       this.watch = checkbox.checked;
     });
     mode.append(checkbox, " Let the AI play both sides");
-    const ready = ([0, 1] as const).every((side) => squadProblems(this.squads[side], this.factions[side], this.doctrines[side]).length === 0);
+    const ready = ([0, 1] as const).every((side) => squadProblems(this.squads[side], this.factions[side], this.commitmentOf(side)).length === 0);
     const fight = element("button", "action fight", "Fight");
     fight.disabled = !ready;
     fight.addEventListener("click", () => this.handlers.onFight(this.squads, this.watch ? null : 0));
     const march = element("button", "action fight", "March");
     march.title = "Take both squads onto a map: your leader against the enemy's";
     march.disabled = !ready;
-    march.addEventListener("click", () => this.handlers.onMarch(this.squads, this.factions, this.doctrines));
+    march.addEventListener("click", () => this.handlers.onMarch(this.squads, this.factions, [this.commitmentOf(0), this.commitmentOf(1)]));
     footer.append(mode, fight, march);
     this.root.appendChild(footer);
   }
@@ -144,11 +148,11 @@ export class Setup {
     }
     panel.appendChild(factions);
     const doctrines = element("div", "doctrines");
-    for (const doctrine of this.factions[side] === "jilliath" ? DOCTRINE_ORDER : []) {
-      const button = element("button", `doctrine${this.doctrines[side] === doctrine ? " selected" : ""}`, DOCTRINES[doctrine].name);
+    for (const option of DOCTRINES[this.factions[side]]) {
+      const button = element("button", `doctrine${this.doctrines[side] === option.key ? " selected" : ""}`, option.name);
       button.addEventListener("click", (e) => {
         e.stopPropagation();
-        this.setDoctrine(side, doctrine);
+        this.setDoctrine(side, option.key);
       });
       doctrines.appendChild(button);
     }
@@ -185,7 +189,7 @@ export class Setup {
     const panel = element("div", "panel palette");
     panel.appendChild(element("div", "title", `Recruit for ${this.active === 0 ? "your" : "the enemy"} squad`));
     panel.appendChild(element("div", "subtitle", "Pick a unit, then click a tile."));
-    for (const defId of allowedUnits(this.factions[this.active], DOCTRINES[this.doctrines[this.active]].commitment)) {
+    for (const defId of allowedUnits(this.factions[this.active], this.commitmentOf(this.active))) {
       const def = UNITS[defId];
       if (!def) continue;
       const card = element("button", `recruit${this.brush === defId ? " selected" : ""}`);

@@ -1,23 +1,29 @@
 import { autoplay } from "#rules/ai";
 import { applyWorldAction, chooseWorldAction, concludeBattle, createWorld } from "#rules/world";
 import type { WorldAction } from "#rules/world";
-import { DOCTRINES } from "#rules/doctrine";
-import type { Doctrine } from "#rules/doctrine";
+import { doctrine } from "#rules/doctrine";
+import type { Playable } from "#rules/units";
 import { NEXUS_PRESET, PRESETS } from "#view/squads";
 
-const isDoctrine = (d: string): d is Doctrine => d in DOCTRINES;
+/**
+ * Whole games with the map AI on both sides: `A=punishment B=nexus:overload pnpm sim:world [seeds...]`.
+ * A side is a Jilliath doctrine key, or `nexus[:doctrine]`; default `uncommitted` Jilliath.
+ */
+const parse = (spec: string | undefined): { faction: Playable; key: string } => {
+  const [head = "uncommitted", tail] = (spec ?? "uncommitted").split(":");
+  return head === "nexus" ? { faction: "nexus", key: tail ?? "uncommitted" } : { faction: "jilliath", key: head };
+};
+const isJilliathPreset = (key: string): key is keyof typeof PRESETS => key in PRESETS;
+const squadOf = (s: { faction: Playable; key: string }) => (s.faction === "nexus" ? NEXUS_PRESET : isJilliathPreset(s.key) ? PRESETS[s.key] : PRESETS.uncommitted);
 
-/** Whole games with the map AI on both sides: `A=punishment B=nexus pnpm sim:world [seeds...]` (a Jilliath doctrine or `nexus`; default uncommitted). */
 const seeds = process.argv.slice(2).map(Number);
+const sides = [parse(process.env["A"]), parse(process.env["B"])] as const;
 for (const seed of seeds.length > 0 ? seeds : [1, 2, 3, 4, 5]) {
-  const doctrines = [process.env["A"] ?? "uncommitted", process.env["B"] ?? "uncommitted"].map((d) => (isDoctrine(d) ? d : "uncommitted"));
-  const [a = "uncommitted", b = "uncommitted"] = doctrines;
-  const nexus = [process.env["A"] === "nexus", process.env["B"] === "nexus"];
   let world = createWorld(
     seed,
-    [nexus[0] ? NEXUS_PRESET : PRESETS[a], nexus[1] ? NEXUS_PRESET : PRESETS[b]],
-    [DOCTRINES[a].commitment, DOCTRINES[b].commitment],
-    [nexus[0] ? "nexus" : "jilliath", nexus[1] ? "nexus" : "jilliath"],
+    [squadOf(sides[0]), squadOf(sides[1])],
+    [doctrine(sides[0].faction, sides[0].key).commitment, doctrine(sides[1].faction, sides[1].key).commitment],
+    [sides[0].faction, sides[1].faction],
   );
   const tally: Record<string, number> = {};
   let battles = 0;

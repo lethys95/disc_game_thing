@@ -3,7 +3,7 @@ import type { Placement } from "#rules/battle";
 import { hexagon, hexDistance, hexKey, neighbors, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { findPath, generateMap, stepCost, TERRAIN_COST } from "#rules/map";
-import { DOCTRINES } from "#rules/doctrine";
+import { doctrine } from "#rules/doctrine";
 import { GUARDIAN_ID } from "#rules/units";
 import {
   applyWorldAction,
@@ -36,7 +36,7 @@ const army: Placement[] = [
   { defId: "punisher", tile: { row: 1, col: 2 } },
 ];
 
-const both = (doctrine: keyof typeof DOCTRINES) => [DOCTRINES[doctrine].commitment, DOCTRINES[doctrine].commitment] as const;
+const both = (key: string) => [doctrine("jilliath", key).commitment, doctrine("jilliath", key).commitment] as const;
 
 function withLeader(world: World, id: string, change: Partial<Leader>): World {
   return { ...world, leaders: world.leaders.map((l) => (l.id === id ? { ...l, ...change } : l)) };

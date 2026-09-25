@@ -61,13 +61,23 @@ const BRANCH_NAMES: Readonly<Record<Branch, string>> = {
   consume: "Faith consumes (Zealot line)",
   punishment: "Punishment (Punisher line)",
   sacrifice: "Self-sacrifice (Fanatic line)",
+  scheme: "Scheme (Battery, Justiciar)",
+  overload: "Overload (Mutant, Thaumaturge)",
+};
+
+const BRANCH_SHORT: Readonly<Record<Branch, string>> = {
+  preserve: "Faith preserves",
+  consume: "Faith consumes",
+  punishment: "Punishment",
+  sacrifice: "Self-sacrifice",
+  scheme: "Scheme",
+  overload: "Overload",
 };
 
 function doctrineName(commitment: Commitment): string {
-  if (commitment.tier2 === null) return "Uncommitted";
-  if (commitment.tier2 === "preserve") return "Faith preserves";
-  return commitment.tier3 === null ? "Faith consumes" : `Faith consumes: ${commitment.tier3 === "punishment" ? "Punishment" : "Self-sacrifice"}`;
+  return commitment.length === 0 ? "Uncommitted" : commitment.map((b) => BRANCH_SHORT[b]).join(": ");
 }
+
 const maxHp = (defId: string) => UNITS[defId]?.stats.maxHp ?? 0;
 
 function leaderName(leader: Leader): string {
@@ -391,7 +401,7 @@ export class Campaign {
 
     const commitment = world.commitment[PLAYER];
     const faction = world.factions[PLAYER];
-    if (faction === "jilliath") this.city.appendChild(element("div", "section", `Doctrine: ${doctrineName(commitment)}`));
+    this.city.appendChild(element("div", "section", `Doctrine: ${doctrineName(commitment)}`));
     for (const branch of openBranches(faction, commitment)) {
       const problem = investProblem(world, branch);
       const invest = element("button", "action small", `Commit: ${BRANCH_NAMES[branch]} (${INVESTMENT_COST[branch]})`);

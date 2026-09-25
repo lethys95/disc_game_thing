@@ -1,6 +1,6 @@
 import { autoplay } from "#rules/ai";
 import type { Placement } from "#rules/battle";
-import { allowedUnits, DOCTRINES, INVESTMENT_COST } from "#rules/doctrine";
+import { allowedUnits, doctrine, INVESTMENT_COST } from "#rules/doctrine";
 import { COLS } from "#rules/grid";
 import { neighbors, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
@@ -18,7 +18,9 @@ import {
 import type { Leader, World } from "#rules/world";
 import { describe, expect, test } from "vitest";
 
-const { uncommitted, preserve, punishment } = { uncommitted: DOCTRINES.uncommitted.commitment, preserve: DOCTRINES.preserve.commitment, punishment: DOCTRINES.punishment.commitment };
+const uncommitted = doctrine("jilliath", "uncommitted").commitment;
+const preserve = doctrine("jilliath", "preserve").commitment;
+const punishment = doctrine("jilliath", "punishment").commitment;
 
 const congregants: Placement[] = COLS.map((col) => ({ defId: "congregant", tile: { row: 0, col } }));
 const punishers: Placement[] = [

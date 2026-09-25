@@ -2,7 +2,7 @@ import { chooseAction } from "#rules/ai";
 import { actionsPerRound, applyAction, createBattle, effectiveStats, legalActions, PUNISHMENT_MAX_STACKS } from "#rules/battle";
 import type { Placement } from "#rules/battle";
 import type { Battle, BattleEvent, Col, Row } from "#rules/types";
-import { squadProblems } from "#rules/doctrine";
+import { doctrine, squadProblems } from "#rules/doctrine";
 import { COLS, ROWS } from "#rules/grid";
 import { describe, expect, test } from "vitest";
 
@@ -224,10 +224,10 @@ describe("whole battles", () => {
 describe("doctrine", () => {
   test("a squad may only field units from its doctrine, at most six", () => {
     const preserve = [p("congregant", 0, 0), p("paladin", 0, 1)];
-    expect(squadProblems(preserve, "jilliath", "preserve")).toEqual([]);
-    expect(squadProblems([...preserve, p("zealot", 1, 1)], "jilliath", "preserve")).toEqual(["outsideDoctrine"]);
-    expect(squadProblems([], "jilliath", "sacrifice")).toEqual(["empty"]);
+    expect(squadProblems(preserve, "jilliath", doctrine("jilliath", "preserve").commitment)).toEqual([]);
+    expect(squadProblems([...preserve, p("zealot", 1, 1)], "jilliath", doctrine("jilliath", "preserve").commitment)).toEqual(["outsideDoctrine"]);
+    expect(squadProblems([], "jilliath", doctrine("jilliath", "sacrifice").commitment)).toEqual(["empty"]);
     const seven = ROWS.flatMap((row) => COLS.map((col) => p("congregant", row, col))).slice(0, 7);
-    expect(squadProblems(seven, "jilliath", "punishment")).toEqual(["tooMany"]);
+    expect(squadProblems(seven, "jilliath", doctrine("jilliath", "punishment").commitment)).toEqual(["tooMany"]);
   });
 });
