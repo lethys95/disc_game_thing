@@ -7,3 +7,8 @@ The user is in a "suggest" role: they answer when they have time, so nothing her
 
 ## Factions
 6. Vexumphat: the mechanics notes say "resurrection mechanics, super annoying to get rid of", but canon says raising the dead isn't a mechanic. Is the intent that *they* come back (graveyard perks), just not that they raise others?
+
+## Map (provisional answers in code)
+7. Leader movement is 4 points per turn, with terrain costs plain 1, forest/hills 2, mountain/water impassable. There's no canon for either; any preferences?
+8. When a squad's leader unit dies but the squad wins, the squad keeps marching (another unit takes the figure). In D2 a leaderless squad… what should happen here? Relates to leader elevation.
+

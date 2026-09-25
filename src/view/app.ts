@@ -3,12 +3,17 @@ import { applyAction, createBattle, legalActions } from "#rules/battle";
 import { sameTile } from "#rules/grid";
 import type { Action, Battle, BattleEvent, LegalAbility, Side, TargetChoice } from "#rules/types";
 import { Hud, unitLabel } from "#view/hud";
+import type { BannerButton } from "#view/hud";
 import type { BattleScene, PreviewMark, TileRef } from "#view/scene";
 import type { Squads } from "#view/setup";
+import type { Stage } from "#view/stage";
 
 export interface AppOptions {
   readonly onSetup: () => void;
 }
+
+/** What happens when a battle ends: a skirmish offers a rematch, a map battle hands the result back. */
+type Finish = { kind: "skirmish"; squads: Squads } | { kind: "world"; onDone: (battle: Battle) => void };
 
 interface Preview {
   readonly key: string;
@@ -28,28 +33,27 @@ function ownEvents(events: readonly BattleEvent[]): readonly BattleEvent[] {
 
 export class App {
   private battle: Battle | null = null;
-  private squads: Squads = [[], []];
   private playerSide: Side | null = 0;
+  private finish: Finish = { kind: "skirmish", squads: [[], []] };
   private selected: string | null = null;
   private hovered: TileRef | null = null;
   private preview: Preview | null = null;
   private busy = false;
+  /** The AI plays the player's side too, until switched off. */
+  private auto = false;
   /** Bumped on every start/stop so a turn still animating from an old battle can't touch the new one. */
   private generation = 0;
   private timer: number | undefined;
   private readonly hud: Hud;
 
   constructor(
+    private readonly stage: Stage,
     private readonly scene: BattleScene,
     private readonly options: AppOptions,
   ) {
-    this.hud = new Hud({
-      onAbility: (id) => this.chooseAbility(id),
-      onRestart: () => this.start(this.squads, this.playerSide),
-      onSetup: () => options.onSetup(),
-    });
+    this.hud = new Hud({ onAbility: (id) => this.chooseAbility(id), onAuto: () => this.toggleAuto() });
     this.hud.setVisible(false);
-    const canvas = scene.renderer.domElement;
+    const canvas = stage.renderer.domElement;
     canvas.addEventListener("pointermove", (e) => this.hover(e.clientX, e.clientY));
     canvas.addEventListener("click", () => this.click());
     canvas.addEventListener("contextmenu", (e) => {
@@ -61,15 +65,27 @@ export class App {
     });
   }
 
+  /** A standalone battle between two squads. */
   start(squads: Squads, playerSide: Side | null, fastForward = 0): void {
-    this.stop();
-    this.squads = squads;
-    this.playerSide = playerSide;
     const step = createBattle(squads);
-    let battle = step.battle;
+    this.run(step.battle, step.events, playerSide, { kind: "skirmish", squads }, fastForward);
+  }
+
+  /** A battle that came from the map; `onDone` receives the finished battle. */
+  fight(battle: Battle, playerSide: Side | null, onDone: (battle: Battle) => void): void {
+    this.run(battle, [], playerSide, { kind: "world", onDone }, 0);
+  }
+
+  private run(start: Battle, events: readonly BattleEvent[], playerSide: Side | null, finish: Finish, fastForward: number): void {
+    this.stop();
+    this.playerSide = playerSide;
+    this.finish = finish;
+    this.auto = false;
+    let battle = start;
+    this.scene.show();
     this.hud.setVisible(true);
     this.hud.clearLog();
-    this.hud.appendLog(step.events, battle, playerSide);
+    this.hud.appendLog(events, battle, playerSide);
     for (let i = 0; i < fastForward && !battle.outcome; i++) {
       const action = chooseAction(battle);
       if (!action) break;
@@ -99,7 +115,14 @@ export class App {
     const battle = this.battle;
     const id = battle?.current?.unitId;
     const unit = id ? battle?.units[id] : undefined;
-    return !this.busy && unit !== undefined && unit.side === this.playerSide;
+    return !this.busy && !this.auto && unit !== undefined && unit.side === this.playerSide;
+  }
+
+  toggleAuto(): void {
+    if (!this.battle || this.playerSide === null) return;
+    this.auto = !this.auto;
+    this.render();
+    this.schedule();
   }
 
   private playerOptions(): LegalAbility[] {
@@ -175,13 +198,13 @@ export class App {
     if (!battle || battle.outcome || this.busy) return;
     const id = battle.current?.unitId;
     const unit = id ? battle.units[id] : undefined;
-    if (!unit || unit.side === this.playerSide) return;
+    if (!unit || (unit.side === this.playerSide && !this.auto)) return;
     const generation = this.generation;
     this.timer = window.setTimeout(() => {
       if (generation !== this.generation || !this.battle) return;
       const action = chooseAction(this.battle);
       if (action) void this.commit(action);
-    }, AI_DELAY_MS);
+    }, AI_DELAY_MS * this.stage.timeScale);
   }
 
   /** Runs the hovered action on a copy of the battle: with no randomness, the preview is exactly what will happen. */
@@ -244,14 +267,27 @@ export class App {
     this.hud.renderTurns(battle, playerSide);
     this.hud.renderCard(battle, inspected?.id ?? currentId, playerSide);
     this.hud.renderActions(battle, this.playerOptions(), this.selected, this.playersTurn());
-    this.hud.showOutcome(battle, playerSide);
+    this.hud.renderAuto(this.playerSide !== null && !battle.outcome, this.auto);
+    this.hud.showOutcome(battle, playerSide, this.bannerButtons(battle));
     this.hud.setHint(preview ? `${option?.name}: ${preview.summary}` : this.hint(option));
-    this.scene.renderer.domElement.style.cursor = hoveredChoice ? "pointer" : "default";
+    this.stage.renderer.domElement.style.cursor = hoveredChoice ? "pointer" : "default";
+  }
+
+  private bannerButtons(battle: Battle): BannerButton[] {
+    const finish = this.finish;
+    if (finish.kind === "world") {
+      return [{ label: "Return to the map", onClick: () => { this.stop(); finish.onDone(battle); } }];
+    }
+    return [
+      { label: "Fight again", onClick: () => this.start(finish.squads, this.playerSide) },
+      { label: "Change squads", onClick: () => this.options.onSetup() },
+    ];
   }
 
   private hint(option: LegalAbility | undefined): string {
     const battle = this.battle;
     if (!battle || battle.outcome || this.busy) return "";
+    if (this.auto) return "Auto-battle: the AI is playing your side.";
     if (!this.playersTurn()) return this.playerSide === null ? "The AI plays both sides." : "The enemy is acting…";
     const name = battle.current ? battle.units[battle.current.unitId]?.name : undefined;
     if (!option) return `${name}: choose an action.`;

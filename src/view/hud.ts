@@ -6,8 +6,12 @@ import { ABILITY_TEXT, effectLabel } from "#view/text";
 
 export interface HudHandlers {
   onAbility(abilityId: string): void;
-  onRestart(): void;
-  onSetup(): void;
+  onAuto(): void;
+}
+
+export interface BannerButton {
+  readonly label: string;
+  readonly onClick: () => void;
 }
 
 const ROW_NAMES = ["front", "middle", "back"] as const;
@@ -42,11 +46,20 @@ export class Hud {
   private readonly hint = byId("hint");
   private readonly log = byId("log");
   private readonly banner = byId("banner");
+  private readonly auto = byId("auto");
 
-  constructor(private readonly handlers: HudHandlers) {}
+  constructor(private readonly handlers: HudHandlers) {
+    this.auto.addEventListener("click", () => handlers.onAuto());
+  }
+
+  renderAuto(available: boolean, on: boolean): void {
+    this.auto.hidden = !available;
+    this.auto.textContent = on ? "Take control" : "Auto-battle";
+    this.auto.classList.toggle("selected", on);
+  }
 
   setVisible(visible: boolean): void {
-    for (const el of [this.turns, this.log, this.hint, this.actions]) el.hidden = !visible;
+    for (const el of [this.turns, this.log, this.hint, this.actions, this.auto]) el.hidden = !visible;
     if (!visible) {
       this.card.hidden = true;
       this.banner.hidden = true;
@@ -159,7 +172,7 @@ export class Hud {
     this.log.replaceChildren();
   }
 
-  showOutcome(battle: Battle, playerSide: Side | null): void {
+  showOutcome(battle: Battle, playerSide: Side | null, buttons: readonly BannerButton[]): void {
     const outcome = battle.outcome;
     this.banner.hidden = !outcome;
     if (!outcome) return;
@@ -174,11 +187,11 @@ export class Hud {
             : "Defeat";
     this.banner.appendChild(element("div", "title", title));
     this.banner.appendChild(element("div", "subtitle", `after ${battle.round} round${battle.round === 1 ? "" : "s"}`));
-    const again = element("button", "action", "Fight again");
-    again.addEventListener("click", () => this.handlers.onRestart());
-    const setup = element("button", "action", "Change squads");
-    setup.addEventListener("click", () => this.handlers.onSetup());
-    this.banner.append(again, " ", setup);
+    for (const { label, onClick } of buttons) {
+      const button = element("button", "action", label);
+      button.addEventListener("click", onClick);
+      this.banner.append(button, " ");
+    }
   }
 }
 

@@ -1,14 +1,10 @@
 import * as THREE from "three";
-import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
-import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
-import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
-import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
-import { CSS2DObject, CSS2DRenderer } from "three/addons/renderers/CSS2DRenderer.js";
+import { CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
 import { COLS, ROWS } from "#rules/grid";
 import type { Battle, BattleEvent, BattleUnit, Col, Row, Side, Tile } from "#rules/types";
 import { UNITS } from "#rules/units";
 import { buildFigure, PALETTES } from "#view/figures";
+import type { CameraPose, Stage } from "#view/stage";
 import { EFFECT_TEXT } from "#view/text";
 
 export interface TileRef {
@@ -40,13 +36,6 @@ interface Figure {
   fallen: boolean;
 }
 
-interface Tween {
-  readonly start: number;
-  readonly duration: number;
-  readonly update: (t: number) => void;
-  readonly done: () => void;
-}
-
 const SPACING = 1.65;
 const GAP = 1.15;
 
@@ -63,52 +52,22 @@ const TILE_AFFECTED = new THREE.Color(0xd8321f);
 const TILE_CURRENT = new THREE.Color(0x8a7040);
 
 export class BattleScene {
-  readonly renderer: THREE.WebGLRenderer;
-  private readonly labels: CSS2DRenderer;
-  private readonly composer: EffectComposer;
-  private readonly bloom: UnrealBloomPass;
-  private readonly scene = new THREE.Scene();
-  private readonly camera: THREE.PerspectiveCamera;
-  private readonly controls: OrbitControls;
+  readonly scene = new THREE.Scene();
+  readonly pose: CameraPose = {
+    position: new THREE.Vector3(-2.4, 8.2, 10.4),
+    target: new THREE.Vector3(0.4, 0.4, -0.6),
+    minDistance: 8,
+    maxDistance: 22,
+  };
   private readonly tiles = new Map<string, THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial>>();
   private readonly figures = new Map<string, Figure>();
-  private readonly tweens: Tween[] = [];
-  private readonly raycaster = new THREE.Raycaster();
 
-  constructor(private readonly host: HTMLElement) {
-    this.renderer = new THREE.WebGLRenderer({ antialias: true });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.05;
-    host.appendChild(this.renderer.domElement);
-
-    this.labels = new CSS2DRenderer();
-    this.labels.domElement.className = "labels";
-    host.appendChild(this.labels.domElement);
-
-    this.camera = new THREE.PerspectiveCamera(40, 1, 0.1, 200);
-    this.camera.position.set(-2.4, 8.2, 10.4);
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    this.controls.target.set(0.4, 0.4, -0.6);
-    this.controls.enablePan = false;
-    this.controls.enableDamping = true;
-    this.controls.minDistance = 8;
-    this.controls.maxDistance = 22;
-    this.controls.minPolarAngle = 0.35;
-    this.controls.maxPolarAngle = 1.25;
-
-    this.composer = new EffectComposer(this.renderer);
-    this.composer.addPass(new RenderPass(this.scene, this.camera));
-    this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.55, 0.5, 0.8);
-    this.composer.addPass(this.bloom);
-    this.composer.addPass(new OutputPass());
-
+  constructor(private readonly stage: Stage) {
     this.buildArena();
-    this.resize();
-    window.addEventListener("resize", () => this.resize());
-    this.renderer.setAnimationLoop((time) => this.frame(time));
+  }
+
+  show(): void {
+    this.stage.show(this.scene, this.pose);
   }
 
   private buildArena(): void {
@@ -194,38 +153,6 @@ export class BattleScene {
     }
   }
 
-  private resize(): void {
-    const { clientWidth: w, clientHeight: h } = this.host;
-    this.camera.aspect = w / h;
-    this.camera.updateProjectionMatrix();
-    this.renderer.setSize(w, h);
-    this.labels.setSize(w, h);
-    this.composer.setSize(w, h);
-    this.bloom.resolution.set(w, h);
-  }
-
-  private frame(time: number): void {
-    for (let i = this.tweens.length - 1; i >= 0; i--) {
-      const tween = this.tweens[i];
-      if (!tween) continue;
-      const t = Math.min(1, (time - tween.start) / tween.duration);
-      tween.update(t);
-      if (t >= 1) {
-        this.tweens.splice(i, 1);
-        tween.done();
-      }
-    }
-    this.controls.update();
-    this.composer.render();
-    this.labels.render(this.scene, this.camera);
-  }
-
-  private tween(duration: number, update: (t: number) => void): Promise<void> {
-    return new Promise((resolve) => {
-      this.tweens.push({ start: performance.now(), duration, update, done: resolve });
-    });
-  }
-
   /** Places every figure where the battle says it is. */
   sync(battle: Battle): void {
     for (const unit of Object.values(battle.units)) {
@@ -290,7 +217,7 @@ export class BattleScene {
       apply(1);
       return Promise.resolve();
     }
-    return this.tween(duration, (t) => apply(1 - (1 - t) ** 3));
+    return this.stage.tween(duration, (t) => apply(1 - (1 - t) ** 3));
   }
 
   /** Removes every figure, for a fresh battle or a new formation preview. */
@@ -329,19 +256,14 @@ export class BattleScene {
 
   /** Where the figure on a tile shows its chest, in client pixels; used by automated play-testing. */
   screenPoint(ref: TileRef): { x: number; y: number } {
-    const rect = this.renderer.domElement.getBoundingClientRect();
-    const point = tilePosition(ref.side, ref.tile).setY(1.3).project(this.camera);
-    return { x: rect.left + ((point.x + 1) / 2) * rect.width, y: rect.top + ((1 - point.y) / 2) * rect.height };
+    return this.stage.project(tilePosition(ref.side, ref.tile).setY(1.3));
   }
 
   /** The tile under a screen point: a tile slab, or the tile of the figure standing there. */
   pick(clientX: number, clientY: number, battle: Battle): TileRef | null {
-    const rect = this.renderer.domElement.getBoundingClientRect();
-    const pointer = new THREE.Vector2(((clientX - rect.left) / rect.width) * 2 - 1, -((clientY - rect.top) / rect.height) * 2 + 1);
-    this.raycaster.setFromCamera(pointer, this.camera);
     const targets: THREE.Object3D[] = [...this.tiles.values()];
     for (const figure of this.figures.values()) if (!figure.fallen) targets.push(figure.group);
-    for (const hit of this.raycaster.intersectObjects(targets, true)) {
+    for (const hit of this.stage.intersect(clientX, clientY, targets)) {
       let object: THREE.Object3D | null = hit.object;
       while (object) {
         const unitId: unknown = object.userData["unitId"];
@@ -407,13 +329,13 @@ export class BattleScene {
     const lunges = targetFigure && targets[0] !== unitId && abilityId !== "hook";
     if (lunges) {
       const toward = targetFigure.group.position.clone().sub(home).setY(0).normalize().multiplyScalar(0.9);
-      await this.tween(170, (t) => figure.group.position.copy(home).addScaledVector(toward, t * t));
-      await this.tween(230, (t) => figure.group.position.copy(home).addScaledVector(toward, 1 - t));
+      await this.stage.tween(170, (t) => figure.group.position.copy(home).addScaledVector(toward, t * t));
+      await this.stage.tween(230, (t) => figure.group.position.copy(home).addScaledVector(toward, 1 - t));
       figure.group.position.copy(home);
       return;
     }
     const scale = figure.group.scale.x;
-    await this.tween(300, (t) => figure.group.scale.setScalar(scale * (1 + 0.12 * Math.sin(t * Math.PI))));
+    await this.stage.tween(300, (t) => figure.group.scale.setScalar(scale * (1 + 0.12 * Math.sin(t * Math.PI))));
   }
 
   private async hit(unitId: string, amount: number, bleed: boolean): Promise<void> {
@@ -425,7 +347,7 @@ export class BattleScene {
     const body = figure.materials[0];
     if (!body) return;
     const original = body.emissive.clone();
-    await this.tween(260, (t) => {
+    await this.stage.tween(260, (t) => {
       body.emissive.setRGB(1, 0.85, 0.7).lerp(original, t);
       body.emissiveIntensity = 1.4 * (1 - t);
     });
@@ -438,7 +360,7 @@ export class BattleScene {
     figure.shownHp += amount;
     this.updateBar(figure);
     this.float(unitId, `+${amount}`, "heal");
-    await this.tween(300, () => {});
+    await this.stage.tween(300, () => {});
   }
 
   private async slide(unitId: string, side: Side, to: Tile): Promise<void> {
@@ -446,7 +368,7 @@ export class BattleScene {
     if (!figure) return;
     const from = figure.group.position.clone();
     const target = tilePosition(side, to).setY(0.28);
-    await this.tween(380, (t) => figure.group.position.lerpVectors(from, target, 1 - (1 - t) ** 2));
+    await this.stage.tween(380, (t) => figure.group.position.lerpVectors(from, target, 1 - (1 - t) ** 2));
   }
 
   private float(unitId: string, text: string, kind: "damage" | "bleed" | "heal" | "effect" | "spared"): void {

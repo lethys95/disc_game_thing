@@ -8,7 +8,8 @@
     "test": "vitest run",
     "typecheck": "tsc",
     "shot": "tsx scripts/shot.ts",
-    "playtest": "tsx scripts/playtest.ts"
+    "playtest": "tsx scripts/playtest.ts",
+    "playtest:map": "tsx scripts/playtest-map.ts"
   },
   "devEngines": {
     "packageManager": {

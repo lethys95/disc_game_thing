@@ -13,6 +13,7 @@ export type Squads = readonly [readonly Placement[], readonly Placement[]];
 export interface SetupHandlers {
   onChange(squads: Squads): void;
   onFight(squads: Squads, playerSide: Side | null): void;
+  onMarch(squads: Squads): void;
 }
 
 const DOCTRINE_ORDER: readonly Doctrine[] = ["preserve", "punishment", "sacrifice"];
@@ -99,7 +100,11 @@ export class Setup {
     const fight = element("button", "action fight", "Fight");
     fight.disabled = !ready;
     fight.addEventListener("click", () => this.handlers.onFight(this.squads, this.watch ? null : 0));
-    footer.append(mode, fight);
+    const march = element("button", "action fight", "March");
+    march.title = "Take both squads onto a map: your leader against the enemy's";
+    march.disabled = !ready;
+    march.addEventListener("click", () => this.handlers.onMarch(this.squads));
+    footer.append(mode, fight, march);
     this.root.appendChild(footer);
   }
 
