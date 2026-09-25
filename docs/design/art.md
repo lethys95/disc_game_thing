@@ -27,4 +27,9 @@ ComfyUI concept art → image-to-3D mesh → **Blender headless** (`blender -b -
 - Blender 5.2.2 works headless. The user's view: don't model every unit ourselves in bpy; bpy is fine for placeholders and for processing generated assets.
 
 ## Status
-Nothing generated yet. ComfyUI is on the box, but its models are outdated. Pick current models when art work starts (check what's current then; don't rely on memory).
+Nothing generated yet. **Model chosen by the user (2026-09-25): Krea 2** (12B DiT, Krea 2 Community License: free until $1M revenue). Findings, 2026-09-25:
+- The user downloaded **Krea 2 Raw** (`~/Downloads/krea/Krea-2-Raw`, diffusers layout: Qwen3-VL text encoder, Qwen-Image VAE). Its card says Raw is "not recommended for inference": it's the base for fine-tuning and LoRAs. **Krea 2 Turbo** is the inference checkpoint, and Krea trains LoRAs on Raw to use them on Turbo. That's our style-LoRA route later.
+- The local ComfyUI (0.23, 2026-06-02) predates Krea 2 (2026-06-22): it has only the paid cloud nodes (`Krea2ImageNode`, `Krea2StyleReferenceNode`), no local loader. Local options: a ComfyUI update (if native support has landed since) or the diffusers `Krea2Pipeline`.
+- Hardware: 2× RTX 3090 Ti (24 GB each), 128 GB RAM. 12B in bf16 is ~24 GB for the transformer alone, so fp8 or CPU offload (or text encoder on the second GPU).
+- ComfyUI already has native background removal (`LoadBackgroundRemovalModel` + `RemoveBackground`, no model installed yet).
+- First targets (proposed): style anchors → ability/effect icons → unit portraits → UI ornaments. See the conversation summary in `status.md`.
