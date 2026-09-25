@@ -3,6 +3,7 @@
 What's decided, and what isn't. Anything under "Open" is a question for the user — don't invent an answer; pick a provisional rule, mark it provisional in code/data, and log it in `../questions.md`.
 
 ## Decided
+- **Initiative controls both order and number of actions** (user allowed either; Claude picked this one, 2026-09-25). Actions per round = `floor(initiative / 15)`, minimum 1. The divisor is a tunable constant. This formula matches both older notes ("15 → 1 action, 45 → 3" and the Punisher dropping 50 → 40 "across an action threshold"). A round is a series of passes: in pass *k*, every unit with at least *k* actions acts, ordered by current initiative, so actions interleave instead of one unit taking three in a row. Wait moves the unit's current action to the end of the pass.
 - Two sides, each a squad on a 3x3 grid (front / middle / back rows).
 - Deterministic. No rolls anywhere.
 - Initiative orders turns; higher acts first. Initiative can be modified mid-battle (Punisher's -10).
@@ -10,6 +11,18 @@ What's decided, and what isn't. Anything under "Open" is a question for the user
 - Abilities may be a **main action** (consumes the turn) or a **free action** (usable alongside the main action), and may be limited per combat (charges: "once per combat", "two charges").
 - Armor: flat per-hit subtraction, floored at 1. Immunity is the only true zero.
 - Melee units can only hit the enemy front line (from the Congregant spec). Units in mid/back rows can't melee.
+- **Defend** (user, 2026-09-25, as in D2): uses the unit's action; incoming damage is halved until the unit's next action. Implemented as an effect ("defending") so it composes with everything else.
+
+## Targeting (user direction 2026-09-25; model chosen by Claude)
+Each ability has its own **targeting pattern**, a small set of tiles. The UI shows it as highlighted squares, per ability.
+
+Geometry: the two 3x3 grids face each other. Rows are numbered by distance from the middle (front = 0, back = 2). From an attacker in row `a`, an enemy tile in row `e` is at **depth** `a + 1 + e` (1–5), and the column offset is −2…+2. So every attacker-to-target relation fits in a **5x5 relative pattern** (depth 1–5 × offset −2…+2). The user's 5x5 hunch is right.
+
+Two kinds of pattern:
+- **Relative**: a 5x5 mask anchored on the user's tile. Melee = one tile, depth 1, offset 0: "the square in front of the user" (user's suggestion). It only works from the front row, which matches the Congregant spec.
+- **Absolute**: a 3x3 mask on a grid, independent of where the user stands. Examples: the Punisher's flail (whole enemy front row), Lay on Hands on an ally, self-only.
+
+A pattern marks *which tiles can be chosen* (select one) or *which tiles are hit* (area). The Punisher chooses nothing: its whole mask is hit.
 - Damage types exist (weapon, fire, …) — e.g. Chosen deals fire.
 - Stun = the unit skips its next turn; it stays on the grid and remains targetable.
 - Status effects can be permanent for the rest of combat and stack (Punishment, bleed).
@@ -17,9 +30,8 @@ What's decided, and what isn't. Anything under "Open" is a question for the user
 - XP: defeated enemies feed a pool, split among the winning side's survivors. Valuation is deterministic from stats.
 
 ## Open
-- **Initiative → actions**: older notes say "15 initiative = 1 action, 45 = 3", and the melee spec talks about dropping "across an action threshold (50 → 40)". The actual formula is undefined. Provisional for M1: one action per unit per round, order by initiative.
-- **Melee reach**: can melee hit any front-row enemy, or only the nearest column (D2 style)? What happens when the enemy front row is empty — does the next row become "front"? Provisional: any enemy in the frontmost non-empty row.
-- **Defend**: what does it do (D2: halve damage until next turn)? Provisional: incoming damage halved until the unit's next turn.
+- **Empty tiles in melee's path**: with melee as "one tile in front", a front-row unit facing an empty column can't attack. Is that intended (positioning matters), or should melee fall through or widen, D2-style? Provisional: literal. Revisit after playing M1, since mirror matches could stall.
+- **Empty enemy front row**: does the next row become "front"? Provisional: no. Relative depth is fixed.
 - **Wait**: move to the end of this round's order (D2 style). Cooldown rules existed in the old code; unclear if intended.
 - **Surrender**: exits the unit from combat — what happens to it strategically?
 - Ranged / caster targeting shapes (any unit? AoE patterns?). No ranged unit is specced yet.

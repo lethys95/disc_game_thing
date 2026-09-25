@@ -1,6 +1,6 @@
 # Design pillars
 
-> Provenance: written by an AI from a design sparring session with the user (C# attempt, 2026-07-27, "captures all settled design directions from the sparring session"). The decisions are the user's; specific wording and numbers may be AI elaboration. Flag anything that looks invented.
+> Provenance: written by an AI from a design sparring session with the user (C# attempt, 2026-07-27). The user read the summary on 2026-09-25 ("sounds correct"). Treat as canon; details can still be questioned.
 
 Settled decisions that make DISC more than a Disciples II clone (inspirations: Disciples II, Warlords 3, a bit of HoMM3). These came from the user across earlier attempts. Change them only with the user.
 

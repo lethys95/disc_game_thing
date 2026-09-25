@@ -28,3 +28,15 @@ The user has no preference. A mirror match uses only units that are already spec
 
 **2026-09-25 — Abilities are the core of combat, not an add-on.**
 Units are sets of modular abilities that can change at runtime; the basic attack is itself an ability. See `design/abilities.md`. M1 builds combat on this model from the start, using the Jilliath melee line as the test set.
+
+**2026-09-25 — Initiative sets both turn order and action count.**
+The user allowed either option. Chose this one because it's more novel and the canon melee line already assumes it (the Punisher's -10 initiative "may cost an action"). Formula `floor(init/15)`, min 1, with interleaved passes; see `design/combat.md`. Balance risk accepted; the divisor is tunable.
+
+**2026-09-25 — Targeting: per-ability tile patterns, relative (5x5) or absolute (3x3).**
+From the user's suggestion; geometry in `design/combat.md`.
+
+**2026-09-25 — Art: "gothic reliquary".**
+Muted world, faction mana color as the only saturated accent, organic and made things fused, chiaroscuro. See `design/art.md`. No copying of named artists.
+
+**2026-09-25 — Notes are written continuously.**
+Update status with every commit, not at session end (user's suggestion; sessions end unpredictably).

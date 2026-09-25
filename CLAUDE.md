@@ -6,11 +6,11 @@ A deterministic, Disciples II–inspired turn-based strategy game: squads on 3x3
 1. Read `docs/status.md` first. It says where things are and what's next.
 2. Read other docs only when the task touches them:
    - `docs/roadmap.md` — milestones, each ending in something playable
-   - `docs/design/` — the game design canon (pillars, combat, abilities, factions, units, lore)
+   - `docs/design/` — the game design canon (pillars, combat, abilities, art, factions, units, lore)
    - `docs/questions.md` — open questions for the user; check for inline answers
    - `docs/decisions.md` — why things are the way they are
    - `docs/prior-attempts.md` — why this repo works the way it does (read once)
-3. Before ending (or at a milestone), **rewrite** `docs/status.md`, append any decisions, and add questions. This is the only memory that survives between sessions, so keep it short and accurate.
+3. **Take notes as you go, not at the end.** A session can end at any moment. Update `docs/status.md` with each commit (rewrite it; keep it short), record a decision in `docs/decisions.md` when you make one, and put a question in `docs/questions.md` when you hit one. The repo is the only memory that survives between sessions.
 
 ## Rules
 - **Playable first.** Build only what the current milestone needs. No speculative systems: no save framework, event bus, plugin registry, or catalog loader until a milestone requires one.
