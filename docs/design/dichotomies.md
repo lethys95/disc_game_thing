@@ -29,4 +29,10 @@ What exists:
 - Core (user, 2026-09-25): expedience and burst.
 - Its dismissal of Vexumphat.
 - User, 2026-09-25: **mutants will be the melee line primarily**; the Custodian golem is the first melee unit; casters are the strongest line.
-Dichotomy: open, being sparred on (see `../questions.md`).
+**Dichotomy (user, 2026-09-25, leaning, not locked): scheme vs overload.** Close to MTG's Izzet, which the user wanted Nexus inspired by. Scheme is foresight and counterplay; overload is raw power that doesn't care who it hits. Claude's framing: Jilliath's forks ask what faith costs, Nexus's ask what power costs (restraint vs collateral).
+
+Tier-2 caster fork from the Apprentice (user, 2026-09-25):
+- **Justiciar** (scheme): a one-time negation of an enemy action that doesn't consume its own action. "Maybe at the cost of initiative next round if too oppressive." Open: a reaction/interrupt, or a prepared mark (free action on your turn; the marked enemy's next action fizzles but still spends its action and charges; Claude's suggestion).
+- **Thaumaturge** (overload): two uses of homing lightning that hits **all** units, friendly and enemy, with the same name as the target. Counters uniform armies; friendly fire is the overload tax.
+
+Open: does scheme vs overload also split the melee line (golems as scheme, mutants as overload)?
