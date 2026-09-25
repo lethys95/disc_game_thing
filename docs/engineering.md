@@ -24,3 +24,15 @@ How the code is laid out and what has bitten before. Keep it short; add a gotcha
 - A local variable named like a module helper (`key`) shadowed it: tsc reports "not callable".
 - pnpm needs build scripts approved (`pnpm approve-builds <pkg>`); esbuild is approved.
 - TypeScript is v7 (`tsc`); config is strict with `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes`.
+
+## Known debt (self-review 2026-09-25, after M6)
+Ranked by how badly it scales. Plan: a consolidation milestone before more content.
+1. **AI cost.** One `autoplay` forecast is about 66 ms; the map AI runs one per goal plus threat checks, on the main thread. That's seconds of frozen UI late in a game, and 48 s for 8 simulated games. Fix: run the AI in a web worker, cache forecasts, and stop structuredCloning whole battles per candidate move.
+2. **Hand-tuned AI scoring.** It's one ply deep, with a special weight per mechanic (charges, shields, negation, mutation). Every mechanic needs a patch.
+3. **No ability params.** The design says `{ id, params }`, but only `id` exists. Variants are separate behaviors, and tuning numbers are constants inside `abilities.ts`.
+4. **Effects scattered.** Each effect kind is handled by hand in 3–5 places in `battle.ts` (26 kind checks). It needs a registry like abilities.
+5. **`world.ts` is too big** (~750 lines: state, movement, economy, battle aftermath, map AI). Split it.
+6. **Hard-coded ability ids outside abilities.** `"wait"` in the engine; `"attack"`/`"flail"` in `app.ts` selectDefault (**bug**: shooters and casters get no default attack selection); literal lists in `hud.ts`/`setup.ts`. Use behavior flags.
+7. **View.** DOM helpers (`element`, `byId`) are copy-pasted into three files; `App`/`Campaign` are large and mix input, state and rendering; playtests aren't part of `pnpm check`.
+8. **Balance numbers scattered** across `units.ts`, `abilities.ts`, `world.ts`, `progression.ts`, `doctrine.ts`. Gather them before balancing.
+

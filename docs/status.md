@@ -17,6 +17,7 @@ Git: tags `m2-playable` … `m6-nexus-forks` mark tested states. Work happens on
 Rules: `src/rules/` (56 tests). View: `src/view/`. Tools: the `verify` skill; `A=<doctrine|nexus> B=… pnpm sim:world`.
 
 ## Next
+0. **Consolidation milestone** (self-review, `engineering.md` "Known debt"): fix the default-attack bug and hard-coded ids, add an effect registry and ability params, split `world.ts`, run the AI in a worker with cheaper forecasts, clean up the view, put playtests in the check. Do this before adding more content.
 1. **Sparring on factions**: Nexus's Arcane Engineer has no tier 2; tiers 3+ are open; Sylvan and Vexumphat have no units yet (`design/dichotomies.md`).
 2. Open design questions: finite neutral XP and cold wars (#19), a gold sink (#20), provisional numbers (#21).
 3. Polish for human play: compact the warband panel, show enemy composition before attacking, add evolution feedback.
