@@ -11,9 +11,9 @@ Git: tags `m2-playable` and `m3-whole-game` mark tested states; work happens on 
 Rules: `src/rules/` (29 tests). View: `src/view/`. Tools: see the `verify` skill; `pnpm sim:world` for whole AI-vs-AI games.
 
 ## Next
-1. **Art spike** (`roadmap.md`): one Paladin through both routes in `design/asset-pipeline.md`, shown in the battle scene. Blender works; ComfyUI runs at :8188. Needs the Qwen-Image models downloaded (~40 GB); check disk first.
-2. Then **M4 progression** (XP → evolution tiers, branch investment, graveyard). Evolution should also break the AI cold wars (`design/combat.md`).
-3. Design gate: a second faction needs unit designs from the user.
+1. **M4 progression** (XP → evolution tiers, branch investment, graveyard). Evolution should also break the AI cold wars (`design/combat.md`).
+2. Design gate: a second faction needs unit designs from the user.
+3. **Art spike: on hold.** The user is researching image models themselves (Reddit is hard for agents to read) and will come back with picks. Don't download models until then; `design/asset-pipeline.md` holds our research for comparison.
 
 ## Waiting on the user
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.
