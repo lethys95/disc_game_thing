@@ -50,7 +50,7 @@ html, body { margin: 0; height: 100%; background: #0b0a0c; color: var(--ink); fo
 #card .stats .up { color: #d9b36a; }
 #card .stats .down { color: #d8584a; }
 #card .effects { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
-#card .effect { font-size: 11px; padding: 1px 6px; border: 1px solid #5e2a22; color: #e0a090; }
+#card .effect { font-size: 11px; padding: 1px 6px; border: 1px solid #5e2a22; color: #e0a090; cursor: help; }
 #card .abilities { list-style: none; margin: 0; padding: 0; border-top: 1px solid #2c2622; }
 #card .abilities li { padding: 5px 0; border-bottom: 1px solid #221d1a; }
 #card .abilities .name { font: 700 15px var(--display); }
@@ -200,3 +200,14 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 .hpbar .shield { position: absolute; left: 0; top: -4px; height: 3px; background: #2fd8d0; box-shadow: 0 0 4px #2fd8d0; }
 .float.shield { color: #6ff0e8; }
 #card .stats .value.shield { color: #6ff0e8; }
+#card .pin { color: #d9b36a; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
+
+#peek { position: fixed; width: 280px; padding: 10px 12px; pointer-events: none; z-index: 10; }
+#peek .title { font: 700 16px var(--display); margin-bottom: 6px; }
+#peek .formation { display: grid; grid-template-columns: 44px repeat(3, 1fr); gap: 3px; align-items: center; }
+#peek .row-label { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; }
+#peek .cell { min-height: 30px; border: 1px dashed #2c2622; padding: 2px 4px; }
+#peek .cell.filled { border-style: solid; background: #1a1513; }
+#peek .cell .name { font-size: 10.5px; line-height: 1.2; }
+#peek .cell .hp { position: relative; height: 4px; background: #231c1a; margin-top: 2px; }
+#peek .cell .hp .fill { position: absolute; inset: 0 auto 0 0; background: #8e1e16; }

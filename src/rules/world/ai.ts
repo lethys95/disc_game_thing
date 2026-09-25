@@ -1,5 +1,5 @@
-import { LEADER_MOVEMENT } from "#rules/balance";
-import { INVESTMENT_COST, openBranches, SQUAD_LIMIT } from "#rules/doctrine";
+import { LEADER_MOVEMENT, STARTING_LEADERSHIP } from "#rules/balance";
+import { INVESTMENT_COST, openBranches } from "#rules/doctrine";
 import { sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
@@ -96,7 +96,7 @@ export function chooseWorldAction(world: World): WorldAction {
     if (underThreat && !recruitProblem(world, guard, { kind: "garrison" })) {
       return { type: "recruit", defId: guard, into: { kind: "garrison" } };
     }
-    const rich = world.gold[side] >= cost * (SQUAD_LIMIT + 1);
+    const rich = world.gold[side] >= cost * (STARTING_LEADERSHIP + 1);
     if (!home && !underThreat && (mine.length === 0 || rich)) {
       const spare = capitol.garrison.find((m) => m.defId !== GUARDIAN_ID);
       if (spare && !elevateProblem(world, spare.tile)) return { type: "elevate", tile: spare.tile };

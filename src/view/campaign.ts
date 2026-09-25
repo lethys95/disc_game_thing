@@ -81,6 +81,7 @@ export class Campaign {
   private readonly hint = byId("maphint");
   private readonly endTurn = buttonById("endturn");
   private readonly banner = byId("mapbanner");
+  private readonly peek = byId("peek");
 
   constructor(
     private readonly stage: Stage,
@@ -92,6 +93,16 @@ export class Campaign {
     const canvas = stage.renderer.domElement;
     canvas.addEventListener("pointermove", (e) => this.hover(e.clientX, e.clientY));
     canvas.addEventListener("click", () => void this.click());
+    // Hold right-click on any group to see its formation.
+    canvas.addEventListener("contextmenu", (e) => {
+      if (this.world) e.preventDefault();
+    });
+    canvas.addEventListener("pointerdown", (e) => {
+      if (e.button === 2) this.peekAt(e.clientX, e.clientY);
+    });
+    window.addEventListener("pointerup", (e) => {
+      if (e.button === 2) this.peek.hidden = true;
+    });
     this.endTurn.addEventListener("click", () => void this.act({ type: "endTurn" }));
   }
 
@@ -340,7 +351,7 @@ export class Campaign {
     for (const leader of mine) {
       const isSelected = leader.id === selected?.id;
       const head = element("button", `warband${isSelected ? " selected" : ""}`);
-      head.append(element("span", "name", leaderName(leader)), element("span", "meta", `${leader.squad.length} units · ${leader.movement} move`));
+      head.append(element("span", "name", leaderName(leader)), element("span", "meta", `${leader.squad.length}/${leader.leadership} units · ${leader.movement} move`));
       head.addEventListener("click", () => {
         this.selected = leader.id;
         this.render();
@@ -427,6 +438,54 @@ export class Campaign {
     const again = element("button", "action", "New game");
     again.addEventListener("click", () => this.options.onSetup());
     this.banner.appendChild(again);
+  }
+
+  /** The squad standing on a hex, whoever it belongs to: a warband, a camp or dungeon's guards, a garrison. */
+  private groupAt(hex: Hex): { title: string; squad: readonly SquadMember[]; leaderTile: { row: number; col: number } | null } | null {
+    const world = this.world;
+    if (!world) return null;
+    const leader = leaderAt(world, hex);
+    if (leader) {
+      const whose = leader.side === PLAYER ? "Your warband" : "Enemy warband";
+      return { title: `${whose}, led by a ${leaderName(leader)}`, squad: leader.squad, leaderTile: leader.leaderTile };
+    }
+    const lair = world.lairs.find((l) => sameHex(l.hex, hex) && l.guards.length > 0);
+    if (lair) return { title: lair.kind === "camp" ? "Bandit camp" : "Dungeon guards", squad: lair.guards, leaderTile: null };
+    const city = world.cities.find((c) => sameHex(c.hex, hex) && c.garrison.length > 0);
+    if (city) {
+      const whose = city.owner === null ? "Bandit-held" : city.owner === PLAYER ? "Your" : "Enemy";
+      return { title: `${whose} ${city.kind === "capitol" ? "Capitol" : "city"} garrison`, squad: city.garrison, leaderTile: null };
+    }
+    return null;
+  }
+
+  private peekAt(x: number, y: number): void {
+    const hex = this.view.pick(x, y);
+    const group = hex ? this.groupAt(hex) : null;
+    this.peek.hidden = !group;
+    if (!group) return;
+    this.peek.replaceChildren(element("div", "title", group.title));
+    const grid = element("div", "formation");
+    for (const row of [0, 1, 2]) {
+      grid.appendChild(element("div", "row-label", ["Front", "Middle", "Back"][row] ?? ""));
+      for (const col of [0, 1, 2]) {
+        const m = group.squad.find((s) => s.tile.row === row && s.tile.col === col);
+        const cell = element("div", `cell${m ? " filled" : ""}`);
+        if (m) {
+          const lead = group.leaderTile && group.leaderTile.row === row && group.leaderTile.col === col;
+          cell.appendChild(element("div", "name", `${lead ? "♛ " : ""}${unitName(m.defId)}`));
+          const bar = element("div", "hp");
+          const fill = element("div", "fill");
+          fill.style.width = `${(100 * m.hp) / maxHp(m.defId)}%`;
+          bar.appendChild(fill);
+          cell.appendChild(bar);
+        }
+        grid.appendChild(cell);
+      }
+    }
+    this.peek.appendChild(grid);
+    this.peek.style.left = `${Math.min(x + 16, window.innerWidth - 300)}px`;
+    this.peek.style.top = `${Math.min(y + 16, window.innerHeight - 200)}px`;
   }
 
   /** Where a hex appears on screen; used by automated play-testing. */

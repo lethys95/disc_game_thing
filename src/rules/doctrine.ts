@@ -1,3 +1,4 @@
+import { STARTING_LEADERSHIP } from "#rules/balance";
 import type { Placement } from "#rules/battle/engine";
 import { EVOLUTIONS, FACTION_ROOTS } from "#rules/units/index";
 import type { Branch, Playable } from "#rules/units/index";
@@ -90,16 +91,13 @@ export function allowedUnits(faction: Playable, commitment: Commitment): string[
   return allowed;
 }
 
-/** Provisional: D2's default squad size. Real capacity will come from leadership (docs/design/pillars.md). */
-export const SQUAD_LIMIT = 6;
-
 export type SquadProblem = "empty" | "tooMany" | "outsideDoctrine";
 
 export function squadProblems(squad: readonly Placement[], faction: Playable, commitment: Commitment): SquadProblem[] {
   const problems: SquadProblem[] = [];
   const allowed = allowedUnits(faction, commitment);
   if (squad.length === 0) problems.push("empty");
-  if (squad.length > SQUAD_LIMIT) problems.push("tooMany");
+  if (squad.length > STARTING_LEADERSHIP) problems.push("tooMany");
   if (squad.some((p) => !allowed.includes(p.defId))) problems.push("outsideDoctrine");
   return problems;
 }

@@ -1,6 +1,7 @@
 import { BEHAVIORS } from "#rules/abilities/index";
 import type { Placement } from "#rules/battle/engine";
-import { allowedUnits, doctrine, DOCTRINES, SQUAD_LIMIT, squadProblems } from "#rules/doctrine";
+import { STARTING_LEADERSHIP } from "#rules/balance";
+import { allowedUnits, doctrine, DOCTRINES, squadProblems } from "#rules/doctrine";
 import type { Commitment } from "#rules/doctrine";
 import { COLS, ROWS, sameTile } from "#rules/battle/grid";
 import type { Side, Tile } from "#rules/battle/types";
@@ -75,7 +76,7 @@ export class Setup {
     this.active = side;
     const squad = this.squads[side].filter((p) => !sameTile(p.tile, tile));
     const occupied = squad.length < this.squads[side].length;
-    if (this.brush && (occupied || squad.length < SQUAD_LIMIT)) squad.push({ defId: this.brush, tile });
+    if (this.brush && (occupied || squad.length < STARTING_LEADERSHIP)) squad.push({ defId: this.brush, tile });
     else if (!occupied) {
       this.render();
       return;
@@ -177,7 +178,7 @@ export class Setup {
       }
     }
     panel.appendChild(grid);
-    panel.appendChild(element("div", "count", `${this.squads[side].length} / ${SQUAD_LIMIT} units · front row faces the enemy`));
+    panel.appendChild(element("div", "count", `${this.squads[side].length} / ${STARTING_LEADERSHIP} units (a new leader's Leadership) · front row faces the enemy`));
     return panel;
   }
 

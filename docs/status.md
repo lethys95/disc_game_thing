@@ -19,6 +19,7 @@ Git: tags `m2-playable` … `m7-foundation` mark tested states. Work happens on 
 Rules: `src/rules/` (63 tests). View: `src/view/`. Tools: the `verify` skill; `A=<doctrine|nexus> B=… pnpm sim:world`.
 
 ## Next
+**From the user's first playtest (`design/playtest-2026-09-25.md`):** done: the neutral-control bug, effect tooltips (click a unit to pin its card), leader crowns, right-click-hold formations on the map, Leadership 5. Next milestone: **the Capitol screen** (HoMM-style inside view: trees, recruit, garrison, graveyard, later buildings) **and the leader tree** (levels give points, Leadership among them; later the options depend on the elevated unit). Both need content sparring with the user.
 1. **Sparring on factions**: Nexus's Arcane Engineer has no tier 2; tiers 3+ are open; Sylvan and Vexumphat have no units yet (`design/dichotomies.md`).
 2. Open design questions: finite neutral XP and cold wars (#19), a gold sink (#20), provisional numbers (#21).
 3. Polish for human play: compact the warband panel, show enemy composition before attacking, add evolution feedback.
@@ -28,6 +29,7 @@ Rules: `src/rules/` (63 tests). View: `src/view/`. Tools: the `verify` skill; `A
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.
 
 ## Recently done
+- 2026-09-25: first playtest fixes: the enemy's fights with neutrals resolve off-screen; effect tooltips and pinned cards; leader crowns; formation peek; Leadership replaces the fixed squad size (5).
 - 2026-09-25: consolidation: the engine rebuilt on traits and effect definitions, a damage pipeline, params and tags, city nodes as data (Blacksmith), world split, AI in a worker, `pnpm verify`. The preset battle matrix is identical before and after.
 - 2026-09-25: M6: per-faction forks; Nexus scheme vs overload with Battery, Mutant, Justiciar, Thaumaturge.
 - 2026-09-25: M5: bandit neutrals (guarded cities, camps, dungeons with rewards), Ral-Vitahl tier 1, shields/ranged/area engine, Punishment cap.

@@ -3,7 +3,7 @@ import { effectDef } from "#rules/effects";
 import { abilityRef, actionsPerRound, effectiveStats, upcomingSlots } from "#rules/battle/engine";
 import type { Battle, BattleEvent, BattleUnit, LegalAbility, Side } from "#rules/battle/types";
 import { UNITS } from "#rules/units/index";
-import { abilityText, effectLabel } from "#view/text";
+import { abilityText, effectLabel, effectText } from "#view/text";
 import { byId, element } from "#view/dom";
 
 export interface HudHandlers {
@@ -67,7 +67,7 @@ export class Hud {
     });
   }
 
-  renderCard(battle: Battle, unitId: string | null, playerSide: Side | null): void {
+  renderCard(battle: Battle, unitId: string | null, playerSide: Side | null, pinned = false): void {
     const unit = unitId ? battle.units[unitId] : undefined;
     this.card.hidden = !unit;
     if (!unit) return;
@@ -76,7 +76,8 @@ export class Hud {
     this.card.replaceChildren();
     this.card.className = `panel side${unit.side}`;
     this.card.appendChild(element("div", "title", unit.name));
-    this.card.appendChild(element("div", "subtitle", `${unitLabel(unit, playerSide).split(" ")[0]} · tier ${def?.tier ?? "?"} · ${place(unit)}`));
+    if (pinned) this.card.appendChild(element("div", "pin", "Pinned · click it again to release"));
+    this.card.appendChild(element("div", "subtitle", `${unitLabel(unit, playerSide).split(" ")[0]}${unit.leader ? " leader" : ""} · tier ${def?.tier ?? "?"} · ${place(unit)}`));
 
     const hp = element("div", "hp");
     const fill = element("div", "fill");
@@ -106,7 +107,11 @@ export class Hud {
     const shown = unit.effects.filter((e) => !(effectDef(e.def).visibility === "hiddenFromBearerSide" && unit.side === playerSide));
     if (shown.length > 0) {
       const effects = element("div", "effects");
-      for (const effect of shown) effects.appendChild(element("span", `effect ${effect.def}`, effectLabel(effect)));
+      for (const effect of shown) {
+        const tag = element("span", `effect ${effect.def}`, effectLabel(effect));
+        tag.title = effectText(effect);
+        effects.appendChild(tag);
+      }
       this.card.appendChild(effects);
     }
 

@@ -40,3 +40,8 @@ The user is in a "suggest" role: they answer when they have time, so nothing her
 23. Equalize targets allies only, and only those with less shield than the Battery; units without a shield stat can receive lent shields. Mutate: +10 damage per overcharge, stacking, for the rest of combat. Restore Shield may now target full shields (needed to feed a Mutant).
 24. Tier-2 stats: Battery 70 HP / 160 shield / 30 dmg; Mutant 150 HP / 60 shield / 40 dmg; Justiciar 70 HP, 55 init; Thaumaturge 65 HP; Homing Lightning 45 per hit. All placeholders.
 
+## From the first playtest
+25. Leadership counts the leader (5 = leader + 4). The 3x3 grid allows up to 9. How high should Leadership go, and does anything besides the leader tree raise it?
+26. The leader tree: what's in it besides Leadership (movement? a stat boost? D3-style skills?), and how do its options depend on the elevated unit (by faction, by line, by the unit itself)?
+27. The Capitol screen: what can you do and build there beyond today's recruit/elevate/invest/resurrect? (Canon mentions Capitol dwellings and base upgrades, and linear upgrades for ordinary cities.)
+

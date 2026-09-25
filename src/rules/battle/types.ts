@@ -82,6 +82,8 @@ export interface BattleUnit {
   abilities: AbilitySlot[];
   effects: EffectInstance[];
   alive: boolean;
+  /** Leads its squad on the map. No combat effect (canon: elevation grants no stat boost); shown to the player. */
+  readonly leader: boolean;
 }
 
 export interface Slot {

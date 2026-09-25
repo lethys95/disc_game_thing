@@ -27,6 +27,8 @@ export interface Leader {
   readonly side: Side;
   hex: Hex;
   movement: number;
+  /** How many units the warband holds, the leader included. Grows through the leader tree (docs/design/pillars.md). */
+  leadership: number;
   squad: SquadMember[];
   /** The squad member who is the leader. Cosmetic for now: it picks the figure shown on the map. */
   leaderTile: Tile;

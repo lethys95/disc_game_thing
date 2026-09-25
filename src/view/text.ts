@@ -43,6 +43,24 @@ export function abilityText(ref: AbilityRef): string {
   return ABILITY_TEXT[ref.id]?.(paramsOf(ref)) ?? "";
 }
 
+/** What an effect does, from its own numbers; shown when hovering it on a unit card. */
+const EFFECT_TEXT: Readonly<Record<string, (effect: EffectInstance) => string>> = {
+  defending: () => "Damage that gets past its shield is halved until this unit's next turn.",
+  stunned: () => "Loses its next turn.",
+  punished: (e) => `−${10 * e.stacks} damage and −${10 * e.stacks} initiative for the rest of combat (at most ${PUNISHMENT_MAX_STACKS} stacks).`,
+  bleeding: (e) => `Loses ${e.amount} HP at the start of each of its turns.`,
+  deathward: () => "Cannot drop below 1 HP until the round ends.",
+  negated: () => "The next ability it uses will be cancelled.",
+  lent_shield: (e) => `${e.amount} shield lent by a Battery; it perishes when the Battery's next turn starts.`,
+  mutated: (e) => `+${10 * e.stacks} damage for the rest of combat.`,
+  fire_shield: (e) => `Absorbs the next ${e.amount} fire damage.`,
+  blacksmith: (e) => `Damaging abilities deal +${e.amount} (from a Blacksmith this side holds).`,
+};
+
+export function effectText(effect: EffectInstance): string {
+  return EFFECT_TEXT[effect.def]?.(effect) ?? "";
+}
+
 export function effectName(id: string): string {
   return effectDef(id).name;
 }

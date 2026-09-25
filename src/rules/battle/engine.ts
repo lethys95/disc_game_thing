@@ -30,6 +30,7 @@ export interface Placement {
   readonly hp?: number;
   /** Effects this unit brings into battle (items, leader upgrades, world-level effects). */
   readonly effects?: readonly EffectSeed[];
+  readonly leader?: boolean;
 }
 
 /** What the world brings into a battle beyond the units: effects on every unit of a side (a Blacksmith node). */
@@ -56,7 +57,7 @@ export function createBattle(sides: readonly [readonly Placement[], readonly Pla
   const units: Record<string, BattleUnit> = {};
   sides.forEach((placements, index) => {
     const side: Side = index === 0 ? 0 : 1;
-    for (const { defId, tile, hp, effects } of placements) {
+    for (const { defId, tile, hp, effects, leader } of placements) {
       const def = UNITS[defId];
       if (!def) throw new Error(`unknown unit: ${defId}`);
       const id = `${side}.${tile.row}.${tile.col}`;
@@ -74,6 +75,7 @@ export function createBattle(sides: readonly [readonly Placement[], readonly Pla
         abilities: def.abilities.map((ref) => ({ ref, chargesUsed: 0 })),
         effects: [...(effects ?? []), ...context.sideEffects[side]].map(instance),
         alive: true,
+        leader: leader ?? false,
       };
     }
   });

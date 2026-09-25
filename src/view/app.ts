@@ -1,7 +1,7 @@
 import { chooseAction } from "#rules/ai";
 import { applyAction, createBattle, legalActions } from "#rules/battle/engine";
 import { sameTile } from "#rules/battle/grid";
-import type { Action, Battle, BattleEvent, LegalAbility, Side, TargetChoice } from "#rules/battle/types";
+import type { Action, Battle, BattleEvent, BattleUnit, LegalAbility, Side, TargetChoice } from "#rules/battle/types";
 import { Hud, unitLabel } from "#view/hud";
 import { asKnown, masked } from "#view/secrecy";
 import type { BannerButton } from "#view/hud";
@@ -39,6 +39,8 @@ export class App {
   private finish: Finish = { kind: "skirmish", squads: [[], []] };
   private selected: string | null = null;
   private hovered: TileRef | null = null;
+  /** A unit whose card stays up (clicked), so the mouse can travel to the card to read its effects. */
+  private pinned: string | null = null;
   private preview: Preview | null = null;
   private busy = false;
   /** The AI plays the player's side too, until switched off. */
@@ -172,7 +174,19 @@ export class App {
 
   private click(): void {
     const action = this.hoveredAction();
-    if (action) void this.commit(action);
+    if (action) {
+      void this.commit(action);
+      return;
+    }
+    const unit = this.unitAt(this.hovered);
+    this.pinned = unit && unit.id !== this.pinned ? unit.id : null;
+    this.render();
+  }
+
+  private unitAt(ref: TileRef | null): BattleUnit | undefined {
+    const battle = this.battle;
+    if (!battle || !ref) return undefined;
+    return Object.values(battle.units).find((u) => u.alive && u.side === ref.side && sameTile(u.tile, ref.tile));
   }
 
   private cancel(): void {
@@ -267,12 +281,10 @@ export class App {
     });
     this.scene.showPreview(preview?.marks ?? []);
 
-    const hovered = this.hovered;
-    const inspected = hovered
-      ? Object.values(battle.units).find((u) => u.alive && u.side === hovered.side && sameTile(u.tile, hovered.tile))
-      : undefined;
+    const inspected = this.unitAt(this.hovered);
+    const pinned = this.pinned && battle.units[this.pinned]?.alive ? this.pinned : null;
     this.hud.renderTurns(battle, playerSide);
-    this.hud.renderCard(battle, inspected?.id ?? currentId, playerSide);
+    this.hud.renderCard(battle, inspected?.id ?? pinned ?? currentId, playerSide, pinned !== null && !inspected);
     this.hud.renderActions(battle, this.playerOptions(), this.selected, this.playersTurn());
     this.hud.renderAuto(this.playerSide !== null && !battle.outcome, this.auto);
     this.hud.showOutcome(battle, playerSide, this.bannerButtons(battle));

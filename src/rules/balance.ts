@@ -13,6 +13,8 @@ export const PUNISHMENT_MAX_STACKS = 3;
 export const AI_CHARGE_VALUE = 40;
 
 // The world.
+/** A new leader's Leadership: how many units its warband holds, itself included (user: "5 total makes sense"). */
+export const STARTING_LEADERSHIP = 5;
 export const LEADER_MOVEMENT = 4;
 export const STARTING_GOLD = 100;
 export const CAPITOL_INCOME = 50;

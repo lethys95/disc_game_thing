@@ -1,6 +1,6 @@
 import { CAPITOL_HEALING, CAPITOL_INCOME, GARRISON_LIMIT, LEADER_MOVEMENT, RESURRECTION_BASE, RESURRECTION_PREMIUM } from "#rules/balance";
 import type { Side, Tile } from "#rules/battle/types";
-import { INVESTMENT_COST, openBranches, SQUAD_LIMIT } from "#rules/doctrine";
+import { INVESTMENT_COST, openBranches } from "#rules/doctrine";
 import type { Commitment } from "#rules/doctrine";
 import { COLS, ROWS, sameTile } from "#rules/battle/grid";
 import { sameHex } from "#rules/hex";
@@ -63,7 +63,7 @@ export function roomProblem(world: World, capitol: City, into: RecruitInto): str
   if (into.kind === "garrison") return capitol.garrison.length >= GARRISON_LIMIT ? "garrison full" : null;
   const leader = leaderById(world, into.leaderId);
   if (leader.side !== world.activeSide || !sameHex(leader.hex, capitol.hex)) return "leader not in the Capitol";
-  return leader.squad.length >= SQUAD_LIMIT ? "squad full" : null;
+  return leader.squad.length >= leader.leadership ? `squad full (Leadership ${leader.leadership})` : null;
 }
 
 export function squadFor(world: World, into: RecruitInto): SquadMember[] | undefined {

@@ -1,8 +1,8 @@
 import { autoplay } from "#rules/ai";
 import { createBattle } from "#rules/battle/engine";
+import type { Placement } from "#rules/battle/engine";
 import type { Battle, Side } from "#rules/battle/types";
 import { sameTile } from "#rules/battle/grid";
-import { SQUAD_LIMIT } from "#rules/doctrine";
 import { NODES } from "#rules/nodes";
 import { xpValue } from "#rules/progression";
 import { GUARDIAN_ID } from "#rules/units/index";
@@ -33,7 +33,12 @@ function defendingSquad(world: World, defender: Defender, attackerSide: Side): {
 
 export function engagementBattle(world: World, attacker: Leader, defender: Defender): Battle {
   const defending = defendingSquad(world, defender, attacker.side);
-  const squads: [SquadMember[], SquadMember[]] = attacker.side === 0 ? [attacker.squad, defending.squad] : [defending.squad, attacker.squad];
+  const led = (leader: Leader | undefined, squad: SquadMember[]): Placement[] =>
+    squad.map((m) => (leader && sameTile(m.tile, leader.leaderTile) ? { ...m, leader: true } : m));
+  const defenderLeader = defender.kind === "leader" ? leaderById(world, defender.leaderId) : undefined;
+  const ours = led(attacker, attacker.squad);
+  const theirs = led(defenderLeader, defending.squad);
+  const squads: [Placement[], Placement[]] = attacker.side === 0 ? [ours, theirs] : [theirs, ours];
   // Each player side brings the battle effects of the city nodes it holds; neutrals bring none.
   const sideEffects = ([0, 1] as const).map((side) =>
     side === defending.side && defending.neutral ? [] : world.cities.filter((c) => c.owner === side).flatMap((c) => c.nodes.flatMap((n) => NODES[n.kind].battleEffects)),
@@ -91,7 +96,7 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
         draft.gold[attacker.side] += lair.reward.gold;
         const joins = lair.reward.joins;
         const tile = joins ? freeTile(attacker.squad) : null;
-        if (joins && tile && attacker.squad.length < SQUAD_LIMIT) attacker.squad.push(member(joins, tile));
+        if (joins && tile && attacker.squad.length < attacker.leadership) attacker.squad.push(member(joins, tile));
         events.push({ type: "looted", lairId: lair.id, side: attacker.side, gold: lair.reward.gold, joins: joins && tile ? joins : null });
       }
     }

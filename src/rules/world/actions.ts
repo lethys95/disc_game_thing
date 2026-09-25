@@ -2,7 +2,7 @@ import { INVESTMENT_COST, commit } from "#rules/doctrine";
 import { sameTile } from "#rules/battle/grid";
 import { stepCost } from "#rules/map";
 import { RECRUIT_COST } from "#rules/units/index";
-import { LEADER_MOVEMENT } from "#rules/balance";
+import { LEADER_MOVEMENT, STARTING_LEADERSHIP } from "#rules/balance";
 import { defenderOf, engagementBattle } from "#rules/world/battles";
 import { elevateProblem, freeTile, growSquad, investProblem, recruitProblem, resurrectionCost, resurrectProblem, squadFor, squadsOf, startTurn } from "#rules/world/economy";
 import { planMove } from "#rules/world/movement";
@@ -66,7 +66,7 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       const tile = { row: 0, col: 1 } as const;
       const id = `leader${draft.nextLeader}`;
       draft.nextLeader += 1;
-      draft.leaders.push({ id, side, hex: capitol.hex, movement: LEADER_MOVEMENT, squad: [{ ...unit, tile }], leaderTile: tile });
+      draft.leaders.push({ id, side, hex: capitol.hex, movement: LEADER_MOVEMENT, leadership: STARTING_LEADERSHIP, squad: [{ ...unit, tile }], leaderTile: tile });
       events.push({ type: "elevated", leaderId: id });
       break;
     }

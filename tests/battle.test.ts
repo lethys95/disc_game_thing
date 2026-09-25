@@ -223,7 +223,7 @@ describe("whole battles", () => {
 });
 
 describe("doctrine", () => {
-  test("a squad may only field units from its doctrine, at most six", () => {
+  test("a squad may only field units from its doctrine, at most a new leader's Leadership", () => {
     const preserve = [p("congregant", 0, 0), p("paladin", 0, 1)];
     expect(squadProblems(preserve, "jilliath", doctrine("jilliath", "preserve").commitment)).toEqual([]);
     expect(squadProblems([...preserve, p("zealot", 1, 1)], "jilliath", doctrine("jilliath", "preserve").commitment)).toEqual(["outsideDoctrine"]);

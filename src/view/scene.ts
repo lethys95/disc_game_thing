@@ -173,6 +173,7 @@ export class BattleScene {
     const group = buildFigure(unit.defId, unit.side);
     group.rotation.y = unit.side === 0 ? 0 : Math.PI;
     group.userData = { unitId: unit.id };
+    if (unit.leader) group.add(crown());
     const materials: THREE.MeshStandardMaterial[] = [];
     group.traverse((child) => {
       if (child instanceof THREE.Mesh && child.material instanceof THREE.MeshStandardMaterial) {
@@ -425,6 +426,22 @@ export class BattleScene {
       div.remove();
     }, 1300);
   }
+}
+
+/** A small gold crown floating over a leader's head. */
+function crown(): THREE.Group {
+  const gold = new THREE.MeshStandardMaterial({ color: 0xd9b36a, emissive: 0xd9a431, emissiveIntensity: 0.9, metalness: 0.7, roughness: 0.35 });
+  const g = new THREE.Group();
+  const band = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.07, 12, 1, true), gold);
+  g.add(band);
+  for (let i = 0; i < 5; i++) {
+    const angle = (i / 5) * Math.PI * 2;
+    const point = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.1, 4), gold);
+    point.position.set(Math.cos(angle) * 0.16, 0.08, Math.sin(angle) * 0.16);
+    g.add(point);
+  }
+  g.position.y = 2.0;
+  return g;
 }
 
 function asTileRef(data: Record<string, unknown>): TileRef | null {
