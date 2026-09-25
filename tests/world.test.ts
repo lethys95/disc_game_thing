@@ -94,15 +94,48 @@ describe("world", () => {
     expect(next.gold[1]).toBe(STARTING_GOLD + CAPITOL_INCOME);
   });
 
-  test("walking into an empty neutral city captures it and its gold mine", () => {
+  test("neutral cities are guarded; once emptied, walking in captures the city and its gold mine", () => {
     const world = createWorld(1, [squad, squad], both("preserve"), ["jilliath", "jilliath"]);
     const city = world.cities.find((c) => c.kind === "city");
     if (!city) throw new Error("no neutral city");
     const near = withLeader(world, "leader0", { hex: walkableNeighbour(world, city.hex) });
-    const step = applyWorldAction(near, { type: "move", leaderId: "leader0", to: city.hex });
+    expect(planMove(near, "leader0", city.hex)?.target).toEqual({ kind: "garrison", cityId: city.id });
+
+    const empty = { ...near, cities: near.cities.map((c) => (c.id === city.id ? { ...c, garrison: [] } : c)) };
+    const step = applyWorldAction(empty, { type: "move", leaderId: "leader0", to: city.hex });
     expect(step.events).toContainEqual({ type: "captured", cityId: city.id, side: 0 });
     expect(income(step.world, 0)).toBe(CAPITOL_INCOME + MINE_INCOME);
     expect(leaderById(step.world, "leader0").hex).toEqual(city.hex);
+  });
+
+  test("beating a bandit camp clears it and pays XP; bandits never enter a graveyard", () => {
+    const world = createWorld(1, [army, squad], both("punishment"), ["jilliath", "jilliath"]);
+    const camp = world.lairs.find((l) => l.kind === "camp");
+    if (!camp) throw new Error("no camp");
+    const ready = withLeader(world, "leader0", { hex: walkableNeighbour(world, camp.hex) });
+    const engaged = applyWorldAction(ready, { type: "move", leaderId: "leader0", to: camp.hex }).world;
+    const battle = engaged.engagement?.battle;
+    if (!battle) throw new Error("no battle");
+    const step = concludeBattle(engaged, autoplay(battle));
+    expect(step.world.lairs.some((l) => l.id === camp.id)).toBe(false);
+    expect(step.events.some((e) => e.type === "xp" && e.side === 0)).toBe(true);
+    expect(step.world.graveyard[1]).toEqual([]);
+  });
+
+  test("clearing a dungeon's guards claims its one-time reward", () => {
+    const world = createWorld(1, [army, squad], both("punishment"), ["jilliath", "jilliath"]);
+    const dungeon = world.lairs.find((l) => l.kind === "dungeon" && l.reward?.joins);
+    if (!dungeon?.reward) throw new Error("no dungeon with a unit reward");
+    const thin = withLeader(world, "leader0", { hex: walkableNeighbour(world, dungeon.hex) });
+    const leader = leaderById(thin, "leader0");
+    const roomy = withLeader(thin, "leader0", { squad: leader.squad.slice(0, 4) });
+    const engaged = applyWorldAction(roomy, { type: "move", leaderId: "leader0", to: dungeon.hex }).world;
+    const battle = engaged.engagement?.battle;
+    if (!battle) throw new Error("no battle");
+    const step = concludeBattle(engaged, autoplay(battle));
+    expect(step.events).toContainEqual({ type: "looted", lairId: dungeon.id, side: 0, gold: dungeon.reward.gold, joins: dungeon.reward.joins });
+    expect(leaderById(step.world, "leader0").squad.some((m) => m.defId === dungeon.reward?.joins)).toBe(true);
+    expect(step.world.gold[0]).toBe(roomy.gold[0] + dungeon.reward.gold);
   });
 
   test("recruiting costs gold and needs the leader in the Capitol", () => {

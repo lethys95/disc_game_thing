@@ -4,7 +4,7 @@ import type { Placement } from "#rules/battle";
 import { commit, INVESTMENT_COST, openBranches, SQUAD_LIMIT } from "#rules/doctrine";
 import type { Commitment } from "#rules/doctrine";
 import { COLS, ROWS, sameTile } from "#rules/grid";
-import { hexKey, neighbors, sameHex } from "#rules/hex";
+import { hexDistance, hexKey, neighbors, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { findPath, generateMap, stepCost } from "#rules/map";
 import type { Path, WorldMap } from "#rules/map";
@@ -45,7 +45,23 @@ export interface City {
   garrison: SquadMember[];
 }
 
-export type Defender = { kind: "leader"; leaderId: string } | { kind: "garrison"; cityId: string };
+/** A one-time dungeon reward (user's 2024 design: gold, a creature that joins you; items once they exist). */
+export interface Reward {
+  readonly gold: number;
+  readonly joins: string | null;
+}
+
+/** A neutral group on the map: a camp, or the guards of a dungeon and its reward. */
+export interface Lair {
+  readonly id: string;
+  readonly kind: "camp" | "dungeon";
+  readonly hex: Hex;
+  guards: SquadMember[];
+  readonly reward: Reward | null;
+  looted: boolean;
+}
+
+export type Defender = { kind: "leader"; leaderId: string } | { kind: "garrison"; cityId: string } | { kind: "lair"; lairId: string };
 
 export interface Engagement {
   readonly attackerId: string;
@@ -57,6 +73,7 @@ export interface World {
   readonly map: WorldMap;
   leaders: Leader[];
   cities: City[];
+  lairs: Lair[];
   gold: [number, number];
   turn: number;
   activeSide: Side;
@@ -90,6 +107,8 @@ export type WorldEvent =
   | { type: "evolved"; side: Side; from: string; to: string }
   | { type: "fell"; side: Side; defId: string }
   | { type: "invested"; side: Side; branch: Branch }
+  | { type: "cleared"; lairId: string; side: Side }
+  | { type: "looted"; lairId: string; side: Side; gold: number; joins: string | null }
   | { type: "resurrected"; side: Side; defId: string }
   | { type: "worldEnd"; winner: Side };
 
@@ -115,6 +134,31 @@ export const RESURRECTION_PREMIUM = 3;
 const fullHp = (defId: string) => UNITS[defId]?.stats.maxHp ?? 0;
 
 const member = (defId: string, tile: Tile): SquadMember => ({ defId, tile, hp: fullHp(defId), xp: 0 });
+
+type Strength = "weak" | "medium" | "strong";
+
+/** Provisional bandit groups (the user's bandit units; formations and sizes are placeholders). */
+const BANDIT_GROUPS: Readonly<Record<Strength, readonly [string, Tile][]>> = {
+  weak: [["brigand", { row: 0, col: 1 }], ["bandit", { row: 1, col: 1 }]],
+  medium: [["brigand", { row: 0, col: 0 }], ["marauder", { row: 0, col: 1 }], ["bandit", { row: 1, col: 1 }]],
+  strong: [
+    ["brigand", { row: 0, col: 0 }], ["marauder", { row: 0, col: 1 }], ["brigand", { row: 0, col: 2 }],
+    ["bandit", { row: 1, col: 0 }], ["hedge_mage", { row: 1, col: 1 }],
+  ],
+};
+
+const banditGroup = (strength: Strength): SquadMember[] => BANDIT_GROUPS[strength].map(([defId, tile]) => member(defId, tile));
+
+/** Stronger the further from both Capitols: easy fights near home, harder ones in the middle. */
+function strengthAt(map: WorldMap, hex: Hex, atLeast: Strength): Strength {
+  const near = Math.min(...map.starts.map((s) => hexDistance(s, hex)));
+  const byDistance: Strength = near <= 3 ? "weak" : near <= 4 ? "medium" : "strong";
+  const order: readonly Strength[] = ["weak", "medium", "strong"];
+  return order[Math.max(order.indexOf(byDistance), order.indexOf(atLeast))] ?? atLeast;
+}
+
+/** Provisional dungeon rewards, alternating between gold and a unit that joins. */
+const DUNGEON_REWARDS: readonly Reward[] = [{ gold: 200, joins: null }, { gold: 50, joins: "hedge_mage" }];
 
 export function createWorld(
   seed: number,
@@ -144,13 +188,22 @@ export function createWorld(
       hex: site.hex,
       goldMines: site.goldMines,
       owner,
-      garrison: site.kind === "capitol" ? [member(GUARDIAN_ID, { row: 0, col: 1 })] : [],
+      garrison: site.kind === "capitol" ? [member(GUARDIAN_ID, { row: 0, col: 1 })] : banditGroup(strengthAt(map, site.hex, "medium")),
     };
   });
+  const lairs = map.lairs.map((site, index): Lair => ({
+    id: site.id,
+    kind: site.kind,
+    hex: site.hex,
+    guards: banditGroup(strengthAt(map, site.hex, site.kind === "dungeon" ? "medium" : "weak")),
+    reward: site.kind === "dungeon" ? (DUNGEON_REWARDS[index % DUNGEON_REWARDS.length] ?? null) : null,
+    looted: false,
+  }));
   const world: World = {
     map,
     leaders,
     cities,
+    lairs,
     gold: [STARTING_GOLD, STARTING_GOLD],
     turn: 1,
     activeSide: 0,
@@ -185,6 +238,17 @@ export function leaderAt(world: World, hex: Hex): Leader | undefined {
   return world.leaders.find((l) => sameHex(l.hex, hex));
 }
 
+/** A lair whose guards still stand. Looted dungeons and cleared camps don't block anything. */
+export function lairAt(world: World, hex: Hex): Lair | undefined {
+  return world.lairs.find((l) => sameHex(l.hex, hex) && l.guards.length > 0);
+}
+
+export function lairById(world: World, id: string): Lair {
+  const lair = world.lairs.find((l) => l.id === id);
+  if (!lair) throw new Error(`unknown lair: ${id}`);
+  return lair;
+}
+
 export function cityAt(world: World, hex: Hex): City | undefined {
   return world.cities.find((c) => sameHex(c.hex, hex));
 }
@@ -202,6 +266,7 @@ export function income(world: World, side: Side): number {
 export type MoveTarget =
   | { kind: "leader"; leaderId: string }
   | { kind: "garrison"; cityId: string }
+  | { kind: "lair"; lairId: string }
   | { kind: "capture"; cityId: string };
 
 export interface MovePlan {
@@ -216,6 +281,8 @@ export interface MovePlan {
 export function destination(world: World, side: Side, hex: Hex): MoveTarget | null | "blocked" {
   const leader = leaderAt(world, hex);
   if (leader) return leader.side === side ? "blocked" : { kind: "leader", leaderId: leader.id };
+  const lair = lairAt(world, hex);
+  if (lair) return { kind: "lair", lairId: lair.id };
   const city = cityAt(world, hex);
   if (!city || city.owner === side) return null;
   return city.garrison.length > 0 ? { kind: "garrison", cityId: city.id } : { kind: "capture", cityId: city.id };
@@ -365,7 +432,7 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
         events.push({ type: "captured", cityId: city.id, side });
       } else if (target) {
         leader.movement = 0;
-        const defender: Defender = target.kind === "leader" ? { kind: "leader", leaderId: target.leaderId } : { kind: "garrison", cityId: target.cityId };
+        const defender = defenderOf(target);
         draft.engagement = { attackerId: leader.id, defender, battle: engagementBattle(draft, leader, defender) };
         events.push({ type: "engaged", attackerId: leader.id, defender });
       }
@@ -445,18 +512,26 @@ function startTurn(world: World, events: WorldEvent[]): void {
   events.push({ type: "turnStarted", side, turn: world.turn, income: earned });
 }
 
-function defendingSquad(world: World, defender: Defender): { side: Side; squad: SquadMember[] } {
+function defenderOf(target: Exclude<MoveTarget, { kind: "capture" }>): Defender {
+  if (target.kind === "leader") return { kind: "leader", leaderId: target.leaderId };
+  if (target.kind === "lair") return { kind: "lair", lairId: target.lairId };
+  return { kind: "garrison", cityId: target.cityId };
+}
+
+/** The defending squad and its battle side. Neutrals take whichever side the attacker leaves free. */
+function defendingSquad(world: World, defender: Defender, attackerSide: Side): { side: Side; squad: SquadMember[]; neutral: boolean } {
+  const free: Side = attackerSide === 0 ? 1 : 0;
   if (defender.kind === "leader") {
     const leader = leaderById(world, defender.leaderId);
-    return { side: leader.side, squad: leader.squad };
+    return { side: leader.side, squad: leader.squad, neutral: false };
   }
+  if (defender.kind === "lair") return { side: free, squad: lairById(world, defender.lairId).guards, neutral: true };
   const city = cityById(world, defender.cityId);
-  // A neutral garrison takes whichever battle side the attacker leaves free.
-  return { side: city.owner ?? 1, squad: city.garrison };
+  return { side: city.owner ?? free, squad: city.garrison, neutral: city.owner === null };
 }
 
 function engagementBattle(world: World, attacker: Leader, defender: Defender): Battle {
-  const defending = defendingSquad(world, defender);
+  const defending = defendingSquad(world, defender, attacker.side);
   const squads: [SquadMember[], SquadMember[]] = attacker.side === 0 ? [attacker.squad, defending.squad] : [defending.squad, attacker.squad];
   return createBattle(squads).battle;
 }
@@ -479,13 +554,14 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
   const draft = structuredClone(world);
   const events: WorldEvent[] = [];
   const attacker = leaderById(draft, engagement.attackerId);
-  const defending = defendingSquad(draft, engagement.defender);
+  const defending = defendingSquad(draft, engagement.defender, attacker.side);
 
-  // The dead go to their side's graveyard (the Guardian is not a unit you can buy back).
+  // A player's dead go to their graveyard (not the Guardian, and never neutrals).
   const lost: [SquadMember[], SquadMember[]] = [[], []];
   lost[attacker.side] = casualties(attacker.squad, attacker.side, battle);
   lost[defending.side] = casualties(defending.squad, defending.side, battle);
   for (const side of [0, 1] as const) {
+    if (side === defending.side && defending.neutral) continue;
     for (const m of lost[side]) {
       if (m.defId === GUARDIAN_ID) continue;
       draft.graveyard[side].push({ defId: m.defId, fellOnTurn: draft.turn });
@@ -498,9 +574,25 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
   if (defender.kind === "leader") {
     const leader = leaderById(draft, defender.leaderId);
     leader.squad = survivors(leader.squad, leader.side, battle);
+  } else if (defender.kind === "lair") {
+    const lair = lairById(draft, defender.lairId);
+    lair.guards = survivors(lair.guards, defending.side, battle);
+    if (lair.guards.length === 0 && attacker.squad.length > 0) {
+      if (lair.kind === "camp") {
+        draft.lairs = draft.lairs.filter((l) => l.id !== lair.id);
+        events.push({ type: "cleared", lairId: lair.id, side: attacker.side });
+      } else if (lair.reward && !lair.looted) {
+        lair.looted = true;
+        draft.gold[attacker.side] += lair.reward.gold;
+        const joins = lair.reward.joins;
+        const tile = joins ? freeTile(attacker.squad) : null;
+        if (joins && tile && attacker.squad.length < SQUAD_LIMIT) attacker.squad.push(member(joins, tile));
+        events.push({ type: "looted", lairId: lair.id, side: attacker.side, gold: lair.reward.gold, joins: joins && tile ? joins : null });
+      }
+    }
   } else {
     const city = cityById(draft, defender.cityId);
-    const side = city.owner ?? (attacker.side === 0 ? 1 : 0);
+    const side = defending.side;
     const guardianBefore = city.garrison.some((m) => m.defId === GUARDIAN_ID);
     city.garrison = survivors(city.garrison, side, battle);
     const guardianFell = guardianBefore && !city.garrison.some((m) => m.defId === GUARDIAN_ID);
@@ -516,7 +608,8 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
 
   // Canon: the defeated enemies' worth is split among the winning side's survivors.
   const winner = battle.outcome.winner;
-  if (winner !== null) {
+  const neutralWon = winner === defending.side && defending.neutral;
+  if (winner !== null && !neutralWon) {
     const loser: Side = winner === 0 ? 1 : 0;
     const pool = lost[loser].reduce((sum, m) => sum + xpValue(m.defId), 0);
     const winners = winner === attacker.side ? attacker.squad : winnerSquad(draft, engagement.defender);
@@ -540,14 +633,15 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
 }
 
 function winnerSquad(world: World, defender: Defender): SquadMember[] {
-  return defender.kind === "leader" ? (world.leaders.find((l) => l.id === defender.leaderId)?.squad ?? []) : cityById(world, defender.cityId).garrison;
+  if (defender.kind === "leader") return world.leaders.find((l) => l.id === defender.leaderId)?.squad ?? [];
+  if (defender.kind === "lair") return world.lairs.find((l) => l.id === defender.lairId)?.guards ?? [];
+  return cityById(world, defender.cityId).garrison;
 }
 
 /** The battle a move would start, played out by the AI on both sides. Deterministic, so it's a true forecast. */
 export function forecast(world: World, leaderId: string, target: MoveTarget): Battle | null {
   if (target.kind === "capture") return null;
-  const defender: Defender = target.kind === "leader" ? { kind: "leader", leaderId: target.leaderId } : { kind: "garrison", cityId: target.cityId };
-  return autoplay(engagementBattle(world, leaderById(world, leaderId), defender));
+  return autoplay(engagementBattle(world, leaderById(world, leaderId), defenderOf(target)));
 }
 
 /** Would an enemy leader be able to reach `hex` next turn and win the fight there? */
@@ -632,6 +726,7 @@ export function chooseWorldAction(world: World): WorldAction {
     const goals: Hex[] = [
       ...world.leaders.filter((l) => l.side !== side).map((l) => l.hex),
       ...world.cities.filter((c) => c.owner !== side).map((c) => c.hex),
+      ...world.lairs.filter((l) => l.guards.length > 0).map((l) => l.hex),
     ];
     const options = goals
       .map((hex) => ({ hex, plan: planMove(world, leader.id, hex) }))
@@ -643,7 +738,7 @@ export function chooseWorldAction(world: World): WorldAction {
       })
       .filter(({ plan }) => {
         const stop = plan.steps > 0 ? plan.path.hexes[plan.steps - 1] : leader.hex;
-        return plan.target?.kind === "leader" || plan.target?.kind === "garrison" || !stop || !threatened(world, leader, stop);
+        return (plan.target !== null && plan.target.kind !== "capture") || !stop || !threatened(world, leader, stop);
       })
       .sort((a, b) => a.plan.path.cost - b.plan.path.cost);
     const best = options[0];

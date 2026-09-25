@@ -25,12 +25,24 @@ export interface Site {
   readonly goldMines: readonly Hex[];
 }
 
+/** A neutral group's spot: a camp (just the group) or a dungeon (a group guarding a one-time reward). */
+export interface LairSite {
+  readonly id: string;
+  readonly kind: "camp" | "dungeon";
+  readonly hex: Hex;
+}
+
 export interface WorldMap {
   readonly radius: number;
   readonly tiles: Readonly<Record<string, MapTile>>;
   readonly starts: readonly [Hex, Hex];
   readonly sites: readonly Site[];
+  readonly lairs: readonly LairSite[];
 }
+
+/** Provisional counts for a radius-4 map. */
+const CAMPS = 2;
+const DUNGEONS = 2;
 
 /** Provisional: three neutral cities on a radius-4 map. */
 const NEUTRAL_CITIES = 3;
@@ -86,11 +98,13 @@ export function generateMap(seed: number, radius = 4): WorldMap {
       const clear = starts.some((s) => hexDistance(s, hex) <= 1);
       tiles[hexKey(hex)] = { hex, terrain: clear ? "plain" : terrainFor(variant, hex, radius) };
     }
-    const bare: WorldMap = { radius, tiles, starts, sites: [] };
+    const bare: WorldMap = { radius, tiles, starts, sites: [], lairs: [] };
     if (!findPath(bare, starts[0], starts[1], () => false)) continue;
     const sites = placeSites(bare, variant);
-    const map: WorldMap = { ...bare, sites };
-    const everyoneReaches = sites.every((site) => starts.every((start) => sameHex(start, site.hex) || findPath(map, start, site.hex, () => false)));
+    const lairs = placeLairs(bare, sites, variant);
+    const map: WorldMap = { ...bare, sites, lairs };
+    const spots = [...sites.map((s) => s.hex), ...lairs.map((l) => l.hex)];
+    const everyoneReaches = spots.every((hex) => starts.every((start) => sameHex(start, hex) || findPath(map, start, hex, () => false)));
     if (everyoneReaches) return map;
   }
 }
@@ -114,6 +128,26 @@ function placeSites(map: WorldMap, seed: number): Site[] {
     sites.push({ id: `city${sites.length - 1}`, kind: "city", hex, goldMines: [mine] });
   }
   return sites;
+}
+
+/** Camps and dungeons on free walkable hexes, away from the Capitols and from each other. */
+function placeLairs(map: WorldMap, sites: readonly Site[], seed: number): LairSite[] {
+  const lairs: LairSite[] = [];
+  const used = (hex: Hex) =>
+    sites.some((s) => hexDistance(s.hex, hex) < 2 || s.goldMines.some((m) => sameHex(m, hex))) || lairs.some((l) => hexDistance(l.hex, hex) < 2);
+  const candidates = Object.values(map.tiles)
+    .map((t) => t.hex)
+    .filter((hex) => stepCost(map, hex) !== null && map.starts.every((s) => hexDistance(s, hex) >= 2))
+    .sort((a, b) => noise(seed + 53, a.q, a.r) - noise(seed + 53, b.q, b.r));
+  for (const hex of candidates) {
+    if (used(hex)) continue;
+    const camps = lairs.filter((l) => l.kind === "camp").length;
+    const dungeons = lairs.filter((l) => l.kind === "dungeon").length;
+    if (camps < CAMPS) lairs.push({ id: `camp${camps}`, kind: "camp", hex });
+    else if (dungeons < DUNGEONS) lairs.push({ id: `dungeon${dungeons}`, kind: "dungeon", hex });
+    else break;
+  }
+  return lairs;
 }
 
 export interface Path {

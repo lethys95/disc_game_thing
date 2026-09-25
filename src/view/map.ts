@@ -73,6 +73,7 @@ export class MapView {
   private readonly hexes = new Map<string, HexTile>();
   private readonly leaders = new Map<string, LeaderFigure>();
   private readonly sites = new Map<string, SiteModel>();
+  private readonly lairs = new Map<string, { group: THREE.Group; label: HTMLDivElement }>();
   private readonly siteLayer = new THREE.Group();
 
   constructor(private readonly stage: Stage) {
@@ -164,8 +165,10 @@ export class MapView {
   /** Builds the cities and their gold mines; call after `build`. Ownership colours follow in `syncSites`. */
   buildSites(world: World): void {
     for (const site of this.sites.values()) site.label.remove();
+    for (const lair of this.lairs.values()) lair.label.remove();
     this.siteLayer.clear();
     this.sites.clear();
+    this.lairs.clear();
     const stone = new THREE.MeshStandardMaterial({ color: 0x3b3733, roughness: 0.9 });
     const dark = new THREE.MeshStandardMaterial({ color: 0x1f1c1a, roughness: 0.85 });
     const ore = new THREE.MeshStandardMaterial({ color: 0xd9a431, emissive: 0xd9a431, emissiveIntensity: 1.4, roughness: 0.4 });
@@ -233,6 +236,61 @@ export class MapView {
         pile.userData = { hex: mine };
         this.siteLayer.add(pile);
       }
+    }
+  }
+
+  /** Camps show their bandits; dungeons show a dark entrance with their guards before it. */
+  syncLairs(world: World): void {
+    const present = new Set(world.lairs.map((l) => l.id));
+    for (const [id, model] of this.lairs) {
+      if (present.has(id)) continue;
+      this.siteLayer.remove(model.group);
+      model.label.remove();
+      this.lairs.delete(id);
+    }
+    for (const lair of world.lairs) {
+      let model = this.lairs.get(lair.id);
+      if (!model) {
+        const group = new THREE.Group();
+        if (lair.kind === "dungeon") {
+          const rock = new THREE.MeshStandardMaterial({ color: 0x2a2624, roughness: 0.95, flatShading: true });
+          const mouth = new THREE.MeshStandardMaterial({ color: 0x050404, emissive: new THREE.Color(0x5a3010), emissiveIntensity: 0.8 });
+          const mound = new THREE.Mesh(new THREE.DodecahedronGeometry(0.5, 0), rock);
+          mound.scale.set(1, 0.7, 1);
+          mound.position.set(0.05, 0.25, -0.2);
+          const entrance = new THREE.Mesh(new THREE.CircleGeometry(0.2, 12, 0, Math.PI), mouth);
+          entrance.position.set(0.05, 0.02, 0.28);
+          group.add(mound, entrance);
+        }
+        const leaderDef = lair.guards[0]?.defId ?? "brigand";
+        const figure = buildFigure(leaderDef, 1);
+        figure.scale.multiplyScalar(0.55);
+        figure.rotation.y = -Math.PI / 2;
+        figure.position.set(lair.kind === "dungeon" ? -0.25 : 0, 0, lair.kind === "dungeon" ? 0.25 : 0);
+        figure.name = "guard";
+        group.add(figure);
+        group.traverse((o) => {
+          o.castShadow = true;
+        });
+        group.position.copy(this.standingPoint(lair.hex));
+        group.userData = { hex: lair.hex };
+        const label = document.createElement("div");
+        label.className = "site-label neutral";
+        const tag = new CSS2DObject(label);
+        tag.position.set(0, 1.35, 0);
+        group.add(tag);
+        this.siteLayer.add(group);
+        model = { group, label };
+        this.lairs.set(lair.id, model);
+      }
+      const guard = model.group.getObjectByName("guard");
+      if (guard) guard.visible = lair.guards.length > 0;
+      model.label.textContent =
+        lair.kind === "camp"
+          ? `Bandits · ${lair.guards.length}`
+          : lair.looted
+            ? "Dungeon (looted)"
+            : `Dungeon · ${lair.guards.length} guards`;
     }
   }
 

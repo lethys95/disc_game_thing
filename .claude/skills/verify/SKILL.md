@@ -19,10 +19,10 @@ Tests prove the rules; only a rendered frame proves the view. Always look at the
 | Param | Effect |
 |---|---|
 | (none) | setup screen |
-| `?fight` | skip setup, battle with the preserve vs punishment presets |
+| `?fight` | skip setup, battle with the preserve vs punishment presets (`?fight=nexus`, `?fight=bandits` for other enemies) |
 | `?steps=N` | fast-forward N AI actions before the first frame (no animation) |
 | `?auto=1` | AI plays both sides |
-| `?map&seed=N` | skip setup, straight onto the map (both sides uncommitted, six Congregants) |
+| `?map&seed=N` | skip setup, straight onto the map (both sides uncommitted Jilliath; `?map=nexus` makes the enemy Nexus) |
 | `?fast` | animations and AI pauses ×0.1 (for scripted runs) |
 | `?debug` | exposes `window.discDebug` (below) |
 

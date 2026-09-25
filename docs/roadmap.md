@@ -22,6 +22,9 @@ One unit (Paladin) through both routes in `design/asset-pipeline.md` (rigid-part
 ## M4 — Progression ✅ (2026-09-25)
 XP → evolution tiers, branch investment for Jilliath's melee line, graveyard with decaying resurrection cost.
 
+## M5 — Neutrals and a second faction ✅ (2026-09-25)
+The user's bandits guard neutral cities, camps and dungeons (one-time rewards: gold, a unit joins). Ral-Vitahl's tier 1 (Custodian, Arcane Engineer, Apprentice) is playable beside Jilliath. Engine: shields, ranged and area attacks. Punishment capped at 3 stacks.
+
 ## Design gate (needs the user)
 Only the Jilliath melee line has units. A second faction needs a unit design from the user before it can be built; Claude doesn't invent units. Raise this once M3 is done.
 

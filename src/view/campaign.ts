@@ -18,6 +18,7 @@ import {
   forecast,
   income,
   investProblem,
+  lairById,
   leaderAt,
   planMove,
   reachable,
@@ -141,6 +142,7 @@ export class Campaign {
   private syncView(world: World): void {
     this.view.syncLeaders(world);
     this.view.syncSites(world);
+    this.view.syncLairs(world);
   }
 
   private myLeaders(): Leader[] {
@@ -230,6 +232,8 @@ export class Campaign {
       if (e.type === "captured") lines.push(`${e.side === PLAYER ? "You take" : "The enemy takes"} the city.`);
       if (e.type === "xp" && e.side === PLAYER) lines.push(`Your survivors gain ${e.each} XP each.`);
       if (e.type === "evolved" && e.side === PLAYER) lines.push(`${unitName(e.from)} becomes ${unitName(e.to)}.`);
+      if (e.type === "cleared" && e.side === PLAYER) lines.push("The bandit camp is cleared.");
+      if (e.type === "looted" && e.side === PLAYER) lines.push(`The dungeon yields ${e.gold} gold${e.joins ? ` and a ${unitName(e.joins)} joins you` : ""}.`);
     }
     if (lines.length > 0) this.hint.textContent = lines.join(" ");
   }
@@ -295,7 +299,13 @@ export class Campaign {
     if (target?.kind === "leader") return `Click to attack the enemy warband. ${this.forecastText(world, leader, target)}`;
     if (target?.kind === "garrison") {
       const city = cityById(world, target.cityId);
-      return `Click to storm the ${city.kind === "capitol" ? "Capitol" : "city"}. ${this.forecastText(world, leader, target)}`;
+      const whose = city.owner === null ? "the bandit-held city" : city.kind === "capitol" ? "the Capitol" : "the city";
+      return `Click to storm ${whose}. ${this.forecastText(world, leader, target)}`;
+    }
+    if (target?.kind === "lair") {
+      const lair = lairById(world, target.lairId);
+      const reward = lair.reward ? ` Reward: ${lair.reward.gold} gold${lair.reward.joins ? ` and a ${unitName(lair.reward.joins)} joins you` : ""}.` : "";
+      return `Click to attack the ${lair.kind === "camp" ? "bandit camp" : "dungeon's guards"}.${reward} ${this.forecastText(world, leader, target)}`;
     }
     if (plan.steps === 0) return "Not enough movement left to go further. End your turn.";
     const total = plan.path.hexes.length;

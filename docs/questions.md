@@ -30,3 +30,8 @@ The user is in a "suggest" role: they answer when they have time, so nothing her
 ## Second faction
 18. Sparring with the user on a second faction (the user has ideas). Topics: how the faction's core plays, back-row roles (every canon unit is melee so far), tree forks, a signature mechanic.
 
+## Neutrals and the economy (M5)
+19. Neutral XP is finite (2 camps, 2 dungeons, 3 guarded cities on a 61-hex map), so AI-vs-AI games still end in cold wars: armies reach about tier 2–3, and a Guardian needs tier 4–5. Should neutrals respawn, or grow over time, or should maps have more of them?
+20. Gold has no sink beyond tier-1 recruits (the winning AI banks ~17k). Canon has city upgrades (linear, gold, raising fortification/armor/regen). Should those come next, or something else?
+21. Bandit and Nexus stats, recruit prices (Custodian 60, Engineer 50, Apprentice 60), group sizes, dungeon rewards (200 gold, or 50 gold + a Hedge Mage joins) are all provisional. Ranged units hit any enemy (D2 archers); fine?
+
