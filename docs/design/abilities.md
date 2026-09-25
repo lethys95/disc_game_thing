@@ -2,7 +2,7 @@
 
 > Provenance: intent inferred by Claude from the old code's shape; confirmed only as "modular, not one ability per unit". Ability *content* in the old code (e.g. Aura of the Scarlet Banner, holy_strike, units.json/abilities.json) was invented by an AI and is not design.
 
-The user's intent, recovered from the C# attempt (its first commit and later refinements) and confirmed with the user on 2026-09-25.
+The shape of the C# attempt's ability system (its first commit and later refinements), which the user described as modular.
 
 ## Intent
 - **A unit is a set of abilities**, not D2's fixed "attack1 / attack2" slots. Any number of them, within reason.
