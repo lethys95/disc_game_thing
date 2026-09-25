@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines._
 
-**Updated:** 2026-09-25
+**Updated:** 2026-09-25 (m8)
 
 ## Where we are
 **Foundation rebuilt (m7-foundation).** Rules are traits (passives and effects share one hook interface), effect definitions with lifetimes and stacking, a typed damage pipeline, ability params and tags, and world context entering battles as effects (the Blacksmith node; a fire-only shield works). The AI runs in a web worker. See `design/architecture.md` and the recipes in `engineering.md`. Run `pnpm verify` before calling anything done.
@@ -16,23 +16,21 @@ Git: tags `m2-playable` … `m7-foundation` mark tested states. Work happens on 
 - Nexus forks scheme vs overload (Battery, Mutant, Justiciar, Thaumaturge). The Negate mark is hidden from the marked side (`src/view/secrecy.ts`, tested).
 - Unit designs from the user: `design/units/*.md`. Numbers are provisional (`questions.md`).
 
-Rules: `src/rules/` (73 tests). View: `src/view/`. Tools: the `verify` skill; `A=<preset|nexus> B=… pnpm sim:world`.
+Rules: `src/rules/` (78 tests). View: `src/view/`. Tools: the `verify` skill; `A=<preset|nexus> B=… pnpm sim:world`.
 
 ## Next
-**m8 (branch `m8`), user's go-ahead given.** Design in `design/pillars.md`.
-- [x] Per-line forks, free choice, fork prompt with the lock warning (`src/rules/forks.ts`).
-- [x] Leader tree v1 (`world/leaders.ts`): points from leader XP; the user's five skills; AI buys them; warband panel shows the tree. Numbers and shape provisional (questions #28–32).
-- [ ] Unit-type upgrades bought with gold, stamped as marks on units that become that type afterwards (non-retroactive). The track record already exists: `recordOf`, shown under each unit.
-- [ ] The Capitol screen (HoMM-style): trees with forks and upgrades per node, recruit, garrison, graveyard.
-1. **Sparring on factions**: Nexus's Arcane Engineer has no tier 2; tiers 3+ are open; Sylvan and Vexumphat have no units yet (`design/dichotomies.md`).
-2. Open design questions: finite neutral XP and cold wars (#19), a gold sink (#20), provisional numbers (#21).
-3. Polish for human play: compact the warband panel, show enemy composition before attacking, add evolution feedback.
-4. Art spike: on hold for the user's image-model research.
+**m8 done** (per-line forks, leader tree v1, unit-type upgrades with the track record, the Capitol screen). Design in `design/pillars.md`; provisional choices in `questions.md` #28–32. Routes to see it: `?map&xp=250` (fork prompt, leader points), `?map&capitol`.
+1. **Playtest m8 with the user**: forks, leader skills, upgrades, the Capitol screen. Upgrade content is placeholder (+5 damage per type) until the user designs unique ones ("punish stacks one more time", a stun grenade).
+2. **Sparring on factions**: Nexus's Arcane Engineer has no tier 2; tiers 3+ are open; Sylvan and Vexumphat have no units yet (`design/dichotomies.md`).
+3. Open design questions: finite neutral XP and cold wars (#19; `pnpm sim:world` still ends in cold wars), the economy (pillars.md), provisional numbers (#21).
+4. Later: a spell tree in the Capitol, shrines with hidden routes, a smarter AI, save/load.
+5. Art spike: on hold for the user's image-model research.
 
 ## Waiting on the user
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.
 
 ## Recently done
+- 2026-09-25: m8: unit-type upgrades (non-retroactive, stamped as marks) and the HoMM-style Capitol screen; the side panel only summarises.
 - 2026-09-25: m8: leader tree v1 and marks (a unit's lasting effects with their source, shown as its track record). Screenshot route `?map&xp=N`.
 - 2026-09-25: m8: per-line forks replace doctrines: free choice in the Capitol, a prompt at undecided forks, setup formations imply the choices.
 - 2026-09-25: first playtest fixes: the enemy's fights with neutrals resolve off-screen; effect tooltips and pinned cards; leader crowns; formation peek; Leadership replaces the fixed squad size (5).

@@ -221,3 +221,35 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 #mapsquad .section { font: 600 13px var(--display); margin: 10px 0 4px; color: var(--muted); }
 #mapsquad button.skill { display: block; width: 100%; margin: 3px 0; text-align: left; }
 #mapsquad button.skill.learned { border-color: #9b7c52; color: #e6d2a6; }
+
+#capitol {
+  position: fixed; inset: 0; display: flex; flex-direction: column; gap: 12px; padding: 18px 24px;
+  background: rgba(8, 7, 7, 0.97);
+}
+.capitol-header { display: flex; align-items: center; gap: 24px; }
+.capitol-header .title { font: 700 36px var(--display); letter-spacing: 0.06em; }
+.capitol-header .gold { color: #d9b36a; font: 600 18px var(--display); flex: 1; }
+.capitol-body { display: grid; grid-template-columns: 1fr 340px; gap: 16px; min-height: 0; flex: 1; }
+.capitol-trees, .capitol-hall { padding: 12px 16px; overflow-y: auto; }
+#capitol .section { font: 700 18px var(--display); margin: 12px 0 6px; }
+#capitol .section:first-child { margin-top: 0; }
+#capitol .note { color: var(--muted); font-size: 11px; margin: 4px 0 8px; }
+#capitol .tree { display: grid; gap: 6px 10px; margin: 10px 0 18px; }
+#capitol .node { display: flex; flex-direction: column; gap: 3px; padding: 6px 8px; border: 1px solid #3a2e28; background: #15110f; }
+#capitol .node.continued { border: none; background: none; border-left: 2px solid #3a2e28; margin-left: 12px; }
+#capitol .node.closed { opacity: 0.45; }
+#capitol .node .name { font: 700 15px var(--display); }
+#capitol .node .stats { color: var(--muted); font-size: 10px; }
+#capitol .node .branch { font-size: 11px; color: var(--muted); }
+#capitol .node .branch.chosen { color: #d9b36a; }
+#capitol .node .upgrade.bought { font-size: 11px; color: #c9b88e; }
+#capitol button.small { font-size: 11px; padding: 3px 6px; }
+#capitol .capitol-hall button.action { display: block; width: 100%; margin: 4px 0; }
+#capitol .member { display: grid; grid-template-columns: 1fr auto; gap: 2px 6px; align-items: center; margin-bottom: 6px; }
+#capitol .member .hp { grid-column: 1; position: relative; height: 12px; background: #231c1a; border: 1px solid #3a2e28; }
+#capitol .member .hp .fill { position: absolute; inset: 0 auto 0 0; background: linear-gradient(#8e1e16, #5e130e); }
+#capitol .member .hp .value { position: relative; display: block; text-align: center; font-size: 10px; line-height: 12px; }
+#capitol .member button.small { grid-row: 1 / span 2; grid-column: 2; }
+#capitol .member .mark { grid-column: 1; }
+#capitol .fallen { display: flex; justify-content: space-between; align-items: center; margin: 4px 0; }
+#mapcity button.action { display: block; width: 100%; margin-top: 8px; }

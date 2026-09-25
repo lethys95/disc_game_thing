@@ -4,32 +4,29 @@ import { tileAt, TERRAIN_COST } from "#rules/map";
 import type { Battle, Side } from "#rules/battle/types";
 import { forkOptions, openForks } from "#rules/forks";
 import type { Commitment } from "#rules/forks";
-import { nextForm, xpToEvolve } from "#rules/progression";
-import { EVOLUTIONS, FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
+import { EVOLUTIONS, GUARDIAN_ID } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
-import { effectDef } from "#rules/effects";
-import { UPGRADES } from "#rules/upgrades";
 import { applyWorldAction } from "#rules/world/actions";
 import { concludeBattle, playersIn } from "#rules/world/battles";
 import { createWorld } from "#rules/world/create";
-import { chooseBranchProblem, elevateProblem, income, learnSkillProblem, recruitProblem, resurrectionCost, resurrectProblem, waitingForks } from "#rules/world/economy";
+import { income, learnSkillProblem, waitingForks } from "#rules/world/economy";
 import { LEADER_SKILLS, leadershipOf, rankOf, unspentPoints } from "#rules/world/leaders";
 import { planMove, reachable } from "#rules/world/movement";
-import { isLeaderOf, maxHpOf, recordOf } from "#rules/world/record";
+import { isLeaderOf, maxHpOf } from "#rules/world/record";
 import { capitolOf, cityById, lairById, leaderAt } from "#rules/world/state";
 import type { MovePlan, MoveTarget } from "#rules/world/movement";
-import type { Leader, Mark, RecruitInto, SquadMember, World, WorldAction, WorldEvent } from "#rules/world/state";
+import type { Leader, SquadMember, World, WorldAction, WorldEvent } from "#rules/world/state";
 import type { AiClient } from "#view/ai-client";
 import type { App } from "#view/app";
 import type { MapView } from "#view/map";
 import type { Squads } from "#view/setup";
 import type { Stage } from "#view/stage";
+import { CapitolScreen } from "#view/capitol";
 import { buttonById, byId, element } from "#view/dom";
+import { memberRow, unitName } from "#view/members";
 
 const PLAYER: Side = 0;
 const AI_STEP_MS = 350;
-
-const unitName = (defId: string) => UNITS[defId]?.name ?? defId;
 
 /** "Paladin (Faith preserves)": a branch by the unit it leads to and the dichotomy it stands for. */
 function branchName(fork: string, to: string): string {
@@ -38,14 +35,6 @@ function branchName(fork: string, to: string): string {
 }
 
 const LOCK_WARNING = (fork: string) => `Permanent: every ${unitName(fork)} in your army will take this branch.`;
-
-/** "+10% max HP · leader tree: Health +10%": one line of a unit's track record. */
-function markText(mark: Mark): string {
-  const { effect, source } = mark;
-  const text = effectDef(effect.def).describe({ def: effect.def, source: null, stacks: effect.stacks ?? 1, amount: effect.amount ?? 0 });
-  const from = source.kind === "leaderTree" ? `leader tree: ${LEADER_SKILLS[source.skill]?.name ?? source.skill}` : `bought at the Capitol: ${UPGRADES.get(source.upgrade)?.name ?? source.upgrade}`;
-  return `${text} (${from})`;
-}
 
 function leaderName(leader: Leader): string {
   const figure = leader.squad.find((m) => m.tile.row === leader.leaderTile.row && m.tile.col === leader.leaderTile.col) ?? leader.squad[0];
@@ -81,6 +70,14 @@ export class Campaign {
   private readonly prompt = byId("forkprompt");
   /** Forks the player put off with "Decide later", keyed by turn so the prompt returns next turn. */
   private deferred = new Set<string>();
+  private capitolOpen = false;
+  private readonly capitolScreen = new CapitolScreen(byId("capitol"), {
+    act: (action) => void this.act(action),
+    close: () => {
+      this.capitolOpen = false;
+      this.render();
+    },
+  });
 
   constructor(
     private readonly stage: Stage,
@@ -123,8 +120,15 @@ export class Campaign {
     this.render();
   }
 
+  openCapitol(): void {
+    this.capitolOpen = true;
+    this.render();
+  }
+
   stop(): void {
     this.generation += 1;
+    this.capitolOpen = false;
+    this.capitolScreen.hide();
     this.world = null;
     this.busy = false;
     this.hud.hidden = true;
@@ -331,29 +335,6 @@ export class Campaign {
     return `${walks}. Hovering ${terrain}.`;
   }
 
-  private memberRow(m: SquadMember, leader: Leader | undefined, commitment?: Commitment): HTMLElement {
-    const row = element("div", "member");
-    row.appendChild(element("span", "name", `${isLeaderOf(m, leader) ? "♛ " : ""}${unitName(m.defId)}`));
-    const max = maxHpOf(m, leader);
-    const bar = element("div", "hp");
-    const fill = element("div", "fill");
-    fill.style.width = `${(100 * m.hp) / max}%`;
-    bar.append(fill, element("span", "value", `${m.hp} / ${max}`));
-    row.appendChild(bar);
-    const needed = xpToEvolve(m.defId);
-    if (commitment && needed !== null) {
-      const next = nextForm(m.defId, commitment);
-      const xp = element("div", `xp${m.xp >= needed ? " ready" : ""}`);
-      const xpFill = element("div", "fill");
-      xpFill.style.width = `${(100 * Math.min(m.xp, needed)) / needed}%`;
-      const label = next ? `XP ${m.xp} / ${needed} → ${unitName(next)}` : m.xp >= needed ? "Ready: choose a branch to evolve" : `XP ${m.xp} / ${needed} → (branch not chosen)`;
-      xp.append(xpFill, element("span", "value", label));
-      row.appendChild(xp);
-    }
-    for (const mark of recordOf(m, leader)) row.appendChild(element("div", "mark", markText(mark)));
-    return row;
-  }
-
   private renderWarbands(selected: Leader | undefined): void {
     this.squad.replaceChildren();
     const mine = this.myLeaders();
@@ -370,7 +351,7 @@ export class Campaign {
       this.squad.appendChild(head);
       if (!isSelected) continue;
       const commitment = this.world?.commitment[PLAYER];
-      for (const m of [...leader.squad].sort((a, b) => a.tile.row - b.tile.row || a.tile.col - b.tile.col)) this.squad.appendChild(this.memberRow(m, leader, commitment));
+      for (const m of [...leader.squad].sort((a, b) => a.tile.row - b.tile.row || a.tile.col - b.tile.col)) this.squad.appendChild(memberRow(m, leader, commitment));
       this.renderLeaderTree(leader);
     }
   }
@@ -393,73 +374,32 @@ export class Campaign {
     }
   }
 
+  /** The side panel only summarises; everything you do in the Capitol happens on its own screen. */
   private renderCapitol(world: World, selected: Leader | undefined): void {
     this.city.replaceChildren();
     const capitol = capitolOf(world, PLAYER);
     this.city.hidden = !capitol || world.outcome !== null;
     if (!capitol) return;
     this.city.appendChild(element("div", "title", "Your Capitol"));
-    const mayAct = this.myTurn();
-    for (const m of capitol.garrison) {
-      const row = this.memberRow(m, undefined);
-      if (m.defId !== GUARDIAN_ID) {
-        const problem = elevateProblem(world, m.tile);
-        const elevate = element("button", "small", "Elevate");
-        elevate.disabled = !mayAct || problem !== null;
-        elevate.title = problem ?? "Make this unit the leader of a new warband (irreversible).";
-        elevate.addEventListener("click", () => void this.act({ type: "elevate", tile: m.tile }));
-        row.appendChild(elevate);
-      }
-      this.city.appendChild(row);
-    }
-    const home = selected && sameHex(selected.hex, capitol.hex) ? selected : undefined;
-    for (const defId of FACTION_ROOTS[world.factions[PLAYER]]) {
-      const cost = RECRUIT_COST[defId] ?? 0;
-      const targets: { label: string; into: RecruitInto }[] = [{ label: "to the garrison", into: { kind: "garrison" } }];
-      if (home) targets.unshift({ label: `to ${leaderName(home)}'s warband`, into: { kind: "leader", leaderId: home.id } });
-      for (const { label, into } of targets) {
-        const problem = recruitProblem(world, defId, into);
-        const recruit = element("button", "action small", `Recruit ${unitName(defId)} ${label} (${cost})`);
-        recruit.disabled = !mayAct || problem !== null;
-        recruit.title = problem ?? "";
-        recruit.addEventListener("click", () => void this.act({ type: "recruit", defId, into }));
-        this.city.appendChild(recruit);
-      }
-    }
-    if (!home) this.city.appendChild(element("div", "note", "Warbands standing in the Capitol can recruit directly and heal each turn."));
-
-    const commitment = world.commitment[PLAYER];
-    const faction = world.factions[PLAYER];
-    const forks = openForks(faction, commitment);
-    if (forks.length > 0) this.city.appendChild(element("div", "section", "Branches (free, permanent)"));
-    for (const fork of forks) {
-      this.city.appendChild(element("div", "note", `${unitName(fork)} evolves into:`));
-      for (const to of forkOptions(fork)) {
-        const problem = chooseBranchProblem(world, fork, to);
-        const choose = element("button", "action small", branchName(fork, to));
-        choose.disabled = !mayAct || problem !== null;
-        choose.title = problem ?? `${LOCK_WARNING(fork)} Units waiting at this fork evolve at once.`;
-        choose.addEventListener("click", () => void this.act({ type: "choose", fork, to }));
-        this.city.appendChild(choose);
-      }
-    }
-
-    const fallen = world.graveyard[PLAYER];
-    if (fallen.length === 0) return;
-    this.city.appendChild(element("div", "section", "Graveyard"));
-    const into: RecruitInto = home ? { kind: "leader", leaderId: home.id } : { kind: "garrison" };
-    fallen.forEach((f, index) => {
-      const cost = resurrectionCost(world, PLAYER, index) ?? 0;
-      const problem = resurrectProblem(world, index, into);
-      const row = element("div", "fallen");
-      row.appendChild(element("span", "name", `${unitName(f.defId)} · ${cost} gold`));
-      const raise = element("button", "small", "Resurrect");
-      raise.disabled = !mayAct || problem !== null;
-      raise.title = problem ?? `Returns at 1 HP ${home ? `to ${leaderName(home)}'s warband` : "to the garrison"}. The price drops each turn you wait.`;
-      raise.addEventListener("click", () => void this.act({ type: "resurrect", index, into }));
-      row.appendChild(raise);
-      this.city.appendChild(row);
+    for (const m of capitol.garrison.filter((g) => g.defId === GUARDIAN_ID)) this.city.appendChild(memberRow(m, undefined));
+    const forks = openForks(world.factions[PLAYER], world.commitment[PLAYER]).length;
+    const fallen = world.graveyard[PLAYER].length;
+    const notes = [`${capitol.garrison.length - 1} in the garrison`, `${forks} open branch${forks === 1 ? "" : "es"}`, `${fallen} in the graveyard`];
+    this.city.appendChild(element("div", "note", notes.join(" · ")));
+    const enter = element("button", "action", "Enter the Capitol");
+    enter.addEventListener("click", () => {
+      this.capitolOpen = true;
+      this.render();
     });
+    this.city.appendChild(enter);
+    if (this.capitolOpen) this.capitolScreen.show(world, PLAYER, this.homeLeader(world, selected), this.myTurn());
+    else this.capitolScreen.hide();
+  }
+
+  /** The selected warband, if it stands in our Capitol. */
+  private homeLeader(world: World, selected: Leader | undefined): Leader | undefined {
+    const capitol = capitolOf(world, PLAYER);
+    return selected && capitol && sameHex(selected.hex, capitol.hex) ? selected : undefined;
   }
 
   /** A unit of ours reached an undecided fork: ask now rather than let it sit at full XP unnoticed. */

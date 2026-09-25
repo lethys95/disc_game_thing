@@ -11,6 +11,9 @@ import type { Playable } from "#rules/units/index";
 export interface UpgradeDef {
   readonly id: string;
   readonly unitType: string;
+  /** What it does, on the node it's bought at: "+5 damage". */
+  readonly label: string;
+  /** With the unit type, for a unit's track record: "Congregant: +5 damage". */
   readonly name: string;
   readonly price: number;
   /** What a unit receives, as a mark. */
@@ -24,7 +27,8 @@ export const UPGRADES: ReadonlyMap<string, UpgradeDef> = new Map(
     .filter(([defId, def]) => def.faction !== "neutral" && defId !== GUARDIAN_ID)
     .map(([defId, def]): [string, UpgradeDef] => {
       const id = `${defId}_damage`;
-      return [id, { id, unitType: defId, name: `${def.name}: +${PLACEHOLDER_DAMAGE} damage`, price: UPGRADE_PRICE_PER_TIER * def.tier, effect: { def: "extra_damage", amount: PLACEHOLDER_DAMAGE } }];
+      const label = `+${PLACEHOLDER_DAMAGE} damage`;
+      return [id, { id, unitType: defId, label, name: `${def.name}: ${label}`, price: UPGRADE_PRICE_PER_TIER * def.tier, effect: { def: "extra_damage", amount: PLACEHOLDER_DAMAGE } }];
     }),
 );
 

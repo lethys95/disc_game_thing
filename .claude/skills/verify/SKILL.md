@@ -23,7 +23,7 @@ Tests prove the rules; only a rendered frame proves the view. Always look at the
 | `?fight` | skip setup, battle with the preserve vs punishment presets (`?fight=nexus`, `?fight=nexus:scheme`, `?fight=nexus:overload`, `?fight=bandits` for other enemies) |
 | `?steps=N` | fast-forward N AI actions before the first frame (no animation) |
 | `?auto=1` | AI plays both sides |
-| `?map&seed=N` | skip setup, straight onto the map (both sides uncommitted Jilliath; `?map=nexus` makes the enemy Nexus; `&xp=100` starts your units with that XP, e.g. to see the fork prompt) |
+| `?map&seed=N` | skip setup, straight onto the map (both sides uncommitted Jilliath; `?map=nexus` makes the enemy Nexus; `&xp=100` starts your units and leader with that XP, e.g. to see the fork prompt or spend leader points; `&capitol` opens the Capitol screen) |
 | `?fast` | animations and AI pauses ×0.1 (for scripted runs) |
 | `?debug` | exposes `window.discDebug` (below) |
 

@@ -14,6 +14,7 @@ src/rules/
   effects.ts         effect definitions
   units/             unit catalogue by faction + index (UNITS, roots, recruit costs, evolutions)
   nodes.ts           city node kinds (income, battle effects)
+  upgrades.ts        unit-type upgrades (placeholder content: +5 damage per type)
   forks.ts           per-line forks: commitments (fork → branch), allowed units, starting-squad checks
   progression.ts     XP value and evolution
   balance.ts         provisional numbers that aren't unit stats or ability params
@@ -25,6 +26,8 @@ src/view/
   stage.ts           the one renderer/camera/bloom/labels/tween loop
   scene.ts, map.ts   BattleScene, MapView
   app.ts, campaign.ts battle and map controllers
+  capitol.ts         the Capitol screen (trees with forks and upgrades, recruit, garrison, graveyard)
+  members.ts         a squad member's row: HP, XP, track record
   hud.ts, setup.ts   panels; dom.ts shared helpers
   secrecy.ts         what a player may see (hidden effects, secret targets)
   ai.worker.ts, ai-client.ts, ai-protocol.ts   the AI off the main thread
@@ -66,5 +69,5 @@ Resolved:
 
 Still open:
 - **The AI is one ply deep.** It plays greedily. A better AI (look-ahead, or rollouts with the forecast machinery) is its own milestone.
-- **`App` and `Campaign` are still big controllers** mixing input, state and rendering. Fine at this size; split them when the next screen (e.g. a city screen) arrives.
+- **`App` and `Campaign` are still big controllers** mixing input, state and rendering. The Capitol screen went into its own class (`view/capitol.ts`); keep new screens out of `Campaign` the same way.
 - **Stats are recomputed often** (`stats()` walks every trait on the battlefield). It's fast enough at 18 units; memoise per action if battles grow.
