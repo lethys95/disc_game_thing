@@ -18,6 +18,8 @@ import { UNITS } from "#rules/units";
 export interface Placement {
   readonly defId: string;
   readonly tile: Tile;
+  /** Wounds carried in from the map; full health when absent. */
+  readonly hp?: number;
 }
 
 export interface Step {
@@ -36,7 +38,7 @@ export function createBattle(sides: readonly [readonly Placement[], readonly Pla
   const units: Record<string, BattleUnit> = {};
   sides.forEach((placements, index) => {
     const side: Side = index === 0 ? 0 : 1;
-    for (const { defId, tile } of placements) {
+    for (const { defId, tile, hp } of placements) {
       const def = UNITS[defId];
       if (!def) throw new Error(`unknown unit: ${defId}`);
       const id = `${side}.${tile.row}.${tile.col}`;
@@ -47,7 +49,7 @@ export function createBattle(sides: readonly [readonly Placement[], readonly Pla
         name: def.name,
         side,
         tile,
-        hp: def.stats.maxHp,
+        hp: Math.min(hp ?? def.stats.maxHp, def.stats.maxHp),
         base: def.stats,
         damageType: def.damageType,
         abilities: def.abilities.map((ref) => ({ ref, chargesUsed: 0 })),
