@@ -1,5 +1,7 @@
 import { createBattle } from "#rules/battle/engine";
+import { AiClient } from "#view/ai-client";
 import { App } from "#view/app";
+import { byId } from "#view/dom";
 import { Campaign } from "#view/campaign";
 import { MapView } from "#view/map";
 import { BattleScene } from "#view/scene";
@@ -8,18 +10,14 @@ import { BANDIT_GROUP, NEXUS_PRESET, NEXUS_PRESETS, PRESETS } from "#view/squads
 import { Stage } from "#view/stage";
 
 const params = new URLSearchParams(window.location.search);
-const byId = (id: string) => {
-  const el = document.getElementById(id);
-  if (!el) throw new Error(`missing #${id}`);
-  return el;
-};
 
 const stage = new Stage(byId("stage"));
 if (params.has("fast")) stage.timeScale = 0.1;
 const battleScene = new BattleScene(stage);
 const mapView = new MapView(stage);
-const app: App = new App(stage, battleScene, { onSetup: () => showSetup() });
-const campaign: Campaign = new Campaign(stage, mapView, app, { onSetup: () => showSetup() });
+const ai = new AiClient();
+const app: App = new App(stage, battleScene, ai, { onSetup: () => showSetup() });
+const campaign: Campaign = new Campaign(stage, mapView, app, ai, { onSetup: () => showSetup() });
 const setup = new Setup(byId("setup"), {
   onChange: (squads) => {
     battleScene.show();

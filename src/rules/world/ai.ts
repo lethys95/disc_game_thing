@@ -7,7 +7,7 @@ import type { Branch } from "#rules/units/index";
 import { forecast } from "#rules/world/battles";
 import { elevateProblem, income, investProblem, recruitProblem, resurrectionCost, resurrectProblem } from "#rules/world/economy";
 import { destination, planMove } from "#rules/world/movement";
-import type { MovePlan } from "#rules/world/movement";
+import type { MovePlan, MoveTarget } from "#rules/world/movement";
 import { capitolOf, fullHp, leaderAt } from "#rules/world/state";
 import type { Leader, RecruitInto, SquadMember, World, WorldAction } from "#rules/world/state";
 import { RESURRECTION_BASE } from "#rules/balance";
@@ -15,14 +15,34 @@ import { RESURRECTION_BASE } from "#rules/balance";
 /** The map AI. */
 
 /** Would an enemy leader be able to reach `hex` next turn and win the fight there? */
-function threatened(world: World, leader: Leader, hex: Hex): boolean {
+/**
+ * Whether the attacker would win a fight, memoised for one decision: a forecast depends only on the two squads,
+ * and the threat checks ask about the same pairs over and over.
+ */
+type Wins = (world: World, attackerId: string, target: MoveTarget) => boolean;
+
+function winsCache(): Wins {
+  const known = new Map<string, boolean>();
+  return (world, attackerId, target) => {
+    const key = `${attackerId}>${JSON.stringify(target)}`;
+    let result = known.get(key);
+    if (result === undefined) {
+      const side = world.leaders.find((l) => l.id === attackerId)?.side;
+      result = forecast(world, attackerId, target)?.outcome?.winner === side;
+      known.set(key, result);
+    }
+    return result;
+  };
+}
+
+function threatened(world: World, leader: Leader, hex: Hex, wins: Wins): boolean {
   const moved: World = { ...world, leaders: world.leaders.map((l) => (l.id === leader.id ? { ...l, hex } : l)) };
   return moved.leaders.some((enemy) => {
     if (enemy.side === leader.side) return false;
     const fresh = { ...moved, leaders: moved.leaders.map((l) => (l.id === enemy.id ? { ...l, movement: LEADER_MOVEMENT } : l)) };
     const plan = planMove(fresh, enemy.id, hex);
     if (plan?.target?.kind !== "leader") return false;
-    return forecast(fresh, enemy.id, plan.target)?.outcome?.winner === enemy.side;
+    return wins(fresh, enemy.id, plan.target);
   });
 }
 
@@ -39,6 +59,7 @@ const fullStrength = (squad: readonly SquadMember[]) => squad.reduce((sum, m) =>
  */
 export function chooseWorldAction(world: World): WorldAction {
   const side = world.activeSide;
+  const wins = winsCache();
   const capitol = capitolOf(world, side);
   const mine = world.leaders.filter((l) => l.side === side);
   const roots = FACTION_ROOTS[world.factions[side]];
@@ -104,11 +125,11 @@ export function chooseWorldAction(world: World): WorldAction {
       .filter(({ hex }) => {
         const goal = destination(world, side, hex);
         if (goal === null || goal === "blocked" || goal.kind === "capture") return true;
-        return forecast(world, leader.id, goal)?.outcome?.winner === side;
+        return wins(world, leader.id, goal);
       })
       .filter(({ plan }) => {
         const stop = plan.steps > 0 ? plan.path.hexes[plan.steps - 1] : leader.hex;
-        return (plan.target !== null && plan.target.kind !== "capture") || !stop || !threatened(world, leader, stop);
+        return (plan.target !== null && plan.target.kind !== "capture") || !stop || !threatened(world, leader, stop, wins);
       })
       .sort((a, b) => a.plan.path.cost - b.plan.path.cost);
     const best = options[0];

@@ -8,40 +8,22 @@ import { nextForm, xpToEvolve } from "#rules/progression";
 import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
 import type { Branch, Playable } from "#rules/units/index";
 import { applyWorldAction } from "#rules/world/actions";
-import { chooseWorldAction } from "#rules/world/ai";
-import { concludeBattle, forecast } from "#rules/world/battles";
+import { concludeBattle } from "#rules/world/battles";
 import { createWorld } from "#rules/world/create";
 import { elevateProblem, income, investProblem, recruitProblem, resurrectionCost, resurrectProblem } from "#rules/world/economy";
 import { planMove, reachable } from "#rules/world/movement";
 import { capitolOf, cityById, lairById, leaderAt } from "#rules/world/state";
 import type { MovePlan, MoveTarget } from "#rules/world/movement";
 import type { Leader, RecruitInto, SquadMember, World, WorldAction, WorldEvent } from "#rules/world/state";
+import type { AiClient } from "#view/ai-client";
 import type { App } from "#view/app";
 import type { MapView } from "#view/map";
 import type { Squads } from "#view/setup";
 import type { Stage } from "#view/stage";
+import { buttonById, byId, element } from "#view/dom";
 
 const PLAYER: Side = 0;
 const AI_STEP_MS = 350;
-
-function byId(id: string): HTMLElement {
-  const el = document.getElementById(id);
-  if (!el) throw new Error(`missing #${id}`);
-  return el;
-}
-
-function button(id: string): HTMLButtonElement {
-  const el = byId(id);
-  if (!(el instanceof HTMLButtonElement)) throw new Error(`#${id} is not a button`);
-  return el;
-}
-
-function element<K extends keyof HTMLElementTagNameMap>(tag: K, className: string, text?: string): HTMLElementTagNameMap[K] {
-  const el = document.createElement(tag);
-  el.className = className;
-  if (text !== undefined) el.textContent = text;
-  return el;
-}
 
 const unitName = (defId: string) => UNITS[defId]?.name ?? defId;
 
@@ -97,13 +79,14 @@ export class Campaign {
   private readonly squad = byId("mapsquad");
   private readonly city = byId("mapcity");
   private readonly hint = byId("maphint");
-  private readonly endTurn = button("endturn");
+  private readonly endTurn = buttonById("endturn");
   private readonly banner = byId("mapbanner");
 
   constructor(
     private readonly stage: Stage,
     private readonly view: MapView,
     private readonly app: App,
+    private readonly ai: AiClient,
     private readonly options: CampaignOptions,
   ) {
     const canvas = stage.renderer.domElement;
@@ -243,21 +226,30 @@ export class Campaign {
     const generation = this.generation;
     await this.stage.tween(AI_STEP_MS, () => {});
     if (generation !== this.generation) return;
-    await this.act(chooseWorldAction(world));
+    const action = await this.ai.chooseWorldAction(world);
+    if (generation !== this.generation) return;
+    await this.act(action);
   }
 
-  /** The deterministic forecast of a fight, played by the AI on both sides; cached per hovered target. */
+  /**
+   * The deterministic forecast of a fight, played by the AI on both sides. Computed in the worker; the hint says
+   * "thinking" until it arrives, then re-renders.
+   */
   private forecastText(world: World, leader: Leader, target: MoveTarget): string {
     const key = `${world.turn}:${leader.id}:${leader.hex.q},${leader.hex.r}:${JSON.stringify(target)}`;
     if (this.forecastCache?.key === key) return this.forecastCache.text;
-    const result = forecast(world, leader.id, target);
-    let text = "";
-    if (result?.outcome) {
-      const standing = (mine: boolean) => Object.values(result.units).filter((u) => u.alive && (u.side === PLAYER) === mine).length;
-      text = result.outcome.winner === PLAYER ? `AI forecast: victory, ${standing(true)} of yours standing.` : `AI forecast: defeat, ${standing(false)} of theirs standing.`;
-    }
-    this.forecastCache = { key, text };
-    return text;
+    this.forecastCache = { key, text: "AI forecast: thinking…" };
+    const generation = this.generation;
+    void this.ai.forecast(world, leader.id, target).then((result) => {
+      if (generation !== this.generation || this.forecastCache?.key !== key) return;
+      const text =
+        result.winner === PLAYER
+          ? `AI forecast: victory, ${result.standing[PLAYER]} of yours standing.`
+          : `AI forecast: defeat, ${result.standing[PLAYER === 0 ? 1 : 0]} of theirs standing.`;
+      this.forecastCache = { key, text };
+      this.render();
+    });
+    return this.forecastCache.text;
   }
 
   private render(): void {

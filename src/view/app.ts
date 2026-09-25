@@ -7,6 +7,7 @@ import { asKnown, masked } from "#view/secrecy";
 import type { BannerButton } from "#view/hud";
 import type { BattleScene, PreviewMark, TileRef } from "#view/scene";
 import type { Squads } from "#view/setup";
+import type { AiClient } from "#view/ai-client";
 import type { Stage } from "#view/stage";
 
 export interface AppOptions {
@@ -50,6 +51,7 @@ export class App {
   constructor(
     private readonly stage: Stage,
     private readonly scene: BattleScene,
+    private readonly ai: AiClient,
     private readonly options: AppOptions,
   ) {
     this.hud = new Hud({ onAbility: (id) => this.chooseAbility(id), onAuto: () => this.toggleAuto() });
@@ -205,9 +207,10 @@ export class App {
     if (!unit || (unit.side === this.playerSide && !this.auto)) return;
     const generation = this.generation;
     this.timer = window.setTimeout(() => {
-      if (generation !== this.generation || !this.battle) return;
-      const action = chooseAction(this.battle);
-      if (action) void this.commit(action);
+      void this.ai.chooseAction(battle).then((action) => {
+        if (generation !== this.generation || !action) return;
+        void this.commit(action);
+      });
     }, AI_DELAY_MS * this.stage.timeScale);
   }
 

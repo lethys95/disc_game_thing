@@ -12,7 +12,8 @@
     "playtest:map": "tsx scripts/playtest-map.ts",
     "check": "tsc && vitest run",
     "sim": "tsx scripts/sim.ts",
-    "sim:world": "tsx scripts/sim-world.ts"
+    "sim:world": "tsx scripts/sim-world.ts",
+    "verify": "pnpm check && tsx scripts/shot.ts shots/verify.png \"/?fight&steps=6\" && tsx scripts/playtest.ts && tsx scripts/playtest-map.ts 4"
   },
   "devEngines": {
     "packageManager": {

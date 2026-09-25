@@ -4,6 +4,7 @@ import { abilityRef, actionsPerRound, effectiveStats, upcomingSlots } from "#rul
 import type { Battle, BattleEvent, BattleUnit, LegalAbility, Side } from "#rules/battle/types";
 import { UNITS } from "#rules/units/index";
 import { abilityText, effectLabel } from "#view/text";
+import { byId, element } from "#view/dom";
 
 export interface HudHandlers {
   onAbility(abilityId: string): void;
@@ -25,19 +26,6 @@ export function unitLabel(unit: BattleUnit, playerSide: Side | null): string {
 
 function place(unit: BattleUnit): string {
   return `${ROW_NAMES[unit.tile.row]} ${COL_NAMES[unit.tile.col]}`;
-}
-
-function element<K extends keyof HTMLElementTagNameMap>(tag: K, className: string, text?: string): HTMLElementTagNameMap[K] {
-  const el = document.createElement(tag);
-  el.className = className;
-  if (text !== undefined) el.textContent = text;
-  return el;
-}
-
-function byId(id: string): HTMLElement {
-  const el = document.getElementById(id);
-  if (!el) throw new Error(`missing #${id}`);
-  return el;
 }
 
 export class Hud {

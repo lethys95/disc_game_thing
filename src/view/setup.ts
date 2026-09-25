@@ -8,6 +8,7 @@ import { UNITS } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
 import { NEXUS_PRESETS, PRESETS } from "#view/squads";
 import { abilityText } from "#view/text";
+import { element } from "#view/dom";
 
 export type Squads = readonly [readonly Placement[], readonly Placement[]];
 
@@ -24,13 +25,6 @@ const isNexusPreset = (key: string): key is keyof typeof NEXUS_PRESETS => key in
 
 const presetFor = (faction: Playable, key: string) =>
   faction === "nexus" ? [...(isNexusPreset(key) ? NEXUS_PRESETS[key] : NEXUS_PRESETS.uncommitted)] : [...(isJilliathPreset(key) ? PRESETS[key] : PRESETS.uncommitted)];
-
-function element<K extends keyof HTMLElementTagNameMap>(tag: K, className: string, text?: string): HTMLElementTagNameMap[K] {
-  const el = document.createElement(tag);
-  el.className = className;
-  if (text !== undefined) el.textContent = text;
-  return el;
-}
 
 /** Skirmish setup: pick a doctrine and a formation for both squads. The arena behind previews them live. */
 export class Setup {
