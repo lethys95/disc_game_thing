@@ -7,14 +7,17 @@ import type { Commitment } from "#rules/forks";
 import { nextForm, xpToEvolve } from "#rules/progression";
 import { EVOLUTIONS, FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
+import { effectDef } from "#rules/effects";
 import { applyWorldAction } from "#rules/world/actions";
 import { concludeBattle, playersIn } from "#rules/world/battles";
 import { createWorld } from "#rules/world/create";
-import { chooseBranchProblem, elevateProblem, income, recruitProblem, resurrectionCost, resurrectProblem, waitingForks } from "#rules/world/economy";
+import { chooseBranchProblem, elevateProblem, income, learnSkillProblem, recruitProblem, resurrectionCost, resurrectProblem, waitingForks } from "#rules/world/economy";
+import { LEADER_SKILLS, leadershipOf, rankOf, unspentPoints } from "#rules/world/leaders";
 import { planMove, reachable } from "#rules/world/movement";
+import { isLeaderOf, maxHpOf, recordOf } from "#rules/world/record";
 import { capitolOf, cityById, lairById, leaderAt } from "#rules/world/state";
 import type { MovePlan, MoveTarget } from "#rules/world/movement";
-import type { Leader, RecruitInto, SquadMember, World, WorldAction, WorldEvent } from "#rules/world/state";
+import type { Leader, Mark, RecruitInto, SquadMember, World, WorldAction, WorldEvent } from "#rules/world/state";
 import type { AiClient } from "#view/ai-client";
 import type { App } from "#view/app";
 import type { MapView } from "#view/map";
@@ -35,7 +38,13 @@ function branchName(fork: string, to: string): string {
 
 const LOCK_WARNING = (fork: string) => `Permanent: every ${unitName(fork)} in your army will take this branch.`;
 
-const maxHp = (defId: string) => UNITS[defId]?.stats.maxHp ?? 0;
+/** "+10% max HP · leader tree: Health +10%": one line of a unit's track record. */
+function markText(mark: Mark): string {
+  const { effect, source } = mark;
+  const text = effectDef(effect.def).describe({ def: effect.def, source: null, stacks: effect.stacks ?? 1, amount: effect.amount ?? 0 });
+  const from = source.kind === "leaderTree" ? `leader tree: ${LEADER_SKILLS[source.skill]?.name ?? source.skill}` : `upgrade: ${source.upgrade}`;
+  return `${text} (${from})`;
+}
 
 function leaderName(leader: Leader): string {
   const figure = leader.squad.find((m) => m.tile.row === leader.leaderTile.row && m.tile.col === leader.leaderTile.col) ?? leader.squad[0];
@@ -104,11 +113,11 @@ export class Campaign {
     this.enterMap();
   }
 
-  /** Screenshots and playtests: every unit of ours starts with this much XP, to reach a fork at once. */
+  /** Screenshots and playtests: our units and leader start with this much XP (to reach a fork, to spend points). */
   startingXp(xp: number): void {
     const world = this.world;
     if (!world) return;
-    const leaders = world.leaders.map((l) => (l.side === PLAYER ? { ...l, squad: l.squad.map((m) => ({ ...m, xp })) } : l));
+    const leaders = world.leaders.map((l) => (l.side === PLAYER ? { ...l, experience: xp, squad: l.squad.map((m) => ({ ...m, xp })) } : l));
     this.world = { ...world, leaders };
     this.render();
   }
@@ -321,13 +330,14 @@ export class Campaign {
     return `${walks}. Hovering ${terrain}.`;
   }
 
-  private memberRow(m: SquadMember, commitment?: Commitment): HTMLElement {
+  private memberRow(m: SquadMember, leader: Leader | undefined, commitment?: Commitment): HTMLElement {
     const row = element("div", "member");
-    row.appendChild(element("span", "name", unitName(m.defId)));
+    row.appendChild(element("span", "name", `${isLeaderOf(m, leader) ? "♛ " : ""}${unitName(m.defId)}`));
+    const max = maxHpOf(m, leader);
     const bar = element("div", "hp");
     const fill = element("div", "fill");
-    fill.style.width = `${(100 * m.hp) / maxHp(m.defId)}%`;
-    bar.append(fill, element("span", "value", `${m.hp} / ${maxHp(m.defId)}`));
+    fill.style.width = `${(100 * m.hp) / max}%`;
+    bar.append(fill, element("span", "value", `${m.hp} / ${max}`));
     row.appendChild(bar);
     const needed = xpToEvolve(m.defId);
     if (commitment && needed !== null) {
@@ -339,6 +349,7 @@ export class Campaign {
       xp.append(xpFill, element("span", "value", label));
       row.appendChild(xp);
     }
+    for (const mark of recordOf(m, leader)) row.appendChild(element("div", "mark", markText(mark)));
     return row;
   }
 
@@ -350,7 +361,7 @@ export class Campaign {
     for (const leader of mine) {
       const isSelected = leader.id === selected?.id;
       const head = element("button", `warband${isSelected ? " selected" : ""}`);
-      head.append(element("span", "name", leaderName(leader)), element("span", "meta", `${leader.squad.length}/${leader.leadership} units · ${leader.movement} move`));
+      head.append(element("span", "name", leaderName(leader)), element("span", "meta", `${leader.squad.length}/${leadershipOf(leader)} units · ${leader.movement} move`));
       head.addEventListener("click", () => {
         this.selected = leader.id;
         this.render();
@@ -358,7 +369,26 @@ export class Campaign {
       this.squad.appendChild(head);
       if (!isSelected) continue;
       const commitment = this.world?.commitment[PLAYER];
-      for (const m of [...leader.squad].sort((a, b) => a.tile.row - b.tile.row || a.tile.col - b.tile.col)) this.squad.appendChild(this.memberRow(m, commitment));
+      for (const m of [...leader.squad].sort((a, b) => a.tile.row - b.tile.row || a.tile.col - b.tile.col)) this.squad.appendChild(this.memberRow(m, leader, commitment));
+      this.renderLeaderTree(leader);
+    }
+  }
+
+  /** Points from the leader's experience, spent on the leader tree (docs/design/pillars.md). */
+  private renderLeaderTree(leader: Leader): void {
+    const world = this.world;
+    if (!world) return;
+    const points = unspentPoints(leader);
+    this.squad.appendChild(element("div", "section", `Leader tree · ${leader.experience} XP · ${points} point${points === 1 ? "" : "s"} to spend`));
+    const mayAct = this.myTurn();
+    for (const [id, skill] of Object.entries(LEADER_SKILLS)) {
+      const rank = rankOf(leader, id);
+      const problem = learnSkillProblem(world, leader.id, id);
+      const button = element("button", `skill small${rank > 0 ? " learned" : ""}`, `${skill.name} ${rank}/${skill.maxRank}`);
+      button.disabled = !mayAct || problem !== null;
+      button.title = problem ? `${skill.describe} (${problem})` : skill.describe;
+      button.addEventListener("click", () => void this.act({ type: "learn", leaderId: leader.id, skill: id }));
+      this.squad.appendChild(button);
     }
   }
 
@@ -370,7 +400,7 @@ export class Campaign {
     this.city.appendChild(element("div", "title", "Your Capitol"));
     const mayAct = this.myTurn();
     for (const m of capitol.garrison) {
-      const row = this.memberRow(m);
+      const row = this.memberRow(m, undefined);
       if (m.defId !== GUARDIAN_ID) {
         const problem = elevateProblem(world, m.tile);
         const elevate = element("button", "small", "Elevate");
@@ -465,20 +495,20 @@ export class Campaign {
   }
 
   /** The squad standing on a hex, whoever it belongs to: a warband, a camp or dungeon's guards, a garrison. */
-  private groupAt(hex: Hex): { title: string; squad: readonly SquadMember[]; leaderTile: { row: number; col: number } | null } | null {
+  private groupAt(hex: Hex): { title: string; squad: readonly SquadMember[]; leader: Leader | undefined } | null {
     const world = this.world;
     if (!world) return null;
     const leader = leaderAt(world, hex);
     if (leader) {
       const whose = leader.side === PLAYER ? "Your warband" : "Enemy warband";
-      return { title: `${whose}, led by a ${leaderName(leader)}`, squad: leader.squad, leaderTile: leader.leaderTile };
+      return { title: `${whose}, led by a ${leaderName(leader)}`, squad: leader.squad, leader };
     }
     const lair = world.lairs.find((l) => sameHex(l.hex, hex) && l.guards.length > 0);
-    if (lair) return { title: lair.kind === "camp" ? "Bandit camp" : "Dungeon guards", squad: lair.guards, leaderTile: null };
+    if (lair) return { title: lair.kind === "camp" ? "Bandit camp" : "Dungeon guards", squad: lair.guards, leader: undefined };
     const city = world.cities.find((c) => sameHex(c.hex, hex) && c.garrison.length > 0);
     if (city) {
       const whose = city.owner === null ? "Bandit-held" : city.owner === PLAYER ? "Your" : "Enemy";
-      return { title: `${whose} ${city.kind === "capitol" ? "Capitol" : "city"} garrison`, squad: city.garrison, leaderTile: null };
+      return { title: `${whose} ${city.kind === "capitol" ? "Capitol" : "city"} garrison`, squad: city.garrison, leader: undefined };
     }
     return null;
   }
@@ -496,11 +526,10 @@ export class Campaign {
         const m = group.squad.find((s) => s.tile.row === row && s.tile.col === col);
         const cell = element("div", `cell${m ? " filled" : ""}`);
         if (m) {
-          const lead = group.leaderTile && group.leaderTile.row === row && group.leaderTile.col === col;
-          cell.appendChild(element("div", "name", `${lead ? "♛ " : ""}${unitName(m.defId)}`));
+          cell.appendChild(element("div", "name", `${isLeaderOf(m, group.leader) ? "♛ " : ""}${unitName(m.defId)}`));
           const bar = element("div", "hp");
           const fill = element("div", "fill");
-          fill.style.width = `${(100 * m.hp) / maxHp(m.defId)}%`;
+          fill.style.width = `${(100 * m.hp) / maxHpOf(m, group.leader)}%`;
           bar.appendChild(fill);
           cell.appendChild(bar);
         }

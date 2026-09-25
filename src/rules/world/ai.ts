@@ -1,10 +1,11 @@
-import { LEADER_MOVEMENT, STARTING_LEADERSHIP } from "#rules/balance";
+import { STARTING_LEADERSHIP } from "#rules/balance";
 import { forkOptions, openForks } from "#rules/forks";
 import { sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
 import { forecast } from "#rules/world/battles";
-import { chooseBranchProblem, elevateProblem, income, recruitProblem, resurrectionCost, resurrectProblem } from "#rules/world/economy";
+import { chooseBranchProblem, elevateProblem, income, learnSkillProblem, recruitProblem, resurrectionCost, resurrectProblem } from "#rules/world/economy";
+import { movementOf } from "#rules/world/leaders";
 import { destination, planMove } from "#rules/world/movement";
 import type { MovePlan, MoveTarget } from "#rules/world/movement";
 import { capitolOf, fullHp, leaderAt } from "#rules/world/state";
@@ -38,7 +39,7 @@ function threatened(world: World, leader: Leader, hex: Hex, wins: Wins): boolean
   const moved: World = { ...world, leaders: world.leaders.map((l) => (l.id === leader.id ? { ...l, hex } : l)) };
   return moved.leaders.some((enemy) => {
     if (enemy.side === leader.side) return false;
-    const fresh = { ...moved, leaders: moved.leaders.map((l) => (l.id === enemy.id ? { ...l, movement: LEADER_MOVEMENT } : l)) };
+    const fresh = { ...moved, leaders: moved.leaders.map((l) => (l.id === enemy.id ? { ...l, movement: movementOf(l) } : l)) };
     const plan = planMove(fresh, enemy.id, hex);
     if (plan?.target?.kind !== "leader") return false;
     return wins(fresh, enemy.id, plan.target);
@@ -47,6 +48,9 @@ function threatened(world: World, leader: Leader, hex: Hex, wins: Wins): boolean
 
 /** Provisional AI taste at each fork: the branches pnpm sim rates strongest first. */
 const AI_PREFERRED_BRANCHES: readonly string[] = ["zealot", "punisher", "mutant", "thaumaturge"];
+
+/** Provisional: the AI buys the tree's skills in this order, a warband's size first. */
+const AI_SKILL_ORDER: readonly string[] = ["leadership", "health", "healing", "movement", "aura"];
 
 const strength = (squad: readonly SquadMember[]) => squad.reduce((sum, m) => sum + m.hp, 0);
 const fullStrength = (squad: readonly SquadMember[]) => squad.reduce((sum, m) => sum + fullHp(m.defId), 0);
@@ -66,6 +70,11 @@ export function chooseWorldAction(world: World): WorldAction {
   // Recruit whichever root unit the target squad has fewest of, for a mixed army.
   const pick = (squad: readonly SquadMember[]) =>
     [...roots].sort((a, b) => squad.filter((m) => m.defId === a).length - squad.filter((m) => m.defId === b).length)[0] ?? roots[0] ?? "";
+
+  for (const leader of mine) {
+    const skill = AI_SKILL_ORDER.find((s) => !learnSkillProblem(world, leader.id, s));
+    if (skill) return { type: "learn", leaderId: leader.id, skill };
+  }
 
   if (capitol) {
     const home = mine.find((l) => sameHex(l.hex, capitol.hex));
@@ -92,7 +101,7 @@ export function chooseWorldAction(world: World): WorldAction {
       }
     }
     // Under threat, recruits stand with the Guardian; a fresh leader in the Capitol would only be picked off.
-    const underThreat = world.leaders.some((l) => l.side !== side && planMove({ ...world, leaders: world.leaders.map((x) => (x.id === l.id ? { ...x, movement: LEADER_MOVEMENT } : x)) }, l.id, capitol.hex)?.target);
+    const underThreat = world.leaders.some((l) => l.side !== side && planMove({ ...world, leaders: world.leaders.map((x) => (x.id === l.id ? { ...x, movement: movementOf(x) } : x)) }, l.id, capitol.hex)?.target);
     const guard = pick(capitol.garrison);
     if (underThreat && !recruitProblem(world, guard, { kind: "garrison" })) {
       return { type: "recruit", defId: guard, into: { kind: "garrison" } };

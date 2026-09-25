@@ -16,13 +16,13 @@ Git: tags `m2-playable` … `m7-foundation` mark tested states. Work happens on 
 - Nexus forks scheme vs overload (Battery, Mutant, Justiciar, Thaumaturge). The Negate mark is hidden from the marked side (`src/view/secrecy.ts`, tested).
 - Unit designs from the user: `design/units/*.md`. Numbers are provisional (`questions.md`).
 
-Rules: `src/rules/` (67 tests). View: `src/view/`. Tools: the `verify` skill; `A=<preset|nexus> B=… pnpm sim:world`.
+Rules: `src/rules/` (73 tests). View: `src/view/`. Tools: the `verify` skill; `A=<preset|nexus> B=… pnpm sim:world`.
 
 ## Next
 **m8 (branch `m8`), user's go-ahead given.** Design in `design/pillars.md`.
 - [x] Per-line forks, free choice, fork prompt with the lock warning (`src/rules/forks.ts`).
-- [ ] Leader tree v1: movement, +10% leader health, +1 Leadership (max 9), passive squad heal, +5% squad damage aura at the end.
-- [ ] Unit-type upgrades bought with gold, stamped on units that become that type afterwards (non-retroactive), and a per-unit track record (what differs from baseline, and why).
+- [x] Leader tree v1 (`world/leaders.ts`): points from leader XP; the user's five skills; AI buys them; warband panel shows the tree. Numbers and shape provisional (questions #28–32).
+- [ ] Unit-type upgrades bought with gold, stamped as marks on units that become that type afterwards (non-retroactive). The track record already exists: `recordOf`, shown under each unit.
 - [ ] The Capitol screen (HoMM-style): trees with forks and upgrades per node, recruit, garrison, graveyard.
 1. **Sparring on factions**: Nexus's Arcane Engineer has no tier 2; tiers 3+ are open; Sylvan and Vexumphat have no units yet (`design/dichotomies.md`).
 2. Open design questions: finite neutral XP and cold wars (#19), a gold sink (#20), provisional numbers (#21).
@@ -33,6 +33,7 @@ Rules: `src/rules/` (67 tests). View: `src/view/`. Tools: the `verify` skill; `A
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.
 
 ## Recently done
+- 2026-09-25: m8: leader tree v1 and marks (a unit's lasting effects with their source, shown as its track record). Screenshot route `?map&xp=N`.
 - 2026-09-25: m8: per-line forks replace doctrines: free choice in the Capitol, a prompt at undecided forks, setup formations imply the choices.
 - 2026-09-25: first playtest fixes: the enemy's fights with neutrals resolve off-screen; effect tooltips and pinned cards; leader crowns; formation peek; Leadership replaces the fixed squad size (5).
 - 2026-09-25: consolidation: the engine rebuilt on traits and effect definitions, a damage pipeline, params and tags, city nodes as data (Blacksmith), world split, AI in a worker, `pnpm verify`. The preset battle matrix is identical before and after.

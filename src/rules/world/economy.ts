@@ -1,4 +1,4 @@
-import { CAPITOL_HEALING, CAPITOL_INCOME, GARRISON_LIMIT, LEADER_MOVEMENT, RESURRECTION_BASE, RESURRECTION_PREMIUM } from "#rules/balance";
+import { CAPITOL_HEALING, CAPITOL_INCOME, GARRISON_LIMIT, RESURRECTION_BASE, RESURRECTION_PREMIUM } from "#rules/balance";
 import type { Side, Tile } from "#rules/battle/types";
 import { chooseProblem, isFork, openForks } from "#rules/forks";
 import type { Commitment } from "#rules/forks";
@@ -7,8 +7,10 @@ import { sameHex } from "#rules/hex";
 import { NODES } from "#rules/nodes";
 import { grow, xpToEvolve } from "#rules/progression";
 import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
-import { capitolOf, fullHp, leaderAt, leaderById } from "#rules/world/state";
-import type { City, RecruitInto, SquadMember, World, WorldEvent } from "#rules/world/state";
+import { leadershipOf, learnProblem, movementOf, squadHealingOf } from "#rules/world/leaders";
+import { maxHpOf } from "#rules/world/record";
+import { capitolOf, leaderAt, leaderById } from "#rules/world/state";
+import type { City, Leader, RecruitInto, SquadMember, World, WorldEvent } from "#rules/world/state";
 
 /** Gold, recruiting, branch choices, resurrection, elevation, and the start of a side's turn. */
 
@@ -43,7 +45,7 @@ export function chooseBranchProblem(world: World, fork: string, to: string): str
 
 /** Forks where one of this side's units waits, XP full, for a choice. The view prompts; the AI just chooses. */
 export function waitingForks(world: World, side: Side): string[] {
-  const forks = squadsOf(world, side).flatMap((squad) => squad.filter((m) => isFork(m.defId) && world.commitment[side][m.defId] === undefined && m.xp >= (xpToEvolve(m.defId) ?? Infinity)).map((m) => m.defId));
+  const forks = squadsOf(world, side).flatMap(({ squad }) => squad.filter((m) => isFork(m.defId) && world.commitment[side][m.defId] === undefined && m.xp >= (xpToEvolve(m.defId) ?? Infinity)).map((m) => m.defId));
   return [...new Set(forks)];
 }
 
@@ -69,20 +71,30 @@ export function roomProblem(world: World, capitol: City, into: RecruitInto): str
   if (into.kind === "garrison") return capitol.garrison.length >= GARRISON_LIMIT ? "garrison full" : null;
   const leader = leaderById(world, into.leaderId);
   if (leader.side !== world.activeSide || !sameHex(leader.hex, capitol.hex)) return "leader not in the Capitol";
-  return leader.squad.length >= leader.leadership ? `squad full (Leadership ${leader.leadership})` : null;
+  const leadership = leadershipOf(leader);
+  return leader.squad.length >= leadership ? `squad full (Leadership ${leadership})` : null;
 }
 
 export function squadFor(world: World, into: RecruitInto): SquadMember[] | undefined {
   return into.kind === "garrison" ? capitolOf(world, world.activeSide)?.garrison : leaderById(world, into.leaderId).squad;
 }
 
+/** A squad and its leader; garrisons have none. */
+export interface Held {
+  readonly squad: SquadMember[];
+  readonly leader: Leader | undefined;
+}
+
 /** Every squad a side owns: its warbands and its garrisons. */
-export function squadsOf(world: World, side: Side): SquadMember[][] {
-  return [...world.leaders.filter((l) => l.side === side).map((l) => l.squad), ...world.cities.filter((c) => c.owner === side).map((c) => c.garrison)];
+export function squadsOf(world: World, side: Side): Held[] {
+  return [
+    ...world.leaders.filter((l) => l.side === side).map((l) => ({ squad: l.squad, leader: l })),
+    ...world.cities.filter((c) => c.owner === side).map((c) => ({ squad: c.garrison, leader: undefined })),
+  ];
 }
 
 /** Evolves members in place; the new form arrives at full health (provisional). */
-export function growSquad(squad: SquadMember[], gained: number, side: Side, commitment: Commitment, events: WorldEvent[]): void {
+export function growSquad({ squad, leader }: Held, gained: number, side: Side, commitment: Commitment, events: WorldEvent[]): void {
   squad.forEach((m, i) => {
     const growth = grow(m.defId, m.xp, gained, commitment);
     let from = m.defId;
@@ -90,7 +102,12 @@ export function growSquad(squad: SquadMember[], gained: number, side: Side, comm
       events.push({ type: "evolved", side, from, to });
       from = to;
     }
-    squad[i] = growth.evolvedInto.length > 0 ? { ...m, defId: growth.defId, xp: growth.xp, hp: fullHp(growth.defId) } : { ...m, xp: growth.xp };
+    if (growth.evolvedInto.length === 0) {
+      squad[i] = { ...m, xp: growth.xp };
+      return;
+    }
+    const evolved = { ...m, defId: growth.defId, xp: growth.xp };
+    squad[i] = { ...evolved, hp: maxHpOf(evolved, leader) };
   });
 }
 
@@ -110,15 +127,21 @@ export function startTurn(world: World, events: WorldEvent[]): void {
   const earned = income(world, side);
   world.gold[side] += earned;
   const capitol = capitolOf(world, side);
-  if (capitol) {
-    const resting = [capitol.garrison, ...world.leaders.filter((l) => l.side === side && sameHex(l.hex, capitol.hex)).map((l) => l.squad)];
-    for (const squad of resting) {
-      squad.forEach((m, i) => {
-        const max = fullHp(m.defId);
-        squad[i] = { ...m, hp: Math.min(max, m.hp + Math.ceil(max * CAPITOL_HEALING)) };
-      });
-    }
+  for (const { squad, leader } of squadsOf(world, side)) {
+    const resting = capitol !== undefined && (leader === undefined ? squad === capitol.garrison : sameHex(leader.hex, capitol.hex));
+    const share = (resting ? CAPITOL_HEALING : 0) + (leader ? squadHealingOf(leader) : 0);
+    if (share === 0) continue;
+    squad.forEach((m, i) => {
+      const max = maxHpOf(m, leader);
+      squad[i] = { ...m, hp: Math.min(max, m.hp + Math.ceil(max * share)) };
+    });
   }
-  for (const leader of world.leaders) if (leader.side === side) leader.movement = LEADER_MOVEMENT;
+  for (const leader of world.leaders) if (leader.side === side) leader.movement = movementOf(leader);
   events.push({ type: "turnStarted", side, turn: world.turn, income: earned });
+}
+
+export function learnSkillProblem(world: World, leaderId: string, skill: string): string | null {
+  const leader = leaderById(world, leaderId);
+  if (leader.side !== world.activeSide) return "not your leader";
+  return learnProblem(leader, skill);
 }

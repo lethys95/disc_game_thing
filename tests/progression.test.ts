@@ -93,6 +93,7 @@ describe("evolution", () => {
     expect(step.events).toContainEqual({ type: "xp", side: 1, pool: 3 * 65, each: 65 });
     expect(step.world.graveyard[0].map((f) => f.defId)).toEqual(["congregant", "congregant", "congregant"]);
     expect(leaderById(step.world, "leader1").squad.every((m) => m.xp === 65)).toBe(true);
+    expect(leaderById(step.world, "leader1").experience).toBe(65);
   });
 });
 

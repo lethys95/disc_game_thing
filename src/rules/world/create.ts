@@ -1,4 +1,4 @@
-import { LEADER_MOVEMENT, STARTING_GOLD, STARTING_LEADERSHIP } from "#rules/balance";
+import { LEADER_MOVEMENT, STARTING_GOLD } from "#rules/balance";
 import type { Placement } from "#rules/battle/engine";
 import type { Commitment } from "#rules/forks";
 import { sameHex } from "#rules/hex";
@@ -28,7 +28,8 @@ export function createWorld(
       side,
       hex: map.starts[side],
       movement: LEADER_MOVEMENT,
-      leadership: STARTING_LEADERSHIP,
+      experience: 0,
+      skills: {},
       squad: squad.map((p) => member(p.defId, p.tile)),
       leaderTile: first.tile,
     };

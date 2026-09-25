@@ -41,7 +41,14 @@ The user is in a "suggest" role: they answer when they have time, so nothing her
 24. Tier-2 stats: Battery 70 HP / 160 shield / 30 dmg; Mutant 150 HP / 60 shield / 40 dmg; Justiciar 70 HP, 55 init; Thaumaturge 65 HP; Homing Lightning 45 per hit. All placeholders.
 
 ## From the first playtest
-25. Leadership counts the leader (5 = leader + 4). The 3x3 grid allows up to 9. How high should Leadership go, and does anything besides the leader tree raise it?
-26. The leader tree: what's in it besides Leadership (movement? a stat boost? D3-style skills?), and how do its options depend on the elevated unit (by faction, by line, by the unit itself)?
+25. ~~How high should Leadership go?~~ Answered: max 9 (the grid). Still open: does anything besides the leader tree raise it?
+26. ~~What's in the leader tree?~~ Answered with v1 (pillars.md). Still open: how the options come to depend on the elevated unit.
 27. The Capitol screen: what can you do and build there beyond today's recruit/elevate/invest/resurrect? (Canon mentions Capitol dwellings and base upgrades, and linear upgrades for ordinary cities.)
 
+
+## Leader tree v1 (m8; provisional answers in code, `world/leaders.ts`, `balance.ts`)
+28. Points: one per 100 XP the leader earns (its share of each won fight, the same XP its unit gets). Should the leader level on its own curve instead?
+29. Ranks and prerequisites: Movement +1 (2 ranks), Health +10% (1), Leadership +1 (4, up to 9), Squad healing (1, needs Health), Leader's aura (1, needs Movement, Leadership and Squad healing: "the end of the tree"). The names are placeholders. Right shape?
+30. Squad healing is passive: 10% of max HP to every unit in the warband at the start of your turn, anywhere on the map (stacks with the Capitol's 25%). Action instead?
+31. Percentages add a share of the *base* stat (+10% health = +9 on a 90 HP Congregant; the aura is +5% of base damage, so Congregation's bonus isn't multiplied). D2 does the same; fine?
+32. If the leader's unit dies but the squad wins, another unit takes the figure and keeps the tree (the tree belongs to the warband's leader, not the unit). Relates to #8.
