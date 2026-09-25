@@ -66,3 +66,6 @@ The user wants a "track record" per unit: what makes it differ from baseline and
 
 **2026-09-25 — Percentage bonuses add a share of the base stat.**
 Stat hooks run in battlefield order, so a multiplier applied before a flat bonus (Congregation) gave a different number than after. Adding `base × percent` is order-independent and matches D2.
+
+**2026-09-25 — Hotkeys live on ability definitions.**
+The user asked for D = Defend and W = Wait. A behavior's optional `hotkey` is its default binding; the battle view looks keys up among the legal actions and never names an ability. A settings menu later overrides them.

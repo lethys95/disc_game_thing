@@ -1,4 +1,5 @@
 import { chooseAction } from "#rules/ai";
+import { BEHAVIORS } from "#rules/abilities/index";
 import { applyAction, createBattle, legalActions } from "#rules/battle/engine";
 import { sameTile } from "#rules/battle/grid";
 import type { Action, Battle, BattleEvent, BattleUnit, LegalAbility, Side, TargetChoice } from "#rules/battle/types";
@@ -67,6 +68,7 @@ export class App {
     });
     window.addEventListener("keydown", (e) => {
       if (e.key === "Escape") this.cancel();
+      else if (!e.repeat && !e.ctrlKey && !e.metaKey && !e.altKey) this.hotkey(e.key.toLowerCase());
     });
   }
 
@@ -143,6 +145,15 @@ export class App {
 
   private selectedOption(): LegalAbility | undefined {
     return this.playerOptions().find((o) => o.abilityId === this.selected);
+  }
+
+  /** An ability whose definition claims this key, among the ones the player may use now. */
+  private hotkey(key: string): void {
+    const option = this.playerOptions().find((o) => {
+      const def = BEHAVIORS[o.abilityId];
+      return def?.kind === "active" && def.hotkey === key;
+    });
+    if (option) this.chooseAbility(option.abilityId);
   }
 
   private chooseAbility(abilityId: string): void {

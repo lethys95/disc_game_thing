@@ -18,6 +18,13 @@ export const FACTION_ROOTS: Readonly<Record<Playable, readonly string[]>> = {
   nexus: ["custodian", "arcane_engineer", "apprentice"],
 };
 
+/** The kinds of line a faction's units come in (D2's archetypes, which the user pointed to). */
+export const ARCHETYPES = ["melee", "ranged", "support", "mage"] as const;
+export type Archetype = (typeof ARCHETYPES)[number];
+
+/** Which kind of line each tier-1 unit starts (user: the melee lines, the Engineer supports, the Apprentice casts). */
+export const LINE_ARCHETYPE: Readonly<Record<string, Archetype>> = { congregant: "melee", custodian: "melee", arcane_engineer: "support", apprentice: "mage" };
+
 /** Canon: the Congregant costs 40 gold. The Nexus prices are provisional ("costly", quality over quantity). */
 export const RECRUIT_COST: Readonly<Record<string, number>> = { congregant: 40, custodian: 60, arcane_engineer: 50, apprentice: 60 };
 

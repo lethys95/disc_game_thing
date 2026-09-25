@@ -44,6 +44,11 @@ export interface Leader {
   experience: number;
   /** Ranks learned in the leader tree, by skill id (`world/leaders.ts`). */
   skills: Record<string, number>;
+  /**
+   * When the leader's own unit fell while its squad won: it stays in the squad at 0 HP, fields no bonuses, and
+   * waits to be revived at the Capitol (as in D2). Null while it lives.
+   */
+  fellOnTurn: number | null;
   squad: SquadMember[];
   /** The squad member who is the leader. Cosmetic for now: it picks the figure shown on the map. */
   leaderTile: Tile;
@@ -112,6 +117,8 @@ export type WorldAction =
   | { type: "choose"; fork: string; to: string }
   | { type: "resurrect"; index: number; into: RecruitInto }
   | { type: "learn"; leaderId: string; skill: string }
+  /** Revive a warband's fallen leader at the Capitol. */
+  | { type: "revive"; leaderId: string }
   /** Buy a unit-type upgrade: units that become that type from now on receive it. */
   | { type: "upgrade"; upgrade: string };
 
@@ -131,6 +138,7 @@ export type WorldEvent =
   | { type: "looted"; lairId: string; side: Side; gold: number; joins: string | null }
   | { type: "resurrected"; side: Side; defId: string }
   | { type: "learned"; leaderId: string; skill: string }
+  | { type: "revived"; leaderId: string }
   | { type: "upgraded"; side: Side; upgrade: string }
   | { type: "worldEnd"; winner: Side };
 
@@ -141,6 +149,11 @@ export interface WorldStep {
 
 
 export const fullHp = (defId: string) => UNITS[defId]?.stats.maxHp ?? 0;
+
+/** Only a fallen leader stays in its squad at 0 HP; every other dead unit leaves for the graveyard. */
+export const alive = (m: SquadMember) => m.hp > 0;
+
+export const leaderUnit = (leader: Leader): SquadMember | undefined => leader.squad.find((m) => m.tile.row === leader.leaderTile.row && m.tile.col === leader.leaderTile.col);
 
 export const member = (defId: string, tile: Tile): SquadMember => ({ defId, tile, hp: fullHp(defId), xp: 0, marks: [] });
 

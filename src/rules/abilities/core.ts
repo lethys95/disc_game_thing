@@ -62,6 +62,7 @@ export const core: Readonly<Record<string, Behavior>> = {
     describe: () =>
       "End the turn. Damage taken is halved until this unit acts again.",
     tags: ["basic"],
+    hotkey: "d",
     choices: (ctx, self) => [single(ctx.unit(self.unitId), "main")],
     resolve: (ctx, self) => ctx.addEffect(self.unitId, { def: "defending" }),
   },
@@ -71,6 +72,7 @@ export const core: Readonly<Record<string, Behavior>> = {
     describe: () =>
       "Act again at the end of this pass.",
     tags: ["basic"],
+    hotkey: "w",
     reschedules: true,
     choices: (ctx, self) => [single(ctx.unit(self.unitId), "main")],
     resolve: () => {},

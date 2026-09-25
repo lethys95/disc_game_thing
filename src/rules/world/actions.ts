@@ -4,9 +4,10 @@ import { stepCost } from "#rules/map";
 import { RECRUIT_COST } from "#rules/units/index";
 import { LEADER_MOVEMENT } from "#rules/balance";
 import { defenderOf, engagementBattle } from "#rules/world/battles";
-import { chooseBranchProblem, elevateProblem, freeTile, growSquad, learnSkillProblem, newcomer, recruitProblem, resurrectionCost, resurrectProblem, squadFor, squadsOf, startTurn, upgradeProblem } from "#rules/world/economy";
+import { chooseBranchProblem, elevateProblem, freeTile, growSquad, learnSkillProblem, newcomer, recruitProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem, squadFor, squadsOf, startTurn, upgradeProblem } from "#rules/world/economy";
 import { movementOf, rankOf } from "#rules/world/leaders";
 import { planMove } from "#rules/world/movement";
+import { isLeaderOf } from "#rules/world/record";
 import { UPGRADES } from "#rules/upgrades";
 import { capitolOf, cityById, leaderById } from "#rules/world/state";
 import type { World, WorldAction, WorldEvent, WorldStep } from "#rules/world/state";
@@ -68,7 +69,7 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       const tile = { row: 0, col: 1 } as const;
       const id = `leader${draft.nextLeader}`;
       draft.nextLeader += 1;
-      draft.leaders.push({ id, side, hex: capitol.hex, movement: LEADER_MOVEMENT, experience: 0, skills: {}, squad: [{ ...unit, tile }], leaderTile: tile });
+      draft.leaders.push({ id, side, hex: capitol.hex, movement: LEADER_MOVEMENT, experience: 0, skills: {}, fellOnTurn: null, squad: [{ ...unit, tile }], leaderTile: tile });
       events.push({ type: "elevated", leaderId: id });
       break;
     }
@@ -103,6 +104,17 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       // Movement learned mid-turn is usable at once.
       leader.movement += movementOf(leader) - before;
       events.push({ type: "learned", leaderId: leader.id, skill: action.skill });
+      break;
+    }
+    case "revive": {
+      const problem = reviveProblem(draft, action.leaderId);
+      const leader = leaderById(draft, action.leaderId);
+      const cost = reviveCost(draft, leader);
+      if (problem || cost === null) throw new Error(`cannot revive: ${problem}`);
+      draft.gold[side] -= cost;
+      leader.squad = leader.squad.map((m) => (isLeaderOf(m, leader) ? { ...m, hp: 1 } : m));
+      leader.fellOnTurn = null;
+      events.push({ type: "revived", leaderId: leader.id });
       break;
     }
     case "upgrade": {
