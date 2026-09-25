@@ -1,6 +1,6 @@
 # Status
 
-_Rewritten (not appended) at the end of every session. Keep under ~50 lines._
+_Rewritten (not appended) with every commit. Keep under ~50 lines._
 
 **Updated:** 2026-09-25
 
