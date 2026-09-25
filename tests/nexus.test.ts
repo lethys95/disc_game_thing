@@ -1,36 +1,8 @@
-import { applyAction, createBattle, effectiveStats, legalActions } from "#rules/battle/engine";
-import type { Placement } from "#rules/battle/engine";
+import { effectiveStats, legalActions } from "#rules/battle/engine";
 import { allowedUnits, commit, openBranches } from "#rules/doctrine";
 import { grow } from "#rules/progression";
-import type { Battle, BattleEvent, Col, Row } from "#rules/battle/types";
+import { act, anchorKey, p, start, unit, until } from "#tests/helpers";
 import { describe, expect, test } from "vitest";
-
-const p = (defId: string, row: Row, col: Col): Placement => ({ defId, tile: { row, col } });
-const start = (a: Placement[], b: Placement[]) => createBattle([a, b]).battle;
-const key = (c: { anchor: { side: number; tile: { row: number; col: number } } }) => `${c.anchor.side}.${c.anchor.tile.row}.${c.anchor.tile.col}`;
-
-function act(battle: Battle, abilityId: string, anchor?: string): { battle: Battle; events: readonly BattleEvent[] } {
-  const option = legalActions(battle).find((a) => a.abilityId === abilityId);
-  if (!option) throw new Error(`${abilityId} is not legal for ${battle.current?.unitId}`);
-  const choice = anchor === undefined ? 0 : option.choices.findIndex((c) => key(c) === anchor);
-  if (choice < 0) throw new Error(`${abilityId} has no choice anchored at ${anchor}`);
-  return applyAction(battle, { abilityId, choice });
-}
-
-function until(battle: Battle, id: string): Battle {
-  let b = battle;
-  for (let i = 0; i < 50 && b.current?.unitId !== id; i++) {
-    b = act(b, legalActions(b).some((a) => a.abilityId === "wait") ? "wait" : "defend").battle;
-  }
-  if (b.current?.unitId !== id) throw new Error(`${id} never got a turn`);
-  return b;
-}
-
-const unit = (battle: Battle, id: string) => {
-  const found = battle.units[id];
-  if (!found) throw new Error(`no unit ${id}`);
-  return found;
-};
 
 describe("Nexus forks", () => {
   test("scheme vs overload is one faction-wide fork", () => {
@@ -59,8 +31,8 @@ describe("Thaumaturge", () => {
   test("homing lightning strikes every unit with the target's name, on both sides", () => {
     const battle = until(start([p("thaumaturge", 1, 1), p("brigand", 0, 1)], [p("brigand", 0, 0), p("brigand", 0, 2), p("bandit", 1, 1)]), "0.1.1");
     const lightning = legalActions(battle).find((a) => a.abilityId === "homing_lightning");
-    expect(lightning?.choices.find((c) => key(c) === "1.0.0")?.affected).toEqual(["0.0.1", "1.0.0", "1.0.2"]);
-    expect(lightning?.choices.find((c) => key(c) === "1.1.1")?.affected).toEqual(["1.1.1"]);
+    expect(lightning?.choices.find((c) => anchorKey(c) === "1.0.0")?.affected).toEqual(["0.0.1", "1.0.0", "1.0.2"]);
+    expect(lightning?.choices.find((c) => anchorKey(c) === "1.1.1")?.affected).toEqual(["1.1.1"]);
   });
 });
 

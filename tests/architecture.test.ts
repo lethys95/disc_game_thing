@@ -1,6 +1,7 @@
-import { applyAction, createBattle, effectiveStats, legalActions } from "#rules/battle/engine";
-import type { BattleContext, Placement } from "#rules/battle/engine";
-import type { Battle, BattleEvent, Col, EffectSeed, Row } from "#rules/battle/types";
+import { createBattle, effectiveStats, legalActions } from "#rules/battle/engine";
+import type { BattleContext } from "#rules/battle/engine";
+import type { BattleEvent } from "#rules/battle/types";
+import { act, anchorKey, p, until } from "#tests/helpers";
 import { describe, expect, test } from "vitest";
 
 /**
@@ -8,27 +9,7 @@ import { describe, expect, test } from "vitest";
  * and battle context, with no mechanic named in the engine.
  */
 
-const p = (defId: string, row: Row, col: Col, effects?: EffectSeed[]): Placement => ({ defId, tile: { row, col }, ...(effects ? { effects } : {}) });
-const key = (c: { anchor: { side: number; tile: { row: number; col: number } } }) => `${c.anchor.side}.${c.anchor.tile.row}.${c.anchor.tile.col}`;
 const blacksmith = (bonus: number): BattleContext => ({ sideEffects: [[{ def: "blacksmith", amount: bonus }], []] });
-
-function act(battle: Battle, abilityId: string, anchor?: string): { battle: Battle; events: readonly BattleEvent[] } {
-  const option = legalActions(battle).find((a) => a.abilityId === abilityId);
-  if (!option) throw new Error(`${abilityId} is not legal for ${battle.current?.unitId}`);
-  const choice = anchor === undefined ? 0 : option.choices.findIndex((c) => key(c) === anchor);
-  if (choice < 0) throw new Error(`${abilityId} has no choice anchored at ${anchor}`);
-  return applyAction(battle, { abilityId, choice });
-}
-
-/** Everyone else passes (waits, or defends once waiting is used up) until `id` is up. */
-function until(battle: Battle, id: string): Battle {
-  let b = battle;
-  for (let i = 0; i < 50 && b.current?.unitId !== id; i++) {
-    b = act(b, legalActions(b).some((a) => a.abilityId === "wait") ? "wait" : "defend").battle;
-  }
-  if (b.current?.unitId !== id) throw new Error(`${id} never got a turn`);
-  return b;
-}
 
 const damageTo = (events: readonly BattleEvent[], unitId: string) =>
   events.filter((e) => e.type === "damage" && e.unitId === unitId && e.source !== null).reduce((sum, e) => sum + (e.type === "damage" ? e.amount : 0), 0);
@@ -75,7 +56,7 @@ describe("params instead of variants", () => {
     const battle = until(createBattle([[p("immortal", 0, 1), p("congregant", 0, 0)], [p("congregant", 2, 2)]]).battle, "0.0.1");
     const heal = legalActions(battle).find((a) => a.abilityId === "lay_on_hands");
     expect(heal?.name).toBe("Divine Lay on Hands");
-    expect(heal?.choices.map((c) => [key(c), c.cost])).toEqual([["0.0.1", "free"], ["0.0.0", "main"]]);
+    expect(heal?.choices.map((c) => [anchorKey(c), c.cost])).toEqual([["0.0.1", "free"], ["0.0.0", "main"]]);
   });
 });
 

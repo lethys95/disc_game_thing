@@ -39,6 +39,7 @@
   "private": true,
   "imports": {
     "#rules/*": "./src/rules/*.ts",
-    "#view/*": "./src/view/*.ts"
+    "#view/*": "./src/view/*.ts",
+    "#tests/*": "./tests/*.ts"
   }
 }

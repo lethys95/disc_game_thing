@@ -1,38 +1,6 @@
-import { applyAction, createBattle, effectiveStats, legalActions } from "#rules/battle/engine";
-import type { Placement } from "#rules/battle/engine";
-import type { Battle, BattleEvent, Col, Row } from "#rules/battle/types";
+import { effectiveStats, legalActions } from "#rules/battle/engine";
+import { act, affectedBy, p, start, unit, until } from "#tests/helpers";
 import { describe, expect, test } from "vitest";
-
-const p = (defId: string, row: Row, col: Col): Placement => ({ defId, tile: { row, col } });
-const start = (a: Placement[], b: Placement[]) => createBattle([a, b]).battle;
-
-function act(battle: Battle, abilityId: string, anchor?: string): { battle: Battle; events: readonly BattleEvent[] } {
-  const option = legalActions(battle).find((a) => a.abilityId === abilityId);
-  if (!option) throw new Error(`${abilityId} is not legal for ${battle.current?.unitId}`);
-  const choice = anchor === undefined ? 0 : option.choices.findIndex((c) => `${c.anchor.side}.${c.anchor.tile.row}.${c.anchor.tile.col}` === anchor);
-  if (choice < 0) throw new Error(`${abilityId} has no choice anchored at ${anchor}`);
-  return applyAction(battle, { abilityId, choice });
-}
-
-/** Everyone else passes (waits, or defends once waiting is used up) until `id` is up. */
-function until(battle: Battle, id: string): Battle {
-  let b = battle;
-  for (let i = 0; i < 50 && b.current?.unitId !== id; i++) {
-    const canWait = legalActions(b).some((a) => a.abilityId === "wait");
-    b = act(b, canWait ? "wait" : "defend").battle;
-  }
-  if (b.current?.unitId !== id) throw new Error(`${id} never got a turn`);
-  return b;
-}
-
-const affectedBy = (battle: Battle, abilityId: string, anchor: string) =>
-  legalActions(battle).find((a) => a.abilityId === abilityId)?.choices.find((c) => `${c.anchor.side}.${c.anchor.tile.row}.${c.anchor.tile.col}` === anchor)?.affected;
-
-const unit = (battle: Battle, id: string) => {
-  const found = battle.units[id];
-  if (!found) throw new Error(`no unit ${id}`);
-  return found;
-};
 
 describe("shields (Custodian, Arcane Engineer)", () => {
   test("a shield takes hits before health", () => {
