@@ -77,6 +77,7 @@ button.action {
 button.action:hover { border-color: #9b7c52; }
 button.action.selected { border-color: var(--blood); box-shadow: 0 0 12px rgba(192, 40, 28, 0.5); }
 button.action .tag { font: 600 9px var(--text); text-transform: uppercase; letter-spacing: 0.1em; margin-left: 6px; color: #d9b36a; vertical-align: middle; }
+button.action .key { font: 600 9px var(--text); margin-left: 6px; padding: 0 3px; border: 1px solid #5a4a36; color: var(--muted); vertical-align: middle; }
 
 #banner {
   position: fixed; left: 50%; top: 38%; transform: translate(-50%, -50%); text-align: center;

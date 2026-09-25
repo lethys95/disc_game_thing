@@ -30,6 +30,7 @@ export function createWorld(
       movement: LEADER_MOVEMENT,
       experience: 0,
       skills: {},
+      fellOnTurn: null,
       squad: squad.map((p) => member(p.defId, p.tile)),
       leaderTile: first.tile,
     };

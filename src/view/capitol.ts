@@ -2,8 +2,8 @@ import type { Side } from "#rules/battle/types";
 import { allowedUnits, isFork } from "#rules/forks";
 import { EVOLUTIONS, FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
 import { upgradesFor } from "#rules/upgrades";
-import { chooseBranchProblem, elevateProblem, recruitProblem, resurrectionCost, resurrectProblem, squadsOf, upgradeProblem } from "#rules/world/economy";
-import { capitolOf } from "#rules/world/state";
+import { chooseBranchProblem, elevateProblem, recruitProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem, squadsOf, upgradeProblem } from "#rules/world/economy";
+import { capitolOf, leaderUnit } from "#rules/world/state";
 import type { Leader, RecruitInto, World, WorldAction } from "#rules/world/state";
 import { element } from "#view/dom";
 import { memberRow, unitName } from "#view/members";
@@ -154,7 +154,21 @@ export class CapitolScreen {
 
     const fallen = world.graveyard[side];
     column.appendChild(element("div", "section", "Graveyard"));
-    if (fallen.length === 0) column.appendChild(element("div", "note", "Nobody has fallen yet."));
+    const lost = world.leaders.filter((l) => l.side === side && l.fellOnTurn !== null);
+    for (const leader of lost) {
+      const own = leaderUnit(leader);
+      const cost = reviveCost(world, leader) ?? 0;
+      const problem = reviveProblem(world, leader.id);
+      const row = element("div", "fallen");
+      row.appendChild(element("span", "name", `♛ ${unitName(own?.defId ?? "")}, a warband's leader · ${cost} gold`));
+      const revive = element("button", "small", "Revive");
+      revive.disabled = !mayAct || problem !== null;
+      revive.title = problem ?? "Returns at 1 HP and leads its warband again. The price drops each turn you wait.";
+      revive.addEventListener("click", () => this.options.act({ type: "revive", leaderId: leader.id }));
+      row.appendChild(revive);
+      column.appendChild(row);
+    }
+    if (fallen.length === 0 && lost.length === 0) column.appendChild(element("div", "note", "Nobody has fallen yet."));
     const into: RecruitInto = home ? { kind: "leader", leaderId: home.id } : { kind: "garrison" };
     fallen.forEach((f, index) => {
       const cost = resurrectionCost(world, side, index) ?? 0;

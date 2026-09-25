@@ -9,9 +9,9 @@ import { GUARDIAN_ID } from "#rules/units/index";
 import { freeTile, growSquad, newcomer } from "#rules/world/economy";
 import type { Held } from "#rules/world/economy";
 import { leadershipOf } from "#rules/world/leaders";
-import { placementOf } from "#rules/world/record";
+import { isLeaderOf, placementOf } from "#rules/world/record";
 import type { MoveTarget } from "#rules/world/movement";
-import { cityById, lairById, leaderAt, leaderById, unitId } from "#rules/world/state";
+import { alive, cityById, lairById, leaderAt, leaderById, leaderUnit, unitId } from "#rules/world/state";
 import type { Defender, Engagement, Leader, SquadMember, World, WorldEvent, WorldStep } from "#rules/world/state";
 
 /** Battles started on the map: who fights whom, with what context, and writing the result back. */
@@ -36,8 +36,8 @@ function defendingSquad(world: World, defender: Defender, attackerSide: Side): H
 
 export function engagementBattle(world: World, attacker: Leader, defender: Defender): Battle {
   const defending = defendingSquad(world, defender, attacker.side);
-  const ours = attacker.squad.map((m) => placementOf(m, attacker));
-  const theirs = defending.squad.map((m) => placementOf(m, defending.leader));
+  const ours = attacker.squad.filter(alive).map((m) => placementOf(m, attacker));
+  const theirs = defending.squad.filter(alive).map((m) => placementOf(m, defending.leader));
   const squads: [Placement[], Placement[]] = attacker.side === 0 ? [ours, theirs] : [theirs, ours];
   // Each player side brings the battle effects of the city nodes it holds; neutrals bring none.
   const sideEffects = ([0, 1] as const).map((side) =>
@@ -46,15 +46,20 @@ export function engagementBattle(world: World, attacker: Leader, defender: Defen
   return createBattle(squads, { sideEffects: [sideEffects[0] ?? [], sideEffects[1] ?? []] }).battle;
 }
 
-function survivors(squad: readonly SquadMember[], side: Side, battle: Battle): SquadMember[] {
-  return squad.flatMap((m) => {
+/** The squad after a battle: survivors keep their wounds, and a fallen leader stays while anyone else stands. */
+function remaining(squad: readonly SquadMember[], side: Side, battle: Battle, leader: Leader | undefined): SquadMember[] {
+  const after = squad.flatMap((m) => {
+    if (!alive(m)) return [m];
     const unit = battle.units[unitId(side, m.tile)];
-    return unit?.alive ? [{ ...m, hp: unit.hp }] : [];
+    if (unit?.alive) return [{ ...m, hp: unit.hp }];
+    return isLeaderOf(m, leader) ? [{ ...m, hp: 0 }] : [];
   });
+  return after.some(alive) ? after : [];
 }
 
-function casualties(squad: readonly SquadMember[], side: Side, battle: Battle): SquadMember[] {
-  return squad.filter((m) => battle.units[unitId(side, m.tile)]?.alive === false);
+/** Units killed in this battle: what the winners' XP is made of. */
+function killed(squad: readonly SquadMember[], side: Side, battle: Battle): SquadMember[] {
+  return squad.filter((m) => alive(m) && battle.units[unitId(side, m.tile)]?.alive === false);
 }
 
 /** Writes a finished battle back into the world: survivors keep their wounds, the dead leave their squad. */
@@ -66,27 +71,31 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
   const attacker = leaderById(draft, engagement.attackerId);
   const defending = defendingSquad(draft, engagement.defender, attacker.side);
 
-  // A player's dead go to their graveyard (not the Guardian, and never neutrals).
   const lost: [SquadMember[], SquadMember[]] = [[], []];
-  lost[attacker.side] = casualties(attacker.squad, attacker.side, battle);
-  lost[defending.side] = casualties(defending.squad, defending.side, battle);
+  lost[attacker.side] = killed(attacker.squad, attacker.side, battle);
+  lost[defending.side] = killed(defending.squad, defending.side, battle);
+  const attackers = remaining(attacker.squad, attacker.side, battle, attacker);
+  const defenders = remaining(defending.squad, defending.side, battle, defending.leader);
+
+  // A player's dead go to their graveyard (not the Guardian, never neutrals, and not a fallen leader who stays).
+  const buried = (before: readonly SquadMember[], after: readonly SquadMember[]) => before.filter((m) => m.defId !== GUARDIAN_ID && !after.some((a) => sameTile(a.tile, m.tile)));
+  const graves: [SquadMember[], SquadMember[]] = [[], []];
+  graves[attacker.side] = buried(attacker.squad, attackers);
+  graves[defending.side] = defending.neutral ? [] : buried(defending.squad, defenders);
   for (const side of [0, 1] as const) {
-    if (side === defending.side && defending.neutral) continue;
-    for (const m of lost[side]) {
-      if (m.defId === GUARDIAN_ID) continue;
+    for (const m of graves[side]) {
       draft.graveyard[side].push({ defId: m.defId, fellOnTurn: draft.turn, marks: m.marks });
       events.push({ type: "fell", side, defId: m.defId });
     }
   }
 
-  attacker.squad = survivors(attacker.squad, attacker.side, battle);
+  attacker.squad = attackers;
   const defender = engagement.defender;
   if (defender.kind === "leader") {
-    const leader = leaderById(draft, defender.leaderId);
-    leader.squad = survivors(leader.squad, leader.side, battle);
+    leaderById(draft, defender.leaderId).squad = defenders;
   } else if (defender.kind === "lair") {
     const lair = lairById(draft, defender.lairId);
-    lair.guards = survivors(lair.guards, defending.side, battle);
+    lair.guards = defenders;
     if (lair.guards.length === 0 && attacker.squad.length > 0) {
       if (lair.kind === "camp") {
         draft.lairs = draft.lairs.filter((l) => l.id !== lair.id);
@@ -102,9 +111,8 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
     }
   } else {
     const city = cityById(draft, defender.cityId);
-    const side = defending.side;
     const guardianBefore = city.garrison.some((m) => m.defId === GUARDIAN_ID);
-    city.garrison = survivors(city.garrison, side, battle);
+    city.garrison = defenders;
     const guardianFell = guardianBefore && !city.garrison.some((m) => m.defId === GUARDIAN_ID);
     if (guardianFell) {
       draft.outcome = { winner: attacker.side };
@@ -123,21 +131,24 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
     const loser: Side = winner === 0 ? 1 : 0;
     const pool = lost[loser].reduce((sum, m) => sum + xpValue(m.defId), 0);
     const winners = winner === attacker.side ? { squad: attacker.squad, leader: attacker } : winnerSquad(draft, engagement.defender);
-    if (pool > 0 && winners.squad.length > 0) {
-      const each = Math.ceil(pool / winners.squad.length);
+    const standing = winners.squad.filter(alive).length;
+    if (pool > 0 && standing > 0) {
+      const each = Math.ceil(pool / standing);
       events.push({ type: "xp", side: winner, pool, each });
       growSquad(draft, winners, each, winner, events);
-      // The leader earns its share like any unit; it also counts toward the leader tree.
-      if (winners.leader) winners.leader.experience += each;
+      // A living leader earns its share like any unit; it also counts toward the leader tree.
+      const leaderStands = winners.leader && winners.leader.squad.some((m) => alive(m) && isLeaderOf(m, winners.leader));
+      if (winners.leader && leaderStands) winners.leader.experience += each;
     }
   }
 
   for (const leader of draft.leaders) {
-    if (leader.squad.length > 0) {
-      if (!leader.squad.some((m) => sameTile(m.tile, leader.leaderTile))) leader.leaderTile = leader.squad[0]?.tile ?? leader.leaderTile;
+    if (leader.squad.length === 0) {
+      events.push({ type: "leaderFell", leaderId: leader.id, side: leader.side });
       continue;
     }
-    events.push({ type: "leaderFell", leaderId: leader.id, side: leader.side });
+    const own = leaderUnit(leader);
+    if (own && !alive(own) && leader.fellOnTurn === null) leader.fellOnTurn = draft.turn;
   }
   draft.leaders = draft.leaders.filter((l) => l.squad.length > 0);
   draft.engagement = null;

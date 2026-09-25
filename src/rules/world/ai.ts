@@ -6,7 +6,7 @@ import { nextForm } from "#rules/progression";
 import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
 import { upgradesOf } from "#rules/upgrades";
 import { forecast } from "#rules/world/battles";
-import { chooseBranchProblem, elevateProblem, income, learnSkillProblem, recruitProblem, resurrectionCost, resurrectProblem, squadsOf, upgradeProblem } from "#rules/world/economy";
+import { chooseBranchProblem, elevateProblem, income, learnSkillProblem, recruitProblem, resurrectionCost, resurrectProblem, reviveProblem, squadsOf, upgradeProblem } from "#rules/world/economy";
 import { movementOf } from "#rules/world/leaders";
 import { destination, planMove } from "#rules/world/movement";
 import type { MovePlan, MoveTarget } from "#rules/world/movement";
@@ -88,6 +88,8 @@ export function chooseWorldAction(world: World): WorldAction {
       if (to && !chooseBranchProblem(world, fork, to)) return { type: "choose", fork, to };
     }
     const spare = (price: number) => world.gold[side] >= price;
+    const fallen = mine.find((l) => !reviveProblem(world, l.id));
+    if (fallen) return { type: "revive", leaderId: fallen.id };
 
     const into: RecruitInto = home ? { kind: "leader", leaderId: home.id } : { kind: "garrison" };
     const bargain = world.graveyard[side]
@@ -128,7 +130,9 @@ export function chooseWorldAction(world: World): WorldAction {
     const atHome = capitol !== undefined && sameHex(leader.hex, capitol.hex);
     // A thin squad waits at home for recruits while gold keeps coming in.
     if (atHome && leader.squad.length < 3 && income(world, side) >= cost) continue;
-    if (strength(leader.squad) < 0.5 * fullStrength(leader.squad) && capitol && !atHome && !leaderAt(world, capitol.hex)) {
+    // Wounded, or leaderless until revived: home to the Capitol.
+    const hurt = strength(leader.squad) < 0.5 * fullStrength(leader.squad) || leader.fellOnTurn !== null;
+    if (hurt && capitol && !atHome && !leaderAt(world, capitol.hex)) {
       const plan = planMove(world, leader.id, capitol.hex);
       if (plan && plan.steps > 0) return { type: "move", leaderId: leader.id, to: capitol.hex };
       continue;

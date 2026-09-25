@@ -9,7 +9,7 @@ import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/in
 import { leadershipOf, learnProblem, movementOf, squadHealingOf } from "#rules/world/leaders";
 import { maxHpOf } from "#rules/world/record";
 import { UPGRADES, upgradesFor } from "#rules/upgrades";
-import { capitolOf, leaderAt, leaderById, member } from "#rules/world/state";
+import { alive, capitolOf, leaderAt, leaderById, leaderUnit, member } from "#rules/world/state";
 import type { City, Leader, Mark, RecruitInto, SquadMember, World, WorldEvent } from "#rules/world/state";
 
 /** Gold, recruiting, branch choices, resurrection, elevation, and the start of a side's turn. */
@@ -45,16 +45,36 @@ export function chooseBranchProblem(world: World, fork: string, to: string): str
 
 /** Forks where one of this side's units waits, XP full, for a choice. The view prompts; the AI just chooses. */
 export function waitingForks(world: World, side: Side): string[] {
-  const forks = squadsOf(world, side).flatMap(({ squad }) => squad.filter((m) => isFork(m.defId) && world.commitment[side][m.defId] === undefined && m.xp >= (xpToEvolve(m.defId) ?? Infinity)).map((m) => m.defId));
+  const forks = squadsOf(world, side).flatMap(({ squad }) => squad.filter((m) => alive(m) && isFork(m.defId) && world.commitment[side][m.defId] === undefined && m.xp >= (xpToEvolve(m.defId) ?? Infinity)).map((m) => m.defId));
   return [...new Set(forks)];
+}
+
+/** Canon: dear at once, cheaper for each turn you wait, down to a base by tier. */
+function raiseCost(world: World, defId: string, fellOnTurn: number): number {
+  const base = RESURRECTION_BASE * Math.max(1, UNITS[defId]?.tier ?? 1);
+  return base * Math.max(1, RESURRECTION_PREMIUM - (world.turn - fellOnTurn));
 }
 
 export function resurrectionCost(world: World, side: Side, index: number): number | null {
   const fallen = world.graveyard[side][index];
-  if (!fallen) return null;
-  const base = RESURRECTION_BASE * Math.max(1, UNITS[fallen.defId]?.tier ?? 1);
-  const waited = world.turn - fallen.fellOnTurn;
-  return base * Math.max(1, RESURRECTION_PREMIUM - waited);
+  return fallen ? raiseCost(world, fallen.defId, fallen.fellOnTurn) : null;
+}
+
+/** Reviving a warband's fallen leader costs what resurrecting it would (provisional). */
+export function reviveCost(world: World, leader: Leader): number | null {
+  const own = leaderUnit(leader);
+  return own && leader.fellOnTurn !== null ? raiseCost(world, own.defId, leader.fellOnTurn) : null;
+}
+
+export function reviveProblem(world: World, leaderId: string): string | null {
+  const leader = leaderById(world, leaderId);
+  const capitol = capitolOf(world, world.activeSide);
+  const cost = reviveCost(world, leader);
+  if (leader.side !== world.activeSide) return "not your leader";
+  if (cost === null) return "the leader stands";
+  if (!capitol || !sameHex(leader.hex, capitol.hex)) return "the warband must stand in the Capitol";
+  if (world.gold[leader.side] < cost) return "not enough gold";
+  return null;
 }
 
 export function resurrectProblem(world: World, index: number, into: RecruitInto): string | null {
@@ -111,6 +131,7 @@ export function newcomer(world: World, side: Side, defId: string, tile: Tile): S
 /** Evolves members in place; the new form arrives at full health (provisional). */
 export function growSquad(world: World, { squad, leader }: Held, gained: number, side: Side, events: WorldEvent[]): void {
   squad.forEach((m, i) => {
+    if (!alive(m)) return;
     const growth = grow(m.defId, m.xp, gained, world.commitment[side]);
     let from = m.defId;
     for (const to of growth.evolvedInto) {
@@ -145,9 +166,10 @@ export function startTurn(world: World, events: WorldEvent[]): void {
   const capitol = capitolOf(world, side);
   for (const { squad, leader } of squadsOf(world, side)) {
     const resting = capitol !== undefined && (leader === undefined ? squad === capitol.garrison : sameHex(leader.hex, capitol.hex));
-    const share = (resting ? CAPITOL_HEALING : 0) + (leader ? squadHealingOf(leader) : 0);
+    const share = (resting ? CAPITOL_HEALING : 0) + (leader && leader.fellOnTurn === null ? squadHealingOf(leader) : 0);
     if (share === 0) continue;
     squad.forEach((m, i) => {
+      if (!alive(m)) return;
       const max = maxHpOf(m, leader);
       squad[i] = { ...m, hp: Math.min(max, m.hp + Math.ceil(max * share)) };
     });

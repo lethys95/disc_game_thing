@@ -31,7 +31,7 @@ export function memberRow(m: SquadMember, leader: Leader | undefined, commitment
   const bar = element("div", "hp");
   const fill = element("div", "fill");
   fill.style.width = `${(100 * m.hp) / max}%`;
-  bar.append(fill, element("span", "value", `${m.hp} / ${max}`));
+  bar.append(fill, element("span", "value", m.hp > 0 ? `${m.hp} / ${max}` : "Fallen: revive at the Capitol"));
   row.appendChild(bar);
   const needed = xpToEvolve(m.defId);
   if (commitment && needed !== null) {

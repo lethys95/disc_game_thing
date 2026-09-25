@@ -95,6 +95,11 @@ One shared tree to begin with ("we can explore the other stuff later"; per-unit 
 - At the end of the tree: a **leadership aura**, e.g. the squad deals +5% damage.
 Games aren't expected to last long enough to fill the whole tree.
 
+## A fallen leader stays the leader (user, 2026-09-25)
+- "The leader should still be the dead unit. In D2, if your leader dies, you have to go back and ress." No other unit takes over: that would break per-unit leader trees and invite abuse (let the leader die on purpose).
+- Implemented: the leader's corpse stays in its squad at 0 HP, isn't fielded, gives no leader bonuses and earns no XP; the warband can still march home, where the leader is revived for gold (priced like a resurrection). A wiped-out warband is gone, as in D2.
+- Open (user unsure): a separate line of experience earned *while being a leader*, and whether leader abilities should come from XP alone (questions.md #33).
+
 ## Doctrines are per tree, not per faction (user, 2026-09-25)
 The dichotomies are **thematic**, not a faction-wide lock. D2's elves are roughly wild vs nobility, but you can go wild in one tree and noble in another. "Just because I as a Jilliath player go faith in melee, doesn't mean I want faith in support." Each line's fork is chosen independently; the faction's dichotomy flavors the pairs. (This matches the canon branch-investment page: commitments are per divergence point and "do not affect independent evolution lines".)
 

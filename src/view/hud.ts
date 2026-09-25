@@ -136,11 +136,14 @@ export class Hud {
     for (const option of options) {
       const button = element("button", `action${option.abilityId === selected ? " selected" : ""}`);
       button.appendChild(element("span", "name", option.name));
+      const def = BEHAVIORS[option.abilityId];
+      const key = def?.kind === "active" ? def.hotkey : undefined;
+      if (key) button.appendChild(element("span", "key", key.toUpperCase()));
       const ref = abilityRef(unit, option.abilityId);
       const charges = paramsOf(ref)["charges"];
       const used = unit.abilities.find((s) => s.ref.id === option.abilityId)?.chargesUsed ?? 0;
       if (charges !== undefined) button.appendChild(element("span", "tag", `${charges - used}/${charges}`));
-      button.title = describeAbility(ref);
+      button.title = `${describeAbility(ref)}${key ? ` (${key.toUpperCase()})` : ""}`;
       button.addEventListener("click", () => this.handlers.onAbility(option.abilityId));
       this.actions.appendChild(button);
     }

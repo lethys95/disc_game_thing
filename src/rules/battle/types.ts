@@ -253,6 +253,8 @@ export interface ActiveBehavior {
   readonly reschedules?: boolean;
   /** The target is secret from the other side (Negate). */
   readonly secretTarget?: boolean;
+  /** Default keyboard shortcut, a lower-case key. The view uses it; a settings menu may remap it later. */
+  readonly hotkey?: string;
   /** Rules text, written from the ability's effective params. */
   describe(params: Params): string;
   choices(ctx: Ctx, self: TraitSelf): TargetChoice[];
