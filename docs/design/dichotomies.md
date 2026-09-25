@@ -22,7 +22,7 @@ Faith preserves (Paladin line) vs faith consumes (Zealot line). See `units/jilli
 - Proposed: **life and death as each other's source** (the cycle: rot feeds the grove). It fits the user's own notes ("balance between life and death", "druids cultivate nature but also rot", "using corpses as a mechanic") and ramp.
 - The same card noted a tension: "acts first / high initiative" (tempo) vs "the cycle" (patience).
 
-## Ral-Vitahl (Nexus): nothing recorded yet
+## Ral-Vitahl (Nexus): scheme vs overload (leaning)
 What exists:
 - User's notes: quality over quantity; high burst that falls off; costly losses; relies on tech, spells and gimmicks; casters vs automatons; "Storm" combo play.
 - User's 2024 note: "Tech. Humans, Automata, Lightning and explosions. Izzet basically."
