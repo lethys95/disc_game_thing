@@ -47,6 +47,8 @@ A pattern marks *which tiles can be chosen* (select one) or *which tiles are hit
 
 - `pnpm sim:world` (2026-09-25, M3 rules, preserve vs punishment presets): games either end in 2–4 turns (Punishment grinds down the lone Guardian) or freeze into a cold war where neither side can win a fight its forecast allows. Expected while squads can't grow; evolution (M4) should break it.
 
+- `pnpm sim:world` after M4 (uncommitted vs uncommitted): the AI invests and resurrects, but games still freeze into cold wars. XP only comes from battles the cautious AI won't start. Needs an XP source (questions.md #15).
+
 ## Open
 - **Empty tiles in melee's path**: with melee as "one tile in front", a front-row unit facing an empty column can't attack. Is that intended (positioning matters), or should melee fall through or widen, D2-style? Provisional: literal. Revisit after playing M1, since mirror matches could stall.
 - **Empty enemy front row**: does the next row become "front"? Provisional: no. Relative depth is fixed.

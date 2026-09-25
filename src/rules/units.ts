@@ -72,3 +72,23 @@ export const RECRUITS: readonly string[] = ["congregant"];
 
 /** Canon: the Congregant costs 40 gold. */
 export const RECRUIT_COST: Readonly<Record<string, number>> = { congregant: 40 };
+
+/** A fork a faction commits to once, for good (branch investment, docs/design/pillars.md). */
+export type Branch = "preserve" | "consume" | "punishment" | "sacrifice";
+
+export interface Evolution {
+  readonly to: string;
+  /** The branch the faction must have invested in; null where the line doesn't fork. */
+  readonly requires: Branch | null;
+}
+
+/** The canon Jilliath melee tree (docs/design/units/jilliath-melee-line.md). */
+export const EVOLUTIONS: Readonly<Record<string, readonly Evolution[]>> = {
+  congregant: [{ to: "paladin", requires: "preserve" }, { to: "zealot", requires: "consume" }],
+  paladin: [{ to: "templar", requires: null }],
+  templar: [{ to: "immortal", requires: null }],
+  zealot: [{ to: "punisher", requires: "punishment" }, { to: "fanatic", requires: "sacrifice" }],
+  punisher: [{ to: "torturer", requires: null }],
+  fanatic: [{ to: "chosen", requires: null }],
+  chosen: [{ to: "avatar_of_vengeance", requires: null }],
+};

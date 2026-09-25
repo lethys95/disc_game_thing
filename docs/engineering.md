@@ -3,7 +3,7 @@
 How the code is laid out and what has bitten before. Keep it short; add a gotcha when one costs real time.
 
 ## Map
-- `src/rules/`: pure, deterministic, plain data. `battle.ts` (engine: passes, attack pipeline, effects), `abilities.ts` (behavior registry; behaviors see the engine only through `Ctx`), `units.ts` (canon unit data), `ai.ts` (greedy: simulate every legal action and score it), `doctrine.ts`, `hex.ts` / `map.ts` (seeded generation, A*), `world.ts` (leaders, cities, gold, recruiting, elevation, engagements, map AI).
+- `src/rules/`: pure, deterministic, plain data. `battle.ts` (engine: passes, attack pipeline, effects), `abilities.ts` (behavior registry; behaviors see the engine only through `Ctx`), `units.ts` (canon unit data), `ai.ts` (greedy: simulate every legal action and score it), `doctrine.ts`, `hex.ts` / `map.ts` (seeded generation, A*), `world.ts` (leaders, cities, gold, recruiting, elevation, engagements, XP/graveyard, map AI), `progression.ts` (XP value, evolution), `doctrine.ts` (commitments, allowed units).
 - `src/view/`: `stage.ts` (the one renderer/camera/bloom/labels/tween loop), `scene.ts` (`BattleScene`), `map.ts` (`MapView`), `app.ts` (battle controller), `campaign.ts` (map controller), `hud.ts`, `setup.ts`, `figures.ts` (placeholder statues), `text.ts` (rules text shown in UI; mirrors the design docs).
 - Imports use `#rules/*` and `#view/*` (package.json `imports`), never `../`.
 

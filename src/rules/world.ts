@@ -1,18 +1,28 @@
 import { autoplay } from "#rules/ai";
 import { createBattle } from "#rules/battle";
 import type { Placement } from "#rules/battle";
-import { SQUAD_LIMIT } from "#rules/doctrine";
+import { commit, INVESTMENT_COST, openBranches, SQUAD_LIMIT } from "#rules/doctrine";
+import type { Commitment } from "#rules/doctrine";
 import { COLS, ROWS, sameTile } from "#rules/grid";
 import { hexKey, neighbors, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { findPath, generateMap, stepCost } from "#rules/map";
 import type { Path, WorldMap } from "#rules/map";
 import type { Battle, Side, Tile } from "#rules/types";
+import { grow, xpValue } from "#rules/progression";
 import { GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units";
+import type { Branch } from "#rules/units";
 
-/** A unit in a squad on the map; its HP carries from one battle to the next. */
+/** A unit in a squad on the map; its HP and XP carry from one battle to the next. */
 export interface SquadMember extends Placement {
   readonly hp: number;
+  readonly xp: number;
+}
+
+/** A unit in its side's graveyard, waiting for resurrection at the Capitol. */
+export interface Fallen {
+  readonly defId: string;
+  readonly fellOnTurn: number;
 }
 
 export interface Leader {
@@ -53,6 +63,8 @@ export interface World {
   engagement: Engagement | null;
   outcome: { winner: Side } | null;
   nextLeader: number;
+  commitment: [Commitment, Commitment];
+  graveyard: [Fallen[], Fallen[]];
 }
 
 export type RecruitInto = { kind: "garrison" } | { kind: "leader"; leaderId: string };
@@ -61,7 +73,9 @@ export type WorldAction =
   | { type: "move"; leaderId: string; to: Hex }
   | { type: "endTurn" }
   | { type: "recruit"; defId: string; into: RecruitInto }
-  | { type: "elevate"; tile: Tile };
+  | { type: "elevate"; tile: Tile }
+  | { type: "invest"; branch: Branch }
+  | { type: "resurrect"; index: number; into: RecruitInto };
 
 export type WorldEvent =
   | { type: "moved"; leaderId: string; path: readonly Hex[] }
@@ -71,6 +85,11 @@ export type WorldEvent =
   | { type: "recruited"; defId: string; into: RecruitInto }
   | { type: "elevated"; leaderId: string }
   | { type: "leaderFell"; leaderId: string }
+  | { type: "xp"; side: Side; pool: number; each: number }
+  | { type: "evolved"; side: Side; from: string; to: string }
+  | { type: "fell"; side: Side; defId: string }
+  | { type: "invested"; side: Side; branch: Branch }
+  | { type: "resurrected"; side: Side; defId: string }
   | { type: "worldEnd"; winner: Side };
 
 export interface WorldStep {
@@ -87,12 +106,20 @@ export const MINE_INCOME = 25;
 export const CAPITOL_HEALING = 0.25;
 /** Garrison size, Guardian included. */
 export const GARRISON_LIMIT = 6;
+/** Resurrection's floor price per tier (the Congregant's canon 40 gold at tier 1). */
+export const RESURRECTION_BASE = 40;
+/** Canon: immediate resurrection is expensive and the price decays each turn you wait. Provisional: 3× base, minus one base per turn. */
+export const RESURRECTION_PREMIUM = 3;
 
 const fullHp = (defId: string) => UNITS[defId]?.stats.maxHp ?? 0;
 
-const member = (defId: string, tile: Tile): SquadMember => ({ defId, tile, hp: fullHp(defId) });
+const member = (defId: string, tile: Tile): SquadMember => ({ defId, tile, hp: fullHp(defId), xp: 0 });
 
-export function createWorld(seed: number, squads: readonly [readonly Placement[], readonly Placement[]]): World {
+export function createWorld(
+  seed: number,
+  squads: readonly [readonly Placement[], readonly Placement[]],
+  commitment: readonly [Commitment, Commitment],
+): World {
   const map = generateMap(seed);
   const leaders = squads.map((squad, index): Leader => {
     const side: Side = index === 0 ? 0 : 1;
@@ -118,7 +145,19 @@ export function createWorld(seed: number, squads: readonly [readonly Placement[]
       garrison: site.kind === "capitol" ? [member(GUARDIAN_ID, { row: 0, col: 1 })] : [],
     };
   });
-  const world: World = { map, leaders, cities, gold: [STARTING_GOLD, STARTING_GOLD], turn: 1, activeSide: 0, engagement: null, outcome: null, nextLeader: 2 };
+  const world: World = {
+    map,
+    leaders,
+    cities,
+    gold: [STARTING_GOLD, STARTING_GOLD],
+    turn: 1,
+    activeSide: 0,
+    engagement: null,
+    outcome: null,
+    nextLeader: 2,
+    commitment: [commitment[0], commitment[1]],
+    graveyard: [[], []],
+  };
   startTurn(world, []);
   return world;
 }
@@ -234,10 +273,60 @@ export function recruitProblem(world: World, defId: string, into: RecruitInto): 
   if (cost === undefined) return "not recruitable";
   if (!capitol) return "no Capitol";
   if (world.gold[side] < cost) return "not enough gold";
+  return roomProblem(world, capitol, into);
+}
+
+export function investProblem(world: World, branch: Branch): string | null {
+  const side = world.activeSide;
+  if (!openBranches(world.commitment[side]).includes(branch)) return "not an open fork";
+  return world.gold[side] < INVESTMENT_COST[branch] ? "not enough gold" : null;
+}
+
+export function resurrectionCost(world: World, side: Side, index: number): number | null {
+  const fallen = world.graveyard[side][index];
+  if (!fallen) return null;
+  const base = RESURRECTION_BASE * Math.max(1, UNITS[fallen.defId]?.tier ?? 1);
+  const waited = world.turn - fallen.fellOnTurn;
+  return base * Math.max(1, RESURRECTION_PREMIUM - waited);
+}
+
+export function resurrectProblem(world: World, index: number, into: RecruitInto): string | null {
+  const side = world.activeSide;
+  const cost = resurrectionCost(world, side, index);
+  const capitol = capitolOf(world, side);
+  if (cost === null) return "nobody there";
+  if (!capitol) return "no Capitol";
+  if (world.gold[side] < cost) return "not enough gold";
+  return roomProblem(world, capitol, into);
+}
+
+function roomProblem(world: World, capitol: City, into: RecruitInto): string | null {
   if (into.kind === "garrison") return capitol.garrison.length >= GARRISON_LIMIT ? "garrison full" : null;
   const leader = leaderById(world, into.leaderId);
-  if (leader.side !== side || !sameHex(leader.hex, capitol.hex)) return "leader not in the Capitol";
+  if (leader.side !== world.activeSide || !sameHex(leader.hex, capitol.hex)) return "leader not in the Capitol";
   return leader.squad.length >= SQUAD_LIMIT ? "squad full" : null;
+}
+
+function squadFor(world: World, into: RecruitInto): SquadMember[] | undefined {
+  return into.kind === "garrison" ? capitolOf(world, world.activeSide)?.garrison : leaderById(world, into.leaderId).squad;
+}
+
+/** Every squad a side owns: its warbands and its garrisons. */
+function squadsOf(world: World, side: Side): SquadMember[][] {
+  return [...world.leaders.filter((l) => l.side === side).map((l) => l.squad), ...world.cities.filter((c) => c.owner === side).map((c) => c.garrison)];
+}
+
+/** Evolves members in place; the new form arrives at full health (provisional). */
+function growSquad(squad: SquadMember[], gained: number, side: Side, commitment: Commitment, events: WorldEvent[]): void {
+  squad.forEach((m, i) => {
+    const growth = grow(m.defId, m.xp, gained, commitment);
+    let from = m.defId;
+    for (const to of growth.evolvedInto) {
+      events.push({ type: "evolved", side, from, to });
+      from = to;
+    }
+    squad[i] = growth.evolvedInto.length > 0 ? { ...m, defId: growth.defId, xp: growth.xp, hp: fullHp(growth.defId) } : { ...m, xp: growth.xp };
+  });
 }
 
 export function elevateProblem(world: World, tile: Tile): string | null {
@@ -288,8 +377,7 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
     case "recruit": {
       const problem = recruitProblem(draft, action.defId, action.into);
       if (problem) throw new Error(`cannot recruit: ${problem}`);
-      const capitol = capitolOf(draft, side);
-      const squad = action.into.kind === "garrison" ? capitol?.garrison : leaderById(draft, action.into.leaderId).squad;
+      const squad = squadFor(draft, action.into);
       const tile = squad ? freeTile(squad) : null;
       if (!squad || !tile) throw new Error("no room");
       squad.push(member(action.defId, tile));
@@ -308,6 +396,28 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       draft.nextLeader += 1;
       draft.leaders.push({ id, side, hex: capitol.hex, movement: LEADER_MOVEMENT, squad: [{ ...unit, tile }], leaderTile: tile });
       events.push({ type: "elevated", leaderId: id });
+      break;
+    }
+    case "invest": {
+      const problem = investProblem(draft, action.branch);
+      if (problem) throw new Error(`cannot invest: ${problem}`);
+      draft.gold[side] -= INVESTMENT_COST[action.branch];
+      draft.commitment[side] = commit(draft.commitment[side], action.branch);
+      events.push({ type: "invested", side, branch: action.branch });
+      for (const squad of squadsOf(draft, side)) growSquad(squad, 0, side, draft.commitment[side], events);
+      break;
+    }
+    case "resurrect": {
+      const problem = resurrectProblem(draft, action.index, action.into);
+      const cost = resurrectionCost(draft, side, action.index);
+      const fallen = draft.graveyard[side][action.index];
+      const squad = squadFor(draft, action.into);
+      const tile = squad ? freeTile(squad) : null;
+      if (problem || cost === null || !fallen || !squad || !tile) throw new Error(`cannot resurrect: ${problem}`);
+      draft.gold[side] -= cost;
+      draft.graveyard[side].splice(action.index, 1);
+      squad.push({ defId: fallen.defId, tile, hp: 1, xp: 0 });
+      events.push({ type: "resurrected", side, defId: fallen.defId });
       break;
     }
   }
@@ -355,6 +465,10 @@ function survivors(squad: readonly SquadMember[], side: Side, battle: Battle): S
   });
 }
 
+function casualties(squad: readonly SquadMember[], side: Side, battle: Battle): SquadMember[] {
+  return squad.filter((m) => battle.units[unitId(side, m.tile)]?.alive === false);
+}
+
 /** Writes a finished battle back into the world: survivors keep their wounds, the dead leave their squad. */
 export function concludeBattle(world: World, battle: Battle): WorldStep {
   const engagement = world.engagement;
@@ -362,8 +476,21 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
   const draft = structuredClone(world);
   const events: WorldEvent[] = [];
   const attacker = leaderById(draft, engagement.attackerId);
-  attacker.squad = survivors(attacker.squad, attacker.side, battle);
+  const defending = defendingSquad(draft, engagement.defender);
 
+  // The dead go to their side's graveyard (the Guardian is not a unit you can buy back).
+  const lost: [SquadMember[], SquadMember[]] = [[], []];
+  lost[attacker.side] = casualties(attacker.squad, attacker.side, battle);
+  lost[defending.side] = casualties(defending.squad, defending.side, battle);
+  for (const side of [0, 1] as const) {
+    for (const m of lost[side]) {
+      if (m.defId === GUARDIAN_ID) continue;
+      draft.graveyard[side].push({ defId: m.defId, fellOnTurn: draft.turn });
+      events.push({ type: "fell", side, defId: m.defId });
+    }
+  }
+
+  attacker.squad = survivors(attacker.squad, attacker.side, battle);
   const defender = engagement.defender;
   if (defender.kind === "leader") {
     const leader = leaderById(draft, defender.leaderId);
@@ -384,6 +511,19 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
     }
   }
 
+  // Canon: the defeated enemies' worth is split among the winning side's survivors.
+  const winner = battle.outcome.winner;
+  if (winner !== null) {
+    const loser: Side = winner === 0 ? 1 : 0;
+    const pool = lost[loser].reduce((sum, m) => sum + xpValue(m.defId), 0);
+    const winners = winner === attacker.side ? attacker.squad : winnerSquad(draft, engagement.defender);
+    if (pool > 0 && winners.length > 0) {
+      const each = Math.ceil(pool / winners.length);
+      events.push({ type: "xp", side: winner, pool, each });
+      growSquad(winners, each, winner, draft.commitment[winner], events);
+    }
+  }
+
   for (const leader of draft.leaders) {
     if (leader.squad.length > 0) {
       if (!leader.squad.some((m) => sameTile(m.tile, leader.leaderTile))) leader.leaderTile = leader.squad[0]?.tile ?? leader.leaderTile;
@@ -394,6 +534,10 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
   draft.leaders = draft.leaders.filter((l) => l.squad.length > 0);
   draft.engagement = null;
   return { world: draft, events };
+}
+
+function winnerSquad(world: World, defender: Defender): SquadMember[] {
+  return defender.kind === "leader" ? (world.leaders.find((l) => l.id === defender.leaderId)?.squad ?? []) : cityById(world, defender.cityId).garrison;
 }
 
 /** The battle a move would start, played out by the AI on both sides. Deterministic, so it's a true forecast. */
@@ -415,6 +559,9 @@ function threatened(world: World, leader: Leader, hex: Hex): boolean {
   });
 }
 
+/** Provisional AI taste: the doctrine pnpm sim rates strongest first. */
+const AI_BRANCH_PREFERENCE: readonly Branch[] = ["consume", "punishment", "preserve", "sacrifice"];
+
 const strength = (squad: readonly SquadMember[]) => squad.reduce((sum, m) => sum + m.hp, 0);
 const fullStrength = (squad: readonly SquadMember[]) => squad.reduce((sum, m) => sum + fullHp(m.defId), 0);
 
@@ -431,7 +578,21 @@ export function chooseWorldAction(world: World): WorldAction {
 
   if (capitol) {
     const home = mine.find((l) => sameHex(l.hex, capitol.hex));
-    if (home && !recruitProblem(world, "congregant", { kind: "leader", leaderId: home.id })) {
+    // Commit at the next fork as soon as it's affordable; save for it otherwise (unless there's no army at all).
+    const open = AI_BRANCH_PREFERENCE.filter((b) => openBranches(world.commitment[side]).includes(b));
+    const branch = open[0];
+    if (branch && !investProblem(world, branch)) return { type: "invest", branch };
+    const reserve = branch && mine.length > 0 ? INVESTMENT_COST[branch] : 0;
+    const spare = (price: number) => world.gold[side] - price >= reserve;
+
+    const into: RecruitInto = home ? { kind: "leader", leaderId: home.id } : { kind: "garrison" };
+    const bargain = world.graveyard[side]
+      .map((fallen, index) => ({ index, tier: UNITS[fallen.defId]?.tier ?? 1, cost: resurrectionCost(world, side, index) ?? Infinity }))
+      .filter((f) => f.tier >= 2 && f.cost === RESURRECTION_BASE * f.tier && spare(f.cost) && !resurrectProblem(world, f.index, into))
+      .sort((a, b) => b.tier - a.tier)[0];
+    if (bargain) return { type: "resurrect", index: bargain.index, into };
+
+    if (home && spare(cost) && !recruitProblem(world, "congregant", { kind: "leader", leaderId: home.id })) {
       return { type: "recruit", defId: "congregant", into: { kind: "leader", leaderId: home.id } };
     }
     // Under threat, recruits stand with the Guardian; a fresh leader in the Capitol would only be picked off.

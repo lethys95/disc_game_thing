@@ -20,3 +20,7 @@ The user is in a "suggest" role: they answer when they have time, so nothing her
 13. Economy: 100 starting gold, Capitol +50/turn, each gold mine +25/turn, Congregant 40 (canon). Units resting in their own Capitol heal 25% of max HP per turn. Elevation is free. Neutral cities start unguarded. All placeholders.
 14. Only tier-1 units can be recruited (D2 style), so Jilliath recruits only Congregants; the rest must come from evolution (M4). Right?
 
+## Progression (M4; provisional answers in `src/rules/progression.ts`, `doctrine.ts`, `world.ts`)
+15. **Where does XP come from besides fighting the other player?** With XP only from battles, AI-vs-AI games freeze: nobody takes a fight its forecast says it loses, so nobody evolves, and nobody can crack a Guardian. D2 used neutral monsters guarding cities, treasure and dungeons. Your design lists dungeons and map structures but has no neutral creatures. What should live there? (A human who takes risks gets further than the cautious AI, but the game needs something to grow on.)
+16. Numbers: XP to evolve 100/250/500/1000 by tier; a unit is worth maxHP/2 + damage + armor; evolving resets XP and heals to full; investing costs 150 at the tier-2 fork and 300 at the tier-3 fork; resurrection costs 40 × tier, 3× that if done at once and minus one base per turn waited; resurrected units return at 1 HP.
+

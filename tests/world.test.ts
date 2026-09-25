@@ -3,6 +3,7 @@ import type { Placement } from "#rules/battle";
 import { hexagon, hexDistance, hexKey, neighbors, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { findPath, generateMap, stepCost, TERRAIN_COST } from "#rules/map";
+import { DOCTRINES } from "#rules/doctrine";
 import { GUARDIAN_ID } from "#rules/units";
 import {
   applyWorldAction,
@@ -32,6 +33,8 @@ const army: Placement[] = [
   { defId: "punisher", tile: { row: 0, col: 2 } },
   { defId: "torturer", tile: { row: 1, col: 1 } },
 ];
+
+const both = (doctrine: keyof typeof DOCTRINES) => [DOCTRINES[doctrine].commitment, DOCTRINES[doctrine].commitment] as const;
 
 function withLeader(world: World, id: string, change: Partial<Leader>): World {
   return { ...world, leaders: world.leaders.map((l) => (l.id === id ? { ...l, ...change } : l)) };
@@ -82,7 +85,7 @@ describe("map", () => {
 
 describe("world", () => {
   test("each side starts with a Capitol guarded by its Guardian, and earns income at the start of its turn", () => {
-    const world = createWorld(1, [squad, squad]);
+    const world = createWorld(1, [squad, squad], both("preserve"));
     expect(capitolOf(world, 0)?.garrison.map((m) => m.defId)).toEqual([GUARDIAN_ID]);
     expect(world.gold).toEqual([STARTING_GOLD + CAPITOL_INCOME, STARTING_GOLD]);
     const next = applyWorldAction(world, { type: "endTurn" }).world;
@@ -90,7 +93,7 @@ describe("world", () => {
   });
 
   test("walking into an empty neutral city captures it and its gold mine", () => {
-    const world = createWorld(1, [squad, squad]);
+    const world = createWorld(1, [squad, squad], both("preserve"));
     const city = world.cities.find((c) => c.kind === "city");
     if (!city) throw new Error("no neutral city");
     const near = withLeader(world, "leader0", { hex: walkableNeighbour(world, city.hex) });
@@ -101,7 +104,7 @@ describe("world", () => {
   });
 
   test("recruiting costs gold and needs the leader in the Capitol", () => {
-    const world = createWorld(1, [squad, squad]);
+    const world = createWorld(1, [squad, squad], both("preserve"));
     const step = applyWorldAction(world, { type: "recruit", defId: "congregant", into: { kind: "leader", leaderId: "leader0" } });
     expect(step.world.gold[0]).toBe(world.gold[0] - 40);
     expect(leaderById(step.world, "leader0").squad).toHaveLength(3);
@@ -110,7 +113,7 @@ describe("world", () => {
   });
 
   test("a garrison unit can be elevated to lead a new squad, but never the Guardian", () => {
-    let world = createWorld(1, [squad, squad]);
+    let world = createWorld(1, [squad, squad], both("preserve"));
     world = applyWorldAction(world, { type: "recruit", defId: "congregant", into: { kind: "garrison" } }).world;
     world = withLeader(world, "leader0", { hex: walkableNeighbour(world, world.map.starts[0]) });
     const recruit = capitolOf(world, 0)?.garrison.find((m) => m.defId === "congregant");
@@ -124,7 +127,7 @@ describe("world", () => {
   });
 
   test("wounded units resting in their Capitol heal at the start of their turn", () => {
-    let world = createWorld(1, [squad, squad]);
+    let world = createWorld(1, [squad, squad], both("preserve"));
     const leader = leaderById(world, "leader0");
     world = withLeader(world, "leader0", { squad: leader.squad.map((m) => ({ ...m, hp: 10 })) });
     world = applyWorldAction(applyWorldAction(world, { type: "endTurn" }).world, { type: "endTurn" }).world;
@@ -132,7 +135,7 @@ describe("world", () => {
   });
 
   test("storming the enemy Capitol and killing its Guardian wins the game", () => {
-    const world = createWorld(1, [army, squad]);
+    const world = createWorld(1, [army, squad], both("punishment"));
     const enemyCapitol = world.map.starts[1];
     const ready = withLeader(
       { ...world, leaders: world.leaders.filter((l) => l.side === 0) },
@@ -149,7 +152,7 @@ describe("world", () => {
   });
 
   test("with the AI on both sides, a clearly stronger side marches on and wins the whole game", () => {
-    let world = createWorld(3, [army, squad]);
+    let world = createWorld(3, [army, squad], both("punishment"));
     for (let i = 0; i < 600 && !world.outcome; i++) {
       const battle = world.engagement?.battle;
       world = battle ? concludeBattle(world, autoplay(battle)).world : applyWorldAction(world, chooseWorldAction(world)).world;

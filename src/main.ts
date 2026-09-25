@@ -1,4 +1,5 @@
 import { createBattle } from "#rules/battle";
+import { DOCTRINES } from "#rules/doctrine";
 import { App } from "#view/app";
 import { Campaign } from "#view/campaign";
 import { MapView } from "#view/map";
@@ -30,9 +31,9 @@ const setup = new Setup(byId("setup"), {
     setup.hide();
     app.start(squads, playerSide);
   },
-  onMarch: (squads) => {
+  onMarch: (squads, doctrines) => {
     setup.hide();
-    campaign.start(squads, Number(params.get("seed") ?? Math.floor(Date.now() % 100000)));
+    campaign.start(squads, [DOCTRINES[doctrines[0]].commitment, DOCTRINES[doctrines[1]].commitment], Number(params.get("seed") ?? Math.floor(Date.now() % 100000)));
   },
 });
 
@@ -46,7 +47,8 @@ const presets = [PRESETS.preserve, PRESETS.punishment] as const;
 // Screenshots and playtests skip the setup screen.
 if (params.has("map")) {
   setup.hide();
-  campaign.start(presets, Number(params.get("seed") ?? 1));
+  const uncommitted = DOCTRINES.uncommitted.commitment;
+  campaign.start([PRESETS.uncommitted, PRESETS.uncommitted], [uncommitted, uncommitted], Number(params.get("seed") ?? 1));
 } else if (params.has("steps") || params.has("auto") || params.has("fight")) {
   setup.hide();
   app.start(presets, params.get("auto") === "1" ? null : 0, Number(params.get("steps") ?? 0));

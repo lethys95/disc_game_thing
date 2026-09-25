@@ -2,7 +2,11 @@ import { sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { tileAt, TERRAIN_COST } from "#rules/map";
 import type { Battle, Side } from "#rules/types";
+import { INVESTMENT_COST, openBranches } from "#rules/doctrine";
+import type { Commitment } from "#rules/doctrine";
+import { nextForm, xpToEvolve } from "#rules/progression";
 import { GUARDIAN_ID, RECRUIT_COST, RECRUITS, UNITS } from "#rules/units";
+import type { Branch } from "#rules/units";
 import {
   applyWorldAction,
   capitolOf,
@@ -13,10 +17,13 @@ import {
   elevateProblem,
   forecast,
   income,
+  investProblem,
   leaderAt,
   planMove,
   reachable,
   recruitProblem,
+  resurrectionCost,
+  resurrectProblem,
 } from "#rules/world";
 import type { Leader, MovePlan, MoveTarget, RecruitInto, SquadMember, World, WorldAction, WorldEvent } from "#rules/world";
 import type { App } from "#view/app";
@@ -47,6 +54,19 @@ function element<K extends keyof HTMLElementTagNameMap>(tag: K, className: strin
 }
 
 const unitName = (defId: string) => UNITS[defId]?.name ?? defId;
+
+const BRANCH_NAMES: Readonly<Record<Branch, string>> = {
+  preserve: "Faith preserves (Paladin line)",
+  consume: "Faith consumes (Zealot line)",
+  punishment: "Punishment (Punisher line)",
+  sacrifice: "Self-sacrifice (Fanatic line)",
+};
+
+function doctrineName(commitment: Commitment): string {
+  if (commitment.tier2 === null) return "Uncommitted";
+  if (commitment.tier2 === "preserve") return "Faith preserves";
+  return commitment.tier3 === null ? "Faith consumes" : `Faith consumes: ${commitment.tier3 === "punishment" ? "Punishment" : "Self-sacrifice"}`;
+}
 const maxHp = (defId: string) => UNITS[defId]?.stats.maxHp ?? 0;
 
 function leaderName(leader: Leader): string {
@@ -92,10 +112,10 @@ export class Campaign {
     this.endTurn.addEventListener("click", () => void this.act({ type: "endTurn" }));
   }
 
-  start(squads: Squads, seed: number): void {
+  start(squads: Squads, commitment: readonly [Commitment, Commitment], seed: number): void {
     this.stop();
     this.seed = seed;
-    this.world = createWorld(seed, squads);
+    this.world = createWorld(seed, squads, commitment);
     this.view.build(this.world.map);
     this.view.buildSites(this.world);
     this.enterMap();
@@ -205,8 +225,13 @@ export class Campaign {
   }
 
   private announce(events: readonly WorldEvent[]): void {
-    const captured = events.find((e) => e.type === "captured");
-    if (captured?.type === "captured") this.hint.textContent = `${captured.side === PLAYER ? "You take" : "The enemy takes"} the city.`;
+    const lines: string[] = [];
+    for (const e of events) {
+      if (e.type === "captured") lines.push(`${e.side === PLAYER ? "You take" : "The enemy takes"} the city.`);
+      if (e.type === "xp" && e.side === PLAYER) lines.push(`Your survivors gain ${e.each} XP each.`);
+      if (e.type === "evolved" && e.side === PLAYER) lines.push(`${unitName(e.from)} becomes ${unitName(e.to)}.`);
+    }
+    if (lines.length > 0) this.hint.textContent = lines.join(" ");
   }
 
   private async runAi(): Promise<void> {
@@ -278,7 +303,7 @@ export class Campaign {
     return `${walks}. Hovering ${terrain}.`;
   }
 
-  private memberRow(m: SquadMember): HTMLElement {
+  private memberRow(m: SquadMember, commitment?: Commitment): HTMLElement {
     const row = element("div", "member");
     row.appendChild(element("span", "name", unitName(m.defId)));
     const bar = element("div", "hp");
@@ -286,6 +311,16 @@ export class Campaign {
     fill.style.width = `${(100 * m.hp) / maxHp(m.defId)}%`;
     bar.append(fill, element("span", "value", `${m.hp} / ${maxHp(m.defId)}`));
     row.appendChild(bar);
+    const needed = xpToEvolve(m.defId);
+    if (commitment && needed !== null) {
+      const next = nextForm(m.defId, commitment);
+      const xp = element("div", `xp${m.xp >= needed ? " ready" : ""}`);
+      const xpFill = element("div", "fill");
+      xpFill.style.width = `${(100 * Math.min(m.xp, needed)) / needed}%`;
+      const label = next ? `XP ${m.xp} / ${needed} → ${unitName(next)}` : m.xp >= needed ? "Ready: invest at the Capitol to evolve" : `XP ${m.xp} / ${needed} → (choose a doctrine)`;
+      xp.append(xpFill, element("span", "value", label));
+      row.appendChild(xp);
+    }
     return row;
   }
 
@@ -304,7 +339,8 @@ export class Campaign {
       });
       this.squad.appendChild(head);
       if (!isSelected) continue;
-      for (const m of [...leader.squad].sort((a, b) => a.tile.row - b.tile.row || a.tile.col - b.tile.col)) this.squad.appendChild(this.memberRow(m));
+      const commitment = this.world?.commitment[PLAYER];
+      for (const m of [...leader.squad].sort((a, b) => a.tile.row - b.tile.row || a.tile.col - b.tile.col)) this.squad.appendChild(this.memberRow(m, commitment));
     }
   }
 
@@ -342,6 +378,34 @@ export class Campaign {
       }
     }
     if (!home) this.city.appendChild(element("div", "note", "Warbands standing in the Capitol can recruit directly and heal each turn."));
+
+    const commitment = world.commitment[PLAYER];
+    this.city.appendChild(element("div", "section", `Doctrine: ${doctrineName(commitment)}`));
+    for (const branch of openBranches(commitment)) {
+      const problem = investProblem(world, branch);
+      const invest = element("button", "action small", `Commit: ${BRANCH_NAMES[branch]} (${INVESTMENT_COST[branch]})`);
+      invest.disabled = !mayAct || problem !== null;
+      invest.title = problem ?? "Irreversible. Units waiting at this fork evolve at once.";
+      invest.addEventListener("click", () => void this.act({ type: "invest", branch }));
+      this.city.appendChild(invest);
+    }
+
+    const fallen = world.graveyard[PLAYER];
+    if (fallen.length === 0) return;
+    this.city.appendChild(element("div", "section", "Graveyard"));
+    const into: RecruitInto = home ? { kind: "leader", leaderId: home.id } : { kind: "garrison" };
+    fallen.forEach((f, index) => {
+      const cost = resurrectionCost(world, PLAYER, index) ?? 0;
+      const problem = resurrectProblem(world, index, into);
+      const row = element("div", "fallen");
+      row.appendChild(element("span", "name", `${unitName(f.defId)} · ${cost} gold`));
+      const raise = element("button", "small", "Resurrect");
+      raise.disabled = !mayAct || problem !== null;
+      raise.title = problem ?? `Returns at 1 HP ${home ? `to ${leaderName(home)}'s warband` : "to the garrison"}. The price drops each turn you wait.`;
+      raise.addEventListener("click", () => void this.act({ type: "resurrect", index, into }));
+      row.appendChild(raise);
+      this.city.appendChild(row);
+    });
   }
 
   private renderBanner(world: World): void {

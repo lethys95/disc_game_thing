@@ -1,12 +1,18 @@
 import { autoplay } from "#rules/ai";
 import { applyWorldAction, chooseWorldAction, concludeBattle, createWorld } from "#rules/world";
 import type { WorldAction } from "#rules/world";
+import { DOCTRINES } from "#rules/doctrine";
+import type { Doctrine } from "#rules/doctrine";
 import { PRESETS } from "#view/squads";
 
-/** Whole games with the map AI on both sides, for a quick read on pacing: `pnpm sim:world [seeds...]`. */
+const isDoctrine = (d: string): d is Doctrine => d in DOCTRINES;
+
+/** Whole games with the map AI on both sides: `A=punishment B=preserve pnpm sim:world [seeds...]` (default uncommitted). */
 const seeds = process.argv.slice(2).map(Number);
 for (const seed of seeds.length > 0 ? seeds : [1, 2, 3, 4, 5]) {
-  let world = createWorld(seed, [PRESETS.preserve, PRESETS.punishment]);
+  const doctrines = [process.env["A"] ?? "uncommitted", process.env["B"] ?? "uncommitted"].map((d) => (isDoctrine(d) ? d : "uncommitted"));
+  const [a = "uncommitted", b = "uncommitted"] = doctrines;
+  let world = createWorld(seed, [PRESETS[a], PRESETS[b]], [DOCTRINES[a].commitment, DOCTRINES[b].commitment]);
   const tally: Record<string, number> = {};
   let battles = 0;
   const count = (action: WorldAction) => {

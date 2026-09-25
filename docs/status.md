@@ -5,20 +5,28 @@ _Rewritten (not appended) with every commit. Keep under ~50 lines._
 **Updated:** 2026-09-25
 
 ## Where we are
-Git: tags `m2-playable` and `m3-whole-game` mark tested states; work happens on a branch per milestone and merges into `main` when it works.
+Git: tags `m2-playable`, `m3-whole-game`, `m4-progression` mark tested states. Work happens on a branch per milestone, merged into `main` when it works.
 
-**M1–M3 done.** Setup → **Fight** (one battle) or **March** (a whole game). The game has a 61-hex map with both Capitols (Guardian = loss condition) and three neutral cities with gold mines. Walk in to capture, recruit Congregants at the Capitol, elevate garrison units into new warbands, and heal at home. The map shows an AI battle forecast before you attack. The map AI forecasts fights both ways (skips losing fights, avoids stopping where it would be caught) and reinforces a threatened Capitol. All M3 numbers are provisional (`questions.md` #12–14).
-Rules: `src/rules/` (29 tests). View: `src/view/`. Tools: see the `verify` skill; `pnpm sim:world` for whole AI-vs-AI games.
+**M1–M4 done.** Setup → **Fight** (one battle) or **March** (a whole game). March now has **progression**:
+- Winners split the fallen enemies' worth as XP; units evolve along the canon tree.
+- Branch investment happens at the Capitol, and the new "Uncommitted" doctrine starts with Congregants only. Units at an uninvested fork wait with a full bar.
+- The dead go to a graveyard; resurrection costs 3× the base price at once and drops each turn you wait.
+
+The map AI invests and resurrects too. All numbers are provisional (`questions.md` #12–16).
+Rules: `src/rules/` (36 tests). View: `src/view/`. Tools: the `verify` skill, plus `A=… B=… pnpm sim:world [seeds]`.
+
+**Key finding:** AI-vs-AI games still freeze into cold wars. XP only comes from battles, and the cautious AI starts none it forecasts losing. That's a design gap: nothing neutral to fight (questions.md #15).
 
 ## Next
-1. **M4 progression** (XP → evolution tiers, branch investment, graveyard). Evolution should also break the AI cold wars (`design/combat.md`).
-2. Design gate: a second faction needs unit designs from the user.
-3. **Art spike: on hold.** The user is researching image models themselves (Reddit is hard for agents to read) and will come back with picks. Don't download models until then; `design/asset-pipeline.md` holds our research for comparison.
+1. **Design gate** (`roadmap.md`): XP sources and neutral encounters (#15), a second faction's units, the Guardian vs Punishment (#12). Needs the user; don't invent.
+2. Meanwhile, safe work: a play-feel pass for human play (compact warband panel, clearer turn and evolution feedback, and a way to see the enemy warband's composition before attacking).
+3. **Art spike: on hold** until the user brings image-model picks.
 
 ## Waiting on the user
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.
 
 ## Recently done
+- 2026-09-25: M4 done: XP, evolution, branch investment, graveyard/resurrection; AI invests and resurrects; cold wars persist (design gap).
 - 2026-09-25: M3 done: Capitols and Guardian, cities and gold, recruiting, elevation, healing, map forecast, safer map AI; Guardian tuned by simulation.
 - 2026-09-25: Blender works headless; order decided: M3 next, then the art spike (`roadmap.md`).
 - 2026-09-25: researched the AI asset pipeline (`design/asset-pipeline.md`): two routes to bake off; Blender needs a system upgrade to start.

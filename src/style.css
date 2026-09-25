@@ -190,3 +190,10 @@ button.warband .meta { color: var(--muted); font-size: 11px; align-self: center;
 button.small { font: 600 11px var(--text); padding: 3px 8px; background: #1d1714; color: var(--ink); border: 1px solid #5a4a36; cursor: pointer; }
 button.action.small { display: block; width: 100%; font: 700 13px var(--display); margin-top: 6px; min-width: 0; padding: 5px 8px; }
 button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-allowed; }
+.member .xp { position: relative; height: 10px; margin-top: 2px; background: #17140f; border: 1px solid #3a3222; }
+.member .xp .fill { position: absolute; inset: 0 auto 0 0; background: linear-gradient(#8a7040, #5a4828); }
+.member .xp.ready .fill { background: linear-gradient(#d9b36a, #9b7c52); }
+.member .xp .value { position: relative; display: block; text-align: center; font-size: 9px; line-height: 10px; color: #d8cbb0; }
+#mapcity .section { font: 700 15px var(--display); margin-top: 12px; padding-top: 6px; border-top: 1px solid #2c2622; }
+#mapcity .fallen { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; font-size: 12px; }
+#mapcity { max-height: calc(100vh - 150px); overflow-y: auto; }

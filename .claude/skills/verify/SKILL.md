@@ -13,7 +13,7 @@ Tests prove the rules; only a rendered frame proves the view. Always look at the
 3. `pnpm playtest`: clicks through four real player turns in a battle (`shots/playtest-*.png`).
 4. `pnpm playtest:map [seed]`: marches on the map, auto-battles the fight, returns (`shots/map-*.png`).
 5. `pnpm sim`: AI-vs-AI matchup matrix of the presets, for balance changes.
-6. `pnpm sim:world [seeds…]`: whole AI-vs-AI games (winner, turns, battles, gold); a "cold war" means neither side could win a fight its forecast allows.
+6. `A=<doctrine> B=<doctrine> pnpm sim:world [seeds…]`: whole AI-vs-AI games (winner, turns, battles, gold); a "cold war" means neither side could win a fight its forecast allows.
 
 ## Routes (URL params, combinable)
 | Param | Effect |
@@ -22,7 +22,7 @@ Tests prove the rules; only a rendered frame proves the view. Always look at the
 | `?fight` | skip setup, battle with the preserve vs punishment presets |
 | `?steps=N` | fast-forward N AI actions before the first frame (no animation) |
 | `?auto=1` | AI plays both sides |
-| `?map&seed=N` | skip setup, straight onto the map |
+| `?map&seed=N` | skip setup, straight onto the map (both sides uncommitted, six Congregants) |
 | `?fast` | animations and AI pauses ×0.1 (for scripted runs) |
 | `?debug` | exposes `window.discDebug` (below) |
 

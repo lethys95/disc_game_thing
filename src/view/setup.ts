@@ -1,6 +1,6 @@
 import { BEHAVIORS } from "#rules/abilities";
 import type { Placement } from "#rules/battle";
-import { DOCTRINES, SQUAD_LIMIT, squadProblems } from "#rules/doctrine";
+import { allowedUnits, DOCTRINES, SQUAD_LIMIT, squadProblems } from "#rules/doctrine";
 import type { Doctrine } from "#rules/doctrine";
 import { COLS, ROWS, sameTile } from "#rules/grid";
 import type { Side, Tile } from "#rules/types";
@@ -13,10 +13,10 @@ export type Squads = readonly [readonly Placement[], readonly Placement[]];
 export interface SetupHandlers {
   onChange(squads: Squads): void;
   onFight(squads: Squads, playerSide: Side | null): void;
-  onMarch(squads: Squads): void;
+  onMarch(squads: Squads, doctrines: readonly [Doctrine, Doctrine]): void;
 }
 
-const DOCTRINE_ORDER: readonly Doctrine[] = ["preserve", "punishment", "sacrifice"];
+const DOCTRINE_ORDER: readonly Doctrine[] = ["uncommitted", "preserve", "punishment", "sacrifice"];
 
 function element<K extends keyof HTMLElementTagNameMap>(tag: K, className: string, text?: string): HTMLElementTagNameMap[K] {
   const el = document.createElement(tag);
@@ -103,7 +103,7 @@ export class Setup {
     const march = element("button", "action fight", "March");
     march.title = "Take both squads onto a map: your leader against the enemy's";
     march.disabled = !ready;
-    march.addEventListener("click", () => this.handlers.onMarch(this.squads));
+    march.addEventListener("click", () => this.handlers.onMarch(this.squads, this.doctrines));
     footer.append(mode, fight, march);
     this.root.appendChild(footer);
   }
@@ -160,7 +160,7 @@ export class Setup {
     const panel = element("div", "panel palette");
     panel.appendChild(element("div", "title", `Recruit for ${this.active === 0 ? "your" : "the enemy"} squad`));
     panel.appendChild(element("div", "subtitle", "Pick a unit, then click a tile."));
-    for (const defId of DOCTRINES[this.doctrines[this.active]].units) {
+    for (const defId of allowedUnits(DOCTRINES[this.doctrines[this.active]].commitment)) {
       const def = UNITS[defId];
       if (!def) continue;
       const card = element("button", `recruit${this.brush === defId ? " selected" : ""}`);

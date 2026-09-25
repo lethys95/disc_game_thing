@@ -19,7 +19,7 @@ Two players (hotseat or player vs AI) alternate faction turns. Capitol with guar
 ## Art spike (time-boxed, after M3)
 One unit (Paladin) through both routes in `design/asset-pipeline.md` (rigid-part 3D vs painted sprites), shown in the real battle scene. Decide the route. Nothing more until the vertical slice.
 
-## M4 — Progression
+## M4 — Progression ✅ (2026-09-25)
 XP → evolution tiers, branch investment for Jilliath's melee line, graveyard with decaying resurrection cost.
 
 ## Design gate (needs the user)
