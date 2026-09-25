@@ -19,18 +19,17 @@ Git: tags `m2-playable` … `m7-foundation` mark tested states. Work happens on 
 Rules: `src/rules/` (81 tests). View: `src/view/`. Tools: the `verify` skill; `A=<preset|nexus> B=… pnpm sim:world`.
 
 ## Next
-**m8 done; m9 (feedback on m8) done.** Fallen leaders stay leaders and are revived at the Capitol (user's D2 rule). Capitol evolution in archetype tabs (Melee/Ranged/Support/Mage). The leader tree has its own screen. Hotkeys D = Defend, W = Wait (data on the ability definitions). Routes: `?map&xp=250`, `&capitol`, `&leader`.
-1. **Spar with the user on leader experience** (#33): should the tree be fed by more than XP?
-2. **Settings menu** eventually (#34): hotkeys, speed, camera.
-3. Upgrade content is placeholder (+5 damage per type) until the user designs unique ones.
-4. **Sparring on factions**: Nexus's Arcane Engineer has no tier 2; tiers 3+ are open; Sylvan and Vexumphat have no units yet.
-5. Open design questions: cold wars (#19), the economy (pillars.md), provisional numbers (#21).
-6. Art spike: on hold for the user's image-model research.
+**Art spike in progress (branch `art-spike`).** Krea 2 Turbo runs in the local ComfyUI; `pnpm art <batch>` generates (`scripts/art/`). The style is found: **ink brush on pale paper, hard black, only faction colors saturated** — keepers `zealot_inkBrush-1001` and `psychopomp_inkBrush-1003` (`art/candidates/pairing/`, regenerable from `manifest.json`). History and the user's verdicts: `design/art.md`.
+1. **Tomorrow (user):** explore existing Krea 2 LoRAs (leads in `design/art.md`).
+2. Lock the shared style into one template in `scripts/art/prompts.ts` (framing, stroke, palette structure; subject and faction colors as slots).
+3. Redo the icons and ornaments (liked in the first batch) in the style; then the Custodian and Punisher.
+4. Game-side open items: leader experience (#33, postponed), settings menu (#34), placeholder upgrades, faction sparring, cold wars (#19).
 
 ## Waiting on the user
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.
 
 ## Recently done
+- 2026-09-25: art spike: Krea 2 set up; four rounds of style fishing with the user; the ink-brush style holds across the Zealot and the Grove's Psychopomp.
 - 2026-09-25: m9: fallen leaders stay and are revived; Capitol archetype tabs; a leader screen; D/W hotkeys (the playtest presses D).
 - 2026-09-25: m8: unit-type upgrades (non-retroactive, stamped as marks) and the HoMM-style Capitol screen; the side panel only summarises.
 - 2026-09-25: m8: leader tree v1 and marks (a unit's lasting effects with their source, shown as its track record). Screenshot route `?map&xp=N`.
