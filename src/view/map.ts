@@ -275,7 +275,7 @@ export class MapView {
 
   private addLeader(leader: Leader, defId: string): LeaderFigure {
     const group = new THREE.Group();
-    const figure = buildFigure(defId, UNITS[defId]?.tier ?? 1, PALETTES[leader.side], UNITS[defId]?.damageType === "fire");
+    const figure = buildFigure(defId, leader.side);
     figure.scale.multiplyScalar(0.62);
     figure.rotation.y = leader.side === 0 ? -Math.PI / 4 : (Math.PI * 3) / 4;
     group.add(figure);

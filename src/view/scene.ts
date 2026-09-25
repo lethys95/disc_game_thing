@@ -2,8 +2,7 @@ import * as THREE from "three";
 import { CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
 import { COLS, ROWS } from "#rules/grid";
 import type { Battle, BattleEvent, BattleUnit, Col, Row, Side, Tile } from "#rules/types";
-import { UNITS } from "#rules/units";
-import { buildFigure, PALETTES } from "#view/figures";
+import { buildFigure } from "#view/figures";
 import type { CameraPose, Stage } from "#view/stage";
 import { EFFECT_TEXT } from "#view/text";
 
@@ -33,6 +32,9 @@ interface Figure {
   readonly materials: THREE.MeshStandardMaterial[];
   shownHp: number;
   maxHp: number;
+  readonly shieldFill: HTMLDivElement;
+  shownShield: number;
+  maxShield: number;
   fallen: boolean;
 }
 
@@ -159,6 +161,8 @@ export class BattleScene {
       const figure = this.figures.get(unit.id) ?? this.addFigure(unit);
       figure.maxHp = unit.base.maxHp;
       figure.shownHp = unit.hp;
+      figure.maxShield = unit.base.shield;
+      figure.shownShield = unit.shield;
       this.updateBar(figure);
       figure.group.position.copy(tilePosition(unit.side, unit.tile)).setY(0.28);
       if (!unit.alive && !figure.fallen) this.topple(figure, 0);
@@ -166,8 +170,7 @@ export class BattleScene {
   }
 
   private addFigure(unit: BattleUnit): Figure {
-    const def = UNITS[unit.defId];
-    const group = buildFigure(unit.defId, def?.tier ?? 1, PALETTES[unit.side], unit.damageType === "fire");
+    const group = buildFigure(unit.defId, unit.side);
     group.rotation.y = unit.side === 0 ? 0 : Math.PI;
     group.userData = { unitId: unit.id };
     const materials: THREE.MeshStandardMaterial[] = [];
@@ -193,13 +196,23 @@ export class BattleScene {
     group.add(previewLabel);
 
     this.scene.add(group);
-    const figure: Figure = { group, bar, fill, label, preview, materials, shownHp: unit.hp, maxHp: unit.base.maxHp, fallen: false };
+    const shieldFill = document.createElement("div");
+    shieldFill.className = "shield";
+    bar.appendChild(shieldFill);
+    const figure: Figure = {
+      group, bar, fill, label, preview, materials,
+      shownHp: unit.hp, maxHp: unit.base.maxHp,
+      shieldFill, shownShield: unit.shield, maxShield: unit.base.shield,
+      fallen: false,
+    };
     this.figures.set(unit.id, figure);
     return figure;
   }
 
   private updateBar(figure: Figure): void {
     figure.fill.style.width = `${Math.max(0, (100 * figure.shownHp) / figure.maxHp)}%`;
+    figure.shieldFill.hidden = figure.maxShield === 0;
+    figure.shieldFill.style.width = figure.maxShield === 0 ? "0" : `${Math.max(0, (100 * figure.shownShield) / figure.maxShield)}%`;
     figure.bar.dataset.hp = `${Math.max(0, figure.shownHp)}`;
     figure.bar.hidden = figure.fallen;
   }
@@ -291,6 +304,12 @@ export class BattleScene {
         case "damage":
           pending.push(this.hit(event.unitId, event.amount, event.source === null));
           break;
+        case "shieldHit":
+          pending.push(this.shieldChange(event.unitId, -event.amount));
+          break;
+        case "shieldRestored":
+          pending.push(this.shieldChange(event.unitId, event.amount));
+          break;
         case "heal":
           pending.push(this.heal(event.unitId, event.amount));
           break;
@@ -371,7 +390,16 @@ export class BattleScene {
     await this.stage.tween(380, (t) => figure.group.position.lerpVectors(from, target, 1 - (1 - t) ** 2));
   }
 
-  private float(unitId: string, text: string, kind: "damage" | "bleed" | "heal" | "effect" | "spared"): void {
+  private async shieldChange(unitId: string, amount: number): Promise<void> {
+    const figure = this.figures.get(unitId);
+    if (!figure) return;
+    figure.shownShield += amount;
+    this.updateBar(figure);
+    this.float(unitId, amount < 0 ? `${amount}` : `+${amount}`, "shield");
+    await this.stage.tween(260, () => {});
+  }
+
+  private float(unitId: string, text: string, kind: "damage" | "bleed" | "heal" | "effect" | "spared" | "shield"): void {
     const figure = this.figures.get(unitId);
     if (!figure) return;
     // CSS2DRenderer positions the outer element through its transform; the animation must live on an inner one.

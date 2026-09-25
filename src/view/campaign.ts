@@ -5,8 +5,8 @@ import type { Battle, Side } from "#rules/types";
 import { INVESTMENT_COST, openBranches } from "#rules/doctrine";
 import type { Commitment } from "#rules/doctrine";
 import { nextForm, xpToEvolve } from "#rules/progression";
-import { GUARDIAN_ID, RECRUIT_COST, RECRUITS, UNITS } from "#rules/units";
-import type { Branch } from "#rules/units";
+import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units";
+import type { Branch, Playable } from "#rules/units";
 import {
   applyWorldAction,
   capitolOf,
@@ -112,10 +112,10 @@ export class Campaign {
     this.endTurn.addEventListener("click", () => void this.act({ type: "endTurn" }));
   }
 
-  start(squads: Squads, commitment: readonly [Commitment, Commitment], seed: number): void {
+  start(squads: Squads, factions: readonly [Playable, Playable], commitment: readonly [Commitment, Commitment], seed: number): void {
     this.stop();
     this.seed = seed;
-    this.world = createWorld(seed, squads, commitment);
+    this.world = createWorld(seed, squads, commitment, factions);
     this.view.build(this.world.map);
     this.view.buildSites(this.world);
     this.enterMap();
@@ -364,7 +364,7 @@ export class Campaign {
       this.city.appendChild(row);
     }
     const home = selected && sameHex(selected.hex, capitol.hex) ? selected : undefined;
-    for (const defId of RECRUITS) {
+    for (const defId of FACTION_ROOTS[world.factions[PLAYER]]) {
       const cost = RECRUIT_COST[defId] ?? 0;
       const targets: { label: string; into: RecruitInto }[] = [{ label: "to the garrison", into: { kind: "garrison" } }];
       if (home) targets.unshift({ label: `to ${leaderName(home)}'s warband`, into: { kind: "leader", leaderId: home.id } });
@@ -380,8 +380,9 @@ export class Campaign {
     if (!home) this.city.appendChild(element("div", "note", "Warbands standing in the Capitol can recruit directly and heal each turn."));
 
     const commitment = world.commitment[PLAYER];
-    this.city.appendChild(element("div", "section", `Doctrine: ${doctrineName(commitment)}`));
-    for (const branch of openBranches(commitment)) {
+    const faction = world.factions[PLAYER];
+    if (faction === "jilliath") this.city.appendChild(element("div", "section", `Doctrine: ${doctrineName(commitment)}`));
+    for (const branch of openBranches(faction, commitment)) {
       const problem = investProblem(world, branch);
       const invest = element("button", "action small", `Commit: ${BRANCH_NAMES[branch]} (${INVESTMENT_COST[branch]})`);
       invest.disabled = !mayAct || problem !== null;

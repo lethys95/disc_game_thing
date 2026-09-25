@@ -1,6 +1,6 @@
 import type { Placement } from "#rules/battle";
-import { EVOLUTIONS } from "#rules/units";
-import type { Branch } from "#rules/units";
+import { EVOLUTIONS, FACTION_ROOTS } from "#rules/units";
+import type { Branch, Playable } from "#rules/units";
 
 /**
  * Branch investment (docs/design/pillars.md): at each fork of the Jilliath melee line the faction commits to one
@@ -27,27 +27,28 @@ export function hasBranch(commitment: Commitment, branch: Branch | null): boolea
   return branch === null || commitment.tier2 === branch || commitment.tier3 === branch;
 }
 
-/** Branches this faction could invest in now: the next open fork on its path. */
-export function openBranches(commitment: Commitment): Branch[] {
+/** Branches this faction could invest in now: the next open fork on its path. Only Jilliath has forks so far. */
+export function openBranches(faction: Playable, commitment: Commitment): Branch[] {
+  if (faction !== "jilliath") return [];
   if (commitment.tier2 === null) return ["preserve", "consume"];
   if (commitment.tier2 === "consume" && commitment.tier3 === null) return ["punishment", "sacrifice"];
   return [];
 }
 
-export function commit(commitment: Commitment, branch: Branch): Commitment {
-  if (!openBranches(commitment).includes(branch)) throw new Error(`cannot invest in ${branch} now`);
+export function commit(faction: Playable, commitment: Commitment, branch: Branch): Commitment {
+  if (!openBranches(faction, commitment).includes(branch)) throw new Error(`cannot invest in ${branch} now`);
   return branch === "preserve" || branch === "consume" ? { ...commitment, tier2: branch } : { ...commitment, tier3: branch };
 }
 
-/** Every unit a faction with this commitment can field: the evolution tree from the Congregant, pruned by branch. */
-export function allowedUnits(commitment: Commitment): string[] {
+/** Every unit a faction with this commitment can field: its evolution tree from its roots, pruned by branch. */
+export function allowedUnits(faction: Playable, commitment: Commitment): string[] {
   const allowed: string[] = [];
   const visit = (defId: string) => {
     if (allowed.includes(defId)) return;
     allowed.push(defId);
     for (const evolution of EVOLUTIONS[defId] ?? []) if (hasBranch(commitment, evolution.requires)) visit(evolution.to);
   };
-  visit("congregant");
+  for (const root of FACTION_ROOTS[faction]) visit(root);
   return allowed;
 }
 
@@ -56,9 +57,9 @@ export const SQUAD_LIMIT = 6;
 
 export type SquadProblem = "empty" | "tooMany" | "outsideDoctrine";
 
-export function squadProblems(squad: readonly Placement[], doctrine: Doctrine): SquadProblem[] {
+export function squadProblems(squad: readonly Placement[], faction: Playable, doctrine: Doctrine): SquadProblem[] {
   const problems: SquadProblem[] = [];
-  const allowed = allowedUnits(DOCTRINES[doctrine].commitment);
+  const allowed = allowedUnits(faction, DOCTRINES[doctrine].commitment);
   if (squad.length === 0) problems.push("empty");
   if (squad.length > SQUAD_LIMIT) problems.push("tooMany");
   if (squad.some((p) => !allowed.includes(p.defId))) problems.push("outsideDoctrine");

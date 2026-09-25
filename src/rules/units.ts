@@ -1,4 +1,4 @@
-import type { UnitDef } from "#rules/types";
+import type { Faction, UnitDef } from "#rules/types";
 
 const kit = (...ids: string[]) => ids.map((id) => ({ id }));
 
@@ -106,11 +106,19 @@ export const UNITS: Readonly<Record<string, UnitDef>> = {
 
 export const GUARDIAN_ID = "capitol_guardian";
 
-/** Units that can be bought: tier 1 only, as in D2; higher tiers come from evolution (M4). */
-export const RECRUITS: readonly string[] = ["congregant"];
+export type Playable = Exclude<Faction, "neutral">;
 
-/** Canon: the Congregant costs 40 gold. */
-export const RECRUIT_COST: Readonly<Record<string, number>> = { congregant: 40 };
+/**
+ * Each playable faction's tier-1 units: what it recruits (tier 1 only, as in D2; higher tiers come from
+ * evolution) and where its evolution tree starts.
+ */
+export const FACTION_ROOTS: Readonly<Record<Playable, readonly string[]>> = {
+  jilliath: ["congregant"],
+  nexus: ["custodian", "arcane_engineer", "apprentice"],
+};
+
+/** Canon: the Congregant costs 40 gold. The Nexus prices are provisional ("costly", quality over quantity). */
+export const RECRUIT_COST: Readonly<Record<string, number>> = { congregant: 40, custodian: 60, arcane_engineer: 50, apprentice: 60 };
 
 /** A fork a faction commits to once, for good (branch investment, docs/design/pillars.md). */
 export type Branch = "preserve" | "consume" | "punishment" | "sacrifice";

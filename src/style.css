@@ -197,3 +197,6 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 #mapcity .section { font: 700 15px var(--display); margin-top: 12px; padding-top: 6px; border-top: 1px solid #2c2622; }
 #mapcity .fallen { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; font-size: 12px; }
 #mapcity { max-height: calc(100vh - 150px); overflow-y: auto; }
+.hpbar .shield { position: absolute; left: 0; top: -4px; height: 3px; background: #2fd8d0; box-shadow: 0 0 4px #2fd8d0; }
+.float.shield { color: #6ff0e8; }
+#card .stats .value.shield { color: #6ff0e8; }

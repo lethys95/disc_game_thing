@@ -1,12 +1,21 @@
 import * as THREE from "three";
+import type { Faction, Side } from "#rules/types";
+import { UNITS } from "#rules/units";
 
-/** Placeholder statues until real art exists: silhouette by unit, material by side, red Jilliath accents. */
+/** Placeholder statues until real art exists: silhouette by unit, material by side, accent by faction. */
 
 export interface Palette {
   readonly body: THREE.Color;
   readonly trim: THREE.Color;
   readonly accent: THREE.Color;
 }
+
+/** Faction accents from the art notes: the mana colour is the only saturated colour on a unit. */
+const ACCENTS: Readonly<Record<Faction, THREE.Color>> = {
+  jilliath: new THREE.Color(0xc0281c),
+  nexus: new THREE.Color(0x2fd8d0),
+  neutral: new THREE.Color(0xa87a3a),
+};
 
 export const PALETTES: readonly [Palette, Palette] = [
   { body: new THREE.Color(0xb8ad98), trim: new THREE.Color(0x6e6252), accent: new THREE.Color(0xc0281c) },
@@ -19,8 +28,8 @@ interface Parts {
   readonly glow: THREE.MeshStandardMaterial;
 }
 
-function materials(palette: Palette, fire: boolean): Parts {
-  const glowColor = fire ? new THREE.Color(0xff6a1a) : palette.accent;
+function materials(palette: Palette, accent: THREE.Color, fire: boolean): Parts {
+  const glowColor = fire ? new THREE.Color(0xff6a1a) : accent;
   return {
     body: new THREE.MeshStandardMaterial({ color: palette.body, roughness: 0.85, metalness: 0.1 }),
     trim: new THREE.MeshStandardMaterial({ color: palette.trim, roughness: 0.5, metalness: 0.6 }),
@@ -113,14 +122,56 @@ function hookBlade(material: THREE.Material): THREE.Mesh {
   return m;
 }
 
-/** Builds a figure facing +x, standing on y = 0. */
-export function buildFigure(defId: string, tier: number, palette: Palette, fire: boolean): THREE.Group {
-  const m = materials(palette, fire);
+function staff(material: THREE.Material, orb: THREE.Material): THREE.Group {
   const g = new THREE.Group();
-  const scale = 1.15 + tier * 0.08;
+  const pole = mesh(new THREE.CylinderGeometry(0.02, 0.025, 1.3, 6), material, 0.3, 0.75, -0.18);
+  g.add(pole, mesh(new THREE.IcosahedronGeometry(0.09, 0), orb, 0.3, 1.45, -0.18));
+  return g;
+}
+
+function bow(material: THREE.Material): THREE.Mesh {
+  const m = mesh(new THREE.TorusGeometry(0.4, 0.02, 5, 16, Math.PI), material, 0.32, 0.85, 0);
+  m.rotation.set(0, Math.PI / 2, Math.PI / 2);
+  return m;
+}
+
+function axe(material: THREE.Material, edge: THREE.Material): THREE.Group {
+  const g = new THREE.Group();
+  const haft = mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.8, 6), material, 0.3, 0.8, -0.2);
+  haft.rotation.z = -0.3;
+  g.add(haft, mesh(new THREE.BoxGeometry(0.05, 0.22, 0.2), edge, 0.42, 1.15, -0.2));
+  return g;
+}
+
+/** Custodian: a blocky golem; its shield shows as glowing plates. */
+function golem(m: Parts): THREE.Group {
+  const g = new THREE.Group();
+  g.add(mesh(new THREE.BoxGeometry(0.5, 0.35, 0.4), m.trim, 0, 0.18, 0));
+  g.add(mesh(new THREE.BoxGeometry(0.62, 0.6, 0.56), m.body, 0, 0.65, 0));
+  g.add(mesh(new THREE.BoxGeometry(0.28, 0.24, 0.28), m.trim, 0.04, 1.08, 0));
+  for (const z of [-0.4, 0.4]) {
+    g.add(mesh(new THREE.BoxGeometry(0.2, 0.55, 0.2), m.trim, 0.05, 0.55, z));
+    g.add(mesh(new THREE.BoxGeometry(0.24, 0.24, 0.24), m.body, 0.1, 0.22, z));
+  }
+  g.add(mesh(new THREE.BoxGeometry(0.04, 0.4, 0.4), m.glow, 0.33, 0.7, 0));
+  g.add(eyes(1.1, m.glow));
+  return g;
+}
+
+/** Builds a unit's figure facing +x, standing on y = 0. */
+export function buildFigure(defId: string, side: Side): THREE.Group {
+  const def = UNITS[defId];
+  const m = materials(PALETTES[side], ACCENTS[def?.faction ?? "neutral"], def?.damageType === "fire");
+  const g = new THREE.Group();
+  const scale = 1.15 + (def?.tier ?? 1) * 0.08;
   const height = 1.1;
   const top = height;
 
+  if (defId === "custodian") {
+    g.add(golem(m));
+    g.scale.setScalar(scale);
+    return g;
+  }
   g.add(robe(height, 0.34, m.body));
   switch (defId) {
     case "congregant":
@@ -165,6 +216,39 @@ export function buildFigure(defId: string, tier: number, palette: Palette, fire:
       g.add(eyes(top + 0.12, m.glow));
       g.add(flail(m.trim, m.glow, defId === "torturer" ? 3 : 2));
       if (defId === "torturer") g.add(hookBlade(m.trim));
+      break;
+    case "arcane_engineer":
+      g.add(helm(top - 0.05, 0.14, m.trim));
+      g.add(eyes(top + 0.1, m.glow));
+      g.add(staff(m.trim, m.glow));
+      break;
+    case "apprentice":
+      g.add(hood(top - 0.1, 0.17, m.body));
+      g.add(eyes(top + 0.05, m.glow));
+      g.add(mesh(new THREE.IcosahedronGeometry(0.1, 0), m.glow, 0.38, 1.0, 0.15));
+      break;
+    case "brigand":
+      g.add(hood(top - 0.1, 0.17, m.trim));
+      g.add(blade(0.45, m.trim, -0.2));
+      break;
+    case "marauder":
+      g.add(helm(top - 0.05, 0.15, m.trim));
+      g.add(axe(m.trim, m.glow));
+      break;
+    case "bandit":
+      g.add(hood(top - 0.1, 0.16, m.trim));
+      g.add(bow(m.trim));
+      break;
+    case "hedge_mage":
+      g.add(hood(top - 0.1, 0.18, m.body));
+      g.add(staff(m.trim, m.glow));
+      break;
+    case "capitol_guardian":
+      g.add(helm(top - 0.05, 0.2, m.trim));
+      g.add(shield(m.trim));
+      g.add(blade(0.9, m.trim, -0.2));
+      g.add(eyes(top + 0.14, m.glow));
+      g.add(wings(top - 0.1, 1.3, m.trim));
       break;
     default:
       g.add(hood(top - 0.1, 0.17, m.body));

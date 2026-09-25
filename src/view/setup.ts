@@ -5,7 +5,8 @@ import type { Doctrine } from "#rules/doctrine";
 import { COLS, ROWS, sameTile } from "#rules/grid";
 import type { Side, Tile } from "#rules/types";
 import { UNITS } from "#rules/units";
-import { PRESETS } from "#view/squads";
+import type { Playable } from "#rules/units";
+import { NEXUS_PRESET, PRESETS } from "#view/squads";
 import { ABILITY_TEXT } from "#view/text";
 
 export type Squads = readonly [readonly Placement[], readonly Placement[]];
@@ -13,8 +14,12 @@ export type Squads = readonly [readonly Placement[], readonly Placement[]];
 export interface SetupHandlers {
   onChange(squads: Squads): void;
   onFight(squads: Squads, playerSide: Side | null): void;
-  onMarch(squads: Squads, doctrines: readonly [Doctrine, Doctrine]): void;
+  onMarch(squads: Squads, factions: readonly [Playable, Playable], doctrines: readonly [Doctrine, Doctrine]): void;
 }
+
+const FACTION_NAMES: Readonly<Record<Playable, string>> = { jilliath: "Jilliath", nexus: "Ral-Vitahl" };
+
+const presetFor = (faction: Playable, doctrine: Doctrine) => [...(faction === "nexus" ? NEXUS_PRESET : PRESETS[doctrine])];
 
 const DOCTRINE_ORDER: readonly Doctrine[] = ["uncommitted", "preserve", "punishment", "sacrifice"];
 
@@ -29,6 +34,7 @@ function element<K extends keyof HTMLElementTagNameMap>(tag: K, className: strin
 export class Setup {
   private squads: [Placement[], Placement[]] = [[...PRESETS.preserve], [...PRESETS.punishment]];
   private doctrines: [Doctrine, Doctrine] = ["preserve", "punishment"];
+  private factions: [Playable, Playable] = ["jilliath", "jilliath"];
   private active: Side = 0;
   private brush: string | null = null;
   private watch = false;
@@ -48,9 +54,18 @@ export class Setup {
     this.root.hidden = true;
   }
 
+  private setFaction(side: Side, faction: Playable): void {
+    this.factions[side] = faction;
+    this.doctrines[side] = faction === "nexus" ? "uncommitted" : this.doctrines[side];
+    this.squads[side] = presetFor(faction, this.doctrines[side]);
+    this.active = side;
+    this.brush = null;
+    this.changed();
+  }
+
   private setDoctrine(side: Side, doctrine: Doctrine): void {
     this.doctrines[side] = doctrine;
-    this.squads[side] = [...PRESETS[doctrine]];
+    this.squads[side] = presetFor(this.factions[side], doctrine);
     this.active = side;
     this.brush = null;
     this.changed();
@@ -78,7 +93,7 @@ export class Setup {
     this.root.replaceChildren();
     const header = element("div", "setup-header");
     header.appendChild(element("div", "title", "Skirmish"));
-    header.appendChild(element("div", "subtitle", "Jilliath against Jilliath. Each squad commits to one doctrine."));
+    header.appendChild(element("div", "subtitle", "Pick each side's faction and formation. Jilliath squads commit to a doctrine."));
     this.root.appendChild(header);
 
     const body = element("div", "setup-body");
@@ -96,14 +111,14 @@ export class Setup {
       this.watch = checkbox.checked;
     });
     mode.append(checkbox, " Let the AI play both sides");
-    const ready = squadProblems(this.squads[0], this.doctrines[0]).length === 0 && squadProblems(this.squads[1], this.doctrines[1]).length === 0;
+    const ready = ([0, 1] as const).every((side) => squadProblems(this.squads[side], this.factions[side], this.doctrines[side]).length === 0);
     const fight = element("button", "action fight", "Fight");
     fight.disabled = !ready;
     fight.addEventListener("click", () => this.handlers.onFight(this.squads, this.watch ? null : 0));
     const march = element("button", "action fight", "March");
     march.title = "Take both squads onto a map: your leader against the enemy's";
     march.disabled = !ready;
-    march.addEventListener("click", () => this.handlers.onMarch(this.squads, this.doctrines));
+    march.addEventListener("click", () => this.handlers.onMarch(this.squads, this.factions, this.doctrines));
     footer.append(mode, fight, march);
     this.root.appendChild(footer);
   }
@@ -118,8 +133,18 @@ export class Setup {
       }
     });
     panel.appendChild(element("div", "title", side === 0 ? "Your squad" : "Enemy squad"));
+    const factions = element("div", "factions");
+    for (const faction of ["jilliath", "nexus"] as const) {
+      const button = element("button", `doctrine faction${this.factions[side] === faction ? " selected" : ""}`, FACTION_NAMES[faction]);
+      button.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.setFaction(side, faction);
+      });
+      factions.appendChild(button);
+    }
+    panel.appendChild(factions);
     const doctrines = element("div", "doctrines");
-    for (const doctrine of DOCTRINE_ORDER) {
+    for (const doctrine of this.factions[side] === "jilliath" ? DOCTRINE_ORDER : []) {
       const button = element("button", `doctrine${this.doctrines[side] === doctrine ? " selected" : ""}`, DOCTRINES[doctrine].name);
       button.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -160,7 +185,7 @@ export class Setup {
     const panel = element("div", "panel palette");
     panel.appendChild(element("div", "title", `Recruit for ${this.active === 0 ? "your" : "the enemy"} squad`));
     panel.appendChild(element("div", "subtitle", "Pick a unit, then click a tile."));
-    for (const defId of allowedUnits(DOCTRINES[this.doctrines[this.active]].commitment)) {
+    for (const defId of allowedUnits(this.factions[this.active], DOCTRINES[this.doctrines[this.active]].commitment)) {
       const def = UNITS[defId];
       if (!def) continue;
       const card = element("button", `recruit${this.brush === defId ? " selected" : ""}`);
@@ -168,9 +193,9 @@ export class Setup {
       head.append(element("span", "name", def.name), element("span", "tier", `tier ${def.tier}`));
       card.appendChild(head);
       card.appendChild(
-        element("div", "stats", `${def.stats.maxHp} HP · ${def.stats.damage} dmg${def.damageType === "fire" ? " (fire)" : ""} · ${def.stats.armor} armor · ${def.stats.initiative} init`),
+        element("div", "stats", `${def.stats.maxHp} HP${def.stats.shield > 0 ? ` · ${def.stats.shield} shield` : ""} · ${def.stats.damage} dmg${def.damageType === "fire" ? " (fire)" : ""} · ${def.stats.armor} armor · ${def.stats.initiative} init`),
       );
-      const special = def.abilities.filter((a) => !["attack", "defend", "wait"].includes(a.id));
+      const special = def.abilities.filter((a) => !["attack", "shoot", "defend", "wait"].includes(a.id));
       card.appendChild(element("div", "abilities", special.map((a) => BEHAVIORS[a.id]?.name ?? a.id).join(" · ")));
       card.title = special.map((a) => `${BEHAVIORS[a.id]?.name}: ${ABILITY_TEXT[a.id] ?? ""}`).join("\n");
       card.addEventListener("click", (e) => {

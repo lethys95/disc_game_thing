@@ -3,16 +3,22 @@ import { applyWorldAction, chooseWorldAction, concludeBattle, createWorld } from
 import type { WorldAction } from "#rules/world";
 import { DOCTRINES } from "#rules/doctrine";
 import type { Doctrine } from "#rules/doctrine";
-import { PRESETS } from "#view/squads";
+import { NEXUS_PRESET, PRESETS } from "#view/squads";
 
 const isDoctrine = (d: string): d is Doctrine => d in DOCTRINES;
 
-/** Whole games with the map AI on both sides: `A=punishment B=preserve pnpm sim:world [seeds...]` (default uncommitted). */
+/** Whole games with the map AI on both sides: `A=punishment B=nexus pnpm sim:world [seeds...]` (a Jilliath doctrine or `nexus`; default uncommitted). */
 const seeds = process.argv.slice(2).map(Number);
 for (const seed of seeds.length > 0 ? seeds : [1, 2, 3, 4, 5]) {
   const doctrines = [process.env["A"] ?? "uncommitted", process.env["B"] ?? "uncommitted"].map((d) => (isDoctrine(d) ? d : "uncommitted"));
   const [a = "uncommitted", b = "uncommitted"] = doctrines;
-  let world = createWorld(seed, [PRESETS[a], PRESETS[b]], [DOCTRINES[a].commitment, DOCTRINES[b].commitment]);
+  const nexus = [process.env["A"] === "nexus", process.env["B"] === "nexus"];
+  let world = createWorld(
+    seed,
+    [nexus[0] ? NEXUS_PRESET : PRESETS[a], nexus[1] ? NEXUS_PRESET : PRESETS[b]],
+    [DOCTRINES[a].commitment, DOCTRINES[b].commitment],
+    [nexus[0] ? "nexus" : "jilliath", nexus[1] ? "nexus" : "jilliath"],
+  );
   const tally: Record<string, number> = {};
   let battles = 0;
   const count = (action: WorldAction) => {

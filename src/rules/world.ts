@@ -10,8 +10,8 @@ import { findPath, generateMap, stepCost } from "#rules/map";
 import type { Path, WorldMap } from "#rules/map";
 import type { Battle, Side, Tile } from "#rules/types";
 import { grow, xpValue } from "#rules/progression";
-import { GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units";
-import type { Branch } from "#rules/units";
+import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units";
+import type { Branch, Playable } from "#rules/units";
 
 /** A unit in a squad on the map; its HP and XP carry from one battle to the next. */
 export interface SquadMember extends Placement {
@@ -63,6 +63,7 @@ export interface World {
   engagement: Engagement | null;
   outcome: { winner: Side } | null;
   nextLeader: number;
+  factions: [Playable, Playable];
   commitment: [Commitment, Commitment];
   graveyard: [Fallen[], Fallen[]];
 }
@@ -119,6 +120,7 @@ export function createWorld(
   seed: number,
   squads: readonly [readonly Placement[], readonly Placement[]],
   commitment: readonly [Commitment, Commitment],
+  factions: readonly [Playable, Playable],
 ): World {
   const map = generateMap(seed);
   const leaders = squads.map((squad, index): Leader => {
@@ -155,6 +157,7 @@ export function createWorld(
     engagement: null,
     outcome: null,
     nextLeader: 2,
+    factions: [factions[0], factions[1]],
     commitment: [commitment[0], commitment[1]],
     graveyard: [[], []],
   };
@@ -270,7 +273,7 @@ export function recruitProblem(world: World, defId: string, into: RecruitInto): 
   const side = world.activeSide;
   const cost = RECRUIT_COST[defId];
   const capitol = capitolOf(world, side);
-  if (cost === undefined) return "not recruitable";
+  if (cost === undefined || !FACTION_ROOTS[world.factions[side]].includes(defId)) return "not recruitable";
   if (!capitol) return "no Capitol";
   if (world.gold[side] < cost) return "not enough gold";
   return roomProblem(world, capitol, into);
@@ -278,7 +281,7 @@ export function recruitProblem(world: World, defId: string, into: RecruitInto): 
 
 export function investProblem(world: World, branch: Branch): string | null {
   const side = world.activeSide;
-  if (!openBranches(world.commitment[side]).includes(branch)) return "not an open fork";
+  if (!openBranches(world.factions[side], world.commitment[side]).includes(branch)) return "not an open fork";
   return world.gold[side] < INVESTMENT_COST[branch] ? "not enough gold" : null;
 }
 
@@ -402,7 +405,7 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       const problem = investProblem(draft, action.branch);
       if (problem) throw new Error(`cannot invest: ${problem}`);
       draft.gold[side] -= INVESTMENT_COST[action.branch];
-      draft.commitment[side] = commit(draft.commitment[side], action.branch);
+      draft.commitment[side] = commit(draft.factions[side], draft.commitment[side], action.branch);
       events.push({ type: "invested", side, branch: action.branch });
       for (const squad of squadsOf(draft, side)) growSquad(squad, 0, side, draft.commitment[side], events);
       break;
@@ -574,12 +577,16 @@ export function chooseWorldAction(world: World): WorldAction {
   const side = world.activeSide;
   const capitol = capitolOf(world, side);
   const mine = world.leaders.filter((l) => l.side === side);
-  const cost = RECRUIT_COST["congregant"] ?? Infinity;
+  const roots = FACTION_ROOTS[world.factions[side]];
+  const cost = Math.min(...roots.map((r) => RECRUIT_COST[r] ?? Infinity));
+  // Recruit whichever root unit the target squad has fewest of, for a mixed army.
+  const pick = (squad: readonly SquadMember[]) =>
+    [...roots].sort((a, b) => squad.filter((m) => m.defId === a).length - squad.filter((m) => m.defId === b).length)[0] ?? roots[0] ?? "";
 
   if (capitol) {
     const home = mine.find((l) => sameHex(l.hex, capitol.hex));
     // Commit at the next fork as soon as it's affordable; save for it otherwise (unless there's no army at all).
-    const open = AI_BRANCH_PREFERENCE.filter((b) => openBranches(world.commitment[side]).includes(b));
+    const open = AI_BRANCH_PREFERENCE.filter((b) => openBranches(world.factions[side], world.commitment[side]).includes(b));
     const branch = open[0];
     if (branch && !investProblem(world, branch)) return { type: "invest", branch };
     const reserve = branch && mine.length > 0 ? INVESTMENT_COST[branch] : 0;
@@ -592,19 +599,23 @@ export function chooseWorldAction(world: World): WorldAction {
       .sort((a, b) => b.tier - a.tier)[0];
     if (bargain) return { type: "resurrect", index: bargain.index, into };
 
-    if (home && spare(cost) && !recruitProblem(world, "congregant", { kind: "leader", leaderId: home.id })) {
-      return { type: "recruit", defId: "congregant", into: { kind: "leader", leaderId: home.id } };
+    if (home) {
+      const defId = pick(home.squad);
+      if (spare(RECRUIT_COST[defId] ?? Infinity) && !recruitProblem(world, defId, { kind: "leader", leaderId: home.id })) {
+        return { type: "recruit", defId, into: { kind: "leader", leaderId: home.id } };
+      }
     }
     // Under threat, recruits stand with the Guardian; a fresh leader in the Capitol would only be picked off.
     const underThreat = world.leaders.some((l) => l.side !== side && planMove({ ...world, leaders: world.leaders.map((x) => (x.id === l.id ? { ...x, movement: LEADER_MOVEMENT } : x)) }, l.id, capitol.hex)?.target);
-    if (underThreat && !recruitProblem(world, "congregant", { kind: "garrison" })) {
-      return { type: "recruit", defId: "congregant", into: { kind: "garrison" } };
+    const guard = pick(capitol.garrison);
+    if (underThreat && !recruitProblem(world, guard, { kind: "garrison" })) {
+      return { type: "recruit", defId: guard, into: { kind: "garrison" } };
     }
     const rich = world.gold[side] >= cost * (SQUAD_LIMIT + 1);
     if (!home && !underThreat && (mine.length === 0 || rich)) {
       const spare = capitol.garrison.find((m) => m.defId !== GUARDIAN_ID);
       if (spare && !elevateProblem(world, spare.tile)) return { type: "elevate", tile: spare.tile };
-      if (!recruitProblem(world, "congregant", { kind: "garrison" })) return { type: "recruit", defId: "congregant", into: { kind: "garrison" } };
+      if (!recruitProblem(world, guard, { kind: "garrison" })) return { type: "recruit", defId: guard, into: { kind: "garrison" } };
     }
   }
 

@@ -224,10 +224,10 @@ describe("whole battles", () => {
 describe("doctrine", () => {
   test("a squad may only field units from its doctrine, at most six", () => {
     const preserve = [p("congregant", 0, 0), p("paladin", 0, 1)];
-    expect(squadProblems(preserve, "preserve")).toEqual([]);
-    expect(squadProblems([...preserve, p("zealot", 1, 1)], "preserve")).toEqual(["outsideDoctrine"]);
-    expect(squadProblems([], "sacrifice")).toEqual(["empty"]);
+    expect(squadProblems(preserve, "jilliath", "preserve")).toEqual([]);
+    expect(squadProblems([...preserve, p("zealot", 1, 1)], "jilliath", "preserve")).toEqual(["outsideDoctrine"]);
+    expect(squadProblems([], "jilliath", "sacrifice")).toEqual(["empty"]);
     const seven = ROWS.flatMap((row) => COLS.map((col) => p("congregant", row, col))).slice(0, 7);
-    expect(squadProblems(seven, "punishment")).toEqual(["tooMany"]);
+    expect(squadProblems(seven, "jilliath", "punishment")).toEqual(["tooMany"]);
   });
 });

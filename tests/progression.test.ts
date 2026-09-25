@@ -49,9 +49,10 @@ function fight(world: World): ReturnType<typeof concludeBattle> {
 
 describe("doctrine", () => {
   test("the tree a faction can field follows its investments", () => {
-    expect(allowedUnits(uncommitted)).toEqual(["congregant"]);
-    expect(allowedUnits(preserve)).toEqual(["congregant", "paladin", "templar", "immortal"]);
-    expect(allowedUnits(punishment)).toEqual(["congregant", "zealot", "punisher", "torturer"]);
+    expect(allowedUnits("jilliath", uncommitted)).toEqual(["congregant"]);
+    expect(allowedUnits("jilliath", preserve)).toEqual(["congregant", "paladin", "templar", "immortal"]);
+    expect(allowedUnits("jilliath", punishment)).toEqual(["congregant", "zealot", "punisher", "torturer"]);
+    expect(allowedUnits("nexus", uncommitted)).toEqual(["custodian", "arcane_engineer", "apprentice"]);
   });
 });
 
@@ -69,7 +70,7 @@ describe("evolution", () => {
 
   test("at an uninvested fork a unit waits with a full bar, and evolves when the faction commits", () => {
     expect(grow("congregant", 0, 500, uncommitted)).toEqual({ defId: "congregant", xp: 100, evolvedInto: [] });
-    let world = createWorld(1, [congregants, congregants], [uncommitted, uncommitted]);
+    let world = createWorld(1, [congregants, congregants], [uncommitted, uncommitted], ["jilliath", "jilliath"]);
     world = withLeader(world, "leader0", { squad: leaderById(world, "leader0").squad.map((m) => ({ ...m, xp: 100 })) });
     world = { ...world, gold: [500, 500] };
     const step = applyWorldAction(world, { type: "invest", branch: "consume" });
@@ -79,7 +80,7 @@ describe("evolution", () => {
   });
 
   test("the winners split the fallen enemies' worth; the fallen go to the graveyard", () => {
-    const world = createWorld(1, [congregants, punishers], [uncommitted, punishment]);
+    const world = createWorld(1, [congregants, punishers], [uncommitted, punishment], ["jilliath", "jilliath"]);
     const step = fight(world);
     expect(step.events).toContainEqual({ type: "xp", side: 1, pool: 3 * 65, each: 65 });
     expect(step.world.graveyard[0].map((f) => f.defId)).toEqual(["congregant", "congregant", "congregant"]);
@@ -89,7 +90,7 @@ describe("evolution", () => {
 
 describe("graveyard", () => {
   test("resurrection is dear at once and cheaper for each turn you wait, down to its base", () => {
-    let world = fight(createWorld(1, [congregants, punishers], [uncommitted, punishment])).world;
+    let world = fight(createWorld(1, [congregants, punishers], [uncommitted, punishment], ["jilliath", "jilliath"])).world;
     const base = RESURRECTION_BASE;
     expect(resurrectionCost(world, 0, 0)).toBe(3 * base);
     world = { ...world, turn: world.turn + 1 };
@@ -99,7 +100,7 @@ describe("graveyard", () => {
   });
 
   test("the resurrected return to the Capitol at 1 HP", () => {
-    let world = fight(createWorld(1, [congregants, punishers], [uncommitted, punishment])).world;
+    let world = fight(createWorld(1, [congregants, punishers], [uncommitted, punishment], ["jilliath", "jilliath"])).world;
     world = { ...world, activeSide: 0, gold: [1000, 0] };
     const step = applyWorldAction(world, { type: "resurrect", index: 0, into: { kind: "garrison" } });
     expect(capitolOf(step.world, 0)?.garrison.find((m) => m.defId === "congregant")?.hp).toBe(1);

@@ -5,7 +5,7 @@ import { Campaign } from "#view/campaign";
 import { MapView } from "#view/map";
 import { BattleScene } from "#view/scene";
 import { Setup } from "#view/setup";
-import { PRESETS } from "#view/squads";
+import { BANDIT_GROUP, NEXUS_PRESET, PRESETS } from "#view/squads";
 import { Stage } from "#view/stage";
 
 const params = new URLSearchParams(window.location.search);
@@ -31,9 +31,10 @@ const setup = new Setup(byId("setup"), {
     setup.hide();
     app.start(squads, playerSide);
   },
-  onMarch: (squads, doctrines) => {
+  onMarch: (squads, factions, doctrines) => {
     setup.hide();
-    campaign.start(squads, [DOCTRINES[doctrines[0]].commitment, DOCTRINES[doctrines[1]].commitment], Number(params.get("seed") ?? Math.floor(Date.now() % 100000)));
+    const seed = Number(params.get("seed") ?? Math.floor(Date.now() % 100000));
+    campaign.start(squads, factions, [DOCTRINES[doctrines[0]].commitment, DOCTRINES[doctrines[1]].commitment], seed);
   },
 });
 
@@ -48,10 +49,12 @@ const presets = [PRESETS.preserve, PRESETS.punishment] as const;
 if (params.has("map")) {
   setup.hide();
   const uncommitted = DOCTRINES.uncommitted.commitment;
-  campaign.start([PRESETS.uncommitted, PRESETS.uncommitted], [uncommitted, uncommitted], Number(params.get("seed") ?? 1));
+  const nexus = params.get("map") === "nexus";
+  campaign.start([PRESETS.uncommitted, nexus ? NEXUS_PRESET : PRESETS.uncommitted], ["jilliath", nexus ? "nexus" : "jilliath"], [uncommitted, uncommitted], Number(params.get("seed") ?? 1));
 } else if (params.has("steps") || params.has("auto") || params.has("fight")) {
   setup.hide();
-  app.start(presets, params.get("auto") === "1" ? null : 0, Number(params.get("steps") ?? 0));
+  const enemy = params.get("fight") === "nexus" ? NEXUS_PRESET : params.get("fight") === "bandits" ? BANDIT_GROUP : presets[1];
+  app.start([presets[0], enemy], params.get("auto") === "1" ? null : 0, Number(params.get("steps") ?? 0));
 } else {
   showSetup();
 }
