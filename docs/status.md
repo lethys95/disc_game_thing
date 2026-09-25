@@ -5,6 +5,8 @@ _Rewritten (not appended) with every commit. Keep under ~50 lines._
 **Updated:** 2026-09-25
 
 ## Where we are
+Git: tag `m2-playable` = the M1+M2 state (untested by the user so far). M3 is developed on branch `m3`; merge into `master` when it works.
+
 **M1 and M2 done.** Setup screen → **Fight** (a single battle) or **March** (both squads on a 61-hex map). On the map your leader walks by clicking hexes (path and reach shown); walking into the enemy leader, or being walked into, starts a battle. Wounds carry over and the survivor returns to the map. Battles have an **Auto-battle** toggle. Rules: `src/rules/` (26 tests). View: `src/view/` (one `Stage` renderer; `BattleScene` and `MapView` take turns). Tools: `pnpm shot [out] [route]`, `pnpm playtest` (battle clicks), `pnpm playtest:map [seed]` (march → battle → return). Useful URL params: `?fight`, `?map&seed=N`, `?steps=N`, `?auto=1`, `?fast`, `?debug`.
 
 ## Next

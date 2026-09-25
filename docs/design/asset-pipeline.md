@@ -40,7 +40,7 @@ Units as painterly animated sprites on billboards; the map, arena, lighting and 
 
 ## License traps (don't ship output from these)
 - **Non-commercial**: FLUX.2 [dev] and [klein] 9B, Qwen-Image 2.1, RigAnything, GVHMR / ComfyUI-MotionCapture, NVIDIA GEM, Ubisoft CHORD, MeshFlow, the Bandai Namco motion set, and HumanML3D/AMASS-derived text-to-motion models (MDM, MoMask, MotionGPT: legally unclear).
-- **Territory-restricted** (excludes EU, UK, South Korea): Hunyuan3D 2.1 and **HY-Motion 1.0**, the best open text-to-motion model. Usable only if the user is outside those regions; open question.
+- **Territory-restricted** (excludes EU, UK, South Korea): Hunyuan3D 2.1 and **HY-Motion 1.0**. **The user is in Denmark (EU), so both are out.** Motion comes from CC0/CC BY libraries and hand-keyed poses.
 - **Unclear**: Pixal3D (one report says MIT, the other found none stated), AniGen (MIT, but the bundled CUBVH code is non-commercial), LTX-2 commercial terms, Make-It-Animatable.
 
 ## Community
@@ -52,7 +52,7 @@ Units as painterly animated sprites on billboards; the map, arena, lighting and 
 - **Quad Remesher**: $79, if Route A ever needs real retopology.
 
 ## Next steps (when art work starts; the user postponed art)
-1. User: answer the region question, and request DINOv3 access on Hugging Face if we go with TRELLIS.2.
+1. User: request DINOv3 access on Hugging Face if we go with TRELLIS.2.
 2. Download Qwen-Image-2512 and Qwen-Image-Edit-2511 (Q8 GGUF) and draft the style bible prompts.
 3. Bake-off: Paladin through Route A and Route B, rendered in the battle scene. Decide.
 4. Then the style LoRA, then batch production.

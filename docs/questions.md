@@ -13,6 +13,5 @@ The user is in a "suggest" role: they answer when they have time, so nothing her
 8. When a squad's leader unit dies but the squad wins, the squad keeps marching (another unit takes the figure). In D2 a leaderless squad… what should happen here? Relates to leader elevation.
 
 ## Art pipeline (see `design/asset-pipeline.md`)
-9. Region: are you in the EU, UK or South Korea? Two of the best open models (HY-Motion for animation, Hunyuan3D) exclude those regions in their licenses.
 11. Route A (rigid-part 3D statues) vs Route B (painted animated sprites in a 3D world, like D2): plan is a bake-off with one unit, but if you already lean one way, say so.
 
