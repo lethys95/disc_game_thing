@@ -23,6 +23,14 @@ Leaders are not unique unit types. Any unit can be elevated to leader at any tim
 - Leaders evolve through the same tiers as regular units.
 - Vexumphat is the exception: spread out, more leaders, weaker squads.
 
+## Leadership and the leader tree (user, 2026-09-25)
+- A warband starts at **5 units including the leader** (D2 started with leader + 3). Capacity comes from the leader's **Leadership** stat, which grows.
+- Leaders gain experience and level like other units, and each level also gives **points in a leader tree** (D3-style); Leadership is one of its stats.
+- Eventually, **which skills the tree offers depends on which unit was elevated** to leader.
+
+## The Capitol screen (user, 2026-09-25)
+A HoMM-style view inside your castle for the research/evolution trees and "various stuff you can do and build". Its content is still to be designed with the user.
+
 ## Capitol Guardian
 A unique unit type (not a leader, not a regular unit) that cannot leave the Capitol. The chess king: powerful but immobile. Guardian defeated = game over. It is the primary loss condition and the anti-rush mechanism. Strong but killable (no D2 90%-armor monstrosity).
 
