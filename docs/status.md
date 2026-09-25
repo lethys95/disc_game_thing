@@ -5,14 +5,12 @@ _Rewritten (not appended) with every commit. Keep under ~50 lines._
 **Updated:** 2026-09-25
 
 ## Where we are
-Workspace set up; no game code yet. Stack is TypeScript + Three.js + Vite (see `decisions.md`). `pnpm shot` renders the app headlessly and saves a screenshot, and it works; the scene is only a placeholder hex patch.
+M1 in progress. **Rules core done**: `src/rules/` has the battle engine (passes by initiative, attack pipeline, effects), the whole canon Jilliath melee line (10 units, 17 abilities), and a greedy AI. 18 tests pass, including an AI mirror match that ends identically every run. Next is the 3D view.
 
 ## Next
-Start **M1 — one battle** (`roadmap.md`). First steps:
-1. `src/rules/`: battle state as plain data, abilities as `{id, params}` + behavior registry (`design/abilities.md`), Congregant/Paladin/Zealot records, pure `applyAction(state, action)`.
-2. Vitest tests for armor, initiative passes (`floor(init/15)` actions), relative/absolute targeting patterns, Defend halving, Zealot must-attack, Congregation stacking.
-3. `src/view/`: two 3x3 grids with placeholder unit tokens, per-ability target highlights, HTML HUD for actions, click to target. Dark, lit per `design/art.md`.
-4. A dumb opponent (attacks the lowest-HP valid target) so a battle can be played solo. Mirror match (decided).
+1. `src/view/`: 3D battle scene (two 3x3 grids, placeholder statue figures, dark lighting per `design/art.md`), per-ability tile highlights, HUD (turn order, unit card, ability buttons, log), click to target.
+2. Player = side 0, greedy AI = side 1; `?auto=1` for AI vs AI; `?steps=N` to fast-forward for screenshots.
+3. Then: squad picker from the canon units; animations for events.
 
 ## Waiting on the user
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.

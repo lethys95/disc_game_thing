@@ -29,6 +29,20 @@ A pattern marks *which tiles can be chosen* (select one) or *which tiles are hit
 - Bleed ticks at the start of the afflicted unit's turn.
 - XP: defeated enemies feed a pool, split among the winning side's survivors. Valuation is deterministic from stats.
 
+## Interpretations made while implementing (provisional, 2026-09-25)
+- **Melee reach**: the user must be in its own front line and can hit enemy front-line units up to one column away; if none are that close, the nearest ones. The enemy "front line" is its frontmost row with a living unit (D2: when the front row falls, the row behind becomes the front). This widens the user's "one tile in front" suggestion, because otherwise a gap in the enemy line makes a unit useless.
+- **Damage dealt** (for Fanaticism's self-damage) is HP actually removed; overkill doesn't count.
+- **Guardian Spirit's "rest of the turn"** is read as the rest of the *round* (it only makes sense if the Immortal gets a chance to heal).
+- **Hook's "clear path"** is checked in the enemy grid only: the target's front tile must be empty, and Hook grabs the first unit behind it. The Torturer's own column doesn't matter.
+- **Fanaticism Aura** gives every unit Fanaticism (self-damage) and Hysteria and forbids Defend, as the spec lists. It does not force everyone to attack.
+- **Devotion Aura** stacks if two Templars/Immortals are adjacent to the same unit, and "adjacent" means orthogonally adjacent.
+- **Turn-order ties** (equal initiative): side 0 first, then front row to back, then column.
+- **Stun** skips the next turn slot; **Defend** ends when the unit's next slot starts; **bleed** ticks at the start of each of the victim's slots.
+
+## Balance observations
+- A Punisher mirror grinds: Punishment stacks without limit, so front lines drop to 0 damage and trade 1-point hits (AI test: 95 rounds). This is canon working as written. Options to discuss: cap stacks, floor damage at a fraction of base, or accept that Punishers make fights long.
+- Every Jilliath unit has 50–60 initiative, so 3–4 actions per round; action count only differs through Punishment. Tempo differences will come from other factions.
+
 ## Open
 - **Empty tiles in melee's path**: with melee as "one tile in front", a front-row unit facing an empty column can't attack. Is that intended (positioning matters), or should melee fall through or widen, D2-style? Provisional: literal. Revisit after playing M1, since mirror matches could stall.
 - **Empty enemy front row**: does the next row become "front"? Provisional: no. Relative depth is fixed.
