@@ -1,5 +1,5 @@
-import type { Placement } from "#rules/battle";
-import type { Col, Row } from "#rules/types";
+import type { Placement } from "#rules/battle/engine";
+import type { Col, Row } from "#rules/battle/types";
 
 const at = (defId: string, row: Row, col: Col): Placement => ({ defId, tile: { row, col } });
 

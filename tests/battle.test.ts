@@ -1,9 +1,10 @@
 import { chooseAction } from "#rules/ai";
-import { actionsPerRound, applyAction, createBattle, effectiveStats, legalActions, PUNISHMENT_MAX_STACKS } from "#rules/battle";
-import type { Placement } from "#rules/battle";
-import type { Battle, BattleEvent, Col, Row } from "#rules/types";
+import { PUNISHMENT_MAX_STACKS } from "#rules/balance";
+import { actionsPerRound, applyAction, createBattle, effectiveStats, legalActions } from "#rules/battle/engine";
+import type { Placement } from "#rules/battle/engine";
+import type { Battle, BattleEvent, Col, Row } from "#rules/battle/types";
 import { doctrine, squadProblems } from "#rules/doctrine";
-import { COLS, ROWS } from "#rules/grid";
+import { COLS, ROWS } from "#rules/battle/grid";
 import { describe, expect, test } from "vitest";
 
 const p = (defId: string, row: Row, col: Col): Placement => ({ defId, tile: { row, col } });

@@ -1,4 +1,4 @@
-import type { BattleUnit, Col, Row, Side, Tile } from "#rules/types";
+import type { BattleUnit, Col, Row, Side, Tile } from "#rules/battle/types";
 
 export const ROWS: readonly Row[] = [0, 1, 2];
 export const COLS: readonly Col[] = [0, 1, 2];

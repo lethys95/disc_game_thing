@@ -1,10 +1,10 @@
 import { autoplay } from "#rules/ai";
-import type { Placement } from "#rules/battle";
+import type { Placement } from "#rules/battle/engine";
 import { hexagon, hexDistance, hexKey, neighbors, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { findPath, generateMap, stepCost, TERRAIN_COST } from "#rules/map";
 import { doctrine } from "#rules/doctrine";
-import { GUARDIAN_ID } from "#rules/units";
+import { GUARDIAN_ID } from "#rules/units/index";
 import {
   applyWorldAction,
   CAPITOL_INCOME,

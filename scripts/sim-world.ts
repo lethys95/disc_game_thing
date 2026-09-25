@@ -2,7 +2,7 @@ import { autoplay } from "#rules/ai";
 import { applyWorldAction, chooseWorldAction, concludeBattle, createWorld } from "#rules/world";
 import type { WorldAction } from "#rules/world";
 import { doctrine } from "#rules/doctrine";
-import type { Playable } from "#rules/units";
+import type { Playable } from "#rules/units/index";
 import { NEXUS_PRESETS, PRESETS } from "#view/squads";
 
 /**

@@ -1,5 +1,5 @@
-import { applyAction, createBattle, legalActions } from "#rules/battle";
-import type { Battle, Col, Row } from "#rules/types";
+import { applyAction, createBattle, legalActions } from "#rules/battle/engine";
+import type { Battle, Col, Row } from "#rules/battle/types";
 import { asKnown, masked } from "#view/secrecy";
 import { describe, expect, test } from "vitest";
 
@@ -28,7 +28,7 @@ describe("the Justiciar's mark is secret", () => {
 
   test("the marked side's view of the battle has no mark, so previews can't leak it", () => {
     const { battle } = marked();
-    expect(battle.units["0.0.1"]?.effects).toContainEqual({ kind: "negated" });
-    expect(asKnown(battle, 0).units["0.0.1"]?.effects).not.toContainEqual({ kind: "negated" });
+    expect(battle.units["0.0.1"]?.effects).toContainEqual(expect.objectContaining({ def: "negated" }));
+    expect(asKnown(battle, 0).units["0.0.1"]?.effects).not.toContainEqual(expect.objectContaining({ def: "negated" }));
   });
 });

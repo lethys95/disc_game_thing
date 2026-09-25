@@ -1,13 +1,13 @@
-import { BEHAVIORS } from "#rules/abilities";
-import type { Placement } from "#rules/battle";
+import { BEHAVIORS } from "#rules/abilities/index";
+import type { Placement } from "#rules/battle/engine";
 import { allowedUnits, doctrine, DOCTRINES, SQUAD_LIMIT, squadProblems } from "#rules/doctrine";
 import type { Commitment } from "#rules/doctrine";
-import { COLS, ROWS, sameTile } from "#rules/grid";
-import type { Side, Tile } from "#rules/types";
-import { UNITS } from "#rules/units";
-import type { Playable } from "#rules/units";
+import { COLS, ROWS, sameTile } from "#rules/battle/grid";
+import type { Side, Tile } from "#rules/battle/types";
+import { UNITS } from "#rules/units/index";
+import type { Playable } from "#rules/units/index";
 import { NEXUS_PRESETS, PRESETS } from "#view/squads";
-import { ABILITY_TEXT } from "#view/text";
+import { abilityText } from "#view/text";
 
 export type Squads = readonly [readonly Placement[], readonly Placement[]];
 
@@ -201,9 +201,13 @@ export class Setup {
       card.appendChild(
         element("div", "stats", `${def.stats.maxHp} HP${def.stats.shield > 0 ? ` · ${def.stats.shield} shield` : ""} · ${def.stats.damage} dmg${def.damageType === "fire" ? " (fire)" : ""} · ${def.stats.armor} armor · ${def.stats.initiative} init`),
       );
-      const special = def.abilities.filter((a) => !["attack", "shoot", "defend", "wait"].includes(a.id));
-      card.appendChild(element("div", "abilities", special.map((a) => BEHAVIORS[a.id]?.name ?? a.id).join(" · ")));
-      card.title = special.map((a) => `${BEHAVIORS[a.id]?.name}: ${ABILITY_TEXT[a.id] ?? ""}`).join("\n");
+      const special = def.abilities.filter((a) => {
+        const b = BEHAVIORS[a.id];
+        return !(b?.kind === "active" && b.tags.includes("basic"));
+      });
+      const label = (a: (typeof special)[number]) => a.name ?? BEHAVIORS[a.id]?.name ?? a.id;
+      card.appendChild(element("div", "abilities", special.map(label).join(" · ")));
+      card.title = special.map((a) => `${label(a)}: ${abilityText(a)}`).join("\n");
       card.addEventListener("click", (e) => {
         e.stopPropagation();
         this.brush = this.brush === defId ? null : defId;

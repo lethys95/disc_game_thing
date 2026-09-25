@@ -1,12 +1,12 @@
 import { sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { tileAt, TERRAIN_COST } from "#rules/map";
-import type { Battle, Side } from "#rules/types";
+import type { Battle, Side } from "#rules/battle/types";
 import { INVESTMENT_COST, openBranches } from "#rules/doctrine";
 import type { Commitment } from "#rules/doctrine";
 import { nextForm, xpToEvolve } from "#rules/progression";
-import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units";
-import type { Branch, Playable } from "#rules/units";
+import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
+import type { Branch, Playable } from "#rules/units/index";
 import {
   applyWorldAction,
   capitolOf,

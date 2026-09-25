@@ -1,7 +1,7 @@
 import { autoplay } from "#rules/ai";
-import type { Placement } from "#rules/battle";
+import type { Placement } from "#rules/battle/engine";
 import { allowedUnits, doctrine, INVESTMENT_COST } from "#rules/doctrine";
-import { COLS } from "#rules/grid";
+import { COLS } from "#rules/battle/grid";
 import { neighbors, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { stepCost } from "#rules/map";

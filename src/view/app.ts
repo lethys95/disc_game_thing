@@ -1,7 +1,7 @@
 import { chooseAction } from "#rules/ai";
-import { applyAction, createBattle, legalActions } from "#rules/battle";
-import { sameTile } from "#rules/grid";
-import type { Action, Battle, BattleEvent, LegalAbility, Side, TargetChoice } from "#rules/types";
+import { applyAction, createBattle, legalActions } from "#rules/battle/engine";
+import { sameTile } from "#rules/battle/grid";
+import type { Action, Battle, BattleEvent, LegalAbility, Side, TargetChoice } from "#rules/battle/types";
 import { Hud, unitLabel } from "#view/hud";
 import { asKnown, masked } from "#view/secrecy";
 import type { BannerButton } from "#view/hud";
@@ -131,7 +131,9 @@ export class App {
   }
 
   private selectDefault(): void {
-    const attack = this.playerOptions().find((o) => o.abilityId === "attack" || o.abilityId === "flail");
+    // The unit's basic attack if it has one, else any attack (casters): never a hard-coded ability id.
+    const options = this.playerOptions().filter((o) => o.tags.includes("attack"));
+    const attack = options.find((o) => o.tags.includes("basic")) ?? options[0];
     this.selected = attack?.abilityId ?? null;
   }
 

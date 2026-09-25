@@ -1,10 +1,10 @@
 import * as THREE from "three";
 import { CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
-import { COLS, ROWS } from "#rules/grid";
-import type { Battle, BattleEvent, BattleUnit, Col, Row, Side, Tile } from "#rules/types";
+import { COLS, ROWS } from "#rules/battle/grid";
+import type { Battle, BattleEvent, BattleUnit, Col, Row, Side, Tile } from "#rules/battle/types";
 import { buildFigure } from "#view/figures";
 import type { CameraPose, Stage } from "#view/stage";
-import { EFFECT_TEXT } from "#view/text";
+import { effectDef } from "#rules/effects";
 
 export interface TileRef {
   readonly side: Side;
@@ -322,10 +322,15 @@ export class BattleScene {
           this.float(event.unitId, "Spared", "spared");
           break;
         case "effect":
-          if (event.effect !== "deathward" && event.effect !== "lentShield") this.float(event.unitId, EFFECT_TEXT[event.effect], "effect");
+          if (!effectDef(event.effect).quiet) this.float(event.unitId, effectDef(event.effect).name, "effect");
           break;
         case "move":
           pending.push(this.slide(event.unitId, battle.units[event.unitId]?.side ?? 0, event.to));
+          break;
+        case "absorbed":
+          this.float(event.unitId, `-${event.amount}`, "shield");
+          break;
+        case "effectEnded":
           break;
         case "negated":
           this.float(event.unitId, "Negated!", "spared");

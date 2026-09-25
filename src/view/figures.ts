@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import type { Faction, Side } from "#rules/types";
-import { UNITS } from "#rules/units";
+import type { Faction, Side } from "#rules/battle/types";
+import { UNITS } from "#rules/units/index";
 
 /** Placeholder statues until real art exists: silhouette by unit, material by side, accent by faction. */
 

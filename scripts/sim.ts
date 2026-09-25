@@ -1,6 +1,6 @@
 import { chooseAction } from "#rules/ai";
-import { applyAction, createBattle } from "#rules/battle";
-import type { Placement } from "#rules/battle";
+import { applyAction, createBattle } from "#rules/battle/engine";
+import type { Placement } from "#rules/battle/engine";
 import { PRESETS } from "#view/squads";
 
 /** AI-vs-AI matrix of every preset against every preset (both seatings), for balance work. */

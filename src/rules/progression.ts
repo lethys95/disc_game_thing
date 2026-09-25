@@ -1,6 +1,6 @@
 import { hasBranch } from "#rules/doctrine";
 import type { Commitment } from "#rules/doctrine";
-import { EVOLUTIONS, UNITS } from "#rules/units";
+import { EVOLUTIONS, UNITS } from "#rules/units/index";
 
 /**
  * XP and evolution. Canon: defeated enemies feed a pool the winners' survivors split, valued deterministically

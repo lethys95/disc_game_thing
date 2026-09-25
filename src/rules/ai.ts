@@ -1,5 +1,6 @@
-import { applyAction, legalActions } from "#rules/battle";
-import type { Action, Battle, Side } from "#rules/types";
+import { AI_CHARGE_VALUE } from "#rules/balance";
+import { applyAction, legalActions, traitValue } from "#rules/battle/engine";
+import type { Action, Battle, Side } from "#rules/battle/types";
 
 /** One-ply greedy opponent: tries every legal action and keeps the best resulting position. */
 export function chooseAction(battle: Battle): Action | null {
@@ -23,21 +24,22 @@ export function chooseAction(battle: Battle): Action | null {
   return best;
 }
 
+/**
+ * How good a position is for `side`. Health, shields and spent charges are universal; everything mechanic-specific
+ * (a pending Negate, a Mutation, a fire shield) comes from the traits' own `aiValue`.
+ */
 function evaluate(battle: Battle, side: Side): number {
   if (battle.outcome) return battle.outcome.winner === side ? 1e6 : battle.outcome.winner === null ? 0 : -1e6;
   let score = 0;
   for (const unit of Object.values(battle.units)) {
     const sign = unit.side === side ? 1 : -1;
-    score += sign * (unit.alive ? unit.hp : -100);
-    if (!unit.alive) continue;
-    // Shields are worth less than health (they return after battle, and lent ones perish).
-    score += sign * 0.5 * unit.shield;
-    // A pending negation costs its bearer roughly one action's worth of damage.
-    if (unit.effects.some((e) => e.kind === "negated")) score -= sign * 2 * unit.base.damage;
-    const mutated = unit.effects.find((e) => e.kind === "mutated");
-    if (mutated?.kind === "mutated") score += sign * 15 * mutated.stacks;
-    // Spent charges count against their owner so once-per-combat heals aren't burned on scratches.
-    score -= sign * 40 * unit.abilities.reduce((sum, a) => sum + a.chargesUsed, 0);
+    score -= sign * AI_CHARGE_VALUE * unit.abilities.reduce((sum, a) => sum + a.chargesUsed, 0);
+    if (!unit.alive) {
+      score -= sign * 100;
+      continue;
+    }
+    // Shields are worth less than health: they return after battle, and lent ones perish.
+    score += sign * (unit.hp + 0.5 * unit.shield + traitValue(battle, unit.id));
   }
   return score;
 }

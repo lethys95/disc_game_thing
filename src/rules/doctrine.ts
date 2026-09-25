@@ -1,6 +1,6 @@
-import type { Placement } from "#rules/battle";
-import { EVOLUTIONS, FACTION_ROOTS } from "#rules/units";
-import type { Branch, Playable } from "#rules/units";
+import type { Placement } from "#rules/battle/engine";
+import { EVOLUTIONS, FACTION_ROOTS } from "#rules/units/index";
+import type { Branch, Playable } from "#rules/units/index";
 
 /**
  * Branch investment (docs/design/pillars.md): at each fork of its tree a faction commits to one branch for good.

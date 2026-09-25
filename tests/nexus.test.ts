@@ -1,8 +1,8 @@
-import { applyAction, createBattle, effectiveStats, legalActions } from "#rules/battle";
-import type { Placement } from "#rules/battle";
+import { applyAction, createBattle, effectiveStats, legalActions } from "#rules/battle/engine";
+import type { Placement } from "#rules/battle/engine";
 import { allowedUnits, commit, openBranches } from "#rules/doctrine";
 import { grow } from "#rules/progression";
-import type { Battle, BattleEvent, Col, Row } from "#rules/types";
+import type { Battle, BattleEvent, Col, Row } from "#rules/battle/types";
 import { describe, expect, test } from "vitest";
 
 const p = (defId: string, row: Row, col: Col): Placement => ({ defId, tile: { row, col } });

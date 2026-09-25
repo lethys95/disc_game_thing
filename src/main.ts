@@ -1,4 +1,4 @@
-import { createBattle } from "#rules/battle";
+import { createBattle } from "#rules/battle/engine";
 import { App } from "#view/app";
 import { Campaign } from "#view/campaign";
 import { MapView } from "#view/map";

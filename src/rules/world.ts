@@ -1,17 +1,17 @@
 import { autoplay } from "#rules/ai";
-import { createBattle } from "#rules/battle";
-import type { Placement } from "#rules/battle";
+import { createBattle } from "#rules/battle/engine";
+import type { Placement } from "#rules/battle/engine";
 import { commit, INVESTMENT_COST, openBranches, SQUAD_LIMIT } from "#rules/doctrine";
 import type { Commitment } from "#rules/doctrine";
-import { COLS, ROWS, sameTile } from "#rules/grid";
+import { COLS, ROWS, sameTile } from "#rules/battle/grid";
 import { hexDistance, hexKey, neighbors, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { findPath, generateMap, stepCost } from "#rules/map";
 import type { Path, WorldMap } from "#rules/map";
-import type { Battle, Side, Tile } from "#rules/types";
+import type { Battle, Side, Tile } from "#rules/battle/types";
 import { grow, xpValue } from "#rules/progression";
-import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units";
-import type { Branch, Playable } from "#rules/units";
+import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
+import type { Branch, Playable } from "#rules/units/index";
 
 /** A unit in a squad on the map; its HP and XP carry from one battle to the next. */
 export interface SquadMember extends Placement {

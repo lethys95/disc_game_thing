@@ -1,6 +1,6 @@
-import { applyAction, createBattle, effectiveStats, legalActions } from "#rules/battle";
-import type { Placement } from "#rules/battle";
-import type { Battle, BattleEvent, Col, Row } from "#rules/types";
+import { applyAction, createBattle, effectiveStats, legalActions } from "#rules/battle/engine";
+import type { Placement } from "#rules/battle/engine";
+import type { Battle, BattleEvent, Col, Row } from "#rules/battle/types";
 import { describe, expect, test } from "vitest";
 
 const p = (defId: string, row: Row, col: Col): Placement => ({ defId, tile: { row, col } });
@@ -91,7 +91,7 @@ describe("bandits", () => {
     const battle = until(start([p("brigand", 0, 1)], [p("congregant", 0, 0), p("congregant", 0, 1)]), "0.0.1");
     expect(legalActions(battle).find((a) => a.abilityId === "stun_front")?.choices.map((c) => c.affected[0])).toEqual(["1.0.1"]);
     const step = act(battle, "stun_front");
-    expect(step.battle.units["1.0.1"]?.effects).toContainEqual({ kind: "stunned" });
+    expect(step.battle.units["1.0.1"]?.effects).toContainEqual(expect.objectContaining({ def: "stunned" }));
     expect(step.battle.units["0.0.1"]?.abilities.find((a) => a.ref.id === "stun_front")?.chargesUsed).toBe(1);
   });
 

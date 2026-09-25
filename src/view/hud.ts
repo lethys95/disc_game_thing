@@ -1,8 +1,9 @@
-import { BEHAVIORS } from "#rules/abilities";
-import { actionsPerRound, effectiveStats, upcomingSlots } from "#rules/battle";
-import type { Battle, BattleEvent, BattleUnit, LegalAbility, Side } from "#rules/types";
-import { UNITS } from "#rules/units";
-import { ABILITY_TEXT, effectLabel } from "#view/text";
+import { BEHAVIORS, paramsOf } from "#rules/abilities/index";
+import { effectDef } from "#rules/effects";
+import { abilityRef, actionsPerRound, effectiveStats, upcomingSlots } from "#rules/battle/engine";
+import type { Battle, BattleEvent, BattleUnit, LegalAbility, Side } from "#rules/battle/types";
+import { UNITS } from "#rules/units/index";
+import { abilityText, effectLabel } from "#view/text";
 
 export interface HudHandlers {
   onAbility(abilityId: string): void;
@@ -114,24 +115,22 @@ export class Hud {
     this.card.appendChild(table);
 
     // A Justiciar's mark stays secret from the marked unit's own side.
-    const shown = unit.effects.filter((e) => !(e.kind === "negated" && unit.side === playerSide));
+    const shown = unit.effects.filter((e) => !(effectDef(e.def).visibility === "hiddenFromBearerSide" && unit.side === playerSide));
     if (shown.length > 0) {
       const effects = element("div", "effects");
-      for (const effect of shown) effects.appendChild(element("span", `effect ${effect.kind}`, effectLabel(effect)));
+      for (const effect of shown) effects.appendChild(element("span", `effect ${effect.def}`, effectLabel(effect)));
       this.card.appendChild(effects);
     }
 
     const abilities = element("ul", "abilities");
     for (const slot of unit.abilities) {
-      const id = slot.ref.id;
-      if (id === "attack" || id === "shoot" || id === "defend" || id === "wait") continue;
-      const behavior = BEHAVIORS[id];
-      if (!behavior) continue;
+      const behavior = BEHAVIORS[slot.ref.id];
+      if (!behavior || (behavior.kind === "active" && behavior.tags.includes("basic"))) continue;
       const item = element("li", behavior.kind);
-      item.appendChild(element("span", "name", behavior.name));
-      const charges = behavior.charges;
+      item.appendChild(element("span", "name", slot.ref.name ?? behavior.name));
+      const charges = paramsOf(slot.ref)["charges"];
       if (charges !== undefined) item.appendChild(element("span", "charges", ` ${charges - slot.chargesUsed}/${charges}`));
-      item.appendChild(element("div", "text", ABILITY_TEXT[id] ?? ""));
+      item.appendChild(element("div", "text", abilityText(slot.ref)));
       abilities.appendChild(item);
     }
     this.card.appendChild(abilities);
@@ -145,11 +144,11 @@ export class Hud {
     for (const option of options) {
       const button = element("button", `action${option.abilityId === selected ? " selected" : ""}`);
       button.appendChild(element("span", "name", option.name));
-      const charges = BEHAVIORS[option.abilityId]?.charges;
+      const ref = abilityRef(unit, option.abilityId);
+      const charges = paramsOf(ref)["charges"];
       const used = unit.abilities.find((s) => s.ref.id === option.abilityId)?.chargesUsed ?? 0;
       if (charges !== undefined) button.appendChild(element("span", "tag", `${charges - used}/${charges}`));
-      if (option.choices.every((c) => c.cost === "free")) button.appendChild(element("span", "tag", "free"));
-      button.title = ABILITY_TEXT[option.abilityId] ?? "";
+      button.title = abilityText(ref);
       button.addEventListener("click", () => this.handlers.onAbility(option.abilityId));
       this.actions.appendChild(button);
     }
@@ -222,8 +221,14 @@ function describe(event: BattleEvent, name: (id: string) => string, playerSide: 
       return `${name(event.unitId)} falls`;
     case "deathPrevented":
       return `${name(event.unitId)} refuses to fall`;
-    case "effect":
-      return event.effect === "defending" ? null : `${name(event.unitId)}: ${event.effect}`;
+    case "effect": {
+      const def = effectDef(event.effect);
+      return def.quiet || def.id === "defending" ? null : `${name(event.unitId)}: ${def.name.toLowerCase()}`;
+    }
+    case "effectEnded":
+      return null;
+    case "absorbed":
+      return `${name(event.unitId)}'s ${effectDef(event.by).name.toLowerCase()} absorbs ${event.amount}`;
     case "move":
       return `${name(event.unitId)} is dragged to the front`;
     case "negated":

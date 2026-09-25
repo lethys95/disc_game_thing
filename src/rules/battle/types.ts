@@ -1,0 +1,292 @@
+/**
+ * Battle data and the vocabulary rules are written in. See docs/design/architecture.md: passive abilities and
+ * effects are both *traits* (bundles of hooks); damage is a typed packet through an ordered pipeline.
+ */
+
+export type Side = 0 | 1;
+export type Row = 0 | 1 | 2;
+export type Col = 0 | 1 | 2;
+
+/** Row 0 is the front row: the one facing the enemy. */
+export interface Tile {
+  readonly row: Row;
+  readonly col: Col;
+}
+
+export type DamageType = "weapon" | "fire";
+
+export interface Stats {
+  maxHp: number;
+  /** A pool that absorbs hits before health (Nexus automatons). Full at the start of every battle. */
+  shield: number;
+  damage: number;
+  armor: number;
+  initiative: number;
+}
+
+/** Numeric tuning for one use of a behavior: power, charges, amounts. */
+export type Params = Readonly<Record<string, number>>;
+
+export interface AbilityRef {
+  readonly id: string;
+  readonly params?: Params;
+  /** A unit-specific name for this use of the behavior (Divine Lay on Hands is Lay on Hands with more params). */
+  readonly name?: string;
+}
+
+export type Faction = "jilliath" | "nexus" | "neutral";
+
+export interface UnitDef {
+  readonly id: string;
+  readonly faction: Faction;
+  readonly name: string;
+  readonly tier: number;
+  readonly stats: Readonly<Stats>;
+  readonly damageType: DamageType;
+  readonly abilities: readonly AbilityRef[];
+}
+
+/** An effect on a unit: plain data; its behavior lives in the effect definition. */
+export interface EffectInstance {
+  readonly def: string;
+  /** The unit that applied it, or null (context from the world, the unit itself). */
+  readonly source: string | null;
+  stacks: number;
+  /** Magnitude: bleed per turn, a pool's remaining shield, a bonus. */
+  amount: number;
+}
+
+/** What callers pass to apply an effect; omitted numbers default to one stack and zero amount. */
+export interface EffectSeed {
+  readonly def: string;
+  readonly source?: string | null;
+  readonly stacks?: number;
+  readonly amount?: number;
+}
+
+export interface AbilitySlot {
+  readonly ref: AbilityRef;
+  chargesUsed: number;
+}
+
+export interface BattleUnit {
+  readonly id: string;
+  readonly defId: string;
+  readonly name: string;
+  readonly side: Side;
+  tile: Tile;
+  hp: number;
+  shield: number;
+  readonly base: Readonly<Stats>;
+  readonly damageType: DamageType;
+  abilities: AbilitySlot[];
+  effects: EffectInstance[];
+  alive: boolean;
+}
+
+export interface Slot {
+  readonly unitId: string;
+  freeUsed: string[];
+  mainTaken: boolean;
+  /** Extra attacks owed this slot (Hysteria); each entry is the self-damage multiplier for that attack. */
+  bonusAttacks: number[];
+  hysteriaTriggers: number;
+  /** Self-damage multiplier of the attack being resolved right now. */
+  penaltyMultiplier: number;
+}
+
+export interface Battle {
+  units: Record<string, BattleUnit>;
+  round: number;
+  pass: number;
+  actionsThisRound: Record<string, number>;
+  queue: string[];
+  waitedThisPass: string[];
+  current: Slot | null;
+  outcome: Outcome | null;
+}
+
+export type Outcome = { winner: Side } | { winner: null; reason: "mutualDestruction" };
+
+/** A way to use an ability: the tile the player clicks, and the units it will affect. */
+export interface TargetChoice {
+  readonly anchor: { side: Side; tile: Tile };
+  readonly affected: readonly string[];
+  readonly cost: Cost;
+}
+
+export type Cost = "main" | "free";
+
+export interface LegalAbility {
+  readonly abilityId: string;
+  readonly name: string;
+  readonly tags: readonly Tag[];
+  readonly choices: readonly TargetChoice[];
+}
+
+export interface Action {
+  readonly abilityId: string;
+  readonly choice: number;
+}
+
+export type BattleEvent =
+  | { type: "roundStart"; round: number }
+  | { type: "turnStart"; unitId: string }
+  | { type: "ability"; unitId: string; abilityId: string; targets: readonly string[] }
+  | { type: "damage"; unitId: string; amount: number; source: string | null }
+  | { type: "heal"; unitId: string; amount: number }
+  | { type: "shieldHit"; unitId: string; amount: number }
+  | { type: "shieldRestored"; unitId: string; amount: number }
+  | { type: "absorbed"; unitId: string; amount: number; by: string }
+  | { type: "death"; unitId: string }
+  | { type: "deathPrevented"; unitId: string }
+  | { type: "effect"; unitId: string; effect: string }
+  | { type: "effectEnded"; unitId: string; effect: string }
+  | { type: "move"; unitId: string; from: Tile; to: Tile }
+  | { type: "skipped"; unitId: string; reason: "stunned" | "noActions" }
+  | { type: "negated"; unitId: string; abilityId: string }
+  | { type: "battleEnd"; outcome: Outcome };
+
+/**
+ * What an ability does, for modifiers, the AI and the UI to reason about without naming abilities:
+ * `attack` is the unit's attack (what Must Attack allows and Hysteria repeats); `basic` marks the universal
+ * verbs; `damage` abilities are what "+X ability damage" modifiers touch.
+ */
+export type Tag = "attack" | "basic" | "melee" | "ranged" | "spell" | "damage" | "heal" | "area";
+
+/** One hit on one unit, on its way through the damage pipeline (architecture.md §3). */
+export interface Packet {
+  readonly source: string | null;
+  readonly target: string;
+  amount: number;
+  readonly type: DamageType;
+  readonly tags: readonly Tag[];
+  /** Split off by conversion stages; applied as bleed instead of as a hit. */
+  bleed: number;
+}
+
+export interface HitSpec {
+  readonly power: number;
+  readonly type: DamageType;
+  readonly tags: readonly Tag[];
+}
+
+/** Who a hook runs for: the unit carrying the trait, the trait's params, and the effect instance if it's an effect. */
+export interface TraitSelf {
+  readonly unitId: string;
+  readonly params: Params;
+  readonly effect: EffectInstance | null;
+}
+
+/**
+ * The hooks a trait may implement. The engine asks every relevant trait at fixed points and never names a
+ * specific mechanic. Adding a mechanic means writing hooks, not editing the engine.
+ */
+export interface Hooks {
+  /** Adjusts `subjectId`'s stats. Asked of every trait on the battlefield, so auras can reach others. */
+  stats?(ctx: Ctx, self: TraitSelf, subjectId: string, stats: Stats): void;
+  /** Abilities granted to `subjectId`. Asked of every trait. */
+  grants?(ctx: Ctx, self: TraitSelf, subjectId: string): readonly string[];
+  /** Removes ability ids `subjectId` may not use. Asked of every trait. */
+  restrict?(ctx: Ctx, self: TraitSelf, subjectId: string, allowed: Set<string>): void;
+  /** The attacker's traits add to or change an outgoing hit. */
+  outgoing?(ctx: Ctx, self: TraitSelf, packet: Packet): void;
+  /** The attacker's traits split part of a hit into other forms (bleed), after `outgoing`. */
+  convert?(ctx: Ctx, self: TraitSelf, packet: Packet): void;
+  /** The target's traits: immunities, resistances. */
+  incoming?(ctx: Ctx, self: TraitSelf, packet: Packet): void;
+  /** The target's pools soak up the hit, highest `absorbPriority` first; the shield stat's pool comes last. */
+  absorb?(ctx: Ctx, self: TraitSelf, packet: Packet): void;
+  /** The target's traits reduce what got past the pools (Defend). */
+  mitigate?(ctx: Ctx, self: TraitSelf, packet: Packet): void;
+  /** At the start of this unit's turn; "skip" loses the turn. */
+  turnStart?(ctx: Ctx, self: TraitSelf): "skip" | null;
+  /** Before this unit's ability resolves; "cancel" makes it fizzle (the action is still spent). */
+  beforeAbility?(ctx: Ctx, self: TraitSelf, abilityId: string): "cancel" | null;
+  /** After this unit's hit lands on one target. */
+  afterHit?(ctx: Ctx, self: TraitSelf, targetId: string, dealt: number): void;
+  /** After this unit's whole attack resolves, if it's still alive. */
+  afterAttack?(ctx: Ctx, self: TraitSelf, dealt: number, kills: number): void;
+  /** When this unit would die; true keeps it at 1 HP. */
+  preventDeath?(ctx: Ctx, self: TraitSelf): boolean;
+  /** When a shield restoration reaches this unit: how much went in, and how much didn't fit. */
+  restored?(ctx: Ctx, self: TraitSelf, restored: number, overflow: number): void;
+  /** What this trait is worth to its unit's side, for the AI's valuation. */
+  aiValue?(ctx: Ctx, self: TraitSelf): number;
+}
+
+export type Stacking = { readonly mode: "unique" } | { readonly mode: "merge"; readonly cap?: number } | { readonly mode: "perSource" };
+
+/**
+ * When an effect ends: `battle` lasts the fight; `untilOwnTurn` ends as its bearer's next turn starts;
+ * `untilRoundEnd` ends when the round does; `untilSourceTurn` ends as its source's next turn starts.
+ */
+export type Lifetime = "battle" | "untilOwnTurn" | "untilRoundEnd" | "untilSourceTurn";
+
+export interface EffectDef {
+  readonly id: string;
+  readonly name: string;
+  readonly stacking: Stacking;
+  readonly lifetime: Lifetime;
+  /** `hiddenFromBearerSide`: the bearer's own side must not see it (a Justiciar's mark). */
+  readonly visibility: "public" | "hiddenFromBearerSide";
+  /** Bookkeeping effects (a loan, a context bonus) that the view shouldn't announce when applied. */
+  readonly quiet?: boolean;
+  readonly hooks: Hooks;
+  readonly absorbPriority?: number;
+  onExpire?(ctx: Ctx, self: TraitSelf): void;
+}
+
+export interface ActiveBehavior {
+  readonly kind: "active";
+  readonly name: string;
+  readonly tags: readonly Tag[];
+  /** Default params; a unit's AbilityRef params override them. `charges` limits uses per combat. */
+  readonly defaults?: Params;
+  /** Uses the damage type given here instead of the unit's. */
+  readonly damageType?: DamageType;
+  /** Wait: puts the unit back in the queue instead of acting. Not an ability a Negate can cancel. */
+  readonly reschedules?: boolean;
+  /** The target is secret from the other side (Negate). */
+  readonly secretTarget?: boolean;
+  choices(ctx: Ctx, self: TraitSelf): TargetChoice[];
+  resolve(ctx: Ctx, self: TraitSelf, choice: TargetChoice): void;
+}
+
+export interface PassiveBehavior {
+  readonly kind: "passive";
+  readonly name: string;
+  readonly defaults?: Params;
+  readonly hooks: Hooks;
+}
+
+export type Behavior = ActiveBehavior | PassiveBehavior;
+
+/**
+ * What the engine offers traits and behaviors. They read and write the battle only through this, which keeps
+ * them free of engine imports.
+ */
+export interface Ctx {
+  readonly battle: Battle;
+  unit(id: string): BattleUnit;
+  stats(id: string): Stats;
+  living(side?: Side): BattleUnit[];
+  /** The damage pipeline: power → outgoing → conversion → incoming → armor → pools → mitigation → HP, then reactions. */
+  hit(sourceId: string, targetIds: readonly string[], spec: HitSpec): void;
+  /** The power and type an ability of this unit hits with: `params.power` if given, else the unit's damage. */
+  hitSpec(self: TraitSelf, tags: readonly Tag[], type?: DamageType): HitSpec;
+  /** Direct HP loss that skips the pipeline (bleed, self-sacrifice). Returns the HP actually removed. */
+  lose(targetId: string, amount: number, sourceId: string | null): number;
+  heal(targetId: string, amount: number): void;
+  /** Shields only come back through this; healing never touches them. */
+  restoreShield(targetId: string, amount: number): void;
+  addEffect(targetId: string, seed: EffectSeed): void;
+  removeEffect(targetId: string, instance: EffectInstance): void;
+  /** Uses one charge of the unit's ability; false when none are left. */
+  consumeCharge(unitId: string, abilityId: string): boolean;
+  /** Ability ids the unit has, including ones granted by traits. */
+  abilityIds(unitId: string): string[];
+  hasTag(abilityId: string, tag: Tag): boolean;
+  move(unitId: string, to: Tile): void;
+  emit(event: BattleEvent): void;
+}
