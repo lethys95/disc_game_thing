@@ -42,3 +42,6 @@ Nothing generated yet. **Model chosen by the user (2026-09-25): Krea 2** (12B Di
 - Disliked: the Zealot ("a depressed tired old man"; zealots should be "batshit insane"), the Apprentice ("a depressed anime boy"). Paladins "cool if a bit forgettable".
 - Congregants came out as rugged knights; they're meant to be an **angry mob** (their passive stacks with numbers).
 - "It's not intended that everyone is supposed to be sad just because the universe is dark." Cause: the global prompt said "solemn, tragic and oppressive"; emotion now belongs to each subject.
+
+## Style sweep (2026-09-25), awaiting the user's pick
+Same three subjects (a frenzied Zealot, a Congregant mob, the Custodian as control) across looks described by qualities (`scripts/art/prompts.ts` `STYLES`): reliquary (the old look), biomechanical, engraving, ornate ink, religious icon painting, baroque oil; then two blends, biomechanical + ornate ink and biomechanical + engraving. Mood now lives in each subject, which fixed "everyone is sad". Claude's read: the blends and biomechanical are the most distinctive; the icon-painting look fights the game (it turns everything into a literal icon); baroque is strong but generic. Contact sheets: `art/candidates/{sweep,blends}/contact-sheet.png`.

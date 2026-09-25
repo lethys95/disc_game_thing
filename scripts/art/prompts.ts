@@ -12,12 +12,39 @@ const ACCENT: Readonly<Record<Faction, string>> = {
   neutral: "dull ember orange",
 };
 
-const style = (faction: Faction) =>
-  `Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. ` +
-  `A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of ${ACCENT[faction]} where there is magic or devotion. ` +
-  `Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.`;
+/**
+ * Looks to fish for our style (user, 2026-09-25: the first batch was generic). Each describes qualities only.
+ * Emotion is never global: a dark world isn't a sad one, so mood belongs to the subject.
+ */
+export const STYLES = {
+  reliquary:
+    "Dark painterly fantasy illustration: sacred things worn by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. Desaturated umber, ash and bone, chiaroscuro with a hard rim light.",
+  biomechanical:
+    "Biomechanical dark surrealism: flesh, bone and machinery fused into one organism, ribbed vertebral structures, tubes and cables like tendons, repeating skeletal ornament, glossy smooth airbrushed surfaces in near-monochrome greys and blacks. Uncanny, alien and beautiful.",
+  engraving:
+    "A dark copperplate engraving: dense cross-hatched ink linework on aged yellowed paper, stark black and bone, meticulous and grotesque, the only color hand-tinted by brush.",
+  ornate:
+    "A highly intricate dark fantasy illustration in fine ink linework, surreal and grotesque, ornamental patterns and strange growths filling every space, decorative and dreamlike, flat muted colors.",
+  icon:
+    "A cracked and blackened religious icon painting: egg tempera on a wooden panel, tarnished gold leaf background, elongated stylized figures, halos and gilded ornament, centuries of soot and damage.",
+  baroque:
+    "A baroque oil painting with violent chiaroscuro, theatrical and grotesque, dramatic foreshortening and bodies in extreme motion, thick glazes and deep blacks.",
+  // Blends of the sweep's strongest looks.
+  biomechanicalOrnate:
+    "Biomechanical dark surrealism drawn in highly intricate fine ink linework: flesh, bone and machinery fused into one organism, ribbed vertebral structures and cables like tendons, surreal ornamental growths filling every space, decorative and dreamlike, near-monochrome greys and bone.",
+  biomechanicalEngraving:
+    "A dark copperplate engraving of biomechanical surrealism: dense cross-hatched ink linework on aged paper, flesh, bone and machinery fused into one organism, ribbed vertebral structures, cables like tendons, meticulous and grotesque, stark black and bone.",
+} as const;
 
-export type Kind = "portrait" | "figure" | "icon" | "ornament";
+export type Style = keyof typeof STYLES;
+
+const SWEEP: readonly Style[] = ["reliquary", "biomechanical", "engraving", "ornate", "icon", "baroque"];
+const BLENDS: readonly Style[] = ["biomechanicalOrnate", "biomechanicalEngraving"];
+
+const style = (faction: Faction, look: Style) =>
+  `${STYLES[look]} The one saturated color in the image is ${ACCENT[faction]}, used where there is magic or devotion. No text, no letters, no watermark.`;
+
+export type Kind = "portrait" | "figure" | "illustration" | "icon" | "ornament";
 
 export interface Asset {
   readonly id: string;
@@ -25,11 +52,13 @@ export interface Asset {
   readonly faction: Faction;
   /** What the image shows; the kind adds framing and the style. */
   readonly subject: string;
+  readonly style?: Style;
 }
 
 const SIZE: Readonly<Record<Kind, { width: number; height: number }>> = {
   portrait: { width: 896, height: 1152 },
   figure: { width: 832, height: 1216 },
+  illustration: { width: 1024, height: 1024 },
   icon: { width: 1024, height: 1024 },
   ornament: { width: 1024, height: 1024 },
 };
@@ -37,16 +66,38 @@ const SIZE: Readonly<Record<Kind, { width: number; height: number }>> = {
 const FRAMING: Readonly<Record<Kind, (subject: string) => string>> = {
   portrait: (s) => `A bust portrait in three-quarter view of ${s}, against a plain dark background.`,
   figure: (s) => `A full-body character concept of ${s}, standing in a neutral pose, the whole figure visible from head to feet, on a plain flat dark grey background.`,
+  illustration: (s) => `A dynamic character illustration of ${s}.`,
   icon: (s) => `A single emblem for a game ability icon: ${s}. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame.`,
   ornament: (s) => `${s}, isolated on a plain black background, flat front view, symmetrical, for use as a game interface decoration.`,
 };
 
 export function promptFor(asset: Asset): { prompt: string; width: number; height: number } {
-  return { prompt: `${FRAMING[asset.kind](asset.subject)} ${style(asset.faction)}`, ...SIZE[asset.kind] };
+  return { prompt: `${FRAMING[asset.kind](asset.subject)} ${style(asset.faction, asset.style ?? "reliquary")}`, ...SIZE[asset.kind] };
 }
+
+/** The sweep's subjects: the Custodian the user liked as the control, and the two that missed, rewritten. */
+const SWEEP_SUBJECTS: readonly Omit<Asset, "style">[] = [
+  {
+    id: "zealot",
+    kind: "illustration",
+    faction: "jilliath",
+    subject:
+      "a frenzied religious zealot in the grip of holy madness, screaming mid-charge with wide ecstatic eyes and a manic grin, strips of burning scripture nailed into his skin, a crude weapon raised overhead",
+  },
+  {
+    id: "congregant",
+    kind: "illustration",
+    faction: "jilliath",
+    subject:
+      "a furious peasant at the front of a surging mob of the faithful, pitchfork and torch raised, face twisted with righteous rage, crude holy symbols and scraps of armor, more fanatics crowding behind",
+  },
+  { id: "custodian", kind: "figure", faction: "nexus", subject: "a golem guardian built of stone and dark brass, wrapped in a crackling protective shield of energy" },
+];
 
 /** Named batches: `pnpm art <batch>`. */
 export const BATCHES: Readonly<Record<string, readonly Asset[]>> = {
+  sweep: SWEEP.flatMap((look) => SWEEP_SUBJECTS.map((s) => ({ ...s, id: `${look}_${s.id}`, style: look }))),
+  blends: BLENDS.flatMap((look) => SWEEP_SUBJECTS.map((s) => ({ ...s, id: `${look}_${s.id}`, style: look }))),
   // Style anchors: a spread of kinds and both factions, to settle the look before any production batch.
   anchors: [
     { id: "congregant", kind: "portrait", faction: "jilliath", subject: "a devout foot soldier of a militant faith, in worn robes over plain battered armor, holding a simple blade" },
