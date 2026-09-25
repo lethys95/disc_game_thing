@@ -67,6 +67,7 @@ export function createWorld(
     factions: [factions[0], factions[1]],
     commitment: [commitment[0], commitment[1]],
     graveyard: [[], []],
+    upgrades: [[], []],
   };
   startTurn(world, []);
   return world;

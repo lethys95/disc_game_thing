@@ -2,9 +2,11 @@ import { STARTING_LEADERSHIP } from "#rules/balance";
 import { forkOptions, openForks } from "#rules/forks";
 import { sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
+import { nextForm } from "#rules/progression";
 import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
+import { upgradesOf } from "#rules/upgrades";
 import { forecast } from "#rules/world/battles";
-import { chooseBranchProblem, elevateProblem, income, learnSkillProblem, recruitProblem, resurrectionCost, resurrectProblem } from "#rules/world/economy";
+import { chooseBranchProblem, elevateProblem, income, learnSkillProblem, recruitProblem, resurrectionCost, resurrectProblem, squadsOf, upgradeProblem } from "#rules/world/economy";
 import { movementOf } from "#rules/world/leaders";
 import { destination, planMove } from "#rules/world/movement";
 import type { MovePlan, MoveTarget } from "#rules/world/movement";
@@ -107,6 +109,13 @@ export function chooseWorldAction(world: World): WorldAction {
       return { type: "recruit", defId: guard, into: { kind: "garrison" } };
     }
     const rich = world.gold[side] >= cost * (STARTING_LEADERSHIP + 1);
+    // Upgrades aren't retroactive: they pay off on units about to become that type, and on future recruits.
+    const everyone = squadsOf(world, side).flatMap((h) => h.squad);
+    const upgrade = upgradesOf(world.factions[side])
+      .map((u) => ({ u, value: everyone.filter((m) => nextForm(m.defId, world.commitment[side]) === u.unitType).length + (roots.includes(u.unitType) ? 1 : 0) }))
+      .filter(({ u, value }) => value > 0 && world.gold[side] >= u.price + cost * STARTING_LEADERSHIP && !upgradeProblem(world, u.id))
+      .sort((a, b) => b.value - a.value)[0];
+    if (upgrade) return { type: "upgrade", upgrade: upgrade.u.id };
     if (!home && !underThreat && (mine.length === 0 || rich)) {
       const spare = capitol.garrison.find((m) => m.defId !== GUARDIAN_ID);
       if (spare && !elevateProblem(world, spare.tile)) return { type: "elevate", tile: spare.tile };

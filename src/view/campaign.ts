@@ -8,6 +8,7 @@ import { nextForm, xpToEvolve } from "#rules/progression";
 import { EVOLUTIONS, FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
 import { effectDef } from "#rules/effects";
+import { UPGRADES } from "#rules/upgrades";
 import { applyWorldAction } from "#rules/world/actions";
 import { concludeBattle, playersIn } from "#rules/world/battles";
 import { createWorld } from "#rules/world/create";
@@ -42,7 +43,7 @@ const LOCK_WARNING = (fork: string) => `Permanent: every ${unitName(fork)} in yo
 function markText(mark: Mark): string {
   const { effect, source } = mark;
   const text = effectDef(effect.def).describe({ def: effect.def, source: null, stacks: effect.stacks ?? 1, amount: effect.amount ?? 0 });
-  const from = source.kind === "leaderTree" ? `leader tree: ${LEADER_SKILLS[source.skill]?.name ?? source.skill}` : `upgrade: ${source.upgrade}`;
+  const from = source.kind === "leaderTree" ? `leader tree: ${LEADER_SKILLS[source.skill]?.name ?? source.skill}` : `bought at the Capitol: ${UPGRADES.get(source.upgrade)?.name ?? source.upgrade}`;
   return `${text} (${from})`;
 }
 

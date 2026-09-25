@@ -159,6 +159,21 @@ const effects: readonly EffectDef[] = [
     },
   },
   {
+    // A bought unit-type upgrade (placeholder content until the user designs unique ones).
+    id: "extra_damage",
+    quiet: true,
+    name: "Extra damage",
+    describe: (e) => `+${e.amount} damage.`,
+    stacking: { mode: "merge" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      stats: (_ctx, self, subjectId, stats) => {
+        if (subjectId === self.unitId) stats.damage += self.effect?.amount ?? 0;
+      },
+    },
+  },
+  {
     // From the leader tree: the leader's own extra health.
     id: "extra_health",
     quiet: true,

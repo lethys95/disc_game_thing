@@ -97,6 +97,8 @@ export interface World {
   factions: [Playable, Playable];
   commitment: [Commitment, Commitment];
   graveyard: [Fallen[], Fallen[]];
+  /** Unit-type upgrades each side has bought (`rules/upgrades.ts`). */
+  upgrades: [string[], string[]];
 }
 
 export type RecruitInto = { kind: "garrison" } | { kind: "leader"; leaderId: string };
@@ -109,7 +111,9 @@ export type WorldAction =
   /** Choose a branch at a fork: free and permanent, for every unit of that kind. */
   | { type: "choose"; fork: string; to: string }
   | { type: "resurrect"; index: number; into: RecruitInto }
-  | { type: "learn"; leaderId: string; skill: string };
+  | { type: "learn"; leaderId: string; skill: string }
+  /** Buy a unit-type upgrade: units that become that type from now on receive it. */
+  | { type: "upgrade"; upgrade: string };
 
 export type WorldEvent =
   | { type: "moved"; leaderId: string; path: readonly Hex[] }
@@ -127,6 +131,7 @@ export type WorldEvent =
   | { type: "looted"; lairId: string; side: Side; gold: number; joins: string | null }
   | { type: "resurrected"; side: Side; defId: string }
   | { type: "learned"; leaderId: string; skill: string }
+  | { type: "upgraded"; side: Side; upgrade: string }
   | { type: "worldEnd"; winner: Side };
 
 export interface WorldStep {

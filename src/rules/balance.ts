@@ -45,3 +45,6 @@ export const LEADER_EXTRA_HEALTH = 10;
 export const LEADER_HEALING = 0.1;
 /** User: "the squad deals +5% damage". */
 export const LEADER_AURA = 5;
+
+/** Gold per tier for a unit-type upgrade (placeholder; the user tunes upgrade prices after playtests). */
+export const UPGRADE_PRICE_PER_TIER = 50;

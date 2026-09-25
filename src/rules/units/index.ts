@@ -21,7 +21,7 @@ export const FACTION_ROOTS: Readonly<Record<Playable, readonly string[]>> = {
 /** Canon: the Congregant costs 40 gold. The Nexus prices are provisional ("costly", quality over quantity). */
 export const RECRUIT_COST: Readonly<Record<string, number>> = { congregant: 40, custodian: 60, arcane_engineer: 50, apprentice: 60 };
 
-/** A fork a faction commits to once, for good (branch investment, docs/design/pillars.md). */
+/** One step up an evolution tree. */
 export interface Evolution {
   readonly to: string;
   /** At a fork, the side of the line's dichotomy this branch stands for (docs/design/dichotomies.md). */

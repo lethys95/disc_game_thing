@@ -6,12 +6,12 @@ import { sameTile } from "#rules/battle/grid";
 import { NODES } from "#rules/nodes";
 import { xpValue } from "#rules/progression";
 import { GUARDIAN_ID } from "#rules/units/index";
-import { freeTile, growSquad } from "#rules/world/economy";
+import { freeTile, growSquad, newcomer } from "#rules/world/economy";
 import type { Held } from "#rules/world/economy";
 import { leadershipOf } from "#rules/world/leaders";
 import { placementOf } from "#rules/world/record";
 import type { MoveTarget } from "#rules/world/movement";
-import { cityById, lairById, leaderAt, leaderById, member, unitId } from "#rules/world/state";
+import { cityById, lairById, leaderAt, leaderById, unitId } from "#rules/world/state";
 import type { Defender, Engagement, Leader, SquadMember, World, WorldEvent, WorldStep } from "#rules/world/state";
 
 /** Battles started on the map: who fights whom, with what context, and writing the result back. */
@@ -96,7 +96,7 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
         draft.gold[attacker.side] += lair.reward.gold;
         const joins = lair.reward.joins;
         const tile = joins ? freeTile(attacker.squad) : null;
-        if (joins && tile && attacker.squad.length < leadershipOf(attacker)) attacker.squad.push(member(joins, tile));
+        if (joins && tile && attacker.squad.length < leadershipOf(attacker)) attacker.squad.push(newcomer(draft, attacker.side, joins, tile));
         events.push({ type: "looted", lairId: lair.id, side: attacker.side, gold: lair.reward.gold, joins: joins && tile ? joins : null });
       }
     }
@@ -126,7 +126,7 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
     if (pool > 0 && winners.squad.length > 0) {
       const each = Math.ceil(pool / winners.squad.length);
       events.push({ type: "xp", side: winner, pool, each });
-      growSquad(winners, each, winner, draft.commitment[winner], events);
+      growSquad(draft, winners, each, winner, events);
       // The leader earns its share like any unit; it also counts toward the leader tree.
       if (winners.leader) winners.leader.experience += each;
     }

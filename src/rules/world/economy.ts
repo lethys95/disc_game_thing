@@ -1,7 +1,6 @@
 import { CAPITOL_HEALING, CAPITOL_INCOME, GARRISON_LIMIT, RESURRECTION_BASE, RESURRECTION_PREMIUM } from "#rules/balance";
 import type { Side, Tile } from "#rules/battle/types";
 import { chooseProblem, isFork, openForks } from "#rules/forks";
-import type { Commitment } from "#rules/forks";
 import { COLS, ROWS, sameTile } from "#rules/battle/grid";
 import { sameHex } from "#rules/hex";
 import { NODES } from "#rules/nodes";
@@ -9,8 +8,9 @@ import { grow, xpToEvolve } from "#rules/progression";
 import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
 import { leadershipOf, learnProblem, movementOf, squadHealingOf } from "#rules/world/leaders";
 import { maxHpOf } from "#rules/world/record";
-import { capitolOf, leaderAt, leaderById } from "#rules/world/state";
-import type { City, Leader, RecruitInto, SquadMember, World, WorldEvent } from "#rules/world/state";
+import { UPGRADES, upgradesFor } from "#rules/upgrades";
+import { capitolOf, leaderAt, leaderById, member } from "#rules/world/state";
+import type { City, Leader, Mark, RecruitInto, SquadMember, World, WorldEvent } from "#rules/world/state";
 
 /** Gold, recruiting, branch choices, resurrection, elevation, and the start of a side's turn. */
 
@@ -93,10 +93,25 @@ export function squadsOf(world: World, side: Side): Held[] {
   ];
 }
 
+/**
+ * The marks a unit receives on becoming `defId`: the side's upgrades for that type. Upgrades bought later never
+ * reach it; a unit that becomes the type later does (the timing rule, docs/design/pillars.md).
+ */
+export function marksOnBecoming(world: World, side: Side, defId: string): Mark[] {
+  return upgradesFor(defId)
+    .filter((u) => world.upgrades[side].includes(u.id))
+    .map((u): Mark => ({ effect: u.effect, source: { kind: "upgrade", upgrade: u.id } }));
+}
+
+/** A new unit for `side`: recruited, joining, or otherwise acquired. */
+export function newcomer(world: World, side: Side, defId: string, tile: Tile): SquadMember {
+  return { ...member(defId, tile), marks: marksOnBecoming(world, side, defId) };
+}
+
 /** Evolves members in place; the new form arrives at full health (provisional). */
-export function growSquad({ squad, leader }: Held, gained: number, side: Side, commitment: Commitment, events: WorldEvent[]): void {
+export function growSquad(world: World, { squad, leader }: Held, gained: number, side: Side, events: WorldEvent[]): void {
   squad.forEach((m, i) => {
-    const growth = grow(m.defId, m.xp, gained, commitment);
+    const growth = grow(m.defId, m.xp, gained, world.commitment[side]);
     let from = m.defId;
     for (const to of growth.evolvedInto) {
       events.push({ type: "evolved", side, from, to });
@@ -106,7 +121,8 @@ export function growSquad({ squad, leader }: Held, gained: number, side: Side, c
       squad[i] = { ...m, xp: growth.xp };
       return;
     }
-    const evolved = { ...m, defId: growth.defId, xp: growth.xp };
+    const marks = [...m.marks, ...growth.evolvedInto.flatMap((to) => marksOnBecoming(world, side, to))];
+    const evolved = { ...m, defId: growth.defId, xp: growth.xp, marks };
     squad[i] = { ...evolved, hp: maxHpOf(evolved, leader) };
   });
 }
@@ -144,4 +160,15 @@ export function learnSkillProblem(world: World, leaderId: string, skill: string)
   const leader = leaderById(world, leaderId);
   if (leader.side !== world.activeSide) return "not your leader";
   return learnProblem(leader, skill);
+}
+
+export function upgradeProblem(world: World, id: string): string | null {
+  const side = world.activeSide;
+  const upgrade = UPGRADES.get(id);
+  if (!upgrade) return "no such upgrade";
+  if (UNITS[upgrade.unitType]?.faction !== world.factions[side]) return "another faction's unit";
+  if (world.upgrades[side].includes(id)) return "already bought";
+  if (!capitolOf(world, side)) return "no Capitol";
+  if (world.gold[side] < upgrade.price) return "not enough gold";
+  return null;
 }

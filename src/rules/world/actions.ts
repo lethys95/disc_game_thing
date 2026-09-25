@@ -4,10 +4,11 @@ import { stepCost } from "#rules/map";
 import { RECRUIT_COST } from "#rules/units/index";
 import { LEADER_MOVEMENT } from "#rules/balance";
 import { defenderOf, engagementBattle } from "#rules/world/battles";
-import { chooseBranchProblem, elevateProblem, freeTile, growSquad, learnSkillProblem, recruitProblem, resurrectionCost, resurrectProblem, squadFor, squadsOf, startTurn } from "#rules/world/economy";
+import { chooseBranchProblem, elevateProblem, freeTile, growSquad, learnSkillProblem, newcomer, recruitProblem, resurrectionCost, resurrectProblem, squadFor, squadsOf, startTurn, upgradeProblem } from "#rules/world/economy";
 import { movementOf, rankOf } from "#rules/world/leaders";
 import { planMove } from "#rules/world/movement";
-import { capitolOf, cityById, leaderById, member } from "#rules/world/state";
+import { UPGRADES } from "#rules/upgrades";
+import { capitolOf, cityById, leaderById } from "#rules/world/state";
 import type { World, WorldAction, WorldEvent, WorldStep } from "#rules/world/state";
 
 /** Orders a side gives on its turn. */
@@ -53,7 +54,7 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       const squad = squadFor(draft, action.into);
       const tile = squad ? freeTile(squad) : null;
       if (!squad || !tile) throw new Error("no room");
-      squad.push(member(action.defId, tile));
+      squad.push(newcomer(draft, side, action.defId, tile));
       draft.gold[side] -= RECRUIT_COST[action.defId] ?? 0;
       events.push({ type: "recruited", defId: action.defId, into: action.into });
       break;
@@ -77,7 +78,7 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       draft.commitment[side] = choose(draft.commitment[side], action.fork, action.to);
       events.push({ type: "chose", side, fork: action.fork, to: action.to });
       // Units already waiting at this fork evolve now.
-      for (const held of squadsOf(draft, side)) growSquad(held, 0, side, draft.commitment[side], events);
+      for (const held of squadsOf(draft, side)) growSquad(draft, held, 0, side, events);
       break;
     }
     case "resurrect": {
@@ -102,6 +103,15 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       // Movement learned mid-turn is usable at once.
       leader.movement += movementOf(leader) - before;
       events.push({ type: "learned", leaderId: leader.id, skill: action.skill });
+      break;
+    }
+    case "upgrade": {
+      const problem = upgradeProblem(draft, action.upgrade);
+      const upgrade = UPGRADES.get(action.upgrade);
+      if (problem || !upgrade) throw new Error(`cannot buy ${action.upgrade}: ${problem}`);
+      draft.gold[side] -= upgrade.price;
+      draft.upgrades[side].push(upgrade.id);
+      events.push({ type: "upgraded", side, upgrade: upgrade.id });
       break;
     }
   }
