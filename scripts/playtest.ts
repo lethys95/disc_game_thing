@@ -36,6 +36,14 @@ for (let turn = 0; turn < 4; turn++) {
   console.log(`turn ${turn}: ${hint}`);
 }
 await waitPlayer();
+// The keyboard: D defends, as its button says.
+const before = await page.evaluate(() => (window as unknown as { discDebug: { log: () => string[] } }).discDebug.log().length);
+await page.keyboard.press("d");
+await page.waitForFunction((n) => (window as unknown as { discDebug: { log: () => string[] } }).discDebug.log().length > n, before, { timeout: 5000 });
+const pressed = await page.evaluate((n) => (window as unknown as { discDebug: { log: () => string[] } }).discDebug.log().slice(n), before);
+console.log(`hotkey d: ${pressed[0]}`);
+if (!pressed[0]?.includes("Defend")) errors.push(`the D hotkey did not defend: ${pressed.join(" | ")}`);
+await waitPlayer();
 await page.screenshot({ path: "shots/playtest-after.png" });
 const log = await page.evaluate(() => (window as unknown as { discDebug: { log: () => string[] } }).discDebug.log());
 console.log(log.slice(-12).join("\n"));

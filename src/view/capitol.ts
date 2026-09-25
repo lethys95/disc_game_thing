@@ -1,6 +1,7 @@
 import type { Side } from "#rules/battle/types";
 import { allowedUnits, isFork } from "#rules/forks";
-import { EVOLUTIONS, FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
+import { ARCHETYPES, EVOLUTIONS, FACTION_ROOTS, GUARDIAN_ID, LINE_ARCHETYPE, RECRUIT_COST, UNITS } from "#rules/units/index";
+import type { Archetype } from "#rules/units/index";
 import { upgradesFor } from "#rules/upgrades";
 import { chooseBranchProblem, elevateProblem, recruitProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem, squadsOf, upgradeProblem } from "#rules/world/economy";
 import { capitolOf, leaderUnit } from "#rules/world/state";
@@ -13,6 +14,8 @@ export interface CapitolOptions {
   readonly close: () => void;
 }
 
+const ARCHETYPE_NAMES: Readonly<Record<Archetype, string>> = { melee: "Melee", ranged: "Ranged", support: "Support", mage: "Mage" };
+
 /** Every route from `defId` to the top of its tree. */
 function routes(defId: string): string[][] {
   const next = EVOLUTIONS[defId] ?? [];
@@ -24,6 +27,9 @@ function routes(defId: string): string[][] {
  * unit-type upgrades, and the recruiting, garrison and graveyard.
  */
 export class CapitolScreen {
+  private tab: Archetype | null = null;
+  private shown: { world: World; side: Side; home: Leader | undefined; mayAct: boolean } | null = null;
+
   constructor(
     private readonly root: HTMLElement,
     private readonly options: CapitolOptions,
@@ -43,6 +49,7 @@ export class CapitolScreen {
 
   /** `home` is the warband standing in the Capitol, if any: recruits and the raised dead can join it directly. */
   show(world: World, side: Side, home: Leader | undefined, mayAct: boolean): void {
+    this.shown = { world, side, home, mayAct };
     this.root.hidden = false;
     this.root.replaceChildren();
     const header = element("div", "capitol-header");
@@ -63,8 +70,25 @@ export class CapitolScreen {
     const commitment = world.commitment[side];
     const allowed = allowedUnits(faction, commitment);
     const owned = squadsOf(world, side).flatMap((h) => h.squad);
-    const trees = FACTION_ROOTS[faction].map(routes);
-    const tiers = Math.max(...trees.flat().map((route) => route.length));
+    const roots = FACTION_ROOTS[faction];
+    const rootsOf = (archetype: Archetype) => roots.filter((r) => LINE_ARCHETYPE[r] === archetype);
+    const tab = this.tab && rootsOf(this.tab).length > 0 ? this.tab : ARCHETYPES.find((a) => rootsOf(a).length > 0);
+    const tabs = element("div", "tabs");
+    for (const archetype of ARCHETYPES) {
+      const lines = rootsOf(archetype);
+      const button = element("button", archetype === tab ? "selected" : "", ARCHETYPE_NAMES[archetype]);
+      button.disabled = lines.length === 0;
+      button.title = lines.length === 0 ? `No ${ARCHETYPE_NAMES[archetype].toLowerCase()} line yet.` : lines.map((r) => `${unitName(r)} line`).join(", ");
+      button.addEventListener("click", () => {
+        this.tab = archetype;
+        const shown = this.shown;
+        if (shown) this.show(shown.world, shown.side, shown.home, shown.mayAct);
+      });
+      tabs.appendChild(button);
+    }
+    column.appendChild(tabs);
+    const trees = (tab ? rootsOf(tab) : []).map(routes);
+    const tiers = Math.max(5, ...trees.flat().map((route) => route.length));
     for (const lines of trees) {
       const grid = element("div", "tree");
       grid.style.gridTemplateColumns = `repeat(${tiers}, minmax(0, 1fr))`;

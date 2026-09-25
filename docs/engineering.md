@@ -26,7 +26,8 @@ src/view/
   stage.ts           the one renderer/camera/bloom/labels/tween loop
   scene.ts, map.ts   BattleScene, MapView
   app.ts, campaign.ts battle and map controllers
-  capitol.ts         the Capitol screen (trees with forks and upgrades, recruit, garrison, graveyard)
+  capitol.ts         the Capitol screen (archetype tabs, trees with forks and upgrades, recruit, garrison, graveyard)
+  leader.ts          a leader's screen (the leader tree by prerequisites, its warband)
   members.ts         a squad member's row: HP, XP, track record
   hud.ts, setup.ts   panels; dom.ts shared helpers
   secrecy.ts         what a player may see (hidden effects, secret targets)

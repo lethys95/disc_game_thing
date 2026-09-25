@@ -9,8 +9,8 @@ import type { Playable } from "#rules/units/index";
 import { applyWorldAction } from "#rules/world/actions";
 import { concludeBattle, playersIn } from "#rules/world/battles";
 import { createWorld } from "#rules/world/create";
-import { income, learnSkillProblem, waitingForks } from "#rules/world/economy";
-import { LEADER_SKILLS, leadershipOf, rankOf, unspentPoints } from "#rules/world/leaders";
+import { income, waitingForks } from "#rules/world/economy";
+import { leadershipOf, unspentPoints } from "#rules/world/leaders";
 import { planMove, reachable } from "#rules/world/movement";
 import { isLeaderOf, maxHpOf } from "#rules/world/record";
 import { capitolOf, cityById, lairById, leaderAt } from "#rules/world/state";
@@ -23,6 +23,7 @@ import type { Squads } from "#view/setup";
 import type { Stage } from "#view/stage";
 import { CapitolScreen } from "#view/capitol";
 import { buttonById, byId, element } from "#view/dom";
+import { LeaderScreen } from "#view/leader";
 import { memberRow, unitName } from "#view/members";
 
 const PLAYER: Side = 0;
@@ -71,6 +72,14 @@ export class Campaign {
   /** Forks the player put off with "Decide later", keyed by turn so the prompt returns next turn. */
   private deferred = new Set<string>();
   private capitolOpen = false;
+  private leaderOpen: string | null = null;
+  private readonly leaderScreen = new LeaderScreen(byId("leaderscreen"), {
+    act: (action) => void this.act(action),
+    close: () => {
+      this.leaderOpen = null;
+      this.render();
+    },
+  });
   private readonly capitolScreen = new CapitolScreen(byId("capitol"), {
     act: (action) => void this.act(action),
     close: () => {
@@ -120,6 +129,11 @@ export class Campaign {
     this.render();
   }
 
+  openLeader(): void {
+    this.leaderOpen = this.myLeaders()[0]?.id ?? null;
+    this.render();
+  }
+
   openCapitol(): void {
     this.capitolOpen = true;
     this.render();
@@ -129,6 +143,8 @@ export class Campaign {
     this.generation += 1;
     this.capitolOpen = false;
     this.capitolScreen.hide();
+    this.leaderOpen = null;
+    this.leaderScreen.hide();
     this.world = null;
     this.busy = false;
     this.hud.hidden = true;
@@ -303,6 +319,7 @@ export class Campaign {
     this.renderCapitol(world, leader);
     this.hint.textContent = this.hintText(world, leader, plan);
     this.renderBanner(world);
+    this.renderLeaderScreen(world);
     this.renderPrompt(world);
     this.stage.renderer.domElement.style.cursor = plan && (plan.steps > 0 || plan.target) ? "pointer" : "default";
   }
@@ -356,22 +373,21 @@ export class Campaign {
     }
   }
 
-  /** Points from the leader's experience, spent on the leader tree (docs/design/pillars.md). */
+  /** The leader tree has its own screen; the panel shows how many points wait there. */
   private renderLeaderTree(leader: Leader): void {
-    const world = this.world;
-    if (!world) return;
     const points = unspentPoints(leader);
-    this.squad.appendChild(element("div", "section", `Leader tree · ${leader.experience} XP · ${points} point${points === 1 ? "" : "s"} to spend`));
-    const mayAct = this.myTurn();
-    for (const [id, skill] of Object.entries(LEADER_SKILLS)) {
-      const rank = rankOf(leader, id);
-      const problem = learnSkillProblem(world, leader.id, id);
-      const button = element("button", `skill small${rank > 0 ? " learned" : ""}`, `${skill.name} ${rank}/${skill.maxRank}`);
-      button.disabled = !mayAct || problem !== null;
-      button.title = problem ? `${skill.describe} (${problem})` : skill.describe;
-      button.addEventListener("click", () => void this.act({ type: "learn", leaderId: leader.id, skill: id }));
-      this.squad.appendChild(button);
-    }
+    const open = element("button", `action small${points > 0 ? " ready" : ""}`, `Leader tree${points > 0 ? ` · ${points} point${points === 1 ? "" : "s"} to spend` : ""}`);
+    open.addEventListener("click", () => {
+      this.leaderOpen = leader.id;
+      this.render();
+    });
+    this.squad.appendChild(open);
+  }
+
+  private renderLeaderScreen(world: World): void {
+    const leader = world.leaders.find((l) => l.id === this.leaderOpen && l.side === PLAYER);
+    if (leader) this.leaderScreen.show(world, leader, `${leaderName(leader)}, leader`, this.myTurn());
+    else this.leaderScreen.hide();
   }
 
   /** The side panel only summarises; everything you do in the Capitol happens on its own screen. */

@@ -16,20 +16,22 @@ Git: tags `m2-playable` … `m7-foundation` mark tested states. Work happens on 
 - Nexus forks scheme vs overload (Battery, Mutant, Justiciar, Thaumaturge). The Negate mark is hidden from the marked side (`src/view/secrecy.ts`, tested).
 - Unit designs from the user: `design/units/*.md`. Numbers are provisional (`questions.md`).
 
-Rules: `src/rules/` (78 tests). View: `src/view/`. Tools: the `verify` skill; `A=<preset|nexus> B=… pnpm sim:world`.
+Rules: `src/rules/` (81 tests). View: `src/view/`. Tools: the `verify` skill; `A=<preset|nexus> B=… pnpm sim:world`.
 
 ## Next
-**m8 done** (per-line forks, leader tree v1, unit-type upgrades with the track record, the Capitol screen). Design in `design/pillars.md`; provisional choices in `questions.md` #28–32. Routes to see it: `?map&xp=250` (fork prompt, leader points), `?map&capitol`.
-1. **Playtest m8 with the user**: forks, leader skills, upgrades, the Capitol screen. Upgrade content is placeholder (+5 damage per type) until the user designs unique ones ("punish stacks one more time", a stun grenade).
-2. **Sparring on factions**: Nexus's Arcane Engineer has no tier 2; tiers 3+ are open; Sylvan and Vexumphat have no units yet (`design/dichotomies.md`).
-3. Open design questions: finite neutral XP and cold wars (#19; `pnpm sim:world` still ends in cold wars), the economy (pillars.md), provisional numbers (#21).
-4. Later: a spell tree in the Capitol, shrines with hidden routes, a smarter AI, save/load.
-5. Art spike: on hold for the user's image-model research.
+**m8 done; m9 (feedback on m8) done.** Fallen leaders stay leaders and are revived at the Capitol (user's D2 rule). Capitol evolution in archetype tabs (Melee/Ranged/Support/Mage). The leader tree has its own screen. Hotkeys D = Defend, W = Wait (data on the ability definitions). Routes: `?map&xp=250`, `&capitol`, `&leader`.
+1. **Spar with the user on leader experience** (#33): should the tree be fed by more than XP?
+2. **Settings menu** eventually (#34): hotkeys, speed, camera.
+3. Upgrade content is placeholder (+5 damage per type) until the user designs unique ones.
+4. **Sparring on factions**: Nexus's Arcane Engineer has no tier 2; tiers 3+ are open; Sylvan and Vexumphat have no units yet.
+5. Open design questions: cold wars (#19), the economy (pillars.md), provisional numbers (#21).
+6. Art spike: on hold for the user's image-model research.
 
 ## Waiting on the user
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.
 
 ## Recently done
+- 2026-09-25: m9: fallen leaders stay and are revived; Capitol archetype tabs; a leader screen; D/W hotkeys (the playtest presses D).
 - 2026-09-25: m8: unit-type upgrades (non-retroactive, stamped as marks) and the HoMM-style Capitol screen; the side panel only summarises.
 - 2026-09-25: m8: leader tree v1 and marks (a unit's lasting effects with their source, shown as its track record). Screenshot route `?map&xp=N`.
 - 2026-09-25: m8: per-line forks replace doctrines: free choice in the Capitol, a prompt at undecided forks, setup formations imply the choices.

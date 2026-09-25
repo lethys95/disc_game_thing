@@ -49,6 +49,7 @@ if (params.has("map")) {
   campaign.start([PRESETS.uncommitted, nexus ? NEXUS_PRESETS.uncommitted : PRESETS.uncommitted], ["jilliath", nexus ? "nexus" : "jilliath"], [{}, {}], Number(params.get("seed") ?? 1));
   if (params.has("xp")) campaign.startingXp(Number(params.get("xp")));
   if (params.has("capitol")) campaign.openCapitol();
+  if (params.has("leader")) campaign.openLeader();
 } else if (params.has("steps") || params.has("auto") || params.has("fight")) {
   setup.hide();
   const fight = params.get("fight") ?? "";
