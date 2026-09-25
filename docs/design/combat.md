@@ -43,6 +43,8 @@ A pattern marks *which tiles can be chosen* (select one) or *which tiles are hit
 - A Punisher mirror grinds: Punishment stacks without limit, so front lines drop to 0 damage and trade 1-point hits (AI test: 95 rounds). This is canon working as written. Options to discuss: cap stacks, floor damage at a fraction of base, or accept that Punishers make fights long.
 - Every Jilliath unit has 50–60 initiative, so 3–4 actions per round; action count only differs through Punishment. Tempo differences will come from other factions.
 
+- `pnpm sim` (2026-09-25): the preserve preset loses to both consume presets; Punishment beats Self-sacrifice. Presets and greedy AI are crude, so treat this as a hint, not a verdict.
+
 ## Open
 - **Empty tiles in melee's path**: with melee as "one tile in front", a front-row unit facing an empty column can't attack. Is that intended (positioning matters), or should melee fall through or widen, D2-style? Provisional: literal. Revisit after playing M1, since mirror matches could stall.
 - **Empty enemy front row**: does the next row become "front"? Provisional: no. Relative depth is fixed.

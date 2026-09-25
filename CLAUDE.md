@@ -9,6 +9,7 @@ A deterministic, Disciples II–inspired turn-based strategy game: squads on 3x3
    - `docs/design/` — the game design canon (pillars, combat, abilities, art, factions, units, lore)
    - `docs/questions.md` — open questions for the user; check for inline answers
    - `docs/decisions.md` — why things are the way they are
+   - `docs/engineering.md` — code map, engine conventions, gotchas that cost time before
    - `docs/prior-attempts.md` — why this repo works the way it does (read once)
 3. **Take notes as you go, not at the end.** A session can end at any moment. Update `docs/status.md` with each commit (rewrite it; keep it short), record a decision in `docs/decisions.md` when you make one, and put a question in `docs/questions.md` when you hit one. The repo is the only memory that survives between sessions.
 
@@ -16,15 +17,16 @@ A deterministic, Disciples II–inspired turn-based strategy game: squads on 3x3
 - **Playable first.** Build only what the current milestone needs. No speculative systems: no save framework, event bus, plugin registry, or catalog loader until a milestone requires one.
 - **Never invent mechanics, names, or lore.** If the design is silent, implement the simplest provisional rule, mark it provisional where it's defined, and add a question to `docs/questions.md`. Placeholder names stay plainly placeholder ("Capitol A", "unit_1"). Past AIs filled this project with invented content (see `docs/prior-attempts.md`).
 - **`src/rules/` is pure.** Plain serializable data + pure functions. It never imports three.js, the DOM, or `src/view/`. No randomness; the game is deterministic.
-- **Verify what you build.** `pnpm test` for rules; `pnpm shot` and look at the PNG for anything visual. Don't call visual work done without having seen it.
+- **Verify what you build.** `pnpm check` for rules; for anything visual or interactive use the `verify` skill (screenshots, click-driven playtests) and look at the PNGs. Don't call visual work done without having seen it.
 - Git: commit at natural checkpoints (work chunk done, tests green) with descriptive messages. Never push.
 
 ## Commands
 ```bash
-pnpm dev          # vite dev server (the user opens it in a browser)
-pnpm test         # vitest
-pnpm typecheck    # tsc (TypeScript 7)
-pnpm shot [out.png] [route]   # headless render → shots/latest.png by default
+pnpm dev --host   # vite dev server; the user connects over Tailscale
+pnpm check        # tsc + vitest
+pnpm shot [out.png] [route]      # headless render (routes/params: see the verify skill)
+pnpm playtest / playtest:map     # scripted clicks through a battle / a march
+pnpm sim          # AI-vs-AI matrix of the preset squads (balance)
 ```
 Package manager is pnpm; build scripts need approval (`pnpm approve-builds <pkg>`).
 

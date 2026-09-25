@@ -9,7 +9,9 @@
     "typecheck": "tsc",
     "shot": "tsx scripts/shot.ts",
     "playtest": "tsx scripts/playtest.ts",
-    "playtest:map": "tsx scripts/playtest-map.ts"
+    "playtest:map": "tsx scripts/playtest-map.ts",
+    "check": "tsc && vitest run",
+    "sim": "tsx scripts/sim.ts"
   },
   "devEngines": {
     "packageManager": {

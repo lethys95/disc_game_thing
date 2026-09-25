@@ -14,6 +14,7 @@ _Rewritten (not appended) with every commit. Keep under ~50 lines._
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.
 
 ## Recently done
+- 2026-09-25: added the `verify` skill (`.claude/skills/verify`), `docs/engineering.md`, `pnpm check`, `pnpm sim`.
 - 2026-09-25: fixed floating damage numbers: a CSS animation on `transform` overrode CSS2DRenderer's positioning, so every number drew in the top-left corner.
 - 2026-09-25: M2: hex map, leaders marching, battles from collisions, wounds persist, auto-battle, map playtest script.
 - 2026-09-25: M1 finished: skirmish setup with doctrines, exact hover preview, full battles run clean in the browser.
