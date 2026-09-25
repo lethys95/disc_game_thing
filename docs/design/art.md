@@ -45,3 +45,13 @@ Nothing generated yet. **Model chosen by the user (2026-09-25): Krea 2** (12B Di
 
 ## Style sweep (2026-09-25), awaiting the user's pick
 Same three subjects (a frenzied Zealot, a Congregant mob, the Custodian as control) across looks described by qualities (`scripts/art/prompts.ts` `STYLES`): reliquary (the old look), biomechanical, engraving, ornate ink, religious icon painting, baroque oil; then two blends, biomechanical + ornate ink and biomechanical + engraving. Mood now lives in each subject, which fixed "everyone is sad". Claude's read: the blends and biomechanical are the most distinctive; the icon-painting look fights the game (it turns everything into a literal icon); baroque is strong but generic. Contact sheets: `art/candidates/{sweep,blends}/contact-sheet.png`.
+
+## User verdict on the sweep (2026-09-25)
+- Not sold. The references (Giger, Shichigoro-Shingo) were about **stroke and style, not theme**: "We're doing a fantasy thing, not biomechanical." Biomechanical and the blends are out.
+- Best of the sweep: the ornate Custodian (still worse than `custodian-1000`). Baroque is "closer to being good" but not it; the front figure of `baroque_congregant-1000` is "rather close to what we're looking for".
+- **Palette (user):** pale, with an explicit strong focus on contrasting **black, white and red**.
+- Comparisons must share framing: the Custodian's grey background came from the full-body template (meant for image-to-3D), not from the style.
+- The user designed the Zealot's look (`units/jilliath-melee-line.md`); it's the next test subject.
+
+## The Zealot test (2026-09-25)
+The user's design and palette held fixed; only the stroke varies (`pnpm art zealot`, `pnpm art zealotMask`): painterly realism, ink brush, pen-and-ink, airbrush. Full-body: the palette lands in all four, but the mask came out wrong (the hand smeared over the whole face, not burning, slit eyes). A head-and-shoulders pass with a more exact mask description fixed that: a burning hand on the forehead, black eye holes, a blank face. Remaining gaps: the eye holes aren't yet wide and staring enough, and the painterly masks still carry a nose ridge.

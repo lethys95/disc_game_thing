@@ -58,6 +58,8 @@ The Zealot is a ticking clock. It deals 70 damage per attack but takes half of t
 
 The self-damage is always half of current damage, so external buffs (Congregation, items, leader upgrades) are double-edged on Zealots — they increase output but also increase self-harm. This fits the theme: a buffed Zealot is more dangerous to everyone, including itself.
 
+**Look (user, 2026-09-25, canon):** a mask covers the whole head. It has no features except two eye holes, wide and staring, with black behind them (no skin shows). On the mask's forehead, a burning outstretched hand with spread fingers. Otherwise the mask is featureless: ominous, strange and inhuman, so that it triggers "this is wrong, grotesque, deranged and twisted". Spiked, tattered armor. A serrated two-handed sword. Pale colors with a strong contrast of black, white and red.
+
 ## Tier 3
 
 ### Templar — Paladin line, tier 3

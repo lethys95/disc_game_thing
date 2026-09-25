@@ -48,6 +48,8 @@ export type Kind = "portrait" | "figure" | "illustration" | "icon" | "ornament";
 
 export interface Asset {
   readonly id: string;
+  /** A finished prompt that bypasses the kind's framing and the style (for fully specified designs). */
+  readonly prompt?: string;
   readonly kind: Kind;
   readonly faction: Faction;
   /** What the image shows; the kind adds framing and the style. */
@@ -72,6 +74,7 @@ const FRAMING: Readonly<Record<Kind, (subject: string) => string>> = {
 };
 
 export function promptFor(asset: Asset): { prompt: string; width: number; height: number } {
+  if (asset.prompt) return { prompt: asset.prompt, ...SIZE[asset.kind] };
   return { prompt: `${FRAMING[asset.kind](asset.subject)} ${style(asset.faction, asset.style ?? "reliquary")}`, ...SIZE[asset.kind] };
 }
 
@@ -94,9 +97,37 @@ const SWEEP_SUBJECTS: readonly Omit<Asset, "style">[] = [
   { id: "custodian", kind: "figure", faction: "nexus", subject: "a golem guardian built of stone and dark brass, wrapped in a crackling protective shield of energy" },
 ];
 
+/**
+ * The user's Zealot (units/jilliath-melee-line.md) and palette (pale; strong black, white, red), rendered in
+ * different strokes: the user's references were about stroke and style, not theme.
+ */
+const ZEALOT =
+  "A full-body illustration of a single figure in a menacing stance, on a pale off-white background. " +
+  "A zealot whose whole head is covered by a smooth, completely featureless mask: no mouth, no nose, no expression, only two wide, staring round eye holes with pure black behind them. " +
+  "Painted on the forehead of the mask is a burning outstretched hand with spread fingers. The mask is ominous, strange and inhuman, deranged and wrong. " +
+  "He wears spiked, tattered armor and holds a huge serrated two-handed sword. " +
+  "A pale, washed-out palette of bone white and ash grey with hard contrasting black and vivid blood red as the only strong colors. No text, no watermark.";
+
+const ZEALOT_MASK =
+  "A head-and-shoulders portrait of a single figure, facing the viewer, on a pale off-white background. " +
+  "His whole head is covered by a smooth, pale, completely featureless mask: no mouth, no nose, no brows, no expression. " +
+  "It has only two eye holes, large perfectly round holes much bigger than human eyes, wide open and staring, with pure black emptiness behind them. " +
+  "High on the forehead, above the eye holes, is a small emblem: an outstretched open hand with spread fingers, drawn in red, with real flames rising from its fingertips. The rest of the mask is blank. " +
+  "The mask is ominous, strange and inhuman; it looks deranged and wrong. Spiked, tattered armor on his shoulders. " +
+  "A pale, washed-out palette of bone white and ash grey with hard contrasting black and vivid blood red as the only strong colors. No text, no watermark.";
+
+const STROKES: Readonly<Record<string, string>> = {
+  painterly: "Painterly realism: confident loose oil brushwork, solid anatomy, dramatic directional light.",
+  inkBrush: "Bold black ink brushstrokes and washes, expressive dry-brush edges, large areas of untouched pale paper.",
+  penInk: "Fine, intricate pen-and-ink linework with careful hatching and flat fills of color.",
+  airbrush: "Smooth airbrushed gradients, soft-edged precise shading and polished surfaces.",
+};
+
 /** Named batches: `pnpm art <batch>`. */
 export const BATCHES: Readonly<Record<string, readonly Asset[]>> = {
   sweep: SWEEP.flatMap((look) => SWEEP_SUBJECTS.map((s) => ({ ...s, id: `${look}_${s.id}`, style: look }))),
+  zealotMask: ["painterly", "penInk"].map((stroke) => ({ id: `mask_${stroke}`, kind: "portrait", faction: "jilliath", subject: "", prompt: `${ZEALOT_MASK} ${STROKES[stroke] ?? ""}` })),
+  zealot: Object.entries(STROKES).map(([stroke, text]) => ({ id: `zealot_${stroke}`, kind: "portrait", faction: "jilliath", subject: "", prompt: `${ZEALOT} ${text}` })),
   blends: BLENDS.flatMap((look) => SWEEP_SUBJECTS.map((s) => ({ ...s, id: `${look}_${s.id}`, style: look }))),
   // Style anchors: a spread of kinds and both factions, to settle the look before any production batch.
   anchors: [
