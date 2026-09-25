@@ -14,6 +14,7 @@ _Rewritten (not appended) with every commit. Keep under ~50 lines._
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.
 
 ## Recently done
+- 2026-09-25: Blender works headless; order decided: M3 next, then the art spike (`roadmap.md`).
 - 2026-09-25: researched the AI asset pipeline (`design/asset-pipeline.md`): two routes to bake off; Blender needs a system upgrade to start.
 - 2026-09-25: added the `verify` skill (`.claude/skills/verify`), `docs/engineering.md`, `pnpm check`, `pnpm sim`.
 - 2026-09-25: fixed floating damage numbers: a CSS animation on `transform` overrode CSS2DRenderer's positioning, so every number drew in the top-left corner.

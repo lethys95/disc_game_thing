@@ -5,7 +5,7 @@
 ## Machine facts (checked)
 - 2× RTX 3090 Ti (24 GB each; Ampere has no hardware FP8, so FP8 weights are upcast and run slower; GGUF Q8 is a good alternative), 123 GB RAM.
 - ComfyUI 0.23 running at `127.0.0.1:8188` (install: `~/boot_launching_applications/ComfyUI`); scriptable through its HTTP API. Installed: Z-Image Turbo, Illustrious-XL, Wan 2.2 (t2v/i2v), LTX-2 / 2.3 video. No 3D nodes yet.
-- Blender 5.2.2 installed but broken by a partial upgrade (needs openexr 3.5); fix with `sudo pacman -Syu` (user).
+- Blender 5.2.2 works headless (`blender -b -P script.py`, glTF exporter available) after the user's system upgrade.
 
 ## The honest problem
 The AI steps have become good. The expensive steps are the ones between them: **retopology of characters**, **skinning around fused weapons and thin parts** (wings, halos, capes), and **stylized attack animation**. The research estimates 30–60 minutes of manual cleanup per unit. Claude can't do that in a GUI, and 40+ units makes it the real cost. So choose a pipeline that avoids those steps rather than one that grinds through them.
@@ -43,8 +43,8 @@ Units as painterly animated sprites on billboards; the map, arena, lighting and 
 - **Territory-restricted** (excludes EU, UK, South Korea): Hunyuan3D 2.1 and **HY-Motion 1.0**, the best open text-to-motion model. Usable only if the user is outside those regions; open question.
 - **Unclear**: Pixal3D (one report says MIT, the other found none stated), AniGen (MIT, but the bundled CUBVH code is non-commercial), LTX-2 commercial terms, Make-It-Animatable.
 
-## Not found
-- The Reddit community the user remembered ("aitopology"): Reddit was blocked to the research fetcher, and nothing by that name turned up. Ask the user for the link.
+## Community
+- r/TopologyAI (https://www.reddit.com/r/TopologyAI), from the user, for AI retopology discussion. Reddit blocks the research fetcher, so read it through search snippets or ask the user.
 
 ## Paid fallbacks (if a route stalls)
 - **Tripo API**: auto-rig for biped, quadruped, avian and more, plus 90+ animation presets; about $0.30 per rig.
@@ -52,7 +52,7 @@ Units as painterly animated sprites on billboards; the map, arena, lighting and 
 - **Quad Remesher**: $79, if Route A ever needs real retopology.
 
 ## Next steps (when art work starts; the user postponed art)
-1. User: fix Blender (`sudo pacman -Syu`), answer the region question, and request DINOv3 access on Hugging Face if we go with TRELLIS.2.
+1. User: answer the region question, and request DINOv3 access on Hugging Face if we go with TRELLIS.2.
 2. Download Qwen-Image-2512 and Qwen-Image-Edit-2511 (Q8 GGUF) and draft the style bible prompts.
 3. Bake-off: Paladin through Route A and Route B, rendered in the battle scene. Decide.
 4. Then the style LoRA, then batch production.

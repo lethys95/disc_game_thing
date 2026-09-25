@@ -24,7 +24,7 @@ Full research and the two candidate routes: `asset-pipeline.md`.
 
 ComfyUI concept art → image-to-3D mesh → **Blender headless** (`blender -b -P script.py`: cleanup, decimate, normals, bake, rig/animate, turntable renders to inspect) → glTF 2.0 (+ Draco/KTX2) → three.js (`GLTFLoader`, `AnimationMixer` crossfades, bones for props, custom shaders for glow/dissolve/auras).
 - Auto-rigging generated characters is the weakest link; expect the most iteration there.
-- Blender 5.2.2 is installed but fails to start (partial upgrade: needs openexr 3.5); the user needs to run `sudo pacman -Syu`.
+- Blender 5.2.2 works headless. The user's view: don't model every unit ourselves in bpy; bpy is fine for placeholders and for processing generated assets.
 
 ## Status
 Nothing generated yet. ComfyUI is on the box, but its models are outdated. Pick current models when art work starts (check what's current then; don't rely on memory).

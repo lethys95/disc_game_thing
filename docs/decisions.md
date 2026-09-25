@@ -49,3 +49,6 @@ No RNG means the preview can run the real rules on a copy of the state and show 
 
 **2026-09-25 — Playtesting is automated too.**
 `pnpm playtest` drives real clicks in a headless browser (`?debug` exposes tile screen positions). Use it after UI changes; it found the initiative-tie bias.
+
+**2026-09-25 — Order: gameplay first, one art spike, then a vertical slice.**
+Keep greyboxing with placeholders (M3, M4). After M3, one time-boxed art bake-off (a single unit through each route) to de-risk the look and the pipeline. The full pipeline, the style LoRA and production come with the vertical slice. Why: rules and unit lists still change and art made now would be redone, but the art route should be proven before anything depends on it. The user agrees not to model units by hand in bpy; bpy is for placeholders and for processing generated assets.
