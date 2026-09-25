@@ -67,6 +67,11 @@ Units evolve through tiers at XP thresholds, cheaper than D2 (whose last tiers w
 - Combat starts when a leader moves into a hex with an enemy leader.
 - Fog of war: unexplored hidden; explored-not-visible shows last-known state.
 
+## Neutrals, dungeons and map structures (user, 2026-09-25)
+- The map has **neutral groups**. **Neutral cities are guarded** by a neutral garrison. **Dungeons are guarded** by neutral groups.
+- Dungeon rewards follow the user's 2024 Unreal design (`legacy/disc/Script/Map/Dungeon.as`): one-time loot of **treasure items, gold, a creature that joins you, or a leader that joins you**; looted once.
+- Neutral unit designs don't exist yet. Until they do, placeholders are plainly labelled and marked for replacement (pending user OK, questions.md).
+
 ## Spells
 Overworld spells, cast on the map (HoMM3-ish), paid in typed mana. Not combat abilities. Targets: ally, enemy, empty tile, area.
 
