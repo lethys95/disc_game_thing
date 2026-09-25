@@ -14,6 +14,4 @@ The user is in a "suggest" role: they answer when they have time, so nothing her
 7. Art direction: dark painterly (D2), stylized low-poly, or something else? This decides what ComfyUI models are worth fetching.
 
 ## Provenance (lets Claude mark things canon)
-8. Faction names and titles (Jilliath/Inquisition, Ral-Vitahl/Nexus, Sylvan/Groves, Vexumphat/Wastes): are these yours? The capital names (Burning Faith, Nexus Prime, Groveheart, Waste's End) came from AI code. Keep, replace, or leave open?
-9. Nexus color: your 2024 notes say **teal** ("Izzet basically"); the AI docs said purple. Teal, then?
-10. Skim `design/pillars.md` and `design/units/jilliath-melee-line.md` (both AI-written from sessions with you) and flag anything that isn't yours.
+10. When you're at a real screen: skim `design/pillars.md` (AI-written from a session with you) and flag anything that isn't yours. The melee line is settled as canon.

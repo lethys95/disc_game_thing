@@ -17,8 +17,8 @@ The user has tried this game several times. The attempts live next to this repo 
 - The user got frustrated with agents ignoring instructions (e.g. committing).
 
 **Provenance: most old content is AI-made**
-- The old `data/units.json` and `data/abilities.json`, most unit and ability names in code (Aura of the Scarlet Banner, Crusader's Charge, …), and most faction "lore" prose were invented by AI agents. Don't mine the old repos for content.
-- Genuinely the user's: the 2024 Unreal code and its comments (e.g. mana colors in `legacy/disc/Script/Spell/Mana.as`), the Vexumphat founding line, the Ton'Arilliet story, the short informal faction mechanics notes, and the decisions from design sessions (AI-written but user-directed).
+- The old `data/units.json` and `data/abilities.json`, most unit and ability names in code (Aura of the Scarlet Banner, Crusader's Charge, …), faction "lore" prose, capital names (Burning Faith, Nexus Prime, …), and the purple Nexus color were invented by AI agents. The user's verdict: hallucinated, and cringe. Don't mine the old repos for content.
+- Genuinely the user's: the 2024 Unreal code and its comments (e.g. mana colors in `legacy/disc/Script/Spell/Mana.as`), the Vexumphat founding line, the Ton'Arilliet story, the short informal faction mechanics notes, the Jilliath melee line (canon), and the decisions from design sessions (AI-written but user-directed).
 - In `design/`, every page or section says where it came from. Keep doing that.
 
 **What was worth keeping**

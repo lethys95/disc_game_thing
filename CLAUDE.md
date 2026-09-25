@@ -14,7 +14,7 @@ A deterministic, Disciples II–inspired turn-based strategy game: squads on 3x3
 
 ## Rules
 - **Playable first.** Build only what the current milestone needs. No speculative systems: no save framework, event bus, plugin registry, or catalog loader until a milestone requires one.
-- **Never invent mechanics.** If the design is silent, implement the simplest provisional rule, mark it provisional where it's defined, and add a question to `docs/questions.md`.
+- **Never invent mechanics, names, or lore.** If the design is silent, implement the simplest provisional rule, mark it provisional where it's defined, and add a question to `docs/questions.md`. Placeholder names stay plainly placeholder ("Capitol A", "unit_1"). Past AIs filled this project with invented content (see `docs/prior-attempts.md`).
 - **`src/rules/` is pure.** Plain serializable data + pure functions. It never imports three.js, the DOM, or `src/view/`. No randomness; the game is deterministic.
 - **Verify what you build.** `pnpm test` for rules; `pnpm shot` and look at the PNG for anything visual. Don't call visual work done without having seen it.
 - Git: commit at natural checkpoints (work chunk done, tests green) with descriptive messages. Never push.

@@ -1,6 +1,6 @@
 # Inquisition Melee Line
 
-> Provenance: written by an AI during a redesign session with the user (C# attempt, 2026-07-30). The structure (Congregant → Paladin/Zealot, faith preserves vs consumes) was the user's direction; stat numbers and ability details may include AI elaboration. Ask before treating a detail as settled.
+> Provenance: largely hand-crafted by the user (redesign session, C# attempt, 2026-07-30). **Treat as canon** (user, 2026-09-25). Numbers are first-pass balance, not sacred.
 
 The Jilliath melee line is built on a central dichotomy: **faith preserves vs faith consumes**. Tier 1 is a shared baseline that diverges at tier 2 into two branches — the Paladin line (self-preservation, defense, protection) and the Zealot line (self-sacrifice, fanaticism, martyrdom). The Paladin line is linear through all tiers. The Zealot line branches again at tier 3.
 

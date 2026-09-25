@@ -4,6 +4,16 @@
 
 Settled decisions that make DISC more than a Disciples II clone (inspirations: Disciples II, Warlords 3, a bit of HoMM3). These came from the user across earlier attempts. Change them only with the user.
 
+## Faction cores (user, 2026-09-25)
+| Faction | Core | Mana color (2024 notes) |
+|---|---|---|
+| Jilliath, Inquisition | sacrifice | red — "Scarlet Crusade-esque" |
+| Ral-Vitahl, Nexus | expedience and burst | teal — lightning, "Izzet basically" |
+| Sylvan, Grove | ramp | green |
+| Vexumphat, Wastes | death and numbers | yellow — "ancient egypt theme, animated armor, ethereals" |
+
+Capitals are unnamed. (Names from the C# attempt, like "Burning Faith" and "Nexus Prime", were AI inventions and are rejected.)
+
 ## No RNG
 No hit chance, crits, damage rolls, or morale. Outcomes are deterministic. Depth comes from richer units instead: multiple mechanics, activated abilities. A healer can still attack (poorly). A tank can still use abilities. Units are not single-trick.
 
