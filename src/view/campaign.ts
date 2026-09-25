@@ -8,7 +8,7 @@ import { nextForm, xpToEvolve } from "#rules/progression";
 import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
 import type { Branch, Playable } from "#rules/units/index";
 import { applyWorldAction } from "#rules/world/actions";
-import { concludeBattle } from "#rules/world/battles";
+import { concludeBattle, playersIn } from "#rules/world/battles";
 import { createWorld } from "#rules/world/create";
 import { elevateProblem, income, investProblem, recruitProblem, resurrectionCost, resurrectProblem } from "#rules/world/economy";
 import { planMove, reachable } from "#rules/world/movement";
@@ -192,6 +192,12 @@ export class Campaign {
     if (engagement) {
       this.hud.hidden = true;
       await this.stage.tween(400, () => {});
+      if (!playersIn(step.world, engagement).includes(PLAYER)) {
+        // Not our fight (the enemy against neutrals): resolve it off-screen, as D2 does, and report the result.
+        const result = await this.ai.resolve(engagement.battle);
+        this.afterBattle(result, generation);
+        return;
+      }
       this.app.fight(engagement.battle, PLAYER, (battle) => this.afterBattle(battle, generation));
       return;
     }
@@ -214,7 +220,8 @@ export class Campaign {
       if (e.type === "captured") lines.push(`${e.side === PLAYER ? "You take" : "The enemy takes"} the city.`);
       if (e.type === "xp" && e.side === PLAYER) lines.push(`Your survivors gain ${e.each} XP each.`);
       if (e.type === "evolved" && e.side === PLAYER) lines.push(`${unitName(e.from)} becomes ${unitName(e.to)}.`);
-      if (e.type === "cleared" && e.side === PLAYER) lines.push("The bandit camp is cleared.");
+      if (e.type === "cleared") lines.push(e.side === PLAYER ? "The bandit camp is cleared." : "The enemy cleared a bandit camp.");
+      if (e.type === "leaderFell") lines.push(e.side === PLAYER ? "One of your warbands fell." : "An enemy warband fell.");
       if (e.type === "looted" && e.side === PLAYER) lines.push(`The dungeon yields ${e.gold} gold${e.joins ? ` and a ${unitName(e.joins)} joins you` : ""}.`);
     }
     if (lines.length > 0) this.hint.textContent = lines.join(" ");

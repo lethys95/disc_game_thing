@@ -35,6 +35,12 @@ export class AiClient {
     return response.kind === "world" ? response.action : { type: "endTurn" };
   }
 
+  /** Plays a whole battle out with the AI on both sides (fights the player isn't in). */
+  async resolve(battle: Battle): Promise<Battle> {
+    const response = await this.ask((id) => ({ id, kind: "resolve", battle }));
+    return response.kind === "resolve" ? response.battle : battle;
+  }
+
   async forecast(world: World, leaderId: string, target: MoveTarget): Promise<ForecastSummary> {
     const response = await this.ask((id) => ({ id, kind: "forecast", world, leaderId, target }));
     return response.kind === "forecast" ? { winner: response.winner, standing: response.standing } : { winner: null, standing: [0, 0] };

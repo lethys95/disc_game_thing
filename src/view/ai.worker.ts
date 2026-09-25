@@ -1,4 +1,4 @@
-import { chooseAction } from "#rules/ai";
+import { autoplay, chooseAction } from "#rules/ai";
 import { chooseWorldAction } from "#rules/world/ai";
 import { forecast } from "#rules/world/battles";
 import type { AiRequest, AiResponse } from "#view/ai-protocol";
@@ -13,6 +13,9 @@ addEventListener("message", (event: MessageEvent<AiRequest>) => {
       break;
     case "world":
       response = { id: request.id, kind: "world", action: chooseWorldAction(request.world) };
+      break;
+    case "resolve":
+      response = { id: request.id, kind: "resolve", battle: autoplay(request.battle) };
       break;
     case "forecast": {
       const result = forecast(request.world, request.leaderId, request.target);

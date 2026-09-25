@@ -8,7 +8,7 @@ import { GUARDIAN_ID } from "#rules/units/index";
 import { CAPITOL_INCOME, MINE_INCOME, STARTING_GOLD } from "#rules/balance";
 import { applyWorldAction } from "#rules/world/actions";
 import { chooseWorldAction } from "#rules/world/ai";
-import { concludeBattle } from "#rules/world/battles";
+import { concludeBattle, playersIn } from "#rules/world/battles";
 import { createWorld } from "#rules/world/create";
 import { income } from "#rules/world/economy";
 import { planMove } from "#rules/world/movement";
@@ -114,6 +114,16 @@ describe("world", () => {
     const effects = (side: number) => Object.values(battle?.units ?? {}).filter((u) => u.side === side).map((u) => u.effects.map((e) => e.def));
     expect(effects(0).every((defs) => defs.includes("blacksmith"))).toBe(true);
     expect(effects(1).every((defs) => defs.length === 0)).toBe(true);
+  });
+
+  test("a fight between a player and neutrals involves only that player", () => {
+    const world = createWorld(1, [squad, army], both("punishment"), ["jilliath", "jilliath"]);
+    const camp = world.lairs.find((l) => l.kind === "camp");
+    if (!camp) throw new Error("no camp");
+    const ready = withLeader({ ...world, activeSide: 1 }, "leader1", { hex: walkableNeighbour(world, camp.hex) });
+    const engaged = applyWorldAction(ready, { type: "move", leaderId: "leader1", to: camp.hex }).world;
+    if (!engaged.engagement) throw new Error("no battle");
+    expect(playersIn(engaged, engaged.engagement)).toEqual([1]);
   });
 
   test("beating a bandit camp clears it and pays XP; bandits never enter a graveyard", () => {

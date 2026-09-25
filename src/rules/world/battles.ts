@@ -9,7 +9,7 @@ import { GUARDIAN_ID } from "#rules/units/index";
 import { freeTile, growSquad } from "#rules/world/economy";
 import type { MoveTarget } from "#rules/world/movement";
 import { cityById, lairById, leaderAt, leaderById, member, unitId } from "#rules/world/state";
-import type { Defender, Leader, SquadMember, World, WorldEvent, WorldStep } from "#rules/world/state";
+import type { Defender, Engagement, Leader, SquadMember, World, WorldEvent, WorldStep } from "#rules/world/state";
 
 /** Battles started on the map: who fights whom, with what context, and writing the result back. */
 
@@ -130,7 +130,7 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
       if (!leader.squad.some((m) => sameTile(m.tile, leader.leaderTile))) leader.leaderTile = leader.squad[0]?.tile ?? leader.leaderTile;
       continue;
     }
-    events.push({ type: "leaderFell", leaderId: leader.id });
+    events.push({ type: "leaderFell", leaderId: leader.id, side: leader.side });
   }
   draft.leaders = draft.leaders.filter((l) => l.squad.length > 0);
   draft.engagement = null;
@@ -141,6 +141,13 @@ function winnerSquad(world: World, defender: Defender): SquadMember[] {
   if (defender.kind === "leader") return world.leaders.find((l) => l.id === defender.leaderId)?.squad ?? [];
   if (defender.kind === "lair") return world.lairs.find((l) => l.id === defender.lairId)?.guards ?? [];
   return cityById(world, defender.cityId).garrison;
+}
+
+/** The players (not neutrals) with a squad in this fight. A player who isn't in it only sees the result. */
+export function playersIn(world: World, engagement: Engagement): Side[] {
+  const attacker = leaderById(world, engagement.attackerId);
+  const defending = defendingSquad(world, engagement.defender, attacker.side);
+  return defending.neutral ? [attacker.side] : [attacker.side, defending.side];
 }
 
 /** The battle a move would start, played out by the AI on both sides. Deterministic, so it's a true forecast. */

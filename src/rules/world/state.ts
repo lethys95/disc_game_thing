@@ -99,7 +99,7 @@ export type WorldEvent =
   | { type: "turnStarted"; side: Side; turn: number; income: number }
   | { type: "recruited"; defId: string; into: RecruitInto }
   | { type: "elevated"; leaderId: string }
-  | { type: "leaderFell"; leaderId: string }
+  | { type: "leaderFell"; leaderId: string; side: Side }
   | { type: "xp"; side: Side; pool: number; each: number }
   | { type: "evolved"; side: Side; from: string; to: string }
   | { type: "fell"; side: Side; defId: string }
