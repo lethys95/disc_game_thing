@@ -9,12 +9,12 @@ _Rewritten (not appended) with every commit. Keep under ~50 lines._
 
 ## Next
 **M3: a tiny whole game** (`roadmap.md`): alternating faction turns with a Capitol + guardian (loss condition), neutral cities with gold nodes, recruiting at the Capitol, elevating a unit to leader, more than one leader per side. Needs design calls first; check `design/pillars.md` for cities/Capitol and log questions for gaps (the guardian's stats, recruit costs, income numbers).
-Known nit: a stray float label ("−23") appeared in the top-left corner of a fast-mode battle screenshot; check at normal speed.
 
 ## Waiting on the user
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.
 
 ## Recently done
+- 2026-09-25: fixed floating damage numbers: a CSS animation on `transform` overrode CSS2DRenderer's positioning, so every number drew in the top-left corner.
 - 2026-09-25: M2: hex map, leaders marching, battles from collisions, wounds persist, auto-battle, map playtest script.
 - 2026-09-25: M1 finished: skirmish setup with doctrines, exact hover preview, full battles run clean in the browser.
 - 2026-09-25: M1 battle view playable; initiative ties now alternate sides (playtest showed the player's squad always moved first).

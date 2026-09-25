@@ -374,14 +374,18 @@ export class BattleScene {
   private float(unitId: string, text: string, kind: "damage" | "bleed" | "heal" | "effect" | "spared"): void {
     const figure = this.figures.get(unitId);
     if (!figure) return;
+    // CSS2DRenderer positions the outer element through its transform; the animation must live on an inner one.
     const div = document.createElement("div");
-    div.className = `float ${kind}`;
-    div.textContent = text;
+    const inner = document.createElement("div");
+    inner.className = `float ${kind}`;
+    inner.textContent = text;
+    div.appendChild(inner);
     const label = new CSS2DObject(div);
-    label.position.set(0, 2.4, 0);
-    figure.group.add(label);
+    // Anchored in the world, not on the figure: a toppling figure would swing its own damage number around.
+    label.position.copy(figure.group.position).add(new THREE.Vector3(0, 2.4, 0));
+    this.scene.add(label);
     window.setTimeout(() => {
-      figure.group.remove(label);
+      this.scene.remove(label);
       div.remove();
     }, 1300);
   }
