@@ -108,6 +108,18 @@ const ZEALOT =
   "He wears spiked, tattered armor and holds a huge serrated two-handed sword. " +
   "A pale, washed-out palette of bone white and ash grey with hard contrasting black and vivid blood red as the only strong colors. No text, no watermark.";
 
+/**
+ * The user's Psychopomp (units/sylvan-psychopomp.md): a different message in the Zealot's style. Same framing,
+ * same palette structure (pale, hard black, only the faction's colors saturated), same strokes.
+ */
+const PSYCHOPOMP =
+  "A full-body illustration of a single figure in a hypnotic, otherworldly stance, on a pale off-white background. " +
+  "A shamanistic elf woman, a druid who guides souls, with long pointed ears and rough, wild, tangled hair full of trinkets, charms, beads and small baubles. " +
+  "Her eyes are wide open and staring straight at the viewer, hypnotic, with glowing violet irises and spiralling pupils. " +
+  "Several faint spectral echoes of her own face, blurred and barely visible, brush outward from her head like drifting afterimages. " +
+  "Roots and vines sprawl around and through her clothes and limbs, teeming with life. Confusing, dreamlike and psychedelic. " +
+  "A pale, washed-out palette of bone white and ash grey with hard contrasting black, and vivid moss green with pulsing violet as the only strong colors. No text, no watermark.";
+
 const ZEALOT_MASK =
   "A head-and-shoulders portrait of a single figure, facing the viewer, on a pale off-white background. " +
   "His whole head is covered by a smooth, pale, completely featureless mask: no mouth, no nose, no brows, no expression. " +
@@ -126,6 +138,11 @@ const STROKES: Readonly<Record<string, string>> = {
 /** Named batches: `pnpm art <batch>`. */
 export const BATCHES: Readonly<Record<string, readonly Asset[]>> = {
   sweep: SWEEP.flatMap((look) => SWEEP_SUBJECTS.map((s) => ({ ...s, id: `${look}_${s.id}`, style: look }))),
+  pairing: [
+    { id: "zealot_inkBrush", kind: "portrait", faction: "jilliath", subject: "", prompt: `${ZEALOT} ${STROKES["inkBrush"] ?? ""}` },
+    { id: "psychopomp_inkBrush", kind: "portrait", faction: "neutral", subject: "", prompt: `${PSYCHOPOMP} ${STROKES["inkBrush"] ?? ""}` },
+    { id: "psychopomp_painterly", kind: "portrait", faction: "neutral", subject: "", prompt: `${PSYCHOPOMP} ${STROKES["painterly"] ?? ""}` },
+  ],
   zealotMask: ["painterly", "penInk"].map((stroke) => ({ id: `mask_${stroke}`, kind: "portrait", faction: "jilliath", subject: "", prompt: `${ZEALOT_MASK} ${STROKES[stroke] ?? ""}` })),
   zealot: Object.entries(STROKES).map(([stroke, text]) => ({ id: `zealot_${stroke}`, kind: "portrait", faction: "jilliath", subject: "", prompt: `${ZEALOT} ${text}` })),
   blends: BLENDS.flatMap((look) => SWEEP_SUBJECTS.map((s) => ({ ...s, id: `${look}_${s.id}`, style: look }))),

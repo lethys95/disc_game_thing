@@ -60,3 +60,6 @@ The user's design and palette held fixed; only the stroke varies (`pnpm art zeal
 - Picks: `zealot_inkBrush` 1000 (but its sword is broken), **1001**, 1002, `zealot_painterly` 1001, 1002. "We can straight up just use zealot inkBrush 1001", or very close. The mask close-ups: none liked.
 - So the look is: **bold black ink brush and washes, dry-brush edges, lots of untouched pale paper; a pale palette with hard black and one or two strong faction colors.**
 - The user's worry: does it scale? Next test: the Grove's Psychopomp (`units/sylvan-psychopomp.md`), a completely different message in the same style. Grove colors from the user: greens, with purples for pulses.
+
+## Scaling test: Zealot + Psychopomp (2026-09-25)
+`pnpm art pairing`: same framing (single full-body figure on pale paper), same palette structure (pale, hard black, only the faction's colors saturated: Jilliath red; Grove moss green with violet pulses), same strokes; only subject and mood differ. Regenerating a picked image from its manifest (prompt + seed) is pixel-identical (checked on `zealot_inkBrush-1001`). First pass: every Psychopomp had closed eyes and the ink one's spirits were cute blobs (kept in `art/candidates/pairing-closed-eyes/`); saying "eyes wide open, violet irises, spiralling pupils" and "spectral echoes of her own face" fixed both.
