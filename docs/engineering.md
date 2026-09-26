@@ -17,6 +17,7 @@ src/rules/
   upgrades.ts        unit-type upgrades (placeholder content: +5 damage per type)
   forks.ts           per-line forks: commitments (fork → branch), allowed units, starting-squad checks
   progression.ts     XP value and evolution
+  save.ts            the save format: the world + a header; other versions are refused
   balance.ts         provisional numbers that aren't unit stats or ability params
   ai.ts              battle AI (one ply, generic valuation + traits' aiValue), autoplay
   hex.ts, map.ts     hex math; seeded map generation (sites, nodes, lairs), A*
@@ -29,6 +30,7 @@ src/view/
   capitol.ts         the Capitol screen (archetype tabs, trees with forks and upgrades, recruit, garrison, graveyard)
   leader.ts          a leader's screen (the leader tree by prerequisites, its warband)
   members.ts         a squad member's row: HP, XP, track record
+  saves.ts, menu.ts  where saves live (localStorage behind a SaveStore interface; file export/import) and the game menu
   art-slots.ts, art.ts  art slots (pure: which content has which slot, fallbacks) and their DOM (image or placeholder)
   hud.ts, setup.ts   panels; dom.ts shared helpers
   secrecy.ts         what a player may see (hidden effects, secret targets)
@@ -51,7 +53,8 @@ The step-by-step recipes (units, abilities, effects, nodes, forks, recording the
 - A definition carries its own rules text (`describe`), so an ability or effect is one place to read and change; `tests/descriptions.test.ts` checks every text renders.
 - Nothing outside `abilities/` and `effects.ts` names an ability or effect id. The engine, AI and view use tags, flags (`reschedules`, `secretTarget`, `visibility`, `quiet`) and hooks.
 - Anything the design doesn't specify is marked provisional where it's defined and listed in `docs/questions.md`.
-- `pnpm verify` before calling anything done: types, tests, a screenshot, and both click-through playtests.
+- `pnpm verify` before calling anything done: types, tests, a screenshot, and the click-through playtests (battle, map, save/load).
+- **Changing the World's shape? Bump `SAVE_VERSION`** (`src/rules/save.ts`) and update the snapshot (`pnpm vitest -u tests/save.test.ts`); the shape test fails until you do. Old saves are then refused, never migrated.
 
 ## Gotchas
 - **CSS2DRenderer positions labels through `transform`.** A CSS animation on `transform` silently overrides it (every float drew at the top-left). Animate an inner element.

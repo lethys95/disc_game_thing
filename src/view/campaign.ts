@@ -3,6 +3,8 @@ import type { Hex } from "#rules/hex";
 import { tileAt, TERRAIN_COST } from "#rules/map";
 import type { Battle, Side } from "#rules/battle/types";
 import { forkOptions, openForks } from "#rules/forks";
+import { toSave } from "#rules/save";
+import type { Save } from "#rules/save";
 import type { Commitment } from "#rules/forks";
 import { EVOLUTIONS, GUARDIAN_ID } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
@@ -44,6 +46,9 @@ function leaderName(leader: Leader): string {
 
 export interface CampaignOptions {
   readonly onSetup: () => void;
+  /** Called at the start of each of the player's turns with a save of the game. */
+  readonly onAutosave: (save: Save) => void;
+  readonly onMenu: () => void;
 }
 
 interface Forecast {
@@ -109,6 +114,7 @@ export class Campaign {
       if (e.button === 2) this.peek.hidden = true;
     });
     this.endTurn.addEventListener("click", () => void this.act({ type: "endTurn" }));
+    buttonById("mapmenu").addEventListener("click", () => this.options.onMenu());
   }
 
   start(squads: Squads, factions: readonly [Playable, Playable], commitment: readonly [Commitment, Commitment], seed: number): void {
@@ -118,6 +124,33 @@ export class Campaign {
     this.view.build(this.world.map);
     this.view.buildSites(this.world);
     this.enterMap();
+    this.autosave();
+  }
+
+  /** Picks up a saved game where it left off, the AI's turn included. */
+  resume(save: Save): void {
+    this.stop();
+    this.seed = save.seed;
+    this.world = save.world;
+    this.view.build(save.world.map);
+    this.view.buildSites(save.world);
+    this.enterMap();
+  }
+
+  /** Whether a map game is running (not a skirmish, not the setup screen). */
+  get running(): boolean {
+    return this.world !== null;
+  }
+
+  /** The game as it stands, or null in the middle of a battle (saves hold the map, not a battle in progress). */
+  snapshot(): Save | null {
+    const world = this.world;
+    return world && !world.engagement ? toSave(world, this.seed, new Date()) : null;
+  }
+
+  private autosave(): void {
+    const save = this.snapshot();
+    if (save) this.options.onAutosave(save);
   }
 
   /** Screenshots and playtests: our units and leader start with this much XP (to reach a fork, to spend points). */
@@ -225,6 +258,7 @@ export class Campaign {
     }
     if (generation !== this.generation) return;
     this.world = step.world;
+    if (step.events.some((e) => e.type === "turnStarted" && e.side === PLAYER)) this.autosave();
     this.syncView(step.world);
     this.busy = false;
     const engagement = step.world.engagement;

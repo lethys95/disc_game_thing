@@ -72,3 +72,6 @@ The user asked for D = Defend and W = Wait. A behavior's optional `hotkey` is it
 
 **2026-09-26 — Art is assigned by slot, with fallbacks; the style is not Claude's to perfect.**
 The user: getting the style exactly right isn't the job now (it's a taste call for them, and `pnpm art` can restyle everything later); what matters is a strategy for assigning assets. Slots are keyed by content ids, files are discovered at build time, missing art falls back to family defaults and then placeholders, and the missing list doubles as the generation queue. Rules stay pure: assets are a view concern.
+
+**2026-09-26 — Saves are snapshots of the world, refused across versions.**
+The world is plain data, so a save is the world as JSON plus a header (format, version, time, seed). Snapshots rather than a seed-plus-actions replay: replays break whenever rules change, and rules change constantly. No migrations (no backwards compatibility, per the user): a save from another `SAVE_VERSION` is refused with a reason, and a snapshot test of the world's shape forces the bump. Saves hold the map only; the menu refuses mid-battle ("finish the battle first"). Storage sits behind a `SaveStore` interface (localStorage now), so a desktop build would only swap the store. Autosave at the start of each of the player's turns.
