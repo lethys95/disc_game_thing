@@ -69,3 +69,6 @@ The user's design and palette held fixed; only the stroke varies (`pnpm art zeal
 ## Art slots (2026-09-26)
 The game now has art slots (`docs/engineering.md` → Art). Installed from the user's picks: `portrait/zealot` (inkBrush-1001), `portrait/custodian` (anchors 1000), `portrait/punisher` (anchors 1001), the four liked icons (`ability/lay_on_hands`, `flail`, `plus_burst`, `defend`) and `ornament/frame-corner` (on every panel). The Custodian, Punisher, icons and ornament are in the first batch's style, not ink brush; they stand in until redone. A test generation of `effect/punished` from rules text alone came out abstract: slots need the user's `LOOKS` to become readable.
 - User (2026-09-26): readability problem: figures are too close to the background color (the Zealot's white mask vs the pale paper, separated by one line). Later fix: figure/ground contrast (a darker or tinted ground, or a strong dark rim), not now. Descriptions of looks: the user will supply them ("it requires some creativity and some vision").
+
+## Status of the direction (user, 2026-09-26)
+**Not settled.** Yesterday's ink-brush work was theorycrafting, not a final art direction; there's a lot of art work still ahead. The keepers stand as references, nothing more. **Paper standees** (flat portrait cards on the 3D battlefield) are a stand-in for battle figures, **not what ships**.
