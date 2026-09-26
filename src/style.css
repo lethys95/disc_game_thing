@@ -302,3 +302,4 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 #menu .menu-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 10px; }
 #menu .hidden-file { display: none; }
 #mapmenu { position: fixed; left: 50%; top: 44px; transform: translateX(-50%); min-width: 0; font-size: 13px; padding: 3px 14px; }
+button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }

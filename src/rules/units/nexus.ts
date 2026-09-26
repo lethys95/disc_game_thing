@@ -17,6 +17,7 @@ export const NEXUS_UNITS: Readonly<Record<string, UnitDef>> = {
     id: "apprentice", name: "Apprentice", faction: "nexus", tier: 1, damageType: "weapon",
     stats: { maxHp: 55, shield: 0, damage: 8, armor: 0, initiative: 45 },
     abilities: kit("plus_burst", "bolt", "defend", "wait"),
+    spellCharges: 2,
   },
   battery: {
     id: "battery", name: "Battery", faction: "nexus", tier: 2, damageType: "weapon",
@@ -31,11 +32,15 @@ export const NEXUS_UNITS: Readonly<Record<string, UnitDef>> = {
   justiciar: {
     id: "justiciar", name: "Justiciar", faction: "nexus", tier: 2, damageType: "weapon",
     stats: { maxHp: 70, shield: 0, damage: 12, armor: 0, initiative: 55 },
-    abilities: kit("negate", "plus_burst", "bolt", "defend", "wait"),
+    // Scheme replicates: precise, every target chosen.
+    abilities: [{ id: "negate", params: { replicate: 1 } }, { id: "plus_burst", params: { replicate: 1 } }, ...kit("bolt", "defend", "wait")],
+    spellCharges: 4,
   },
   thaumaturge: {
     id: "thaumaturge", name: "Thaumaturge", faction: "nexus", tier: 2, damageType: "weapon",
     stats: { maxHp: 65, shield: 0, damage: 12, armor: 0, initiative: 50 },
-    abilities: kit("homing_lightning", "plus_burst", "bolt", "defend", "wait"),
+    // Overload overloads: wider, and it doesn't care who it hits.
+    abilities: [{ id: "homing_lightning", params: { overload: 1 } }, { id: "plus_burst", params: { overload: 1 } }, ...kit("bolt", "defend", "wait")],
+    spellCharges: 4,
   },
 };

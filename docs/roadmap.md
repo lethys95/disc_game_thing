@@ -38,6 +38,9 @@ The goal of the vertical slice: one Jilliath vs Ral-Vitahl match you can play to
 - AI decision time over whole games: median 0.1 ms, p90 127 ms, max 388 ms (in the worker; the view pauses 350 ms per AI action anyway). About 3 AI actions per turn.
 - Estimated human game: ~40 turns, 15–20 battles, roughly 45–90 minutes. Needs the user's playtest.
 
+## M14 — Nexus spell charges ✅ (2026-09-26)
+Casters' batteries; spells cost charges; overload (Thaumaturge) and replicate (Justiciar) as selectable variants with exact previews.
+
 ## Then
 - Faction content as the user designs it (Nexus trees first; Grove and Wastes later). The user owns unit designs and looks.
 - Spells and mana (canon), a spell tree in the Capitol.

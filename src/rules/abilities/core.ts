@@ -6,6 +6,16 @@ import type { Behavior, BattleUnit, Col, Cost, Ctx, Params, Row, TargetChoice, T
 /** "Once per combat" / "2 uses per combat", for rules text. */
 export const uses = (p: Params) => (p["charges"] === 1 ? "Once per combat" : `${p["charges"]} uses per combat`);
 
+const charges = (n: number) => `${n} spell charge${n === 1 ? "" : "s"}`;
+
+/** A spell's price in spell charges, and the enhancements this unit may pay for (docs/design/factions/ral-vitahl.md). */
+export function spellCost(p: Params, overloaded?: string): string {
+  const parts = [`Costs ${charges(p["cost"] ?? 0)}.`];
+  if (p["overload"] !== undefined && overloaded) parts.push(`Overload (+${charges(p["overload"])}): ${overloaded}.`);
+  if (p["replicate"] !== undefined) parts.push(`Replicate (+${charges(p["replicate"])} per copy): cast it again on another target.`);
+  return parts.join(" ");
+}
+
 export function at(anchor: BattleUnit, affected: readonly string[], cost: Cost): TargetChoice {
   return { anchor: { side: anchor.side, tile: anchor.tile }, affected, cost };
 }

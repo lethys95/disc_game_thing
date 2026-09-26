@@ -1,4 +1,4 @@
-import { areaChoices, at, rangedChoices, single, uses } from "#rules/abilities/core";
+import { areaChoices, at, rangedChoices, single, spellCost } from "#rules/abilities/core";
 import { MUTATED_PER_STACK } from "#rules/effects";
 import { opponent } from "#rules/battle/grid";
 import type { Behavior } from "#rules/battle/types";
@@ -16,16 +16,20 @@ export const nexus: Readonly<Record<string, Behavior>> = {
     resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self, ["attack", "ranged", "spell", "damage"])),
   },
 
-  /** A plus shape around the chosen tile. */
+  /** A plus shape around the chosen tile; overloaded, every enemy. */
   plus_burst: {
     kind: "active",
     name: "Burst",
     describe: (p) =>
-      `${uses(p)}: a burst of ${p["power"]} hitting every enemy in a plus shape.`,
+      `A burst of ${p["power"]} hitting every enemy in a plus shape. ${spellCost(p, "every enemy is hit")}`,
     tags: ["attack", "ranged", "spell", "damage", "area"],
-    defaults: { power: 40, charges: 2 },
+    defaults: { power: 40, cost: 1 },
     choices: (ctx, self) =>
       areaChoices(ctx, self, (row, col) => [{ row, col }, { row: row - 1, col }, { row: row + 1, col }, { row, col: col - 1 }, { row, col: col + 1 }]),
+    overloadChoices: (ctx, self) => {
+      const enemies = ctx.living(opponent(ctx.unit(self.unitId).side));
+      return enemies.map((target) => at(target, enemies.map((u) => u.id), "main"));
+    },
     resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self, ["attack", "ranged", "spell", "damage", "area"])),
   },
 
@@ -47,17 +51,14 @@ export const nexus: Readonly<Record<string, Behavior>> = {
     },
   },
 
-  /**
-   * Justiciar (scheme): secretly mark an enemy; the next ability it uses is cancelled. A free action, once per
-   * combat.
-   */
+  /** Justiciar (scheme): secretly mark an enemy; the next ability it uses is cancelled. A free action. */
   negate: {
     kind: "active",
     name: "Negate",
-    describe: () =>
-      "Free action, once per combat: secretly mark an enemy; the next ability it uses is cancelled.",
+    describe: (p) =>
+      `Free action: secretly mark an enemy; the next ability it uses is cancelled. ${spellCost(p)}`,
     tags: ["spell"],
-    defaults: { charges: 1 },
+    defaults: { cost: 1 },
     secretTarget: true,
     choices: (ctx, self) =>
       ctx
@@ -69,15 +70,19 @@ export const nexus: Readonly<Record<string, Behavior>> = {
     },
   },
 
-  /** Thaumaturge (overload): lightning that strikes every unit sharing the target's name, on both sides. */
+  /**
+   * Thaumaturge (overload): lightning on one enemy; overloaded, it homes in on every unit sharing the target's name,
+   * on both sides (the user's design is the overloaded form).
+   */
   homing_lightning: {
     kind: "active",
     name: "Homing Lightning",
     describe: (p) =>
-      `${uses(p)}: lightning (${p["power"]}) strikes every unit with the target's name, friend and foe alike.`,
+      `Lightning (${p["power"]}) strikes an enemy. ${spellCost(p, "it strikes every unit with the target's name, friend and foe alike")}`,
     tags: ["attack", "ranged", "spell", "damage", "area"],
-    defaults: { power: 45, charges: 2 },
-    choices: (ctx, self) => {
+    defaults: { power: 45, cost: 1 },
+    choices: (ctx, self) => ctx.living(opponent(ctx.unit(self.unitId).side)).map((target) => single(target, "main")),
+    overloadChoices: (ctx, self) => {
       const everyone = ctx.living();
       return ctx
         .living(opponent(ctx.unit(self.unitId).side))

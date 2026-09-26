@@ -2,8 +2,9 @@ import { chooseAction } from "#rules/ai";
 import { BEHAVIORS } from "#rules/abilities/index";
 import { applyAction, createBattle, legalActions } from "#rules/battle/engine";
 import { sameTile } from "#rules/battle/grid";
-import type { Action, Battle, BattleEvent, BattleUnit, LegalAbility, Side, TargetChoice } from "#rules/battle/types";
-import { Hud, unitLabel } from "#view/hud";
+import type { Action, Battle, BattleEvent, BattleUnit, Enhancement, LegalAbility, Side, TargetChoice } from "#rules/battle/types";
+import { PLAIN } from "#rules/battle/types";
+import { enhancementLabel, Hud, optionKey, unitLabel } from "#view/hud";
 import { asKnown, masked } from "#view/secrecy";
 import type { BannerButton } from "#view/hud";
 import type { BattleScene, PreviewMark, TileRef } from "#view/scene";
@@ -38,7 +39,10 @@ export class App {
   private battle: Battle | null = null;
   private playerSide: Side | null = 0;
   private finish: Finish = { kind: "skirmish", squads: [[], []] };
+  /** The chosen ability variant (`optionKey`). */
   private selected: string | null = null;
+  /** A replicated spell's targets picked so far (choice indices). */
+  private picks: number[] = [];
   private hovered: TileRef | null = null;
   /** A unit whose card stays up (clicked), so the mouse can travel to the card to read its effects. */
   private pinned: string | null = null;
@@ -138,13 +142,18 @@ export class App {
 
   private selectDefault(): void {
     // The unit's basic attack if it has one, else any attack (casters): never a hard-coded ability id.
-    const options = this.playerOptions().filter((o) => o.tags.includes("attack"));
+    const options = this.playerOptions().filter((o) => o.tags.includes("attack") && o.enhancement.kind === "none");
     const attack = options.find((o) => o.tags.includes("basic")) ?? options[0];
-    this.selected = attack?.abilityId ?? null;
+    this.select(attack ? optionKey(attack) : null);
+  }
+
+  private select(key: string | null): void {
+    this.selected = key;
+    this.picks = [];
   }
 
   private selectedOption(): LegalAbility | undefined {
-    return this.playerOptions().find((o) => o.abilityId === this.selected);
+    return this.playerOptions().find((o) => optionKey(o) === this.selected);
   }
 
   /** An ability whose definition claims this key, among the ones the player may use now. */
@@ -153,20 +162,25 @@ export class App {
       const def = BEHAVIORS[o.abilityId];
       return def?.kind === "active" && def.hotkey === key;
     });
-    if (option) this.chooseAbility(option.abilityId);
+    if (option) this.chooseAbility(optionKey(option));
   }
 
-  private chooseAbility(abilityId: string): void {
-    const option = this.playerOptions().find((o) => o.abilityId === abilityId);
+  private chooseAbility(key: string): void {
+    const option = this.playerOptions().find((o) => optionKey(o) === key);
     if (!option) return;
     const only = option.choices[0];
     const self = this.battle?.current?.unitId;
     if (option.choices.length === 1 && only && self && only.affected.length === 1 && only.affected[0] === self) {
-      void this.commit({ abilityId, choice: 0 });
+      void this.commit({ abilityId: option.abilityId, choice: 0, enhancement: option.enhancement });
       return;
     }
-    this.selected = this.selected === abilityId ? null : abilityId;
+    this.select(this.selected === key ? null : key);
     this.render();
+  }
+
+  /** Targets a replicated spell needs in all: the first cast and one per copy. */
+  private targetsNeeded(option: LegalAbility): number {
+    return option.enhancement.kind === "replicate" ? option.enhancement.copies + 1 : 1;
   }
 
   private hover(x: number, y: number): void {
@@ -175,17 +189,41 @@ export class App {
     this.render();
   }
 
+  /**
+   * The action under the cursor. A replicated spell is built up target by target: until the last pick, this is the
+   * cast so far (a smaller replicate, or the plain spell) so the preview shows what the picks add up to.
+   */
   private hoveredAction(): Action | null {
     const option = this.selectedOption();
     const hovered = this.hovered;
     if (!option || !hovered) return null;
-    const choice = option.choices.findIndex((c) => matches(c, hovered));
-    return choice < 0 ? null : { abilityId: option.abilityId, choice };
+    const choice = option.choices.findIndex((c, i) => matches(c, hovered) && !this.picks.includes(i));
+    if (choice < 0) return null;
+    const [first = choice, ...rest] = [...this.picks, choice];
+    const copies = rest.length;
+    const enhancement: Enhancement = option.enhancement.kind === "replicate" ? (copies > 0 ? { kind: "replicate", copies } : PLAIN) : option.enhancement;
+    return copies > 0 ? { abilityId: option.abilityId, choice: first, enhancement, copies: rest } : { abilityId: option.abilityId, choice: first, enhancement };
   }
 
   private click(): void {
     const action = this.hoveredAction();
-    if (action) {
+    const option = this.selectedOption();
+    // Clicking a target already picked casts the replicated spell with the picks so far.
+    const hovered = this.hovered;
+    const again = option && hovered ? option.choices.findIndex((c, i) => matches(c, hovered) && this.picks.includes(i)) : -1;
+    if (option && again >= 0) {
+      const [first, ...rest] = this.picks;
+      if (first === undefined) return;
+      void this.commit(rest.length > 0 ? { abilityId: option.abilityId, choice: first, enhancement: { kind: "replicate", copies: rest.length }, copies: rest } : { abilityId: option.abilityId, choice: first, enhancement: PLAIN });
+      return;
+    }
+    if (action && option) {
+      const picked = 1 + (action.copies?.length ?? 0);
+      if (picked < this.targetsNeeded(option)) {
+        this.picks = [action.choice, ...(action.copies ?? [])];
+        this.render();
+        return;
+      }
       void this.commit(action);
       return;
     }
@@ -201,7 +239,7 @@ export class App {
   }
 
   private cancel(): void {
-    this.selected = null;
+    this.select(null);
     this.render();
   }
 
@@ -241,7 +279,7 @@ export class App {
 
   /** Runs the hovered action on a copy of the battle: with no randomness, the preview is exactly what will happen. */
   private previewOf(battle: Battle, action: Action): Preview {
-    const key = `${action.abilityId}:${action.choice}`;
+    const key = JSON.stringify(action);
     if (this.preview?.key === key) return this.preview;
     const totals = new Map<string, { harm: number; heal: number; dies: boolean; spared: boolean }>();
     const entry = (id: string) => {
@@ -278,7 +316,8 @@ export class App {
     const option = this.selectedOption();
     const action = this.hoveredAction();
     const hoveredChoice = action ? option?.choices[action.choice] : undefined;
-    const affected = (hoveredChoice?.affected ?? []).flatMap((id) => {
+    const picked = [...this.picks, ...(action ? [action.choice, ...(action.copies ?? [])] : [])].flatMap((i) => option?.choices[i]?.affected ?? []);
+    const affected = [...new Set(picked)].flatMap((id) => {
       const unit = battle.units[id];
       return unit ? [{ side: unit.side, tile: unit.tile }] : [];
     });
@@ -299,7 +338,7 @@ export class App {
     this.hud.renderActions(battle, this.playerOptions(), this.selected, this.playersTurn());
     this.hud.renderAuto(this.playerSide !== null && !battle.outcome, this.auto);
     this.hud.showOutcome(battle, playerSide, this.bannerButtons(battle));
-    this.hud.setHint(preview ? `${option?.name}: ${preview.summary}` : this.hint(option));
+    this.hud.setHint(preview?.summary ? `${option?.name}: ${preview.summary}` : this.hint(option));
     this.stage.renderer.domElement.style.cursor = hoveredChoice ? "pointer" : "default";
   }
 
@@ -321,6 +360,11 @@ export class App {
     if (!this.playersTurn()) return this.playerSide === null ? "The AI plays both sides." : "The enemy is acting…";
     const name = battle.current ? battle.units[battle.current.unitId]?.name : undefined;
     if (!option) return `${name}: choose an action.`;
-    return `${name}: choose a target for ${option.name}. Right-click to cancel.`;
+    const left = this.targetsNeeded(option) - this.picks.length;
+    if (option.enhancement.kind === "replicate") {
+      const early = this.picks.length > 0 ? " Click a picked target to cast now." : "";
+      return `${name}: ${option.name}, up to ${left} more target${left === 1 ? "" : "s"}.${early} Right-click to cancel.`;
+    }
+    return `${name}: choose a target for ${option.name}${enhancementLabel(option.enhancement)}. Right-click to cancel.`;
   }
 }

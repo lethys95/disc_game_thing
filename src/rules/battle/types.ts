@@ -44,6 +44,11 @@ export interface UnitDef {
   readonly stats: Readonly<Stats>;
   readonly damageType: DamageType;
   readonly abilities: readonly AbilityRef[];
+  /**
+   * Nexus casters' batteries (docs/design/factions/ral-vitahl.md): spell charges for the whole battle, full at its
+   * start. Spells with a `cost` param draw on them, more when overloaded or replicated. Absent: no spells to power.
+   */
+  readonly spellCharges?: number;
 }
 
 /** An effect on a unit: plain data; its behavior lives in the effect definition. */
@@ -82,6 +87,8 @@ export interface BattleUnit {
   abilities: AbilitySlot[];
   effects: EffectInstance[];
   alive: boolean;
+  /** Spell charges left this battle. */
+  spellCharges: number;
   /** Leads its squad on the map. No combat effect (canon: elevation grants no stat boost); shown to the player. */
   readonly leader: boolean;
 }
@@ -119,22 +126,37 @@ export interface TargetChoice {
 
 export type Cost = "main" | "free";
 
+/**
+ * How a spell is cast (Nexus, after MTG Izzet): as is; **overloaded** (pay extra for a wider reach, e.g. every
+ * enemy instead of one); or **replicated** (pay extra per copy, each copy on a different target).
+ */
+export type Enhancement = { readonly kind: "none" } | { readonly kind: "overload" } | { readonly kind: "replicate"; readonly copies: number };
+
+export const PLAIN: Enhancement = { kind: "none" };
+
 export interface LegalAbility {
   readonly abilityId: string;
   readonly name: string;
   readonly tags: readonly Tag[];
   readonly choices: readonly TargetChoice[];
+  readonly enhancement: Enhancement;
+  /** Spell charges this use takes (0 for abilities that don't draw on them). */
+  readonly spellCost: number;
 }
 
 export interface Action {
   readonly abilityId: string;
   readonly choice: number;
+  /** Omitted: cast as is. */
+  readonly enhancement?: Enhancement;
+  /** A replicated spell's further targets: indices into the same choices, all different from `choice` and each other. */
+  readonly copies?: readonly number[];
 }
 
 export type BattleEvent =
   | { type: "roundStart"; round: number }
   | { type: "turnStart"; unitId: string }
-  | { type: "ability"; unitId: string; abilityId: string; targets: readonly string[] }
+  | { type: "ability"; unitId: string; abilityId: string; targets: readonly string[]; enhancement: Enhancement }
   | { type: "damage"; unitId: string; amount: number; source: string | null }
   | { type: "heal"; unitId: string; amount: number }
   | { type: "shieldHit"; unitId: string; amount: number }
@@ -245,7 +267,10 @@ export interface ActiveBehavior {
   readonly kind: "active";
   readonly name: string;
   readonly tags: readonly Tag[];
-  /** Default params; a unit's AbilityRef params override them. `charges` limits uses per combat. */
+  /**
+   * Default params; a unit's AbilityRef params override them. `charges` limits uses per combat. Spells: `cost` draws
+   * that many spell charges; `overload` and `replicate` (extra cost, per copy for replicate) allow those enhancements.
+   */
   readonly defaults?: Params;
   /** Uses the damage type given here instead of the unit's. */
   readonly damageType?: DamageType;
@@ -253,6 +278,8 @@ export interface ActiveBehavior {
   readonly reschedules?: boolean;
   /** The target is secret from the other side (Negate). */
   readonly secretTarget?: boolean;
+  /** What an overloaded cast reaches, when the unit's params allow overloading (`overload`: its extra cost). */
+  overloadChoices?(ctx: Ctx, self: TraitSelf): TargetChoice[];
   /** Default keyboard shortcut, a lower-case key. The view uses it; a settings menu may remap it later. */
   readonly hotkey?: string;
   /** Rules text, written from the ability's effective params. */

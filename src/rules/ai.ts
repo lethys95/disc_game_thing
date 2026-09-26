@@ -1,5 +1,6 @@
 import { AI_CHARGE_VALUE } from "#rules/balance";
 import { applyAction, legalActions, traitValue } from "#rules/battle/engine";
+import { UNITS } from "#rules/units/index";
 import type { Action, Battle, Side } from "#rules/battle/types";
 
 /** One-ply greedy opponent: tries every legal action and keeps the best resulting position. */
@@ -11,15 +12,29 @@ export function chooseAction(battle: Battle): Action | null {
 
   let best: Action | null = null;
   let bestScore = -Infinity;
-  for (const option of legalActions(battle)) {
-    option.choices.forEach((_, choice) => {
-      const action = { abilityId: option.abilityId, choice };
-      const score = evaluate(applyAction(battle, action).battle, side);
-      if (score > bestScore) {
-        best = action;
-        bestScore = score;
-      }
-    });
+  const consider = (action: Action) => {
+    const score = evaluate(applyAction(battle, action).battle, side);
+    if (score > bestScore) {
+      best = action;
+      bestScore = score;
+    }
+  };
+  const options = legalActions(battle);
+  for (const option of options) {
+    const enhancement = option.enhancement;
+    if (enhancement.kind === "replicate") {
+      // Copies go on the targets that score best for a single cast, rather than trying every combination.
+      const single = options.find((o) => o.abilityId === option.abilityId && o.enhancement.kind === "none");
+      if (!single) continue;
+      const ranked = single.choices
+        .map((_, choice) => ({ choice, score: evaluate(applyAction(battle, { abilityId: option.abilityId, choice }).battle, side) }))
+        .sort((a, b) => b.score - a.score)
+        .map((r) => r.choice);
+      const [first, ...rest] = ranked.slice(0, enhancement.copies + 1);
+      if (first !== undefined && rest.length === enhancement.copies) consider({ abilityId: option.abilityId, choice: first, enhancement, copies: rest });
+      continue;
+    }
+    option.choices.forEach((_, choice) => consider({ abilityId: option.abilityId, choice, enhancement }));
   }
   return best;
 }
@@ -33,7 +48,8 @@ function evaluate(battle: Battle, side: Side): number {
   let score = 0;
   for (const unit of Object.values(battle.units)) {
     const sign = unit.side === side ? 1 : -1;
-    score -= sign * AI_CHARGE_VALUE * unit.abilities.reduce((sum, a) => sum + a.chargesUsed, 0);
+    const spentSpells = (UNITS[unit.defId]?.spellCharges ?? 0) - unit.spellCharges;
+    score -= sign * AI_CHARGE_VALUE * (unit.abilities.reduce((sum, a) => sum + a.chargesUsed, 0) + spentSpells);
     if (!unit.alive) {
       score -= sign * 100;
       continue;
