@@ -32,8 +32,10 @@ export class Stage {
   private readonly tweens: Tween[] = [];
   private active: THREE.Scene = new THREE.Scene();
   private readonly raycaster = new THREE.Raycaster();
-  /** Multiplies every animation and AI pause; automated play-tests run the game faster. */
-  timeScale = 1;
+  /** Animation speed from the settings: multiplies every animation and AI pause. */
+  private speedScale = 1;
+  /** Automated play-tests run the game faster still. */
+  testScale = 1;
 
   constructor(private readonly host: HTMLElement) {
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -77,6 +79,17 @@ export class Stage {
     this.controls.minDistance = pose.minDistance;
     this.controls.maxDistance = pose.maxDistance;
     this.controls.update();
+  }
+
+  get timeScale(): number {
+    return this.speedScale * this.testScale;
+  }
+
+  /** The player's settings: how fast animations run, how fast the camera turns and zooms. */
+  setFeel(speedScale: number, rotate: number, zoom: number): void {
+    this.speedScale = speedScale;
+    this.controls.rotateSpeed = rotate;
+    this.controls.zoomSpeed = zoom;
   }
 
   tween(duration: number, update: (t: number) => void): Promise<void> {

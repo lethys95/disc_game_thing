@@ -1,12 +1,16 @@
 import { readSave } from "#rules/save";
 import type { Save } from "#rules/save";
 import { FACTION_NAMES } from "#rules/units/index";
+import { BEHAVIORS } from "#rules/abilities/index";
 import { element } from "#view/dom";
+import { ANIMATION_SPEEDS, CAMERA_RANGE, DEFAULT_SETTINGS, remappable, SPEED_ORDER, withHotkey } from "#view/settings";
+import type { Settings } from "#view/settings";
 import { AUTOSAVE_ID, exportSave } from "#view/saves";
 import type { SaveStore } from "#view/saves";
 
 export interface MenuOptions {
   readonly store: SaveStore;
+  readonly settings: Settings;
   /** The game to save now, or a reason it can't be saved; null when there's no game (the setup screen). */
   readonly current: () => Save | string | null;
   readonly load: (save: Save) => void;
@@ -18,17 +22,32 @@ const describe = (save: Save) => {
   return `Turn ${save.world.turn} · ${save.world.players.map((p) => FACTION_NAMES[p.faction]).join(" vs ")} · seed ${save.seed} · ${when}`;
 };
 
-/** The game menu: save, load, export and import saves, start over. Settings will live here too. */
+/** The game menu: save, load, export and import saves, start over; and the settings. */
 export class GameMenu {
   private message = "";
+  private page: "game" | "settings" = "game";
+  /** The ability whose new key the menu is waiting for. */
+  private capturing: string | null = null;
 
   constructor(
     private readonly root: HTMLElement,
     private readonly options: MenuOptions,
   ) {
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && !this.root.hidden) this.hide();
-    });
+    // Capture phase: while the menu waits for a key, nothing else (a battle's hotkeys) may see it.
+    window.addEventListener(
+      "keydown",
+      (e) => {
+        if (this.root.hidden) return;
+        if (this.capturing !== null) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          this.captured(e.key);
+          return;
+        }
+        if (e.key === "Escape") this.hide();
+      },
+      { capture: true },
+    );
   }
 
   show(): void {
@@ -39,9 +58,92 @@ export class GameMenu {
   hide(): void {
     this.root.hidden = true;
     this.message = "";
+    this.page = "game";
+    this.capturing = null;
   }
 
   private render(): void {
+    if (this.page === "settings") this.renderSettings();
+    else this.renderGame();
+  }
+
+  private captured(key: string): void {
+    const ability = this.capturing;
+    this.capturing = null;
+    const usable = key.length === 1 && key !== " " && key !== "Escape";
+    if (ability && usable) this.options.settings.update(withHotkey(this.options.settings.data, ability, key.toLowerCase()));
+    this.render();
+  }
+
+  private renderSettings(): void {
+    const { settings } = this.options;
+    const data = settings.data;
+    this.root.replaceChildren();
+    this.root.appendChild(element("div", "title", "Settings"));
+
+    this.root.appendChild(element("div", "section", "Animation speed"));
+    const speeds = element("div", "segmented");
+    for (const id of SPEED_ORDER) {
+      const button = element("button", `small${data.speed === id ? " selected" : ""}`, ANIMATION_SPEEDS[id].label);
+      button.addEventListener("click", () => {
+        settings.update({ ...settings.data, speed: id });
+        this.render();
+      });
+      speeds.appendChild(button);
+    }
+    this.root.append(speeds, element("div", "note", "Also how long the AI pauses between its moves."));
+
+    this.root.appendChild(element("div", "section", "Camera"));
+    for (const [field, label] of [["rotate", "Rotation speed"], ["zoom", "Zoom speed"]] as const) {
+      const row = element("label", "slider-row");
+      const slider = element("input", "slider");
+      slider.type = "range";
+      slider.min = String(CAMERA_RANGE.min);
+      slider.max = String(CAMERA_RANGE.max);
+      slider.step = "0.05";
+      slider.value = String(data[field]);
+      const value = element("span", "value", `${data[field].toFixed(2)}×`);
+      slider.addEventListener("input", () => {
+        settings.update({ ...settings.data, [field]: Number(slider.value) });
+        value.textContent = `${Number(slider.value).toFixed(2)}×`;
+      });
+      row.append(element("span", "name", label), slider, value);
+      this.root.appendChild(row);
+    }
+
+    this.root.appendChild(element("div", "section", "Hotkeys"));
+    for (const abilityId of remappable()) {
+      const row = element("div", "save-row");
+      const key = settings.keyFor(abilityId);
+      const waiting = this.capturing === abilityId;
+      row.append(element("div", "name", BEHAVIORS[abilityId]?.name ?? abilityId), element("span", "key", waiting ? "…" : (key ?? "").toUpperCase()));
+      const change = element("button", "small", waiting ? "Press a key (Esc cancels)" : "Change");
+      change.addEventListener("click", () => {
+        this.capturing = waiting ? null : abilityId;
+        this.render();
+      });
+      row.appendChild(change);
+      this.root.appendChild(row);
+    }
+    this.root.appendChild(element("div", "note", "A key already in use swaps with the one you're changing."));
+
+    const footer = element("div", "menu-footer");
+    const reset = element("button", "action", "Restore defaults");
+    reset.addEventListener("click", () => {
+      settings.update(DEFAULT_SETTINGS);
+      this.render();
+    });
+    const back = element("button", "action", "Back");
+    back.addEventListener("click", () => {
+      this.page = "game";
+      this.capturing = null;
+      this.render();
+    });
+    footer.append(reset, back);
+    this.root.appendChild(footer);
+  }
+
+  private renderGame(): void {
     const { store } = this.options;
     this.root.replaceChildren();
     this.root.appendChild(element("div", "title", "Game"));
@@ -105,6 +207,12 @@ export class GameMenu {
       });
       footer.appendChild(fresh);
     }
+    const open = element("button", "action", "Settings");
+    open.addEventListener("click", () => {
+      this.page = "settings";
+      this.render();
+    });
+    footer.appendChild(open);
     const close = element("button", "action", "Close");
     close.addEventListener("click", () => this.hide());
     footer.appendChild(close);

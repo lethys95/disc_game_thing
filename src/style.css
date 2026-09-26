@@ -377,3 +377,9 @@ button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }
 .research-row .done { color: #c9b88e; font-size: 12px; }
 .city-body .nodes { gap: 24px; }
 .city-body .node-item { display: flex; flex-direction: column; gap: 2px; }
+#menu .segmented { display: flex; gap: 6px; }
+#menu .segmented button.selected { border-color: var(--blood); color: var(--ink); }
+#menu .slider-row { display: grid; grid-template-columns: 140px 1fr 56px; align-items: center; gap: 10px; }
+#menu .slider-row .value { text-align: right; color: var(--muted); }
+#menu .key { font: 700 14px var(--display); min-width: 28px; text-align: center; padding: 2px 6px; border: 1px solid var(--edge); }
+#menu input.slider { accent-color: var(--blood); width: 100%; }

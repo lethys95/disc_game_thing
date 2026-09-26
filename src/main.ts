@@ -11,17 +11,20 @@ import { MapView } from "#view/map";
 import { BattleScene } from "#view/scene";
 import { Setup } from "#view/setup";
 import { BANDIT_GROUP, NEXUS_PRESETS, PRESETS } from "#view/squads";
+import { ANIMATION_SPEEDS, Settings } from "#view/settings";
 import { Stage } from "#view/stage";
 
 const params = new URLSearchParams(window.location.search);
 
 applyOrnaments(document.documentElement);
 const stage = new Stage(byId("stage"));
-if (params.has("fast")) stage.timeScale = 0.1;
+const settings = new Settings();
+settings.follow((s) => stage.setFeel(ANIMATION_SPEEDS[s.speed].scale, s.rotate, s.zoom));
+if (params.has("fast")) stage.testScale = 0.1;
 const battleScene = new BattleScene(stage);
 const mapView = new MapView(stage);
 const ai = new AiClient();
-const app: App = new App(stage, battleScene, ai, { onSetup: () => showSetup() });
+const app: App = new App(stage, battleScene, ai, settings, { onSetup: () => showSetup() });
 const saves = new LocalSaveStore();
 const campaign: Campaign = new Campaign(stage, mapView, app, ai, {
   onSetup: () => showSetup(),
@@ -30,6 +33,7 @@ const campaign: Campaign = new Campaign(stage, mapView, app, ai, {
 });
 const menu: GameMenu = new GameMenu(byId("menu"), {
   store: saves,
+  settings,
   current: () => {
     if (setup.visible) return null;
     if (!campaign.running) return "Skirmishes aren't saved; march onto a map for a game you can save.";
