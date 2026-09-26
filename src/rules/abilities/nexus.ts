@@ -52,9 +52,9 @@ export const nexus: Readonly<Record<string, Behavior>> = {
   },
 
   /** Justiciar (scheme): secretly mark an enemy; the next ability it uses is cancelled. A free action. */
-  negate: {
+  counter: {
     kind: "active",
-    name: "Negate",
+    name: "Counter",
     describe: (p) =>
       `Free action: secretly mark an enemy; the next ability it uses is cancelled. ${spellCost(p)}`,
     tags: ["spell"],
@@ -63,10 +63,10 @@ export const nexus: Readonly<Record<string, Behavior>> = {
     choices: (ctx, self) =>
       ctx
         .living(opponent(ctx.unit(self.unitId).side))
-        .filter((u) => !u.effects.some((e) => e.def === "negated"))
+        .filter((u) => !u.effects.some((e) => e.def === "countered"))
         .map((u) => single(u, "free")),
     resolve: (ctx, self, choice) => {
-      for (const id of choice.affected) ctx.addEffect(id, { def: "negated", source: self.unitId });
+      for (const id of choice.affected) ctx.addEffect(id, { def: "countered", source: self.unitId });
     },
   },
 
@@ -91,7 +91,7 @@ export const nexus: Readonly<Record<string, Behavior>> = {
     resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self, ["attack", "ranged", "spell", "damage", "area"])),
   },
 
-  /** Battery (scheme): share shield with an ally until both are equal; the loan perishes on the Battery's next turn. */
+  /** Cyclops (scheme): share shield with an ally until both are equal; the loan perishes on the Cyclops's next turn. */
   equalize: {
     kind: "active",
     name: "Equalize",

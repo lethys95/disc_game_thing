@@ -168,7 +168,7 @@ export type BattleEvent =
   | { type: "effectEnded"; unitId: string; effect: string }
   | { type: "move"; unitId: string; from: Tile; to: Tile }
   | { type: "skipped"; unitId: string; reason: "stunned" | "noActions" }
-  | { type: "negated"; unitId: string; abilityId: string }
+  | { type: "countered"; unitId: string; abilityId: string }
   | { type: "battleEnd"; outcome: Outcome };
 
 /**
@@ -274,9 +274,9 @@ export interface ActiveBehavior {
   readonly defaults?: Params;
   /** Uses the damage type given here instead of the unit's. */
   readonly damageType?: DamageType;
-  /** Wait: puts the unit back in the queue instead of acting. Not an ability a Negate can cancel. */
+  /** Wait: puts the unit back in the queue instead of acting. Not an ability a Counter can cancel. */
   readonly reschedules?: boolean;
-  /** The target is secret from the other side (Negate). */
+  /** The target is secret from the other side (Counter). */
   readonly secretTarget?: boolean;
   /** What an overloaded cast reaches, when the unit's params allow overloading (`overload`: its extra cost). */
   overloadChoices?(ctx: Ctx, self: TraitSelf): TargetChoice[];

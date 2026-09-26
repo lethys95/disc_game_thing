@@ -20,10 +20,10 @@ Two players (hotseat or player vs AI) alternate faction turns. Capitol with guar
 XP → evolution tiers, branch investment for Jilliath's melee line, graveyard with decaying resurrection cost.
 
 ## M5 — Neutrals and a second faction ✅ (2026-09-25)
-The user's bandits guard neutral cities, camps and dungeons (one-time rewards: gold, a unit joins). Ral-Vitahl's tier 1 (Custodian, Arcane Engineer, Apprentice) is playable beside Jilliath. Engine: shields, ranged and area attacks. Punishment capped at 3 stacks.
+The user's bandits guard neutral cities, camps and dungeons (one-time rewards: gold, a unit joins). Ral-Vitahl's tier 1 (Custodian, Technician, Apprentice) is playable beside Jilliath. Engine: shields, ranged and area attacks. Punishment capped at 3 stacks.
 
 ## M6 — Nexus scheme vs overload ✅ (2026-09-25)
-Forks are per faction. Nexus's one fork (scheme = automata and the Justiciar, overload = mutants and the Thaumaturge) unlocks the Battery (Equalize: lent shields), the Mutant (Mutate), the Justiciar (a secret Negate mark) and the Thaumaturge (Homing Lightning). All designed by the user.
+Forks are per faction. Nexus's one fork (scheme = automata and the Justiciar, overload = mutants and the Thaumaturge) unlocks the Cyclops (Equalize: lent shields), the Mutant (Mutate), the Justiciar (a secret Counter mark) and the Thaumaturge (Homing Lightning). All designed by the user.
 
 ## M7–M11 ✅ (2026-09-25/26)
 Foundation rebuild (traits, effect definitions, damage pipeline), first-playtest fixes, per-line forks, leader tree, unit-type upgrades and the Capitol screen (m8), fallen leaders and hotkeys (m9), art slots and the art pipeline (m10), save/load (m11). The art spike ran on Krea 2; the direction is **not settled** (`design/art.md`).

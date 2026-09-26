@@ -5,14 +5,14 @@
 
 ## The line
 - **Role in the faction:** the front; not Nexus's strongest line (casters are).
-- **Ends at tier:** 3 at most (you, 2026-09-26); the scheme side may stop at the Battery (tier 2).
+- **Ends at tier:** 3 at most (you, 2026-09-26); the scheme side may stop at the Cyclops (tier 2).
 - **Forks:** tier 2: **scheme** (automata: foresight, counterplay) vs **overload** (mutants: raw power that doesn't care who it hits).
 - **Theme:** expedience; "mutants will be the melee line primarily" (you).
 
 ## Tier 1
 
 ### Custodian
-- **Evolves into:** Battery (scheme) or Mutant (overload).
+- **Evolves into:** Cyclops (scheme) or Mutant (overload).
 - **Role:** golem front-liner on a shield.
 - **Intent:** a shield is temporary health on top of a small max HP. It regenerates fully after the fight, but the unit can't take a large beating, hence expedience and speed. Normal healing can't restore shields, only shield-specific effects.
 - **Stats (Claude):** health low · shield high · damage medium · armor none · initiative medium.
@@ -21,14 +21,14 @@
 
 ## Tier 2
 
-### Battery (scheme)
+### Cyclops (scheme)
 - **Evolves from:** Custodian.
 - **Role:** shield bank for the squad.
 - **Intent:** higher shield; spreads it to others and usually loses some doing so.
 - **Stats (Claude):** health low · shield very high · damage low · armor none · initiative medium.
 - **Abilities:**
-  - *Equalize*: shares shields with a unit until both are equal. Shields handed out this way perish on the Battery's next turn.
-- **Status:** in game as `battery`.
+  - *Equalize*: shares shields with a unit until both are equal. Shields handed out this way perish on the Cyclops's next turn.
+- **Status:** in game as `cyclops`.
 
 ### Mutant (overload)
 - **Evolves from:** Custodian.

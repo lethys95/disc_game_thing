@@ -8,11 +8,11 @@ Already in the game:
 - Lent shields that perish when the *lender's* next turn starts (Equalize).
 - Stacking with a cap (Punishment ×3), stacking without a cap (Mutate), accumulating magnitude (bleed).
 - Timed effects on different clocks: until the bearer's next turn (Defend, Stun), until the round ends (Guardian Spirit's reprieve), all battle (Punishment, bleed).
-- Replacements: a cancelled ability (Negate), a prevented death (Guardian Spirit), damage turned into bleed (Domination).
+- Replacements: a cancelled ability (Counter), a prevented death (Guardian Spirit), damage turned into bleed (Domination).
 - Reactions: on hit (Punishment), after attacking (Zeal, Fanaticism), on a kill (Hysteria), on a shield overcharge (Mutate).
 - Auras: positional (Devotion Aura), battlefield-wide rule changes that grant and forbid abilities (Fanaticism Aura), dynamic (Congregation).
 - Per-target bonuses (Marauder vs armor); abilities with fixed power (Burst) vs power from the unit's damage (Attack).
-- Hidden information (Negate's mark is secret from the marked side).
+- Hidden information (Counter's mark is secret from the marked side).
 
 Asked for or implied by the design:
 - **Blacksmith node**: a world-level source (owning a city node) makes abilities deal +10 damage in battle. Fixed-power spells too, not just the damage stat.
@@ -36,7 +36,7 @@ A **trait** is a bundle of hooks. Passive abilities are traits. Effects (buffs, 
 | `mitigate(packet)` | the target's traits | Defend (halve) |
 | `turnStart(unit)` → `skip`? | traits on the unit whose turn starts | Stun, bleed tick |
 | `anyTurnStart(actor)` | all traits | lent shields expiring when their lender acts |
-| `beforeAbility(action)` → `cancel`? | the actor's traits | Negate |
+| `beforeAbility(action)` → `cancel`? | the actor's traits | Counter |
 | `afterHit`, `afterAttack`, `onKill` | the attacker's traits | Punishment, Zeal, Fanaticism, Hysteria |
 | `preventDeath` | the dying unit's traits | Guardian Spirit, its reprieve |
 | `restored(pool, overflow)` | the target's traits | Mutate |
@@ -48,7 +48,7 @@ Adding a mechanic means writing a trait. The engine and the AI don't change.
 An **effect definition** (registered by id, like abilities) holds the hooks plus metadata:
 - `stacking`: `unique` (re-applying refreshes it), `stack` (up to an optional cap), or `independent` (one instance per source; loans).
 - `lifetime`: `battle`, `untilOwnTurn` (ends when the bearer's next turn starts), `untilRoundEnd`, `untilSourceTurn` (ends when the source's next turn starts), or `permanent` (world-level; survives battles).
-- `visibility`: `public`, or `hiddenFromBearerSide` (Negate's mark). The view reads this flag; nothing checks effect names.
+- `visibility`: `public`, or `hiddenFromBearerSide` (Counter's mark). The view reads this flag; nothing checks effect names.
 - `onExpire`: cleanup, e.g. a lent shield takes back what's left of the loan.
 
 Every definition also carries `describe`: its rules text, computed from its own numbers, so the words can't drift from the rule.

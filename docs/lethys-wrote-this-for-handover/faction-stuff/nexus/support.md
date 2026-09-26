@@ -11,14 +11,14 @@
 
 ## Tier 1
 
-### Arcane Engineer
+### Technician
 - **Evolves into:** nothing yet.
 - **Role:** shield mechanic.
 - **Intent:** weak ranged attack; primary function is restoring shields. Only the melee line has a shield stat, which limits its use (your words).
 - **Stats (Claude):** health low · damage very low (ranged) · armor none · initiative medium.
 - **Abilities:**
   - *Restore Shield*: refills an ally's shield (and feeds a Mutant's Mutate when the shield is already full).
-- **Status:** in game as `arcane_engineer`.
+- **Status:** in game as `technician`.
 
 ## Tier 2
 Not designed yet.

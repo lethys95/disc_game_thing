@@ -28,15 +28,15 @@ export const PRESETS: Readonly<Record<"uncommitted" | "preserve" | "punishment" 
 export const NEXUS_PRESETS: Readonly<Record<"uncommitted" | "scheme" | "overload", readonly Placement[]>> = {
   uncommitted: [
     at("custodian", 0, 0), at("custodian", 0, 1), at("custodian", 0, 2),
-    at("arcane_engineer", 1, 0), at("apprentice", 1, 1),
+    at("technician", 1, 0), at("apprentice", 1, 1),
   ],
   scheme: [
-    at("battery", 0, 0), at("custodian", 0, 1), at("battery", 0, 2),
-    at("arcane_engineer", 1, 0), at("justiciar", 1, 1),
+    at("cyclops", 0, 0), at("custodian", 0, 1), at("cyclops", 0, 2),
+    at("technician", 1, 0), at("justiciar", 1, 1),
   ],
   overload: [
     at("mutant", 0, 0), at("custodian", 0, 1), at("mutant", 0, 2),
-    at("arcane_engineer", 1, 0), at("thaumaturge", 1, 1),
+    at("technician", 1, 0), at("thaumaturge", 1, 1),
   ],
 };
 

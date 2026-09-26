@@ -12,8 +12,8 @@ Git: tags `m2-playable` … `m7-foundation` mark tested states. Work happens on 
 **M1–M6 done.** Setup → pick each side's faction (**Jilliath** or **Ral-Vitahl**) and a formation → **Fight** or **March**.
 - March: a 61-hex map with Capitols and Guardians, neutral cities guarded by **bandits**, bandit **camps**, and guarded **dungeons** with one-time rewards.
 - Also gold, recruiting, elevation, XP and evolution, free per-line branch choices (with a prompt when a unit reaches an undecided fork), and the graveyard.
-- Engine: shields (and lent shields), ranged, area spells, stun, anti-armor, secret Negate marks, same-name lightning, Mutate. Punishment is capped at 3 stacks.
-- Nexus forks scheme vs overload (Battery, Mutant, Justiciar, Thaumaturge). The Negate mark is hidden from the marked side (`src/view/secrecy.ts`, tested).
+- Engine: shields (and lent shields), ranged, area spells, stun, anti-armor, secret Counter marks, same-name lightning, Mutate. Punishment is capped at 3 stacks.
+- Nexus forks scheme vs overload (Cyclops, Mutant, Justiciar, Thaumaturge). The Counter mark is hidden from the marked side (`src/view/secrecy.ts`, tested).
 - Unit designs from the user: `design/units/*.md`. Numbers are provisional (`questions.md`).
 
 Rules: `src/rules/` (93 tests). View: `src/view/`. Tools: the `verify` skill; `A=<preset|nexus> B=… pnpm sim:world`.
@@ -47,7 +47,7 @@ See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/c
 - 2026-09-25: m8: per-line forks replace doctrines: free choice in the Capitol, a prompt at undecided forks, setup formations imply the choices.
 - 2026-09-25: first playtest fixes: the enemy's fights with neutrals resolve off-screen; effect tooltips and pinned cards; leader crowns; formation peek; Leadership replaces the fixed squad size (5).
 - 2026-09-25: consolidation: the engine rebuilt on traits and effect definitions, a damage pipeline, params and tags, city nodes as data (Blacksmith), world split, AI in a worker, `pnpm verify`. The preset battle matrix is identical before and after.
-- 2026-09-25: M6: per-faction forks; Nexus scheme vs overload with Battery, Mutant, Justiciar, Thaumaturge.
+- 2026-09-25: M6: per-faction forks; Nexus scheme vs overload with Cyclops, Mutant, Justiciar, Thaumaturge.
 - 2026-09-25: M5: bandit neutrals (guarded cities, camps, dungeons with rewards), Ral-Vitahl tier 1, shields/ranged/area engine, Punishment cap.
 - 2026-09-25: M4 done: XP, evolution, branch investment, graveyard/resurrection; AI invests and resurrects; cold wars persist (design gap).
 - 2026-09-25: M3 done: Capitols and Guardian, cities and gold, recruiting, elevation, healing, map forecast, safer map AI; Guardian tuned by simulation.

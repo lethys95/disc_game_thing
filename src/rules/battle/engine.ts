@@ -161,10 +161,10 @@ export function applyAction(battle: Battle, action: Action): Step {
   const bonus = slot.bonusAttacks.shift();
   slot.penaltyMultiplier = bonus ?? 1;
   ctx.emit({ type: "ability", unitId, abilityId: action.abilityId, targets: casts.flatMap((c) => c.affected), enhancement });
-  // A cancel (Negate) spoils the whole cast, copies included.
+  // A cancel (Counter) spoils the whole cast, copies included.
   const cancelled =
     !found.reschedules && [...traitsOn(ctx, unitId)].some((t) => t.hooks.beforeAbility?.(ctx, t.self, action.abilityId) === "cancel");
-  if (cancelled) ctx.emit({ type: "negated", unitId, abilityId: action.abilityId });
+  if (cancelled) ctx.emit({ type: "countered", unitId, abilityId: action.abilityId });
   else for (const cast of casts) found.resolve(ctx, self, cast);
   slot.penaltyMultiplier = 1;
 

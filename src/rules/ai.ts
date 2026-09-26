@@ -41,7 +41,7 @@ export function chooseAction(battle: Battle): Action | null {
 
 /**
  * How good a position is for `side`. Health, shields and spent charges are universal; everything mechanic-specific
- * (a pending Negate, a Mutation, a fire shield) comes from the traits' own `aiValue`.
+ * (a pending Counter, a Mutation, a fire shield) comes from the traits' own `aiValue`.
  */
 function evaluate(battle: Battle, side: Side): number {
   if (battle.outcome) return battle.outcome.winner === side ? 1e6 : battle.outcome.winner === null ? 0 : -1e6;

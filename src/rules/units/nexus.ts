@@ -8,8 +8,8 @@ export const NEXUS_UNITS: Readonly<Record<string, UnitDef>> = {
     stats: { maxHp: 60, shield: 90, damage: 25, armor: 0, initiative: 45 },
     abilities: kit("attack", "defend", "wait"),
   },
-  arcane_engineer: {
-    id: "arcane_engineer", name: "Arcane Engineer", faction: "nexus", tier: 1, damageType: "weapon",
+  technician: {
+    id: "technician", name: "Technician", faction: "nexus", tier: 1, damageType: "weapon",
     stats: { maxHp: 60, shield: 0, damage: 10, armor: 0, initiative: 45 },
     abilities: kit("shoot", "restore_shield", "defend", "wait"),
   },
@@ -19,8 +19,8 @@ export const NEXUS_UNITS: Readonly<Record<string, UnitDef>> = {
     abilities: kit("plus_burst", "bolt", "defend", "wait"),
     spellCharges: 2,
   },
-  battery: {
-    id: "battery", name: "Battery", faction: "nexus", tier: 2, damageType: "weapon",
+  cyclops: {
+    id: "cyclops", name: "Cyclops", faction: "nexus", tier: 2, damageType: "weapon",
     stats: { maxHp: 70, shield: 160, damage: 30, armor: 0, initiative: 45 },
     abilities: kit("attack", "equalize", "defend", "wait"),
   },
@@ -33,7 +33,7 @@ export const NEXUS_UNITS: Readonly<Record<string, UnitDef>> = {
     id: "justiciar", name: "Justiciar", faction: "nexus", tier: 2, damageType: "weapon",
     stats: { maxHp: 70, shield: 0, damage: 12, armor: 0, initiative: 55 },
     // Scheme replicates: precise, every target chosen.
-    abilities: [{ id: "negate", params: { replicate: 1 } }, { id: "plus_burst", params: { replicate: 1 } }, ...kit("bolt", "defend", "wait")],
+    abilities: [{ id: "counter", params: { replicate: 1 } }, { id: "plus_burst", params: { replicate: 1 } }, ...kit("bolt", "defend", "wait")],
     spellCharges: 4,
   },
   thaumaturge: {

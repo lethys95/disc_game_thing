@@ -74,8 +74,8 @@ const effects: readonly EffectDef[] = [
     hooks: { preventDeath: () => true },
   },
   {
-    id: "negated",
-    name: "Negated",
+    id: "countered",
+    name: "Countered",
     describe: () => "The next ability it uses will be cancelled.",
     stacking: { mode: "unique" },
     lifetime: "battle",
@@ -89,11 +89,11 @@ const effects: readonly EffectDef[] = [
     },
   },
   {
-    // Shield lent by a Battery. It sits in the bearer's shield pool; on expiry whatever is left of it goes.
+    // Shield lent by a Cyclops. It sits in the bearer's shield pool; on expiry whatever is left of it goes.
     id: "lent_shield",
     quiet: true,
     name: "Lent shield",
-    describe: (e) => `${e.amount} shield lent by a Battery; it perishes when the Battery's next turn starts.`,
+    describe: (e) => `${e.amount} shield lent by a Cyclops; it perishes when the Cyclops's next turn starts.`,
     stacking: { mode: "perSource" },
     lifetime: "untilSourceTurn",
     visibility: "public",

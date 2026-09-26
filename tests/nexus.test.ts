@@ -7,24 +7,24 @@ import { describe, expect, test } from "vitest";
 describe("Nexus forks", () => {
   test("scheme vs overload is chosen per line: Custodians going Scheme says nothing about Apprentices", () => {
     expect(openForks("nexus", {})).toEqual(["custodian", "apprentice"]);
-    const scheming = choose({}, "custodian", "battery");
+    const scheming = choose({}, "custodian", "cyclops");
     expect(openForks("nexus", scheming)).toEqual(["apprentice"]);
-    expect(allowedUnits("nexus", scheming)).toEqual(["custodian", "battery", "arcane_engineer", "apprentice", "justiciar", "thaumaturge"]);
+    expect(allowedUnits("nexus", scheming)).toEqual(["custodian", "cyclops", "technician", "apprentice", "justiciar", "thaumaturge"]);
     expect(grow("custodian", 0, 100, { custodian: "mutant" }).defId).toBe("mutant");
     expect(grow("apprentice", 0, 100, { ...scheming, apprentice: "thaumaturge" }).defId).toBe("thaumaturge");
   });
 });
 
 describe("Justiciar", () => {
-  test("Negate is a free action; the marked unit's next ability fizzles but still spends its turn", () => {
+  test("Counter is a free action; the marked unit's next ability fizzles but still spends its turn", () => {
     let battle = start([p("justiciar", 1, 1)], [p("paladin", 0, 1)]);
-    battle = act(battle, "negate", "1.0.1").battle;
+    battle = act(battle, "counter", "1.0.1").battle;
     expect(battle.current?.unitId).toBe("0.1.1");
     battle = act(battle, "defend").battle;
     const step = act(battle, "lay_on_hands");
-    expect(step.events).toContainEqual({ type: "negated", unitId: "1.0.1", abilityId: "lay_on_hands" });
+    expect(step.events).toContainEqual({ type: "countered", unitId: "1.0.1", abilityId: "lay_on_hands" });
     expect(unit(step.battle, "1.0.1").abilities.find((a) => a.ref.id === "lay_on_hands")?.chargesUsed).toBe(1);
-    expect(legalActions(step.battle).map((a) => a.abilityId)).not.toContain("negate");
+    expect(legalActions(step.battle).map((a) => a.abilityId)).not.toContain("counter");
   });
 });
 
@@ -50,15 +50,15 @@ describe("spell charges (docs/design/factions/ral-vitahl.md)", () => {
     expect(unit(step.battle, "0.1.1").spellCharges).toBe(4 - 2);
   });
 
-  test("a replicated Negate marks several enemies with one free action; each copy needs its own target", () => {
+  test("a replicated Counter marks several enemies with one free action; each copy needs its own target", () => {
     const battle = start([p("justiciar", 1, 1)], [p("paladin", 0, 0), p("paladin", 0, 2)]);
-    const negate = legalActions(battle).find((a) => a.abilityId === "negate" && a.enhancement.kind === "replicate");
-    if (!negate || negate.enhancement.kind !== "replicate") throw new Error("no replicated Negate");
-    expect(negate.enhancement.copies).toBe(1);
-    const step = applyAction(battle, { abilityId: "negate", choice: 0, enhancement: negate.enhancement, copies: [1] });
-    expect(["1.0.0", "1.0.2"].every((id) => unit(step.battle, id).effects.some((e) => e.def === "negated"))).toBe(true);
+    const counter = legalActions(battle).find((a) => a.abilityId === "counter" && a.enhancement.kind === "replicate");
+    if (!counter || counter.enhancement.kind !== "replicate") throw new Error("no replicated Counter");
+    expect(counter.enhancement.copies).toBe(1);
+    const step = applyAction(battle, { abilityId: "counter", choice: 0, enhancement: counter.enhancement, copies: [1] });
+    expect(["1.0.0", "1.0.2"].every((id) => unit(step.battle, id).effects.some((e) => e.def === "countered"))).toBe(true);
     expect(unit(step.battle, "0.1.1").spellCharges).toBe(4 - 2);
-    expect(() => applyAction(battle, { abilityId: "negate", choice: 0, enhancement: negate.enhancement, copies: [0] })).toThrow(/illegal/);
+    expect(() => applyAction(battle, { abilityId: "counter", choice: 0, enhancement: counter.enhancement, copies: [0] })).toThrow(/illegal/);
   });
 
   test("an empty battery leaves only the weak default attack", () => {
@@ -70,9 +70,9 @@ describe("spell charges (docs/design/factions/ral-vitahl.md)", () => {
   });
 });
 
-describe("Battery", () => {
-  test("Equalize evens out shields, and the lent part perishes when the Battery's next turn starts", () => {
-    let battle = until(start([p("battery", 0, 1), p("custodian", 0, 0)], [p("congregant", 2, 2)]), "0.0.1");
+describe("Cyclops", () => {
+  test("Equalize evens out shields, and the lent part perishes when the Cyclops's next turn starts", () => {
+    let battle = until(start([p("cyclops", 0, 1), p("custodian", 0, 0)], [p("congregant", 2, 2)]), "0.0.1");
     battle = act(battle, "equalize", "0.0.0").battle;
     expect(unit(battle, "0.0.1").shield).toBe(160 - 35);
     expect(unit(battle, "0.0.0").shield).toBe(90 + 35);
@@ -83,7 +83,7 @@ describe("Battery", () => {
 
 describe("Mutant", () => {
   test("restoring a shield that's already full mutates it: +10 damage each time", () => {
-    let battle = until(start([p("mutant", 0, 1), p("arcane_engineer", 1, 1)], [p("congregant", 2, 2)]), "0.1.1");
+    let battle = until(start([p("mutant", 0, 1), p("technician", 1, 1)], [p("congregant", 2, 2)]), "0.1.1");
     battle = act(battle, "restore_shield", "0.0.1").battle;
     expect(effectiveStats(battle, "0.0.1").damage).toBe(50);
   });

@@ -279,8 +279,8 @@ function describe(event: BattleEvent, name: (id: string) => string, playerSide: 
       return `${name(event.unitId)}'s ${effectDef(event.by).name.toLowerCase()} absorbs ${event.amount}`;
     case "move":
       return `${name(event.unitId)} is dragged to the front`;
-    case "negated":
-      return `${name(event.unitId)}'s action is negated!`;
+    case "countered":
+      return `${name(event.unitId)}'s action is countered!`;
     case "skipped":
       return event.reason === "stunned" ? `${name(event.unitId)} is stunned` : `${name(event.unitId)} cannot act`;
     case "battleEnd":
