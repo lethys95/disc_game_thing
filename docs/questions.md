@@ -31,7 +31,7 @@ The user is in a "suggest" role: they answer when they have time, so nothing her
 18. Sparring with the user on a second faction (the user has ideas). Topics: how the faction's core plays, back-row roles (every canon unit is melee so far), tree forks, a signature mechanic.
 
 ## Neutrals and the economy (M5)
-19. Neutral XP is finite (2 camps, 2 dungeons, 3 guarded cities on a 61-hex map), so AI-vs-AI games still end in cold wars: armies reach about tier 2–3, and a Guardian needs tier 4–5. Should neutrals respawn, or grow over time, or should maps have more of them?
+19. **Provisional answer in code (m13):** cleared bandit camps regrow after 8 turns, weak before turn 20, medium before 40, strong after (`balance.ts`). Before that, every AI game stalled once the neutrals were gone, since tier-1 units can't hurt a 25-armor Guardian. Is regrowth right, or would you rather have something else (more lairs, neutral roamers, a training building)? Original question: Neutral XP is finite (2 camps, 2 dungeons, 3 guarded cities on a 61-hex map), so AI-vs-AI games still end in cold wars: armies reach about tier 2–3, and a Guardian needs tier 4–5. Should neutrals respawn, or grow over time, or should maps have more of them?
 20. Gold has no sink beyond tier-1 recruits (the winning AI banks ~17k). Canon has city upgrades (linear, gold, raising fortification/armor/regen). Should those come next, or something else?
 21. Bandit and Nexus stats, recruit prices (Custodian 60, Engineer 50, Apprentice 60), group sizes, dungeon rewards (200 gold, or 50 gold + a Hedge Mage joins) are all provisional. Ranged units hit any enemy (D2 archers); fine?
 
@@ -54,3 +54,7 @@ The user is in a "suggest" role: they answer when they have time, so nothing her
 32. ~~Another unit takes over a fallen leader's figure?~~ Answered: no. The fallen leader stays the leader and must be revived (pillars.md). Still provisional: the warband may march while its leader is dead (to go home), and reviving costs what a resurrection would.
 33. Leader experience: today a leader's tree points come from `experience`, which already is its own counter (starts at 0 on elevation, only grows while it leads, and only while it lives), fed by the same XP as its unit. The user suspects leader abilities shouldn't hang on XP alone. Other sources to spar on: battles won as leader, cities taken, dungeons cleared, turns led, items.
 34. A settings menu (hotkeys, speed, camera) is wanted eventually. Hotkeys are data on the ability definitions (`hotkey`), so remapping will be an override table.
+
+## A game you can finish (m13)
+35. **Nexus needs tiers 3+ (design gate).** Nexus's trees end at tier 2 (Battery, Mutant, Justiciar, Thaumaturge; the Arcane Engineer has no tier 2 at all). Tier-2 armies can't break a Capitol, so games where Nexus is ahead still stall. Needs the user's unit designs.
+36. **Cross-faction balance:** with the AI on both sides, Nexus wins about 10 of 13 decided games against Jilliath (8 seeds each way; the Jilliath mirror is an even 4–4). Tuning waits for Nexus's tiers 3+, since the tier-2 cap distorts the picture.

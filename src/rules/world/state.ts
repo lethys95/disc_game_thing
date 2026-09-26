@@ -78,6 +78,8 @@ export interface Lair {
   guards: SquadMember[];
   readonly reward: Reward | null;
   looted: boolean;
+  /** A cleared camp's turn to regrow (provisional, questions.md #19); null while guarded, and for dungeons. */
+  regrowsOn: number | null;
 }
 
 export type Defender = { kind: "leader"; leaderId: string } | { kind: "garrison"; cityId: string } | { kind: "lair"; lairId: string };
@@ -135,6 +137,7 @@ export type WorldEvent =
   | { type: "fell"; side: Side; defId: string }
   | { type: "chose"; side: Side; fork: string; to: string }
   | { type: "cleared"; lairId: string; side: Side }
+  | { type: "regrew"; lairId: string }
   | { type: "looted"; lairId: string; side: Side; gold: number; joins: string | null }
   | { type: "resurrected"; side: Side; defId: string }
   | { type: "learned"; leaderId: string; skill: string }

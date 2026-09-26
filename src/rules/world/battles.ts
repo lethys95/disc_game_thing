@@ -1,4 +1,5 @@
 import { autoplay } from "#rules/ai";
+import { CAMP_REGROWTH_TURNS } from "#rules/balance";
 import { createBattle } from "#rules/battle/engine";
 import type { Placement } from "#rules/battle/engine";
 import type { Battle, Side } from "#rules/battle/types";
@@ -98,7 +99,7 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
     lair.guards = defenders;
     if (lair.guards.length === 0 && attacker.squad.length > 0) {
       if (lair.kind === "camp") {
-        draft.lairs = draft.lairs.filter((l) => l.id !== lair.id);
+        lair.regrowsOn = draft.turn + CAMP_REGROWTH_TURNS;
         events.push({ type: "cleared", lairId: lair.id, side: attacker.side });
       } else if (lair.reward && !lair.looted) {
         lair.looted = true;

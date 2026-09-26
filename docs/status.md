@@ -16,19 +16,19 @@ Git: tags `m2-playable` … `m7-foundation` mark tested states. Work happens on 
 - Nexus forks scheme vs overload (Battery, Mutant, Justiciar, Thaumaturge). The Negate mark is hidden from the marked side (`src/view/secrecy.ts`, tested).
 - Unit designs from the user: `design/units/*.md`. Numbers are provisional (`questions.md`).
 
-Rules: `src/rules/` (89 tests). View: `src/view/`. Tools: the `verify` skill; `A=<preset|nexus> B=… pnpm sim:world`.
+Rules: `src/rules/` (90 tests). View: `src/view/`. Tools: the `verify` skill; `A=<preset|nexus> B=… pnpm sim:world`.
 
 ## Next
-**Direction agreed with the user (decisions.md, 2026-09-26):** Claude owns roadmap, architecture, systems and AI; the user owns designs, looks, playtest verdicts and vetoes. Goal: a vertical slice, one Jilliath vs Ral-Vitahl match you can finish (`roadmap.md`).
-- m12 done: paper standees (portrait cards on the battlefield; statues where no portrait exists).
-1. **M13: a game you can finish.** Map AI that plans, no cold wars (#19), reachable win conditions, sim-tuned balance.
-2. The user will bring unit ideas as they come; implement through the add-content skill.
-3. Open: leader experience (#33, postponed), settings menu (#34), placeholder upgrades, art readability (figure/ground).
+**M13 in progress (branch `m13-finish`): games end now.** Before: every AI-vs-AI game stalled by turn ~20. Now the map AI refills warbands, stages near the enemy Capitol, and opens **siege chains** it has simulated to win; cleared camps regrow (provisional, #19). Jilliath mirror: 8/8 games end, turns 21–66, 4–4. Cross-faction: 13/16 end, Nexus wins ~10/13. `VERBOSE=1 pnpm sim:world` prints each game's battle timeline.
+1. **Waiting on the user:** Nexus tiers 3+ (#35), which also gates cross-faction balance (#36); camp regrowth OK? (#19).
+2. Next for Claude: play a whole game as the human (a playtest script or by hand) for pacing and fairness; then pacing/balance numbers.
+3. Open: leader experience (#33), settings menu (#34), placeholder upgrades, art readability.
 
 ## Waiting on the user
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.
 
 ## Recently done
+- 2026-09-26: m13 (part 1): siege-planning map AI, camp regrowth (provisional); AI games end.
 - 2026-09-26: m12: paper standees; roadmap rewritten around the vertical slice.
 - 2026-09-26: m11: saves (snapshots, versioned, localStorage behind an interface, file export/import, autosave), game menu.
 - 2026-09-26: m10: art slots with fallbacks and placeholders, the art pipeline CLI, first art in the game.

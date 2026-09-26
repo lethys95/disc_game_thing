@@ -279,6 +279,9 @@ export class MapView {
       }
       const guard = model.group.getObjectByName("guard");
       if (guard) guard.visible = lair.guards.length > 0;
+      // A cleared camp is gone until it regrows.
+      model.group.visible = lair.kind === "dungeon" || lair.guards.length > 0;
+      model.label.hidden = !model.group.visible;
       model.label.textContent =
         lair.kind === "camp"
           ? `Bandits · ${lair.guards.length}`
