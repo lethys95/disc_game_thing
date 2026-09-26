@@ -6,13 +6,15 @@ import { LEADER_MOVEMENT } from "#rules/balance";
 import { defenderOf, engage } from "#rules/world/battles";
 import { chooseBranchProblem, elevateProblem, freeTile, growSquad, learnSkillProblem, newcomer, recruitProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem, squadsOf, startRound, startTurn, upgradeCityProblem, researchProblem, cityOfSquad, investNodeProblem, nodeInvestCost, upgradeProblem, cityUpgradeCost } from "#rules/world/economy";
 import { movementOf, rankOf } from "#rules/world/leaders";
-import { planMove } from "#rules/world/movement";
+import { destination, planMove } from "#rules/world/movement";
+import { knownWorld, see, updateVision } from "#rules/world/vision";
+import type { Hex } from "#rules/hex";
 import { squadAt, transfer, transferProblem } from "#rules/world/squads";
 import { isLeaderOf } from "#rules/world/record";
 import { RESEARCH } from "#rules/research";
 import { UPGRADES } from "#rules/upgrades";
 import { playerOf, capitolOf, cityById, leaderById } from "#rules/world/state";
-import type { World, WorldAction, WorldEvent, WorldStep } from "#rules/world/state";
+import type { Leader, World, WorldAction, WorldEvent, WorldStep } from "#rules/world/state";
 
 /** Orders a side gives on its turn. */
 
@@ -25,24 +27,7 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
     case "move": {
       const leader = leaderById(draft, action.leaderId);
       if (leader.player !== side) throw new Error(`${leader.id} cannot move on the other side's turn`);
-      const plan = planMove(draft, leader.id, action.to);
-      if (!plan) throw new Error(`no path for ${leader.id}`);
-      const walked = plan.path.hexes.slice(0, plan.steps);
-      for (const hex of walked) leader.movement -= stepCost(draft.map, hex) ?? 0;
-      const last = walked[walked.length - 1];
-      if (last) leader.hex = last;
-      if (walked.length > 0) events.push({ type: "moved", leaderId: leader.id, path: walked });
-      const target = plan.target;
-      if (target?.kind === "capture") {
-        const city = cityById(draft, target.cityId);
-        city.owner = side;
-        events.push({ type: "captured", cityId: city.id, player: side });
-      } else if (target) {
-        leader.movement = 0;
-        const defender = defenderOf(target);
-        draft.engagement = engage(draft, leader, defender);
-        events.push({ type: "engaged", attackerId: leader.id, defender });
-      }
+      march(draft, leader, action.to, events);
       break;
     }
     case "endTurn": {
@@ -171,5 +156,58 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       break;
     }
   }
+  updateVision(draft);
   return { world: draft, events };
+}
+
+/**
+ * A march, planned on what its player knows (`knownWorld`) and walked a hex at a time. It stops early when it sights
+ * a warband it hadn't seen, or when its way or goal turns out other than it looked through the fog; the next hex
+ * is always in sight, so it never walks into anything unawares.
+ */
+function march(draft: World, leader: Leader, to: Hex, events: WorldEvent[]): void {
+  const side = leader.player;
+  const known = knownWorld(draft, side);
+  const plan = planMove(known, leader.id, to);
+  if (!plan) throw new Error(`no path for ${leader.id}`);
+  const seen = new Set(known.leaders.map((l) => l.id));
+  const route = plan.path.hexes.slice(0, plan.steps);
+  const walked: Hex[] = [];
+  let interrupted = false;
+  let captures: string | null = null;
+  for (const [i, hex] of route.entries()) {
+    const cost = stepCost(draft.map, hex);
+    const there = destination(draft, side, hex);
+    const last = i === route.length - 1;
+    const capture = last && plan.target?.kind === "capture" && there !== null && there !== "blocked" && there.kind === "capture" ? there.cityId : null;
+    if (cost === null || cost > leader.movement || (there !== null && capture === null)) {
+      interrupted = true;
+      break;
+    }
+    leader.movement -= cost;
+    leader.hex = hex;
+    walked.push(hex);
+    captures = capture;
+    if (last) break;
+    see(draft, side);
+    const now = knownWorld(draft, side);
+    if (now.leaders.some((l) => !seen.has(l.id)) || JSON.stringify(destination(now, side, to)) !== JSON.stringify(destination(known, side, to))) {
+      interrupted = true;
+      break;
+    }
+  }
+  if (walked.length > 0) events.push({ type: "moved", leaderId: leader.id, path: walked });
+  if (captures !== null) {
+    cityById(draft, captures).owner = side;
+    events.push({ type: "captured", cityId: captures, player: side });
+    return;
+  }
+  if (interrupted || !plan.target || plan.target.kind === "capture") return;
+  // Next to the goal and in sight of it: what's really there decides.
+  const target = destination(draft, side, to);
+  if (target === null || target === "blocked" || target.kind === "capture") return;
+  leader.movement = 0;
+  const defender = defenderOf(target);
+  draft.engagement = engage(draft, leader, defender);
+  events.push({ type: "engaged", attackerId: leader.id, defender });
 }

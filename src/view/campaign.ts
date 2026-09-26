@@ -1,4 +1,5 @@
-import { hexDistance, sameHex } from "#rules/hex";
+import { hexDistance, hexKey, sameHex } from "#rules/hex";
+import { knownWorld, sightOf, visionOf } from "#rules/world/vision";
 import type { Hex } from "#rules/hex";
 import { tileAt, TERRAIN_COST } from "#rules/map";
 import type { Battle, Side } from "#rules/battle/types";
@@ -202,10 +203,18 @@ export class Campaign {
     void this.runAi();
   }
 
+  /** Everything on the map is drawn as the player at this screen knows it (fog of war). */
   private syncView(world: World): void {
-    this.view.syncLeaders(world);
-    this.view.syncSites(world);
-    this.view.syncLairs(world);
+    const known = knownWorld(world, PLAYER);
+    this.view.setVision(visionOf(world, PLAYER));
+    this.view.syncLeaders(known);
+    this.view.syncSites(known);
+    this.view.syncLairs(known);
+  }
+
+  /** The world as the player at this screen knows it: what hovering, planning and forecasts may use. */
+  private known(): World | null {
+    return this.world ? knownWorld(this.world, PLAYER) : null;
   }
 
   private myLeaders(): Leader[] {
@@ -223,7 +232,7 @@ export class Campaign {
   }
 
   private plan(): MovePlan | null {
-    const world = this.world;
+    const world = this.known();
     const leader = this.selectedLeader();
     const hovered = this.hovered;
     if (!world || !leader || !hovered || !this.myTurn() || sameHex(hovered, leader.hex)) return null;
@@ -238,7 +247,7 @@ export class Campaign {
   }
 
   private async click(): Promise<void> {
-    const world = this.world;
+    const world = this.known();
     const target = this.hovered;
     if (!world || !target || !this.myTurn()) return;
     const own = leaderAt(world, target);
@@ -263,7 +272,7 @@ export class Campaign {
     this.render();
     const step = applyWorldAction(world, action);
     for (const event of step.events) {
-      if (event.type === "moved") await this.view.walk(event.leaderId, event.path);
+      if (event.type === "moved") await this.view.walk(event.leaderId, event.path, world.leaders.some((l) => l.id === event.leaderId && l.player === PLAYER));
     }
     if (generation !== this.generation) return;
     this.world = step.world;
@@ -285,7 +294,7 @@ export class Campaign {
       return;
     }
     this.render();
-    this.announce(step.events);
+    this.announce(step.events, step.world);
     await this.runAi();
   }
 
@@ -294,18 +303,23 @@ export class Campaign {
     const step = concludeBattle(this.world, battle);
     this.world = step.world;
     this.enterMap();
-    this.announce(step.events);
+    this.announce(step.events, step.world);
   }
 
-  private announce(events: readonly WorldEvent[]): void {
+  /** News for the player at this screen: its own, and what others do where it can see. */
+  private announce(events: readonly WorldEvent[], world: World): void {
+    const sight = sightOf(world, PLAYER);
+    const inSight = (hex: Hex | undefined) => hex !== undefined && sight.has(hexKey(hex));
+    const lairSeen = (id: string) => inSight(world.lairs.find((l) => l.id === id)?.hex);
     const lines: string[] = [];
     for (const e of events) {
-      if (e.type === "captured") lines.push(`${e.player === PLAYER ? "You take" : "The enemy takes"} the city.`);
+      if (e.type === "captured" && (e.player === PLAYER || inSight(world.cities.find((c) => c.id === e.cityId)?.hex)))
+        lines.push(`${e.player === PLAYER ? "You take" : "The enemy takes"} the city.`);
       if (e.type === "xp" && e.player === PLAYER) lines.push(`Your survivors gain ${e.each} XP each.`);
       if (e.type === "evolved" && e.player === PLAYER) lines.push(`${unitName(e.from)} becomes ${unitName(e.to)}.`);
       if (e.type === "leveled" && e.player === PLAYER) lines.push(`${unitName(e.defId)} reaches level ${e.level}.`);
-      if (e.type === "cleared") lines.push(e.player === PLAYER ? "The bandit camp is cleared." : "The enemy cleared a bandit camp.");
-      if (e.type === "leaderFell") lines.push(e.player === PLAYER ? "One of your warbands fell." : "An enemy warband fell.");
+      if (e.type === "cleared" && (e.player === PLAYER || lairSeen(e.lairId))) lines.push(e.player === PLAYER ? "The bandit camp is cleared." : "The enemy cleared a bandit camp.");
+      if (e.type === "leaderFell" && e.player === PLAYER) lines.push("One of your warbands fell.");
       if (e.type === "looted" && e.player === PLAYER) lines.push(`The dungeon yields ${e.gold} gold${e.joins ? ` and a ${unitName(e.joins)} joins you` : ""}.`);
     }
     if (lines.length > 0) this.hint.textContent = lines.join(" ");
@@ -347,7 +361,8 @@ export class Campaign {
     if (!world) return;
     const leader = this.selectedLeader();
     const plan = this.plan();
-    const reach = leader && this.myTurn() ? reachable(world, leader.id) : new Map<string, number>();
+    const known = knownWorld(world, PLAYER);
+    const reach = leader && this.myTurn() ? reachable(known, leader.id) : new Map<string, number>();
     this.view.setHighlights({
       reachable: new Set(reach.keys()),
       path: plan?.path.hexes ?? [],
@@ -364,7 +379,7 @@ export class Campaign {
     this.renderWarbands(leader);
     this.renderCities(world);
     this.renderCityScreen(world);
-    this.hint.textContent = this.hintText(world, leader, plan);
+    this.hint.textContent = this.hintText(known, leader, plan);
     this.renderBanner(world);
     this.renderLeaderScreen(world);
     this.renderPrompt(world);
@@ -377,8 +392,9 @@ export class Campaign {
     const hovered = this.hovered;
     const own = hovered ? leaderAt(world, hovered) : undefined;
     if (own?.player === PLAYER && own.id !== leader.id) return `Click to select ${leaderName(own)}'s warband.`;
-    const tile = hovered ? tileAt(world.map, hovered) : undefined;
-    const terrain = tile ? `${tile.terrain}${TERRAIN_COST[tile.terrain] === null ? " (impassable)" : `, costs ${TERRAIN_COST[tile.terrain]}`}` : "";
+    const explored = hovered !== null && playerOf(world, PLAYER).explored.includes(hexKey(hovered));
+    const tile = hovered && explored ? tileAt(world.map, hovered) : undefined;
+    const terrain = hovered && !explored ? "unexplored land" : tile ? `${tile.terrain}${TERRAIN_COST[tile.terrain] === null ? " (impassable)" : `, costs ${TERRAIN_COST[tile.terrain]}`}` : "";
     if (!plan) return `${leaderName(leader)}: ${leader.movement} movement left. ${terrain ? `Hovering ${terrain}.` : "Click a hex to march."}`;
     const target = plan.target;
     if (target?.kind === "capture") return "Click to take the undefended city.";
@@ -530,7 +546,7 @@ export class Campaign {
 
   /** The squad standing on a hex, whoever it belongs to: a warband, a camp or dungeon's guards, a garrison. */
   private groupAt(hex: Hex): { title: string; squad: readonly SquadMember[]; leader: Leader | undefined } | null {
-    const world = this.world;
+    const world = this.known();
     if (!world) return null;
     const leader = leaderAt(world, hex);
     if (leader) {
@@ -538,11 +554,11 @@ export class Campaign {
       return { title: `${whose}, led by a ${leaderName(leader)}`, squad: leader.squad, leader };
     }
     const lair = world.lairs.find((l) => sameHex(l.hex, hex) && l.guards.length > 0);
-    if (lair) return { title: lair.kind === "camp" ? "Bandit camp" : "Dungeon guards", squad: lair.guards, leader: undefined };
+    if (lair) return { title: `${lair.kind === "camp" ? "Bandit camp" : "Dungeon guards"}${this.view.sees(hex) ? "" : ", as last seen"}`, squad: lair.guards, leader: undefined };
     const city = world.cities.find((c) => sameHex(c.hex, hex) && c.garrison.length > 0);
     if (city) {
       const whose = city.owner === null ? "Bandit-held" : city.owner === PLAYER ? "Your" : "Enemy";
-      return { title: `${whose} ${city.kind === "capitol" ? "Capitol" : "city"} garrison`, squad: city.garrison, leader: undefined };
+      return { title: `${whose} ${city.kind === "capitol" ? "Capitol" : "city"} garrison${this.view.sees(hex) ? "" : ", as last seen"}`, squad: city.garrison, leader: undefined };
     }
     return null;
   }

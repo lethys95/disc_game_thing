@@ -1,6 +1,7 @@
 import { STARTING_LEADERSHIP } from "#rules/balance";
 import { forkOptions, openForks } from "#rules/forks";
-import { hexDistance, neighbors, sameHex } from "#rules/hex";
+import { hexDistance, hexKey, neighbors, sameHex } from "#rules/hex";
+import { knownWorld } from "#rules/world/vision";
 import type { Hex } from "#rules/hex";
 import { stepCost } from "#rules/map";
 import { nextForm } from "#rules/progression";
@@ -96,6 +97,23 @@ function siegeViable(world: World, capitolHex: Hex): boolean {
   return siegeOpener(placed, capitolHex) !== null;
 }
 
+/** Idle warbands head for the nearest hex their player hasn't seen, stopping where no enemy could beat them. */
+function explore(world: World, mine: readonly Leader[], wins: Wins): WorldAction | null {
+  const explored = new Set(playerOf(world, world.activePlayer).explored);
+  const unknown = Object.values(world.map.tiles).filter((t) => !explored.has(hexKey(t.hex)));
+  for (const leader of mine) {
+    if (leader.movement <= 0 || leader.fellOnTurn !== null) continue;
+    const nearest = [...unknown].sort((a, b) => hexDistance(leader.hex, a.hex) - hexDistance(leader.hex, b.hex));
+    for (const { hex } of nearest.slice(0, 6)) {
+      const plan = planMove(world, leader.id, hex);
+      if (!plan || plan.steps === 0 || plan.target) continue;
+      const stop = plan.path.hexes.slice(0, plan.steps).reverse().find((h) => !threatened(world, leader, h, wins));
+      if (stop) return { type: "move", leaderId: leader.id, to: stop };
+    }
+  }
+  return null;
+}
+
 /** Provisional AI taste at each fork: the branches pnpm sim rates strongest first. */
 const AI_PREFERRED_BRANCHES: readonly string[] = ["zealot", "punisher", "mutant", "thaumaturge"];
 
@@ -114,10 +132,12 @@ const fullStrength = (squad: readonly SquadMember[]) => squad.reduce((sum, m) =>
 /**
  * Map AI: fill the Capitol, raise a leader when it has none (or gold to spare), then march each leader on the
  * nearest target it can take. It uses deterministic battle forecasts both ways: it skips fights it would lose and
- * won't stop where an enemy could reach it next turn and win. Badly wounded leaders go home to heal.
+ * won't stop where an enemy could reach it next turn and win. Badly wounded leaders go home to heal. It plans from
+ * what it knows (fog of war), and explores when it knows of nothing to do.
  */
-export function chooseWorldAction(world: World): WorldAction {
-  const side = world.activePlayer;
+export function chooseWorldAction(truth: World): WorldAction {
+  const side = truth.activePlayer;
+  const world = knownWorld(truth, side);
   const wins = winsCache();
   const capitol = capitolOf(world, side);
   const mine = world.leaders.filter((l) => l.player === side);
@@ -259,5 +279,7 @@ export function chooseWorldAction(world: World): WorldAction {
   }
   const approach = staging[0];
   if (approach) return { type: "move", leaderId: approach.leader.id, to: approach.to };
+  const scout = explore(world, mine, wins);
+  if (scout) return scout;
   return { type: "endTurn" };
 }
