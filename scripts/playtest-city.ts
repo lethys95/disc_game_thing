@@ -16,6 +16,8 @@ await page.waitForSelector("body[data-ready=true]");
 
 const grids = page.locator("#capitol .squad-grid");
 const titles = () => grids.locator(".section").allTextContents();
+/** "Garrison · 2/4" → 2. */
+const count = (title: string | undefined) => Number(/· (\d+)\//.exec(title ?? "")?.[1] ?? -1);
 const cell = (grid: number, index: number) => grids.nth(grid).locator(".cell").nth(index);
 console.log(`before: ${(await titles()).join(" | ")}`);
 // Visiting warband, front row middle (index 1) → garrison, back row right (index 8).
@@ -23,7 +25,7 @@ await cell(1, 1).dragTo(cell(0, 8));
 await page.waitForTimeout(300);
 const afterDrag = await titles();
 console.log(`after drag: ${afterDrag.join(" | ")}`);
-if (!afterDrag[0]?.includes("2/6")) errors.push("the dragged unit didn't reach the garrison");
+if (count(afterDrag[0]) !== 2) errors.push("the dragged unit didn't reach the garrison");
 
 await cell(0, 6).click();
 await page.locator(".grid-menu button", { hasText: "Recruit Congregant" }).click();
@@ -31,7 +33,7 @@ await page.waitForTimeout(300);
 const afterRecruit = await titles();
 const purse = await page.textContent("#capitol .purse");
 console.log(`after recruit: ${afterRecruit.join(" | ")} · gold ${purse}`);
-if (!afterRecruit[0]?.includes("3/6")) errors.push("the recruit didn't arrive");
+if (count(afterRecruit[0]) !== 3) errors.push("the recruit didn't arrive");
 if (purse?.trim() !== "110") errors.push(`expected 110 gold after recruiting, saw ${purse}`);
 await page.screenshot({ path: "shots/playtest-city.png" });
 await browser.close();

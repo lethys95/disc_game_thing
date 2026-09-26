@@ -5,8 +5,9 @@ import { stepCost } from "#rules/map";
 import { GUARDIAN_ID } from "#rules/units/index";
 import { applyWorldAction } from "#rules/world/actions";
 import { createWorld } from "#rules/world/create";
-import { recruitProblem } from "#rules/world/economy";
-import { transferProblem } from "#rules/world/squads";
+import { recruitProblem, upgradeCityProblem } from "#rules/world/economy";
+import { CITY_ARMOR_PER_TIER, CITY_SLOTS, CITY_UPGRADE_COST } from "#rules/balance";
+import { capacityOf, transferProblem } from "#rules/world/squads";
 import { capitolOf, leaderById } from "#rules/world/state";
 import type { Leader, SquadRef, World } from "#rules/world/state";
 import { describe, expect, test } from "vitest";
@@ -69,5 +70,34 @@ describe("recruiting by tile", () => {
     expect(recruitProblem(w, "congregant", { kind: "garrison", cityId: city.id })).toBe("not your squad");
     w = { ...w, cities: w.cities.map((c) => (c.id === city.id ? { ...c, owner: 0, garrison: [] } : c)) };
     expect(recruitProblem(w, "congregant", { kind: "garrison", cityId: city.id })).toBeNull();
+  });
+});
+
+describe("city tiers", () => {
+  test("upgrading costs gold and adds garrison slots; the Guardian takes none", () => {
+    let w = world();
+    const capitol = capitolOf(w, 0);
+    if (!capitol) throw new Error("no Capitol");
+    expect([capitol.tier, capacityOf(w, garrison)]).toEqual([1, (CITY_SLOTS[1] ?? 0) + 1]);
+    w = applyWorldAction(w, { type: "upgradeCity", cityId: capitol.id }).world;
+    expect(w.gold[0]).toBe(1000 - CITY_UPGRADE_COST * 2);
+    expect(capacityOf(w, garrison)).toBe((CITY_SLOTS[2] ?? 0) + 1);
+    w = applyWorldAction({ ...w, gold: [5000, 5000] }, { type: "upgradeCity", cityId: capitol.id }).world;
+    w = applyWorldAction(w, { type: "upgradeCity", cityId: capitol.id }).world;
+    expect(upgradeCityProblem(w, capitol.id)).toBe("already at the highest tier");
+  });
+
+  test("the garrison, and a warband defending in its own city, fight behind the walls", () => {
+    const base = world();
+    const upgraded = capitolOf(base, 0);
+    if (!upgraded) throw new Error("no Capitol");
+    const w = applyWorldAction(base, { type: "upgradeCity", cityId: upgraded.id }).world;
+    const capitol = capitolOf(w, 0);
+    if (!capitol) throw new Error("no Capitol");
+    const attacker = withLeader({ ...w, activeSide: 1 }, "leader1", { hex: neighbors(capitol.hex).find((h) => stepCost(w.map, h) !== null && !w.cities.some((c) => sameHex(c.hex, h))) ?? capitol.hex });
+    const battle = applyWorldAction(attacker, { type: "move", leaderId: "leader1", to: capitol.hex }).world.engagement?.battle;
+    const walls = Object.values(battle?.units ?? {}).filter((u) => u.side === 0).map((u) => u.effects.find((e) => e.def === "fortified")?.amount);
+    expect(walls.length).toBeGreaterThan(0);
+    expect(walls.every((a) => a === CITY_ARMOR_PER_TIER)).toBe(true);
   });
 });

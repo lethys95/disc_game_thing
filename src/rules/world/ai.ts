@@ -1,18 +1,19 @@
 import { STARTING_LEADERSHIP } from "#rules/balance";
 import { forkOptions, openForks } from "#rules/forks";
-import { sameHex } from "#rules/hex";
+import { hexDistance, neighbors, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
+import { stepCost } from "#rules/map";
 import { nextForm } from "#rules/progression";
 import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
 import { upgradesOf } from "#rules/upgrades";
 import { autoplay } from "#rules/ai";
 import { applyWorldAction } from "#rules/world/actions";
 import { concludeBattle, forecast } from "#rules/world/battles";
-import { chooseBranchProblem, elevateProblem, income, learnSkillProblem, recruitProblem, resurrectionCost, resurrectProblem, reviveProblem, squadsOf, upgradeProblem } from "#rules/world/economy";
+import { chooseBranchProblem, elevateProblem, income, learnSkillProblem, recruitProblem, resurrectionCost, resurrectProblem, reviveProblem, squadsOf, upgradeProblem, cityUpgradeCost, upgradeCityProblem } from "#rules/world/economy";
 import { leadershipOf, movementOf } from "#rules/world/leaders";
 import { destination, planMove } from "#rules/world/movement";
 import type { MovePlan, MoveTarget } from "#rules/world/movement";
-import { capitolOf, fullHp, leaderAt } from "#rules/world/state";
+import { capitolOf, fullHp, lairAt, leaderAt } from "#rules/world/state";
 import type { Leader, SquadMember, SquadRef, World, WorldAction } from "#rules/world/state";
 import { RESURRECTION_BASE } from "#rules/balance";
 
@@ -72,6 +73,27 @@ function siegeOpener(world: World, capitolHex: Hex): string | null {
     if (w.outcome?.winner === side && first) return first.id;
   }
   return null;
+}
+
+const healthy = (leader: Leader) => leader.fellOnTurn === null && strength(leader.squad) >= 0.5 * fullStrength(leader.squad);
+
+/**
+ * The rally check: would a siege win if every healthy warband stood next to the enemy Capitol now? If so, they stop
+ * chasing other targets and close in, so the siege check can open the assault once enough are in reach.
+ */
+function siegeViable(world: World, capitolHex: Hex): boolean {
+  const side = world.activeSide;
+  const free = neighbors(capitolHex).filter(
+    (h) => stepCost(world.map, h) !== null && !world.cities.some((c) => sameHex(c.hex, h)) && !world.leaders.some((l) => sameHex(l.hex, h)) && !lairAt(world, h),
+  );
+  let placed = world;
+  for (const leader of world.leaders.filter((l) => l.side === side && healthy(l))) {
+    const adjacent = hexDistance(leader.hex, capitolHex) === 1;
+    const spot = adjacent ? leader.hex : free.shift();
+    if (!spot) break;
+    placed = { ...placed, leaders: placed.leaders.map((l) => (l.id === leader.id ? { ...l, hex: spot, movement: Math.max(l.movement, movementOf(l)) } : l)) };
+  }
+  return siegeOpener(placed, capitolHex) !== null;
 }
 
 /** Provisional AI taste at each fork: the branches pnpm sim rates strongest first. */
@@ -145,6 +167,11 @@ export function chooseWorldAction(world: World): WorldAction {
       .filter(({ u, value }) => value > 0 && world.gold[side] >= u.price + cost * STARTING_LEADERSHIP && !upgradeProblem(world, u.id))
       .sort((a, b) => b.value - a.value)[0];
     if (upgrade) return { type: "upgrade", upgrade: upgrade.u.id };
+    // Walls with spare gold: the Capitol first (it's the loss condition), then the cheapest city.
+    const walls = world.cities
+      .filter((c) => c.owner === side && !upgradeCityProblem(world, c.id) && world.gold[side] >= cityUpgradeCost(c) + cost * STARTING_LEADERSHIP)
+      .sort((a, b) => Number(b.kind === "capitol") - Number(a.kind === "capitol") || cityUpgradeCost(a) - cityUpgradeCost(b))[0];
+    if (walls && rich) return { type: "upgradeCity", cityId: walls.id };
     // Under threat, only with the gold to fill the new warband at once: a lone new leader stands in front of the
     // garrison and only feeds the enemy XP. New warbands only once the existing ones are full.
     const canFill = world.gold[side] >= cost * STARTING_LEADERSHIP;
@@ -162,6 +189,7 @@ export function chooseWorldAction(world: World): WorldAction {
     if (opener) return { type: "move", leaderId: opener, to: target.hex };
   }
 
+  const rally = target !== undefined && siegeViable(world, target.hex);
   const staging: { leader: Leader; to: Hex }[] = [];
   for (const leader of mine) {
     if (leader.movement <= 0) continue;
@@ -170,12 +198,19 @@ export function chooseWorldAction(world: World): WorldAction {
     if (atHome && leader.squad.length < 3 && income(world, side) >= cost) continue;
     // Wounded, leaderless until revived, or short of units with the gold to fill them: home to the Capitol.
     const missing = leadershipOf(leader) - leader.squad.length;
-    const refill = missing >= 2 && world.gold[side] >= cost * missing;
+    const refill = missing >= 1 && world.gold[side] >= cost * missing;
     const hurt = strength(leader.squad) < 0.5 * fullStrength(leader.squad) || leader.fellOnTurn !== null || refill;
     if (hurt && capitol && !atHome && !leaderAt(world, capitol.hex)) {
       const plan = planMove(world, leader.id, capitol.hex);
       if (plan && plan.steps > 0) return { type: "move", leaderId: leader.id, to: capitol.hex };
       continue;
+    }
+    // Rallying: close in on the enemy Capitol rather than chase anything else; hold once in reach.
+    if (rally && target && healthy(leader)) {
+      const plan = planMove(world, leader.id, target.hex);
+      if (plan?.target) continue;
+      const stop = plan ? plan.path.hexes.slice(0, plan.steps).reverse().find((hex) => !threatened(world, leader, hex, wins)) : undefined;
+      if (stop) return { type: "move", leaderId: leader.id, to: stop };
     }
     const goals: Hex[] = [
       ...world.leaders.filter((l) => l.side !== side).map((l) => l.hex),

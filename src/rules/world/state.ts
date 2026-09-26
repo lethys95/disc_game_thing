@@ -70,6 +70,8 @@ export interface City {
   owner: Side | null;
   /** The leaderless fortification squad. A Capitol's includes its Guardian. */
   garrison: SquadMember[];
+  /** Upgraded with gold: garrison slots and armor for defenders (balance.ts, CITY_SLOTS). Kept when captured. */
+  tier: number;
 }
 
 /** A one-time dungeon reward (user's 2024 design: gold, a creature that joins you; items once they exist). */
@@ -135,6 +137,8 @@ export type WorldAction =
   | { type: "learn"; leaderId: string; skill: string }
   /** Revive a warband's fallen leader at the Capitol. */
   | { type: "revive"; leaderId: string }
+  /** Raise a city you hold one tier. */
+  | { type: "upgradeCity"; cityId: string }
   /** Buy a unit-type upgrade: units that become that type from now on receive it. */
   | { type: "upgrade"; upgrade: string };
 
@@ -158,6 +162,7 @@ export type WorldEvent =
   | { type: "resurrected"; side: Side; defId: string }
   | { type: "learned"; leaderId: string; skill: string }
   | { type: "revived"; leaderId: string }
+  | { type: "cityUpgraded"; cityId: string; tier: number }
   | { type: "upgraded"; side: Side; upgrade: string }
   | { type: "worldEnd"; winner: Side };
 

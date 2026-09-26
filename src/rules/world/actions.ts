@@ -4,7 +4,7 @@ import { stepCost } from "#rules/map";
 import { RECRUIT_COST } from "#rules/units/index";
 import { LEADER_MOVEMENT } from "#rules/balance";
 import { defenderOf, engagementBattle } from "#rules/world/battles";
-import { chooseBranchProblem, elevateProblem, freeTile, growSquad, learnSkillProblem, newcomer, recruitProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem, squadsOf, startTurn, upgradeProblem } from "#rules/world/economy";
+import { chooseBranchProblem, elevateProblem, freeTile, growSquad, learnSkillProblem, newcomer, recruitProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem, squadsOf, startTurn, upgradeCityProblem, upgradeProblem, cityUpgradeCost } from "#rules/world/economy";
 import { movementOf, rankOf } from "#rules/world/leaders";
 import { planMove } from "#rules/world/movement";
 import { squadAt, transfer, transferProblem } from "#rules/world/squads";
@@ -123,6 +123,15 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       leader.squad = leader.squad.map((m) => (isLeaderOf(m, leader) ? { ...m, hp: 1 } : m));
       leader.fellOnTurn = null;
       events.push({ type: "revived", leaderId: leader.id });
+      break;
+    }
+    case "upgradeCity": {
+      const problem = upgradeCityProblem(draft, action.cityId);
+      if (problem) throw new Error(`cannot upgrade the city: ${problem}`);
+      const city = cityById(draft, action.cityId);
+      draft.gold[side] -= cityUpgradeCost(city);
+      city.tier += 1;
+      events.push({ type: "cityUpgraded", cityId: city.id, tier: city.tier });
       break;
     }
     case "upgrade": {

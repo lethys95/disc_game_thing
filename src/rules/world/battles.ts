@@ -1,5 +1,6 @@
 import { autoplay } from "#rules/ai";
-import { CAMP_REGROWTH_TURNS } from "#rules/balance";
+import { CAMP_REGROWTH_TURNS, CITY_ARMOR_PER_TIER } from "#rules/balance";
+import { sameHex } from "#rules/hex";
 import { createBattle } from "#rules/battle/engine";
 import type { Placement } from "#rules/battle/engine";
 import type { Battle, Side } from "#rules/battle/types";
@@ -13,7 +14,7 @@ import { leadershipOf } from "#rules/world/leaders";
 import { isLeaderOf, placementOf } from "#rules/world/record";
 import type { MoveTarget } from "#rules/world/movement";
 import { alive, cityById, lairById, leaderAt, leaderById, leaderUnit, unitId } from "#rules/world/state";
-import type { Defender, Engagement, Leader, SquadMember, World, WorldEvent, WorldStep } from "#rules/world/state";
+import type { City, Defender, Engagement, Leader, SquadMember, World, WorldEvent, WorldStep } from "#rules/world/state";
 
 /** Battles started on the map: who fights whom, with what context, and writing the result back. */
 
@@ -35,10 +36,26 @@ function defendingSquad(world: World, defender: Defender, attackerSide: Side): H
   return { side: city.owner ?? free, squad: city.garrison, leader: undefined, neutral: city.owner === null };
 }
 
+/** The armor a defender gets from a city's walls: a garrison always, a warband only in its own city. */
+function wallsFor(world: World, defender: Defender, side: Side): number {
+  let city: City | undefined;
+  if (defender.kind === "garrison") city = cityById(world, defender.cityId);
+  if (defender.kind === "leader") {
+    const hex = leaderById(world, defender.leaderId).hex;
+    city = world.cities.find((c) => sameHex(c.hex, hex) && c.owner === side);
+  }
+  return city ? CITY_ARMOR_PER_TIER * (city.tier - 1) : 0;
+}
+
 export function engagementBattle(world: World, attacker: Leader, defender: Defender): Battle {
   const defending = defendingSquad(world, defender, attacker.side);
   const ours = attacker.squad.filter(alive).map((m) => placementOf(m, attacker));
-  const theirs = defending.squad.filter(alive).map((m) => placementOf(m, defending.leader));
+  // Defenders in a city fight behind its walls: its garrison, or a warband standing in its own city.
+  const walls = wallsFor(world, defender, defending.side);
+  const theirs = defending.squad.filter(alive).map((m) => {
+    const placement = placementOf(m, defending.leader);
+    return walls > 0 ? { ...placement, effects: [...(placement.effects ?? []), { def: "fortified", amount: walls }] } : placement;
+  });
   const squads: [Placement[], Placement[]] = attacker.side === 0 ? [ours, theirs] : [theirs, ours];
   // Each player side brings the battle effects of the city nodes it holds; neutrals bring none.
   const sideEffects = ([0, 1] as const).map((side) =>

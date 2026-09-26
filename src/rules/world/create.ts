@@ -47,6 +47,7 @@ export function createWorld(
       nodes: site.nodes,
       owner,
       garrison: site.kind === "capitol" ? [member(GUARDIAN_ID, { row: 0, col: 1 })] : banditGroup(strengthAt(map, site.hex, "medium")),
+      tier: 1,
     };
   });
   const lairs = map.lairs.map((site, index): Lair => ({

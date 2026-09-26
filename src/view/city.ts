@@ -1,6 +1,7 @@
 import type { Side, Tile } from "#rules/battle/types";
 import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST } from "#rules/units/index";
-import { elevateProblem, recruitProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem } from "#rules/world/economy";
+import { CITY_ARMOR_PER_TIER, CITY_MAX_TIER, CITY_SLOTS } from "#rules/balance";
+import { cityUpgradeCost, elevateProblem, recruitProblem, upgradeCityProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem } from "#rules/world/economy";
 import { capacityOf, transferProblem } from "#rules/world/squads";
 import { cityById, leaderById, leaderUnit } from "#rules/world/state";
 import type { City, SquadMember, SquadRef, World, WorldAction } from "#rules/world/state";
@@ -79,6 +80,7 @@ export class CityScreen {
       return;
     }
     const body = element("div", "city-body");
+    if (city) body.appendChild(this.fortifications(world, city, mayAct));
     const squads = this.squads(world, side, place);
     const grids = element("div", "grids panel");
     for (const squad of squads) grids.appendChild(squadGrid(squad, this.gridOptions(world, city, mayAct)));
@@ -143,6 +145,24 @@ export class CityScreen {
           ? [{ label: "Elevate to leader", problem: elevateProblem(world, member.tile), run: () => this.options.act({ type: "elevate", tile: member.tile }) }]
           : [],
     };
+  }
+
+  /** The city's tier and its upgrade. */
+  private fortifications(world: World, city: City, mayAct: boolean): HTMLElement {
+    const row = element("div", "fortifications panel");
+    const armor = CITY_ARMOR_PER_TIER * (city.tier - 1);
+    row.append(element("div", "name", `Tier ${city.tier}`), element("div", "note", `${CITY_SLOTS[city.tier] ?? 0} garrison slots · defenders +${armor} armor`));
+    if (city.tier < CITY_MAX_TIER) {
+      const next = city.tier + 1;
+      const problem = upgradeCityProblem(world, city.id);
+      const upgrade = element("button", "action small");
+      upgrade.append(`Upgrade to tier ${next} · `, gold(cityUpgradeCost(city)));
+      upgrade.disabled = !mayAct || problem !== null;
+      upgrade.title = problem ?? `Tier ${next}: ${CITY_SLOTS[next] ?? 0} garrison slots; the garrison and a warband defending here get +${CITY_ARMOR_PER_TIER * (next - 1)} armor.`;
+      upgrade.addEventListener("click", () => this.options.act({ type: "upgradeCity", cityId: city.id }));
+      row.appendChild(upgrade);
+    } else row.appendChild(element("div", "note", "Fully upgraded."));
+    return row;
   }
 
   /** The fallen: warband leaders to revive here, and units to resurrect by clicking an empty tile. */

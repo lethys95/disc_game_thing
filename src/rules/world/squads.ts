@@ -1,4 +1,4 @@
-import { GARRISON_LIMIT } from "#rules/balance";
+import { CITY_SLOTS } from "#rules/balance";
 import type { Side, Tile } from "#rules/battle/types";
 import { sameTile } from "#rules/battle/grid";
 import { hexDistance, sameHex } from "#rules/hex";
@@ -17,9 +17,12 @@ export function squadAt(world: World, ref: SquadRef): SquadMember[] {
   return ref.kind === "garrison" ? cityById(world, ref.cityId).garrison : leaderById(world, ref.leaderId).squad;
 }
 
-/** How many units the squad can hold: a warband's Leadership, or the garrison's slots. */
+/** How many units the squad can hold: a warband's Leadership, or the garrison's slots by the city's tier. */
 export function capacityOf(world: World, ref: SquadRef): number {
-  return ref.kind === "garrison" ? GARRISON_LIMIT : leadershipOf(leaderById(world, ref.leaderId));
+  if (ref.kind === "warband") return leadershipOf(leaderById(world, ref.leaderId));
+  const city = cityById(world, ref.cityId);
+  // The Guardian is the Capitol's heart, not one of its defenders: it takes no slot.
+  return (CITY_SLOTS[city.tier] ?? 0) + city.garrison.filter((m) => m.defId === GUARDIAN_ID).length;
 }
 
 export function ownerOf(world: World, ref: SquadRef): Side | null {

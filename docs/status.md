@@ -19,8 +19,7 @@ Git: tags `m2-playable` … `m7-foundation` mark tested states. Work happens on 
 Rules: `src/rules/` (93 tests). View: `src/view/`. Tools: the `verify` skill; `A=<preset|nexus> B=… pnpm sim:world`.
 
 ## Next
-**M17 Cities in progress (branch `m17-cities`; plan in `roadmap.md`).** Done: charge pips, fork peek (step 1); squad grids with drag and drop, recruit on a tile in any held city, a screen per city with City/Research tabs, warbands meeting (step 2).
-1. Step 3: city tiers (upgrade for gold: garrison slots, armor bonus for garrison and visitors; recruiting capped by tier).
+**M17 Cities in progress (branch `m17-cities`; plan in `roadmap.md`).** Done: charge pips, fork peek (step 1); squad grids with drag and drop, recruit on a tile in any held city, a screen per city with City/Research tabs, warbands meeting (step 2); city tiers with walls, the AI rallying for sieges (step 3).
 2. Step 4: resurrection at cities, unlocked by Capitol research, at a premium.
 3. Step 5: nodes tied to the nearest city (Capitols too), shown on the map; investment.
 4. Spar with the user: destructible cities (#42); colors too brown (#43); neutral difficulty (#41); levels (#40).

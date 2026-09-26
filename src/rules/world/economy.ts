@@ -1,4 +1,4 @@
-import { CAMP_MEDIUM_FROM, CAMP_STRONG_FROM, CAPITOL_HEALING, CAPITOL_INCOME, RESURRECTION_BASE, RESURRECTION_PREMIUM } from "#rules/balance";
+import { CAMP_MEDIUM_FROM, CAMP_STRONG_FROM, CAPITOL_HEALING, CITY_MAX_TIER, CITY_UPGRADE_COST, CAPITOL_INCOME, RESURRECTION_BASE, RESURRECTION_PREMIUM } from "#rules/balance";
 import type { Side, Tile } from "#rules/battle/types";
 import { chooseProblem, isFork, openForks } from "#rules/forks";
 import { COLS, ROWS, sameTile } from "#rules/battle/grid";
@@ -212,4 +212,14 @@ function regrowCamps(world: World, events: WorldEvent[]): void {
     lair.regrowsOn = null;
     events.push({ type: "regrew", lairId: lair.id });
   }
+}
+
+export const cityUpgradeCost = (city: City): number => CITY_UPGRADE_COST * (city.tier + 1);
+
+export function upgradeCityProblem(world: World, cityId: string): string | null {
+  const city = cityById(world, cityId);
+  if (city.owner !== world.activeSide) return "not your city";
+  if (city.tier >= CITY_MAX_TIER) return "already at the highest tier";
+  if (world.gold[world.activeSide] < cityUpgradeCost(city)) return "not enough gold";
+  return null;
 }

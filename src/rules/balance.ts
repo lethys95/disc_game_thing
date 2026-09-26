@@ -21,8 +21,17 @@ export const CAPITOL_INCOME = 50;
 export const MINE_INCOME = 25;
 /** Share of max HP restored at the start of its side's turn to every unit resting in its own Capitol. */
 export const CAPITOL_HEALING = 0.25;
-/** Garrison size, Guardian included. */
-export const GARRISON_LIMIT = 6;
+/**
+ * City tiers (user, 2026-09-26: "upgrade the city: more garrison slots, a small armor bonus to the garrison and the
+ * visiting squad"). Every number here is provisional. Index = tier. A Capitol's Guardian takes no slot.
+ */
+export const CITY_SLOTS: readonly number[] = [0, 3, 4, 6, 8];
+export const CITY_MAX_TIER = CITY_SLOTS.length - 1;
+/** Armor for a city's defenders per tier above the first ("a small armor bonus": armor subtracts from every hit). */
+export const CITY_ARMOR_PER_TIER = 2;
+/** Gold to reach a tier: this × the tier. */
+export const CITY_UPGRADE_COST = 150;
+
 /** Resurrection's floor price per tier (the Congregant's canon 40 gold at tier 1). */
 export const RESURRECTION_BASE = 40;
 /** Canon: immediate resurrection is expensive and the price decays each turn. 3× base, minus one base per turn. */
