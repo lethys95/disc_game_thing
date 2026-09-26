@@ -56,3 +56,16 @@ Units as painterly animated sprites on billboards; the map, arena, lighting and 
 2. Download Qwen-Image-2512 and Qwen-Image-Edit-2511 (Q8 GGUF) and draft the style bible prompts.
 3. Bake-off: Paladin through Route A and Route B, rendered in the battle scene. Decide.
 4. Then the style LoRA, then batch production.
+
+## What the community posts add (user's handover, 2026-09-26)
+Source: `docs/lethys-wrote-this-for-handover/inspiration-from-topology-ai.md` (posts collected by the user). Treat vendor demos with care (most evidence is from launch demos and early testers; costs like "$1,874 of tokens for an island" are real warnings). What applies to us:
+- **Reference folder first.** A curated set of images that define the look, read by the agent before any asset work. We have keepers but no committed reference set; the user curates it once the direction settles.
+- **Image first, then 3D.** "A house I don't like dies in seconds instead of after the model is done": pick 2D concepts before spending anything on meshes. Our `pnpm art` → pick → accept flow already works this way.
+- **Split characters into parts** (helmet, weapon, armor, body) and generate them separately, then assemble in Blender. This is our Route A (rigid parts), and it sidesteps the skinning problems posters report (hair, fur, thin parts).
+- **Multi-view input** improves image-to-3D: posters make turnarounds with a video model ("rotate it as a 3D model") before reconstruction. We have Wan 2.2 installed for exactly that.
+- **Blockout first, dress later** (boxes for houses): what our statues and standees are.
+- **AI in Blender is more capable than we assumed** at rigging, animation fixes, procedural scenes, wind, VFX and props, with iteration driven by screenshots of the result. Correction to "The honest problem" above: cleanup and rigging are workable by Claude in headless Blender (`blender -b -P`, rendering frames to inspect), with a few rounds of feedback; still the costliest step, but not a wall.
+- **Procedural environment art is a cheap, safe win**: trees, rocks, map dressing, spell effects, wind, lighting. No likeness or style risk comparable to characters.
+- Tools named in the posts: Tripo P2 / 3DAIStudio / Meshy (cloud, paid per generation; check terms and EU availability before relying on them), Blender MCP (drives a running Blender GUI; headless scripts do the same for us and live in git).
+
+Plan (proposed 2026-09-26): after M13, a **3D spike**: the Zealot keeper → multi-view (Wan 2.2 turntable) → image-to-3D (local and EU-usable first, e.g. TRELLIS.2; a cloud generator as comparison) → Blender headless (cleanup, split into rigid parts, rig, attack/hit/death/idle) → glTF → the battle scene beside the standees. Separately and cheaply: procedural map dressing (trees, rocks) from Blender or three.js.
