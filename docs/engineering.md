@@ -33,6 +33,7 @@ src/view/
   peek.ts            hold-right-click peeks (formations, as last seen)
   fork-prompt.ts     "a unit is ready to evolve" and Decide later
   forecasts.ts       battle forecasts for the hint, from the worker
+  spells.ts          the Capitol's Spells tab and the map's spell bar (aiming lives in campaign.ts)
   settings.ts        player settings (speed, camera, hotkeys), kept in localStorage; the menu's Settings page edits them
   standee.ts         paper standees: a unit's portrait as a camera-facing card (stand-in battle figures)
   city.ts            a city's screen (City tab: squad grids, recruit on a tile, graveyard; Research tab for the Capitol); also two warbands meeting

@@ -8,6 +8,8 @@ import { chooseBranchProblem, elevateProblem, freeTile, growSquad, learnSkillPro
 import { movementOf, rankOf } from "#rules/world/leaders";
 import { destination, planMove } from "#rules/world/movement";
 import { knownWorld, see, updateVision } from "#rules/world/vision";
+import { castProblem, castSpell, learnSpellProblem } from "#rules/world/spells";
+import { spellById } from "#rules/spells";
 import type { Hex } from "#rules/hex";
 import { squadAt, transfer, transferProblem } from "#rules/world/squads";
 import { isLeaderOf } from "#rules/world/record";
@@ -64,7 +66,7 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       const tile = { row: 0, col: 1 } as const;
       const id = `leader${draft.nextLeader}`;
       draft.nextLeader += 1;
-      draft.leaders.push({ id, player: side, hex: capitol.hex, movement: LEADER_MOVEMENT, experience: 0, skills: {}, fellOnTurn: null, squad: [{ ...unit, tile }], leaderTile: tile });
+      draft.leaders.push({ id, player: side, hex: capitol.hex, movement: LEADER_MOVEMENT, experience: 0, skills: {}, fellOnTurn: null, squad: [{ ...unit, tile }], leaderTile: tile, enchantments: [] });
       events.push({ type: "elevated", leaderId: id });
       break;
     }
@@ -135,6 +137,21 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       playerOf(draft, side).gold -= nodeInvestCost(node);
       node.level += 1;
       events.push({ type: "nodeInvested", nodeId: node.id, level: node.level });
+      break;
+    }
+    case "learnSpell": {
+      const problem = learnSpellProblem(draft, action.spell);
+      if (problem) throw new Error(`cannot learn ${action.spell}: ${problem}`);
+      playerOf(draft, side).gold -= spellById(action.spell).learnCost;
+      playerOf(draft, side).spells.push(action.spell);
+      events.push({ type: "spellLearned", player: side, spell: action.spell });
+      break;
+    }
+    case "castSpell": {
+      const problem = castProblem(draft, action.spell, action.at);
+      if (problem) throw new Error(`cannot cast ${action.spell}: ${problem}`);
+      castSpell(draft, action.spell, action.at);
+      events.push({ type: "spellCast", player: side, spell: action.spell, at: action.at });
       break;
     }
     case "upgradeCity": {

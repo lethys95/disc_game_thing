@@ -8,25 +8,28 @@ import { concludeBattle, playersIn } from "#rules/world/battles";
 import { fallbackColor } from "#rules/world/colors";
 import { createWorld } from "#rules/world/create";
 import type { PlayerSetup } from "#rules/world/create";
-import { income } from "#rules/world/economy";
+import { income, manaIncome } from "#rules/world/economy";
 import { movementOf } from "#rules/world/leaders";
 import { planMove, reachable } from "#rules/world/movement";
 import type { MovePlan } from "#rules/world/movement";
 import { capitolOf, leaderAt, playerOf } from "#rules/world/state";
 import type { Leader, World, WorldAction } from "#rules/world/state";
 import { knownWorld, visionOf } from "#rules/world/vision";
+import { castProblem, spellTargets } from "#rules/world/spells";
+import { FACTION_MANA } from "#rules/spells";
+import { hexKey } from "#rules/hex";
 import type { AiClient } from "#view/ai-client";
 import type { App } from "#view/app";
 import { CityScreen } from "#view/city";
 import type { Place } from "#view/city";
 import { applySideColors, battleColors } from "#view/colors";
-import { buttonById, byId, element, gold, movementPips } from "#view/dom";
+import { buttonById, byId, element, gold, mana, movementPips } from "#view/dom";
 import { Forecasts } from "#view/forecasts";
 import { ForkPrompt } from "#view/fork-prompt";
 import { LeaderScreen } from "#view/leader";
 import type { MapView } from "#view/map";
 import { MapPanels } from "#view/map-panels";
-import { hintText, leaderName, newsText } from "#view/map-text";
+import { castHint, hintText, leaderName, newsText } from "#view/map-text";
 import { formation, groupAt, showPeek } from "#view/peek";
 import type { Stage } from "#view/stage";
 
@@ -69,7 +72,13 @@ export class Campaign {
       this.render();
     },
     newGame: () => this.options.onSetup(),
+    pickSpell: (id) => {
+      this.casting = id;
+      this.render();
+    },
   });
+  /** The spell being aimed on the map, if any: the next click on a valid hex casts it. */
+  private casting: string | null = null;
   /** The city (or meeting warbands) whose screen is open. */
   private place: Place | null = null;
   private leaderOpen: string | null = null;
@@ -104,7 +113,18 @@ export class Campaign {
       if (this.world) e.preventDefault();
     });
     canvas.addEventListener("pointerdown", (e) => {
-      if (e.button === 2) this.peekAt(e.clientX, e.clientY);
+      if (e.button !== 2) return;
+      // Right-click stops aiming a spell; otherwise it peeks at a formation.
+      if (this.casting) {
+        this.casting = null;
+        this.render();
+      } else this.peekAt(e.clientX, e.clientY);
+    });
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && this.casting) {
+        this.casting = null;
+        this.render();
+      }
     });
     window.addEventListener("pointerup", (e) => {
       if (e.button === 2) this.peek.hidden = true;
@@ -160,6 +180,14 @@ export class Campaign {
     if (!world) return;
     const leaders = world.leaders.map((l) => (l.player === PLAYER ? { ...l, experience: xp, squad: l.squad.map((m) => ({ ...m, xp })) } : l));
     this.world = { ...world, leaders };
+    this.render();
+  }
+
+  /** Screenshots and playtests: we start with this much mana of every color (to try spells). */
+  startingMana(amount: number): void {
+    const world = this.world;
+    if (!world) return;
+    this.world = { ...world, players: world.players.map((p, id) => (id === PLAYER ? { ...p, mana: { red: amount, teal: amount } } : p)) };
     this.render();
   }
 
@@ -228,6 +256,7 @@ export class Campaign {
   }
 
   private plan(): MovePlan | null {
+    if (this.casting) return null;
     const world = this.known();
     const leader = this.selectedLeader();
     const hovered = this.hovered;
@@ -246,6 +275,14 @@ export class Campaign {
     const world = this.known();
     const target = this.hovered;
     if (!world || !target || !this.myTurn()) return;
+    const spell = this.casting;
+    if (spell) {
+      if (this.world && castProblem(this.world, spell, target) === null) {
+        this.casting = null;
+        await this.act({ type: "castSpell", spell, at: target });
+      }
+      return;
+    }
     const own = leaderAt(world, target);
     if (own?.player === PLAYER) {
       this.selected = own.id;
@@ -324,30 +361,42 @@ export class Campaign {
     const leader = this.selectedLeader();
     const plan = this.plan();
     const known = knownWorld(world, PLAYER);
-    const reach = leader && this.myTurn() ? reachable(known, leader.id) : new Map<string, number>();
+    if (this.casting && !this.myTurn()) this.casting = null;
+    const casting = this.casting;
+    const aimed = casting && this.hovered && castProblem(known, casting, this.hovered) === null ? this.hovered : null;
+    const reach = casting ? new Set(spellTargets(known, casting).map(hexKey)) : new Set((leader && this.myTurn() ? reachable(known, leader.id) : new Map<string, number>()).keys());
     this.view.setHighlights({
-      reachable: new Set(reach.keys()),
+      reachable: reach,
       path: plan?.path.hexes ?? [],
       walked: plan?.steps ?? 0,
-      attack: plan?.target && plan.target.kind !== "capture" ? this.hovered : null,
+      attack: aimed ?? (plan?.target && plan.target.kind !== "capture" ? this.hovered : null),
     });
 
     this.turn.replaceChildren();
     if (!world.outcome) {
-      this.turn.append(`Turn ${world.turn} · ${world.activePlayer === PLAYER ? "your move" : "the enemy moves"} · `, gold(playerOf(world, PLAYER).gold), ` (+${income(world, PLAYER)} per turn)`);
+      const color = FACTION_MANA[playerOf(world, PLAYER).faction];
+      this.turn.append(
+        `Turn ${world.turn} · ${world.activePlayer === PLAYER ? "your move" : "the enemy moves"} · `,
+        gold(playerOf(world, PLAYER).gold),
+        ` (+${income(world, PLAYER)}) · `,
+        mana(playerOf(world, PLAYER).mana[color], color),
+        ` (+${manaIncome(world, PLAYER)})`,
+      );
       if (leader) this.turn.append(" · ", element("span", "movement", `Movement ${movementPips(leader.movement, movementOf(leader))}`));
     }
     this.endTurn.disabled = !this.myTurn();
-    this.panels.render(world, PLAYER, leader);
+    this.panels.render(world, PLAYER, leader, this.casting, this.myTurn());
     this.renderCityScreen(world);
-    this.hint.textContent = this.myTurn()
+    this.hint.textContent = casting && this.myTurn()
+      ? castHint(known, casting, this.hovered)
+      : this.myTurn()
       ? hintText({ known, player: PLAYER, leader, hovered: this.hovered, plan, forecast: (l, target) => this.forecasts.text(known, l, target) })
       : world.activePlayer === PLAYER
         ? ""
         : "The enemy is moving…";
     this.renderLeaderScreen(world);
     this.forkPrompt.render(world, PLAYER, this.myTurn());
-    this.stage.renderer.domElement.style.cursor = plan && (plan.steps > 0 || plan.target) ? "pointer" : "default";
+    this.stage.renderer.domElement.style.cursor = aimed || (plan && (plan.steps > 0 || plan.target)) ? "pointer" : "default";
   }
 
   private renderLeaderScreen(world: World): void {

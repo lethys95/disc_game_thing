@@ -273,6 +273,20 @@ const effects: readonly EffectDef[] = [
     },
   },
   {
+    // A spell on a city (provisional Break walls): its defenders fight with less armor.
+    id: "sundered",
+    name: "Sundered",
+    describe: (e) => `−${e.amount} armor: its city's walls are broken.`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      stats: (_ctx, self, subjectId, stats) => {
+        if (subjectId === self.unitId) stats.armor -= self.effect?.amount ?? 0;
+      },
+    },
+  },
+  {
     // A city's walls: its garrison, and a warband defending in its own city, stand behind them (city tiers).
     id: "fortified",
     quiet: true,

@@ -37,6 +37,7 @@ export function createWorld(seed: number, setups: readonly PlayerSetup[]): World
       experience: 0,
       skills: {},
       fellOnTurn: null,
+      enchantments: [],
       squad: setup.squad.map((p) => member(p.defId, p.tile)),
       leaderTile: first.tile,
     };
@@ -51,6 +52,7 @@ export function createWorld(seed: number, setups: readonly PlayerSetup[]): World
       owner,
       garrison: site.kind === "capitol" ? [member(GUARDIAN_ID, { row: 0, col: 1 })] : banditGroup(strengthAt(map, site.hex, "medium")),
       tier: 1,
+      enchantments: [],
     };
   });
   const lairs = map.lairs.map((site, index): Lair => ({
@@ -72,6 +74,9 @@ export function createWorld(seed: number, setups: readonly PlayerSetup[]): World
       upgrades: [],
       research: [],
       eliminated: false,
+      mana: { red: 0, teal: 0 },
+      spells: [],
+      cast: [],
       explored: [],
       memory: { cities: [], lairs: [], nodes: [] },
     }),

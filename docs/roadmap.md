@@ -64,9 +64,12 @@ Animation speed, camera feel, hotkeys; kept per browser.
 ## M24 — More players from the setup ✅ (2026-09-26)
 Up to six players on a map from the setup screen; you against several AIs.
 
+## M25 — Spells and mana ✅ (2026-09-26)
+The canon overworld spell system with placeholder spells (#51): typed mana, learning at the Capitol, casting on the map.
+
 ## Then
 - Faction content as the user designs it (Nexus trees first; Grove and Wastes later). The user owns unit designs and looks.
-- Spells and mana (canon), a spell tree in the Capitol.
+- A spell tree in the Capitol, and the real spells (#51).
 - Leader experience (#33), the economy question.
 
 ## Later (not ordered yet)

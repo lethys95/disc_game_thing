@@ -19,15 +19,16 @@ Git: tags `m2-playable` … `m7-foundation` mark tested states. Work happens on 
 Rules: `src/rules/` (93 tests). View: `src/view/`. Tools: the `verify` skill; `A=<preset|nexus> B=… pnpm sim:world`.
 
 ## Next
-**M24 done: more players from the setup screen.** Map games take up to four extra AI opponents (faction and formation each; colors follow the factions, then the free ones). The map camera opens on your home; if you're knocked out with others still standing, your game ends there. `pnpm playtest:setup` in verify; `?map&players=N`. Before it: settings (M22, slot keys and fullscreen), Nexus tier-3 mages (M21), fog of war (M19).
-1. **Waiting on the user:** playtest the lot; #40–50; colors (#43). An `sfx` skill (Stable Audio 3, `/home/lethys/programs/stable-audio-3`) is being set up.
-2. Candidates next: spells and mana (canon); audio slots and playback (`design/audio-pipeline.md`); an MCP player (roadmap, later).
-3. Open design: Nexus tiers 4–5 and the other lines (#35), Jilliath backline (#36), fourth archetype (#37), leader experience (#33); AI for 3+ players (#48).
+**M25 done: spells and mana** (canon system, placeholder spells; questions #51). Typed mana (red/teal) from the Capitol and a mana node; learn at the Capitol's Spells tab; cast on the map at anything in sight, once per turn (spell bar under your cities; right-click or Esc stops aiming). Spells: map damage (never kills) or enchantments carried into battle for N turns (✦ on the map). The AI learns and casts. `pnpm playtest:spells` in verify; `?mana=N`. Before it: M24 setup for more players.
+1. **Waiting on the user:** design real spells (#51); playtest; #40–51; colors (#43). Sound: generated SFX weren't good enough; royalty-free sources surveyed in `design/audio-sources.md` (Sonniss GDC archive, Kenney CC0, Ovani, Freesound CC0).
+2. Candidates next: audio slots and playback with library sounds (needs the user's pick of sources); AI for 3+ players (#48).
+3. Open design: Nexus tiers 4–5 and the other lines (#35), Jilliath backline (#36), fourth archetype (#37), leader experience (#33).
 
 ## Waiting on the user
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.
 
 ## Recently done
+- 2026-09-26: M25 spells and mana.
 - 2026-09-26: M24 setup for more players.
 - 2026-09-26: M22 settings menu.
 - 2026-09-26: M21 Nexus tier-3 mages; renames Cyclops, Technician, Counter.

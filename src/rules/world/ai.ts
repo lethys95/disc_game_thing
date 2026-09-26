@@ -2,6 +2,8 @@ import { STARTING_LEADERSHIP } from "#rules/balance";
 import { forkOptions, openForks } from "#rules/forks";
 import { hexDistance, hexKey, neighbors, sameHex } from "#rules/hex";
 import { knownWorld } from "#rules/world/vision";
+import { castProblem, learnSpellProblem, spellTargets, spellVictims } from "#rules/world/spells";
+import { spellById, spellsOf } from "#rules/spells";
 import type { Hex } from "#rules/hex";
 import { stepCost } from "#rules/map";
 import { nextForm } from "#rules/progression";
@@ -95,6 +97,47 @@ function siegeViable(world: World, capitolHex: Hex): boolean {
     placed = { ...placed, leaders: placed.leaders.map((l) => (l.id === leader.id ? { ...l, hex: spot, movement: Math.max(l.movement, movementOf(l)) } : l)) };
   }
   return siegeOpener(placed, capitolHex) !== null;
+}
+
+/** Least a damage spell must take off enemy squads (HP, never counting the last point) to be worth casting. */
+const AI_SPELL_WORTH = 40;
+
+/**
+ * Spells before marching: damage where it takes off the most, walls broken and warbands blessed where a warband of
+ * ours can attack this turn. Provisional taste, like the spells themselves.
+ */
+function chooseCast(world: World): WorldAction | null {
+  const side = world.activePlayer;
+  const mine = world.leaders.filter((l) => l.player === side && l.fellOnTurn === null);
+  const canAttack = (from: Leader, hex: Hex) => {
+    const target = planMove(world, from.id, hex)?.target;
+    return target !== undefined && target !== null && target.kind !== "capture";
+  };
+  for (const id of playerOf(world, side).spells) {
+    const spell = spellById(id);
+    const targets = spellTargets(world, id).filter((hex) => !castProblem(world, id, hex));
+    let best: { hex: Hex; score: number } | null = null;
+    for (const hex of targets) {
+      let score = 0;
+      if (spell.effect.kind === "damage") {
+        const amount = spell.effect.amount;
+        score = spellVictims(world, id, hex).flat().reduce((sum, m) => sum + (m.hp > 0 ? Math.min(amount, m.hp - 1) : 0), 0);
+        if (score < AI_SPELL_WORTH) continue;
+      } else if (spell.target === "enemyCity") {
+        if (!mine.some((l) => canAttack(l, hex))) continue;
+        score = 1;
+      } else {
+        const leader = mine.find((l) => sameHex(l.hex, hex));
+        if (!leader || leader.enchantments.some((e) => e.spell === id)) continue;
+        const goals = [...world.leaders.filter((l) => l.player !== side).map((l) => l.hex), ...world.cities.filter((c) => c.owner !== side).map((c) => c.hex)];
+        if (!goals.some((g) => canAttack(leader, g))) continue;
+        score = strength(leader.squad);
+      }
+      if (!best || score > best.score) best = { hex, score };
+    }
+    if (best) return { type: "castSpell", spell: id, at: best.hex };
+  }
+  return null;
 }
 
 /** Idle warbands head for the nearest hex their player hasn't seen, stopping where no enemy could beat them. */
@@ -193,6 +236,11 @@ export function chooseWorldAction(truth: World): WorldAction {
       .filter(({ u, value }) => value > 0 && playerOf(world, side).gold >= u.price + cost * STARTING_LEADERSHIP && !upgradeProblem(world, u.id))
       .sort((a, b) => b.value - a.value)[0];
     if (upgrade) return { type: "upgrade", upgrade: upgrade.u.id };
+    // Spells with spare gold, cheapest first.
+    const spell = spellsOf(playerOf(world, side).faction)
+      .filter((s) => !learnSpellProblem(world, s.id) && playerOf(world, side).gold >= s.learnCost + cost * STARTING_LEADERSHIP)
+      .sort((a, b) => a.learnCost - b.learnCost)[0];
+    if (spell && rich) return { type: "learnSpell", spell: spell.id };
     // Walls with spare gold: the Capitol first (it's the loss condition), then the cheapest city.
     const walls = world.cities
       .filter((c) => c.owner === side && !upgradeCityProblem(world, c.id) && playerOf(world, side).gold >= cityUpgradeCost(c) + cost * STARTING_LEADERSHIP)
@@ -213,6 +261,9 @@ export function chooseWorldAction(truth: World): WorldAction {
       if (!recruitProblem(world, guard, garrison)) return { type: "recruit", defId: guard, into: garrison };
     }
   }
+
+  const cast = chooseCast(world);
+  if (cast) return cast;
 
   // The nearest enemy Capitol (with several enemies, the closest one is the siege target).
   const base = capitol?.hex ?? mine[0]?.hex;

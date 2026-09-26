@@ -11,6 +11,7 @@ import { hexKey } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import type { Terrain, WorldMap } from "#rules/map";
 import { UNITS } from "#rules/units/index";
+import { spellById } from "#rules/spells";
 import type { City, Leader, World } from "#rules/world/state";
 import { buildFigure } from "#view/figures";
 import type { CameraPose, Stage } from "#view/stage";
@@ -374,7 +375,8 @@ export class MapView {
       site.banner.color.copy(owner === null ? NEUTRAL_BANNER : this.colorOf(owner));
       site.banner.emissive.copy(owner === null ? NONE : this.colorOf(owner));
       site.banner.emissiveIntensity = owner === null ? 0 : 0.8;
-      site.label.textContent = siteName(city);
+      site.label.textContent = `${siteName(city)}${city.enchantments.length > 0 ? " ✦" : ""}`;
+      site.label.title = city.enchantments.map((e) => spellById(e.spell).name).join(", ");
       site.label.className = `site-label ${owner === null ? "neutral" : "owned"}`;
       site.label.style.color = owner === null ? "" : `#${this.colorOf(owner).getHexString()}`;
       site.label.style.borderColor = site.label.style.color;
@@ -410,7 +412,10 @@ export class MapView {
       const alive = leader.squad.length;
       // Your own warbands also show the movement they have left.
       const move = leader.player === 0 ? ` · ${movementPips(leader.movement, movementOf(leader))}` : "";
-      figure.label.textContent = `${UNITS[defId]?.name ?? defId} · ${alive} unit${alive === 1 ? "" : "s"}${move}`;
+      // ✦: under a spell (its names on hover).
+      const spelled = leader.enchantments.length > 0 ? " ✦" : "";
+      figure.label.textContent = `${UNITS[defId]?.name ?? defId} · ${alive} unit${alive === 1 ? "" : "s"}${move}${spelled}`;
+      figure.label.title = leader.enchantments.map((e) => spellById(e.spell).name).join(", ");
     }
   }
 

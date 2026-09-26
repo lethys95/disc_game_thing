@@ -10,6 +10,7 @@ import { element, gold } from "#view/dom";
 import { unitName } from "#view/members";
 import { ResearchPanel } from "#view/research";
 import { squadGrid } from "#view/squad-grid";
+import { spellsTab } from "#view/spells";
 import type { GridChoice, GridSquad } from "#view/squad-grid";
 import { sameHex } from "#rules/hex";
 
@@ -33,7 +34,7 @@ export const cityName = (city: City): string => (city.kind === "capitol" ? "Capi
  * same grids show two warbands that meet on the map.
  */
 export class CityScreen {
-  private tab: "city" | "research" = "city";
+  private tab: "city" | "research" | "spells" = "city";
   private selected: { ref: SquadRef; tile: Tile } | null = null;
   private shown: { world: World; side: Side; place: Place; mayAct: boolean } | null = null;
   private readonly research: ResearchPanel;
@@ -64,7 +65,7 @@ export class CityScreen {
     header.append(element("div", "title", city ? `Your ${cityName(city)}` : "Warbands meet"), gold(playerOf(world, side).gold, "purse"));
     if (city?.kind === "capitol") {
       const tabs = element("div", "tabs");
-      for (const [id, label] of [["city", "City"], ["research", "Research"]] as const) {
+      for (const [id, label] of [["city", "City"], ["research", "Research"], ["spells", "Spells"]] as const) {
         const button = element("button", `action${this.tab === id ? " selected" : ""}`, label);
         button.addEventListener("click", () => {
           this.tab = id;
@@ -81,6 +82,10 @@ export class CityScreen {
 
     if (this.tab === "research" && city?.kind === "capitol") {
       this.root.appendChild(this.research.render(world, side, mayAct));
+      return;
+    }
+    if (this.tab === "spells" && city?.kind === "capitol") {
+      this.root.appendChild(spellsTab(world, side, mayAct, this.options.act));
       return;
     }
     const body = element("div", "city-body");

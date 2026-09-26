@@ -76,6 +76,12 @@ export const CAMP_STRONG_FROM = 40;
 
 /** Node investment (user: "possibly invest into the nodes around the cities"; provisional): cost × the next level. */
 export const NODE_INVEST_COST = 100;
+/**
+ * Mana (pillars.md, "Spells": typed mana pays for spells cast on the map). Provisional: a Capitol yields a trickle of
+ * its owner's color, a mana node more per level, always in its holder's color.
+ */
+export const CAPITOL_MANA = 5;
+export const MANA_NODE_INCOME = 10;
 export const NODE_MAX_LEVEL = 3;
 
 /** Gold per tier for a unit-type upgrade (placeholder; the user tunes upgrade prices after playtests). */
