@@ -5,7 +5,7 @@ import type { UnitDef } from "#rules/battle/types";
 export const NEXUS_UNITS: Readonly<Record<string, UnitDef>> = {
   custodian: {
     id: "custodian", name: "Custodian", faction: "nexus", tier: 1, damageType: "weapon",
-    stats: { maxHp: 60, shield: 90, damage: 25, armor: 0, initiative: 45 },
+    stats: { maxHp: 60, shield: 65, damage: 25, armor: 0, initiative: 45 },
     abilities: kit("attack", "defend", "wait"),
   },
   technician: {
@@ -16,7 +16,7 @@ export const NEXUS_UNITS: Readonly<Record<string, UnitDef>> = {
   apprentice: {
     id: "apprentice", name: "Apprentice", faction: "nexus", tier: 1, damageType: "weapon",
     stats: { maxHp: 55, shield: 0, damage: 8, armor: 0, initiative: 45 },
-    abilities: kit("plus_burst", "bolt", "defend", "wait"),
+    abilities: [{ id: "plus_burst", params: { power: 35 } }, ...kit("bolt", "defend", "wait")],
     spellCharges: 2,
   },
   cyclops: {

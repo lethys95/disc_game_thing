@@ -13,6 +13,7 @@
     "check": "tsc && vitest run",
     "sim": "tsx scripts/sim.ts",
     "sim:world": "tsx scripts/sim-world.ts",
+    "sim:t1": "tsx scripts/sim-tier1.ts",
     "verify": "pnpm check && tsx scripts/shot.ts shots/verify.png \"/?fight&steps=6\" && tsx scripts/playtest.ts && tsx scripts/playtest-map.ts 4 && tsx scripts/playtest-save.ts && tsx scripts/playtest-city.ts && tsx scripts/playtest-settings.ts && tsx scripts/playtest-setup.ts && tsx scripts/playtest-spells.ts",
     "art": "tsx scripts/art/assets.ts",
     "playtest:save": "tsx scripts/playtest-save.ts",

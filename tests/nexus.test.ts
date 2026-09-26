@@ -1,3 +1,4 @@
+import { UNITS } from "#rules/units/index";
 import { applyAction, effectiveStats, legalActions } from "#rules/battle/engine";
 import { allowedUnits, choose, openForks } from "#rules/forks";
 import { grow } from "#rules/progression";
@@ -74,10 +75,12 @@ describe("Cyclops", () => {
   test("Equalize evens out shields, and the lent part perishes when the Cyclops's next turn starts", () => {
     let battle = until(start([p("cyclops", 0, 1), p("custodian", 0, 0)], [p("congregant", 2, 2)]), "0.0.1");
     battle = act(battle, "equalize", "0.0.0").battle;
-    expect(unit(battle, "0.0.1").shield).toBe(160 - 35);
-    expect(unit(battle, "0.0.0").shield).toBe(90 + 35);
+    const shield = UNITS["custodian"]?.stats.shield ?? 0;
+    const lent = Math.floor((160 - shield) / 2);
+    expect(unit(battle, "0.0.1").shield).toBe(160 - lent);
+    expect(unit(battle, "0.0.0").shield).toBe(shield + lent);
     battle = until(battle, "0.0.1");
-    expect(unit(battle, "0.0.0").shield).toBe(90);
+    expect(unit(battle, "0.0.0").shield).toBe(shield);
   });
 });
 

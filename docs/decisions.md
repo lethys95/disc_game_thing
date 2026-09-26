@@ -114,3 +114,6 @@ Pillars fix overworld spells paid in typed mana, aimed at an ally, an enemy, a t
 
 **2026-09-26 — Sims are smoke tests until both factions have their lines (user).**
 Jilliath had only its melee line, so cross-faction win counts compared a melee-only army with three lines and said nothing about balance. Until both factions have their lines, `sim:world` answers "do games end, does the AI act, does nothing crash", and nothing more.
+
+**2026-09-26 — Balance by tuning units, never Leadership (user).**
+Every faction keeps the same starting Leadership; unequal armies are evened out by unit numbers alone (not by price either: a warband's size is capped by Leadership, so a dearer unit is simply a stronger slot). `pnpm sim:t1` plays the tier-1 squads of both factions against each other, both seatings; the first pass cut the Custodian's shield and the Apprentice's Burst (#52).
