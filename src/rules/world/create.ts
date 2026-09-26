@@ -75,6 +75,7 @@ export function createWorld(
     graveyard: [[], []],
     colors: [colors[0], colors[1]],
     upgrades: [[], []],
+    research: [[], []],
   };
   startTurn(world, []);
   return world;

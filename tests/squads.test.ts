@@ -5,7 +5,8 @@ import { stepCost } from "#rules/map";
 import { GUARDIAN_ID } from "#rules/units/index";
 import { applyWorldAction } from "#rules/world/actions";
 import { createWorld } from "#rules/world/create";
-import { recruitProblem, upgradeCityProblem } from "#rules/world/economy";
+import { recruitProblem, resurrectionCost, resurrectProblem, upgradeCityProblem } from "#rules/world/economy";
+import { CITY_RESURRECTION_PREMIUM } from "#rules/research";
 import { CITY_ARMOR_PER_TIER, CITY_SLOTS, CITY_UPGRADE_COST } from "#rules/balance";
 import { capacityOf, transferProblem } from "#rules/world/squads";
 import { capitolOf, leaderById } from "#rules/world/state";
@@ -99,5 +100,24 @@ describe("city tiers", () => {
     const walls = Object.values(battle?.units ?? {}).filter((u) => u.side === 0).map((u) => u.effects.find((e) => e.def === "fortified")?.amount);
     expect(walls.length).toBeGreaterThan(0);
     expect(walls.every((a) => a === CITY_ARMOR_PER_TIER)).toBe(true);
+  });
+});
+
+describe("resurrection in cities", () => {
+  test("only at the Capitol until researched; then in any city you hold, for a premium", () => {
+    let w = world();
+    const city = w.cities.find((c) => c.kind === "city");
+    if (!city) throw new Error("no city");
+    w = { ...w, cities: w.cities.map((c) => (c.id === city.id ? { ...c, owner: 0, garrison: [] } : c)), graveyard: [[{ defId: "paladin", fellOnTurn: w.turn - 5, marks: [], level: 0 }], []] };
+    const there: SquadRef = { kind: "garrison", cityId: city.id };
+    expect(resurrectProblem(w, 0, there)).toMatch(/only at the Capitol/);
+    w = applyWorldAction(w, { type: "research", research: "city_resurrection" }).world;
+    expect(resurrectProblem(w, 0, there)).toBeNull();
+    const atCapitol = resurrectionCost(w, 0, 0) ?? 0;
+    const inCity = resurrectionCost(w, 0, 0, w.cities.find((c) => c.id === city.id)) ?? 0;
+    expect(inCity).toBe(Math.round(atCapitol * CITY_RESURRECTION_PREMIUM));
+    const before = w.gold[0];
+    w = applyWorldAction(w, { type: "resurrect", index: 0, into: there }).world;
+    expect(w.gold[0]).toBe(before - inCity);
   });
 });

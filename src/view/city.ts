@@ -20,6 +20,9 @@ export interface CityScreenOptions {
   readonly close: () => void;
 }
 
+/** Whether the dead can be raised in this city: at the Capitol, or anywhere once researched. */
+const raisesHere = (world: World, city: City): boolean => city.kind === "capitol" || world.research[world.activeSide].includes("city_resurrection");
+
 /** Placeholder city names until the user names them. */
 export const cityName = (city: City): string => (city.kind === "capitol" ? "Capitol" : `City ${city.id.replace("city", "")}`);
 
@@ -86,7 +89,7 @@ export class CityScreen {
     for (const squad of squads) grids.appendChild(squadGrid(squad, this.gridOptions(world, city, mayAct)));
     grids.appendChild(element("div", "note", "Drag units between the grids; dropping on a unit swaps the two. Click an empty tile to recruit. Click a unit for its details."));
     body.appendChild(grids);
-    if (city?.kind === "capitol") body.appendChild(this.graveyard(world, side, mayAct));
+    if (city && raisesHere(world, city)) body.appendChild(this.graveyard(world, side, city, mayAct));
     this.root.appendChild(body);
   }
 
@@ -131,9 +134,9 @@ export class CityScreen {
           run: () => this.options.act({ type: "recruit", defId, into: ref, tile }),
         }));
         const raised =
-          city?.kind === "capitol"
+          city && raisesHere(world, city)
             ? world.graveyard[side].map((fallen, index) => ({
-                label: `Resurrect ${unitName(fallen.defId)} · ${resurrectionCost(world, side, index) ?? 0} gold`,
+                label: `Resurrect ${unitName(fallen.defId)} · ${resurrectionCost(world, side, index, city) ?? 0} gold`,
                 problem: resurrectProblem(world, index, ref, tile),
                 run: () => this.options.act({ type: "resurrect", index, into: ref, tile }),
               }))
@@ -166,10 +169,11 @@ export class CityScreen {
   }
 
   /** The fallen: warband leaders to revive here, and units to resurrect by clicking an empty tile. */
-  private graveyard(world: World, side: Side, mayAct: boolean): HTMLElement {
+  private graveyard(world: World, side: Side, city: City, mayAct: boolean): HTMLElement {
     const column = element("div", "capitol-hall panel");
     column.appendChild(element("div", "section", "Graveyard"));
-    const lost = world.leaders.filter((l) => l.side === side && l.fellOnTurn !== null);
+    // Fallen leaders are revived at the Capitol only.
+    const lost = city.kind === "capitol" ? world.leaders.filter((l) => l.side === side && l.fellOnTurn !== null) : [];
     for (const leader of lost) {
       const own = leaderUnit(leader);
       const problem = reviveProblem(world, leader.id);
@@ -183,7 +187,7 @@ export class CityScreen {
       column.appendChild(row);
     }
     world.graveyard[side].forEach((fallen, index) => {
-      column.appendChild(element("div", "fallen", `${unitName(fallen.defId)} · ${resurrectionCost(world, side, index) ?? 0} gold`));
+      column.appendChild(element("div", "fallen", `${unitName(fallen.defId)} · ${resurrectionCost(world, side, index, city) ?? 0} gold`));
     });
     const empty = world.graveyard[side].length === 0 && lost.length === 0;
     column.appendChild(element("div", "note", empty ? "Nobody has fallen yet." : "Resurrect by clicking an empty tile. The price drops each turn you wait."));

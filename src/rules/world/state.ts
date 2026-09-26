@@ -118,6 +118,8 @@ export interface World {
   graveyard: [Fallen[], Fallen[]];
   /** Unit-type upgrades each side has bought (`rules/upgrades.ts`). */
   upgrades: [string[], string[]];
+  /** Capitol research each side has finished (`rules/research.ts`). */
+  research: [string[], string[]];
 }
 
 /** A squad on the map: a city's garrison, or a warband (`world/squads.ts`). */
@@ -137,6 +139,7 @@ export type WorldAction =
   | { type: "learn"; leaderId: string; skill: string }
   /** Revive a warband's fallen leader at the Capitol. */
   | { type: "revive"; leaderId: string }
+  | { type: "research"; research: string }
   /** Raise a city you hold one tier. */
   | { type: "upgradeCity"; cityId: string }
   /** Buy a unit-type upgrade: units that become that type from now on receive it. */
@@ -163,6 +166,7 @@ export type WorldEvent =
   | { type: "learned"; leaderId: string; skill: string }
   | { type: "revived"; leaderId: string }
   | { type: "cityUpgraded"; cityId: string; tier: number }
+  | { type: "researched"; side: Side; research: string }
   | { type: "upgraded"; side: Side; upgrade: string }
   | { type: "worldEnd"; winner: Side };
 

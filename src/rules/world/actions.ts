@@ -4,11 +4,12 @@ import { stepCost } from "#rules/map";
 import { RECRUIT_COST } from "#rules/units/index";
 import { LEADER_MOVEMENT } from "#rules/balance";
 import { defenderOf, engagementBattle } from "#rules/world/battles";
-import { chooseBranchProblem, elevateProblem, freeTile, growSquad, learnSkillProblem, newcomer, recruitProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem, squadsOf, startTurn, upgradeCityProblem, upgradeProblem, cityUpgradeCost } from "#rules/world/economy";
+import { chooseBranchProblem, elevateProblem, freeTile, growSquad, learnSkillProblem, newcomer, recruitProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem, squadsOf, startTurn, upgradeCityProblem, researchProblem, cityOfSquad, upgradeProblem, cityUpgradeCost } from "#rules/world/economy";
 import { movementOf, rankOf } from "#rules/world/leaders";
 import { planMove } from "#rules/world/movement";
 import { squadAt, transfer, transferProblem } from "#rules/world/squads";
 import { isLeaderOf } from "#rules/world/record";
+import { RESEARCH } from "#rules/research";
 import { UPGRADES } from "#rules/upgrades";
 import { capitolOf, cityById, leaderById } from "#rules/world/state";
 import type { World, WorldAction, WorldEvent, WorldStep } from "#rules/world/state";
@@ -92,7 +93,7 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
     }
     case "resurrect": {
       const problem = resurrectProblem(draft, action.index, action.into, action.tile);
-      const cost = resurrectionCost(draft, side, action.index);
+      const cost = resurrectionCost(draft, side, action.index, cityOfSquad(draft, action.into));
       const fallen = draft.graveyard[side][action.index];
       const squad = squadAt(draft, action.into);
       const tile = action.tile ?? freeTile(squad);
@@ -123,6 +124,15 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       leader.squad = leader.squad.map((m) => (isLeaderOf(m, leader) ? { ...m, hp: 1 } : m));
       leader.fellOnTurn = null;
       events.push({ type: "revived", leaderId: leader.id });
+      break;
+    }
+    case "research": {
+      const problem = researchProblem(draft, action.research);
+      const research = RESEARCH.find((r) => r.id === action.research);
+      if (problem || !research) throw new Error(`cannot research: ${problem}`);
+      draft.gold[side] -= research.cost;
+      draft.research[side].push(research.id);
+      events.push({ type: "researched", side, research: research.id });
       break;
     }
     case "upgradeCity": {

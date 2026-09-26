@@ -8,6 +8,7 @@ import { grow, xpToEvolve } from "#rules/progression";
 import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
 import { learnProblem, movementOf, squadHealingOf } from "#rules/world/leaders";
 import { maxHpOf } from "#rules/world/record";
+import { CITY_RESURRECTION_PREMIUM, RESEARCH } from "#rules/research";
 import { UPGRADES, upgradesFor } from "#rules/upgrades";
 import { alive, banditGroup, capitolOf, cityById, leaderAt, leaderById, leaderUnit, member } from "#rules/world/state";
 import type { City, Leader, Mark, SquadMember, SquadRef, Strength, World, WorldEvent } from "#rules/world/state";
@@ -32,18 +33,18 @@ export function recruitProblem(world: World, defId: string, into: SquadRef, tile
   const cost = RECRUIT_COST[defId];
   if (cost === undefined || !FACTION_ROOTS[world.factions[side]].includes(defId)) return "not recruitable";
   if (world.gold[side] < cost) return "not enough gold";
-  return placeProblem(world, into, tile, (city) => city.owner === side);
+  return placeProblem(world, into, tile, (city) => city.owner === side, "only in a city you hold");
 }
 
 /**
  * Why a new unit can't be put into this squad, or null: a garrison of a city that qualifies, or a warband standing
  * in one; room left; and the tile, if one is named, free.
  */
-function placeProblem(world: World, into: SquadRef, tile: Tile | undefined, qualifies: (city: City) => boolean): string | null {
+function placeProblem(world: World, into: SquadRef, tile: Tile | undefined, qualifies: (city: City) => boolean, refusal: string): string | null {
   const side = world.activeSide;
   if (ownerOf(world, into) !== side) return "not your squad";
   const city = into.kind === "garrison" ? cityById(world, into.cityId) : world.cities.find((c) => sameHex(c.hex, hexOf(world, into)));
-  if (!city || !qualifies(city)) return into.kind === "garrison" ? "not here" : "the warband must stand in the right city";
+  if (!city || !qualifies(city)) return into.kind === "garrison" ? refusal : `the warband must stand there: ${refusal}`;
   const squad = squadAt(world, into);
   if (squad.length >= capacityOf(world, into)) return into.kind === "warband" ? `squad full (Leadership ${capacityOf(world, into)})` : "garrison full";
   if (tile && squad.some((m) => sameTile(m.tile, tile))) return "that spot is taken";
@@ -69,9 +70,12 @@ function raiseCost(world: World, defId: string, fellOnTurn: number): number {
   return base * Math.max(1, RESURRECTION_PREMIUM - (world.turn - fellOnTurn));
 }
 
-export function resurrectionCost(world: World, side: Side, index: number): number | null {
+/** Outside the Capitol, a premium (research, CITY_RESURRECTION_PREMIUM). */
+export function resurrectionCost(world: World, side: Side, index: number, city?: City): number | null {
   const fallen = world.graveyard[side][index];
-  return fallen ? raiseCost(world, fallen.defId, fallen.fellOnTurn) : null;
+  if (!fallen) return null;
+  const base = raiseCost(world, fallen.defId, fallen.fellOnTurn);
+  return city && city.kind !== "capitol" ? Math.round(base * CITY_RESURRECTION_PREMIUM) : base;
 }
 
 /** Reviving a warband's fallen leader costs what resurrecting it would (provisional). */
@@ -91,13 +95,33 @@ export function reviveProblem(world: World, leaderId: string): string | null {
   return null;
 }
 
-/** Resurrection happens at the Capitol: into its garrison, or a warband standing in it. */
+/**
+ * Resurrection happens at the Capitol, into its garrison or a warband standing in it; with the research, in any
+ * city you hold, for a premium.
+ */
 export function resurrectProblem(world: World, index: number, into: SquadRef, tile?: Tile): string | null {
   const side = world.activeSide;
-  const cost = resurrectionCost(world, side, index);
+  const city = cityOfSquad(world, into);
+  const cost = resurrectionCost(world, side, index, city);
   if (cost === null) return "nobody there";
   if (world.gold[side] < cost) return "not enough gold";
-  return placeProblem(world, into, tile, (city) => city.kind === "capitol" && city.owner === side);
+  const anywhere = world.research[side].includes("city_resurrection");
+  return placeProblem(world, into, tile, (c) => c.owner === side && (c.kind === "capitol" || anywhere), anywhere ? "only in a city you hold" : "only at the Capitol, until researched for cities");
+}
+
+/** The city a squad is in: a garrison's own, or the one a warband stands in. */
+export function cityOfSquad(world: World, ref: SquadRef): City | undefined {
+  return ref.kind === "garrison" ? cityById(world, ref.cityId) : world.cities.find((c) => sameHex(c.hex, hexOf(world, ref)));
+}
+
+export function researchProblem(world: World, id: string): string | null {
+  const side = world.activeSide;
+  const research = RESEARCH.find((r) => r.id === id);
+  if (!research) return "no such research";
+  if (world.research[side].includes(id)) return "already done";
+  if (!capitolOf(world, side)) return "no Capitol";
+  if (world.gold[side] < research.cost) return "not enough gold";
+  return null;
 }
 
 /** A squad and its leader; garrisons have none. */

@@ -252,9 +252,10 @@ exports[`saves > the saved shape is pinned to the save version: when this fails,
     "map.tiles.4,0.terrain",
     "nextLeader",
     "outcome",
+    "research[][]",
     "turn",
     "upgrades[][]",
   ],
-  "version": 5,
+  "version": 6,
 }
 `;

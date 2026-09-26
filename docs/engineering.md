@@ -14,6 +14,7 @@ src/rules/
   effects.ts         effect definitions
   units/             unit catalogue by faction + index (UNITS, roots, recruit costs, evolutions)
   nodes.ts           city node kinds (income, battle effects)
+  research.ts        Capitol research (one-time unlocks for the side)
   upgrades.ts        unit-type upgrades (placeholder content: +5 damage per type)
   forks.ts           per-line forks: commitments (fork → branch), allowed units, starting-squad checks
   progression.ts     XP value and evolution

@@ -370,3 +370,7 @@ button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }
 .city-body .fortifications .name { white-space: nowrap; }
 .city-body .fortifications .note { flex: 1; }
 .city-body .fortifications button { flex: none; width: auto; margin: 0; }
+
+.research-row { display: grid; grid-template-columns: 220px 1fr auto; gap: 12px; align-items: center; padding: 6px 0; border-bottom: 1px solid #2c2622; }
+.research-row .name { font: 700 15px var(--display); }
+.research-row .done { color: #c9b88e; font-size: 12px; }

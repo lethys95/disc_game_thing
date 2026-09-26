@@ -3,10 +3,11 @@ import { allowedUnits, isFork } from "#rules/forks";
 import { ARCHETYPES, EVOLUTIONS, FACTION_ROOTS, LINE_ARCHETYPE, UNITS } from "#rules/units/index";
 import type { Archetype } from "#rules/units/index";
 import { upgradesFor } from "#rules/upgrades";
-import { chooseBranchProblem, squadsOf, upgradeProblem } from "#rules/world/economy";
+import { RESEARCH } from "#rules/research";
+import { chooseBranchProblem, researchProblem, squadsOf, upgradeProblem } from "#rules/world/economy";
 import type { World, WorldAction } from "#rules/world/state";
 import { art } from "#view/art";
-import { element } from "#view/dom";
+import { element, gold } from "#view/dom";
 import { unitName } from "#view/members";
 
 const ARCHETYPE_NAMES: Readonly<Record<Archetype, string>> = { melee: "Melee", ranged: "Ranged", support: "Support", mage: "Mage" };
@@ -31,6 +32,22 @@ export class ResearchPanel {
 
   render(world: World, side: Side, mayAct: boolean): HTMLElement {
     const column = element("div", "capitol-trees panel");
+    column.appendChild(element("div", "section", "Capitol research"));
+    for (const research of RESEARCH) {
+      const row = element("div", "research-row");
+      row.append(element("div", "name", research.name), element("div", "note", research.describe));
+      if (world.research[side].includes(research.id)) row.appendChild(element("div", "done", "✓ Done"));
+      else {
+        const problem = researchProblem(world, research.id);
+        const buy = element("button", "small");
+        buy.append("Research · ", gold(research.cost));
+        buy.disabled = !mayAct || problem !== null;
+        buy.title = problem ?? "";
+        buy.addEventListener("click", () => this.act({ type: "research", research: research.id }));
+        row.appendChild(buy);
+      }
+      column.appendChild(row);
+    }
     column.appendChild(element("div", "section", "Evolution"));
     column.appendChild(element("div", "note", "Choosing a branch is free and permanent for every unit of that kind. Upgrades reach units that become that type after you buy them."));
     const faction = world.factions[side];
