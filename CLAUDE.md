@@ -7,6 +7,7 @@ A deterministic, Disciples II–inspired turn-based strategy game: squads on 3x3
 2. Read other docs only when the task touches them:
    - `docs/roadmap.md` — milestones, each ending in something playable
    - `docs/design/` — the game design canon (pillars, combat, abilities, art, factions, units, lore)
+   - `docs/lethys-wrote-this-for-handover/faction-stuff/` — the user's unit design sheets (intent, no numbers; `_template.md`); read the relevant sheet before adding or changing a unit
    - `docs/questions.md` — open questions for the user; check for inline answers
    - `docs/decisions.md` — why things are the way they are
    - `docs/engineering.md` — code map, engine conventions, gotchas that cost time before

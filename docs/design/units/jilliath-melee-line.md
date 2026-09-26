@@ -207,6 +207,8 @@ The Paladin line is a single spine: Congregant → Paladin → Templar → Immor
 
 ## Branch Investment
 
+> **Superseded (2026-09-25):** branch choice is free and per line; nothing is bought (`pillars.md`, `decisions.md`). Kept as history.
+
 Divergence points are permanent faction investments, not per-unit choices. At each branch point, the player spends gold in the tech tree to unlock a branch. Once invested, the branch is committed — the player cannot go back and unlock the other side.
 
 - **Tier 2 split:** Invest in the Paladin line or the Zealot line. Once the gold is spent, every Congregant upgraded is locked into that branch.

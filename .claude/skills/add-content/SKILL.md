@@ -38,3 +38,6 @@ Update `docs/status.md`, add provisional numbers and open questions to `docs/que
 
 ## Art
 New units, abilities and effects get art slots automatically (placeholders until filled; see `docs/engineering.md` → Art). If the user describes how something looks, add it to `LOOKS` in `scripts/art/prompts.ts` (by slot key, e.g. `portrait/zealot`) and record it in the unit's design doc.
+
+## The user's design sheets
+The user writes unit intent in `docs/lethys-wrote-this-for-handover/faction-stuff/<faction>/<line>.md` (format: `_template.md`): relative stats ("high health for its tier"), abilities and why, look. Read the sheet first; turn intent into provisional numbers relative to the other units of that tier; keep the sheet's **Status** line current (`in game as <id>`). Anything Claude writes there is marked **(Claude)**. Don't delete the user's text; per their `note.md`, raise conflicts with existing units instead of removing either.
