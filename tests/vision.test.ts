@@ -11,6 +11,7 @@ import { capitolOf, leaderById, playerOf } from "#rules/world/state";
 import type { Leader, World } from "#rules/world/state";
 import { knownWorld, sightOf, updateVision } from "#rules/world/vision";
 import { startOf, twoPlayers } from "#tests/helpers";
+import { newsText } from "#view/map-text";
 import { describe, expect, test } from "vitest";
 
 /** Fog of war (pillars.md): unexplored hidden; explored-not-visible shows last-known state. */
@@ -102,5 +103,15 @@ describe("fog of war", () => {
       explored = playerOf(w, 0).explored.length;
     }
     expect(explored).toBeGreaterThan(before.size);
+  });
+
+  test("news of other players reaches you only from where you can see", () => {
+    const w = world();
+    const far = w.cities.find((c) => c.owner === null && !sightOf(w, 0).has(hexKey(c.hex)));
+    const near = w.cities.find((c) => c.owner === null && sightOf(w, 0).has(hexKey(c.hex)));
+    if (!far) throw new Error("no city out of sight");
+    expect(newsText([{ type: "captured", cityId: far.id, player: 1 }], w, 0)).toBe("");
+    expect(newsText([{ type: "captured", cityId: far.id, player: 0 }], w, 0)).toBe("You take the city.");
+    if (near) expect(newsText([{ type: "captured", cityId: near.id, player: 1 }], w, 0)).toBe("The enemy takes the city.");
   });
 });
