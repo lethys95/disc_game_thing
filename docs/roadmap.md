@@ -58,10 +58,13 @@ Canon fog: unexplored hidden, explored-not-visible as last seen. Per-player expl
 ## M21 — Nexus tier-3 mages ✅ (2026-09-26)
 The user's Etherborn, Backlasher and Maelstrom; the renames Cyclops, Technician and Counter.
 
+## M22 — Settings ✅ (2026-09-26)
+Animation speed, camera feel, hotkeys; kept per browser.
+
 ## Then
 - Faction content as the user designs it (Nexus trees first; Grove and Wastes later). The user owns unit designs and looks.
 - Spells and mana (canon), a spell tree in the Capitol.
-- Settings menu (#34), leader experience (#33), the economy question.
+- Leader experience (#33), the economy question.
 
 ## Later (not ordered yet)
 **An outside AI possesses a player over MCP** (user idea, 2026-09-26, "for shits and giggles"; not soon): a local stdio MCP server in `scripts/mcp/` running a headless game (the rules are pure, like `sim:world`); the other seats are the map AI. Tools: new_game, look (a compact text view of `knownWorld`, so fog keeps it fair), options, act, end_turn, battle_state / battle_act (or autoplay). Writes a save after each turn to load in the browser and watch. The user wants to play in that game too (2026-09-26): the browser and the MCP server then share one live game (a small local server the browser connects to, e.g. a websocket), which is more than the headless version. The real work: a compact, readable state description; a list of what a player can do now on the map (the rules only answer "why not"). Dev tooling, kept out of `src/`.

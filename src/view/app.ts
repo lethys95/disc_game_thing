@@ -1,5 +1,4 @@
 import { chooseAction } from "#rules/ai";
-import { BEHAVIORS } from "#rules/abilities/index";
 import { applyAction, createBattle, legalActions } from "#rules/battle/engine";
 import { sameTile } from "#rules/battle/grid";
 import type { Action, Battle, BattleEvent, BattleUnit, Enhancement, LegalAbility, Side, TargetChoice } from "#rules/battle/types";
@@ -12,6 +11,7 @@ import type { BannerButton } from "#view/hud";
 import type { BattleScene, PreviewMark, TileRef } from "#view/scene";
 import type { Squads } from "#view/setup";
 import type { AiClient } from "#view/ai-client";
+import type { Settings } from "#view/settings";
 import type { Stage } from "#view/stage";
 
 export interface AppOptions {
@@ -66,9 +66,10 @@ export class App {
     private readonly stage: Stage,
     private readonly scene: BattleScene,
     private readonly ai: AiClient,
+    private readonly settings: Settings,
     private readonly options: AppOptions,
   ) {
-    this.hud = new Hud({
+    this.hud = new Hud((abilityId) => settings.keyFor(abilityId), {
       onAbility: (id) => this.chooseAbility(id),
       onAuto: () => this.toggleAuto(),
       onFocus: (unitId) => {
@@ -190,10 +191,7 @@ export class App {
 
   /** An ability whose definition claims this key, among the ones the player may use now. */
   private hotkey(key: string): void {
-    const option = this.playerOptions().find((o) => {
-      const def = BEHAVIORS[o.abilityId];
-      return def?.kind === "active" && def.hotkey === key;
-    });
+    const option = this.playerOptions().find((o) => o.enhancement.kind === "none" && this.settings.keyFor(o.abilityId) === key);
     if (option) this.chooseAbility(optionKey(option));
   }
 

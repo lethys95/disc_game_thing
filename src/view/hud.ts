@@ -52,7 +52,11 @@ export class Hud {
   private readonly banner = byId("banner");
   private readonly auto = byId("auto");
 
-  constructor(private readonly handlers: HudHandlers) {
+  constructor(
+    /** The key that uses an ability, after the player's settings. */
+    private readonly keyFor: (abilityId: string) => string | undefined,
+    private readonly handlers: HudHandlers,
+  ) {
     this.auto.addEventListener("click", () => handlers.onAuto());
   }
 
@@ -183,8 +187,7 @@ export class Hud {
       const plain = options.find((o) => o.abilityId === option.abilityId && o.enhancement.kind === "none");
       const perCopy = replicate && plain && option.enhancement.kind === "replicate" ? (option.spellCost - plain.spellCost) / option.enhancement.copies : 0;
       if (option.spellCost > 0) button.appendChild(element("span", "tag spell", replicate ? `+${perCopy} ⚡ per copy` : `${option.spellCost} ⚡`));
-      const def = BEHAVIORS[option.abilityId];
-      const key = def?.kind === "active" && option.enhancement.kind === "none" ? def.hotkey : undefined;
+      const key = option.enhancement.kind === "none" ? this.keyFor(option.abilityId) : undefined;
       if (key) button.appendChild(element("span", "key", key.toUpperCase()));
       const ref = abilityRef(unit, option.abilityId);
       const charges = paramsOf(ref)["charges"];
