@@ -19,10 +19,10 @@ Git: tags `m2-playable` … `m7-foundation` mark tested states. Work happens on 
 Rules: `src/rules/` (90 tests). View: `src/view/`. Tools: the `verify` skill; `A=<preset|nexus> B=… pnpm sim:world`.
 
 ## Next
-**M13 in progress (branch `m13-finish`): games end now.** Before: every AI-vs-AI game stalled by turn ~20. Now the map AI refills warbands, stages near the enemy Capitol, and opens **siege chains** it has simulated to win; cleared camps regrow (provisional, #19). Jilliath mirror: 8/8 games end, turns 21–66, 4–4. Cross-faction: 13/16 end, Nexus wins ~10/13. `VERBOSE=1 pnpm sim:world` prints each game's battle timeline.
-1. **Waiting on the user:** Nexus tiers 3+ (#35), which also gates cross-faction balance (#36); camp regrowth OK? (#19).
-2. Next for Claude: play a whole game as the human (a playtest script or by hand) for pacing and fairness; then pacing/balance numbers.
-3. Open: leader experience (#33), settings menu (#34), placeholder upgrades, art readability.
+**M13 done on the code side (tag `m13-finish`).** AI games end (siege chains, staging, refilling; provisional camp regrowth). Decision time is fine (p90 127 ms). Needs the user's playtest: pace and fairness.
+**Design session 2026-09-26** (recorded in `design/factions/*.md`, the user's sheets in `docs/lethys-wrote-this-for-handover/faction-stuff/`, questions #35–39): Nexus depths; Nexus casters converging on **spell charges** (Claude's proposal: scheme = replicate, overload = overload; not yet confirmed); Wastes canon (numerous, can't really die, cheap graveyard revival, weak baseline, not undead); Grove (strategic ramp, decay, fungal corpse explosion); Jilliath (resurrection, a beacon ability); summons as a line rejected.
+1. **Waiting on the user:** playtest a full game; confirm the spell-charge shape (#39) → then Claude prototypes it on the three Nexus casters.
+2. Open: camp regrowth (#19), Nexus tiers 3+ (#35), balance (#36), fourth archetype (#37), leader experience (#33), settings menu (#34).
 
 ## Waiting on the user
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.

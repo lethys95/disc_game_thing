@@ -31,11 +31,12 @@ Foundation rebuild (traits, effect definitions, damage pipeline), first-playtest
 ## M12 — Paper standees ✅ (2026-09-26)
 Units with a portrait stand on the battlefield as camera-facing cards in their side's frame; the rest keep the statue placeholders. A stand-in, not the shipping look.
 
-## M13 — A game you can finish (in progress)
+## M13 — A game you can finish ✅ code side (2026-09-26); awaiting the user's playtest
 The goal of the vertical slice: one Jilliath vs Ral-Vitahl match you can play to the end against the AI and enjoy. A map AI that plans (not one move deep), no cold wars (finite neutral XP, #19), win conditions it actually reaches, balance tuned by `pnpm sim` / `sim:world`.
 - Done (2026-09-26): siege chains, staging, refilling, safer elevation; provisional camp regrowth (#19). Jilliath mirror: every game ends. `tests/campaign.test.ts` plays a whole AI game.
 - Blocked on design: Nexus tiers 3+ (#35); cross-faction balance waits for them (#36).
-- Next: playtest a full game as a human against the AI (pace, whether the AI feels fair), then pacing and balance.
+- AI decision time over whole games: median 0.1 ms, p90 127 ms, max 388 ms (in the worker; the view pauses 350 ms per AI action anyway). About 3 AI actions per turn.
+- Estimated human game: ~40 turns, 15–20 battles, roughly 45–90 minutes. Needs the user's playtest.
 
 ## Then
 - Faction content as the user designs it (Nexus trees first; Grove and Wastes later). The user owns unit designs and looks.
