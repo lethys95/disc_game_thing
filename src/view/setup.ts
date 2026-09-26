@@ -7,7 +7,7 @@ import { COLS, ROWS, sameTile } from "#rules/battle/grid";
 import type { Side, Tile } from "#rules/battle/types";
 import { FACTION_NAMES, UNITS } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
-import { fallbackColor, PLAYER_COLORS } from "#rules/world/colors";
+import { defaultColors, fallbackColor, freeColor, PLAYER_COLORS } from "#rules/world/colors";
 import type { PlayerColor } from "#rules/world/colors";
 import type { PlayerSetup } from "#rules/world/create";
 import { art } from "#view/art";
@@ -19,10 +19,13 @@ export type Squads = readonly [readonly Placement[], readonly Placement[]];
 
 type Colors = readonly [PlayerColor, PlayerColor];
 
+/** Maps have room for six Capitols (the ring's corners): you, the enemy squad and four more. */
+const MAX_EXTRA_OPPONENTS = 4;
+
 export interface SetupHandlers {
   onChange(squads: Squads, colors: Colors): void;
   onFight(squads: Squads, playerSide: Side | null, colors: Colors): void;
-  /** Onto a map: you (player 0) against the AI (player 1). */
+  /** Onto a map: you (player 0) against the enemy squad (player 1) and any extra AI opponents. */
   onMarch(players: readonly PlayerSetup[]): void;
   onLoad(): void;
 }
@@ -41,7 +44,9 @@ const PROBLEM_TEXT: Readonly<Record<SquadProblem, string>> = {
  */
 export class Setup {
   private squads: [Placement[], Placement[]] = [[...PRESETS.preserve], [...PRESETS.punishment]];
-  private formations: [string, string] = ["Faith preserves", "Faith consumes: Punishment"];
+  private formations: [string, string] = ["Faith preserves", "Faith consumes: Punisher"];
+  /** More AI opponents for the map, beyond the enemy squad (a skirmish stays two-sided). */
+  private extras: { faction: Playable; formation: string }[] = [];
   private factions: [Playable, Playable] = ["jilliath", "jilliath"];
   private colors: [PlayerColor, PlayerColor] = colorPair(["jilliath", "jilliath"]);
   /** Colors the player picked stay; the others follow the factions' defaults. */
@@ -133,6 +138,7 @@ export class Setup {
     body.appendChild(this.palette());
     body.appendChild(this.squadPanel(1));
     this.root.appendChild(body);
+    this.root.appendChild(this.extrasPanel());
 
     const footer = element("div", "setup-footer");
     const mode = element("label", "mode");
@@ -150,15 +156,87 @@ export class Setup {
     fight.disabled = !ready;
     fight.addEventListener("click", () => this.handlers.onFight(this.squads, this.watch ? null : 0, this.colors));
     const march = element("button", "action fight", "March");
-    march.title = "Take both squads onto a map: your leader against the enemy's";
+    march.title = this.extras.length === 0 ? "Take both squads onto a map: your leader against the enemy's" : `Onto a map: you against ${this.extras.length + 1} AI opponents`;
     march.disabled = !ready;
-    march.addEventListener("click", () =>
-      this.handlers.onMarch(([0, 1] as const).map((side) => ({ squad: this.squads[side], faction: this.factions[side], commitment: this.commitmentOf(side), color: this.colors[side] }))),
-    );
+    march.addEventListener("click", () => this.handlers.onMarch(this.players()));
     const load = element("button", "action", "Load game");
     load.addEventListener("click", () => this.handlers.onLoad());
     footer.append(mode, fight, march, load);
     this.root.appendChild(footer);
+  }
+
+  /** Everyone on the map: you, the enemy squad, then the extra opponents, each with a color of its own. */
+  private players(): PlayerSetup[] {
+    const main = ([0, 1] as const).map((side): PlayerSetup => ({ squad: this.squads[side], faction: this.factions[side], commitment: this.commitmentOf(side), color: this.colors[side] }));
+    const colors = this.extraColors();
+    const extras = this.extras.map((extra, i): PlayerSetup => {
+      const squad = this.extraSquad(extra);
+      return { squad, faction: extra.faction, commitment: commitmentOf(squad.map((p) => p.defId)) ?? {}, color: colors[i] ?? "white" };
+    });
+    return [...main, ...extras];
+  }
+
+  private extraSquad(extra: { faction: Playable; formation: string }): Placement[] {
+    const formations = FORMATIONS[extra.faction];
+    return [...(formations.find((f) => f.name === extra.formation) ?? formations[0])?.squad ?? []];
+  }
+
+  /** Extra opponents take their faction's color if it's free, else the next free one. */
+  private extraColors(): PlayerColor[] {
+    const taken: PlayerColor[] = [...this.colors];
+    return this.extras.map((extra) => {
+      const own = defaultColors([extra.faction])[0];
+      const color = own && !taken.includes(own) ? own : freeColor(taken);
+      taken.push(color);
+      return color;
+    });
+  }
+
+  /** Map games only: more AI opponents, each with a faction and a formation. */
+  private extrasPanel(): HTMLElement {
+    const panel = element("div", "setup-extras");
+    panel.appendChild(element("div", "note", "On the map, more AI opponents can join (skirmishes stay one against one):"));
+    const colors = this.extraColors();
+    this.extras.forEach((extra, i) => {
+      const row = element("div", "extra");
+      const dot = element("span", "dot");
+      dot.style.background = COLOR_HEX[colors[i] ?? "white"];
+      row.appendChild(dot);
+      for (const faction of ["jilliath", "nexus"] as const) {
+        const button = element("button", `doctrine faction small${extra.faction === faction ? " selected" : ""}`, FACTION_NAMES[faction]);
+        button.addEventListener("click", () => {
+          this.extras[i] = { faction, formation: FORMATIONS[faction][0]?.name ?? "" };
+          this.render();
+        });
+        row.appendChild(button);
+      }
+      const formation = element("select", "formation");
+      for (const option of FORMATIONS[extra.faction]) {
+        const item = element("option", "", option.name);
+        item.value = option.name;
+        item.selected = option.name === extra.formation;
+        formation.appendChild(item);
+      }
+      formation.addEventListener("change", () => {
+        this.extras[i] = { ...extra, formation: formation.value };
+      });
+      const remove = element("button", "small", "Remove");
+      remove.addEventListener("click", () => {
+        this.extras.splice(i, 1);
+        this.render();
+      });
+      row.append(formation, remove);
+      panel.appendChild(row);
+    });
+    const add = element("button", "small", "Add an AI opponent");
+    add.disabled = this.extras.length >= MAX_EXTRA_OPPONENTS;
+    add.title = add.disabled ? `At most ${MAX_EXTRA_OPPONENTS + 2} players on a map.` : "";
+    add.addEventListener("click", () => {
+      this.extras.push({ faction: "jilliath", formation: FORMATIONS.jilliath[0]?.name ?? "" });
+      this.render();
+    });
+    panel.appendChild(add);
+    return panel;
   }
 
   private squadPanel(side: Side): HTMLElement {

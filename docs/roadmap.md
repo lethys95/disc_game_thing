@@ -61,6 +61,9 @@ The user's Etherborn, Backlasher and Maelstrom; the renames Cyclops, Technician 
 ## M22 — Settings ✅ (2026-09-26)
 Animation speed, camera feel, hotkeys; kept per browser.
 
+## M24 — More players from the setup ✅ (2026-09-26)
+Up to six players on a map from the setup screen; you against several AIs.
+
 ## Then
 - Faction content as the user designs it (Nexus trees first; Grove and Wastes later). The user owns unit designs and looks.
 - Spells and mana (canon), a spell tree in the Capitol.

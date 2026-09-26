@@ -80,12 +80,15 @@ export class MapPanels {
     }
   }
 
+  /** The end of your game: the last one standing, or your Guardian fell (with 3+ players, the others play on). */
   private renderBanner(world: World, player: PlayerId): void {
-    this.banner.hidden = !world.outcome;
-    if (!world.outcome) return;
+    const out = playerOf(world, player).eliminated;
+    this.banner.hidden = !world.outcome && !out;
+    if (this.banner.hidden) return;
     this.banner.replaceChildren();
-    const won = world.outcome.winner === player;
-    this.banner.appendChild(element("div", "title", won ? "The enemy Guardian has fallen" : "Your Guardian has fallen"));
+    const won = world.outcome?.winner === player;
+    const others = world.players.length > 2 ? "Every other Guardian has fallen" : "The enemy Guardian has fallen";
+    this.banner.appendChild(element("div", "title", won ? others : "Your Guardian has fallen"));
     this.banner.appendChild(element("div", "subtitle", `${won ? "Victory" : "Defeat"} on turn ${world.turn}`));
     const again = element("button", "action", "New game");
     again.addEventListener("click", () => this.actions.newGame());
