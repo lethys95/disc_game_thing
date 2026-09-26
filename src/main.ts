@@ -1,5 +1,7 @@
 import { createBattle } from "#rules/battle/engine";
 import { AiClient } from "#view/ai-client";
+import { GameMenu } from "#view/menu";
+import { AUTOSAVE_ID, LocalSaveStore } from "#view/saves";
 import { applyOrnaments } from "#view/art";
 import { App } from "#view/app";
 import { byId } from "#view/dom";
@@ -19,7 +21,26 @@ const battleScene = new BattleScene(stage);
 const mapView = new MapView(stage);
 const ai = new AiClient();
 const app: App = new App(stage, battleScene, ai, { onSetup: () => showSetup() });
-const campaign: Campaign = new Campaign(stage, mapView, app, ai, { onSetup: () => showSetup() });
+const saves = new LocalSaveStore();
+const campaign: Campaign = new Campaign(stage, mapView, app, ai, {
+  onSetup: () => showSetup(),
+  onAutosave: (save) => saves.write(AUTOSAVE_ID, save),
+  onMenu: () => menu.show(),
+});
+const menu: GameMenu = new GameMenu(byId("menu"), {
+  store: saves,
+  current: () => {
+    if (setup.visible) return null;
+    if (!campaign.running) return "Skirmishes aren't saved; march onto a map for a game you can save.";
+    return campaign.snapshot() ?? "Finish the battle first: saves hold the map.";
+  },
+  load: (save) => {
+    setup.hide();
+    app.stop();
+    campaign.resume(save);
+  },
+  newGame: () => showSetup(),
+});
 const setup = new Setup(byId("setup"), {
   onChange: (squads) => {
     battleScene.show();
@@ -35,6 +56,7 @@ const setup = new Setup(byId("setup"), {
     const seed = Number(params.get("seed") ?? Math.floor(Date.now() % 100000));
     campaign.start(squads, factions, commitments, seed);
   },
+  onLoad: () => menu.show(),
 });
 
 function showSetup(): void {

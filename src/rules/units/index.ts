@@ -9,6 +9,9 @@ export const GUARDIAN_ID = "capitol_guardian";
 
 export type Playable = Exclude<Faction, "neutral">;
 
+/** The user's faction names (docs/design/factions/). */
+export const FACTION_NAMES: Readonly<Record<Playable, string>> = { jilliath: "Jilliath", nexus: "Ral-Vitahl" };
+
 /**
  * Each playable faction's tier-1 units: what it recruits (tier 1 only, as in D2; higher tiers come from
  * evolution) and where its evolution tree starts.

@@ -16,18 +16,19 @@ Git: tags `m2-playable` … `m7-foundation` mark tested states. Work happens on 
 - Nexus forks scheme vs overload (Battery, Mutant, Justiciar, Thaumaturge). The Negate mark is hidden from the marked side (`src/view/secrecy.ts`, tested).
 - Unit designs from the user: `design/units/*.md`. Numbers are provisional (`questions.md`).
 
-Rules: `src/rules/` (85 tests). View: `src/view/`. Tools: the `verify` skill; `A=<preset|nexus> B=… pnpm sim:world`.
+Rules: `src/rules/` (89 tests). View: `src/view/`. Tools: the `verify` skill; `A=<preset|nexus> B=… pnpm sim:world`.
 
 ## Next
-**m10 (branch `m10-assets`): art slots done.** Every unit, ability and effect has a slot; the game shows art where it exists and faction-colored placeholders elsewhere (unit card, action buttons, effect tags, setup list, Capitol tree; the corner ornament on panels). `pnpm art report | generate | accept` (engineering.md → Art). 8 slots filled from the user's picks.
-1. **Save/load** (next, agreed with the user): world snapshots as JSON with a version; localStorage slots, file export/import, autosave each turn. Battles in progress are plain data too.
-2. Art as the user likes: describe looks (`LOOKS`), generate, pick, accept. Style is the user's call, not a Claude project (decisions.md 2026-09-26).
-3. Game-side open items: leader experience (#33, postponed), settings menu (#34), placeholder upgrades, faction sparring, cold wars (#19).
+**m11 done: save/load.** Menu on the map (Save, saved games with Load/Export/Delete, Import, New game); "Load game" on the setup screen; autosave at the start of each of your turns; `pnpm verify` saves, reloads and loads a game. Art slots (m10) done before it.
+1. **Spar with the user on direction** (they asked, after saves): Claude brings a proposal, incl. browser vs desktop app and 3D performance in the browser.
+2. Art when the user supplies looks; readability fix (figure/ground contrast) later.
+3. Open items: leader experience (#33, postponed), settings menu (#34; the game menu is its home), placeholder upgrades, faction sparring, cold wars (#19).
 
 ## Waiting on the user
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.
 
 ## Recently done
+- 2026-09-26: m11: saves (snapshots, versioned, localStorage behind an interface, file export/import, autosave), game menu.
 - 2026-09-26: m10: art slots with fallbacks and placeholders, the art pipeline CLI, first art in the game.
 - 2026-09-25: art spike: Krea 2 set up; four rounds of style fishing with the user; the ink-brush style holds across the Zealot and the Grove's Psychopomp.
 - 2026-09-25: m9: fallen leaders stay and are revived; Capitol archetype tabs; a leader screen; D/W hotkeys (the playtest presses D).

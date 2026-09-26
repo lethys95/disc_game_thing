@@ -5,7 +5,7 @@ import { allowedUnits, commitmentOf, squadProblems } from "#rules/forks";
 import type { Commitment, SquadProblem } from "#rules/forks";
 import { COLS, ROWS, sameTile } from "#rules/battle/grid";
 import type { Side, Tile } from "#rules/battle/types";
-import { UNITS } from "#rules/units/index";
+import { FACTION_NAMES, UNITS } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
 import { art } from "#view/art";
 import { FORMATIONS, PRESETS } from "#view/squads";
@@ -17,9 +17,9 @@ export interface SetupHandlers {
   onChange(squads: Squads): void;
   onFight(squads: Squads, playerSide: Side | null): void;
   onMarch(squads: Squads, factions: readonly [Playable, Playable], commitments: readonly [Commitment, Commitment]): void;
+  onLoad(): void;
 }
 
-const FACTION_NAMES: Readonly<Record<Playable, string>> = { jilliath: "Jilliath", nexus: "Ral-Vitahl" };
 
 const PROBLEM_TEXT: Readonly<Record<SquadProblem, string>> = {
   empty: "A squad needs at least one unit.",
@@ -53,6 +53,10 @@ export class Setup {
 
   hide(): void {
     this.root.hidden = true;
+  }
+
+  get visible(): boolean {
+    return !this.root.hidden;
   }
 
   private setFaction(side: Side, faction: Playable): void {
@@ -128,7 +132,9 @@ export class Setup {
     march.title = "Take both squads onto a map: your leader against the enemy's";
     march.disabled = !ready;
     march.addEventListener("click", () => this.handlers.onMarch(this.squads, this.factions, [this.commitmentOf(0), this.commitmentOf(1)]));
-    footer.append(mode, fight, march);
+    const load = element("button", "action", "Load game");
+    load.addEventListener("click", () => this.handlers.onLoad());
+    footer.append(mode, fight, march, load);
     this.root.appendChild(footer);
   }
 
