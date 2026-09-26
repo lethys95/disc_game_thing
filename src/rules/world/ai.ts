@@ -99,6 +99,12 @@ function siegeViable(world: World, capitolHex: Hex): boolean {
 /** Provisional AI taste at each fork: the branches pnpm sim rates strongest first. */
 const AI_PREFERRED_BRANCHES: readonly string[] = ["zealot", "punisher", "mutant", "thaumaturge"];
 
+/**
+ * The AI keeps at most this many warbands. Not a game rule (there's no leader cap): more warbands mostly spread its
+ * XP thin, and each one multiplies its siege planning, which slowed long games with several players to a crawl.
+ */
+const AI_MAX_WARBANDS = 4;
+
 /** Provisional: the AI buys the tree's skills in this order, a warband's size first. */
 const AI_SKILL_ORDER: readonly string[] = ["leadership", "health", "healing", "movement", "aura"];
 
@@ -181,7 +187,7 @@ export function chooseWorldAction(world: World): WorldAction {
     // garrison and only feeds the enemy XP. New warbands only once the existing ones are full.
     const canFill = playerOf(world, side).gold >= cost * STARTING_LEADERSHIP;
     const warbandsFull = mine.every((l) => l.squad.length >= leadershipOf(l));
-    if (!home && (!underThreat || canFill) && (mine.length === 0 || (rich && warbandsFull))) {
+    if (!home && (!underThreat || canFill) && (mine.length === 0 || (rich && warbandsFull && mine.length < AI_MAX_WARBANDS))) {
       const spare = capitol.garrison.find((m) => m.defId !== GUARDIAN_ID);
       if (spare && !elevateProblem(world, spare.tile)) return { type: "elevate", tile: spare.tile };
       if (!recruitProblem(world, guard, garrison)) return { type: "recruit", defId: guard, into: garrison };
