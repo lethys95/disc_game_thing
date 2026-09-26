@@ -56,5 +56,6 @@ The user is in a "suggest" role: they answer when they have time, so nothing her
 34. A settings menu (hotkeys, speed, camera) is wanted eventually. Hotkeys are data on the ability definitions (`hotkey`), so remapping will be an override table.
 
 ## A game you can finish (m13)
-35. **Nexus needs tiers 3+ (design gate).** Nexus's trees end at tier 2 (Battery, Mutant, Justiciar, Thaumaturge; the Arcane Engineer has no tier 2 at all). Tier-2 armies can't break a Capitol, so games where Nexus is ahead still stall. Needs the user's unit designs.
+35. **Nexus needs tiers 3+ (design gate).** Depths set by the user (2026-09-26): melee ≤ tier 3 (scheme may stop at the Battery), support ≤ 3 and about disabling, mage to tier 5 with maybe several tier-5 options. Units still to design. Nexus's trees end at tier 2 (Battery, Mutant, Justiciar, Thaumaturge; the Arcane Engineer has no tier 2 at all). Tier-2 armies can't break a Capitol, so games where Nexus is ahead still stall. Needs the user's unit designs.
 36. **Cross-faction balance:** with the AI on both sides, Nexus wins about 10 of 13 decided games against Jilliath (8 seeds each way; the Jilliath mirror is an even 4–4). Tuning waits for Nexus's tiers 3+, since the tier-2 cap distorts the picture.
+37. **The fourth archetype.** The user doubts "ranged" (D2's bows) has creative room and wants something beyond melee/support/mage, but isn't sure what. Claude's proposals in the conversation of 2026-09-26 (summoner/tile-filler line, telegraphed artillery); undecided.

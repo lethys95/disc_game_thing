@@ -4,8 +4,8 @@
 > the provisional code. Your word wins.
 
 ## The line
-- **Role in the faction:** keeps the melee line's shields up.
-- **Ends at tier:** open. Only tier 1 exists.
+- **Role in the faction:** short line, focused on **disabling** more than on healing shields (you, 2026-09-26).
+- **Ends at tier:** probably 3 at most (you).
 - **Forks:** open. (The other Nexus lines fork scheme vs overload at tier 2.)
 - **Theme:** open.
 

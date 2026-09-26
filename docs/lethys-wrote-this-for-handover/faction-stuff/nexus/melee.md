@@ -5,7 +5,7 @@
 
 ## The line
 - **Role in the faction:** the front; not Nexus's strongest line (casters are).
-- **Ends at tier:** short evolution chain (your words). Today it stops at tier 2. **Open:** does it go further? (questions.md #35)
+- **Ends at tier:** 3 at most (you, 2026-09-26); the scheme side may stop at the Battery (tier 2).
 - **Forks:** tier 2: **scheme** (automata: foresight, counterplay) vs **overload** (mutants: raw power that doesn't care who it hits).
 - **Theme:** expedience; "mutants will be the melee line primarily" (you).
 

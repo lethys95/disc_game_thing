@@ -5,7 +5,7 @@
 
 ## The line
 - **Role in the faction:** Nexus's strongest line in general (you).
-- **Ends at tier:** open. Today it stops at tier 2. (questions.md #35)
+- **Ends at tier:** 5, possibly with several tier-5 options (you, 2026-09-26).
 - **Forks:** tier 2: **scheme** (Justiciar: foresight, counterplay) vs **overload** (Thaumaturge: power that doesn't care who it hits).
 - **Theme:** burst and gimmicks; "Storm" combo play.
 
