@@ -69,3 +69,13 @@ Source: `docs/lethys-wrote-this-for-handover/inspiration-from-topology-ai.md` (p
 - Tools named in the posts: Tripo P2 / 3DAIStudio / Meshy (cloud, paid per generation; check terms and EU availability before relying on them), Blender MCP (drives a running Blender GUI; headless scripts do the same for us and live in git).
 
 Plan (proposed 2026-09-26): after M13, a **3D spike**: the Zealot keeper → multi-view (Wan 2.2 turntable) → image-to-3D (local and EU-usable first, e.g. TRELLIS.2; a cloud generator as comparison) → Blender headless (cleanup, split into rigid parts, rig, attack/hit/death/idle) → glTF → the battle scene beside the standees. Separately and cheaply: procedural map dressing (trees, rocks) from Blender or three.js.
+
+## Experiment: a Grove tree built by an agent in Blender (2026-09-26)
+The user asked to see how far iterative AI work in Blender goes. A subagent ran 8 build → render → critique iterations on a procedural "life and death intertwined" Grove tree (brief: readable at map scale, ≤ 4k triangles, glTF). Result: `art/blender/grove-tree/` (script, `.glb` of 3,056 triangles, notes, renders). It reads as half alive, half dead at map scale and holds up across random seeds; the styling is generic low-poly, not the ink direction. Its lessons, worth keeping for any 3D work:
+- Judge at the player's pixel size (a render with the game camera's exact scale); close-ups flatter everything.
+- Silhouettes come from contrasting gestures (stilt roots, a drooping mass vs a reaching arm), and value contrast (dark bark vs bone-pale dead wood) beats hue at small sizes. An accent color works in 2–3 places, not everywhere.
+- Canopy recipe: merged spheres → voxel remesh → noise displacement → decimate, colored afterwards.
+- Separate random streams for structure and decoration, so tweaking one doesn't reshuffle the other.
+- Verify a glTF export by re-importing it into an empty scene and rendering from the file alone.
+- Blender 5.2 headless renders EEVEE, Workbench and Cycles; bloom now goes through `scene.compositing_node_group`.
+Next steps it proposed: ink treatment (hard black in crevices, outlines on big shapes), canopy gaps, variants (sapling, dead) and a check in the real map renderer.
