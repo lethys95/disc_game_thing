@@ -36,9 +36,9 @@ What exists:
 Scheme vs overload splits the **whole faction** (user, 2026-09-25): **scheme = automata, overload = mutants**, and the casters fork the same way. It's one faction-wide fork, bought once, like Jilliath's.
 
 Tier 2 (user, 2026-09-25; numbers provisional):
-- **Battery** (Custodian → scheme, melee): higher shield. **Equalize**: shares shields with any unit until they're equal, so it spreads its shield and usually loses some. Shields handed out this way perish on the Battery's next turn.
+- **Cyclops** (Custodian → scheme, melee): higher shield. **Equalize**: shares shields with any unit until they're equal, so it spreads its shield and usually loses some. Shields handed out this way perish on the Cyclops's next turn.
 - **Mutant** (Custodian → overload, melee): higher max HP. Passive **Mutate**: if a shield is restored while its shield is already full, it gains about +10 damage. "You must attack this thing or it becomes a menace."
 - **Justiciar** (Apprentice → scheme, caster): **activated, not a reaction** (a reaction would pause the game all the time). Target another unit in the queue; the next ability that unit uses is cancelled. The selection is **secret** from the other player. It doesn't use up the Justiciar's own action; one use. "Maybe at the cost of initiative next round if too oppressive": not applied until balance says so.
 - **Thaumaturge** (Apprentice → overload, caster): two uses of homing lightning that hits **all** units, friendly and enemy, with the same name as the target.
 
-The Arcane Engineer has no tier 2 yet.
+The Technician has no tier 2 yet.

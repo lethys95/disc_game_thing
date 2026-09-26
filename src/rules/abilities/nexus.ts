@@ -51,23 +51,90 @@ export const nexus: Readonly<Record<string, Behavior>> = {
     },
   },
 
-  /** Justiciar (scheme): secretly mark an enemy; the next ability it uses is cancelled. A free action. */
-  negate: {
+  /**
+   * Justiciar (scheme): secretly mark an enemy; the next ability it uses is cancelled. A free action. With a
+   * `backlash` param (the Backlasher's Backlash), the cancelled unit is also hit for that much.
+   */
+  counter: {
     kind: "active",
-    name: "Negate",
+    name: "Counter",
     describe: (p) =>
-      `Free action: secretly mark an enemy; the next ability it uses is cancelled. ${spellCost(p)}`,
+      `Free action: secretly mark an enemy; the next ability it uses is cancelled${p["backlash"] ? `, and the backlash hits it for ${p["backlash"]}` : ""}. ${spellCost(p)}`,
     tags: ["spell"],
     defaults: { cost: 1 },
     secretTarget: true,
     choices: (ctx, self) =>
       ctx
         .living(opponent(ctx.unit(self.unitId).side))
-        .filter((u) => !u.effects.some((e) => e.def === "negated"))
+        .filter((u) => !u.effects.some((e) => e.def === "countered"))
         .map((u) => single(u, "free")),
+    resolve: (ctx, self, choice) => {
+      for (const id of choice.affected) ctx.addEffect(id, { def: "countered", source: self.unitId, amount: self.params["backlash"] ?? 0 });
+    },
+  },
+
+  /** Etherborn: secretly mark any unit; the next damage or healing to reach it is turned around, once. */
+  negate: {
+    kind: "active",
+    name: "Negate",
+    describe: (p) =>
+      `Secretly mark any unit: the next damage it would take heals it instead, and the next healing it would get (shields too) hurts it instead. Once. ${spellCost(p)}`,
+    tags: ["spell"],
+    defaults: { cost: 1 },
+    secretTarget: true,
+    choices: (ctx) =>
+      ctx
+        .living()
+        .filter((u) => !u.effects.some((e) => e.def === "negated"))
+        .map((u) => single(u, "main")),
     resolve: (ctx, self, choice) => {
       for (const id of choice.affected) ctx.addEffect(id, { def: "negated", source: self.unitId });
     },
+  },
+
+  /**
+   * Etherborn's basic attack. On an enemy: a very weak hit, and its next hit is weakened. On an ally: the next hit
+   * on it is softened. Either way the Etherborn heals by what was prevented.
+   */
+  absorb: {
+    kind: "active",
+    name: "Absorb",
+    describe: (p) =>
+      `On an enemy: a very weak ranged hit, and its next hit deals ${p["prevent"]} less. On an ally: the next hit on it deals ${p["prevent"]} less. This unit heals by what is prevented. Unlimited.`,
+    tags: ["attack", "ranged", "spell", "damage"],
+    defaults: { prevent: 15 },
+    choices: (ctx, self) =>
+      ctx
+        .living()
+        .filter((u) => u.id !== self.unitId)
+        .map((u) => single(u, "main")),
+    resolve: (ctx, self, choice) => {
+      const side = ctx.unit(self.unitId).side;
+      const prevent = self.params["prevent"] ?? 0;
+      for (const id of choice.affected) {
+        if (ctx.unit(id).side === side) {
+          ctx.addEffect(id, { def: "absorbing_guard", source: self.unitId, amount: prevent });
+          continue;
+        }
+        ctx.hit(self.unitId, [id], ctx.hitSpec(self, ["attack", "ranged", "spell", "damage"]));
+        ctx.addEffect(id, { def: "absorbing_hit", source: self.unitId, amount: prevent });
+      }
+    },
+  },
+
+  /** Maelstrom: for the rest of this turn, its spells that cost charges are free actions. */
+  combustion: {
+    kind: "active",
+    name: "Combustion",
+    describe: (p) =>
+      `Free action: until this turn ends, spells that cost charges are free actions. ${spellCost(p)}`,
+    tags: ["spell"],
+    defaults: { cost: 1 },
+    choices: (ctx, self) => {
+      const user = ctx.unit(self.unitId);
+      return user.effects.some((e) => e.def === "combusting") ? [] : [single(user, "free")];
+    },
+    resolve: (ctx, self) => ctx.addEffect(self.unitId, { def: "combusting", source: self.unitId }),
   },
 
   /**
@@ -91,7 +158,7 @@ export const nexus: Readonly<Record<string, Behavior>> = {
     resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self, ["attack", "ranged", "spell", "damage", "area"])),
   },
 
-  /** Battery (scheme): share shield with an ally until both are equal; the loan perishes on the Battery's next turn. */
+  /** Cyclops (scheme): share shield with an ally until both are equal; the loan perishes on the Cyclops's next turn. */
   equalize: {
     kind: "active",
     name: "Equalize",

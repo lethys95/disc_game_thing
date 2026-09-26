@@ -143,8 +143,8 @@ function axe(material: THREE.Material, edge: THREE.Material): THREE.Group {
   return g;
 }
 
-/** Custodian and Battery: blocky golems; their shields show as glowing plates (the Battery carries cells). */
-function golem(m: Parts, battery: boolean): THREE.Group {
+/** Custodian and Cyclops: blocky golems; their shields show as glowing plates (the Cyclops carries cells). */
+function golem(m: Parts, cyclops: boolean): THREE.Group {
   const g = new THREE.Group();
   g.add(mesh(new THREE.BoxGeometry(0.5, 0.35, 0.4), m.trim, 0, 0.18, 0));
   g.add(mesh(new THREE.BoxGeometry(0.62, 0.6, 0.56), m.body, 0, 0.65, 0));
@@ -155,7 +155,7 @@ function golem(m: Parts, battery: boolean): THREE.Group {
   }
   g.add(mesh(new THREE.BoxGeometry(0.04, 0.4, 0.4), m.glow, 0.33, 0.7, 0));
   g.add(eyes(1.1, m.glow));
-  if (battery) {
+  if (cyclops) {
     for (const z of [-0.18, 0, 0.18]) g.add(mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.34, 8), m.glow, -0.36, 0.78, z));
   }
   return g;
@@ -187,8 +187,8 @@ export function buildFigure(defId: string, side: Side, owner: THREE.Color | null
   const height = 1.1;
   const top = height;
 
-  if (defId === "custodian" || defId === "battery" || defId === "mutant") {
-    g.add(defId === "mutant" ? mutantBody(m) : golem(m, defId === "battery"));
+  if (defId === "custodian" || defId === "cyclops" || defId === "mutant") {
+    g.add(defId === "mutant" ? mutantBody(m) : golem(m, defId === "cyclops"));
     g.scale.setScalar(scale);
     return g;
   }
@@ -237,7 +237,7 @@ export function buildFigure(defId: string, side: Side, owner: THREE.Color | null
       g.add(flail(m.trim, m.glow, defId === "torturer" ? 3 : 2));
       if (defId === "torturer") g.add(hookBlade(m.trim));
       break;
-    case "arcane_engineer":
+    case "technician":
       g.add(helm(top - 0.05, 0.14, m.trim));
       g.add(eyes(top + 0.1, m.glow));
       g.add(staff(m.trim, m.glow));

@@ -164,11 +164,11 @@ export type BattleEvent =
   | { type: "absorbed"; unitId: string; amount: number; by: string }
   | { type: "death"; unitId: string }
   | { type: "deathPrevented"; unitId: string }
-  | { type: "effect"; unitId: string; effect: string }
-  | { type: "effectEnded"; unitId: string; effect: string }
+  | { type: "effect"; unitId: string; effect: string; source: string | null }
+  | { type: "effectEnded"; unitId: string; effect: string; source: string | null }
   | { type: "move"; unitId: string; from: Tile; to: Tile }
   | { type: "skipped"; unitId: string; reason: "stunned" | "noActions" }
-  | { type: "negated"; unitId: string; abilityId: string }
+  | { type: "countered"; unitId: string; abilityId: string }
   | { type: "battleEnd"; outcome: Outcome };
 
 /**
@@ -233,6 +233,13 @@ export interface Hooks {
   afterAttack?(ctx: Ctx, self: TraitSelf, dealt: number, kills: number): void;
   /** When this unit would die; true keeps it at 1 HP. */
   preventDeath?(ctx: Ctx, self: TraitSelf): boolean;
+  /**
+   * When healing (or a shield restoration) is about to reach this unit: the traits may change `heal.amount`, down to
+   * zero, and do something else instead (Negate turns it into damage).
+   */
+  healing?(ctx: Ctx, self: TraitSelf, heal: { amount: number; readonly pool: "hp" | "shield" }): void;
+  /** The acting unit's traits: whether its spells that cost charges are free actions right now (Combustion). */
+  castsFree?(ctx: Ctx, self: TraitSelf): boolean;
   /** When a shield restoration reaches this unit: how much went in, and how much didn't fit. */
   restored?(ctx: Ctx, self: TraitSelf, restored: number, overflow: number): void;
   /** What this trait is worth to its unit's side, for the AI's valuation. */
@@ -243,17 +250,18 @@ export type Stacking = { readonly mode: "unique" } | { readonly mode: "merge"; r
 
 /**
  * When an effect ends: `battle` lasts the fight; `untilOwnTurn` ends as its bearer's next turn starts;
- * `untilRoundEnd` ends when the round does; `untilSourceTurn` ends as its source's next turn starts.
+ * `untilRoundEnd` ends when the round does; `untilSourceTurn` ends as its source's next turn starts; `untilTurnEnd`
+ * ends when the bearer's current turn does.
  */
-export type Lifetime = "battle" | "untilOwnTurn" | "untilRoundEnd" | "untilSourceTurn";
+export type Lifetime = "battle" | "untilOwnTurn" | "untilRoundEnd" | "untilSourceTurn" | "untilTurnEnd";
 
 export interface EffectDef {
   readonly id: string;
   readonly name: string;
   readonly stacking: Stacking;
   readonly lifetime: Lifetime;
-  /** `hiddenFromBearerSide`: the bearer's own side must not see it (a Justiciar's mark). */
-  readonly visibility: "public" | "hiddenFromBearerSide";
+  /** `secret`: only the side of the unit that applied it knows it's there, until it fires (a Justiciar's mark). */
+  readonly visibility: "public" | "secret";
   /** Bookkeeping effects (a loan, a context bonus) that the view shouldn't announce when applied. */
   readonly quiet?: boolean;
   readonly hooks: Hooks;
@@ -274,9 +282,9 @@ export interface ActiveBehavior {
   readonly defaults?: Params;
   /** Uses the damage type given here instead of the unit's. */
   readonly damageType?: DamageType;
-  /** Wait: puts the unit back in the queue instead of acting. Not an ability a Negate can cancel. */
+  /** Wait: puts the unit back in the queue instead of acting. Not an ability a Counter can cancel. */
   readonly reschedules?: boolean;
-  /** The target is secret from the other side (Negate). */
+  /** The target is secret from the other side (Counter). */
   readonly secretTarget?: boolean;
   /** What an overloaded cast reaches, when the unit's params allow overloading (`overload`: its extra cost). */
   overloadChoices?(ctx: Ctx, self: TraitSelf): TargetChoice[];

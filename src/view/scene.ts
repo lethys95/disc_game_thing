@@ -386,8 +386,8 @@ export class BattleScene {
           break;
         case "effectEnded":
           break;
-        case "negated":
-          this.float(event.unitId, "Negated!", "spared");
+        case "countered":
+          this.float(event.unitId, "Countered!", "spared");
           break;
         case "skipped":
           this.float(event.unitId, event.reason === "stunned" ? "Stunned" : "No action", "effect");

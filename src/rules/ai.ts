@@ -3,21 +3,29 @@ import { applyAction, legalActions, traitValue } from "#rules/battle/engine";
 import { UNITS } from "#rules/units/index";
 import type { Action, Battle, Side } from "#rules/battle/types";
 
-/** One-ply greedy opponent: tries every legal action and keeps the best resulting position. */
+/**
+ * Greedy opponent: tries every legal action and keeps the best resulting position. An action that leaves the same
+ * unit's turn going (a free action, a bonus attack) is worth its best follow-up too, looked at `depth` steps deep:
+ * otherwise a free action that only pays off on the next one (Combustion) never looks worth it.
+ */
 export function chooseAction(battle: Battle): Action | null {
+  return bestAction(battle, FOLLOW_UP_DEPTH)?.action ?? null;
+}
+
+const FOLLOW_UP_DEPTH = 2;
+
+function bestAction(battle: Battle, depth: number): { action: Action; score: number } | null {
   const slot = battle.current;
   if (!slot) return null;
   const side = battle.units[slot.unitId]?.side;
   if (side === undefined) return null;
 
-  let best: Action | null = null;
-  let bestScore = -Infinity;
+  let best: { action: Action; score: number } | null = null;
   const consider = (action: Action) => {
-    const score = evaluate(applyAction(battle, action).battle, side);
-    if (score > bestScore) {
-      best = action;
-      bestScore = score;
-    }
+    const after = applyAction(battle, action).battle;
+    let score = evaluate(after, side);
+    if (depth > 0 && after.current?.unitId === slot.unitId && !after.outcome) score = Math.max(score, bestAction(after, depth - 1)?.score ?? -Infinity);
+    if (!best || score > best.score) best = { action, score };
   };
   const options = legalActions(battle);
   for (const option of options) {
@@ -41,7 +49,7 @@ export function chooseAction(battle: Battle): Action | null {
 
 /**
  * How good a position is for `side`. Health, shields and spent charges are universal; everything mechanic-specific
- * (a pending Negate, a Mutation, a fire shield) comes from the traits' own `aiValue`.
+ * (a pending Counter, a Mutation, a fire shield) comes from the traits' own `aiValue`.
  */
 function evaluate(battle: Battle, side: Side): number {
   if (battle.outcome) return battle.outcome.winner === side ? 1e6 : battle.outcome.winner === null ? 0 : -1e6;

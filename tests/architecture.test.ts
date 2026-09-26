@@ -62,7 +62,7 @@ describe("params instead of variants", () => {
 
 describe("stacking and lifetimes", () => {
   test("loans from different lenders are tracked apart and each perishes on its own lender's turn", () => {
-    let battle = createBattle([[p("battery", 0, 0), p("battery", 0, 2), p("congregant", 0, 1)], [p("congregant", 2, 2)]]).battle;
+    let battle = createBattle([[p("cyclops", 0, 0), p("cyclops", 0, 2), p("congregant", 0, 1)], [p("congregant", 2, 2)]]).battle;
     const lenders = ["0.0.0", "0.0.2"];
     for (const lender of lenders) battle = act(until(battle, lender), "equalize", "0.0.1").battle;
     const loans = battle.units["0.0.1"]?.effects.filter((e) => e.def === "lent_shield").map((e) => [e.source, e.amount]);

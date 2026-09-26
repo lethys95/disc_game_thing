@@ -18,18 +18,18 @@ export const FACTION_NAMES: Readonly<Record<Playable, string>> = { jilliath: "Ji
  */
 export const FACTION_ROOTS: Readonly<Record<Playable, readonly string[]>> = {
   jilliath: ["congregant"],
-  nexus: ["custodian", "arcane_engineer", "apprentice"],
+  nexus: ["custodian", "technician", "apprentice"],
 };
 
 /** The kinds of line a faction's units come in (D2's archetypes, which the user pointed to). */
 export const ARCHETYPES = ["melee", "ranged", "support", "mage"] as const;
 export type Archetype = (typeof ARCHETYPES)[number];
 
-/** Which kind of line each tier-1 unit starts (user: the melee lines, the Engineer supports, the Apprentice casts). */
-export const LINE_ARCHETYPE: Readonly<Record<string, Archetype>> = { congregant: "melee", custodian: "melee", arcane_engineer: "support", apprentice: "mage" };
+/** Which kind of line each tier-1 unit starts (user: the melee lines, the Technician supports, the Apprentice casts). */
+export const LINE_ARCHETYPE: Readonly<Record<string, Archetype>> = { congregant: "melee", custodian: "melee", technician: "support", apprentice: "mage" };
 
 /** Canon: the Congregant costs 40 gold. The Nexus prices are provisional ("costly", quality over quantity). */
-export const RECRUIT_COST: Readonly<Record<string, number>> = { congregant: 40, custodian: 60, arcane_engineer: 50, apprentice: 60 };
+export const RECRUIT_COST: Readonly<Record<string, number>> = { congregant: 40, custodian: 60, technician: 50, apprentice: 60 };
 
 /** One step up an evolution tree. */
 export interface Evolution {
@@ -52,6 +52,9 @@ export const EVOLUTIONS: Readonly<Record<string, readonly Evolution[]>> = {
   fanatic: [{ to: "chosen" }],
   chosen: [{ to: "avatar_of_vengeance" }],
   // Ral-Vitahl: scheme vs overload, chosen per line (user, 2026-09-25).
-  custodian: [{ to: "battery", label: "Scheme" }, { to: "mutant", label: "Overload" }],
+  custodian: [{ to: "cyclops", label: "Scheme" }, { to: "mutant", label: "Overload" }],
   apprentice: [{ to: "justiciar", label: "Scheme" }, { to: "thaumaturge", label: "Overload" }],
+  // Tier 3 mages (user, 2026-09-26). The Justiciar forks; the fork has no dichotomy label yet.
+  justiciar: [{ to: "etherborn" }, { to: "backlasher" }],
+  thaumaturge: [{ to: "maelstrom" }],
 };

@@ -5,6 +5,7 @@ import type { Battle, BattleEvent, BattleUnit, EffectInstance, Enhancement, Lega
 import { UNITS } from "#rules/units/index";
 import { art } from "#view/art";
 import { byId, element } from "#view/dom";
+import { sees } from "#view/secrecy";
 
 /** " (overloaded)", " ×3": how an enhanced spell reads in buttons and the log. */
 export function enhancementLabel(enhancement: Enhancement): string {
@@ -138,8 +139,8 @@ export class Hud {
     table.appendChild(element("span", "value", `${actionsPerRound(stats.initiative)} per round`));
     this.card.appendChild(table);
 
-    // A Justiciar's mark stays secret from the marked unit's own side.
-    const shown = unit.effects.filter((e) => !(effectDef(e.def).visibility === "hiddenFromBearerSide" && unit.side === playerSide));
+    // Secret effects (a Justiciar's mark) show only to the side that applied them.
+    const shown = unit.effects.filter((e) => sees(battle, playerSide, e.def, e.source));
     if (shown.length > 0) {
       const effects = element("div", "effects");
       for (const effect of shown) {
@@ -279,8 +280,8 @@ function describe(event: BattleEvent, name: (id: string) => string, playerSide: 
       return `${name(event.unitId)}'s ${effectDef(event.by).name.toLowerCase()} absorbs ${event.amount}`;
     case "move":
       return `${name(event.unitId)} is dragged to the front`;
-    case "negated":
-      return `${name(event.unitId)}'s action is negated!`;
+    case "countered":
+      return `${name(event.unitId)}'s action is countered!`;
     case "skipped":
       return event.reason === "stunned" ? `${name(event.unitId)} is stunned` : `${name(event.unitId)} cannot act`;
     case "battleEnd":

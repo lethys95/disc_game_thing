@@ -12,22 +12,23 @@ Git: tags `m2-playable` … `m7-foundation` mark tested states. Work happens on 
 **M1–M6 done.** Setup → pick each side's faction (**Jilliath** or **Ral-Vitahl**) and a formation → **Fight** or **March**.
 - March: a 61-hex map with Capitols and Guardians, neutral cities guarded by **bandits**, bandit **camps**, and guarded **dungeons** with one-time rewards.
 - Also gold, recruiting, elevation, XP and evolution, free per-line branch choices (with a prompt when a unit reaches an undecided fork), and the graveyard.
-- Engine: shields (and lent shields), ranged, area spells, stun, anti-armor, secret Negate marks, same-name lightning, Mutate. Punishment is capped at 3 stacks.
-- Nexus forks scheme vs overload (Battery, Mutant, Justiciar, Thaumaturge). The Negate mark is hidden from the marked side (`src/view/secrecy.ts`, tested).
+- Engine: shields (and lent shields), ranged, area spells, stun, anti-armor, secret Counter marks, same-name lightning, Mutate. Punishment is capped at 3 stacks.
+- Nexus forks scheme vs overload (Cyclops, Mutant, Justiciar, Thaumaturge). The Counter mark is hidden from the marked side (`src/view/secrecy.ts`, tested).
 - Unit designs from the user: `design/units/*.md`. Numbers are provisional (`questions.md`).
 
 Rules: `src/rules/` (93 tests). View: `src/view/`. Tools: the `verify` skill; `A=<preset|nexus> B=… pnpm sim:world`.
 
 ## Next
-**M19 done: fog of war** (decisions.md). Each player has explored hexes and a memory of places as last seen; `knownWorld` is what a player knows, and the map AI, the map view, previews and forecasts all use it. Unexplored land is a flat dark board; remembered land is dimmed; marches stop when they sight an unseen warband; the AI explores when idle. Sight radii provisional (#49). 8/8 AI games end (4–4). Before it: M18 players, M17 cities (tags `m18-players`, `m17-cities`).
-1. **Waiting on the user:** playtest cities and fog; spar on destructible cities (#42); questions #40–49; colors too brown (#43).
+**M21 done: Nexus tier-3 mages** from the user's sheet: Etherborn and Backlasher (a new fork after the Justiciar), Maelstrom (after the Thaumaturge). Renames: Battery → Cyclops, Arcane Engineer → Technician, the Justiciar's Negate → Counter (Negate is now the Etherborn's flip). New engine hooks: `healing`, `castsFree`; lifetime `untilTurnEnd`; visibility `secret` (only the caster's side sees it). The battle AI looks past free actions. Setup has three new Nexus formations. Provisional readings: questions.md #50. Before it: M19 fog of war.
+1. **Waiting on the user:** #50 (Backlash's cut-off sentence, fork labels), playtest cities, fog and the new mages; #40–49; colors (#43).
 2. Candidates next: a settings menu (#34); a setup screen for more players; spells and mana (canon).
-3. Open design: Nexus tiers 3+ (#35), Jilliath backline (#36), fourth archetype (#37), leader experience (#33).
+3. Open design: Nexus tiers 4–5 and the other lines (#35), Jilliath backline (#36), fourth archetype (#37), leader experience (#33).
 
 ## Waiting on the user
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.
 
 ## Recently done
+- 2026-09-26: M21 Nexus tier-3 mages; renames Cyclops, Technician, Counter.
 - 2026-09-26: `view/campaign.ts` split (606 → 390 lines): map panels, hint and news text, peeks, fork prompt, forecasts.
 - 2026-09-26: M19 Fog of war.
 - 2026-09-26: M18 Players: any number of players in the rules, battles two-sided.
@@ -47,7 +48,7 @@ See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/c
 - 2026-09-25: m8: per-line forks replace doctrines: free choice in the Capitol, a prompt at undecided forks, setup formations imply the choices.
 - 2026-09-25: first playtest fixes: the enemy's fights with neutrals resolve off-screen; effect tooltips and pinned cards; leader crowns; formation peek; Leadership replaces the fixed squad size (5).
 - 2026-09-25: consolidation: the engine rebuilt on traits and effect definitions, a damage pipeline, params and tags, city nodes as data (Blacksmith), world split, AI in a worker, `pnpm verify`. The preset battle matrix is identical before and after.
-- 2026-09-25: M6: per-faction forks; Nexus scheme vs overload with Battery, Mutant, Justiciar, Thaumaturge.
+- 2026-09-25: M6: per-faction forks; Nexus scheme vs overload with Cyclops, Mutant, Justiciar, Thaumaturge.
 - 2026-09-25: M5: bandit neutrals (guarded cities, camps, dungeons with rewards), Ral-Vitahl tier 1, shields/ranged/area engine, Punishment cap.
 - 2026-09-25: M4 done: XP, evolution, branch investment, graveyard/resurrection; AI invests and resurrects; cold wars persist (design gap).
 - 2026-09-25: M3 done: Capitols and Guardian, cities and gold, recruiting, elevation, healing, map forecast, safer map AI; Guardian tuned by simulation.

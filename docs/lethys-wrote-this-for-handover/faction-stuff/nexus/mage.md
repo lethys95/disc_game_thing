@@ -25,6 +25,7 @@ Nexus casters aren't real spellcasters: their power comes from batteries and equ
   - *Burst* (1 spell charge; the Apprentice has 2): hits a plus shape.
   - *Bolt* (every turn): very weak single target.
 - **Status:** in game as `apprentice`.
+- **look** (semi placeholder) We're keeping apprentice hooded and robed, so there's ambiguity at the gender split between scheme and overload.
 
 ## Tier 2
 
@@ -33,8 +34,9 @@ Nexus casters aren't real spellcasters: their power comes from batteries and equ
 - **Role:** counterplay.
 - **Intent:** activated, not a reaction (a reaction would pause the game all the time). Pick another unit in the queue: the next ability that unit uses is cancelled. The pick is **secret** from the other player. Doesn't use up the Justiciar's own action; once per fight. "Maybe at the cost of initiative next round if too oppressive": not applied unless balance needs it.
 - **Stats (Claude):** health low · damage as the Apprentice · armor none · initiative above medium.
-- **Abilities:** *Negate* (free action, 1 charge; replicable: several secret marks at once), plus the Apprentice's *Burst* (replicable) and *Bolt*.
+- **Abilities:** *Counter* (free action, 1 charge; replicable: several secret marks at once), plus the Apprentice's *Burst* (replicable) and *Bolt*.
 - **Status:** in game as `justiciar`.
+- **look** (semi placeholder, we're making scheme female and overload male)
 
 ### Thaumaturge (overload)
 - **Evolves from:** Apprentice.
@@ -43,6 +45,44 @@ Nexus casters aren't real spellcasters: their power comes from batteries and equ
 - **Stats (Claude):** health low · damage high burst · armor none · initiative medium.
 - **Abilities:** *Homing Lightning* (1 charge, one enemy; **overloaded**: every unit with the target's name, friend and foe, your original design). Plus the Apprentice's *Burst* (overloaded: every enemy) and *Bolt*.
 - **Status:** in game as `thaumaturge`.
+- **look** (semi placeholder, we're making scheme female and overload male)
 
 ## Tier 3
-Not designed yet.
+
+### Etherborn
+- **Evolves from:** Justiciar
+- **Role:** counterplay, semi support.
+- **intent:** Same usage of secrets as justiciar, but has more secrets. Also uses spells to counter enemy healing. Semi support unit, reactionary countering of damage and healing. Loses burst. Bolt turns into absorb. It's up the user not to mess up with the unit. Dead end evolution.
+- **look:** Blue skin, like stars underneath the skin, noble robes, no facial features, no eyes, no mouth. Hands surrounded by purple/pink arcane energy. Female shaped.
+- **Abilities**:
+    - Counter: secret Counterspell, costs charge
+    - Negate: secret damage/healing negation on target. Works against shields too. costs charge. Any target who would be healed, is damaged by that amount instead once. Any target who would be damaged is healed for that amount instead once.
+    - Absorb: basic attack replacement. Can target either enemy or ally. If enemy, deal very small amount of damage, next time they would deal damage, reduce the damage by x, and heal etherborn by the damage prevented. If ally, prevent y and heal etherborn by the damage prevented.
+- **Stats (Claude):** health below medium · damage very low · armor none · initiative high · 6 spell charges.
+- **Status:** in game as `etherborn` (provisional readings in questions.md #50).
+
+
+### Backlasher
+- **Evolves from** Justiciar
+- **Role:** offensive counterplay
+- **intent:** counterspells with penalties, more offensive power. 
+- **Abilities:**
+    - Bolt
+    - Burst
+    - backlash: negate but upgraded. If an ability is prevented this way, and the ability, deal x amount of damage.
+- **look**: 
+- **Stats (Claude):** health below medium · damage low · armor none · initiative high · 6 spell charges.
+- **Status:** in game as `backlasher` (provisional readings in questions.md #50).
+
+
+### Maelstrom 
+- **Evolves from** Thaumaturge
+- **Role** burst
+- **intent:** Has two more charges, and an additional spell. Linear upgrade.
+- **Abiliites:**
+    - Bolt
+    - Burst
+    - Homing Lightning
+    - Combustion: Costs 1 charge. Free action. Spells cast by this unit which cost charges become free actions this turn.
+- **Stats (Claude):** health below medium · damage low, high burst · armor none · initiative medium · 6 spell charges (the Thaumaturge's 4 + 2).
+- **Status:** in game as `maelstrom` (provisional readings in questions.md #50).

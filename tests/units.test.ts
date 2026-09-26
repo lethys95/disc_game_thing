@@ -2,7 +2,7 @@ import { effectiveStats, legalActions } from "#rules/battle/engine";
 import { act, affectedBy, p, start, unit, until } from "#tests/helpers";
 import { describe, expect, test } from "vitest";
 
-describe("shields (Custodian, Arcane Engineer)", () => {
+describe("shields (Custodian, Technician)", () => {
   test("a shield takes hits before health", () => {
     const battle = act(start([p("paladin", 0, 1)], [p("custodian", 0, 1)]), "attack", "1.0.1").battle;
     expect(unit(battle, "1.0.1").shield).toBe(90 - 40);
@@ -19,7 +19,7 @@ describe("shields (Custodian, Arcane Engineer)", () => {
   });
 
   test("only shield restoration brings a shield back", () => {
-    let battle = start([p("paladin", 0, 1)], [p("custodian", 0, 1), p("arcane_engineer", 1, 1)]);
+    let battle = start([p("paladin", 0, 1)], [p("custodian", 0, 1), p("technician", 1, 1)]);
     battle = act(battle, "attack", "1.0.1").battle;
     battle = act(battle, "defend").battle;
     expect(battle.current?.unitId).toBe("1.1.1");

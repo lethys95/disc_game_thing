@@ -161,10 +161,10 @@ export function applyAction(battle: Battle, action: Action): Step {
   const bonus = slot.bonusAttacks.shift();
   slot.penaltyMultiplier = bonus ?? 1;
   ctx.emit({ type: "ability", unitId, abilityId: action.abilityId, targets: casts.flatMap((c) => c.affected), enhancement });
-  // A cancel (Negate) spoils the whole cast, copies included.
+  // A cancel (Counter) spoils the whole cast, copies included.
   const cancelled =
     !found.reschedules && [...traitsOn(ctx, unitId)].some((t) => t.hooks.beforeAbility?.(ctx, t.self, action.abilityId) === "cancel");
-  if (cancelled) ctx.emit({ type: "negated", unitId, abilityId: action.abilityId });
+  if (cancelled) ctx.emit({ type: "countered", unitId, abilityId: action.abilityId });
   else for (const cast of casts) found.resolve(ctx, self, cast);
   slot.penaltyMultiplier = 1;
 
@@ -176,7 +176,10 @@ export function applyAction(battle: Battle, action: Action): Step {
   }
 
   checkOutcome(ctx);
-  if (draft.current && slotIsOver(ctx, slot)) draft.current = null;
+  if (draft.current && slotIsOver(ctx, slot)) {
+    draft.current = null;
+    expire(ctx, "untilTurnEnd", (u) => u.id === unitId);
+  }
   advance(ctx);
   return { battle: draft, events };
 }
@@ -217,10 +220,12 @@ function legal(ctx: Ctx): LegalAbility[] {
     const b = active(id);
     const self = activeSelf(ctx, unitId, id);
     if (self.params["charges"] !== undefined && chargesLeft(ctx, unitId, id) <= 0) continue;
-    const usable = (choices: readonly TargetChoice[]) =>
-      choices.map((c) => (bonusMode ? { ...c, cost: "free" as const } : c)).filter((c) => bonusMode || c.cost === "main" || !slot.freeUsed.includes(id));
-    const name = abilityRef(unit, id).name ?? b.name;
     const base = self.params["cost"] ?? 0;
+    // Spells that cost charges can be made free actions (Combustion).
+    const free = base > 0 && traitsOn(ctx, unitId).some((t) => t.hooks.castsFree?.(ctx, t.self) === true);
+    const usable = (choices: readonly TargetChoice[]) =>
+      choices.map((c) => (bonusMode || free ? { ...c, cost: "free" as const } : c)).filter((c) => bonusMode || c.cost === "main" || !slot.freeUsed.includes(id));
+    const name = abilityRef(unit, id).name ?? b.name;
     const affordable = (cost: number) => cost <= unit.spellCharges;
     const add = (choices: readonly TargetChoice[], enhancement: Enhancement, spellCost: number) => {
       if (choices.length > 0 && affordable(spellCost)) result.push({ abilityId: id, name, tags: b.tags, choices, enhancement, spellCost });
@@ -404,7 +409,7 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
       existing.stacks = Math.min(cap, existing.stacks + fresh.stacks);
       existing.amount += fresh.amount;
     }
-    ctx.emit({ type: "effect", unitId: targetId, effect: seed.def });
+    ctx.emit({ type: "effect", unitId: targetId, effect: seed.def, source: fresh.source });
   };
 
   const ctx: Ctx = {
@@ -419,16 +424,22 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
       tags,
     }),
     lose: (targetId, amount, sourceId) => lose(ctx, targetId, amount, sourceId),
-    heal: (targetId, amount) => {
+    heal: (targetId, offered) => {
       const target = unit(targetId);
-      const healed = Math.min(amount, stats(targetId).maxHp - target.hp);
+      const heal = { amount: offered, pool: "hp" as const };
+      for (const t of traitsOn(ctx, targetId)) if (target.alive) t.hooks.healing?.(ctx, t.self, heal);
+      const healed = Math.min(heal.amount, stats(targetId).maxHp - target.hp);
       if (!target.alive || healed <= 0) return;
       target.hp += healed;
       ctx.emit({ type: "heal", unitId: targetId, amount: healed });
     },
-    restoreShield: (targetId, amount) => {
+    restoreShield: (targetId, offered) => {
       const target = unit(targetId);
       if (!target.alive) return;
+      const heal = { amount: offered, pool: "shield" as const };
+      for (const t of traitsOn(ctx, targetId)) t.hooks.healing?.(ctx, t.self, heal);
+      const amount = heal.amount;
+      if (amount <= 0 && offered > 0) return;
       const room = Math.max(0, stats(targetId).shield - target.shield);
       const restored = Math.min(amount, room);
       if (restored > 0) {
@@ -441,7 +452,7 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
     removeEffect: (targetId, effect) => {
       const target = unit(targetId);
       target.effects = target.effects.filter((e) => e !== effect);
-      ctx.emit({ type: "effectEnded", unitId: targetId, effect: effect.def });
+      ctx.emit({ type: "effectEnded", unitId: targetId, effect: effect.def, source: effect.source });
     },
     consumeCharge: (unitId, abilityId) => {
       const slot = unit(unitId).abilities.find((s) => s.ref.id === abilityId);
