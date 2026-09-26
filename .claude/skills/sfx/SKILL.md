@@ -48,8 +48,21 @@ CUDA_VISIBLE_DEVICES=1 HF_HUB_OFFLINE=1 uv run --no-sync stable-audio \
   --duration 2 --seed 101 --batch-size 4 \
   -o /home/lethys/projects/all_disc/sfx-candidates/hit/sword-on-shield/s101.wav
 ```
-Status: **not yet run end to end.** The flags come from `cli.py` and the docs, but the first test (2026-09-26) stopped at the gated
-download. Once a real run works, delete this line and note anything that differed.
+Status: works (2026-09-26; `small-sfx` and `medium`, batch 3, ~seconds per batch). With `--batch-size N`, `-o x.wav` writes
+`x_0.wav … x_{N-1}.wav`. The `-base` models aren't downloaded (the user's step, as above); skip them unless the user fetched them.
+
+**Lessons from the first test (a sword):** the user's keyword prompt ("sword slash sound, heavy, metal, cut") gave a broadband
+noise burst with a big low thump and no metallic ring; the user found it poor. Sentence prompts with `TrackType: SFX`, a physical
+source, one action and the recording ("a heavy steel longsword striking a steel shield: one sharp metallic clang with a bright ring
+that decays quickly. Close-miked foley in a dead room.") gave clear ringing partials on both models. Every clip also carried a low
+noise floor through its tail: `sfx.sh finish` trims and fades it, so always listen to finished clips, not raw ones.
+
+**Look at spectrograms:** Claude can't hear, but it can see. A clang shows horizontal harmonic lines; a whoosh is a broadband smear;
+a double hit shows two onsets. Render a grid and read it before handing clips over:
+```
+ffmpeg -v error -y -i in.wav -lavfi "atrim=0:1.2,showspectrumpic=s=400x200:legend=0:scale=log:fscale=log:color=intensity" out.png
+```
+(`xstack` combines several into one image.) Report what the pictures show, not that something sounds good.
 
 - `CUDA_VISIBLE_DEVICES=1`: ComfyUI may hold GPU0. `HF_HUB_OFFLINE=1`: load from the cache only, so a run never authenticates as
   the user. A cache miss shows up as `LocalEntryNotFoundError`. That is a stop-point (see setup), not something to work around.
