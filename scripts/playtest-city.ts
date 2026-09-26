@@ -27,6 +27,7 @@ const afterDrag = await titles();
 console.log(`after drag: ${afterDrag.join(" | ")}`);
 if (count(afterDrag[0]) !== 2) errors.push("the dragged unit didn't reach the garrison");
 
+const purseBefore = Number((await page.textContent("#capitol .purse"))?.trim());
 await cell(0, 6).click();
 await page.locator(".grid-menu button", { hasText: "Recruit Congregant" }).click();
 await page.waitForTimeout(300);
@@ -34,7 +35,7 @@ const afterRecruit = await titles();
 const purse = await page.textContent("#capitol .purse");
 console.log(`after recruit: ${afterRecruit.join(" | ")} · gold ${purse}`);
 if (count(afterRecruit[0]) !== 3) errors.push("the recruit didn't arrive");
-if (purse?.trim() !== "110") errors.push(`expected 110 gold after recruiting, saw ${purse}`);
+if (Number(purse?.trim()) !== purseBefore - 40) errors.push(`recruiting should cost 40 gold: ${purseBefore} → ${purse}`);
 await page.screenshot({ path: "shots/playtest-city.png" });
 await browser.close();
 await server.close();

@@ -1,15 +1,15 @@
 import type { Placement } from "#rules/battle/engine";
 import { COLS } from "#rules/battle/grid";
-import { neighbors, sameHex } from "#rules/hex";
+import { hexDistance, neighbors, sameHex } from "#rules/hex";
 import { stepCost } from "#rules/map";
 import { GUARDIAN_ID } from "#rules/units/index";
 import { applyWorldAction } from "#rules/world/actions";
 import { createWorld } from "#rules/world/create";
-import { recruitProblem, resurrectionCost, resurrectProblem, upgradeCityProblem } from "#rules/world/economy";
+import { income, investNodeProblem, recruitProblem, resurrectionCost, resurrectProblem, upgradeCityProblem } from "#rules/world/economy";
 import { CITY_RESURRECTION_PREMIUM } from "#rules/research";
-import { CITY_ARMOR_PER_TIER, CITY_SLOTS, CITY_UPGRADE_COST } from "#rules/balance";
+import { CITY_ARMOR_PER_TIER, CITY_SLOTS, CITY_UPGRADE_COST, MINE_INCOME } from "#rules/balance";
 import { capacityOf, transferProblem } from "#rules/world/squads";
-import { capitolOf, leaderById } from "#rules/world/state";
+import { capitolOf, cityOfNode, leaderById, nodesOf } from "#rules/world/state";
 import type { Leader, SquadRef, World } from "#rules/world/state";
 import { describe, expect, test } from "vitest";
 
@@ -119,5 +119,33 @@ describe("resurrection in cities", () => {
     const before = w.gold[0];
     w = applyWorldAction(w, { type: "resurrect", index: 0, into: there }).world;
     expect(w.gold[0]).toBe(before - inCity);
+  });
+});
+
+describe("nodes", () => {
+  test("a node belongs to the nearest city, Capitols included; each Capitol has a mine of its own", () => {
+    const w = world();
+    for (const side of [0, 1] as const) {
+      const capitol = capitolOf(w, side);
+      if (!capitol) throw new Error("no Capitol");
+      expect(nodesOf(w, capitol).map((n) => n.kind)).toContain("gold");
+    }
+    for (const node of w.nodes) {
+      const owner = cityOfNode(w, node);
+      expect(w.cities.every((c) => hexDistance(c.hex, node.hex) >= hexDistance(owner?.hex ?? node.hex, node.hex))).toBe(true);
+    }
+  });
+
+  test("investing raises a node's level and what it yields", () => {
+    let w = world();
+    const capitol = capitolOf(w, 0);
+    const mine = capitol ? nodesOf(w, capitol).find((n) => n.kind === "gold") : undefined;
+    if (!mine) throw new Error("no Capitol mine");
+    const before = income(w, 0);
+    w = applyWorldAction(w, { type: "investNode", nodeId: mine.id }).world;
+    expect(income(w, 0)).toBe(before + MINE_INCOME);
+    const enemyMine = w.nodes.find((n) => cityOfNode(w, n)?.owner === 1);
+    if (!enemyMine) throw new Error("no enemy node");
+    expect(investNodeProblem(w, enemyMine.id)).toBe("its city isn't yours");
   });
 });

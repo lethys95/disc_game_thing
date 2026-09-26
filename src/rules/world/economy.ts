@@ -1,4 +1,4 @@
-import { CAMP_MEDIUM_FROM, CAMP_STRONG_FROM, CAPITOL_HEALING, CITY_MAX_TIER, CITY_UPGRADE_COST, CAPITOL_INCOME, RESURRECTION_BASE, RESURRECTION_PREMIUM } from "#rules/balance";
+import { CAMP_MEDIUM_FROM, CAMP_STRONG_FROM, CAPITOL_HEALING, CITY_MAX_TIER, CITY_UPGRADE_COST, NODE_INVEST_COST, NODE_MAX_LEVEL, CAPITOL_INCOME, RESURRECTION_BASE, RESURRECTION_PREMIUM } from "#rules/balance";
 import type { Side, Tile } from "#rules/battle/types";
 import { chooseProblem, isFork, openForks } from "#rules/forks";
 import { COLS, ROWS, sameTile } from "#rules/battle/grid";
@@ -10,15 +10,14 @@ import { learnProblem, movementOf, squadHealingOf } from "#rules/world/leaders";
 import { maxHpOf } from "#rules/world/record";
 import { CITY_RESURRECTION_PREMIUM, RESEARCH } from "#rules/research";
 import { UPGRADES, upgradesFor } from "#rules/upgrades";
-import { alive, banditGroup, capitolOf, cityById, leaderAt, leaderById, leaderUnit, member } from "#rules/world/state";
-import type { City, Leader, Mark, SquadMember, SquadRef, Strength, World, WorldEvent } from "#rules/world/state";
+import { alive, banditGroup, capitolOf, cityById, cityOfNode, leaderAt, leaderById, leaderUnit, member, nodesHeldBy } from "#rules/world/state";
+import type { City, Leader, MapNode, Mark, SquadMember, SquadRef, Strength, World, WorldEvent } from "#rules/world/state";
 import { capacityOf, hexOf, ownerOf, squadAt } from "#rules/world/squads";
 
 /** Gold, recruiting, branch choices, resurrection, elevation, and the start of a side's turn. */
 
 export function income(world: World, side: Side): number {
-  const nodes = world.cities.filter((c) => c.owner === side).flatMap((c) => c.nodes);
-  return (capitolOf(world, side) ? CAPITOL_INCOME : 0) + nodes.reduce((sum, n) => sum + NODES[n.kind].income, 0);
+  return (capitolOf(world, side) ? CAPITOL_INCOME : 0) + nodesHeldBy(world, side).reduce((sum, n) => sum + NODES[n.kind].income(n.level), 0);
 }
 
 
@@ -245,5 +244,16 @@ export function upgradeCityProblem(world: World, cityId: string): string | null 
   if (city.owner !== world.activeSide) return "not your city";
   if (city.tier >= CITY_MAX_TIER) return "already at the highest tier";
   if (world.gold[world.activeSide] < cityUpgradeCost(city)) return "not enough gold";
+  return null;
+}
+
+export const nodeInvestCost = (node: MapNode): number => NODE_INVEST_COST * (node.level + 1);
+
+export function investNodeProblem(world: World, nodeId: string): string | null {
+  const node = world.nodes.find((n) => n.id === nodeId);
+  if (!node) return "no such node";
+  if (cityOfNode(world, node)?.owner !== world.activeSide) return "its city isn't yours";
+  if (node.level >= NODE_MAX_LEVEL) return "already at its highest level";
+  if (world.gold[world.activeSide] < nodeInvestCost(node)) return "not enough gold";
   return null;
 }

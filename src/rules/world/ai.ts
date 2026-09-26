@@ -9,7 +9,7 @@ import { upgradesOf } from "#rules/upgrades";
 import { autoplay } from "#rules/ai";
 import { applyWorldAction } from "#rules/world/actions";
 import { concludeBattle, forecast } from "#rules/world/battles";
-import { chooseBranchProblem, elevateProblem, income, learnSkillProblem, recruitProblem, resurrectionCost, resurrectProblem, reviveProblem, squadsOf, upgradeProblem, cityUpgradeCost, upgradeCityProblem } from "#rules/world/economy";
+import { chooseBranchProblem, elevateProblem, income, learnSkillProblem, recruitProblem, resurrectionCost, resurrectProblem, reviveProblem, squadsOf, upgradeProblem, cityUpgradeCost, upgradeCityProblem, investNodeProblem, nodeInvestCost } from "#rules/world/economy";
 import { leadershipOf, movementOf } from "#rules/world/leaders";
 import { destination, planMove } from "#rules/world/movement";
 import type { MovePlan, MoveTarget } from "#rules/world/movement";
@@ -172,6 +172,11 @@ export function chooseWorldAction(world: World): WorldAction {
       .filter((c) => c.owner === side && !upgradeCityProblem(world, c.id) && world.gold[side] >= cityUpgradeCost(c) + cost * STARTING_LEADERSHIP)
       .sort((a, b) => Number(b.kind === "capitol") - Number(a.kind === "capitol") || cityUpgradeCost(a) - cityUpgradeCost(b))[0];
     if (walls && rich) return { type: "upgradeCity", cityId: walls.id };
+    // Mines pay for themselves; invest with spare gold, cheapest first.
+    const mineToInvest = world.nodes
+      .filter((n) => n.kind === "gold" && !investNodeProblem(world, n.id) && world.gold[side] >= nodeInvestCost(n) + cost * STARTING_LEADERSHIP)
+      .sort((a, b) => nodeInvestCost(a) - nodeInvestCost(b))[0];
+    if (mineToInvest && rich) return { type: "investNode", nodeId: mineToInvest.id };
     // Under threat, only with the gold to fill the new warband at once: a lone new leader stands in front of the
     // garrison and only feeds the enemy XP. New warbands only once the existing ones are full.
     const canFill = world.gold[side] >= cost * STARTING_LEADERSHIP;

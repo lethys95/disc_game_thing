@@ -343,7 +343,8 @@ button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }
 
 /* City screen and squad grids (view/city.ts, view/squad-grid.ts). */
 .city-body { display: grid; grid-template-columns: 1fr 320px; grid-template-rows: auto 1fr; gap: 12px 16px; min-height: 0; flex: 1; }
-.city-body .fortifications { grid-column: 1 / -1; display: flex; align-items: center; gap: 16px; padding: 8px 16px; }
+.city-body .city-head { grid-column: 1 / -1; display: flex; gap: 12px; }
+.city-body .fortifications { flex: 1; display: flex; align-items: center; gap: 16px; padding: 8px 16px; }
 .city-body .fortifications .name { font: 700 18px var(--display); }
 .city-body .grids { display: flex; flex-wrap: wrap; gap: 28px; align-content: flex-start; padding: 14px 18px; overflow-y: auto; }
 .city-body .grids > .note { flex-basis: 100%; color: var(--muted); font-size: 11px; }
@@ -374,3 +375,5 @@ button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }
 .research-row { display: grid; grid-template-columns: 220px 1fr auto; gap: 12px; align-items: center; padding: 6px 0; border-bottom: 1px solid #2c2622; }
 .research-row .name { font: 700 15px var(--display); }
 .research-row .done { color: #c9b88e; font-size: 12px; }
+.city-body .nodes { gap: 24px; }
+.city-body .node-item { display: flex; flex-direction: column; gap: 2px; }

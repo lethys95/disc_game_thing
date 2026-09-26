@@ -1,6 +1,6 @@
 import { hexagon, hexDistance, hexKey, neighbors, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
-import type { CityNode, NodeKind } from "#rules/nodes";
+import type { NodeKind, NodeSite } from "#rules/nodes";
 
 /** Provisional terrain (docs/design/pillars.md leaves terrain to the map model): costs are placeholders. */
 export type Terrain = "plain" | "forest" | "hills" | "mountain" | "water";
@@ -23,7 +23,7 @@ export interface Site {
   readonly id: string;
   readonly kind: "capitol" | "city";
   readonly hex: Hex;
-  readonly nodes: readonly CityNode[];
+  readonly nodes: readonly NodeSite[];
 }
 
 /** A neutral group's spot: a camp (just the group) or a dungeon (a group guarding a one-time reward). */
@@ -110,10 +110,17 @@ export function generateMap(seed: number, radius = 4): WorldMap {
   }
 }
 
-/** Capitols on the starts; neutral cities spread over the middle ground, each with one gold mine beside it. */
+/** Capitols on the starts; neutral cities spread over the middle ground, each with one node beside it. */
 function placeSites(map: WorldMap, seed: number): Site[] {
-  const sites: Site[] = map.starts.map((hex, side) => ({ id: `capitol${side}`, kind: "capitol", hex, nodes: [] }));
   const walkable = (hex: Hex) => stepCost(map, hex) !== null;
+  // Each Capitol has a gold mine of its own (user: Capitols count as cities for nodes), placed alike for both.
+  const capitolMine = (start: Hex, side: number): NodeSite[] => {
+    const spot = neighbors(start)
+      .filter((n) => walkable(n) && !map.starts.some((s) => sameHex(s, n)))
+      .sort((a, b) => noise(seed + 41 + side, a.q, a.r) - noise(seed + 41 + side, b.q, b.r))[0];
+    return spot ? [{ kind: "gold", hex: spot }] : [];
+  };
+  const sites: Site[] = map.starts.map((hex, side) => ({ id: `capitol${side}`, kind: "capitol", hex, nodes: capitolMine(hex, side) }));
   const taken = (hex: Hex) => sites.some((s) => sameHex(s.hex, hex) || s.nodes.some((n) => sameHex(n.hex, hex)));
   const candidates = Object.values(map.tiles)
     .map((t) => t.hex)

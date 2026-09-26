@@ -67,5 +67,9 @@ export const CAMP_REGROWTH_TURNS = 8;
 export const CAMP_MEDIUM_FROM = 20;
 export const CAMP_STRONG_FROM = 40;
 
+/** Node investment (user: "possibly invest into the nodes around the cities"; provisional): cost × the next level. */
+export const NODE_INVEST_COST = 100;
+export const NODE_MAX_LEVEL = 3;
+
 /** Gold per tier for a unit-type upgrade (placeholder; the user tunes upgrade prices after playtests). */
 export const UPGRADE_PRICE_PER_TIER = 50;

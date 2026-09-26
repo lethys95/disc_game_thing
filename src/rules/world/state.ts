@@ -5,7 +5,7 @@ import type { PlayerColor } from "#rules/world/colors";
 import { hexDistance, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import type { WorldMap } from "#rules/map";
-import type { CityNode } from "#rules/nodes";
+import type { NodeKind } from "#rules/nodes";
 import { UNITS } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
 
@@ -62,11 +62,19 @@ export interface Leader {
   leaderTile: Tile;
 }
 
+/** A node on the map: it belongs to the nearest city (`cityOfNode`). */
+export interface MapNode {
+  readonly id: string;
+  readonly kind: NodeKind;
+  readonly hex: Hex;
+  /** Raised by investment (1 when found). */
+  level: number;
+}
+
 export interface City {
   readonly id: string;
   readonly kind: "capitol" | "city";
   readonly hex: Hex;
-  readonly nodes: readonly CityNode[];
   owner: Side | null;
   /** The leaderless fortification squad. A Capitol's includes its Guardian. */
   garrison: SquadMember[];
@@ -104,6 +112,7 @@ export interface World {
   readonly map: WorldMap;
   leaders: Leader[];
   cities: City[];
+  nodes: MapNode[];
   lairs: Lair[];
   gold: [number, number];
   turn: number;
@@ -140,6 +149,8 @@ export type WorldAction =
   /** Revive a warband's fallen leader at the Capitol. */
   | { type: "revive"; leaderId: string }
   | { type: "research"; research: string }
+  /** Raise a node of a city you hold one level. */
+  | { type: "investNode"; nodeId: string }
   /** Raise a city you hold one tier. */
   | { type: "upgradeCity"; cityId: string }
   /** Buy a unit-type upgrade: units that become that type from now on receive it. */
@@ -167,6 +178,7 @@ export type WorldEvent =
   | { type: "revived"; leaderId: string }
   | { type: "cityUpgraded"; cityId: string; tier: number }
   | { type: "researched"; side: Side; research: string }
+  | { type: "nodeInvested"; nodeId: string; level: number }
   | { type: "upgraded"; side: Side; upgrade: string }
   | { type: "worldEnd"; winner: Side };
 
@@ -270,3 +282,18 @@ export function cityAt(world: World, hex: Hex): City | undefined {
 export function capitolOf(world: World, side: Side): City | undefined {
   return world.cities.find((c) => c.kind === "capitol" && c.owner === side);
 }
+
+/**
+ * The city a node belongs to: the nearest one, Capitols included (user, 2026-09-26). Ties go to the first city in
+ * the list, so it's deterministic.
+ */
+export function cityOfNode(world: World, node: MapNode): City | undefined {
+  let best: City | undefined;
+  for (const city of world.cities) if (!best || hexDistance(city.hex, node.hex) < hexDistance(best.hex, node.hex)) best = city;
+  return best;
+}
+
+export const nodesOf = (world: World, city: City): MapNode[] => world.nodes.filter((n) => cityOfNode(world, n)?.id === city.id);
+
+/** Every node whose city this side holds. */
+export const nodesHeldBy = (world: World, side: Side): MapNode[] => world.nodes.filter((n) => cityOfNode(world, n)?.owner === side);

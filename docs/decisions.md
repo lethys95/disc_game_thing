@@ -93,3 +93,6 @@ The user asked for WC3/AoE2-style colors so two Nexus players aren't both teal. 
 
 **2026-09-26 — City tiers, and the AI rallies for sieges (M17 step 3).**
 Every city has a tier (the Capitol too, starting at 1): garrison slots and a small armor bonus for defenders ("fortified": the garrison, and a warband defending in its own city), bought with gold. The Guardian takes no slot. Starting the Capitol at a higher tier gave it walls from turn 1 and stalled AI games, so every city starts equal. The AI also got two fixes found in simulation: it refills a warband missing even one unit (a 4/5 warband used to block both refilling and raising new warbands, forever), and it **rallies**: if a chained assault would win with all healthy warbands gathered around the enemy Capitol, they stop chasing other targets and close in. Jilliath mirror: 8/8 games end again (turns 19–90); cross-faction 6/8.
+
+**2026-09-26 — Nodes belong to the nearest city (M17 step 5).**
+Nodes moved out of cities into a world-level list with levels; ownership is computed (nearest city, Capitols included), so destructible cities, if they come (#42), would hand nodes to the next nearest city with no extra rule. Each Capitol has its own mine for symmetry. The map draws a thin link from each node to its city in the owner's color.

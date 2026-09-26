@@ -4,7 +4,7 @@ import { stepCost } from "#rules/map";
 import { RECRUIT_COST } from "#rules/units/index";
 import { LEADER_MOVEMENT } from "#rules/balance";
 import { defenderOf, engagementBattle } from "#rules/world/battles";
-import { chooseBranchProblem, elevateProblem, freeTile, growSquad, learnSkillProblem, newcomer, recruitProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem, squadsOf, startTurn, upgradeCityProblem, researchProblem, cityOfSquad, upgradeProblem, cityUpgradeCost } from "#rules/world/economy";
+import { chooseBranchProblem, elevateProblem, freeTile, growSquad, learnSkillProblem, newcomer, recruitProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem, squadsOf, startTurn, upgradeCityProblem, researchProblem, cityOfSquad, investNodeProblem, nodeInvestCost, upgradeProblem, cityUpgradeCost } from "#rules/world/economy";
 import { movementOf, rankOf } from "#rules/world/leaders";
 import { planMove } from "#rules/world/movement";
 import { squadAt, transfer, transferProblem } from "#rules/world/squads";
@@ -133,6 +133,15 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       draft.gold[side] -= research.cost;
       draft.research[side].push(research.id);
       events.push({ type: "researched", side, research: research.id });
+      break;
+    }
+    case "investNode": {
+      const problem = investNodeProblem(draft, action.nodeId);
+      const node = draft.nodes.find((n) => n.id === action.nodeId);
+      if (problem || !node) throw new Error(`cannot invest: ${problem}`);
+      draft.gold[side] -= nodeInvestCost(node);
+      node.level += 1;
+      events.push({ type: "nodeInvested", nodeId: node.id, level: node.level });
       break;
     }
     case "upgradeCity": {

@@ -1,9 +1,10 @@
 import type { Side, Tile } from "#rules/battle/types";
 import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST } from "#rules/units/index";
-import { CITY_ARMOR_PER_TIER, CITY_MAX_TIER, CITY_SLOTS } from "#rules/balance";
-import { cityUpgradeCost, elevateProblem, recruitProblem, upgradeCityProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem } from "#rules/world/economy";
+import { BLACKSMITH_BONUS, CITY_ARMOR_PER_TIER, CITY_MAX_TIER, CITY_SLOTS, NODE_MAX_LEVEL } from "#rules/balance";
+import { cityUpgradeCost, elevateProblem, investNodeProblem, nodeInvestCost, recruitProblem, upgradeCityProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem } from "#rules/world/economy";
 import { capacityOf, transferProblem } from "#rules/world/squads";
-import { cityById, leaderById, leaderUnit } from "#rules/world/state";
+import { cityById, leaderById, leaderUnit, nodesOf } from "#rules/world/state";
+import { NODES } from "#rules/nodes";
 import type { City, SquadMember, SquadRef, World, WorldAction } from "#rules/world/state";
 import { element, gold } from "#view/dom";
 import { unitName } from "#view/members";
@@ -83,7 +84,12 @@ export class CityScreen {
       return;
     }
     const body = element("div", "city-body");
-    if (city) body.appendChild(this.fortifications(world, city, mayAct));
+    if (city) {
+      const head = element("div", "city-head");
+      head.appendChild(this.fortifications(world, city, mayAct));
+      if (nodesOf(world, city).length > 0) head.appendChild(this.nodes(world, city, mayAct));
+      body.appendChild(head);
+    }
     const squads = this.squads(world, side, place);
     const grids = element("div", "grids panel");
     for (const squad of squads) grids.appendChild(squadGrid(squad, this.gridOptions(world, city, mayAct)));
@@ -148,6 +154,29 @@ export class CityScreen {
           ? [{ label: "Elevate to leader", problem: elevateProblem(world, member.tile), run: () => this.options.act({ type: "elevate", tile: member.tile }) }]
           : [],
     };
+  }
+
+  /** The nodes that feed this city (the nearest city owns a node), and investing in them. */
+  private nodes(world: World, city: City, mayAct: boolean): HTMLElement {
+    const row = element("div", "fortifications nodes panel");
+    row.appendChild(element("div", "name", "Nodes"));
+    for (const node of nodesOf(world, city)) {
+      const def = NODES[node.kind];
+      const yields = node.kind === "gold" ? `+${def.income(node.level)} gold per turn` : `+${BLACKSMITH_BONUS * node.level} ability damage in your battles`;
+      const item = element("div", "node-item");
+      item.append(element("div", "", `${def.name} · level ${node.level}`), element("div", "note", yields));
+      if (node.level < NODE_MAX_LEVEL) {
+        const problem = investNodeProblem(world, node.id);
+        const invest = element("button", "small");
+        invest.append(`Invest · `, gold(nodeInvestCost(node)));
+        invest.disabled = !mayAct || problem !== null;
+        invest.title = problem ?? `Level ${node.level + 1}: ${node.kind === "gold" ? `+${def.income(node.level + 1)} gold per turn` : `+${BLACKSMITH_BONUS * (node.level + 1)} ability damage`}.`;
+        invest.addEventListener("click", () => this.options.act({ type: "investNode", nodeId: node.id }));
+        item.appendChild(invest);
+      }
+      row.appendChild(item);
+    }
+    return row;
   }
 
   /** The city's tier and its upgrade. */

@@ -12,7 +12,7 @@ import { concludeBattle, playersIn } from "#rules/world/battles";
 import { createWorld } from "#rules/world/create";
 import { income } from "#rules/world/economy";
 import { planMove } from "#rules/world/movement";
-import { banditGroup, capitolOf, leaderById } from "#rules/world/state";
+import { banditGroup, capitolOf, leaderById, nodesOf } from "#rules/world/state";
 import type { Leader, World } from "#rules/world/state";
 import { describe, expect, test } from "vitest";
 
@@ -88,14 +88,15 @@ describe("world", () => {
   test("each side starts with a Capitol guarded by its Guardian, and earns income at the start of its turn", () => {
     const world = createWorld(1, [squad, squad], both("preserve"), ["jilliath", "jilliath"]);
     expect(capitolOf(world, 0)?.garrison.map((m) => m.defId)).toEqual([GUARDIAN_ID]);
-    expect(world.gold).toEqual([STARTING_GOLD + CAPITOL_INCOME, STARTING_GOLD]);
+    // Each Capitol has a gold mine of its own.
+    expect(world.gold).toEqual([STARTING_GOLD + CAPITOL_INCOME + MINE_INCOME, STARTING_GOLD]);
     const next = applyWorldAction(world, { type: "endTurn" }).world;
-    expect(next.gold[1]).toBe(STARTING_GOLD + CAPITOL_INCOME);
+    expect(next.gold[1]).toBe(STARTING_GOLD + CAPITOL_INCOME + MINE_INCOME);
   });
 
   test("neutral cities are guarded; once emptied, walking in captures the city and its gold mine", () => {
     const world = createWorld(1, [squad, squad], both("preserve"), ["jilliath", "jilliath"]);
-    const city = world.cities.find((c) => c.kind === "city" && c.nodes.every((n) => n.kind === "gold"));
+    const city = world.cities.find((c) => c.kind === "city" && nodesOf(world, c).every((n) => n.kind === "gold"));
     if (!city) throw new Error("no neutral gold city");
     const near = withLeader(world, "leader0", { hex: walkableNeighbour(world, city.hex) });
     expect(planMove(near, "leader0", city.hex)?.target).toEqual({ kind: "garrison", cityId: city.id });
@@ -103,13 +104,13 @@ describe("world", () => {
     const empty = { ...near, cities: near.cities.map((c) => (c.id === city.id ? { ...c, garrison: [] } : c)) };
     const step = applyWorldAction(empty, { type: "move", leaderId: "leader0", to: city.hex });
     expect(step.events).toContainEqual({ type: "captured", cityId: city.id, side: 0 });
-    expect(income(step.world, 0)).toBe(CAPITOL_INCOME + MINE_INCOME);
+    expect(income(step.world, 0)).toBe(CAPITOL_INCOME + 2 * MINE_INCOME);
     expect(leaderById(step.world, "leader0").hex).toEqual(city.hex);
   });
 
   test("holding a Blacksmith city brings its bonus into your battles, and never to neutrals", () => {
     const world = createWorld(1, [army, squad], both("punishment"), ["jilliath", "jilliath"]);
-    const smithy = world.cities.find((c) => c.nodes.some((n) => n.kind === "blacksmith"));
+    const smithy = world.cities.find((c) => nodesOf(world, c).some((n) => n.kind === "blacksmith"));
     const camp = world.lairs.find((l) => l.kind === "camp");
     if (!smithy || !camp) throw new Error("no blacksmith city or camp");
     const owned = { ...world, cities: world.cities.map((c) => (c.id === smithy.id ? { ...c, owner: 0 as const } : c)) };

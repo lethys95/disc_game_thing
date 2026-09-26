@@ -13,7 +13,7 @@ import type { Held } from "#rules/world/economy";
 import { leadershipOf } from "#rules/world/leaders";
 import { isLeaderOf, placementOf } from "#rules/world/record";
 import type { MoveTarget } from "#rules/world/movement";
-import { alive, cityById, lairById, leaderAt, leaderById, leaderUnit, unitId } from "#rules/world/state";
+import { alive, cityById, lairById, leaderAt, leaderById, leaderUnit, nodesHeldBy, unitId } from "#rules/world/state";
 import type { City, Defender, Engagement, Leader, SquadMember, World, WorldEvent, WorldStep } from "#rules/world/state";
 
 /** Battles started on the map: who fights whom, with what context, and writing the result back. */
@@ -59,7 +59,7 @@ export function engagementBattle(world: World, attacker: Leader, defender: Defen
   const squads: [Placement[], Placement[]] = attacker.side === 0 ? [ours, theirs] : [theirs, ours];
   // Each player side brings the battle effects of the city nodes it holds; neutrals bring none.
   const sideEffects = ([0, 1] as const).map((side) =>
-    side === defending.side && defending.neutral ? [] : world.cities.filter((c) => c.owner === side).flatMap((c) => c.nodes.flatMap((n) => NODES[n.kind].battleEffects)),
+    side === defending.side && defending.neutral ? [] : nodesHeldBy(world, side).flatMap((n) => NODES[n.kind].battleEffects(n.level)),
   );
   return createBattle(squads, { sideEffects: [sideEffects[0] ?? [], sideEffects[1] ?? []] }).battle;
 }
