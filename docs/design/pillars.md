@@ -118,3 +118,6 @@ The dichotomies are **thematic**, not a faction-wide lock. D2's elves are roughl
 
 ## The Capitol screen and the economy (user, 2026-09-25)
 The Capitol screen holds units, upgrades (unlocking evolutions), spells (a spell tree later), and the rest. The user questions D2's model: city upgrades are "insanely expensive", they lock you in place and push you back, and losing units is expensive too. Unit evolution stays, but should unlocks cost gold at all? What else is gold for? Being sparred on (see decisions.md once settled).
+
+## Levels past the end of a line (user, 2026-09-26; D2's rule)
+You can't max out on XP. A unit with no further evolution (the end of its line, or a unit without a line, like a neutral) keeps leveling **without changing tier**: each level gives minor stat bonuses, smaller than a tier upgrade, and the XP needed for the next level **stays fixed**. So lower-tier units level more often (smaller requirement), while higher-tier units gain more from each level.
