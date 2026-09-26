@@ -44,6 +44,13 @@ const defend = page.locator("#actions button", { hasText: "Defend" });
 const shown = await defend.locator(".key").textContent();
 console.log(`battle: Defend button shows ${shown}`);
 if (shown !== "X") errors.push(`the Defend button shows ${shown}`);
+// Keys 1–9 pick buttons by position: the last button is Wait here, and its number chooses it.
+const buttons = page.locator("#actions button");
+const count = await buttons.count();
+const last = await buttons.nth(count - 1).locator(".slot").textContent();
+console.log(`battle: ${count} buttons, the last numbered ${last}`);
+if (last !== String(count)) errors.push(`the last button should be numbered ${count}: ${last}`);
+await page.screenshot({ path: "shots/playtest-settings-battle.png" });
 await browser.close();
 await server.close();
 if (errors.length) {

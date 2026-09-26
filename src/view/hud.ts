@@ -6,6 +6,7 @@ import { UNITS } from "#rules/units/index";
 import { art } from "#view/art";
 import { byId, element } from "#view/dom";
 import { sees } from "#view/secrecy";
+import type { Settings } from "#view/settings";
 
 /** " (overloaded)", " ×3": how an enhanced spell reads in buttons and the log. */
 export function enhancementLabel(enhancement: Enhancement): string {
@@ -17,6 +18,16 @@ export function enhancementLabel(enhancement: Enhancement): string {
 /** One button per ability variant: an ability can be offered plain, overloaded and replicated. */
 export const optionKey = (option: { abilityId: string; enhancement: Enhancement }) =>
   `${option.abilityId}|${option.enhancement.kind}${option.enhancement.kind === "replicate" ? option.enhancement.copies : ""}`;
+
+/**
+ * The ability buttons, in order: one per option, except that a replicated spell is one button, its largest version
+ * (targets are picked one by one, and it can be cast early). Keys 1–9 follow this order.
+ */
+export function actionButtons(options: readonly LegalAbility[]): LegalAbility[] {
+  const largest = (o: LegalAbility) =>
+    o.enhancement.kind !== "replicate" || !options.some((x) => x.abilityId === o.abilityId && x.enhancement.kind === "replicate" && x.enhancement.copies > (o.enhancement.kind === "replicate" ? o.enhancement.copies : 0));
+  return options.filter(largest);
+}
 
 export interface HudHandlers {
   /** A unit in the turn order is hovered (null: no longer). */
@@ -53,8 +64,7 @@ export class Hud {
   private readonly auto = byId("auto");
 
   constructor(
-    /** The key that uses an ability, after the player's settings. */
-    private readonly keyFor: (abilityId: string) => string | undefined,
+    private readonly settings: Settings,
     private readonly handlers: HudHandlers,
   ) {
     this.auto.addEventListener("click", () => handlers.onAuto());
@@ -176,18 +186,16 @@ export class Hud {
     const unitId = battle.current?.unitId;
     const unit = unitId ? battle.units[unitId] : undefined;
     if (!enabled || !unit) return;
-    // A replicated spell is one button, its largest version: targets are picked one by one, and it can be cast early.
-    const largest = (o: LegalAbility) =>
-      o.enhancement.kind !== "replicate" || !options.some((x) => x.abilityId === o.abilityId && x.enhancement.kind === "replicate" && x.enhancement.copies > (o.enhancement.kind === "replicate" ? o.enhancement.copies : 0));
-    for (const option of options.filter(largest)) {
+    for (const [index, option] of actionButtons(options).entries()) {
       const button = element("button", `action${optionKey(option) === selected ? " selected" : ""}`);
+      if (this.settings.data.slotKeys && index < 9) button.appendChild(element("span", "slot", String(index + 1)));
       button.appendChild(art({ kind: "ability", id: option.abilityId }, "small"));
       const replicate = option.enhancement.kind === "replicate";
       button.appendChild(element("span", "name", `${option.name}${replicate ? " (replicate)" : enhancementLabel(option.enhancement)}`));
       const plain = options.find((o) => o.abilityId === option.abilityId && o.enhancement.kind === "none");
       const perCopy = replicate && plain && option.enhancement.kind === "replicate" ? (option.spellCost - plain.spellCost) / option.enhancement.copies : 0;
       if (option.spellCost > 0) button.appendChild(element("span", "tag spell", replicate ? `+${perCopy} ⚡ per copy` : `${option.spellCost} ⚡`));
-      const key = option.enhancement.kind === "none" ? this.keyFor(option.abilityId) : undefined;
+      const key = option.enhancement.kind === "none" ? this.settings.keyFor(option.abilityId) : undefined;
       if (key) button.appendChild(element("span", "key", key.toUpperCase()));
       const ref = abilityRef(unit, option.abilityId);
       const charges = paramsOf(ref)["charges"];

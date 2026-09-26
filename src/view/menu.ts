@@ -3,7 +3,7 @@ import type { Save } from "#rules/save";
 import { FACTION_NAMES } from "#rules/units/index";
 import { BEHAVIORS } from "#rules/abilities/index";
 import { element } from "#view/dom";
-import { ANIMATION_SPEEDS, CAMERA_RANGE, DEFAULT_SETTINGS, remappable, SPEED_ORDER, withHotkey } from "#view/settings";
+import { ANIMATION_SPEEDS, assignable, CAMERA_RANGE, DEFAULT_SETTINGS, remappable, SPEED_ORDER, withHotkey } from "#view/settings";
 import type { Settings } from "#view/settings";
 import { AUTOSAVE_ID, exportSave } from "#view/saves";
 import type { SaveStore } from "#view/saves";
@@ -70,8 +70,7 @@ export class GameMenu {
   private captured(key: string): void {
     const ability = this.capturing;
     this.capturing = null;
-    const usable = key.length === 1 && key !== " " && key !== "Escape";
-    if (ability && usable) this.options.settings.update(withHotkey(this.options.settings.data, ability, key.toLowerCase()));
+    if (ability && assignable(key)) this.options.settings.update(withHotkey(this.options.settings.data, ability, key.toLowerCase()));
     this.render();
   }
 
@@ -125,7 +124,19 @@ export class GameMenu {
       row.appendChild(change);
       this.root.appendChild(row);
     }
-    this.root.appendChild(element("div", "note", "A key already in use swaps with the one you're changing."));
+    this.root.appendChild(element("div", "note", "A key already in use swaps with the one you're changing. Digits are kept for the ability slots."));
+    const slots = element("label", "check-row");
+    const box = element("input", "check");
+    box.type = "checkbox";
+    box.checked = data.slotKeys;
+    box.addEventListener("change", () => settings.update({ ...settings.data, slotKeys: box.checked }));
+    slots.append(box, element("span", "", "Keys 1–9 choose the battle's ability buttons by position"));
+    this.root.appendChild(slots);
+
+    this.root.appendChild(element("div", "section", "Display"));
+    const full = element("button", "small", document.fullscreenElement ? "Leave fullscreen" : "Fullscreen");
+    full.addEventListener("click", () => void this.toggleFullscreen());
+    this.root.appendChild(full);
 
     const footer = element("div", "menu-footer");
     const reset = element("button", "action", "Restore defaults");
@@ -141,6 +152,16 @@ export class GameMenu {
     });
     footer.append(reset, back);
     this.root.appendChild(footer);
+  }
+
+  private async toggleFullscreen(): Promise<void> {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await document.documentElement.requestFullscreen();
+    } catch {
+      // Refused by the browser (an embedded page, a policy): nothing to do.
+    }
+    this.render();
   }
 
   private renderGame(): void {
