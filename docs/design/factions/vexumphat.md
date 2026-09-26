@@ -33,4 +33,7 @@ The Ton'Arilliet story (`../lore/ton-arilliet.md`) is the user's and establishes
 - **When pushed,** they overrun you out of frustration.
 - **Look:** more like WoW's ethereals; spirits, ghasts. Attuned to the desert, phantasmagoria, secrets. (Earlier user reference, 2026-07-30: white-aligned Phyrexians, "bleeding porcelain horror": something almost right but wrong.)
 
-> Tension to resolve (questions.md #38): the core "takes advantage of death and numbers" (2026-09-25) vs "can't become more in numbers". Likely reading: abundant, cheap and hard to be rid of, but never growing mid-game.
+### Death and numbers (user, 2026-09-26; answers questions.md #38)
+- **Numbers:** the spirit bomb fell where empires once stood; two millennia of people from the same area were raised next to each other at once. That's where both the confusion and the numbers come from: vastly more Vexumphat than any other faction. But it was one incident, and Nexus won't repeat it (they created enemies for themselves; why make more?). So: numerous, never growing.
+- **Death:** they can't really die. Like demons in WoW sent back to the Twisting Nether, a Vexumphat unit that dies doesn't really go away. **Mechanically, Vexumphat abuses the graveyard:** its units come back really quickly and cheaply, at the cost of unit strength. Cheap to recruit, cheap to revive, but they don't hit very hard. You have to be really annoying and difficult to get rid of.
+- **Double-edged:** every defeat feeds XP to the enemy. "It's not all fun and games. You have to use your brain."
