@@ -16,19 +16,19 @@ Git: tags `m2-playable` … `m7-foundation` mark tested states. Work happens on 
 - Nexus forks scheme vs overload (Battery, Mutant, Justiciar, Thaumaturge). The Negate mark is hidden from the marked side (`src/view/secrecy.ts`, tested).
 - Unit designs from the user: `design/units/*.md`. Numbers are provisional (`questions.md`).
 
-Rules: `src/rules/` (89 tests). View: `src/view/`. Tools: the `verify` skill; `A=<preset|nexus> B=… pnpm sim:world`.
+Rules: `src/rules/` (90 tests). View: `src/view/`. Tools: the `verify` skill; `A=<preset|nexus> B=… pnpm sim:world`.
 
 ## Next
-**Direction agreed with the user (decisions.md, 2026-09-26):** Claude owns roadmap, architecture, systems and AI; the user owns designs, looks, playtest verdicts and vetoes. Goal: a vertical slice, one Jilliath vs Ral-Vitahl match you can finish (`roadmap.md`).
-- m12 done: paper standees (portrait cards on the battlefield; statues where no portrait exists).
-1. **M13: a game you can finish.** Map AI that plans, no cold wars (#19), reachable win conditions, sim-tuned balance.
-2. The user will bring unit ideas as they come; implement through the add-content skill.
-3. Open: leader experience (#33, postponed), settings menu (#34), placeholder upgrades, art readability (figure/ground).
+**M13 done on the code side (tag `m13-finish`).** AI games end (siege chains, staging, refilling; provisional camp regrowth). Decision time is fine (p90 127 ms). Needs the user's playtest: pace and fairness.
+**Design session 2026-09-26** (recorded in `design/factions/*.md`, the user's sheets in `docs/lethys-wrote-this-for-handover/faction-stuff/`, questions #35–39): Nexus depths; Nexus casters converging on **spell charges** (Claude's proposal: scheme = replicate, overload = overload; not yet confirmed); Wastes canon (numerous, can't really die, cheap graveyard revival, weak baseline, not undead); Grove (strategic ramp, decay, fungal corpse explosion); Jilliath (resurrection, a beacon ability); summons as a line rejected.
+1. **Waiting on the user:** playtest a full game; confirm the spell-charge shape (#39) → then Claude prototypes it on the three Nexus casters.
+2. Open: camp regrowth (#19), Nexus tiers 3+ (#35), balance (#36), fourth archetype (#37), leader experience (#33), settings menu (#34).
 
 ## Waiting on the user
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.
 
 ## Recently done
+- 2026-09-26: m13 (part 1): siege-planning map AI, camp regrowth (provisional); AI games end.
 - 2026-09-26: m12: paper standees; roadmap rewritten around the vertical slice.
 - 2026-09-26: m11: saves (snapshots, versioned, localStorage behind an interface, file export/import, autosave), game menu.
 - 2026-09-26: m10: art slots with fallbacks and placeholders, the art pipeline CLI, first art in the game.

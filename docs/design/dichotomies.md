@@ -31,6 +31,8 @@ What exists:
 - User, 2026-09-25: **mutants will be the melee line primarily**; the Custodian golem is the first melee unit; casters are the strongest line.
 **Dichotomy (user, 2026-09-25): scheme vs overload.** Close to MTG's Izzet, which the user wanted Nexus inspired by. Scheme is foresight and counterplay; overload is raw power that doesn't care who it hits. Claude's framing: Jilliath's forks ask what faith costs, Nexus's ask what power costs (restraint vs collateral).
 
+> **Superseded (2026-09-25):** forks are per line, not faction-wide (`pillars.md`). Kept as history.
+
 Scheme vs overload splits the **whole faction** (user, 2026-09-25): **scheme = automata, overload = mutants**, and the casters fork the same way. It's one faction-wide fork, bought once, like Jilliath's.
 
 Tier 2 (user, 2026-09-25; numbers provisional):

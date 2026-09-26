@@ -1,4 +1,4 @@
-import { CAPITOL_HEALING, CAPITOL_INCOME, GARRISON_LIMIT, RESURRECTION_BASE, RESURRECTION_PREMIUM } from "#rules/balance";
+import { CAMP_MEDIUM_FROM, CAMP_STRONG_FROM, CAPITOL_HEALING, CAPITOL_INCOME, GARRISON_LIMIT, RESURRECTION_BASE, RESURRECTION_PREMIUM } from "#rules/balance";
 import type { Side, Tile } from "#rules/battle/types";
 import { chooseProblem, isFork, openForks } from "#rules/forks";
 import { COLS, ROWS, sameTile } from "#rules/battle/grid";
@@ -9,8 +9,8 @@ import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/in
 import { leadershipOf, learnProblem, movementOf, squadHealingOf } from "#rules/world/leaders";
 import { maxHpOf } from "#rules/world/record";
 import { UPGRADES, upgradesFor } from "#rules/upgrades";
-import { alive, capitolOf, leaderAt, leaderById, leaderUnit, member } from "#rules/world/state";
-import type { City, Leader, Mark, RecruitInto, SquadMember, World, WorldEvent } from "#rules/world/state";
+import { alive, banditGroup, capitolOf, leaderAt, leaderById, leaderUnit, member } from "#rules/world/state";
+import type { City, Leader, Mark, RecruitInto, SquadMember, Strength, World, WorldEvent } from "#rules/world/state";
 
 /** Gold, recruiting, branch choices, resurrection, elevation, and the start of a side's turn. */
 
@@ -175,6 +175,7 @@ export function startTurn(world: World, events: WorldEvent[]): void {
     });
   }
   for (const leader of world.leaders) if (leader.side === side) leader.movement = movementOf(leader);
+  if (side === 0) regrowCamps(world, events);
   events.push({ type: "turnStarted", side, turn: world.turn, income: earned });
 }
 
@@ -193,4 +194,15 @@ export function upgradeProblem(world: World, id: string): string | null {
   if (!capitolOf(world, side)) return "no Capitol";
   if (world.gold[side] < upgrade.price) return "not enough gold";
   return null;
+}
+
+/** Provisional (#19): cleared camps regrow, stronger as the game goes on, so XP never runs dry. */
+function regrowCamps(world: World, events: WorldEvent[]): void {
+  const strength: Strength = world.turn >= CAMP_STRONG_FROM ? "strong" : world.turn >= CAMP_MEDIUM_FROM ? "medium" : "weak";
+  for (const lair of world.lairs) {
+    if (lair.regrowsOn === null || lair.regrowsOn > world.turn || leaderAt(world, lair.hex)) continue;
+    lair.guards = banditGroup(strength);
+    lair.regrowsOn = null;
+    events.push({ type: "regrew", lairId: lair.id });
+  }
 }

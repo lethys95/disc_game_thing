@@ -18,3 +18,9 @@ That means you'd be likely to see druids both cultivate nature, but also rot. Us
 Runs out of control if unhandled.
 
 Spells: self healing, buffs, etc.
+
+## User direction, 2026-09-26
+- **Ramp is on the strategic level** (the whole game), not inside each battle. No saplings that grow mid-fight.
+- **No zombies,** for the Grove or the Wastes. The Grove's side of death is **decay**.
+- **Mage idea:** a caster makes an enemy corpse explode, and a fungal infestation bursts out of it, damaging units adjacent to the corpse every turn. It also prevents resurrection (which is likely a Jilliath mechanic).
+- **Environment:** regular trees, maybe with autumn colors; withered trees for decay. Not every tree shows the life/death dichotomy, and no skeleton trees (the agent-built tree was "a nice test", too literal).

@@ -72,3 +72,6 @@ The game now has art slots (`docs/engineering.md` → Art). Installed from the u
 
 ## Status of the direction (user, 2026-09-26)
 **Not settled.** Yesterday's ink-brush work was theorycrafting, not a final art direction; there's a lot of art work still ahead. The keepers stand as references, nothing more. **Paper standees** (flat portrait cards on the 3D battlefield) are a stand-in for battle figures, **not what ships**.
+
+## Environment (user, 2026-09-26)
+Regular trees, maybe with autumn colors; withered trees for the Grove's decay. Not every tree shows the life/death dichotomy; no skeleton trees. The agent-built Grove tree (`art/blender/grove-tree/`) was a nice test, too literal.

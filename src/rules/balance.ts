@@ -46,5 +46,11 @@ export const LEADER_HEALING = 0.1;
 /** User: "the squad deals +5% damage". */
 export const LEADER_AURA = 5;
 
+/** Provisional (#19): a cleared bandit camp regrows after this many turns, stronger the later the game. */
+export const CAMP_REGROWTH_TURNS = 8;
+/** Game turns from which regrown camps are medium, then strong. */
+export const CAMP_MEDIUM_FROM = 20;
+export const CAMP_STRONG_FROM = 40;
+
 /** Gold per tier for a unit-type upgrade (placeholder; the user tunes upgrade prices after playtests). */
 export const UPGRADE_PRICE_PER_TIER = 50;

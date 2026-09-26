@@ -5,9 +5,11 @@ import type { Hex } from "#rules/hex";
 import { nextForm } from "#rules/progression";
 import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
 import { upgradesOf } from "#rules/upgrades";
-import { forecast } from "#rules/world/battles";
+import { autoplay } from "#rules/ai";
+import { applyWorldAction } from "#rules/world/actions";
+import { concludeBattle, forecast } from "#rules/world/battles";
 import { chooseBranchProblem, elevateProblem, income, learnSkillProblem, recruitProblem, resurrectionCost, resurrectProblem, reviveProblem, squadsOf, upgradeProblem } from "#rules/world/economy";
-import { movementOf } from "#rules/world/leaders";
+import { leadershipOf, movementOf } from "#rules/world/leaders";
 import { destination, planMove } from "#rules/world/movement";
 import type { MovePlan, MoveTarget } from "#rules/world/movement";
 import { capitolOf, fullHp, leaderAt } from "#rules/world/state";
@@ -46,6 +48,30 @@ function threatened(world: World, leader: Leader, hex: Hex, wins: Wins): boolean
     if (plan?.target?.kind !== "leader") return false;
     return wins(fresh, enemy.id, plan.target);
   });
+}
+
+/**
+ * A siege: this side's warbands that can reach the enemy Capitol this turn attack it one after another (wounds
+ * carry over, and the Capitol only heals between turns). Returns the first attacker of an order that brings the
+ * Guardian down, or null. A lone assault that fails makes the garrison stronger (it earns XP), so the AI commits
+ * only to chains that win.
+ */
+function siegeOpener(world: World, capitolHex: Hex): string | null {
+  const side = world.activeSide;
+  const ready = world.leaders.filter((l) => l.side === side && l.fellOnTurn === null && planMove(world, l.id, capitolHex)?.target);
+  if (ready.length === 0) return null;
+  const orders = [[...ready].sort((a, b) => strength(a.squad) - strength(b.squad)), [...ready].sort((a, b) => strength(b.squad) - strength(a.squad))];
+  for (const order of orders) {
+    let w = world;
+    for (const leader of order) {
+      if (w.outcome || !w.leaders.some((l) => l.id === leader.id) || !planMove(w, leader.id, capitolHex)?.target) continue;
+      const step = applyWorldAction(w, { type: "move", leaderId: leader.id, to: capitolHex }).world;
+      w = step.engagement ? concludeBattle(step, autoplay(step.engagement.battle)).world : step;
+    }
+    const first = order[0];
+    if (w.outcome?.winner === side && first) return first.id;
+  }
+  return null;
 }
 
 /** Provisional AI taste at each fork: the branches pnpm sim rates strongest first. */
@@ -118,20 +144,33 @@ export function chooseWorldAction(world: World): WorldAction {
       .filter(({ u, value }) => value > 0 && world.gold[side] >= u.price + cost * STARTING_LEADERSHIP && !upgradeProblem(world, u.id))
       .sort((a, b) => b.value - a.value)[0];
     if (upgrade) return { type: "upgrade", upgrade: upgrade.u.id };
-    if (!home && !underThreat && (mine.length === 0 || rich)) {
+    // Under threat, only with the gold to fill the new warband at once: a lone new leader stands in front of the
+    // garrison and only feeds the enemy XP. New warbands only once the existing ones are full.
+    const canFill = world.gold[side] >= cost * STARTING_LEADERSHIP;
+    const warbandsFull = mine.every((l) => l.squad.length >= leadershipOf(l));
+    if (!home && (!underThreat || canFill) && (mine.length === 0 || (rich && warbandsFull))) {
       const spare = capitol.garrison.find((m) => m.defId !== GUARDIAN_ID);
       if (spare && !elevateProblem(world, spare.tile)) return { type: "elevate", tile: spare.tile };
       if (!recruitProblem(world, guard, { kind: "garrison" })) return { type: "recruit", defId: guard, into: { kind: "garrison" } };
     }
   }
 
+  const target = world.cities.find((c) => c.kind === "capitol" && c.owner !== side && c.owner !== null);
+  if (target) {
+    const opener = siegeOpener(world, target.hex);
+    if (opener) return { type: "move", leaderId: opener, to: target.hex };
+  }
+
+  const staging: { leader: Leader; to: Hex }[] = [];
   for (const leader of mine) {
     if (leader.movement <= 0) continue;
     const atHome = capitol !== undefined && sameHex(leader.hex, capitol.hex);
     // A thin squad waits at home for recruits while gold keeps coming in.
     if (atHome && leader.squad.length < 3 && income(world, side) >= cost) continue;
-    // Wounded, or leaderless until revived: home to the Capitol.
-    const hurt = strength(leader.squad) < 0.5 * fullStrength(leader.squad) || leader.fellOnTurn !== null;
+    // Wounded, leaderless until revived, or short of units with the gold to fill them: home to the Capitol.
+    const missing = leadershipOf(leader) - leader.squad.length;
+    const refill = missing >= 2 && world.gold[side] >= cost * missing;
+    const hurt = strength(leader.squad) < 0.5 * fullStrength(leader.squad) || leader.fellOnTurn !== null || refill;
     if (hurt && capitol && !atHome && !leaderAt(world, capitol.hex)) {
       const plan = planMove(world, leader.id, capitol.hex);
       if (plan && plan.steps > 0) return { type: "move", leaderId: leader.id, to: capitol.hex };
@@ -157,6 +196,17 @@ export function chooseWorldAction(world: World): WorldAction {
       .sort((a, b) => a.plan.path.cost - b.plan.path.cost);
     const best = options[0];
     if (best) return { type: "move", leaderId: leader.id, to: best.hex };
+    // Nothing to take: close in on the enemy Capitol and wait within reach for the siege, never alone.
+    if (target && leader.fellOnTurn === null) {
+      const plan = planMove(world, leader.id, target.hex);
+      if (plan && !plan.target) {
+        const stops = plan.path.hexes.slice(0, plan.steps).reverse();
+        const stop = stops.find((hex) => !threatened(world, leader, hex, wins));
+        if (stop) staging.push({ leader, to: stop });
+      }
+    }
   }
+  const approach = staging[0];
+  if (approach) return { type: "move", leaderId: approach.leader.id, to: approach.to };
   return { type: "endTurn" };
 }

@@ -53,6 +53,7 @@ export function createWorld(
     guards: banditGroup(strengthAt(map, site.hex, site.kind === "dungeon" ? "medium" : "weak")),
     reward: site.kind === "dungeon" ? (DUNGEON_REWARDS[index % DUNGEON_REWARDS.length] ?? null) : null,
     looted: false,
+    regrowsOn: null,
   }));
   const world: World = {
     map,

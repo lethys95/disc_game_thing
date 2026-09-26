@@ -5,14 +5,14 @@ import type { Hex } from "#rules/hex";
 import { findPath, generateMap, stepCost, TERRAIN_COST } from "#rules/map";
 import type { Commitment } from "#rules/forks";
 import { GUARDIAN_ID } from "#rules/units/index";
-import { CAPITOL_INCOME, MINE_INCOME, STARTING_GOLD } from "#rules/balance";
+import { CAMP_REGROWTH_TURNS, CAMP_STRONG_FROM, CAPITOL_INCOME, MINE_INCOME, STARTING_GOLD } from "#rules/balance";
 import { applyWorldAction } from "#rules/world/actions";
 import { chooseWorldAction } from "#rules/world/ai";
 import { concludeBattle, playersIn } from "#rules/world/battles";
 import { createWorld } from "#rules/world/create";
 import { income } from "#rules/world/economy";
 import { planMove } from "#rules/world/movement";
-import { capitolOf, leaderById } from "#rules/world/state";
+import { banditGroup, capitolOf, leaderById } from "#rules/world/state";
 import type { Leader, World } from "#rules/world/state";
 import { describe, expect, test } from "vitest";
 
@@ -130,7 +130,7 @@ describe("world", () => {
     expect(playersIn(engaged, engaged.engagement)).toEqual([1]);
   });
 
-  test("beating a bandit camp clears it and pays XP; bandits never enter a graveyard", () => {
+  test("beating a bandit camp clears it and pays XP; bandits never enter a graveyard; the camp regrows later, stronger", () => {
     const world = createWorld(1, [army, squad], both("punishment"), ["jilliath", "jilliath"]);
     const camp = world.lairs.find((l) => l.kind === "camp");
     if (!camp) throw new Error("no camp");
@@ -139,9 +139,18 @@ describe("world", () => {
     const battle = engaged.engagement?.battle;
     if (!battle) throw new Error("no battle");
     const step = concludeBattle(engaged, autoplay(battle));
-    expect(step.world.lairs.some((l) => l.id === camp.id)).toBe(false);
+    const cleared = step.world.lairs.find((l) => l.id === camp.id);
+    expect(cleared?.guards).toEqual([]);
+    expect(cleared?.regrowsOn).toBe(step.world.turn + CAMP_REGROWTH_TURNS);
     expect(step.events.some((e) => e.type === "xp" && e.side === 0)).toBe(true);
     expect(step.world.graveyard[1]).toEqual([]);
+
+    // Provisional (#19): at the start of the round it's due, the camp regrows; late in the game, strong.
+    let later: World = { ...step.world, turn: CAMP_STRONG_FROM, activeSide: 1, leaders: step.world.leaders.filter((l) => l.side !== 0) };
+    later = { ...later, lairs: later.lairs.map((l) => (l.id === camp.id ? { ...l, regrowsOn: CAMP_STRONG_FROM + 1 } : l)) };
+    const regrown = applyWorldAction(later, { type: "endTurn" });
+    expect(regrown.events).toContainEqual({ type: "regrew", lairId: camp.id });
+    expect(regrown.world.lairs.find((l) => l.id === camp.id)?.guards.length).toBe(banditGroup("strong").length);
   });
 
   test("clearing a dungeon's guards claims its one-time reward", () => {
