@@ -4,6 +4,9 @@ import { applyAction, createBattle, legalActions } from "#rules/battle/engine";
 import { sameTile } from "#rules/battle/grid";
 import type { Action, Battle, BattleEvent, BattleUnit, Enhancement, LegalAbility, Side, TargetChoice } from "#rules/battle/types";
 import { PLAIN } from "#rules/battle/types";
+import { defaultColors } from "#rules/world/colors";
+import type { PlayerColor } from "#rules/world/colors";
+import { applySideColors } from "#view/colors";
 import { enhancementLabel, Hud, optionKey, unitLabel } from "#view/hud";
 import { asKnown, masked } from "#view/secrecy";
 import type { BannerButton } from "#view/hud";
@@ -17,7 +20,8 @@ export interface AppOptions {
 }
 
 /** What happens when a battle ends: a skirmish offers a rematch, a map battle hands the result back. */
-type Finish = { kind: "skirmish"; squads: Squads } | { kind: "world"; onDone: (battle: Battle) => void };
+type Finish = { kind: "skirmish"; squads: Squads; colors: Colors } | { kind: "world"; onDone: (battle: Battle) => void };
+type Colors = readonly [PlayerColor, PlayerColor];
 
 interface Preview {
   readonly key: string;
@@ -38,7 +42,7 @@ function ownEvents(events: readonly BattleEvent[]): readonly BattleEvent[] {
 export class App {
   private battle: Battle | null = null;
   private playerSide: Side | null = 0;
-  private finish: Finish = { kind: "skirmish", squads: [[], []] };
+  private finish: Finish = { kind: "skirmish", squads: [[], []], colors: defaultColors(["jilliath", "jilliath"]) };
   /** The chosen ability variant (`optionKey`). */
   private selected: string | null = null;
   /** A replicated spell's targets picked so far (choice indices). */
@@ -88,18 +92,20 @@ export class App {
   }
 
   /** A standalone battle between two squads. */
-  start(squads: Squads, playerSide: Side | null, fastForward = 0): void {
+  start(squads: Squads, playerSide: Side | null, colors: Colors, fastForward = 0): void {
     const step = createBattle(squads);
-    this.run(step.battle, step.events, playerSide, { kind: "skirmish", squads }, fastForward);
+    this.run(step.battle, step.events, playerSide, colors, { kind: "skirmish", squads, colors }, fastForward);
   }
 
   /** A battle that came from the map; `onDone` receives the finished battle. */
-  fight(battle: Battle, playerSide: Side | null, onDone: (battle: Battle) => void): void {
-    this.run(battle, [], playerSide, { kind: "world", onDone }, 0);
+  fight(battle: Battle, playerSide: Side | null, colors: Colors, onDone: (battle: Battle) => void): void {
+    this.run(battle, [], playerSide, colors, { kind: "world", onDone }, 0);
   }
 
-  private run(start: Battle, events: readonly BattleEvent[], playerSide: Side | null, finish: Finish, fastForward: number): void {
+  private run(start: Battle, events: readonly BattleEvent[], playerSide: Side | null, colors: Colors, finish: Finish, fastForward: number): void {
     this.stop();
+    this.scene.setColors(colors);
+    applySideColors(document.documentElement, colors);
     this.playerSide = playerSide;
     this.finish = finish;
     this.auto = false;
@@ -376,7 +382,7 @@ export class App {
       return [{ label: "Return to the map", onClick: () => { this.stop(); finish.onDone(battle); } }];
     }
     return [
-      { label: "Fight again", onClick: () => this.start(finish.squads, this.playerSide) },
+      { label: "Fight again", onClick: () => this.start(finish.squads, this.playerSide, finish.colors) },
       { label: "Change squads", onClick: () => this.options.onSetup() },
     ];
   }

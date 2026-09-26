@@ -88,8 +88,8 @@ button.action .key { font: 600 9px var(--text); margin-left: 6px; padding: 0 3px
 
 .hpbar { width: 54px; height: 5px; background: #1a1412; border: 1px solid #000; position: relative; }
 .hpbar .fill { position: absolute; inset: 0 auto 0 0; }
-.hpbar.side0 .fill { background: #c9b48e; }
-.hpbar.side1 .fill { background: #a8342a; }
+.hpbar.side0 .fill { background: var(--side0); }
+.hpbar.side1 .fill { background: var(--side1); }
 
 .float { font: 700 20px var(--display); text-shadow: 0 1px 4px #000; animation: rise 1.3s ease-out forwards; white-space: nowrap; }
 .float.damage { color: #f0e0cc; }
@@ -172,11 +172,11 @@ button.action:disabled { opacity: 0.4; cursor: not-allowed; }
 #forkprompt .subtitle { color: var(--muted); margin-bottom: 8px; }
 .leader-label { font: 600 11px var(--text); padding: 1px 6px; background: rgba(10, 9, 9, 0.75); border: 1px solid #3a2e28; white-space: nowrap; }
 .leader-label.side0 { color: var(--side0); }
-.leader-label.side1 { color: #b8aca4; }
+.leader-label.side1 { color: var(--side1); }
 #auto { position: fixed; right: 16px; top: 14px; min-width: 0; font-size: 14px; padding: 5px 12px; }
 .site-label { font: 600 10px var(--text); padding: 0 5px; background: rgba(10, 9, 9, 0.6); border: 1px solid #2c2622; color: var(--muted); white-space: nowrap; }
-.site-label.side0 { color: var(--side0); border-color: #5a4a36; }
-.site-label.side1 { color: #b8aca4; border-color: #5e2a22; }
+.site-label.side0 { color: var(--side0); border-color: var(--side0); }
+.site-label.side1 { color: var(--side1); border-color: var(--side1); }
 #mapsquad { max-height: calc(100vh - 150px); overflow-y: auto; }
 button.warband {
   display: flex; justify-content: space-between; width: 100%; margin: 6px 0 4px; padding: 4px 8px; cursor: pointer;
@@ -318,3 +318,10 @@ button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }
 .coin { display: inline-block; width: 1em; height: 1em; vertical-align: -0.12em; }
 .coin svg { width: 100%; height: 100%; display: block; }
 #mapturn .movement { color: #cfe3d2; letter-spacing: 0.05em; }
+
+.squad .swatches { display: flex; gap: 4px; margin: 6px 0; }
+.squad .swatch { width: 20px; height: 20px; min-width: 0; padding: 0; border: 2px solid #1a1614; cursor: pointer; }
+.squad .swatch.selected { border-color: #f1eadb; box-shadow: 0 0 0 1px #000; }
+.squad .swatch:disabled { opacity: 0.25; cursor: default; }
+#turns .chip.side0 .art.placeholder { background: var(--side0); border-color: var(--side0); }
+#turns .chip.side1 .art.placeholder { background: var(--side1); border-color: var(--side1); }

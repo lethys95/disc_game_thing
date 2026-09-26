@@ -4,6 +4,9 @@ import { effectiveStats } from "#rules/battle/engine";
 import { COLS, ROWS } from "#rules/battle/grid";
 import type { Battle, BattleEvent, BattleUnit, Col, Row, Side, Tile } from "#rules/battle/types";
 import { artUrl } from "#view/art";
+import { defaultColors } from "#rules/world/colors";
+import type { PlayerColor } from "#rules/world/colors";
+import { threeColor } from "#view/colors";
 import { buildFigure } from "#view/figures";
 import { buildStandee } from "#view/standee";
 import type { CameraPose, Stage } from "#view/stage";
@@ -69,6 +72,7 @@ export class BattleScene {
   };
   private readonly tiles = new Map<string, THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial>>();
   private readonly figures = new Map<string, Figure>();
+  private colors: [THREE.Color, THREE.Color] = [threeColor(defaultColors(["jilliath", "jilliath"])[0]), threeColor(defaultColors(["jilliath", "jilliath"])[1])];
 
   constructor(private readonly stage: Stage) {
     this.buildArena();
@@ -161,6 +165,11 @@ export class BattleScene {
     }
   }
 
+  /** The owners' player colors, for figures made from now on (call before `reset`). */
+  setColors(colors: readonly [PlayerColor, PlayerColor]): void {
+    this.colors = [threeColor(colors[0]), threeColor(colors[1])];
+  }
+
   /** Places every figure where the battle says it is. */
   sync(battle: Battle): void {
     for (const unit of Object.values(battle.units)) {
@@ -177,7 +186,8 @@ export class BattleScene {
 
   private addFigure(unit: BattleUnit): Figure {
     const portrait = artUrl({ kind: "portrait", id: unit.defId });
-    const group = portrait ? buildStandee(portrait, unit.side) : buildFigure(unit.defId, unit.side);
+    const owner = this.colors[unit.side];
+    const group = portrait ? buildStandee(portrait, owner) : buildFigure(unit.defId, unit.side, owner);
     group.rotation.y = unit.side === 0 ? 0 : Math.PI;
     group.userData = { unitId: unit.id };
     if (unit.leader) group.add(crown());

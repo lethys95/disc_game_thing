@@ -177,10 +177,11 @@ function mutantBody(m: Parts): THREE.Group {
   return g;
 }
 
-/** Builds a unit's figure facing +x, standing on y = 0. */
-export function buildFigure(defId: string, side: Side): THREE.Group {
+/** Builds a unit's figure facing +x, standing on y = 0. Its trim takes the owner's player color, if it has one. */
+export function buildFigure(defId: string, side: Side, owner: THREE.Color | null): THREE.Group {
   const def = UNITS[defId];
-  const m = materials(PALETTES[side], ACCENTS[def?.faction ?? "neutral"], def?.damageType === "fire");
+  const palette = owner ? { ...PALETTES[side], trim: owner.clone().multiplyScalar(0.8) } : PALETTES[side];
+  const m = materials(palette, ACCENTS[def?.faction ?? "neutral"], def?.damageType === "fire");
   const g = new THREE.Group();
   const scale = 1.15 + (def?.tier ?? 1) * 0.08;
   const height = 1.1;

@@ -1,8 +1,7 @@
 import * as THREE from "three";
-import type { Side } from "#rules/battle/types";
 
 /**
- * A paper standee: the unit's portrait on an upright card in a frame of its side's color, on a small base, always
+ * A paper standee: the unit's portrait on an upright card in a frame of its owner's color, on a small base, always
  * turned toward the camera. A stand-in for battle figures (docs/design/art.md), not the look that ships.
  */
 
@@ -10,11 +9,11 @@ const CARD_WIDTH = 1.25;
 /** Portraits are 384 × 494. */
 const CARD_HEIGHT = CARD_WIDTH * (494 / 384);
 const LIFT = 0.12;
-const FRAME: Readonly<Record<Side, number>> = { 0: 0xcbbd9f, 1: 0x2a2624 };
 
 const loader = new THREE.TextureLoader();
 
-export function buildStandee(url: string, side: Side): THREE.Group {
+/** `owner` is the owner's player color. */
+export function buildStandee(url: string, owner: THREE.Color): THREE.Group {
   const group = new THREE.Group();
   const texture = loader.load(url);
   texture.colorSpace = THREE.SRGBColorSpace;
@@ -31,14 +30,14 @@ export function buildStandee(url: string, side: Side): THREE.Group {
   face.position.set(0, CARD_HEIGHT / 2, 0.012);
   const frame = new THREE.Mesh(
     new THREE.BoxGeometry(CARD_WIDTH + 0.1, CARD_HEIGHT + 0.1, 0.02),
-    new THREE.MeshStandardMaterial({ color: FRAME[side], roughness: 0.6, metalness: 0.2 }),
+    new THREE.MeshStandardMaterial({ color: owner, roughness: 0.6, metalness: 0.2 }),
   );
   frame.position.y = CARD_HEIGHT / 2;
   card.add(face, frame);
 
   const base = new THREE.Mesh(
     new THREE.CylinderGeometry(0.32, 0.38, LIFT, 24),
-    new THREE.MeshStandardMaterial({ color: FRAME[side], roughness: 0.7, metalness: 0.3 }),
+    new THREE.MeshStandardMaterial({ color: owner, roughness: 0.7, metalness: 0.3 }),
   );
   base.position.y = LIFT / 2;
 

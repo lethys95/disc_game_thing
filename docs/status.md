@@ -27,6 +27,7 @@ Rules: `src/rules/` (93 tests). View: `src/view/`. Tools: the `verify` skill; `A
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.
 
 ## Recently done
+- 2026-09-26: m16 (branch `m16-playtest` on top of `m15-levels`, worktree `../new_disc-levels`; merge after the user's playtest): support abilities default by target, portrait turn queue with hover focus, gold coin and movement pips, tougher neutrals (#41), player colors.
 - 2026-09-26: m15 (branch `m15-levels`, worktree `../new_disc-levels`; merge after the user's playtest): levels past the end of a line.
 - 2026-09-26: m14: Nexus spell charges with overload and replicate.
 - 2026-09-26: m13 (part 1): siege-planning map AI, camp regrowth (provisional); AI games end.

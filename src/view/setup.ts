@@ -7,16 +7,21 @@ import { COLS, ROWS, sameTile } from "#rules/battle/grid";
 import type { Side, Tile } from "#rules/battle/types";
 import { FACTION_NAMES, UNITS } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
+import { defaultColors, fallbackColor, PLAYER_COLORS } from "#rules/world/colors";
+import type { PlayerColor } from "#rules/world/colors";
 import { art } from "#view/art";
+import { COLOR_HEX, COLOR_NAMES } from "#view/colors";
 import { FORMATIONS, PRESETS } from "#view/squads";
 import { element } from "#view/dom";
 
 export type Squads = readonly [readonly Placement[], readonly Placement[]];
 
+type Colors = readonly [PlayerColor, PlayerColor];
+
 export interface SetupHandlers {
-  onChange(squads: Squads): void;
-  onFight(squads: Squads, playerSide: Side | null): void;
-  onMarch(squads: Squads, factions: readonly [Playable, Playable], commitments: readonly [Commitment, Commitment]): void;
+  onChange(squads: Squads, colors: Colors): void;
+  onFight(squads: Squads, playerSide: Side | null, colors: Colors): void;
+  onMarch(squads: Squads, factions: readonly [Playable, Playable], commitments: readonly [Commitment, Commitment], colors: Colors): void;
   onLoad(): void;
 }
 
@@ -36,6 +41,9 @@ export class Setup {
   private squads: [Placement[], Placement[]] = [[...PRESETS.preserve], [...PRESETS.punishment]];
   private formations: [string, string] = ["Faith preserves", "Faith consumes: Punishment"];
   private factions: [Playable, Playable] = ["jilliath", "jilliath"];
+  private colors: [PlayerColor, PlayerColor] = defaultColors(["jilliath", "jilliath"]);
+  /** Colors the player picked stay; the others follow the factions' defaults. */
+  private picked: [boolean, boolean] = [false, false];
   private active: Side = 0;
   private brush: string | null = null;
   private watch = false;
@@ -48,7 +56,7 @@ export class Setup {
   show(): void {
     this.root.hidden = false;
     this.render();
-    this.handlers.onChange(this.squads);
+    this.handlers.onChange(this.squads, this.colors);
   }
 
   hide(): void {
@@ -59,8 +67,19 @@ export class Setup {
     return !this.root.hidden;
   }
 
+  private recolor(): void {
+    const defaults = defaultColors(this.factions);
+    const next: [PlayerColor, PlayerColor] = [this.picked[0] ? this.colors[0] : defaults[0], this.picked[1] ? this.colors[1] : defaults[1]];
+    // On a clash, the side whose color wasn't picked by hand moves to the first free one.
+    const moving: Side = this.picked[1] && !this.picked[0] ? 0 : 1;
+    const other: Side = moving === 0 ? 1 : 0;
+    if (next[0] === next[1]) next[moving] = fallbackColor(next[other]);
+    this.colors = next;
+  }
+
   private setFaction(side: Side, faction: Playable): void {
     this.factions[side] = faction;
+    this.recolor();
     const first = FORMATIONS[faction][0];
     this.formations[side] = first?.name ?? "";
     this.squads[side] = [...(first?.squad ?? [])];
@@ -97,7 +116,7 @@ export class Setup {
 
   private changed(): void {
     this.render();
-    this.handlers.onChange(this.squads);
+    this.handlers.onChange(this.squads, this.colors);
   }
 
   private render(): void {
@@ -127,11 +146,11 @@ export class Setup {
     if (!ready) footer.appendChild(element("div", "problem", PROBLEM_TEXT[problems[0] ?? "empty"]));
     const fight = element("button", "action fight", "Fight");
     fight.disabled = !ready;
-    fight.addEventListener("click", () => this.handlers.onFight(this.squads, this.watch ? null : 0));
+    fight.addEventListener("click", () => this.handlers.onFight(this.squads, this.watch ? null : 0, this.colors));
     const march = element("button", "action fight", "March");
     march.title = "Take both squads onto a map: your leader against the enemy's";
     march.disabled = !ready;
-    march.addEventListener("click", () => this.handlers.onMarch(this.squads, this.factions, [this.commitmentOf(0), this.commitmentOf(1)]));
+    march.addEventListener("click", () => this.handlers.onMarch(this.squads, this.factions, [this.commitmentOf(0), this.commitmentOf(1)], this.colors));
     const load = element("button", "action", "Load game");
     load.addEventListener("click", () => this.handlers.onLoad());
     footer.append(mode, fight, march, load);
@@ -158,6 +177,23 @@ export class Setup {
       factions.appendChild(button);
     }
     panel.appendChild(factions);
+    const swatches = element("div", "swatches");
+    for (const color of PLAYER_COLORS) {
+      const taken = this.colors[side === 0 ? 1 : 0] === color;
+      const swatch = element("button", `swatch${this.colors[side] === color ? " selected" : ""}`);
+      swatch.style.background = COLOR_HEX[color];
+      swatch.title = taken ? `${COLOR_NAMES[color]} (the other side's)` : COLOR_NAMES[color];
+      swatch.disabled = taken;
+      swatch.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.colors[side] = color;
+        this.picked[side] = true;
+        this.render();
+        this.handlers.onChange(this.squads, this.colors);
+      });
+      swatches.appendChild(swatch);
+    }
+    panel.appendChild(swatches);
     const doctrines = element("div", "doctrines");
     for (const option of FORMATIONS[this.factions[side]]) {
       const button = element("button", `doctrine${this.formations[side] === option.name ? " selected" : ""}`, option.name);

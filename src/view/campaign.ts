@@ -23,7 +23,9 @@ import type { App } from "#view/app";
 import type { MapView } from "#view/map";
 import type { Squads } from "#view/setup";
 import type { Stage } from "#view/stage";
+import type { PlayerColor } from "#rules/world/colors";
 import { CapitolScreen } from "#view/capitol";
+import { applySideColors } from "#view/colors";
 import { buttonById, byId, element, gold, movementPips } from "#view/dom";
 import { LeaderScreen } from "#view/leader";
 import { memberRow, unitName } from "#view/members";
@@ -117,10 +119,11 @@ export class Campaign {
     buttonById("mapmenu").addEventListener("click", () => this.options.onMenu());
   }
 
-  start(squads: Squads, factions: readonly [Playable, Playable], commitment: readonly [Commitment, Commitment], seed: number): void {
+  start(squads: Squads, factions: readonly [Playable, Playable], commitment: readonly [Commitment, Commitment], colors: readonly [PlayerColor, PlayerColor], seed: number): void {
     this.stop();
     this.seed = seed;
-    this.world = createWorld(seed, squads, commitment, factions);
+    this.world = createWorld(seed, squads, commitment, factions, colors);
+    this.view.setColors(colors);
     this.view.build(this.world.map);
     this.view.buildSites(this.world);
     this.enterMap();
@@ -132,6 +135,7 @@ export class Campaign {
     this.stop();
     this.seed = save.seed;
     this.world = save.world;
+    this.view.setColors(save.world.colors);
     this.view.build(save.world.map);
     this.view.buildSites(save.world);
     this.enterMap();
@@ -186,6 +190,7 @@ export class Campaign {
   private enterMap(): void {
     const world = this.world;
     if (!world) return;
+    applySideColors(document.documentElement, world.colors);
     this.view.show();
     this.syncView(world);
     this.hud.hidden = false;
@@ -271,7 +276,7 @@ export class Campaign {
         this.afterBattle(result, generation);
         return;
       }
-      this.app.fight(engagement.battle, PLAYER, (battle) => this.afterBattle(battle, generation));
+      this.app.fight(engagement.battle, PLAYER, step.world.colors, (battle) => this.afterBattle(battle, generation));
       return;
     }
     this.render();

@@ -1,6 +1,7 @@
 import { levelBonus } from "#rules/balance";
 import type { Battle, EffectSeed, Side, Tile } from "#rules/battle/types";
 import type { Commitment } from "#rules/forks";
+import type { PlayerColor } from "#rules/world/colors";
 import { hexDistance, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import type { WorldMap } from "#rules/map";
@@ -109,6 +110,8 @@ export interface World {
   outcome: { winner: Side } | null;
   nextLeader: number;
   factions: [Playable, Playable];
+  /** Who owns what, on screen (`world/colors.ts`). */
+  colors: [PlayerColor, PlayerColor];
   commitment: [Commitment, Commitment];
   graveyard: [Fallen[], Fallen[]];
   /** Unit-type upgrades each side has bought (`rules/upgrades.ts`). */

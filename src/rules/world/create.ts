@@ -7,6 +7,8 @@ import type { Side } from "#rules/battle/types";
 import { GUARDIAN_ID } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
 import { startTurn } from "#rules/world/economy";
+import { defaultColors } from "#rules/world/colors";
+import type { PlayerColor } from "#rules/world/colors";
 import { banditGroup, DUNGEON_REWARDS, member, strengthAt } from "#rules/world/state";
 import type { City, Lair, Leader, World } from "#rules/world/state";
 
@@ -17,6 +19,7 @@ export function createWorld(
   squads: readonly [readonly Placement[], readonly Placement[]],
   commitment: readonly [Commitment, Commitment],
   factions: readonly [Playable, Playable],
+  colors: readonly [PlayerColor, PlayerColor] = defaultColors(factions),
 ): World {
   const map = generateMap(seed);
   const leaders = squads.map((squad, index): Leader => {
@@ -69,6 +72,7 @@ export function createWorld(
     factions: [factions[0], factions[1]],
     commitment: [commitment[0], commitment[1]],
     graveyard: [[], []],
+    colors: [colors[0], colors[1]],
     upgrades: [[], []],
   };
   startTurn(world, []);
