@@ -138,7 +138,7 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
         lair.looted = true;
         playerOf(draft, attacker.player).gold += lair.reward.gold;
         const joins = lair.reward.joins;
-        const tile = joins ? freeTile(attacker.squad) : null;
+        const tile = joins ? freeTile(attacker.squad, joins) : null;
         if (joins && tile && attacker.squad.length < leadershipOf(attacker)) attacker.squad.push(newcomer(draft, attacker.player, joins, tile));
         events.push({ type: "looted", lairId: lair.id, player: attacker.player, gold: lair.reward.gold, joins: joins && tile ? joins : null });
       }

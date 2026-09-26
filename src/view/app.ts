@@ -22,6 +22,22 @@ export interface AppOptions {
 type Finish = { kind: "skirmish"; squads: Squads; colors: Colors } | { kind: "world"; onDone: (battle: Battle) => void };
 type Colors = readonly [PlayerColor, PlayerColor];
 
+/** What one action does to one unit. */
+interface Outcome {
+  harm: number;
+  heal: number;
+  dies: boolean;
+  spared: boolean;
+}
+
+const change = (t: Outcome): string => (t.harm > 0 ? `−${t.harm}` : t.heal > 0 ? `+${t.heal}` : "");
+
+const markOf = (unitId: string, t: Outcome): PreviewMark => ({
+  unitId,
+  text: `${change(t)}${t.dies ? " †" : t.spared ? " (spared)" : ""}`,
+  kind: t.dies ? "death" : t.heal > 0 ? "heal" : "harm",
+});
+
 interface Preview {
   readonly key: string;
   readonly marks: readonly PreviewMark[];
@@ -54,6 +70,10 @@ export class App {
   /** A unit whose card stays up (clicked), so the mouse can travel to the card to read its effects. */
   private pinned: string | null = null;
   private preview: Preview | null = null;
+  /** The ability button under the pointer, if any. */
+  private abilityHover: string | null = null;
+  /** Every target's preview for one ability, cached per battle state and ability. */
+  private sweep: { readonly key: string; readonly marks: readonly PreviewMark[] } | null = null;
   private busy = false;
   /** The AI plays the player's side too, until switched off. */
   private auto = false;
@@ -71,6 +91,11 @@ export class App {
   ) {
     this.hud = new Hud(settings, {
       onAbility: (id) => this.chooseAbility(id),
+      onAbilityHover: (key) => {
+        if (this.abilityHover === key) return;
+        this.abilityHover = key;
+        this.render();
+      },
       onAuto: () => this.toggleAuto(),
       onFocus: (unitId) => {
         this.focus = unitId;
@@ -308,11 +333,9 @@ export class App {
     }, AI_DELAY_MS * this.stage.timeScale);
   }
 
-  /** Runs the hovered action on a copy of the battle: with no randomness, the preview is exactly what will happen. */
-  private previewOf(battle: Battle, action: Action): Preview {
-    const key = JSON.stringify(action);
-    if (this.preview?.key === key) return this.preview;
-    const totals = new Map<string, { harm: number; heal: number; dies: boolean; spared: boolean }>();
+  /** What an action does to each unit, on a copy of the battle as the player knows it. */
+  private outcomeOf(battle: Battle, action: Action): Map<string, Outcome> {
+    const totals = new Map<string, Outcome>();
     const entry = (id: string) => {
       const found = totals.get(id) ?? { harm: 0, heal: 0, dies: false, spared: false };
       totals.set(id, found);
@@ -324,18 +347,43 @@ export class App {
       if (event.type === "death") entry(event.unitId).dies = true;
       if (event.type === "deathPrevented") entry(event.unitId).spared = true;
     }
+    return totals;
+  }
+
+  /** Runs the hovered action on a copy of the battle: with no randomness, the preview is exactly what will happen. */
+  private previewOf(battle: Battle, action: Action): Preview {
+    const key = JSON.stringify(action);
+    if (this.preview?.key === key) return this.preview;
     const marks: PreviewMark[] = [];
     const parts: string[] = [];
-    for (const [unitId, t] of totals) {
+    for (const [unitId, t] of this.outcomeOf(battle, action)) {
       const unit = battle.units[unitId];
       if (!unit) continue;
-      const change = t.harm > 0 ? `−${t.harm}` : t.heal > 0 ? `+${t.heal}` : "";
-      const fate = t.dies ? " †" : t.spared ? " (spared)" : "";
-      marks.push({ unitId, text: `${change}${fate}`, kind: t.dies ? "death" : t.heal > 0 ? "heal" : "harm" });
-      parts.push(`${unitLabel(unit, this.playerSide)} ${change}${t.dies ? ", dies" : t.spared ? ", spared" : ""}`);
+      marks.push(markOf(unitId, t));
+      parts.push(`${unitLabel(unit, this.playerSide)} ${change(t)}${t.dies ? ", dies" : t.spared ? ", spared" : ""}`);
     }
     this.preview = { key, marks, summary: parts.join(" · ") };
     return this.preview;
+  }
+
+  /**
+   * An ability tried on every target it can reach, before one is hovered: each unit shows what the ability would do
+   * to it when aimed at it (for an area, at its anchor tile).
+   */
+  private sweepOf(battle: Battle, option: LegalAbility): readonly PreviewMark[] {
+    const key = `${battle.round}.${battle.pass}.${battle.current?.unitId}.${JSON.stringify(battle.current)}:${optionKey(option)}:${Object.values(battle.units).map((u) => u.hp).join(",")}`;
+    if (this.sweep?.key === key) return this.sweep.marks;
+    const marks: PreviewMark[] = [];
+    option.choices.forEach((choice, index) => {
+      const outcome = this.outcomeOf(battle, { abilityId: option.abilityId, choice: index, enhancement: option.enhancement.kind === "replicate" ? PLAIN : option.enhancement });
+      for (const [unitId, t] of outcome) {
+        const unit = battle.units[unitId];
+        const aimed = unit && unit.side === choice.anchor.side && sameTile(unit.tile, choice.anchor.tile);
+        if (aimed && !marks.some((m) => m.unitId === unitId)) marks.push(markOf(unitId, t));
+      }
+    });
+    this.sweep = { key, marks };
+    return marks;
   }
 
   private render(): void {
@@ -354,6 +402,8 @@ export class App {
     });
     const preview = action ? this.previewOf(battle, action) : null;
     if (!action) this.preview = null;
+    // No target hovered: preview the hovered button's ability (or the one being aimed) on every target it can reach.
+    const swept = action ? undefined : (this.playerOptions().find((o) => optionKey(o) === this.abilityHover) ?? (this.chosen ? this.selectedOption() : undefined));
 
     const focused = this.focus && battle.units[this.focus]?.alive ? battle.units[this.focus] : undefined;
     this.scene.setHighlights({
@@ -362,7 +412,7 @@ export class App {
       affected,
       focus: focused ? { side: focused.side, tile: focused.tile } : null,
     });
-    this.scene.showPreview(preview?.marks ?? []);
+    this.scene.showPreview(preview?.marks ?? (swept && this.playersTurn() ? this.sweepOf(battle, swept) : []));
 
     const inspected = focused ?? this.unitAt(this.hovered);
     const pinned = this.pinned && battle.units[this.pinned]?.alive ? this.pinned : null;

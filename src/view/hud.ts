@@ -33,6 +33,8 @@ export interface HudHandlers {
   /** A unit in the turn order is hovered (null: no longer). */
   onFocus(unitId: string | null): void;
   onAbility(key: string): void;
+  /** An ability button is hovered (null: no longer): preview it on every target it can reach. */
+  onAbilityHover(key: string | null): void;
   onAuto(): void;
 }
 
@@ -203,6 +205,8 @@ export class Hud {
       if (charges !== undefined) button.appendChild(element("span", "tag", `${charges - used}/${charges}`));
       button.title = `${describeAbility(ref)}${key ? ` (${key.toUpperCase()})` : ""}`;
       button.addEventListener("click", () => this.handlers.onAbility(optionKey(option)));
+      button.addEventListener("mouseenter", () => this.handlers.onAbilityHover(optionKey(option)));
+      button.addEventListener("mouseleave", () => this.handlers.onAbilityHover(null));
       this.actions.appendChild(button);
     }
   }

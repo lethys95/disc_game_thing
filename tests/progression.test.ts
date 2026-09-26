@@ -52,9 +52,10 @@ function fight(world: World): ReturnType<typeof concludeBattle> {
 
 describe("forks", () => {
   test("undecided forks keep both branches open; a choice closes the other", () => {
-    expect(allowedUnits("jilliath", preserve)).toEqual(["congregant", "paladin", "templar", "immortal"]);
-    expect(allowedUnits("jilliath", punishment)).toEqual(["congregant", "zealot", "punisher", "torturer"]);
-    expect(allowedUnits("jilliath", { congregant: "zealot" })).toEqual(["congregant", "zealot", "punisher", "torturer", "fanatic", "chosen", "avatar_of_vengeance"]);
+    const backline = ["cleric", "jilliath_mage_1"];
+    expect(allowedUnits("jilliath", preserve)).toEqual(["congregant", "paladin", "templar", "immortal", ...backline]);
+    expect(allowedUnits("jilliath", punishment)).toEqual(["congregant", "zealot", "punisher", "torturer", ...backline]);
+    expect(allowedUnits("jilliath", { congregant: "zealot" })).toEqual(["congregant", "zealot", "punisher", "torturer", "fanatic", "chosen", "avatar_of_vengeance", ...backline]);
     expect(openForks("jilliath", uncommitted)).toEqual(["congregant", "zealot"]);
     expect(openForks("jilliath", preserve)).toEqual([]);
   });

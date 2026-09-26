@@ -5,7 +5,7 @@ import { COLS, ROWS, sameTile } from "#rules/battle/grid";
 import { sameHex } from "#rules/hex";
 import { NODES } from "#rules/nodes";
 import { grow, xpToEvolve } from "#rules/progression";
-import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
+import { EVOLUTIONS, FACTION_ROOTS, GUARDIAN_ID, LINE_ARCHETYPE, RECRUIT_COST, UNITS } from "#rules/units/index";
 import { learnProblem, movementOf, squadHealingOf } from "#rules/world/leaders";
 import { maxHpOf } from "#rules/world/record";
 import { CITY_RESURRECTION_PREMIUM, RESEARCH } from "#rules/research";
@@ -22,9 +22,20 @@ export function income(world: World, side: PlayerId): number {
 }
 
 
-export function freeTile(squad: readonly SquadMember[]): Tile | null {
-  for (const row of ROWS) for (const col of COLS) if (!squad.some((m) => sameTile(m.tile, { row, col }))) return { row, col };
+/**
+ * Where a new unit goes when nobody says: melee units fill from the front row, everyone else (supports, mages,
+ * ranged) from the back. By the line the unit's type belongs to.
+ */
+export function freeTile(squad: readonly SquadMember[], defId: string): Tile | null {
+  const rows = LINE_ARCHETYPE[rootOf(defId)] === "melee" ? ROWS : [...ROWS].reverse();
+  for (const row of rows) for (const col of COLS) if (!squad.some((m) => sameTile(m.tile, { row, col }))) return { row, col };
   return null;
+}
+
+/** The tier-1 unit a type's line starts from. */
+function rootOf(defId: string): string {
+  const parent = Object.entries(EVOLUTIONS).find(([, next]) => next.some((e) => e.to === defId))?.[0];
+  return parent ? rootOf(parent) : defId;
 }
 
 /** Why a recruit order can't happen, or null if it can. Any city you hold recruits (pillars.md, "Cities"). */

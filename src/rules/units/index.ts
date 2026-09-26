@@ -17,7 +17,7 @@ export const FACTION_NAMES: Readonly<Record<Playable, string>> = { jilliath: "Ji
  * evolution) and where its evolution tree starts.
  */
 export const FACTION_ROOTS: Readonly<Record<Playable, readonly string[]>> = {
-  jilliath: ["congregant"],
+  jilliath: ["congregant", "cleric", "jilliath_mage_1"],
   nexus: ["custodian", "technician", "apprentice"],
 };
 
@@ -26,10 +26,10 @@ export const ARCHETYPES = ["melee", "ranged", "support", "mage"] as const;
 export type Archetype = (typeof ARCHETYPES)[number];
 
 /** Which kind of line each tier-1 unit starts (user: the melee lines, the Technician supports, the Apprentice casts). */
-export const LINE_ARCHETYPE: Readonly<Record<string, Archetype>> = { congregant: "melee", custodian: "melee", technician: "support", apprentice: "mage" };
+export const LINE_ARCHETYPE: Readonly<Record<string, Archetype>> = { congregant: "melee", cleric: "support", jilliath_mage_1: "mage", custodian: "melee", technician: "support", apprentice: "mage" };
 
 /** Canon: the Congregant costs 40 gold. The Nexus prices are provisional ("costly", quality over quantity). */
-export const RECRUIT_COST: Readonly<Record<string, number>> = { congregant: 40, custodian: 60, technician: 50, apprentice: 60 };
+export const RECRUIT_COST: Readonly<Record<string, number>> = { congregant: 40, cleric: 50, jilliath_mage_1: 60, custodian: 60, technician: 50, apprentice: 60 };
 
 /** One step up an evolution tree. */
 export interface Evolution {

@@ -8,6 +8,18 @@ export const JILLIATH_UNITS: Readonly<Record<string, UnitDef>> = {
     stats: { maxHp: 90, shield: 0, damage: 20, armor: 0, initiative: 50 },
     abilities: kit("attack", "defend", "wait", "congregation"),
   },
+  // The backline's tier 1 (user, 2026-09-26: "keep it simple"). Stats are provisional.
+  cleric: {
+    id: "cleric", name: "Cleric", faction: "jilliath", tier: 1, damageType: "weapon",
+    stats: { maxHp: 70, shield: 0, damage: 10, armor: 0, initiative: 45 },
+    // A weak attack of its own (user: not D2's attack-less healer).
+    abilities: kit("mend", "shoot", "defend", "wait"),
+  },
+  jilliath_mage_1: {
+    id: "jilliath_mage_1", name: "Jilliath mage 1", faction: "jilliath", tier: 1, damageType: "fire",
+    stats: { maxHp: 60, shield: 0, damage: 25, armor: 0, initiative: 50 },
+    abilities: kit("condemn", "defend", "wait"),
+  },
   paladin: {
     id: "paladin", name: "Paladin", faction: "jilliath", tier: 2, damageType: "weapon",
     stats: { maxHp: 150, shield: 0, damage: 40, armor: 20, initiative: 50 },

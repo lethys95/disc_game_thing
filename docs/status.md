@@ -19,15 +19,16 @@ Git: tags `m2-playable` … `m7-foundation` mark tested states. Work happens on 
 Rules: `src/rules/` (93 tests). View: `src/view/`. Tools: the `verify` skill; `A=<preset|nexus> B=… pnpm sim:world`.
 
 ## Next
-**M25 done: spells and mana** (canon system, placeholder spells; questions #51). Typed mana (red/teal) from the Capitol and a mana node; learn at the Capitol's Spells tab; cast on the map at anything in sight, once per turn (spell bar under your cities; right-click or Esc stops aiming). Spells: map damage (never kills) or enchantments carried into battle for N turns (✦ on the map). The AI learns and casts. `pnpm playtest:spells` in verify; `?mana=N`. Before it: M24 setup for more players.
-1. **Waiting on the user:** design real spells (#51); playtest; #40–51; colors (#43). Sound: generated SFX weren't good enough; royalty-free sources surveyed in `design/audio-sources.md` (Sonniss GDC archive, Kenney CC0, Ovani, Freesound CC0).
-2. Candidates next: audio slots and playback with library sounds (needs the user's pick of sources); AI for 3+ players (#48).
-3. Open design: Nexus tiers 4–5 and the other lines (#35), Jilliath backline (#36), fourth archetype (#37), leader experience (#33).
+**M26: Jilliath's tier-1 backline** (user, 2026-09-26: "keep it simple"): the Cleric (heal scaled by missing health, weak ranged attack) and "Jilliath mage 1" (placeholder name; Condemn: damage plus a share of the target's missing health). Recruitable; new recruits fill by line (melee from the front, the rest from the back). **Hovering an ability button previews it on every target it can reach** (the user asked for numbers, not abstractions). Sims are smoke tests only until both factions have their lines.
+1. **Waiting on the user:** a name for the mage; playtest; #40–51; colors (#43). Sonniss GDC packs downloading to `~/programs/sfx-libraries/sonniss/` (an agent).
+2. Candidates next: sound slots and playback with the Sonniss material; more of the backline lines when the user designs them.
+3. Open design: Nexus tiers 4–5 (#35), Jilliath lines past tier 1, fourth archetype (#37), real spells (#51), leader experience (#33).
 
 ## Waiting on the user
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.
 
 ## Recently done
+- 2026-09-26: M26 Jilliath tier-1 Cleric and mage; ability hover previews.
 - 2026-09-26: M25 spells and mana.
 - 2026-09-26: M24 setup for more players.
 - 2026-09-26: M22 settings menu.

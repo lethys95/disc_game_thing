@@ -20,10 +20,9 @@
   Cleric wins long fights it would otherwise lose, but it adds nothing to a fight's damage.
 - **Stats (Claude):** health low · damage none · armor none · initiative medium.
 - **Abilities:**
-  - *Heal* (main action, every turn): restores a medium amount of health to one ally. Can't restore shields (Nexus rule).
-  - (Claude, proposal) no attack at all, as D2's healers: it heals, defends or waits. Say if it should have a weak strike.
+  - *Heal* (main action, every turn): restores health to one wounded ally, more the more it is missing (you, 2026-09-26).
+    Can't restore shields (Nexus rule). (Claude:) 20 plus 30% of what's missing.
+  - *Shoot* (main action): a weak ranged attack (you: not D2's attack-less healer).
 - **Strong against / weak against (Claude):** attrition and chip damage / burst that kills before healing matters, and
   anything that reaches the back row.
-- **Open questions (Claude):** a martyr's twist even at tier 1 (the heal costs the Cleric a little health), or keep it
-  plain and save the side effects for later tiers? My lean: plain, as you said.
-- **Status:** designed (your call); not in game.
+- **Status:** in game as `cleric` (numbers provisional).
