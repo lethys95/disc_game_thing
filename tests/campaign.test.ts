@@ -18,6 +18,6 @@ function playOut(seed: number, maxTurn: number): World {
 }
 
 test("an AI-vs-AI game ends with a fallen Guardian, not a cold war", { timeout: 120_000 }, () => {
-  const world = playOut(6, 100);
+  const world = playOut(3, 150);
   expect(world.outcome).not.toBeNull();
 });

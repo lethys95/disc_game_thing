@@ -12,7 +12,7 @@ import { applyWorldAction } from "#rules/world/actions";
 import { concludeBattle, playersIn } from "#rules/world/battles";
 import { createWorld } from "#rules/world/create";
 import { income, waitingForks } from "#rules/world/economy";
-import { leadershipOf, unspentPoints } from "#rules/world/leaders";
+import { leadershipOf, movementOf, unspentPoints } from "#rules/world/leaders";
 import { planMove, reachable } from "#rules/world/movement";
 import { isLeaderOf, maxHpOf } from "#rules/world/record";
 import { capitolOf, cityById, lairById, leaderAt } from "#rules/world/state";
@@ -24,7 +24,7 @@ import type { MapView } from "#view/map";
 import type { Squads } from "#view/setup";
 import type { Stage } from "#view/stage";
 import { CapitolScreen } from "#view/capitol";
-import { buttonById, byId, element } from "#view/dom";
+import { buttonById, byId, element, gold, movementPips } from "#view/dom";
 import { LeaderScreen } from "#view/leader";
 import { memberRow, unitName } from "#view/members";
 
@@ -346,9 +346,11 @@ export class Campaign {
       attack: plan?.target && plan.target.kind !== "capture" ? this.hovered : null,
     });
 
-    this.turn.textContent = world.outcome
-      ? ""
-      : `Turn ${world.turn} · ${world.activeSide === PLAYER ? "your move" : "the enemy moves"} · ${world.gold[PLAYER]} gold (+${income(world, PLAYER)}/turn) · seed ${this.seed}`;
+    this.turn.replaceChildren();
+    if (!world.outcome) {
+      this.turn.append(`Turn ${world.turn} · ${world.activeSide === PLAYER ? "your move" : "the enemy moves"} · `, gold(world.gold[PLAYER]), ` (+${income(world, PLAYER)} per turn)`);
+      if (leader) this.turn.append(" · ", element("span", "movement", `Movement ${movementPips(leader.movement, movementOf(leader))}`));
+    }
     this.endTurn.disabled = !this.myTurn();
     this.renderWarbands(leader);
     this.renderCapitol(world, leader);
@@ -395,7 +397,7 @@ export class Campaign {
     for (const leader of mine) {
       const isSelected = leader.id === selected?.id;
       const head = element("button", `warband${isSelected ? " selected" : ""}`);
-      head.append(element("span", "name", leaderName(leader)), element("span", "meta", `${leader.squad.length}/${leadershipOf(leader)} units · ${leader.movement} move`));
+      head.append(element("span", "name", leaderName(leader)), element("span", "meta", `${leader.squad.length}/${leadershipOf(leader)} units · ${movementPips(leader.movement, movementOf(leader))}`));
       head.addEventListener("click", () => {
         this.selected = leader.id;
         this.render();

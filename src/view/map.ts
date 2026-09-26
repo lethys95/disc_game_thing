@@ -1,4 +1,6 @@
 import * as THREE from "three";
+import { movementOf } from "#rules/world/leaders";
+import { movementPips } from "#view/dom";
 import { CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
 import { hexKey } from "#rules/hex";
 import type { Hex } from "#rules/hex";
@@ -324,7 +326,9 @@ export class MapView {
       figure.group.position.copy(this.standingPoint(leader.hex));
       figure.group.userData = { hex: leader.hex };
       const alive = leader.squad.length;
-      figure.label.textContent = `${UNITS[defId]?.name ?? defId} · ${alive} unit${alive === 1 ? "" : "s"}`;
+      // Your own warbands also show the movement they have left.
+      const move = leader.side === 0 ? ` · ${movementPips(leader.movement, movementOf(leader))}` : "";
+      figure.label.textContent = `${UNITS[defId]?.name ?? defId} · ${alive} unit${alive === 1 ? "" : "s"}${move}`;
     }
   }
 

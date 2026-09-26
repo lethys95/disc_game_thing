@@ -43,6 +43,10 @@ export class App {
   private selected: string | null = null;
   /** A replicated spell's targets picked so far (choice indices). */
   private picks: number[] = [];
+  /** A unit hovered in the turn order. */
+  private focus: string | null = null;
+  /** Whether the player picked the selected ability themselves; if not, hovering may fall back to another. */
+  private chosen = false;
   private hovered: TileRef | null = null;
   /** A unit whose card stays up (clicked), so the mouse can travel to the card to read its effects. */
   private pinned: string | null = null;
@@ -61,7 +65,14 @@ export class App {
     private readonly ai: AiClient,
     private readonly options: AppOptions,
   ) {
-    this.hud = new Hud({ onAbility: (id) => this.chooseAbility(id), onAuto: () => this.toggleAuto() });
+    this.hud = new Hud({
+      onAbility: (id) => this.chooseAbility(id),
+      onAuto: () => this.toggleAuto(),
+      onFocus: (unitId) => {
+        this.focus = unitId;
+        this.render();
+      },
+    });
     this.hud.setVisible(false);
     const canvas = stage.renderer.domElement;
     canvas.addEventListener("pointermove", (e) => this.hover(e.clientX, e.clientY));
@@ -147,13 +158,28 @@ export class App {
     this.select(attack ? optionKey(attack) : null);
   }
 
-  private select(key: string | null): void {
+  private select(key: string | null, chosen = false): void {
     this.selected = key;
+    this.chosen = chosen;
     this.picks = [];
   }
 
   private selectedOption(): LegalAbility | undefined {
     return this.playerOptions().find((o) => optionKey(o) === this.selected);
+  }
+
+  /**
+   * The option a click on the hovered tile would use. Until the player picks one, a tile the default can't reach
+   * falls back to the first plain, non-basic ability that can (a support's shield on an ally, its attack on an enemy).
+   * Never onto the acting unit itself, so a stray click can't spend a self-heal.
+   */
+  private targetOption(): LegalAbility | undefined {
+    const selected = this.selectedOption();
+    const hovered = this.hovered;
+    if (this.chosen || !hovered || selected?.choices.some((c) => matches(c, hovered))) return selected;
+    const self = this.battle?.current ? this.battle.units[this.battle.current.unitId] : undefined;
+    if (self && hovered.side === self.side && sameTile(hovered.tile, self.tile)) return selected;
+    return this.playerOptions().find((o) => o.enhancement.kind === "none" && !o.tags.includes("basic") && o.choices.some((c) => matches(c, hovered))) ?? selected;
   }
 
   /** An ability whose definition claims this key, among the ones the player may use now. */
@@ -174,7 +200,7 @@ export class App {
       void this.commit({ abilityId: option.abilityId, choice: 0, enhancement: option.enhancement });
       return;
     }
-    this.select(this.selected === key ? null : key);
+    this.select(this.selected === key ? null : key, true);
     this.render();
   }
 
@@ -194,7 +220,7 @@ export class App {
    * cast so far (a smaller replicate, or the plain spell) so the preview shows what the picks add up to.
    */
   private hoveredAction(): Action | null {
-    const option = this.selectedOption();
+    const option = this.targetOption();
     const hovered = this.hovered;
     if (!option || !hovered) return null;
     const choice = option.choices.findIndex((c, i) => matches(c, hovered) && !this.picks.includes(i));
@@ -207,7 +233,7 @@ export class App {
 
   private click(): void {
     const action = this.hoveredAction();
-    const option = this.selectedOption();
+    const option = this.targetOption();
     // Clicking a target already picked casts the replicated spell with the picks so far.
     const hovered = this.hovered;
     const again = option && hovered ? option.choices.findIndex((c, i) => matches(c, hovered) && this.picks.includes(i)) : -1;
@@ -313,7 +339,7 @@ export class App {
     const playerSide = this.playerSide;
     const currentId = battle.current?.unitId ?? null;
     const current = currentId ? battle.units[currentId] : undefined;
-    const option = this.selectedOption();
+    const option = this.targetOption();
     const action = this.hoveredAction();
     const hoveredChoice = action ? option?.choices[action.choice] : undefined;
     const picked = [...this.picks, ...(action ? [action.choice, ...(action.copies ?? [])] : [])].flatMap((i) => option?.choices[i]?.affected ?? []);
@@ -324,14 +350,16 @@ export class App {
     const preview = action ? this.previewOf(battle, action) : null;
     if (!action) this.preview = null;
 
+    const focused = this.focus && battle.units[this.focus]?.alive ? battle.units[this.focus] : undefined;
     this.scene.setHighlights({
       current: current ? { side: current.side, tile: current.tile } : null,
       candidates: option ? option.choices.map((c) => c.anchor) : [],
       affected,
+      focus: focused ? { side: focused.side, tile: focused.tile } : null,
     });
     this.scene.showPreview(preview?.marks ?? []);
 
-    const inspected = this.unitAt(this.hovered);
+    const inspected = focused ?? this.unitAt(this.hovered);
     const pinned = this.pinned && battle.units[this.pinned]?.alive ? this.pinned : null;
     this.hud.renderTurns(battle, playerSide);
     this.hud.renderCard(battle, inspected?.id ?? pinned ?? currentId, playerSide, pinned !== null && !inspected);

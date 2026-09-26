@@ -117,7 +117,7 @@ describe("world", () => {
     const battle = applyWorldAction(ready, { type: "move", leaderId: "leader0", to: camp.hex }).world.engagement?.battle;
     const effects = (side: number) => Object.values(battle?.units ?? {}).filter((u) => u.side === side).map((u) => u.effects.map((e) => e.def));
     expect(effects(0).every((defs) => defs.includes("blacksmith"))).toBe(true);
-    expect(effects(1).every((defs) => defs.length === 0)).toBe(true);
+    expect(effects(1).some((defs) => defs.includes("blacksmith"))).toBe(false);
   });
 
   test("a fight between a player and neutrals involves only that player", () => {

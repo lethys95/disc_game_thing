@@ -22,6 +22,8 @@ export interface PreviewMark {
 
 export interface Highlights {
   readonly current: TileRef | null;
+  /** A unit hovered elsewhere (the turn order): shown brighter than anything else. */
+  readonly focus?: TileRef | null;
   readonly candidates: readonly TileRef[];
   readonly affected: readonly TileRef[];
 }
@@ -55,6 +57,7 @@ const TILE_BASE = new THREE.Color(0x2a2724);
 const TILE_CANDIDATE = new THREE.Color(0x5a1410);
 const TILE_AFFECTED = new THREE.Color(0xd8321f);
 const TILE_CURRENT = new THREE.Color(0x8a7040);
+const TILE_FOCUS = new THREE.Color(0xe0c070);
 
 export class BattleScene {
   readonly scene = new THREE.Scene();
@@ -268,10 +271,11 @@ export class BattleScene {
     const candidates = new Set(highlights.candidates.map(key));
     const affected = new Set(highlights.affected.map(key));
     const current = highlights.current ? key(highlights.current) : null;
+    const focus = highlights.focus ? key(highlights.focus) : null;
     for (const [k, tile] of this.tiles) {
-      const color = affected.has(k) ? TILE_AFFECTED : candidates.has(k) ? TILE_CANDIDATE : k === current ? TILE_CURRENT : TILE_BASE;
+      const color = k === focus ? TILE_FOCUS : affected.has(k) ? TILE_AFFECTED : candidates.has(k) ? TILE_CANDIDATE : k === current ? TILE_CURRENT : TILE_BASE;
       tile.material.emissive.copy(color);
-      tile.material.emissiveIntensity = color === TILE_BASE ? 0.2 : color === TILE_AFFECTED ? 1.6 : 1;
+      tile.material.emissiveIntensity = color === TILE_BASE ? 0.2 : color === TILE_AFFECTED || color === TILE_FOCUS ? 1.6 : 1;
     }
   }
 

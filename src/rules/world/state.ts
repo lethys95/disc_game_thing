@@ -1,3 +1,4 @@
+import { levelBonus } from "#rules/balance";
 import type { Battle, EffectSeed, Side, Tile } from "#rules/battle/types";
 import type { Commitment } from "#rules/forks";
 import { hexDistance, sameHex } from "#rules/hex";
@@ -170,16 +171,38 @@ export const member = (defId: string, tile: Tile): SquadMember => ({ defId, tile
 export type Strength = "weak" | "medium" | "strong";
 
 /** Provisional bandit groups (the user's bandit units; formations and sizes are placeholders). */
-const BANDIT_GROUPS: Readonly<Record<Strength, readonly [string, Tile][]>> = {
-  weak: [["brigand", { row: 0, col: 1 }], ["bandit", { row: 1, col: 1 }]],
-  medium: [["brigand", { row: 0, col: 0 }], ["marauder", { row: 0, col: 1 }], ["bandit", { row: 1, col: 1 }]],
-  strong: [
-    ["brigand", { row: 0, col: 0 }], ["marauder", { row: 0, col: 1 }], ["brigand", { row: 0, col: 2 }],
-    ["bandit", { row: 1, col: 0 }], ["hedge_mage", { row: 1, col: 1 }],
-  ],
+/**
+ * Provisional bandit groups (the user's bandit units; formations, sizes and levels are placeholders). The user:
+ * neutrals should be a challenge from the start. Stronger groups are bigger and seasoned (levels, pillars.md).
+ */
+const BANDIT_GROUPS: Readonly<Record<Strength, { readonly level: number; readonly units: readonly [string, Tile][] }>> = {
+  weak: {
+    level: 0,
+    units: [["brigand", { row: 0, col: 0 }], ["marauder", { row: 0, col: 1 }], ["bandit", { row: 1, col: 0 }], ["hedge_mage", { row: 1, col: 1 }]],
+  },
+  medium: {
+    level: 2,
+    units: [
+      ["brigand", { row: 0, col: 0 }], ["marauder", { row: 0, col: 1 }], ["brigand", { row: 0, col: 2 }],
+      ["bandit", { row: 1, col: 0 }], ["hedge_mage", { row: 1, col: 1 }],
+    ],
+  },
+  strong: {
+    level: 4,
+    units: [
+      ["marauder", { row: 0, col: 0 }], ["brigand", { row: 0, col: 1 }], ["marauder", { row: 0, col: 2 }],
+      ["bandit", { row: 1, col: 0 }], ["hedge_mage", { row: 1, col: 1 }], ["bandit", { row: 1, col: 2 }],
+    ],
+  },
 };
 
-export const banditGroup = (strength: Strength): SquadMember[] => BANDIT_GROUPS[strength].map(([defId, tile]) => member(defId, tile));
+export function banditGroup(strength: Strength): SquadMember[] {
+  const { level, units } = BANDIT_GROUPS[strength];
+  return units.map(([defId, tile]) => {
+    const hp = fullHp(defId);
+    return { ...member(defId, tile), level, hp: hp + levelBonus(hp, level) };
+  });
+}
 
 /** Stronger the further from both Capitols: easy fights near home, harder ones in the middle. */
 export function strengthAt(map: WorldMap, hex: Hex, atLeast: Strength): Strength {

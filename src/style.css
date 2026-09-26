@@ -228,7 +228,7 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 }
 .capitol-header { display: flex; align-items: center; gap: 24px; }
 .capitol-header .title { font: 700 36px var(--display); letter-spacing: 0.06em; }
-.capitol-header .gold { color: #d9b36a; font: 600 18px var(--display); flex: 1; }
+.capitol-header .gold { font: 600 18px var(--display); flex: 1; }
 .capitol-body { display: grid; grid-template-columns: 1fr 340px; gap: 16px; min-height: 0; flex: 1; }
 .capitol-trees, .capitol-hall { padding: 12px 16px; overflow-y: auto; }
 .screen .section { font: 700 18px var(--display); margin: 12px 0 6px; }
@@ -303,3 +303,18 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 #menu .hidden-file { display: none; }
 #mapmenu { position: fixed; left: 50%; top: 44px; transform: translateX(-50%); min-width: 0; font-size: 13px; padding: 3px 14px; }
 button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }
+
+/* The turn order as portraits (view/hud.ts). */
+#turns .chip { position: relative; padding: 0; border-width: 1px 1px 3px; cursor: default; line-height: 0; }
+#turns .chip .art.queue { width: 34px; height: 42px; background-size: 200%; background-position: 50% 4%; }
+#turns .chip .art.queue-now { width: 46px; height: 56px; background-size: 200%; background-position: 50% 4%; }
+#turns .chip .art.placeholder { font-size: 11px; }
+#turns .chip .when { position: absolute; left: 0; right: 0; bottom: -15px; font: 600 9px var(--text); line-height: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); text-align: center; }
+#turns .chip.now .when { color: #d9b36a; }
+#turns .chip:hover { border-color: #e0c070; }
+#turns { align-items: flex-start; }
+
+.gold { display: inline-flex; align-items: center; gap: 4px; color: #e8c46a; }
+.coin { display: inline-block; width: 1em; height: 1em; vertical-align: -0.12em; }
+.coin svg { width: 100%; height: 100%; display: block; }
+#mapturn .movement { color: #cfe3d2; letter-spacing: 0.05em; }

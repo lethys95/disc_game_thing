@@ -18,3 +18,19 @@ export function buttonById(id: string): HTMLButtonElement {
   if (!(el instanceof HTMLButtonElement)) throw new Error(`#${id} is not a button`);
   return el;
 }
+
+const COIN_SVG =
+  '<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#b8862b"/><circle cx="8" cy="8" r="7" fill="none" stroke="#6e4d12" stroke-width="1"/>' +
+  '<circle cx="8" cy="8" r="4.6" fill="none" stroke="#f3d27a" stroke-width="1.2"/><circle cx="6" cy="5.6" r="1.4" fill="#fbe8a8" opacity="0.8"/></svg>';
+
+/** An amount of gold with a coin in front: currency people recognise at a glance. */
+export function gold(amount: number | string, className = ""): HTMLElement {
+  const el = element("span", `gold ${className}`.trim());
+  const icon = element("span", "coin");
+  icon.innerHTML = COIN_SVG;
+  el.append(icon, `${amount}`);
+  return el;
+}
+
+/** Movement left as pips: ●●●○ is 3 of 4. */
+export const movementPips = (left: number, max: number): string => "●".repeat(Math.max(0, Math.min(left, max))) + "○".repeat(Math.max(0, max - Math.max(0, left)));
