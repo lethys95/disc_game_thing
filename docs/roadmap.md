@@ -41,6 +41,14 @@ The goal of the vertical slice: one Jilliath vs Ral-Vitahl match you can play to
 ## M14 — Nexus spell charges ✅ (2026-09-26)
 Casters' batteries; spells cost charges; overload (Thaumaturge) and replicate (Justiciar) as selectable variants with exact previews.
 
+## M17 — Cities ✅ (2026-09-26; the user's playtest of 2026-09-26)
+The user's city list (pillars.md, "Cities"), in steps, each playable:
+1. ✅ Small fixes: spell-charge pips over casters; hold right-click on a fork's options to see each branch's card.
+2. ✅ **Squad grids**: drag and drop between garrison and visiting warband, and between two adjacent warbands anywhere; recruit by clicking a tile. A city screen for every owned city, with tabs (City, Research for the Capitol).
+3. ✅ **City tiers**: upgrade for gold: garrison slots, an armor bonus for garrison and visitors; recruiting limited by tier.
+4. ✅ **Resurrection at cities**, unlocked by Capitol research, at a premium.
+5. ✅ **Nodes**: tied to the nearest city (Capitols included), shown on the map; investment.
+
 ## Then
 - Faction content as the user designs it (Nexus trees first; Grove and Wastes later). The user owns unit designs and looks.
 - Spells and mana (canon), a spell tree in the Capitol.

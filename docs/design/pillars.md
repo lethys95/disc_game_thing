@@ -121,3 +121,19 @@ The Capitol screen holds units, upgrades (unlocking evolutions), spells (a spell
 
 ## Levels past the end of a line (user, 2026-09-26; D2's rule)
 You can't max out on XP. A unit with no further evolution (the end of its line, or a unit without a line, like a neutral) keeps leveling **without changing tier**: each level gives minor stat bonuses, smaller than a tier upgrade, and the XP needed for the next level **stays fixed**. So lower-tier units level more often (smaller requirement), while higher-tier units gain more from each level.
+
+## Cities (user, 2026-09-26, after the playtest)
+Captured cities should do a lot more:
+1. Open a city pane and control the city's defenses (its garrison).
+2. Recruit new units there. Numbers are limited by the city's tier; neutral units garrisoned in a city aren't bound by that limit.
+3. Upgrade the city (tiers): more garrison slots, and a small armor bonus for the garrison and the visiting squad.
+4. Drag and drop units between the garrison and the visiting squad.
+5. If researched in the Capitol, resurrect units at cities, at a slight premium.
+6. Possibly invest in the nodes around cities.
+7. It should be clear visually which nodes belong to which city.
+8. Nodes are tied to the closest city (Capitols count as cities). In Warlords 3 cities can be destroyed, so nodes converge on the remaining city and pool their recruitment benefits there, at the cost of the strategic advantage of more cities. Destructible cities: not sold, to spar on.
+
+The Capitol gets the same layout: **tabs**: *City* (the garrison and visiting grids, recruiting) and *Research* (the trees); later *Spells*. **Recruiting** happens by clicking a tile in the grid and picking the unit from a drop-down, instead of the list on today's Capitol screen.
+
+## Warbands meeting (user, 2026-09-26)
+Two of your warbands directly next to each other anywhere on the map can trade units, through the same drag-and-drop grids as the garrison.

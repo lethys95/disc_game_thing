@@ -18,7 +18,7 @@ const rich = (): World => ({ ...createWorld(1, [pair, pair], [{ congregant: "pal
 
 const buy = (world: World, upgrade: string) => applyWorldAction(world, { type: "upgrade", upgrade }).world;
 
-const recruit = (world: World) => applyWorldAction(world, { type: "recruit", defId: "congregant", into: { kind: "leader", leaderId: "leader0" } }).world;
+const recruit = (world: World) => applyWorldAction(world, { type: "recruit", defId: "congregant", into: { kind: "warband", leaderId: "leader0" } }).world;
 
 /** The member at `index` reaches its evolution now, the way XP from a fight would bring it. */
 function evolve(world: World, index: number): World {
@@ -66,7 +66,7 @@ describe("unit-type upgrades", () => {
       ...withLeader(world, { squad: leaderById(world, "leader0").squad.slice(0, 2) }),
       graveyard: [[{ defId: "congregant", fellOnTurn: world.turn, marks: fallen.marks, level: 0 }], []],
     };
-    const back = applyWorldAction(dead, { type: "resurrect", index: 0, into: { kind: "leader", leaderId: "leader0" } }).world;
+    const back = applyWorldAction(dead, { type: "resurrect", index: 0, into: { kind: "warband", leaderId: "leader0" } }).world;
     expect(upgradesOn(back)).toEqual([[], [], ["congregant_damage"]]);
   });
 });

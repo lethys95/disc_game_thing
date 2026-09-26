@@ -44,9 +44,9 @@ export function createWorld(
       id: site.id,
       kind: site.kind,
       hex: site.hex,
-      nodes: site.nodes,
       owner,
       garrison: site.kind === "capitol" ? [member(GUARDIAN_ID, { row: 0, col: 1 })] : banditGroup(strengthAt(map, site.hex, "medium")),
+      tier: 1,
     };
   });
   const lairs = map.lairs.map((site, index): Lair => ({
@@ -62,6 +62,7 @@ export function createWorld(
     map,
     leaders,
     cities,
+    nodes: map.sites.flatMap((site) => site.nodes).map((n, index) => ({ id: `node${index}`, kind: n.kind, hex: n.hex, level: 1 })),
     lairs,
     gold: [STARTING_GOLD, STARTING_GOLD],
     turn: 1,
@@ -74,6 +75,7 @@ export function createWorld(
     graveyard: [[], []],
     colors: [colors[0], colors[1]],
     upgrades: [[], []],
+    research: [[], []],
   };
   startTurn(world, []);
   return world;

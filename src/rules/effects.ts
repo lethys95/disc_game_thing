@@ -174,6 +174,21 @@ const effects: readonly EffectDef[] = [
     },
   },
   {
+    // A city's walls: its garrison, and a warband defending in its own city, stand behind them (city tiers).
+    id: "fortified",
+    quiet: true,
+    name: "Fortified",
+    describe: (e) => `+${e.amount} armor, defending a city.`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      stats: (_ctx, self, subjectId, stats) => {
+        if (subjectId === self.unitId) stats.armor += self.effect?.amount ?? 0;
+      },
+    },
+  },
+  {
     // Levels past the end of a line (pillars.md): a share of the base stat, so higher tiers gain more per level.
     id: "veteran",
     quiet: true,

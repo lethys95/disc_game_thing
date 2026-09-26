@@ -4,10 +4,12 @@ import { stepCost } from "#rules/map";
 import { RECRUIT_COST } from "#rules/units/index";
 import { LEADER_MOVEMENT } from "#rules/balance";
 import { defenderOf, engagementBattle } from "#rules/world/battles";
-import { chooseBranchProblem, elevateProblem, freeTile, growSquad, learnSkillProblem, newcomer, recruitProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem, squadFor, squadsOf, startTurn, upgradeProblem } from "#rules/world/economy";
+import { chooseBranchProblem, elevateProblem, freeTile, growSquad, learnSkillProblem, newcomer, recruitProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem, squadsOf, startTurn, upgradeCityProblem, researchProblem, cityOfSquad, investNodeProblem, nodeInvestCost, upgradeProblem, cityUpgradeCost } from "#rules/world/economy";
 import { movementOf, rankOf } from "#rules/world/leaders";
 import { planMove } from "#rules/world/movement";
+import { squadAt, transfer, transferProblem } from "#rules/world/squads";
 import { isLeaderOf } from "#rules/world/record";
+import { RESEARCH } from "#rules/research";
 import { UPGRADES } from "#rules/upgrades";
 import { capitolOf, cityById, leaderById } from "#rules/world/state";
 import type { World, WorldAction, WorldEvent, WorldStep } from "#rules/world/state";
@@ -50,11 +52,11 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       break;
     }
     case "recruit": {
-      const problem = recruitProblem(draft, action.defId, action.into);
+      const problem = recruitProblem(draft, action.defId, action.into, action.tile);
       if (problem) throw new Error(`cannot recruit: ${problem}`);
-      const squad = squadFor(draft, action.into);
-      const tile = squad ? freeTile(squad) : null;
-      if (!squad || !tile) throw new Error("no room");
+      const squad = squadAt(draft, action.into);
+      const tile = action.tile ?? freeTile(squad);
+      if (!tile) throw new Error("no room");
       squad.push(newcomer(draft, side, action.defId, tile));
       draft.gold[side] -= RECRUIT_COST[action.defId] ?? 0;
       events.push({ type: "recruited", defId: action.defId, into: action.into });
@@ -82,13 +84,20 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       for (const held of squadsOf(draft, side)) growSquad(draft, held, 0, side, events);
       break;
     }
+    case "transfer": {
+      const problem = transferProblem(draft, action);
+      if (problem) throw new Error(`cannot transfer: ${problem}`);
+      transfer(draft, action);
+      events.push({ type: "transferred", from: action.from, to: action.to });
+      break;
+    }
     case "resurrect": {
-      const problem = resurrectProblem(draft, action.index, action.into);
-      const cost = resurrectionCost(draft, side, action.index);
+      const problem = resurrectProblem(draft, action.index, action.into, action.tile);
+      const cost = resurrectionCost(draft, side, action.index, cityOfSquad(draft, action.into));
       const fallen = draft.graveyard[side][action.index];
-      const squad = squadFor(draft, action.into);
-      const tile = squad ? freeTile(squad) : null;
-      if (problem || cost === null || !fallen || !squad || !tile) throw new Error(`cannot resurrect: ${problem}`);
+      const squad = squadAt(draft, action.into);
+      const tile = action.tile ?? freeTile(squad);
+      if (problem || cost === null || !fallen || !tile) throw new Error(`cannot resurrect: ${problem}`);
       draft.gold[side] -= cost;
       draft.graveyard[side].splice(action.index, 1);
       squad.push({ defId: fallen.defId, tile, hp: 1, xp: 0, marks: fallen.marks, level: fallen.level });
@@ -115,6 +124,33 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       leader.squad = leader.squad.map((m) => (isLeaderOf(m, leader) ? { ...m, hp: 1 } : m));
       leader.fellOnTurn = null;
       events.push({ type: "revived", leaderId: leader.id });
+      break;
+    }
+    case "research": {
+      const problem = researchProblem(draft, action.research);
+      const research = RESEARCH.find((r) => r.id === action.research);
+      if (problem || !research) throw new Error(`cannot research: ${problem}`);
+      draft.gold[side] -= research.cost;
+      draft.research[side].push(research.id);
+      events.push({ type: "researched", side, research: research.id });
+      break;
+    }
+    case "investNode": {
+      const problem = investNodeProblem(draft, action.nodeId);
+      const node = draft.nodes.find((n) => n.id === action.nodeId);
+      if (problem || !node) throw new Error(`cannot invest: ${problem}`);
+      draft.gold[side] -= nodeInvestCost(node);
+      node.level += 1;
+      events.push({ type: "nodeInvested", nodeId: node.id, level: node.level });
+      break;
+    }
+    case "upgradeCity": {
+      const problem = upgradeCityProblem(draft, action.cityId);
+      if (problem) throw new Error(`cannot upgrade the city: ${problem}`);
+      const city = cityById(draft, action.cityId);
+      draft.gold[side] -= cityUpgradeCost(city);
+      city.tier += 1;
+      events.push({ type: "cityUpgraded", cityId: city.id, tier: city.tier });
       break;
     }
     case "upgrade": {

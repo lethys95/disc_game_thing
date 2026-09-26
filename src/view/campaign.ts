@@ -1,4 +1,4 @@
-import { sameHex } from "#rules/hex";
+import { hexDistance, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { tileAt, TERRAIN_COST } from "#rules/map";
 import type { Battle, Side } from "#rules/battle/types";
@@ -24,11 +24,12 @@ import type { MapView } from "#view/map";
 import type { Squads } from "#view/setup";
 import type { Stage } from "#view/stage";
 import type { PlayerColor } from "#rules/world/colors";
-import { CapitolScreen } from "#view/capitol";
+import { cityName, CityScreen } from "#view/city";
+import type { Place } from "#view/city";
 import { applySideColors } from "#view/colors";
 import { buttonById, byId, element, gold, movementPips } from "#view/dom";
 import { LeaderScreen } from "#view/leader";
-import { memberRow, unitName } from "#view/members";
+import { memberRow, unitDefCard, unitName } from "#view/members";
 
 const PLAYER: Side = 0;
 const AI_STEP_MS = 350;
@@ -78,7 +79,8 @@ export class Campaign {
   private readonly prompt = byId("forkprompt");
   /** Forks the player put off with "Decide later", keyed by turn so the prompt returns next turn. */
   private deferred = new Set<string>();
-  private capitolOpen = false;
+  /** The city (or meeting warbands) whose screen is open. */
+  private place: Place | null = null;
   private leaderOpen: string | null = null;
   private readonly leaderScreen = new LeaderScreen(byId("leaderscreen"), {
     act: (action) => void this.act(action),
@@ -87,10 +89,10 @@ export class Campaign {
       this.render();
     },
   });
-  private readonly capitolScreen = new CapitolScreen(byId("capitol"), {
+  private readonly cityScreen = new CityScreen(byId("capitol"), {
     act: (action) => void this.act(action),
     close: () => {
-      this.capitolOpen = false;
+      this.place = null;
       this.render();
     },
   });
@@ -172,14 +174,15 @@ export class Campaign {
   }
 
   openCapitol(): void {
-    this.capitolOpen = true;
+    const capitol = this.world ? capitolOf(this.world, PLAYER) : undefined;
+    this.place = capitol ? { kind: "city", cityId: capitol.id } : null;
     this.render();
   }
 
   stop(): void {
     this.generation += 1;
-    this.capitolOpen = false;
-    this.capitolScreen.hide();
+    this.place = null;
+    this.cityScreen.hide();
     this.leaderOpen = null;
     this.leaderScreen.hide();
     this.world = null;
@@ -358,7 +361,8 @@ export class Campaign {
     }
     this.endTurn.disabled = !this.myTurn();
     this.renderWarbands(leader);
-    this.renderCapitol(world, leader);
+    this.renderCities(world);
+    this.renderCityScreen(world);
     this.hint.textContent = this.hintText(world, leader, plan);
     this.renderBanner(world);
     this.renderLeaderScreen(world);
@@ -412,6 +416,15 @@ export class Campaign {
       const commitment = this.world?.commitment[PLAYER];
       for (const m of [...leader.squad].sort((a, b) => a.tile.row - b.tile.row || a.tile.col - b.tile.col)) this.squad.appendChild(memberRow(m, leader, commitment));
       this.renderLeaderTree(leader);
+      // Warbands next to each other can trade units (pillars.md, "Warbands meeting").
+      for (const other of mine.filter((l) => l.id !== leader.id && hexDistance(l.hex, leader.hex) === 1)) {
+        const meet = element("button", "action small", `Meet ${leaderName(other)}'s warband`);
+        meet.addEventListener("click", () => {
+          this.place = { kind: "meet", a: leader.id, b: other.id };
+          this.render();
+        });
+        this.squad.appendChild(meet);
+      }
     }
   }
 
@@ -432,32 +445,42 @@ export class Campaign {
     else this.leaderScreen.hide();
   }
 
-  /** The side panel only summarises; everything you do in the Capitol happens on its own screen. */
-  private renderCapitol(world: World, selected: Leader | undefined): void {
+  /** Your cities, the Capitol first; each opens its own screen. Everything happens there. */
+  private renderCities(world: World): void {
     this.city.replaceChildren();
-    const capitol = capitolOf(world, PLAYER);
-    this.city.hidden = !capitol || world.outcome !== null;
-    if (!capitol) return;
-    this.city.appendChild(element("div", "title", "Your Capitol"));
-    for (const m of capitol.garrison.filter((g) => g.defId === GUARDIAN_ID)) this.city.appendChild(memberRow(m, undefined));
+    const cities = world.cities.filter((c) => c.owner === PLAYER).sort((a, b) => Number(b.kind === "capitol") - Number(a.kind === "capitol"));
+    this.city.hidden = cities.length === 0 || world.outcome !== null;
+    this.city.appendChild(element("div", "title", cities.length === 1 ? "Your city" : "Your cities"));
     const forks = openForks(world.factions[PLAYER], world.commitment[PLAYER]).length;
-    const fallen = world.graveyard[PLAYER].length;
-    const notes = [`${capitol.garrison.length - 1} in the garrison`, `${forks} open branch${forks === 1 ? "" : "es"}`, `${fallen} in the graveyard`];
-    this.city.appendChild(element("div", "note", notes.join(" · ")));
-    const enter = element("button", "action", "Enter the Capitol");
-    enter.addEventListener("click", () => {
-      this.capitolOpen = true;
-      this.render();
-    });
-    this.city.appendChild(enter);
-    if (this.capitolOpen) this.capitolScreen.show(world, PLAYER, this.homeLeader(world, selected), this.myTurn());
-    else this.capitolScreen.hide();
+    for (const city of cities) {
+      const row = element("div", "city-row");
+      const visitor = world.leaders.find((l) => l.side === PLAYER && sameHex(l.hex, city.hex));
+      const facts = [`${city.garrison.filter((m) => m.defId !== GUARDIAN_ID).length} in the garrison`, visitor ? `${leaderName(visitor)}'s warband visiting` : ""];
+      if (city.kind === "capitol") facts.push(`${forks} open branch${forks === 1 ? "" : "es"}`, `${world.graveyard[PLAYER].length} in the graveyard`);
+      const text = element("div", "city-text");
+      text.append(element("div", "name", cityName(city)), element("div", "note", facts.filter((f) => f).join(" · ")));
+      const enter = element("button", "small", "Enter");
+      enter.addEventListener("click", () => {
+        this.place = { kind: "city", cityId: city.id };
+        this.render();
+      });
+      row.append(text, enter);
+      this.city.appendChild(row);
+    }
   }
 
-  /** The selected warband, if it stands in our Capitol. */
-  private homeLeader(world: World, selected: Leader | undefined): Leader | undefined {
-    const capitol = capitolOf(world, PLAYER);
-    return selected && capitol && sameHex(selected.hex, capitol.hex) ? selected : undefined;
+  private renderCityScreen(world: World): void {
+    const place = this.place;
+    const valid =
+      place &&
+      (place.kind === "city"
+        ? world.cities.some((c) => c.id === place.cityId && c.owner === PLAYER)
+        : [place.a, place.b].every((id) => world.leaders.some((l) => l.id === id && l.side === PLAYER)));
+    if (place && valid) this.cityScreen.show(world, PLAYER, place, this.myTurn());
+    else {
+      this.place = null;
+      this.cityScreen.hide();
+    }
   }
 
   /** A unit of ours reached an undecided fork: ask now rather than let it sit at full XP unnoticed. */
@@ -470,9 +493,20 @@ export class Campaign {
     this.prompt.appendChild(element("div", "subtitle", LOCK_WARNING(fork)));
     for (const to of forkOptions(fork)) {
       const choose = element("button", "action", branchName(fork, to));
+      choose.title = "Hold right-click to see what it is.";
       choose.addEventListener("click", () => void this.act({ type: "choose", fork, to }));
+      // Hold right-click on a branch to see the unit it leads to (released on pointerup, like the formation peek).
+      choose.addEventListener("contextmenu", (e) => e.preventDefault());
+      choose.addEventListener("pointerdown", (e) => {
+        if (e.button !== 2) return;
+        this.peek.replaceChildren(unitDefCard(to));
+        this.peek.hidden = false;
+        this.peek.style.left = `${Math.min(e.clientX + 16, window.innerWidth - 320)}px`;
+        this.peek.style.top = `${Math.min(e.clientY + 16, window.innerHeight - 300)}px`;
+      });
       this.prompt.appendChild(choose);
     }
+    this.prompt.appendChild(element("div", "note", "Hold right-click on a branch to see what it is."));
     const later = element("button", "small", "Decide later");
     later.addEventListener("click", () => {
       this.deferred.add(`${world.turn}:${fork}`);

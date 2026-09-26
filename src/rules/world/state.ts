@@ -5,7 +5,7 @@ import type { PlayerColor } from "#rules/world/colors";
 import { hexDistance, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import type { WorldMap } from "#rules/map";
-import type { CityNode } from "#rules/nodes";
+import type { NodeKind } from "#rules/nodes";
 import { UNITS } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
 
@@ -62,14 +62,24 @@ export interface Leader {
   leaderTile: Tile;
 }
 
+/** A node on the map: it belongs to the nearest city (`cityOfNode`). */
+export interface MapNode {
+  readonly id: string;
+  readonly kind: NodeKind;
+  readonly hex: Hex;
+  /** Raised by investment (1 when found). */
+  level: number;
+}
+
 export interface City {
   readonly id: string;
   readonly kind: "capitol" | "city";
   readonly hex: Hex;
-  readonly nodes: readonly CityNode[];
   owner: Side | null;
   /** The leaderless fortification squad. A Capitol's includes its Guardian. */
   garrison: SquadMember[];
+  /** Upgraded with gold: garrison slots and armor for defenders (balance.ts, CITY_SLOTS). Kept when captured. */
+  tier: number;
 }
 
 /** A one-time dungeon reward (user's 2024 design: gold, a creature that joins you; items once they exist). */
@@ -102,6 +112,7 @@ export interface World {
   readonly map: WorldMap;
   leaders: Leader[];
   cities: City[];
+  nodes: MapNode[];
   lairs: Lair[];
   gold: [number, number];
   turn: number;
@@ -116,21 +127,32 @@ export interface World {
   graveyard: [Fallen[], Fallen[]];
   /** Unit-type upgrades each side has bought (`rules/upgrades.ts`). */
   upgrades: [string[], string[]];
+  /** Capitol research each side has finished (`rules/research.ts`). */
+  research: [string[], string[]];
 }
 
-export type RecruitInto = { kind: "garrison" } | { kind: "leader"; leaderId: string };
+/** A squad on the map: a city's garrison, or a warband (`world/squads.ts`). */
+export type SquadRef = { readonly kind: "garrison"; readonly cityId: string } | { readonly kind: "warband"; readonly leaderId: string };
 
 export type WorldAction =
   | { type: "move"; leaderId: string; to: Hex }
   | { type: "endTurn" }
-  | { type: "recruit"; defId: string; into: RecruitInto }
+  /** `tile` picks the spot; without it, the first free one. */
+  | { type: "recruit"; defId: string; into: SquadRef; tile?: Tile }
+  /** Move a unit between squads that meet, or within one; onto an occupied tile, the two swap. */
+  | { type: "transfer"; from: SquadRef; fromTile: Tile; to: SquadRef; toTile: Tile }
   | { type: "elevate"; tile: Tile }
   /** Choose a branch at a fork: free and permanent, for every unit of that kind. */
   | { type: "choose"; fork: string; to: string }
-  | { type: "resurrect"; index: number; into: RecruitInto }
+  | { type: "resurrect"; index: number; into: SquadRef; tile?: Tile }
   | { type: "learn"; leaderId: string; skill: string }
   /** Revive a warband's fallen leader at the Capitol. */
   | { type: "revive"; leaderId: string }
+  | { type: "research"; research: string }
+  /** Raise a node of a city you hold one level. */
+  | { type: "investNode"; nodeId: string }
+  /** Raise a city you hold one tier. */
+  | { type: "upgradeCity"; cityId: string }
   /** Buy a unit-type upgrade: units that become that type from now on receive it. */
   | { type: "upgrade"; upgrade: string };
 
@@ -139,7 +161,8 @@ export type WorldEvent =
   | { type: "engaged"; attackerId: string; defender: Defender }
   | { type: "captured"; cityId: string; side: Side }
   | { type: "turnStarted"; side: Side; turn: number; income: number }
-  | { type: "recruited"; defId: string; into: RecruitInto }
+  | { type: "recruited"; defId: string; into: SquadRef }
+  | { type: "transferred"; from: SquadRef; to: SquadRef }
   | { type: "elevated"; leaderId: string }
   | { type: "leaderFell"; leaderId: string; side: Side }
   | { type: "xp"; side: Side; pool: number; each: number }
@@ -153,6 +176,9 @@ export type WorldEvent =
   | { type: "resurrected"; side: Side; defId: string }
   | { type: "learned"; leaderId: string; skill: string }
   | { type: "revived"; leaderId: string }
+  | { type: "cityUpgraded"; cityId: string; tier: number }
+  | { type: "researched"; side: Side; research: string }
+  | { type: "nodeInvested"; nodeId: string; level: number }
   | { type: "upgraded"; side: Side; upgrade: string }
   | { type: "worldEnd"; winner: Side };
 
@@ -256,3 +282,18 @@ export function cityAt(world: World, hex: Hex): City | undefined {
 export function capitolOf(world: World, side: Side): City | undefined {
   return world.cities.find((c) => c.kind === "capitol" && c.owner === side);
 }
+
+/**
+ * The city a node belongs to: the nearest one, Capitols included (user, 2026-09-26). Ties go to the first city in
+ * the list, so it's deterministic.
+ */
+export function cityOfNode(world: World, node: MapNode): City | undefined {
+  let best: City | undefined;
+  for (const city of world.cities) if (!best || hexDistance(city.hex, node.hex) < hexDistance(best.hex, node.hex)) best = city;
+  return best;
+}
+
+export const nodesOf = (world: World, city: City): MapNode[] => world.nodes.filter((n) => cityOfNode(world, n)?.id === city.id);
+
+/** Every node whose city this side holds. */
+export const nodesHeldBy = (world: World, side: Side): MapNode[] => world.nodes.filter((n) => cityOfNode(world, n)?.owner === side);

@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import type { PlayerColor } from "#rules/world/colors";
+import { cityOfNode } from "#rules/world/state";
 import { threeColor } from "#view/colors";
 import { movementOf } from "#rules/world/leaders";
 import { movementPips } from "#view/dom";
@@ -9,7 +10,7 @@ import type { Hex } from "#rules/hex";
 import type { Terrain, WorldMap } from "#rules/map";
 import { UNITS } from "#rules/units/index";
 import type { City, Leader, World } from "#rules/world/state";
-import { buildFigure, PALETTES } from "#view/figures";
+import { buildFigure } from "#view/figures";
 import type { CameraPose, Stage } from "#view/stage";
 
 const SIZE = 1;
@@ -45,6 +46,7 @@ interface SiteModel {
   readonly label: HTMLDivElement;
 }
 
+const NEUTRAL_LINK = new THREE.Color(0x6a6058);
 const NEUTRAL_BANNER = new THREE.Color(0x4a4744);
 
 interface LeaderFigure {
@@ -84,6 +86,8 @@ export class MapView {
   private readonly hexes = new Map<string, HexTile>();
   private readonly leaders = new Map<string, LeaderFigure>();
   private readonly sites = new Map<string, SiteModel>();
+  /** Each node's link to its city, recolored when the city changes hands. */
+  private readonly links = new Map<string, { material: THREE.MeshStandardMaterial; city: string }>();
   private readonly lairs = new Map<string, { group: THREE.Group; label: HTMLDivElement }>();
   private readonly siteLayer = new THREE.Group();
 
@@ -231,16 +235,29 @@ export class MapView {
       group.add(tag);
       this.siteLayer.add(group);
       this.sites.set(city.id, { group, banner, label });
+    }
 
-      for (const node of city.nodes) {
-        const model = node.kind === "blacksmith" ? anvil(dark, forge) : orePile(node.hex, ore, dark);
-        model.position.copy(this.standingPoint(node.hex));
-        model.userData = { hex: node.hex };
-        model.traverse((o) => {
-          o.castShadow = true;
-        });
-        this.siteLayer.add(model);
-      }
+    this.links.clear();
+    for (const node of world.nodes) {
+      const model = node.kind === "blacksmith" ? anvil(dark, forge) : orePile(node.hex, ore, dark);
+      model.position.copy(this.standingPoint(node.hex));
+      model.userData = { hex: node.hex };
+      model.traverse((o) => {
+        o.castShadow = true;
+      });
+      this.siteLayer.add(model);
+      // A thin road from the node to its city, in the owner's color: which city it feeds (user, 2026-09-26).
+      const city = cityOfNode(world, node);
+      if (!city) continue;
+      const lift = new THREE.Vector3(0, 0.04, 0);
+      const from = this.standingPoint(node.hex).add(lift);
+      const to = this.standingPoint(city.hex).add(lift);
+      const material = new THREE.MeshStandardMaterial({ color: NEUTRAL_LINK, emissive: NEUTRAL_LINK, emissiveIntensity: 0.4, transparent: true, opacity: 0.8 });
+      const link = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.03, from.distanceTo(to)), material);
+      link.position.copy(from).lerp(to, 0.5);
+      link.lookAt(to);
+      this.siteLayer.add(link);
+      this.links.set(node.id, { material, city: city.id });
     }
   }
 
@@ -307,11 +324,18 @@ export class MapView {
       const site = this.sites.get(city.id);
       if (!site) continue;
       const owner = city.owner;
-      site.banner.color.copy(owner === null ? NEUTRAL_BANNER : PALETTES[owner].body);
-      site.banner.emissive.copy(owner === null ? NONE : PALETTES[owner].accent);
+      site.banner.color.copy(owner === null ? NEUTRAL_BANNER : this.colors[owner]);
+      site.banner.emissive.copy(owner === null ? NONE : this.colors[owner]);
       site.banner.emissiveIntensity = owner === null ? 0 : 0.8;
       site.label.textContent = siteName(city);
       site.label.className = `site-label ${owner === null ? "neutral" : `side${owner}`}`;
+    }
+    for (const link of this.links.values()) {
+      const owner = world.cities.find((c) => c.id === link.city)?.owner ?? null;
+      const color = owner === null ? NEUTRAL_LINK : this.colors[owner];
+      link.material.color.copy(color);
+      link.material.emissive.copy(color);
+      link.material.emissiveIntensity = owner === null ? 0.2 : 0.9;
     }
   }
 
