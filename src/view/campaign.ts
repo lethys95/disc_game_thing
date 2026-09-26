@@ -5,28 +5,26 @@ import type { Battle, Side } from "#rules/battle/types";
 import { forkOptions, openForks } from "#rules/forks";
 import { toSave } from "#rules/save";
 import type { Save } from "#rules/save";
-import type { Commitment } from "#rules/forks";
 import { EVOLUTIONS, GUARDIAN_ID } from "#rules/units/index";
-import type { Playable } from "#rules/units/index";
 import { applyWorldAction } from "#rules/world/actions";
 import { concludeBattle, playersIn } from "#rules/world/battles";
 import { createWorld } from "#rules/world/create";
+import type { PlayerSetup } from "#rules/world/create";
 import { income, waitingForks } from "#rules/world/economy";
 import { leadershipOf, movementOf, unspentPoints } from "#rules/world/leaders";
 import { planMove, reachable } from "#rules/world/movement";
 import { isLeaderOf, maxHpOf } from "#rules/world/record";
-import { capitolOf, cityById, lairById, leaderAt } from "#rules/world/state";
+import { playerOf, capitolOf, cityById, lairById, leaderAt } from "#rules/world/state";
 import type { MovePlan, MoveTarget } from "#rules/world/movement";
 import type { Leader, SquadMember, World, WorldAction, WorldEvent } from "#rules/world/state";
 import type { AiClient } from "#view/ai-client";
 import type { App } from "#view/app";
 import type { MapView } from "#view/map";
-import type { Squads } from "#view/setup";
 import type { Stage } from "#view/stage";
-import type { PlayerColor } from "#rules/world/colors";
 import { cityName, CityScreen } from "#view/city";
 import type { Place } from "#view/city";
-import { applySideColors } from "#view/colors";
+import { applySideColors, battleColors } from "#view/colors";
+import { fallbackColor } from "#rules/world/colors";
 import { buttonById, byId, element, gold, movementPips } from "#view/dom";
 import { LeaderScreen } from "#view/leader";
 import { memberRow, unitDefCard, unitName } from "#view/members";
@@ -121,11 +119,12 @@ export class Campaign {
     buttonById("mapmenu").addEventListener("click", () => this.options.onMenu());
   }
 
-  start(squads: Squads, factions: readonly [Playable, Playable], commitment: readonly [Commitment, Commitment], colors: readonly [PlayerColor, PlayerColor], seed: number): void {
+  /** A new game; player 0 is the human at this screen, the others are played by the AI. */
+  start(setups: readonly PlayerSetup[], seed: number): void {
     this.stop();
     this.seed = seed;
-    this.world = createWorld(seed, squads, commitment, factions, colors);
-    this.view.setColors(colors);
+    this.world = createWorld(seed, setups);
+    this.view.setColors(setups.map((s) => s.color));
     this.view.build(this.world.map);
     this.view.buildSites(this.world);
     this.enterMap();
@@ -137,7 +136,7 @@ export class Campaign {
     this.stop();
     this.seed = save.seed;
     this.world = save.world;
-    this.view.setColors(save.world.colors);
+    this.view.setColors(save.world.players.map((p) => p.color));
     this.view.build(save.world.map);
     this.view.buildSites(save.world);
     this.enterMap();
@@ -163,7 +162,7 @@ export class Campaign {
   startingXp(xp: number): void {
     const world = this.world;
     if (!world) return;
-    const leaders = world.leaders.map((l) => (l.side === PLAYER ? { ...l, experience: xp, squad: l.squad.map((m) => ({ ...m, xp })) } : l));
+    const leaders = world.leaders.map((l) => (l.player === PLAYER ? { ...l, experience: xp, squad: l.squad.map((m) => ({ ...m, xp })) } : l));
     this.world = { ...world, leaders };
     this.render();
   }
@@ -193,7 +192,9 @@ export class Campaign {
   private enterMap(): void {
     const world = this.world;
     if (!world) return;
-    applySideColors(document.documentElement, world.colors);
+    // Outside battles, --side0 is you and --side1 your first opponent.
+    const you = playerOf(world, PLAYER).color;
+    applySideColors(document.documentElement, [you, world.players.find((_, id) => id !== PLAYER)?.color ?? fallbackColor(you)]);
     this.view.show();
     this.syncView(world);
     this.hud.hidden = false;
@@ -208,7 +209,7 @@ export class Campaign {
   }
 
   private myLeaders(): Leader[] {
-    return this.world?.leaders.filter((l) => l.side === PLAYER) ?? [];
+    return this.world?.leaders.filter((l) => l.player === PLAYER) ?? [];
   }
 
   private selectedLeader(): Leader | undefined {
@@ -218,7 +219,7 @@ export class Campaign {
 
   private myTurn(): boolean {
     const world = this.world;
-    return world !== null && !this.busy && !world.outcome && !world.engagement && world.activeSide === PLAYER;
+    return world !== null && !this.busy && !world.outcome && !world.engagement && world.activePlayer === PLAYER;
   }
 
   private plan(): MovePlan | null {
@@ -226,7 +227,7 @@ export class Campaign {
     const leader = this.selectedLeader();
     const hovered = this.hovered;
     if (!world || !leader || !hovered || !this.myTurn() || sameHex(hovered, leader.hex)) return null;
-    if (leaderAt(world, hovered)?.side === PLAYER) return null;
+    if (leaderAt(world, hovered)?.player === PLAYER) return null;
     return planMove(world, leader.id, hovered);
   }
 
@@ -241,7 +242,7 @@ export class Campaign {
     const target = this.hovered;
     if (!world || !target || !this.myTurn()) return;
     const own = leaderAt(world, target);
-    if (own?.side === PLAYER) {
+    if (own?.player === PLAYER) {
       this.selected = own.id;
       this.render();
       return;
@@ -266,20 +267,21 @@ export class Campaign {
     }
     if (generation !== this.generation) return;
     this.world = step.world;
-    if (step.events.some((e) => e.type === "turnStarted" && e.side === PLAYER)) this.autosave();
+    if (step.events.some((e) => e.type === "turnStarted" && e.player === PLAYER)) this.autosave();
     this.syncView(step.world);
     this.busy = false;
     const engagement = step.world.engagement;
     if (engagement) {
       this.hud.hidden = true;
       await this.stage.tween(400, () => {});
-      if (!playersIn(step.world, engagement).includes(PLAYER)) {
-        // Not our fight (the enemy against neutrals): resolve it off-screen, as D2 does, and report the result.
+      if (!playersIn(engagement).includes(PLAYER)) {
+        // Not our fight (other players, or one against neutrals): resolve it off-screen, as D2 does, and report it.
         const result = await this.ai.resolve(engagement.battle);
         this.afterBattle(result, generation);
         return;
       }
-      this.app.fight(engagement.battle, PLAYER, step.world.colors, (battle) => this.afterBattle(battle, generation));
+      const side: Side = engagement.players[0] === PLAYER ? 0 : 1;
+      this.app.fight(engagement.battle, side, battleColors(step.world, engagement.players), (battle) => this.afterBattle(battle, generation));
       return;
     }
     this.render();
@@ -298,20 +300,20 @@ export class Campaign {
   private announce(events: readonly WorldEvent[]): void {
     const lines: string[] = [];
     for (const e of events) {
-      if (e.type === "captured") lines.push(`${e.side === PLAYER ? "You take" : "The enemy takes"} the city.`);
-      if (e.type === "xp" && e.side === PLAYER) lines.push(`Your survivors gain ${e.each} XP each.`);
-      if (e.type === "evolved" && e.side === PLAYER) lines.push(`${unitName(e.from)} becomes ${unitName(e.to)}.`);
-      if (e.type === "leveled" && e.side === PLAYER) lines.push(`${unitName(e.defId)} reaches level ${e.level}.`);
-      if (e.type === "cleared") lines.push(e.side === PLAYER ? "The bandit camp is cleared." : "The enemy cleared a bandit camp.");
-      if (e.type === "leaderFell") lines.push(e.side === PLAYER ? "One of your warbands fell." : "An enemy warband fell.");
-      if (e.type === "looted" && e.side === PLAYER) lines.push(`The dungeon yields ${e.gold} gold${e.joins ? ` and a ${unitName(e.joins)} joins you` : ""}.`);
+      if (e.type === "captured") lines.push(`${e.player === PLAYER ? "You take" : "The enemy takes"} the city.`);
+      if (e.type === "xp" && e.player === PLAYER) lines.push(`Your survivors gain ${e.each} XP each.`);
+      if (e.type === "evolved" && e.player === PLAYER) lines.push(`${unitName(e.from)} becomes ${unitName(e.to)}.`);
+      if (e.type === "leveled" && e.player === PLAYER) lines.push(`${unitName(e.defId)} reaches level ${e.level}.`);
+      if (e.type === "cleared") lines.push(e.player === PLAYER ? "The bandit camp is cleared." : "The enemy cleared a bandit camp.");
+      if (e.type === "leaderFell") lines.push(e.player === PLAYER ? "One of your warbands fell." : "An enemy warband fell.");
+      if (e.type === "looted" && e.player === PLAYER) lines.push(`The dungeon yields ${e.gold} gold${e.joins ? ` and a ${unitName(e.joins)} joins you` : ""}.`);
     }
     if (lines.length > 0) this.hint.textContent = lines.join(" ");
   }
 
   private async runAi(): Promise<void> {
     const world = this.world;
-    if (!world || world.outcome || world.engagement || world.activeSide === PLAYER || this.busy) return;
+    if (!world || world.outcome || world.engagement || world.activePlayer === PLAYER || this.busy) return;
     const generation = this.generation;
     await this.stage.tween(AI_STEP_MS, () => {});
     if (generation !== this.generation) return;
@@ -332,9 +334,8 @@ export class Campaign {
     void this.ai.forecast(world, leader.id, target).then((result) => {
       if (generation !== this.generation || this.forecastCache?.key !== key) return;
       const text =
-        result.winner === PLAYER
-          ? `AI forecast: victory, ${result.standing[PLAYER]} of yours standing.`
-          : `AI forecast: defeat, ${result.standing[PLAYER === 0 ? 1 : 0]} of theirs standing.`;
+        // You're the mover, side 0 of the forecast battle.
+        result.winner === 0 ? `AI forecast: victory, ${result.standing[0]} of yours standing.` : `AI forecast: defeat, ${result.standing[1]} of theirs standing.`;
       this.forecastCache = { key, text };
       this.render();
     });
@@ -356,7 +357,7 @@ export class Campaign {
 
     this.turn.replaceChildren();
     if (!world.outcome) {
-      this.turn.append(`Turn ${world.turn} · ${world.activeSide === PLAYER ? "your move" : "the enemy moves"} · `, gold(world.gold[PLAYER]), ` (+${income(world, PLAYER)} per turn)`);
+      this.turn.append(`Turn ${world.turn} · ${world.activePlayer === PLAYER ? "your move" : "the enemy moves"} · `, gold(playerOf(world, PLAYER).gold), ` (+${income(world, PLAYER)} per turn)`);
       if (leader) this.turn.append(" · ", element("span", "movement", `Movement ${movementPips(leader.movement, movementOf(leader))}`));
     }
     this.endTurn.disabled = !this.myTurn();
@@ -371,11 +372,11 @@ export class Campaign {
   }
 
   private hintText(world: World, leader: Leader | undefined, plan: MovePlan | null): string {
-    if (!this.myTurn()) return world.activeSide === PLAYER ? "" : "The enemy is moving…";
+    if (!this.myTurn()) return world.activePlayer === PLAYER ? "" : "The enemy is moving…";
     if (!leader) return "You have no warbands. Elevate a garrison unit in your Capitol.";
     const hovered = this.hovered;
     const own = hovered ? leaderAt(world, hovered) : undefined;
-    if (own?.side === PLAYER && own.id !== leader.id) return `Click to select ${leaderName(own)}'s warband.`;
+    if (own?.player === PLAYER && own.id !== leader.id) return `Click to select ${leaderName(own)}'s warband.`;
     const tile = hovered ? tileAt(world.map, hovered) : undefined;
     const terrain = tile ? `${tile.terrain}${TERRAIN_COST[tile.terrain] === null ? " (impassable)" : `, costs ${TERRAIN_COST[tile.terrain]}`}` : "";
     if (!plan) return `${leaderName(leader)}: ${leader.movement} movement left. ${terrain ? `Hovering ${terrain}.` : "Click a hex to march."}`;
@@ -413,7 +414,7 @@ export class Campaign {
       });
       this.squad.appendChild(head);
       if (!isSelected) continue;
-      const commitment = this.world?.commitment[PLAYER];
+      const commitment = this.world ? playerOf(this.world, PLAYER).commitment : undefined;
       for (const m of [...leader.squad].sort((a, b) => a.tile.row - b.tile.row || a.tile.col - b.tile.col)) this.squad.appendChild(memberRow(m, leader, commitment));
       this.renderLeaderTree(leader);
       // Warbands next to each other can trade units (pillars.md, "Warbands meeting").
@@ -440,7 +441,7 @@ export class Campaign {
   }
 
   private renderLeaderScreen(world: World): void {
-    const leader = world.leaders.find((l) => l.id === this.leaderOpen && l.side === PLAYER);
+    const leader = world.leaders.find((l) => l.id === this.leaderOpen && l.player === PLAYER);
     if (leader) this.leaderScreen.show(world, leader, `${leaderName(leader)}, leader`, this.myTurn());
     else this.leaderScreen.hide();
   }
@@ -451,12 +452,12 @@ export class Campaign {
     const cities = world.cities.filter((c) => c.owner === PLAYER).sort((a, b) => Number(b.kind === "capitol") - Number(a.kind === "capitol"));
     this.city.hidden = cities.length === 0 || world.outcome !== null;
     this.city.appendChild(element("div", "title", cities.length === 1 ? "Your city" : "Your cities"));
-    const forks = openForks(world.factions[PLAYER], world.commitment[PLAYER]).length;
+    const forks = openForks(playerOf(world, PLAYER).faction, playerOf(world, PLAYER).commitment).length;
     for (const city of cities) {
       const row = element("div", "city-row");
-      const visitor = world.leaders.find((l) => l.side === PLAYER && sameHex(l.hex, city.hex));
+      const visitor = world.leaders.find((l) => l.player === PLAYER && sameHex(l.hex, city.hex));
       const facts = [`${city.garrison.filter((m) => m.defId !== GUARDIAN_ID).length} in the garrison`, visitor ? `${leaderName(visitor)}'s warband visiting` : ""];
-      if (city.kind === "capitol") facts.push(`${forks} open branch${forks === 1 ? "" : "es"}`, `${world.graveyard[PLAYER].length} in the graveyard`);
+      if (city.kind === "capitol") facts.push(`${forks} open branch${forks === 1 ? "" : "es"}`, `${playerOf(world, PLAYER).graveyard.length} in the graveyard`);
       const text = element("div", "city-text");
       text.append(element("div", "name", cityName(city)), element("div", "note", facts.filter((f) => f).join(" · ")));
       const enter = element("button", "small", "Enter");
@@ -475,7 +476,7 @@ export class Campaign {
       place &&
       (place.kind === "city"
         ? world.cities.some((c) => c.id === place.cityId && c.owner === PLAYER)
-        : [place.a, place.b].every((id) => world.leaders.some((l) => l.id === id && l.side === PLAYER)));
+        : [place.a, place.b].every((id) => world.leaders.some((l) => l.id === id && l.player === PLAYER)));
     if (place && valid) this.cityScreen.show(world, PLAYER, place, this.myTurn());
     else {
       this.place = null;
@@ -533,7 +534,7 @@ export class Campaign {
     if (!world) return null;
     const leader = leaderAt(world, hex);
     if (leader) {
-      const whose = leader.side === PLAYER ? "Your warband" : "Enemy warband";
+      const whose = leader.player === PLAYER ? "Your warband" : "Enemy warband";
       return { title: `${whose}, led by a ${leaderName(leader)}`, squad: leader.squad, leader };
     }
     const lair = world.lairs.find((l) => sameHex(l.hex, hex) && l.guards.length > 0);
@@ -580,7 +581,7 @@ export class Campaign {
   }
 
   hexOfLeader(side: Side): Hex | null {
-    return this.world?.leaders.find((l) => l.side === side)?.hex ?? null;
+    return this.world?.leaders.find((l) => l.player === side)?.hex ?? null;
   }
 
   capitolHex(side: Side): Hex | null {

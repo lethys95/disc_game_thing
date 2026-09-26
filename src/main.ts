@@ -1,7 +1,6 @@
 import { createBattle } from "#rules/battle/engine";
-import { defaultColors } from "#rules/world/colors";
 import { AiClient } from "#view/ai-client";
-import { applySideColors } from "#view/colors";
+import { applySideColors, colorPair } from "#view/colors";
 import { GameMenu } from "#view/menu";
 import { AUTOSAVE_ID, LocalSaveStore } from "#view/saves";
 import { applyOrnaments } from "#view/art";
@@ -55,10 +54,10 @@ const setup = new Setup(byId("setup"), {
     setup.hide();
     app.start(squads, playerSide, colors);
   },
-  onMarch: (squads, factions, commitments, colors) => {
+  onMarch: (players) => {
     setup.hide();
     const seed = Number(params.get("seed") ?? Math.floor(Date.now() % 100000));
-    campaign.start(squads, factions, commitments, colors, seed);
+    campaign.start(players, seed);
   },
   onLoad: () => menu.show(),
 });
@@ -75,7 +74,12 @@ if (params.has("map")) {
   setup.hide();
   const nexus = params.get("map") === "nexus";
   const factions = ["jilliath", nexus ? "nexus" : "jilliath"] as const;
-  campaign.start([PRESETS.uncommitted, nexus ? NEXUS_PRESETS.uncommitted : PRESETS.uncommitted], factions, [{}, {}], defaultColors(factions), Number(params.get("seed") ?? 1));
+  const colors = colorPair(factions);
+  const squads = [PRESETS.uncommitted, nexus ? NEXUS_PRESETS.uncommitted : PRESETS.uncommitted] as const;
+  campaign.start(
+    ([0, 1] as const).map((i) => ({ squad: squads[i], faction: factions[i], commitment: {}, color: colors[i] })),
+    Number(params.get("seed") ?? 1),
+  );
   if (params.has("xp")) campaign.startingXp(Number(params.get("xp")));
   if (params.has("capitol")) campaign.openCapitol();
   if (params.has("leader")) campaign.openLeader();
@@ -84,7 +88,7 @@ if (params.has("map")) {
   const fight = params.get("fight") ?? "";
   const nexusKey = fight.startsWith("nexus:") ? fight.slice(6) : "uncommitted";
   const enemy = fight.startsWith("nexus") ? (nexusKey === "scheme" || nexusKey === "overload" ? NEXUS_PRESETS[nexusKey] : NEXUS_PRESETS.uncommitted) : fight === "bandits" ? BANDIT_GROUP : presets[1];
-  app.start([presets[0], enemy], params.get("auto") === "1" ? null : 0, defaultColors(["jilliath", fight.startsWith("nexus") ? "nexus" : "jilliath"]), Number(params.get("steps") ?? 0));
+  app.start([presets[0], enemy], params.get("auto") === "1" ? null : params.get("side") === "1" ? 1 : 0, colorPair(["jilliath", fight.startsWith("nexus") ? "nexus" : "jilliath"]), Number(params.get("steps") ?? 0));
 } else {
   showSetup();
 }

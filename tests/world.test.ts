@@ -12,8 +12,9 @@ import { concludeBattle, playersIn } from "#rules/world/battles";
 import { createWorld } from "#rules/world/create";
 import { income } from "#rules/world/economy";
 import { planMove } from "#rules/world/movement";
-import { banditGroup, capitolOf, leaderById, nodesOf } from "#rules/world/state";
+import { playerOf, banditGroup, capitolOf, leaderById, nodesOf } from "#rules/world/state";
 import type { Leader, World } from "#rules/world/state";
+import { startOf, twoPlayers } from "#tests/helpers";
 import { describe, expect, test } from "vitest";
 
 const squad: Placement[] = [
@@ -60,8 +61,7 @@ describe("map", () => {
       expect(capitols).toEqual([...map.starts]);
       for (const site of map.sites.filter((s) => s.kind === "city")) {
         expect(site.nodes).toHaveLength(1);
-        expect(findPath(map, map.starts[0], site.hex, () => false)).not.toBeNull();
-        expect(findPath(map, map.starts[1], site.hex, () => false)).not.toBeNull();
+        for (const start of map.starts) expect(findPath(map, start, site.hex, () => false)).not.toBeNull();
       }
     }
     expect(generateMap(1)).not.toEqual(generateMap(2));
@@ -69,10 +69,12 @@ describe("map", () => {
 
   test("paths never cross impassable terrain and cost what their terrain costs", () => {
     const map = generateMap(7);
-    const path = findPath(map, map.starts[0], map.starts[1], () => false);
+    const [from, to] = map.starts;
+    if (!from || !to) throw new Error("no starts");
+    const path = findPath(map, from, to, () => false);
     if (!path) throw new Error("no path");
     let cost = 0;
-    let previous = map.starts[0];
+    let previous = from;
     for (const hex of path.hexes) {
       expect(hexDistance(previous, hex)).toBe(1);
       const step = TERRAIN_COST[map.tiles[hexKey(hex)]?.terrain ?? "water"];
@@ -86,16 +88,16 @@ describe("map", () => {
 
 describe("world", () => {
   test("each side starts with a Capitol guarded by its Guardian, and earns income at the start of its turn", () => {
-    const world = createWorld(1, [squad, squad], both("preserve"), ["jilliath", "jilliath"]);
+    const world = createWorld(1, twoPlayers([squad, squad], both("preserve"), ["jilliath", "jilliath"]));
     expect(capitolOf(world, 0)?.garrison.map((m) => m.defId)).toEqual([GUARDIAN_ID]);
     // Each Capitol has a gold mine of its own.
-    expect(world.gold).toEqual([STARTING_GOLD + CAPITOL_INCOME + MINE_INCOME, STARTING_GOLD]);
+    expect(world.players.map((p) => p.gold)).toEqual([STARTING_GOLD + CAPITOL_INCOME + MINE_INCOME, STARTING_GOLD]);
     const next = applyWorldAction(world, { type: "endTurn" }).world;
-    expect(next.gold[1]).toBe(STARTING_GOLD + CAPITOL_INCOME + MINE_INCOME);
+    expect(playerOf(next, 1).gold).toBe(STARTING_GOLD + CAPITOL_INCOME + MINE_INCOME);
   });
 
   test("neutral cities are guarded; once emptied, walking in captures the city and its gold mine", () => {
-    const world = createWorld(1, [squad, squad], both("preserve"), ["jilliath", "jilliath"]);
+    const world = createWorld(1, twoPlayers([squad, squad], both("preserve"), ["jilliath", "jilliath"]));
     const city = world.cities.find((c) => c.kind === "city" && nodesOf(world, c).every((n) => n.kind === "gold"));
     if (!city) throw new Error("no neutral gold city");
     const near = withLeader(world, "leader0", { hex: walkableNeighbour(world, city.hex) });
@@ -103,13 +105,13 @@ describe("world", () => {
 
     const empty = { ...near, cities: near.cities.map((c) => (c.id === city.id ? { ...c, garrison: [] } : c)) };
     const step = applyWorldAction(empty, { type: "move", leaderId: "leader0", to: city.hex });
-    expect(step.events).toContainEqual({ type: "captured", cityId: city.id, side: 0 });
+    expect(step.events).toContainEqual({ type: "captured", cityId: city.id, player: 0 });
     expect(income(step.world, 0)).toBe(CAPITOL_INCOME + 2 * MINE_INCOME);
     expect(leaderById(step.world, "leader0").hex).toEqual(city.hex);
   });
 
   test("holding a Blacksmith city brings its bonus into your battles, and never to neutrals", () => {
-    const world = createWorld(1, [army, squad], both("punishment"), ["jilliath", "jilliath"]);
+    const world = createWorld(1, twoPlayers([army, squad], both("punishment"), ["jilliath", "jilliath"]));
     const smithy = world.cities.find((c) => nodesOf(world, c).some((n) => n.kind === "blacksmith"));
     const camp = world.lairs.find((l) => l.kind === "camp");
     if (!smithy || !camp) throw new Error("no blacksmith city or camp");
@@ -122,17 +124,17 @@ describe("world", () => {
   });
 
   test("a fight between a player and neutrals involves only that player", () => {
-    const world = createWorld(1, [squad, army], both("punishment"), ["jilliath", "jilliath"]);
+    const world = createWorld(1, twoPlayers([squad, army], both("punishment"), ["jilliath", "jilliath"]));
     const camp = world.lairs.find((l) => l.kind === "camp");
     if (!camp) throw new Error("no camp");
-    const ready = withLeader({ ...world, activeSide: 1 }, "leader1", { hex: walkableNeighbour(world, camp.hex) });
+    const ready = withLeader({ ...world, activePlayer: 1 }, "leader1", { hex: walkableNeighbour(world, camp.hex) });
     const engaged = applyWorldAction(ready, { type: "move", leaderId: "leader1", to: camp.hex }).world;
     if (!engaged.engagement) throw new Error("no battle");
-    expect(playersIn(engaged, engaged.engagement)).toEqual([1]);
+    expect(playersIn(engaged.engagement)).toEqual([1]);
   });
 
   test("beating a bandit camp clears it and pays XP; bandits never enter a graveyard; the camp regrows later, stronger", () => {
-    const world = createWorld(1, [army, squad], both("punishment"), ["jilliath", "jilliath"]);
+    const world = createWorld(1, twoPlayers([army, squad], both("punishment"), ["jilliath", "jilliath"]));
     const camp = world.lairs.find((l) => l.kind === "camp");
     if (!camp) throw new Error("no camp");
     const ready = withLeader(world, "leader0", { hex: walkableNeighbour(world, camp.hex) });
@@ -143,11 +145,11 @@ describe("world", () => {
     const cleared = step.world.lairs.find((l) => l.id === camp.id);
     expect(cleared?.guards).toEqual([]);
     expect(cleared?.regrowsOn).toBe(step.world.turn + CAMP_REGROWTH_TURNS);
-    expect(step.events.some((e) => e.type === "xp" && e.side === 0)).toBe(true);
-    expect(step.world.graveyard[1]).toEqual([]);
+    expect(step.events.some((e) => e.type === "xp" && e.player === 0)).toBe(true);
+    expect(playerOf(step.world, 1).graveyard).toEqual([]);
 
     // Provisional (#19): at the start of the round it's due, the camp regrows; late in the game, strong.
-    let later: World = { ...step.world, turn: CAMP_STRONG_FROM, activeSide: 1, leaders: step.world.leaders.filter((l) => l.side !== 0) };
+    let later: World = { ...step.world, turn: CAMP_STRONG_FROM, activePlayer: 1, leaders: step.world.leaders.filter((l) => l.player !== 0) };
     later = { ...later, lairs: later.lairs.map((l) => (l.id === camp.id ? { ...l, regrowsOn: CAMP_STRONG_FROM + 1 } : l)) };
     const regrown = applyWorldAction(later, { type: "endTurn" });
     expect(regrown.events).toContainEqual({ type: "regrew", lairId: camp.id });
@@ -155,7 +157,7 @@ describe("world", () => {
   });
 
   test("clearing a dungeon's guards claims its one-time reward", () => {
-    const world = createWorld(1, [army, squad], both("punishment"), ["jilliath", "jilliath"]);
+    const world = createWorld(1, twoPlayers([army, squad], both("punishment"), ["jilliath", "jilliath"]));
     const dungeon = world.lairs.find((l) => l.kind === "dungeon" && l.reward?.joins);
     if (!dungeon?.reward) throw new Error("no dungeon with a unit reward");
     const thin = withLeader(world, "leader0", { hex: walkableNeighbour(world, dungeon.hex) });
@@ -165,24 +167,24 @@ describe("world", () => {
     const battle = engaged.engagement?.battle;
     if (!battle) throw new Error("no battle");
     const step = concludeBattle(engaged, autoplay(battle));
-    expect(step.events).toContainEqual({ type: "looted", lairId: dungeon.id, side: 0, gold: dungeon.reward.gold, joins: dungeon.reward.joins });
+    expect(step.events).toContainEqual({ type: "looted", lairId: dungeon.id, player: 0, gold: dungeon.reward.gold, joins: dungeon.reward.joins });
     expect(leaderById(step.world, "leader0").squad.some((m) => m.defId === dungeon.reward?.joins)).toBe(true);
-    expect(step.world.gold[0]).toBe(roomy.gold[0] + dungeon.reward.gold);
+    expect(playerOf(step.world, 0).gold).toBe(playerOf(roomy, 0).gold + dungeon.reward.gold);
   });
 
   test("recruiting costs gold and needs the warband in a city of yours", () => {
-    const world = createWorld(1, [squad, squad], both("preserve"), ["jilliath", "jilliath"]);
+    const world = createWorld(1, twoPlayers([squad, squad], both("preserve"), ["jilliath", "jilliath"]));
     const step = applyWorldAction(world, { type: "recruit", defId: "congregant", into: { kind: "warband", leaderId: "leader0" } });
-    expect(step.world.gold[0]).toBe(world.gold[0] - 40);
+    expect(playerOf(step.world, 0).gold).toBe(playerOf(world, 0).gold - 40);
     expect(leaderById(step.world, "leader0").squad).toHaveLength(3);
-    const away = withLeader(world, "leader0", { hex: walkableNeighbour(world, world.map.starts[0]) });
+    const away = withLeader(world, "leader0", { hex: walkableNeighbour(world, startOf(world, 0)) });
     expect(() => applyWorldAction(away, { type: "recruit", defId: "congregant", into: { kind: "warband", leaderId: "leader0" } })).toThrow(/must stand/);
   });
 
   test("a garrison unit can be elevated to lead a new squad, but never the Guardian", () => {
-    let world = createWorld(1, [squad, squad], both("preserve"), ["jilliath", "jilliath"]);
+    let world = createWorld(1, twoPlayers([squad, squad], both("preserve"), ["jilliath", "jilliath"]));
     world = applyWorldAction(world, { type: "recruit", defId: "congregant", into: { kind: "garrison", cityId: "capitol0" } }).world;
-    world = withLeader(world, "leader0", { hex: walkableNeighbour(world, world.map.starts[0]) });
+    world = withLeader(world, "leader0", { hex: walkableNeighbour(world, startOf(world, 0)) });
     const recruit = capitolOf(world, 0)?.garrison.find((m) => m.defId === "congregant");
     const guardian = capitolOf(world, 0)?.garrison.find((m) => m.defId === GUARDIAN_ID);
     if (!recruit || !guardian) throw new Error("garrison missing");
@@ -190,11 +192,11 @@ describe("world", () => {
     const step = applyWorldAction(world, { type: "elevate", tile: recruit.tile });
     const created = step.world.leaders.find((l) => l.id === "leader2");
     expect(created?.squad.map((m) => m.defId)).toEqual(["congregant"]);
-    expect(created?.hex).toEqual(world.map.starts[0]);
+    expect(created?.hex).toEqual(startOf(world, 0));
   });
 
   test("wounded units resting in their Capitol heal at the start of their turn", () => {
-    let world = createWorld(1, [squad, squad], both("preserve"), ["jilliath", "jilliath"]);
+    let world = createWorld(1, twoPlayers([squad, squad], both("preserve"), ["jilliath", "jilliath"]));
     const leader = leaderById(world, "leader0");
     world = withLeader(world, "leader0", { squad: leader.squad.map((m) => ({ ...m, hp: 10 })) });
     world = applyWorldAction(applyWorldAction(world, { type: "endTurn" }).world, { type: "endTurn" }).world;
@@ -202,10 +204,10 @@ describe("world", () => {
   });
 
   test("storming the enemy Capitol and killing its Guardian wins the game", () => {
-    const world = createWorld(1, [army, squad], both("punishment"), ["jilliath", "jilliath"]);
-    const enemyCapitol = world.map.starts[1];
+    const world = createWorld(1, twoPlayers([army, squad], both("punishment"), ["jilliath", "jilliath"]));
+    const enemyCapitol = startOf(world, 1);
     const ready = withLeader(
-      { ...world, leaders: world.leaders.filter((l) => l.side === 0) },
+      { ...world, leaders: world.leaders.filter((l) => l.player === 0) },
       "leader0",
       { hex: walkableNeighbour(world, enemyCapitol) },
     );
@@ -219,7 +221,7 @@ describe("world", () => {
   });
 
   test("with the AI on both sides, a clearly stronger side marches on and wins the whole game", () => {
-    let world = createWorld(3, [army, squad], both("punishment"), ["jilliath", "jilliath"]);
+    let world = createWorld(3, twoPlayers([army, squad], both("punishment"), ["jilliath", "jilliath"]));
     for (let i = 0; i < 600 && !world.outcome; i++) {
       const battle = world.engagement?.battle;
       world = battle ? concludeBattle(world, autoplay(battle)).world : applyWorldAction(world, chooseWorldAction(world)).world;

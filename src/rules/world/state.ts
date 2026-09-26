@@ -43,9 +43,31 @@ export interface Fallen {
   readonly level: number;
 }
 
+/**
+ * A player in the game, by index into `World.players`. Not a battle side: every battle has exactly two sides (0 the
+ * attacker, 1 the defender), and its engagement records which player stands on each.
+ */
+export type PlayerId = number;
+
+export interface Player {
+  readonly faction: Playable;
+  /** Who owns what, on screen (`world/colors.ts`). */
+  readonly color: PlayerColor;
+  gold: number;
+  /** Branch choices at forks (`rules/forks.ts`). */
+  commitment: Commitment;
+  graveyard: Fallen[];
+  /** Unit-type upgrades bought (`rules/upgrades.ts`). */
+  upgrades: string[];
+  /** Capitol research finished (`rules/research.ts`). */
+  research: string[];
+  /** Out of the game: its Guardian fell. */
+  eliminated: boolean;
+}
+
 export interface Leader {
   readonly id: string;
-  readonly side: Side;
+  readonly player: PlayerId;
   hex: Hex;
   movement: number;
   /** XP the leader has earned in all; it buys points in the leader tree. */
@@ -75,7 +97,7 @@ export interface City {
   readonly id: string;
   readonly kind: "capitol" | "city";
   readonly hex: Hex;
-  owner: Side | null;
+  owner: PlayerId | null;
   /** The leaderless fortification squad. A Capitol's includes its Guardian. */
   garrison: SquadMember[];
   /** Upgraded with gold: garrison slots and armor for defenders (balance.ts, CITY_SLOTS). Kept when captured. */
@@ -106,6 +128,8 @@ export interface Engagement {
   readonly attackerId: string;
   readonly defender: Defender;
   readonly battle: Battle;
+  /** The player on each battle side: side 0 attacks, side 1 defends (null: neutrals). */
+  readonly players: readonly [PlayerId, PlayerId | null];
 }
 
 export interface World {
@@ -114,21 +138,14 @@ export interface World {
   cities: City[];
   nodes: MapNode[];
   lairs: Lair[];
-  gold: [number, number];
+  players: Player[];
   turn: number;
-  activeSide: Side;
+  /** Whose turn it is. Players take turns in order; a round ends when the order wraps around. */
+  activePlayer: PlayerId;
   engagement: Engagement | null;
-  outcome: { winner: Side } | null;
+  /** The last player standing (Guardians fallen for all the others). */
+  outcome: { winner: PlayerId } | null;
   nextLeader: number;
-  factions: [Playable, Playable];
-  /** Who owns what, on screen (`world/colors.ts`). */
-  colors: [PlayerColor, PlayerColor];
-  commitment: [Commitment, Commitment];
-  graveyard: [Fallen[], Fallen[]];
-  /** Unit-type upgrades each side has bought (`rules/upgrades.ts`). */
-  upgrades: [string[], string[]];
-  /** Capitol research each side has finished (`rules/research.ts`). */
-  research: [string[], string[]];
 }
 
 /** A squad on the map: a city's garrison, or a warband (`world/squads.ts`). */
@@ -159,28 +176,29 @@ export type WorldAction =
 export type WorldEvent =
   | { type: "moved"; leaderId: string; path: readonly Hex[] }
   | { type: "engaged"; attackerId: string; defender: Defender }
-  | { type: "captured"; cityId: string; side: Side }
-  | { type: "turnStarted"; side: Side; turn: number; income: number }
+  | { type: "captured"; cityId: string; player: PlayerId }
+  | { type: "turnStarted"; player: PlayerId; turn: number; income: number }
   | { type: "recruited"; defId: string; into: SquadRef }
   | { type: "transferred"; from: SquadRef; to: SquadRef }
   | { type: "elevated"; leaderId: string }
-  | { type: "leaderFell"; leaderId: string; side: Side }
-  | { type: "xp"; side: Side; pool: number; each: number }
-  | { type: "evolved"; side: Side; from: string; to: string }
-  | { type: "leveled"; side: Side; defId: string; level: number }
-  | { type: "fell"; side: Side; defId: string }
-  | { type: "chose"; side: Side; fork: string; to: string }
-  | { type: "cleared"; lairId: string; side: Side }
+  | { type: "leaderFell"; leaderId: string; player: PlayerId }
+  | { type: "xp"; player: PlayerId; pool: number; each: number }
+  | { type: "evolved"; player: PlayerId; from: string; to: string }
+  | { type: "leveled"; player: PlayerId; defId: string; level: number }
+  | { type: "fell"; player: PlayerId; defId: string }
+  | { type: "chose"; player: PlayerId; fork: string; to: string }
+  | { type: "cleared"; lairId: string; player: PlayerId }
   | { type: "regrew"; lairId: string }
-  | { type: "looted"; lairId: string; side: Side; gold: number; joins: string | null }
-  | { type: "resurrected"; side: Side; defId: string }
+  | { type: "looted"; lairId: string; player: PlayerId; gold: number; joins: string | null }
+  | { type: "resurrected"; player: PlayerId; defId: string }
   | { type: "learned"; leaderId: string; skill: string }
   | { type: "revived"; leaderId: string }
   | { type: "cityUpgraded"; cityId: string; tier: number }
-  | { type: "researched"; side: Side; research: string }
+  | { type: "researched"; player: PlayerId; research: string }
   | { type: "nodeInvested"; nodeId: string; level: number }
-  | { type: "upgraded"; side: Side; upgrade: string }
-  | { type: "worldEnd"; winner: Side };
+  | { type: "upgraded"; player: PlayerId; upgrade: string }
+  | { type: "worldEnd"; winner: PlayerId }
+  | { type: "eliminated"; player: PlayerId };
 
 export interface WorldStep {
   readonly world: World;
@@ -279,7 +297,16 @@ export function cityAt(world: World, hex: Hex): City | undefined {
   return world.cities.find((c) => sameHex(c.hex, hex));
 }
 
-export function capitolOf(world: World, side: Side): City | undefined {
+export function playerOf(world: World, id: PlayerId): Player {
+  const player = world.players[id];
+  if (!player) throw new Error(`unknown player: ${id}`);
+  return player;
+}
+
+/** The player whose turn it is. */
+export const active = (world: World): Player => playerOf(world, world.activePlayer);
+
+export function capitolOf(world: World, side: PlayerId): City | undefined {
   return world.cities.find((c) => c.kind === "capitol" && c.owner === side);
 }
 
@@ -296,4 +323,4 @@ export function cityOfNode(world: World, node: MapNode): City | undefined {
 export const nodesOf = (world: World, city: City): MapNode[] => world.nodes.filter((n) => cityOfNode(world, n)?.id === city.id);
 
 /** Every node whose city this side holds. */
-export const nodesHeldBy = (world: World, side: Side): MapNode[] => world.nodes.filter((n) => cityOfNode(world, n)?.owner === side);
+export const nodesHeldBy = (world: World, side: PlayerId): MapNode[] => world.nodes.filter((n) => cityOfNode(world, n)?.owner === side);

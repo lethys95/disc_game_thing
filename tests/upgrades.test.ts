@@ -3,18 +3,19 @@ import { effectiveStats } from "#rules/battle/engine";
 import { COLS } from "#rules/battle/grid";
 import { UPGRADES } from "#rules/upgrades";
 import { applyWorldAction } from "#rules/world/actions";
-import { engagementBattle } from "#rules/world/battles";
+import { engage } from "#rules/world/battles";
 import { createWorld } from "#rules/world/create";
 import { growSquad, upgradeProblem } from "#rules/world/economy";
-import { capitolOf, leaderById } from "#rules/world/state";
+import { playerOf, capitolOf, leaderById } from "#rules/world/state";
 import type { Leader, Mark, World } from "#rules/world/state";
+import { withGraveyard, withGold, twoPlayers } from "#tests/helpers";
 import { describe, expect, test } from "vitest";
 
 /** The timing rule (docs/design/pillars.md): an upgrade reaches units that become its type after the purchase. */
 
 const pair: Placement[] = COLS.slice(0, 2).map((col) => ({ defId: "congregant", tile: { row: 0, col } }));
 
-const rich = (): World => ({ ...createWorld(1, [pair, pair], [{ congregant: "paladin" }, {}], ["jilliath", "nexus"]), gold: [1000, 1000] });
+const rich = (): World => withGold(createWorld(1, twoPlayers([pair, pair], [{ congregant: "paladin" }, {}], ["jilliath", "nexus"])), [1000, 1000]);
 
 const buy = (world: World, upgrade: string) => applyWorldAction(world, { type: "upgrade", upgrade }).world;
 
@@ -38,10 +39,10 @@ const upgradesOn = (world: World) => leaderById(world, "leader0").squad.map((m) 
 describe("unit-type upgrades", () => {
   test("bought once, with gold, for your own faction's units", () => {
     const world = buy(rich(), "congregant_damage");
-    expect(world.gold[0]).toBe(1000 - (UPGRADES.get("congregant_damage")?.price ?? 0));
+    expect(playerOf(world, 0).gold).toBe(1000 - (UPGRADES.get("congregant_damage")?.price ?? 0));
     expect(upgradeProblem(world, "congregant_damage")).toBe("already bought");
     expect(upgradeProblem(world, "custodian_damage")).toBe("another faction's unit");
-    expect(upgradeProblem({ ...world, gold: [0, 0] }, "paladin_damage")).toBe("not enough gold");
+    expect(upgradeProblem(withGold(world, [0, 0]), "paladin_damage")).toBe("not enough gold");
   });
 
   test("not retroactive: units you have keep their baseline, recruits after the purchase get it", () => {
@@ -62,10 +63,9 @@ describe("unit-type upgrades", () => {
     const world = recruit(buy(rich(), "congregant_damage"));
     const fallen = leaderById(world, "leader0").squad[2];
     if (!fallen) throw new Error("no recruit");
-    const dead: World = {
-      ...withLeader(world, { squad: leaderById(world, "leader0").squad.slice(0, 2) }),
-      graveyard: [[{ defId: "congregant", fellOnTurn: world.turn, marks: fallen.marks, level: 0 }], []],
-    };
+    const dead = withGraveyard(withLeader(world, { squad: leaderById(world, "leader0").squad.slice(0, 2) }), 0, [
+      { defId: "congregant", fellOnTurn: world.turn, marks: fallen.marks, level: 0 },
+    ]);
     const back = applyWorldAction(dead, { type: "resurrect", index: 0, into: { kind: "warband", leaderId: "leader0" } }).world;
     expect(upgradesOn(back)).toEqual([[], [], ["congregant_damage"]]);
   });
@@ -75,7 +75,7 @@ describe("marks in battle", () => {
   test("a marked unit hits harder", () => {
     const world = recruit(buy(rich(), "congregant_damage"));
     const leader = leaderById(world, "leader0");
-    const battle = engagementBattle(world, leader, { kind: "garrison", cityId: capitolOf(world, 1)?.id ?? "" });
+    const battle = engage(world, leader, { kind: "garrison", cityId: capitolOf(world, 1)?.id ?? "" }).battle;
     const tile = leader.squad[2]?.tile;
     const plain = leader.squad[0]?.tile;
     if (!tile || !plain) throw new Error("no recruit");

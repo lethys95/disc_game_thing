@@ -5,10 +5,11 @@ import { applyWorldAction } from "#rules/world/actions";
 import { chooseWorldAction } from "#rules/world/ai";
 import { createWorld } from "#rules/world/create";
 import type { World } from "#rules/world/state";
+import { twoPlayers } from "#tests/helpers";
 import { describe, expect, test } from "vitest";
 
 const squad: Placement[] = COLS.map((col) => ({ defId: "congregant", tile: { row: 0, col } }));
-const world = (): World => createWorld(3, [squad, squad], [{}, {}], ["jilliath", "nexus"]);
+const world = (): World => createWorld(3, twoPlayers([squad, squad], [{}, {}], ["jilliath", "nexus"]));
 const at = new Date("2026-09-26T09:00:00Z");
 
 /** Plays the map AI for both sides until a battle starts or `steps` orders are given. */

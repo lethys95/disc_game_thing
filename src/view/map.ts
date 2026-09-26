@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import type { PlayerColor } from "#rules/world/colors";
 import { cityOfNode } from "#rules/world/state";
+import type { PlayerId } from "#rules/world/state";
 import { threeColor } from "#view/colors";
 import { movementOf } from "#rules/world/leaders";
 import { movementPips } from "#view/dom";
@@ -68,11 +69,15 @@ function jitter(hex: Hex, salt: number): number {
 }
 
 export class MapView {
-  private colors: [THREE.Color, THREE.Color] = [threeColor("red"), threeColor("teal")];
+  private colors: THREE.Color[] = [];
 
-  /** The owners' player colors, for warbands placed from now on (call before `build`). */
-  setColors(colors: readonly [PlayerColor, PlayerColor]): void {
-    this.colors = [threeColor(colors[0]), threeColor(colors[1])];
+  /** Each player's color, for warbands placed from now on (call before `build`). */
+  setColors(colors: readonly PlayerColor[]): void {
+    this.colors = colors.map(threeColor);
+  }
+
+  private colorOf(player: PlayerId): THREE.Color {
+    return this.colors[player] ?? NEUTRAL_LINK;
   }
 
   readonly scene = new THREE.Scene();
@@ -324,15 +329,17 @@ export class MapView {
       const site = this.sites.get(city.id);
       if (!site) continue;
       const owner = city.owner;
-      site.banner.color.copy(owner === null ? NEUTRAL_BANNER : this.colors[owner]);
-      site.banner.emissive.copy(owner === null ? NONE : this.colors[owner]);
+      site.banner.color.copy(owner === null ? NEUTRAL_BANNER : this.colorOf(owner));
+      site.banner.emissive.copy(owner === null ? NONE : this.colorOf(owner));
       site.banner.emissiveIntensity = owner === null ? 0 : 0.8;
       site.label.textContent = siteName(city);
-      site.label.className = `site-label ${owner === null ? "neutral" : `side${owner}`}`;
+      site.label.className = `site-label ${owner === null ? "neutral" : "owned"}`;
+      site.label.style.color = owner === null ? "" : `#${this.colorOf(owner).getHexString()}`;
+      site.label.style.borderColor = site.label.style.color;
     }
     for (const link of this.links.values()) {
       const owner = world.cities.find((c) => c.id === link.city)?.owner ?? null;
-      const color = owner === null ? NEUTRAL_LINK : this.colors[owner];
+      const color = owner === null ? NEUTRAL_LINK : this.colorOf(owner);
       link.material.color.copy(color);
       link.material.emissive.copy(color);
       link.material.emissiveIntensity = owner === null ? 0.2 : 0.9;
@@ -360,17 +367,18 @@ export class MapView {
       figure.group.userData = { hex: leader.hex };
       const alive = leader.squad.length;
       // Your own warbands also show the movement they have left.
-      const move = leader.side === 0 ? ` · ${movementPips(leader.movement, movementOf(leader))}` : "";
+      const move = leader.player === 0 ? ` · ${movementPips(leader.movement, movementOf(leader))}` : "";
       figure.label.textContent = `${UNITS[defId]?.name ?? defId} · ${alive} unit${alive === 1 ? "" : "s"}${move}`;
     }
   }
 
   private addLeader(leader: Leader, defId: string): LeaderFigure {
     const group = new THREE.Group();
-    const owner = this.colors[leader.side];
-    const figure = buildFigure(defId, leader.side, owner);
+    const owner = this.colorOf(leader.player);
+    // Statues: light for the player at this screen, dark for everyone else.
+    const figure = buildFigure(defId, leader.player === 0 ? 0 : 1, owner);
     figure.scale.multiplyScalar(0.62);
-    figure.rotation.y = leader.side === 0 ? -Math.PI / 4 : (Math.PI * 3) / 4;
+    figure.rotation.y = leader.player === 0 ? -Math.PI / 4 : (Math.PI * 3) / 4;
     group.add(figure);
     const ring = new THREE.Mesh(
       new THREE.TorusGeometry(0.5, 0.05, 6, 24),
@@ -380,7 +388,8 @@ export class MapView {
     ring.position.y = 0.03;
     group.add(ring);
     const label = document.createElement("div");
-    label.className = `leader-label side${leader.side}`;
+    label.className = "leader-label";
+    label.style.color = `#${owner.getHexString()}`;
     const tag = new CSS2DObject(label);
     tag.position.set(0, 1.45, 0);
     group.add(tag);

@@ -3,20 +3,21 @@ import { effectiveStats } from "#rules/battle/engine";
 import type { Placement } from "#rules/battle/engine";
 import { COLS } from "#rules/battle/grid";
 import { applyWorldAction } from "#rules/world/actions";
-import { concludeBattle, engagementBattle } from "#rules/world/battles";
+import { concludeBattle, engage } from "#rules/world/battles";
 import { createWorld } from "#rules/world/create";
 import { learnSkillProblem, reviveCost, reviveProblem } from "#rules/world/economy";
 import { neighbors, sameHex } from "#rules/hex";
 import { stepCost } from "#rules/map";
 import { LEADER_SKILLS, leadershipOf, unspentPoints } from "#rules/world/leaders";
 import { maxHpOf, recordOf } from "#rules/world/record";
-import { leaderById } from "#rules/world/state";
+import { playerOf, leaderById } from "#rules/world/state";
 import type { Leader, World } from "#rules/world/state";
+import { withGold, startOf, twoPlayers } from "#tests/helpers";
 import { describe, expect, test } from "vitest";
 
 const congregants: Placement[] = COLS.map((col) => ({ defId: "congregant", tile: { row: 0, col } }));
 
-const fresh = (): World => createWorld(1, [congregants, congregants], [{}, {}], ["jilliath", "jilliath"]);
+const fresh = (): World => createWorld(1, twoPlayers([congregants, congregants], [{}, {}], ["jilliath", "jilliath"]));
 
 function withLeader(world: World, id: string, change: Partial<Leader>): World {
   return { ...world, leaders: world.leaders.map((l) => (l.id === id ? { ...l, ...change } : l)) };
@@ -62,7 +63,7 @@ describe("leader tree", () => {
     expect(recordOf(second, leader)).toEqual([]);
 
     const healed = withLeader(world, "leader0", { squad: leader.squad.map((m) => ({ ...m, hp: 99 })) });
-    const battle = engagementBattle(healed, leaderById(healed, "leader0"), { kind: "leader", leaderId: "leader1" });
+    const battle = engage(healed, leaderById(healed, "leader0"), { kind: "leader", leaderId: "leader1" }).battle;
     expect(battle.units["0.0.0"]?.hp).toBe(99);
     expect(battle.units["0.0.1"]?.hp).toBe(90);
   });
@@ -71,8 +72,8 @@ describe("leader tree", () => {
     const skills = Object.fromEntries(Object.entries(LEADER_SKILLS).map(([id]) => [id, 1]));
     const world = withLeader(fresh(), "leader0", { skills, experience: 100 * LEADER_XP_PER_POINT });
     const plain = fresh();
-    const withAura = engagementBattle(world, leaderById(world, "leader0"), { kind: "leader", leaderId: "leader1" });
-    const without = engagementBattle(plain, leaderById(plain, "leader0"), { kind: "leader", leaderId: "leader1" });
+    const withAura = engage(world, leaderById(world, "leader0"), { kind: "leader", leaderId: "leader1" }).battle;
+    const without = engage(plain, leaderById(plain, "leader0"), { kind: "leader", leaderId: "leader1" }).battle;
     const damage = (battle: typeof withAura, id: string) => effectiveStats(battle, id).damage;
     expect(damage(withAura, "0.0.1")).toBe(damage(without, "0.0.1") + 1);
     expect(damage(withAura, "1.0.1")).toBe(damage(without, "1.0.1"));
@@ -89,18 +90,21 @@ describe("leader tree", () => {
 });
 
 describe("a fallen leader (D2: go back and revive)", () => {
-  /** Leader 1 attacks leader 0; the fight ends with leader 0's own unit dead and the rest of its squad winning. */
+  /**
+   * Leader 1 attacks leader 0 (so leader 0 defends, on battle side 1); the fight ends with leader 0's own unit dead
+   * and the rest of its squad winning.
+   */
   function leaderFalls(world: World, wipe = false): World {
     const target = leaderById(world, "leader0").hex;
     const beside = neighbors(target).find((n) => stepCost(world.map, n) !== null && !world.cities.some((c) => sameHex(c.hex, n)));
     if (!beside) throw new Error("no free neighbour");
-    const moved = applyWorldAction({ ...withLeader(world, "leader1", { hex: beside }), activeSide: 1 }, { type: "move", leaderId: "leader1", to: target }).world;
+    const moved = applyWorldAction({ ...withLeader(world, "leader1", { hex: beside }), activePlayer: 1 }, { type: "move", leaderId: "leader1", to: target }).world;
     const battle = moved.engagement?.battle;
     if (!battle) throw new Error("no battle");
     const units = Object.fromEntries(
-      Object.entries(battle.units).map(([id, u]) => [id, u.side === 1 || id === "0.0.0" || wipe ? { ...u, hp: 0, alive: false } : u]),
+      Object.entries(battle.units).map(([id, u]) => [id, u.side === 0 || id === "1.0.0" || wipe ? { ...u, hp: 0, alive: false } : u]),
     );
-    return concludeBattle(moved, { ...battle, units, outcome: { winner: wipe ? 1 : 0 } }).world;
+    return concludeBattle(moved, { ...battle, units, outcome: { winner: wipe ? 0 : 1 } }).world;
   }
 
   test("stays in its squad at 0 HP, out of the graveyard, earns nothing, and isn't fielded", () => {
@@ -111,20 +115,20 @@ describe("a fallen leader (D2: go back and revive)", () => {
     expect(leader.squad[1]?.xp).toBeGreaterThan(0);
     expect(leader.experience).toBe(0);
     expect(leader.fellOnTurn).toBe(world.turn);
-    expect(world.graveyard[0]).toEqual([]);
-    const next = engagementBattle(world, leader, { kind: "leader", leaderId: "leader0" });
+    expect(playerOf(world, 0).graveyard).toEqual([]);
+    const next = engage(world, leader, { kind: "leader", leaderId: "leader0" }).battle;
     expect(Object.keys(next.units).filter((id) => id.startsWith("0."))).toEqual(["0.0.1", "0.0.2"]);
   });
 
   test("is revived for gold at the Capitol, at 1 HP", () => {
-    const fallen: World = { ...leaderFalls(fresh()), activeSide: 0 };
+    const fallen: World = { ...leaderFalls(fresh()), activePlayer: 0 };
     const away = fallen.cities.find((c) => c.kind === "city")?.hex;
     if (!away) throw new Error("no neutral city");
     expect(reviveProblem(withLeader(fallen, "leader0", { hex: away }), "leader0")).toBe("the warband must stand in the Capitol");
-    const home = { ...withLeader(fallen, "leader0", { hex: fallen.map.starts[0] }), gold: [500, 500] as [number, number] };
+    const home = withGold(withLeader(fallen, "leader0", { hex: startOf(fallen, 0) }), [500, 500]);
     const cost = reviveCost(home, leaderById(home, "leader0")) ?? 0;
     const revived = applyWorldAction(home, { type: "revive", leaderId: "leader0" }).world;
-    expect(revived.gold[0]).toBe(500 - cost);
+    expect(playerOf(revived, 0).gold).toBe(500 - cost);
     expect(leaderById(revived, "leader0").squad[0]?.hp).toBe(1);
     expect(leaderById(revived, "leader0").fellOnTurn).toBeNull();
   });
@@ -132,6 +136,6 @@ describe("a fallen leader (D2: go back and revive)", () => {
   test("when the whole warband falls, it's gone and everyone goes to the graveyard", () => {
     const world = leaderFalls(fresh(), true);
     expect(world.leaders.some((l) => l.id === "leader0")).toBe(false);
-    expect(world.graveyard[0].map((f) => f.defId)).toEqual(["congregant", "congregant", "congregant"]);
+    expect(playerOf(world, 0).graveyard.map((f) => f.defId)).toEqual(["congregant", "congregant", "congregant"]);
   });
 });

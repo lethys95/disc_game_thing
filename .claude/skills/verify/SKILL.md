@@ -14,13 +14,13 @@ Tests prove the rules; only a rendered frame proves the view. Always look at the
 3. `pnpm playtest`: clicks through four real player turns in a battle (`shots/playtest-*.png`).
 4. `pnpm playtest:map [seed]`: marches on the map, auto-battles the fight, returns (`shots/map-*.png`).
 5. `pnpm sim`: AI-vs-AI matchup matrix of the presets, for balance changes.
-6. `A=<preset|nexus[:scheme|overload]> B=… pnpm sim:world [seeds…]`: whole AI-vs-AI games (winner, turns, battles, gold); a "cold war" means neither side could win a fight its forecast allows.
+6. `PLAYERS=<preset|nexus[:scheme|overload]>,… pnpm sim:world [seeds…]` (two or more players): whole AI-vs-AI games (winner, turns, battles, gold); a "cold war" means neither side could win a fight its forecast allows.
 
 ## Routes (URL params, combinable)
 | Param | Effect |
 |---|---|
 | (none) | setup screen |
-| `?fight` | skip setup, battle with the preserve vs punishment presets (`?fight=nexus`, `?fight=nexus:scheme`, `?fight=nexus:overload`, `?fight=bandits` for other enemies) |
+| `?fight` | skip setup, battle with the preserve vs punishment presets (`?fight=nexus`, `?fight=nexus:scheme`, `?fight=nexus:overload`, `?fight=bandits` for other enemies; `&side=1` plays the defending side, drawn on the left) |
 | `?steps=N` | fast-forward N AI actions before the first frame (no animation) |
 | `?auto=1` | AI plays both sides |
 | `?map&seed=N` | skip setup, straight onto the map (both sides uncommitted Jilliath; `?map=nexus` makes the enemy Nexus; `&xp=100` starts your units and leader with that XP, e.g. to see the fork prompt or spend leader points; `&capitol` opens the Capitol screen, `&leader` the first warband's leader screen) |

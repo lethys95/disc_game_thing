@@ -14,9 +14,8 @@ export interface MenuOptions {
 }
 
 const describe = (save: Save) => {
-  const [a, b] = save.world.factions;
   const when = new Date(save.savedAt).toLocaleString();
-  return `Turn ${save.world.turn} · ${FACTION_NAMES[a]} vs ${FACTION_NAMES[b]} · seed ${save.seed} · ${when}`;
+  return `Turn ${save.world.turn} · ${save.world.players.map((p) => FACTION_NAMES[p.faction]).join(" vs ")} · seed ${save.seed} · ${when}`;
 };
 
 /** The game menu: save, load, export and import saves, start over. Settings will live here too. */

@@ -2,9 +2,8 @@ import { hexKey, neighbors } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { findPath, stepCost } from "#rules/map";
 import type { Path } from "#rules/map";
-import type { Side } from "#rules/battle/types";
 import { cityAt, lairAt, leaderAt, leaderById } from "#rules/world/state";
-import type { World } from "#rules/world/state";
+import type { PlayerId, World } from "#rules/world/state";
 
 /** Where a warband can go and what it runs into. */
 
@@ -24,9 +23,9 @@ export interface MovePlan {
 }
 
 /** What a march by `side` ending on `hex` runs into. */
-export function destination(world: World, side: Side, hex: Hex): MoveTarget | null | "blocked" {
+export function destination(world: World, side: PlayerId, hex: Hex): MoveTarget | null | "blocked" {
   const leader = leaderAt(world, hex);
-  if (leader) return leader.side === side ? "blocked" : { kind: "leader", leaderId: leader.id };
+  if (leader) return leader.player === side ? "blocked" : { kind: "leader", leaderId: leader.id };
   const lair = lairAt(world, hex);
   if (lair) return { kind: "lair", lairId: lair.id };
   const city = cityAt(world, hex);
@@ -36,10 +35,10 @@ export function destination(world: World, side: Side, hex: Hex): MoveTarget | nu
 
 export function planMove(world: World, leaderId: string, to: Hex): MovePlan | null {
   const leader = leaderById(world, leaderId);
-  const goal = destination(world, leader.side, to);
+  const goal = destination(world, leader.player, to);
   if (goal === "blocked") return null;
   // Other leaders and cities not your own can only be a march's goal, never a waypoint.
-  const blocked = (hex: Hex) => destination(world, leader.side, hex) !== null;
+  const blocked = (hex: Hex) => destination(world, leader.player, hex) !== null;
   const path = findPath(world.map, leader.hex, to, blocked);
   if (!path || path.hexes.length === 0) return null;
   let left = leader.movement;
@@ -66,7 +65,7 @@ export function reachable(world: World, leaderId: string): Map<string, number> {
     const spent = costs.get(hexKey(hex)) ?? 0;
     for (const next of neighbors(hex)) {
       const cost = stepCost(world.map, next);
-      if (cost === null || destination(world, leader.side, next) !== null) continue;
+      if (cost === null || destination(world, leader.player, next) !== null) continue;
       const total = spent + cost;
       if (total > leader.movement || total >= (costs.get(hexKey(next)) ?? Infinity)) continue;
       costs.set(hexKey(next), total);

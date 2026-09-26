@@ -5,11 +5,12 @@ import { concludeBattle } from "#rules/world/battles";
 import { createWorld } from "#rules/world/create";
 import type { World } from "#rules/world/state";
 import { PRESETS } from "#view/squads";
+import { twoPlayers } from "#tests/helpers";
 import { expect, test } from "vitest";
 
 /** A whole game, map AI on both sides: M13's promise is that games end (docs/roadmap.md). */
 function playOut(seed: number, maxTurn: number): World {
-  let world = createWorld(seed, [PRESETS.uncommitted, PRESETS.uncommitted], [{}, {}], ["jilliath", "jilliath"]);
+  let world = createWorld(seed, twoPlayers([PRESETS.uncommitted, PRESETS.uncommitted], [{}, {}], ["jilliath", "jilliath"]));
   for (let i = 0; world.turn <= maxTurn && !world.outcome && i < 20000; i++) {
     const battle = world.engagement?.battle;
     world = battle ? concludeBattle(world, autoplay(battle)).world : applyWorldAction(world, chooseWorldAction(world)).world;

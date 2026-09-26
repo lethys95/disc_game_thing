@@ -49,6 +49,9 @@ The user's city list (pillars.md, "Cities"), in steps, each playable:
 4. ✅ **Resurrection at cities**, unlocked by Capitol research, at a premium.
 5. ✅ **Nodes**: tied to the nearest city (Capitols included), shown on the map; investment.
 
+## M18 — Players ✅ (2026-09-26)
+The world supports any number of players (battles stay two-sided); the screens stay you vs one AI for now.
+
 ## Then
 - Faction content as the user designs it (Nexus trees first; Grove and Wastes later). The user owns unit designs and looks.
 - Spells and mana (canon), a spell tree in the Capitol.

@@ -4,7 +4,6 @@ import { effectiveStats } from "#rules/battle/engine";
 import { COLS, ROWS } from "#rules/battle/grid";
 import type { Battle, BattleEvent, BattleUnit, Col, Row, Side, Tile } from "#rules/battle/types";
 import { artUrl } from "#view/art";
-import { defaultColors } from "#rules/world/colors";
 import type { PlayerColor } from "#rules/world/colors";
 import { threeColor } from "#view/colors";
 import { buildFigure } from "#view/figures";
@@ -75,7 +74,8 @@ export class BattleScene {
   };
   private readonly tiles = new Map<string, THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial>>();
   private readonly figures = new Map<string, Figure>();
-  private colors: [THREE.Color, THREE.Color] = [threeColor(defaultColors(["jilliath", "jilliath"])[0]), threeColor(defaultColors(["jilliath", "jilliath"])[1])];
+  private left: Side = 0;
+  private colors: [THREE.Color, THREE.Color] = [threeColor("red"), threeColor("blue")];
 
   constructor(private readonly stage: Stage) {
     this.buildArena();
@@ -168,6 +168,22 @@ export class BattleScene {
     }
   }
 
+  /**
+   * Which battle side is drawn on the left: the player's own, so your squad is on the left whether you attack
+   * (side 0) or defend (side 1). Call before `reset`.
+   */
+  setLeft(side: Side): void {
+    this.left = side;
+    for (const tile of this.tiles.values()) {
+      const ref = asTileRef(tile.userData);
+      if (ref) tile.position.copy(this.position(ref.side, ref.tile)).setY(0.2);
+    }
+  }
+
+  private position(side: Side, tile: Tile): THREE.Vector3 {
+    return tilePosition(side === this.left ? 0 : 1, tile);
+  }
+
   /** The owners' player colors, for figures made from now on (call before `reset`). */
   setColors(colors: readonly [PlayerColor, PlayerColor]): void {
     this.colors = [threeColor(colors[0]), threeColor(colors[1])];
@@ -191,7 +207,7 @@ export class BattleScene {
         }),
       );
       this.updateBar(figure);
-      figure.group.position.copy(tilePosition(unit.side, unit.tile)).setY(0.28);
+      figure.group.position.copy(this.position(unit.side, unit.tile)).setY(0.28);
       if (!unit.alive && !figure.fallen) this.topple(figure, 0);
     }
   }
@@ -199,8 +215,9 @@ export class BattleScene {
   private addFigure(unit: BattleUnit): Figure {
     const portrait = artUrl({ kind: "portrait", id: unit.defId });
     const owner = this.colors[unit.side];
-    const group = portrait ? buildStandee(portrait, owner) : buildFigure(unit.defId, unit.side, owner);
-    group.rotation.y = unit.side === 0 ? 0 : Math.PI;
+    // Statues: light for the side on the left (yours), dark for the other.
+    const group = portrait ? buildStandee(portrait, owner) : buildFigure(unit.defId, unit.side === this.left ? 0 : 1, owner);
+    group.rotation.y = unit.side === this.left ? 0 : Math.PI;
     group.userData = { unitId: unit.id };
     if (unit.leader) group.add(crown());
     const materials: THREE.MeshStandardMaterial[] = [];
@@ -306,7 +323,7 @@ export class BattleScene {
 
   /** Where the figure on a tile shows its chest, in client pixels; used by automated play-testing. */
   screenPoint(ref: TileRef): { x: number; y: number } {
-    return this.stage.project(tilePosition(ref.side, ref.tile).setY(1.3));
+    return this.stage.project(this.position(ref.side, ref.tile).setY(1.3));
   }
 
   /** The tile under a screen point: a tile slab, or the tile of the figure standing there. */
@@ -431,7 +448,7 @@ export class BattleScene {
     const figure = this.figures.get(unitId);
     if (!figure) return;
     const from = figure.group.position.clone();
-    const target = tilePosition(side, to).setY(0.28);
+    const target = this.position(side, to).setY(0.28);
     await this.stage.tween(380, (t) => figure.group.position.lerpVectors(from, target, 1 - (1 - t) ** 2));
   }
 

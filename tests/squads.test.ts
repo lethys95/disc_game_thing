@@ -9,14 +9,15 @@ import { income, investNodeProblem, recruitProblem, resurrectionCost, resurrectP
 import { CITY_RESURRECTION_PREMIUM } from "#rules/research";
 import { CITY_ARMOR_PER_TIER, CITY_SLOTS, CITY_UPGRADE_COST, MINE_INCOME } from "#rules/balance";
 import { capacityOf, transferProblem } from "#rules/world/squads";
-import { capitolOf, cityOfNode, leaderById, nodesOf } from "#rules/world/state";
+import { playerOf, capitolOf, cityOfNode, leaderById, nodesOf } from "#rules/world/state";
 import type { Leader, SquadRef, World } from "#rules/world/state";
+import { withGraveyard, startOf, withGold, twoPlayers } from "#tests/helpers";
 import { describe, expect, test } from "vitest";
 
 /** Units trade between squads that meet (pillars.md, "Cities" and "Warbands meeting"). */
 
 const three: Placement[] = COLS.map((col) => ({ defId: "congregant", tile: { row: 0, col } }));
-const world = (): World => ({ ...createWorld(1, [three, three], [{}, {}], ["jilliath", "jilliath"]), gold: [1000, 1000] });
+const world = (): World => withGold(createWorld(1, twoPlayers([three, three], [{}, {}], ["jilliath", "jilliath"])), [1000, 1000]);
 
 const band: SquadRef = { kind: "warband", leaderId: "leader0" };
 const garrison: SquadRef = { kind: "garrison", cityId: "capitol0" };
@@ -49,9 +50,9 @@ describe("transfers", () => {
 
   test("squads apart don't meet; neighbouring warbands do", () => {
     const start = world();
-    const away = neighbors(start.map.starts[0]).find((h) => stepCost(start.map, h) !== null && !start.cities.some((c) => sameHex(c.hex, h)));
+    const away = neighbors(startOf(start, 0)).find((h) => stepCost(start.map, h) !== null && !start.cities.some((c) => sameHex(c.hex, h)));
     if (!away) throw new Error("no free neighbour");
-    const apart = withLeader(start, "leader0", { hex: start.map.starts[1] });
+    const apart = withLeader(start, "leader0", { hex: startOf(start, 1) });
     expect(transferProblem(apart, { from: band, fromTile: { row: 0, col: 1 }, to: garrison, toTile: { row: 2, col: 2 } })).toMatch(/together/);
 
     const second: Leader = { ...leaderById(start, "leader0"), id: "leaderX", hex: away, squad: [{ defId: "congregant", tile: { row: 0, col: 0 }, hp: 90, xp: 0, marks: [], level: 0 }], leaderTile: { row: 0, col: 0 } };
@@ -81,9 +82,9 @@ describe("city tiers", () => {
     if (!capitol) throw new Error("no Capitol");
     expect([capitol.tier, capacityOf(w, garrison)]).toEqual([1, (CITY_SLOTS[1] ?? 0) + 1]);
     w = applyWorldAction(w, { type: "upgradeCity", cityId: capitol.id }).world;
-    expect(w.gold[0]).toBe(1000 - CITY_UPGRADE_COST * 2);
+    expect(playerOf(w, 0).gold).toBe(1000 - CITY_UPGRADE_COST * 2);
     expect(capacityOf(w, garrison)).toBe((CITY_SLOTS[2] ?? 0) + 1);
-    w = applyWorldAction({ ...w, gold: [5000, 5000] }, { type: "upgradeCity", cityId: capitol.id }).world;
+    w = applyWorldAction(withGold(w, [5000, 5000]), { type: "upgradeCity", cityId: capitol.id }).world;
     w = applyWorldAction(w, { type: "upgradeCity", cityId: capitol.id }).world;
     expect(upgradeCityProblem(w, capitol.id)).toBe("already at the highest tier");
   });
@@ -95,9 +96,10 @@ describe("city tiers", () => {
     const w = applyWorldAction(base, { type: "upgradeCity", cityId: upgraded.id }).world;
     const capitol = capitolOf(w, 0);
     if (!capitol) throw new Error("no Capitol");
-    const attacker = withLeader({ ...w, activeSide: 1 }, "leader1", { hex: neighbors(capitol.hex).find((h) => stepCost(w.map, h) !== null && !w.cities.some((c) => sameHex(c.hex, h))) ?? capitol.hex });
+    const attacker = withLeader({ ...w, activePlayer: 1 }, "leader1", { hex: neighbors(capitol.hex).find((h) => stepCost(w.map, h) !== null && !w.cities.some((c) => sameHex(c.hex, h))) ?? capitol.hex });
     const battle = applyWorldAction(attacker, { type: "move", leaderId: "leader1", to: capitol.hex }).world.engagement?.battle;
-    const walls = Object.values(battle?.units ?? {}).filter((u) => u.side === 0).map((u) => u.effects.find((e) => e.def === "fortified")?.amount);
+    // Player 0 defends, so it stands on battle side 1.
+    const walls = Object.values(battle?.units ?? {}).filter((u) => u.side === 1).map((u) => u.effects.find((e) => e.def === "fortified")?.amount);
     expect(walls.length).toBeGreaterThan(0);
     expect(walls.every((a) => a === CITY_ARMOR_PER_TIER)).toBe(true);
   });
@@ -108,7 +110,7 @@ describe("resurrection in cities", () => {
     let w = world();
     const city = w.cities.find((c) => c.kind === "city");
     if (!city) throw new Error("no city");
-    w = { ...w, cities: w.cities.map((c) => (c.id === city.id ? { ...c, owner: 0, garrison: [] } : c)), graveyard: [[{ defId: "paladin", fellOnTurn: w.turn - 5, marks: [], level: 0 }], []] };
+    w = withGraveyard({ ...w, cities: w.cities.map((c) => (c.id === city.id ? { ...c, owner: 0, garrison: [] } : c)) }, 0, [{ defId: "paladin", fellOnTurn: w.turn - 5, marks: [], level: 0 }]);
     const there: SquadRef = { kind: "garrison", cityId: city.id };
     expect(resurrectProblem(w, 0, there)).toMatch(/only at the Capitol/);
     w = applyWorldAction(w, { type: "research", research: "city_resurrection" }).world;
@@ -116,9 +118,9 @@ describe("resurrection in cities", () => {
     const atCapitol = resurrectionCost(w, 0, 0) ?? 0;
     const inCity = resurrectionCost(w, 0, 0, w.cities.find((c) => c.id === city.id)) ?? 0;
     expect(inCity).toBe(Math.round(atCapitol * CITY_RESURRECTION_PREMIUM));
-    const before = w.gold[0];
+    const before = playerOf(w, 0).gold;
     w = applyWorldAction(w, { type: "resurrect", index: 0, into: there }).world;
-    expect(w.gold[0]).toBe(before - inCity);
+    expect(playerOf(w, 0).gold).toBe(before - inCity);
   });
 });
 

@@ -36,17 +36,13 @@ export interface LairSite {
 export interface WorldMap {
   readonly radius: number;
   readonly tiles: Readonly<Record<string, MapTile>>;
-  readonly starts: readonly [Hex, Hex];
+  /** One start per player, where its Capitol stands. */
+  readonly starts: readonly Hex[];
   readonly sites: readonly Site[];
   readonly lairs: readonly LairSite[];
 }
 
-/** Provisional counts for a radius-4 map. */
-const CAMPS = 2;
-const DUNGEONS = 2;
 
-/** Provisional: three neutral cities on a radius-4 map. */
-const NEUTRAL_CITIES = 3;
 
 export function tileAt(map: WorldMap, hex: Hex): MapTile | undefined {
   return map.tiles[hexKey(hex)];
@@ -82,16 +78,23 @@ function terrainFor(seed: number, hex: Hex, radius: number): Terrain {
   return "plain";
 }
 
-/** Opposite corners, pushed onto plain ground: each side starts on a walkable hex. */
-function startHexes(radius: number): [Hex, Hex] {
-  return [
-    { q: -radius + 1, r: radius - 1 },
-    { q: radius - 1, r: -radius + 1 },
-  ];
+/**
+ * One start per player on the corners of the ring just inside the edge, spread evenly (two players: opposite
+ * corners). Up to six players; the start hexes are cleared to plain ground.
+ */
+function startHexes(radius: number, players: number): Hex[] {
+  const k = radius - 1;
+  const corners: Hex[] = [{ q: k, r: 0 }, { q: 0, r: k }, { q: -k, r: k }, { q: -k, r: 0 }, { q: 0, r: -k }, { q: k, r: -k }];
+  if (players < 2 || players > corners.length) throw new Error(`maps hold 2 to ${corners.length} players, not ${players}`);
+  return Array.from({ length: players }, (_, i) => corners[(2 + Math.floor((i * corners.length) / players)) % corners.length] ?? { q: 0, r: 0 });
 }
 
-export function generateMap(seed: number, radius = 4): WorldMap {
-  const starts = startHexes(radius);
+/**
+ * A map for `players` players; more players get a larger map and more neutral sites (provisional: a neutral city
+ * more than there are players; a camp and a dungeon per player).
+ */
+export function generateMap(seed: number, players = 2, radius = players <= 2 ? 4 : 5): WorldMap {
+  const starts = startHexes(radius, players);
   for (let attempt = 0; ; attempt++) {
     const variant = seed + attempt * 104729;
     const tiles: Record<string, MapTile> = {};
@@ -100,9 +103,10 @@ export function generateMap(seed: number, radius = 4): WorldMap {
       tiles[hexKey(hex)] = { hex, terrain: clear ? "plain" : terrainFor(variant, hex, radius) };
     }
     const bare: WorldMap = { radius, tiles, starts, sites: [], lairs: [] };
-    if (!findPath(bare, starts[0], starts[1], () => false)) continue;
-    const sites = placeSites(bare, variant);
-    const lairs = placeLairs(bare, sites, variant);
+    const first = starts[0];
+    if (!first || starts.some((s) => !sameHex(s, first) && !findPath(bare, first, s, () => false))) continue;
+    const sites = placeSites(bare, variant, players + 1);
+    const lairs = placeLairs(bare, sites, variant, players);
     const map: WorldMap = { ...bare, sites, lairs };
     const spots = [...sites.map((s) => s.hex), ...lairs.map((l) => l.hex)];
     const everyoneReaches = spots.every((hex) => starts.every((start) => sameHex(start, hex) || findPath(map, start, hex, () => false)));
@@ -111,9 +115,9 @@ export function generateMap(seed: number, radius = 4): WorldMap {
 }
 
 /** Capitols on the starts; neutral cities spread over the middle ground, each with one node beside it. */
-function placeSites(map: WorldMap, seed: number): Site[] {
+function placeSites(map: WorldMap, seed: number, neutralCities: number): Site[] {
   const walkable = (hex: Hex) => stepCost(map, hex) !== null;
-  // Each Capitol has a gold mine of its own (user: Capitols count as cities for nodes), placed alike for both.
+  // Each Capitol has a gold mine of its own (user: Capitols count as cities for nodes).
   const capitolMine = (start: Hex, side: number): NodeSite[] => {
     const spot = neighbors(start)
       .filter((n) => walkable(n) && !map.starts.some((s) => sameHex(s, n)))
@@ -127,21 +131,23 @@ function placeSites(map: WorldMap, seed: number): Site[] {
     .filter((hex) => walkable(hex) && map.starts.every((s) => hexDistance(s, hex) >= 3))
     .sort((a, b) => noise(seed + 31, a.q, a.r) - noise(seed + 31, b.q, b.r));
   for (const hex of candidates) {
-    if (sites.filter((s) => s.kind === "city").length >= NEUTRAL_CITIES) break;
+    const cities = sites.filter((s) => s.kind === "city").length;
+    if (cities >= neutralCities) break;
     if (sites.some((s) => hexDistance(s.hex, hex) < 3)) continue;
     const mine = neighbors(hex)
       .filter((n) => walkable(n) && !taken(n) && !map.starts.some((s) => sameHex(s, n)))
       .sort((a, b) => noise(seed + 37, a.q, a.r) - noise(seed + 37, b.q, b.r))[0];
     if (!mine) continue;
     // Provisional: the second neutral city has a Blacksmith, the others a gold mine.
-    const kind: NodeKind = sites.length - 2 === 1 ? "blacksmith" : "gold";
-    sites.push({ id: `city${sites.length - 1}`, kind: "city", hex, nodes: [{ kind, hex: mine }] });
+    const kind: NodeKind = cities === 1 ? "blacksmith" : "gold";
+    sites.push({ id: `city${cities + 1}`, kind: "city", hex, nodes: [{ kind, hex: mine }] });
   }
   return sites;
 }
 
 /** Camps and dungeons on free walkable hexes, away from the Capitols and from each other. */
-function placeLairs(map: WorldMap, sites: readonly Site[], seed: number): LairSite[] {
+/** `each`: how many camps and how many dungeons. */
+function placeLairs(map: WorldMap, sites: readonly Site[], seed: number, each: number): LairSite[] {
   const lairs: LairSite[] = [];
   const used = (hex: Hex) =>
     sites.some((s) => hexDistance(s.hex, hex) < 2 || s.nodes.some((n) => sameHex(n.hex, hex))) || lairs.some((l) => hexDistance(l.hex, hex) < 2);
@@ -153,8 +159,8 @@ function placeLairs(map: WorldMap, sites: readonly Site[], seed: number): LairSi
     if (used(hex)) continue;
     const camps = lairs.filter((l) => l.kind === "camp").length;
     const dungeons = lairs.filter((l) => l.kind === "dungeon").length;
-    if (camps < CAMPS) lairs.push({ id: `camp${camps}`, kind: "camp", hex });
-    else if (dungeons < DUNGEONS) lairs.push({ id: `dungeon${dungeons}`, kind: "dungeon", hex });
+    if (camps < each) lairs.push({ id: `camp${camps}`, kind: "camp", hex });
+    else if (dungeons < each) lairs.push({ id: `dungeon${dungeons}`, kind: "dungeon", hex });
     else break;
   }
   return lairs;
