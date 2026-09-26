@@ -7,10 +7,11 @@ import { COLS, ROWS, sameTile } from "#rules/battle/grid";
 import type { Side, Tile } from "#rules/battle/types";
 import { FACTION_NAMES, UNITS } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
-import { defaultColors, fallbackColor, PLAYER_COLORS } from "#rules/world/colors";
+import { fallbackColor, PLAYER_COLORS } from "#rules/world/colors";
 import type { PlayerColor } from "#rules/world/colors";
+import type { PlayerSetup } from "#rules/world/create";
 import { art } from "#view/art";
-import { COLOR_HEX, COLOR_NAMES } from "#view/colors";
+import { colorPair, COLOR_HEX, COLOR_NAMES } from "#view/colors";
 import { FORMATIONS, PRESETS } from "#view/squads";
 import { element } from "#view/dom";
 
@@ -21,7 +22,8 @@ type Colors = readonly [PlayerColor, PlayerColor];
 export interface SetupHandlers {
   onChange(squads: Squads, colors: Colors): void;
   onFight(squads: Squads, playerSide: Side | null, colors: Colors): void;
-  onMarch(squads: Squads, factions: readonly [Playable, Playable], commitments: readonly [Commitment, Commitment], colors: Colors): void;
+  /** Onto a map: you (player 0) against the AI (player 1). */
+  onMarch(players: readonly PlayerSetup[]): void;
   onLoad(): void;
 }
 
@@ -41,7 +43,7 @@ export class Setup {
   private squads: [Placement[], Placement[]] = [[...PRESETS.preserve], [...PRESETS.punishment]];
   private formations: [string, string] = ["Faith preserves", "Faith consumes: Punishment"];
   private factions: [Playable, Playable] = ["jilliath", "jilliath"];
-  private colors: [PlayerColor, PlayerColor] = defaultColors(["jilliath", "jilliath"]);
+  private colors: [PlayerColor, PlayerColor] = colorPair(["jilliath", "jilliath"]);
   /** Colors the player picked stay; the others follow the factions' defaults. */
   private picked: [boolean, boolean] = [false, false];
   private active: Side = 0;
@@ -68,7 +70,7 @@ export class Setup {
   }
 
   private recolor(): void {
-    const defaults = defaultColors(this.factions);
+    const defaults = colorPair(this.factions);
     const next: [PlayerColor, PlayerColor] = [this.picked[0] ? this.colors[0] : defaults[0], this.picked[1] ? this.colors[1] : defaults[1]];
     // On a clash, the side whose color wasn't picked by hand moves to the first free one.
     const moving: Side = this.picked[1] && !this.picked[0] ? 0 : 1;
@@ -150,7 +152,9 @@ export class Setup {
     const march = element("button", "action fight", "March");
     march.title = "Take both squads onto a map: your leader against the enemy's";
     march.disabled = !ready;
-    march.addEventListener("click", () => this.handlers.onMarch(this.squads, this.factions, [this.commitmentOf(0), this.commitmentOf(1)], this.colors));
+    march.addEventListener("click", () =>
+      this.handlers.onMarch(([0, 1] as const).map((side) => ({ squad: this.squads[side], faction: this.factions[side], commitment: this.commitmentOf(side), color: this.colors[side] }))),
+    );
     const load = element("button", "action", "Load game");
     load.addEventListener("click", () => this.handlers.onLoad());
     footer.append(mode, fight, march, load);

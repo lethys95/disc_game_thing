@@ -19,14 +19,17 @@ Git: tags `m2-playable` … `m7-foundation` mark tested states. Work happens on 
 Rules: `src/rules/` (93 tests). View: `src/view/`. Tools: the `verify` skill; `A=<preset|nexus> B=… pnpm sim:world`.
 
 ## Next
-**M17 Cities done (tag `m17-cities`).** Charge pips and fork peek; squad grids with drag and drop (garrison ↔ visiting warband, neighbouring warbands, rearranging); recruit on a tile in any held city; a screen per city (City tab; the Capitol adds Research); city tiers (slots, walls; the Guardian takes no slot); Capitol research (resurrection in cities); nodes owned by the nearest city, linked on the map, with investment. AI: refills at one missing unit, buys walls and mines, **rallies** for sieges. AI games: 16/16 end (turns ~24–77).
-1. **Waiting on the user:** playtest the cities; spar on destructible cities (#42); questions #40–46 (levels, neutrals, tiers, research, nodes); colors too brown (#43).
-2. Open: Nexus tiers 3+ (#35), Jilliath backline (#36), fourth archetype (#37), leader experience (#33), settings menu (#34).
+**M18 done: any number of players on the map** (decisions.md). Battles stay two-sided (attacker side 0, defender side 1; the view draws yours on the left). Turns go round the table; a fallen Guardian eliminates its player; last one standing wins. Screens still two-player. `PLAYERS=uncommitted,uncommitted,nexus pnpm sim:world` runs bigger games. #44 answered: Capitols start with only the Guardian (already so) and enough gold to recruit.
+M17 Cities done before it (tag `m17-cities`).
+1. **Waiting on the user:** playtest the cities; spar on destructible cities (#42); questions #40–46; colors too brown (#43).
+2. Later: a setup screen for more players (and hotseat or several AIs), when wanted.
+3. Open: Nexus tiers 3+ (#35), Jilliath backline (#36), fourth archetype (#37), leader experience (#33), settings menu (#34).
 
 ## Waiting on the user
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.
 
 ## Recently done
+- 2026-09-26: M18 Players: any number of players in the rules, battles two-sided.
 - 2026-09-26: M17 Cities (steps 1–5); all AI games end.
 - 2026-09-26: m16 merged (levels, playtest fixes, player colors). M17 steps 1–2: charge pips, fork peek, squad grids, city screens, meeting warbands.
 - 2026-09-26: m16 (branch `m16-playtest` on top of `m15-levels`, worktree `../new_disc-levels`; merge after the user's playtest): support abilities default by target, portrait turn queue with hover focus, gold coin and movement pips, tougher neutrals (#41), player colors.

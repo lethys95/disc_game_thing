@@ -1,3 +1,4 @@
+import { playerOf } from "#rules/world/state";
 import type { Side } from "#rules/battle/types";
 import { allowedUnits, isFork } from "#rules/forks";
 import { ARCHETYPES, EVOLUTIONS, FACTION_ROOTS, LINE_ARCHETYPE, UNITS } from "#rules/units/index";
@@ -36,7 +37,7 @@ export class ResearchPanel {
     for (const research of RESEARCH) {
       const row = element("div", "research-row");
       row.append(element("div", "name", research.name), element("div", "note", research.describe));
-      if (world.research[side].includes(research.id)) row.appendChild(element("div", "done", "✓ Done"));
+      if (playerOf(world, side).research.includes(research.id)) row.appendChild(element("div", "done", "✓ Done"));
       else {
         const problem = researchProblem(world, research.id);
         const buy = element("button", "small");
@@ -50,8 +51,8 @@ export class ResearchPanel {
     }
     column.appendChild(element("div", "section", "Evolution"));
     column.appendChild(element("div", "note", "Choosing a branch is free and permanent for every unit of that kind. Upgrades reach units that become that type after you buy them."));
-    const faction = world.factions[side];
-    const commitment = world.commitment[side];
+    const faction = playerOf(world, side).faction;
+    const commitment = playerOf(world, side).commitment;
     const allowed = allowedUnits(faction, commitment);
     const owned = squadsOf(world, side).flatMap((h) => h.squad);
     const roots = FACTION_ROOTS[faction];
@@ -96,7 +97,7 @@ export class ResearchPanel {
     head.append(art({ kind: "portrait", id: defId }, "thumb"), element("div", "name", `${unitName(defId)}${count > 0 ? ` ×${count}` : ""}`));
     node.appendChild(head);
     if (def) node.appendChild(element("div", "stats", `Tier ${def.tier} · ${def.stats.maxHp} HP · ${def.stats.damage} dmg · ${def.stats.armor} armor`));
-    const commitment = world.commitment[side];
+    const commitment = playerOf(world, side).commitment;
     if (parent && isFork(parent)) {
       const label = EVOLUTIONS[parent]?.find((e) => e.to === defId)?.label ?? "";
       const chosen = commitment[parent];
@@ -112,7 +113,7 @@ export class ResearchPanel {
       }
     }
     for (const upgrade of upgradesFor(defId)) {
-      if (world.upgrades[side].includes(upgrade.id)) {
+      if (playerOf(world, side).upgrades.includes(upgrade.id)) {
         node.appendChild(element("div", "upgrade bought", `✓ ${upgrade.label}`));
         continue;
       }

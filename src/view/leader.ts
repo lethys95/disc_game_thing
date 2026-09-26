@@ -1,3 +1,4 @@
+import { playerOf } from "#rules/world/state";
 import { LEADER_SKILLS, leadershipOf, movementOf, rankOf, unspentPoints } from "#rules/world/leaders";
 import { learnSkillProblem } from "#rules/world/economy";
 import type { Leader, World, WorldAction } from "#rules/world/state";
@@ -71,7 +72,7 @@ export class LeaderScreen {
     const side = element("div", "capitol-hall panel");
     side.appendChild(element("div", "section", "Warband"));
     side.appendChild(element("div", "note", `Leadership ${leadershipOf(leader)} · ${movementOf(leader)} movement per turn`));
-    for (const m of leader.squad) side.appendChild(memberRow(m, leader, world.commitment[leader.side]));
+    for (const m of leader.squad) side.appendChild(memberRow(m, leader, playerOf(world, leader.player).commitment));
 
     const body = element("div", "capitol-body");
     body.append(tree, side);

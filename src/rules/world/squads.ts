@@ -1,12 +1,12 @@
 import { CITY_SLOTS } from "#rules/balance";
-import type { Side, Tile } from "#rules/battle/types";
+import type { Tile } from "#rules/battle/types";
 import { sameTile } from "#rules/battle/grid";
 import { hexDistance, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { GUARDIAN_ID } from "#rules/units/index";
 import { leadershipOf } from "#rules/world/leaders";
 import { cityById, leaderById } from "#rules/world/state";
-import type { SquadMember, SquadRef, World } from "#rules/world/state";
+import type { PlayerId, SquadMember, SquadRef, World } from "#rules/world/state";
 
 /**
  * Squads on the map as places units can be put: a city's garrison or a warband. Units move between squads that
@@ -25,8 +25,8 @@ export function capacityOf(world: World, ref: SquadRef): number {
   return (CITY_SLOTS[city.tier] ?? 0) + city.garrison.filter((m) => m.defId === GUARDIAN_ID).length;
 }
 
-export function ownerOf(world: World, ref: SquadRef): Side | null {
-  return ref.kind === "garrison" ? cityById(world, ref.cityId).owner : leaderById(world, ref.leaderId).side;
+export function ownerOf(world: World, ref: SquadRef): PlayerId | null {
+  return ref.kind === "garrison" ? cityById(world, ref.cityId).owner : leaderById(world, ref.leaderId).player;
 }
 
 export function hexOf(world: World, ref: SquadRef): Hex {
@@ -63,7 +63,7 @@ export interface Transfer {
 /** Why this move can't happen, or null. Moving onto an occupied tile swaps the two units. */
 export function transferProblem(world: World, transfer: Transfer): string | null {
   const { from, fromTile, to, toTile } = transfer;
-  const side = world.activeSide;
+  const side = world.activePlayer;
   if (ownerOf(world, from) !== side || ownerOf(world, to) !== side) return "not your squad";
   if (!canMeet(world, from, to)) return "these squads aren't together";
   const source = squadAt(world, from);

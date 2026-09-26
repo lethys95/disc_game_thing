@@ -13,7 +13,7 @@ import { chooseBranchProblem, elevateProblem, income, learnSkillProblem, recruit
 import { leadershipOf, movementOf } from "#rules/world/leaders";
 import { destination, planMove } from "#rules/world/movement";
 import type { MovePlan, MoveTarget } from "#rules/world/movement";
-import { capitolOf, fullHp, lairAt, leaderAt } from "#rules/world/state";
+import { playerOf, capitolOf, fullHp, lairAt, leaderAt } from "#rules/world/state";
 import type { Leader, SquadMember, SquadRef, World, WorldAction } from "#rules/world/state";
 import { RESURRECTION_BASE } from "#rules/balance";
 
@@ -32,8 +32,8 @@ function winsCache(): Wins {
     const key = `${attackerId}>${JSON.stringify(target)}`;
     let result = known.get(key);
     if (result === undefined) {
-      const side = world.leaders.find((l) => l.id === attackerId)?.side;
-      result = forecast(world, attackerId, target)?.outcome?.winner === side;
+      // The mover is always the attacker, side 0 of its battle.
+      result = forecast(world, attackerId, target)?.outcome?.winner === 0;
       known.set(key, result);
     }
     return result;
@@ -43,7 +43,7 @@ function winsCache(): Wins {
 function threatened(world: World, leader: Leader, hex: Hex, wins: Wins): boolean {
   const moved: World = { ...world, leaders: world.leaders.map((l) => (l.id === leader.id ? { ...l, hex } : l)) };
   return moved.leaders.some((enemy) => {
-    if (enemy.side === leader.side) return false;
+    if (enemy.player === leader.player) return false;
     const fresh = { ...moved, leaders: moved.leaders.map((l) => (l.id === enemy.id ? { ...l, movement: movementOf(l) } : l)) };
     const plan = planMove(fresh, enemy.id, hex);
     if (plan?.target?.kind !== "leader") return false;
@@ -58,8 +58,8 @@ function threatened(world: World, leader: Leader, hex: Hex, wins: Wins): boolean
  * only to chains that win.
  */
 function siegeOpener(world: World, capitolHex: Hex): string | null {
-  const side = world.activeSide;
-  const ready = world.leaders.filter((l) => l.side === side && l.fellOnTurn === null && planMove(world, l.id, capitolHex)?.target);
+  const side = world.activePlayer;
+  const ready = world.leaders.filter((l) => l.player === side && l.fellOnTurn === null && planMove(world, l.id, capitolHex)?.target);
   if (ready.length === 0) return null;
   const orders = [[...ready].sort((a, b) => strength(a.squad) - strength(b.squad)), [...ready].sort((a, b) => strength(b.squad) - strength(a.squad))];
   for (const order of orders) {
@@ -82,12 +82,12 @@ const healthy = (leader: Leader) => leader.fellOnTurn === null && strength(leade
  * chasing other targets and close in, so the siege check can open the assault once enough are in reach.
  */
 function siegeViable(world: World, capitolHex: Hex): boolean {
-  const side = world.activeSide;
+  const side = world.activePlayer;
   const free = neighbors(capitolHex).filter(
     (h) => stepCost(world.map, h) !== null && !world.cities.some((c) => sameHex(c.hex, h)) && !world.leaders.some((l) => sameHex(l.hex, h)) && !lairAt(world, h),
   );
   let placed = world;
-  for (const leader of world.leaders.filter((l) => l.side === side && healthy(l))) {
+  for (const leader of world.leaders.filter((l) => l.player === side && healthy(l))) {
     const adjacent = hexDistance(leader.hex, capitolHex) === 1;
     const spot = adjacent ? leader.hex : free.shift();
     if (!spot) break;
@@ -111,11 +111,11 @@ const fullStrength = (squad: readonly SquadMember[]) => squad.reduce((sum, m) =>
  * won't stop where an enemy could reach it next turn and win. Badly wounded leaders go home to heal.
  */
 export function chooseWorldAction(world: World): WorldAction {
-  const side = world.activeSide;
+  const side = world.activePlayer;
   const wins = winsCache();
   const capitol = capitolOf(world, side);
-  const mine = world.leaders.filter((l) => l.side === side);
-  const roots = FACTION_ROOTS[world.factions[side]];
+  const mine = world.leaders.filter((l) => l.player === side);
+  const roots = FACTION_ROOTS[playerOf(world, side).faction];
   const cost = Math.min(...roots.map((r) => RECRUIT_COST[r] ?? Infinity));
   // Recruit whichever root unit the target squad has fewest of, for a mixed army.
   const pick = (squad: readonly SquadMember[]) =>
@@ -129,19 +129,19 @@ export function chooseWorldAction(world: World): WorldAction {
   if (capitol) {
     const home = mine.find((l) => sameHex(l.hex, capitol.hex));
     // Choosing is free, so the AI settles every fork it can reach right away.
-    const fork = openForks(world.factions[side], world.commitment[side])[0];
+    const fork = openForks(playerOf(world, side).faction, playerOf(world, side).commitment)[0];
     if (fork) {
       const options = forkOptions(fork);
       const to = options.find((o) => AI_PREFERRED_BRANCHES.includes(o)) ?? options[0];
       if (to && !chooseBranchProblem(world, fork, to)) return { type: "choose", fork, to };
     }
-    const spare = (price: number) => world.gold[side] >= price;
+    const spare = (price: number) => playerOf(world, side).gold >= price;
     const fallen = mine.find((l) => !reviveProblem(world, l.id));
     if (fallen) return { type: "revive", leaderId: fallen.id };
 
     const garrison: SquadRef = { kind: "garrison", cityId: capitol.id };
     const into: SquadRef = home ? { kind: "warband", leaderId: home.id } : garrison;
-    const bargain = world.graveyard[side]
+    const bargain = playerOf(world, side).graveyard
       .map((fallen, index) => ({ index, tier: UNITS[fallen.defId]?.tier ?? 1, cost: resurrectionCost(world, side, index) ?? Infinity }))
       .filter((f) => f.tier >= 2 && f.cost === RESURRECTION_BASE * f.tier && spare(f.cost) && !resurrectProblem(world, f.index, into))
       .sort((a, b) => b.tier - a.tier)[0];
@@ -154,32 +154,32 @@ export function chooseWorldAction(world: World): WorldAction {
       }
     }
     // Under threat, recruits stand with the Guardian; a fresh leader in the Capitol would only be picked off.
-    const underThreat = world.leaders.some((l) => l.side !== side && planMove({ ...world, leaders: world.leaders.map((x) => (x.id === l.id ? { ...x, movement: movementOf(x) } : x)) }, l.id, capitol.hex)?.target);
+    const underThreat = world.leaders.some((l) => l.player !== side && planMove({ ...world, leaders: world.leaders.map((x) => (x.id === l.id ? { ...x, movement: movementOf(x) } : x)) }, l.id, capitol.hex)?.target);
     const guard = pick(capitol.garrison);
     if (underThreat && !recruitProblem(world, guard, garrison)) {
       return { type: "recruit", defId: guard, into: garrison };
     }
-    const rich = world.gold[side] >= cost * (STARTING_LEADERSHIP + 1);
+    const rich = playerOf(world, side).gold >= cost * (STARTING_LEADERSHIP + 1);
     // Upgrades aren't retroactive: they pay off on units about to become that type, and on future recruits.
     const everyone = squadsOf(world, side).flatMap((h) => h.squad);
-    const upgrade = upgradesOf(world.factions[side])
-      .map((u) => ({ u, value: everyone.filter((m) => nextForm(m.defId, world.commitment[side]) === u.unitType).length + (roots.includes(u.unitType) ? 1 : 0) }))
-      .filter(({ u, value }) => value > 0 && world.gold[side] >= u.price + cost * STARTING_LEADERSHIP && !upgradeProblem(world, u.id))
+    const upgrade = upgradesOf(playerOf(world, side).faction)
+      .map((u) => ({ u, value: everyone.filter((m) => nextForm(m.defId, playerOf(world, side).commitment) === u.unitType).length + (roots.includes(u.unitType) ? 1 : 0) }))
+      .filter(({ u, value }) => value > 0 && playerOf(world, side).gold >= u.price + cost * STARTING_LEADERSHIP && !upgradeProblem(world, u.id))
       .sort((a, b) => b.value - a.value)[0];
     if (upgrade) return { type: "upgrade", upgrade: upgrade.u.id };
     // Walls with spare gold: the Capitol first (it's the loss condition), then the cheapest city.
     const walls = world.cities
-      .filter((c) => c.owner === side && !upgradeCityProblem(world, c.id) && world.gold[side] >= cityUpgradeCost(c) + cost * STARTING_LEADERSHIP)
+      .filter((c) => c.owner === side && !upgradeCityProblem(world, c.id) && playerOf(world, side).gold >= cityUpgradeCost(c) + cost * STARTING_LEADERSHIP)
       .sort((a, b) => Number(b.kind === "capitol") - Number(a.kind === "capitol") || cityUpgradeCost(a) - cityUpgradeCost(b))[0];
     if (walls && rich) return { type: "upgradeCity", cityId: walls.id };
     // Mines pay for themselves; invest with spare gold, cheapest first.
     const mineToInvest = world.nodes
-      .filter((n) => n.kind === "gold" && !investNodeProblem(world, n.id) && world.gold[side] >= nodeInvestCost(n) + cost * STARTING_LEADERSHIP)
+      .filter((n) => n.kind === "gold" && !investNodeProblem(world, n.id) && playerOf(world, side).gold >= nodeInvestCost(n) + cost * STARTING_LEADERSHIP)
       .sort((a, b) => nodeInvestCost(a) - nodeInvestCost(b))[0];
     if (mineToInvest && rich) return { type: "investNode", nodeId: mineToInvest.id };
     // Under threat, only with the gold to fill the new warband at once: a lone new leader stands in front of the
     // garrison and only feeds the enemy XP. New warbands only once the existing ones are full.
-    const canFill = world.gold[side] >= cost * STARTING_LEADERSHIP;
+    const canFill = playerOf(world, side).gold >= cost * STARTING_LEADERSHIP;
     const warbandsFull = mine.every((l) => l.squad.length >= leadershipOf(l));
     if (!home && (!underThreat || canFill) && (mine.length === 0 || (rich && warbandsFull))) {
       const spare = capitol.garrison.find((m) => m.defId !== GUARDIAN_ID);
@@ -188,7 +188,11 @@ export function chooseWorldAction(world: World): WorldAction {
     }
   }
 
-  const target = world.cities.find((c) => c.kind === "capitol" && c.owner !== side && c.owner !== null);
+  // The nearest enemy Capitol (with several enemies, the closest one is the siege target).
+  const base = capitol?.hex ?? mine[0]?.hex;
+  const target = world.cities
+    .filter((c) => c.kind === "capitol" && c.owner !== side && c.owner !== null)
+    .sort((a, b) => (base ? hexDistance(base, a.hex) - hexDistance(base, b.hex) : 0))[0];
   if (target) {
     const opener = siegeOpener(world, target.hex);
     if (opener) return { type: "move", leaderId: opener, to: target.hex };
@@ -203,7 +207,7 @@ export function chooseWorldAction(world: World): WorldAction {
     if (atHome && leader.squad.length < 3 && income(world, side) >= cost) continue;
     // Wounded, leaderless until revived, or short of units with the gold to fill them: home to the Capitol.
     const missing = leadershipOf(leader) - leader.squad.length;
-    const refill = missing >= 1 && world.gold[side] >= cost * missing;
+    const refill = missing >= 1 && playerOf(world, side).gold >= cost * missing;
     const hurt = strength(leader.squad) < 0.5 * fullStrength(leader.squad) || leader.fellOnTurn !== null || refill;
     if (hurt && capitol && !atHome && !leaderAt(world, capitol.hex)) {
       const plan = planMove(world, leader.id, capitol.hex);
@@ -218,7 +222,7 @@ export function chooseWorldAction(world: World): WorldAction {
       if (stop) return { type: "move", leaderId: leader.id, to: stop };
     }
     const goals: Hex[] = [
-      ...world.leaders.filter((l) => l.side !== side).map((l) => l.hex),
+      ...world.leaders.filter((l) => l.player !== side).map((l) => l.hex),
       ...world.cities.filter((c) => c.owner !== side).map((c) => c.hex),
       ...world.lairs.filter((l) => l.guards.length > 0).map((l) => l.hex),
     ];

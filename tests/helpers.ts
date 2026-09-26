@@ -1,6 +1,12 @@
 import { applyAction, createBattle, legalActions } from "#rules/battle/engine";
 import type { BattleContext, Placement } from "#rules/battle/engine";
 import type { Battle, BattleEvent, BattleUnit, Col, EffectSeed, Row } from "#rules/battle/types";
+import type { Commitment } from "#rules/forks";
+import type { Playable } from "#rules/units/index";
+import { defaultColors } from "#rules/world/colors";
+import type { PlayerSetup } from "#rules/world/create";
+import type { World } from "#rules/world/state";
+import type { Hex } from "#rules/hex";
 
 /** Shared battle-test helpers. */
 
@@ -42,3 +48,30 @@ export function unit(battle: Battle, id: string): BattleUnit {
 /** Choices of `abilityId` for the unit whose turn it is, as the affected unit lists keyed by anchor. */
 export const affectedBy = (battle: Battle, abilityId: string, anchor: string) =>
   legalActions(battle).find((a) => a.abilityId === abilityId)?.choices.find((c) => anchorKey(c) === anchor)?.affected;
+
+/** Two players for a world test: squads, commitments and factions side by side, default colors. */
+export function twoPlayers(
+  squads: readonly [readonly Placement[], readonly Placement[]],
+  commitments: readonly [Commitment, Commitment],
+  factions: readonly [Playable, Playable],
+): PlayerSetup[] {
+  const colors = defaultColors(factions);
+  return ([0, 1] as const).map((i) => ({ squad: squads[i], faction: factions[i], commitment: commitments[i], color: colors[i] ?? "white" }));
+}
+
+/** The world with each player's gold set, in player order. */
+export function withGold(world: World, gold: readonly number[]): World {
+  return { ...world, players: world.players.map((p, i) => ({ ...p, gold: gold[i] ?? p.gold })) };
+}
+
+/** A player's start hex (every player has one). */
+export function startOf(world: World, player: number): Hex {
+  const start = world.map.starts[player];
+  if (!start) throw new Error(`no start for player ${player}`);
+  return start;
+}
+
+/** The world with one player's graveyard replaced. */
+export function withGraveyard(world: World, player: number, graveyard: World["players"][number]["graveyard"]): World {
+  return { ...world, players: world.players.map((p, i) => (i === player ? { ...p, graveyard } : p)) };
+}

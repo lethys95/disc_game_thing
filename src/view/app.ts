@@ -4,9 +4,8 @@ import { applyAction, createBattle, legalActions } from "#rules/battle/engine";
 import { sameTile } from "#rules/battle/grid";
 import type { Action, Battle, BattleEvent, BattleUnit, Enhancement, LegalAbility, Side, TargetChoice } from "#rules/battle/types";
 import { PLAIN } from "#rules/battle/types";
-import { defaultColors } from "#rules/world/colors";
 import type { PlayerColor } from "#rules/world/colors";
-import { applySideColors } from "#view/colors";
+import { applySideColors, colorPair } from "#view/colors";
 import { enhancementLabel, Hud, optionKey, unitLabel } from "#view/hud";
 import { asKnown, masked } from "#view/secrecy";
 import type { BannerButton } from "#view/hud";
@@ -42,7 +41,7 @@ function ownEvents(events: readonly BattleEvent[]): readonly BattleEvent[] {
 export class App {
   private battle: Battle | null = null;
   private playerSide: Side | null = 0;
-  private finish: Finish = { kind: "skirmish", squads: [[], []], colors: defaultColors(["jilliath", "jilliath"]) };
+  private finish: Finish = { kind: "skirmish", squads: [[], []], colors: colorPair(["jilliath", "jilliath"]) };
   /** The chosen ability variant (`optionKey`). */
   private selected: string | null = null;
   /** A replicated spell's targets picked so far (choice indices). */
@@ -105,6 +104,7 @@ export class App {
   private run(start: Battle, events: readonly BattleEvent[], playerSide: Side | null, colors: Colors, finish: Finish, fastForward: number): void {
     this.stop();
     this.scene.setColors(colors);
+    this.scene.setLeft(playerSide ?? 0);
     applySideColors(document.documentElement, colors);
     this.playerSide = playerSide;
     this.finish = finish;
