@@ -16,18 +16,18 @@ Git: tags `m2-playable` … `m7-foundation` mark tested states. Work happens on 
 - Nexus forks scheme vs overload (Battery, Mutant, Justiciar, Thaumaturge). The Negate mark is hidden from the marked side (`src/view/secrecy.ts`, tested).
 - Unit designs from the user: `design/units/*.md`. Numbers are provisional (`questions.md`).
 
-Rules: `src/rules/` (90 tests). View: `src/view/`. Tools: the `verify` skill; `A=<preset|nexus> B=… pnpm sim:world`.
+Rules: `src/rules/` (93 tests). View: `src/view/`. Tools: the `verify` skill; `A=<preset|nexus> B=… pnpm sim:world`.
 
 ## Next
-**M13 done on the code side (tag `m13-finish`).** AI games end (siege chains, staging, refilling; provisional camp regrowth). Decision time is fine (p90 127 ms). Needs the user's playtest: pace and fairness.
-**Design session 2026-09-26** (recorded in `design/factions/*.md`, the user's sheets in `docs/lethys-wrote-this-for-handover/faction-stuff/`, questions #35–39): Nexus depths; Nexus casters converging on **spell charges** (Claude's proposal: scheme = replicate, overload = overload; not yet confirmed); Wastes canon (numerous, can't really die, cheap graveyard revival, weak baseline, not undead); Grove (strategic ramp, decay, fungal corpse explosion); Jilliath (resurrection, a beacon ability); summons as a line rejected.
-1. **Waiting on the user:** playtest a full game; confirm the spell-charge shape (#39) → then Claude prototypes it on the three Nexus casters.
-2. Open: camp regrowth (#19), Nexus tiers 3+ (#35), balance (#36), fourth archetype (#37), leader experience (#33), settings menu (#34).
+**m14 done: Nexus spell charges** (decisions.md). Casters have batteries (Apprentice 2, Justiciar and Thaumaturge 4); spells cost charges; the Thaumaturge *overloads* (Burst hits every enemy; Homing Lightning hits every unit with the target's name), the Justiciar *replicates* (several secret Negates, several Bursts; pick targets one by one, click a picked one to cast early). The card shows charges; buttons show costs. M13 (games end) done before it.
+1. **Waiting on the user:** a playtest (pace, fairness, and now the Nexus casters).
+2. Open: Nexus tiers 3+ (#35) and balance (#36), camp regrowth (#19), fourth archetype (#37), leader experience (#33), settings menu (#34).
 
 ## Waiting on the user
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.
 
 ## Recently done
+- 2026-09-26: m14: Nexus spell charges with overload and replicate.
 - 2026-09-26: m13 (part 1): siege-planning map AI, camp regrowth (provisional); AI games end.
 - 2026-09-26: m12: paper standees; roadmap rewritten around the vertical slice.
 - 2026-09-26: m11: saves (snapshots, versioned, localStorage behind an interface, file export/import, autosave), game menu.

@@ -12,14 +12,17 @@ import type {
   Ctx,
   EffectInstance,
   EffectSeed,
+  Enhancement,
   LegalAbility,
   Lifetime,
   Side,
   Slot,
   Stats,
+  TargetChoice,
   Tile,
   TraitSelf,
 } from "#rules/battle/types";
+import { PLAIN } from "#rules/battle/types";
 import { effectDef } from "#rules/effects";
 import { UNITS } from "#rules/units/index";
 
@@ -75,6 +78,7 @@ export function createBattle(sides: readonly [readonly Placement[], readonly Pla
         abilities: def.abilities.map((ref) => ({ ref, chargesUsed: 0 })),
         effects: [...(effects ?? []), ...context.sideEffects[side]].map(instance),
         alive: true,
+        spellCharges: def.spellCharges ?? 0,
         leader: leader ?? false,
       };
     }
@@ -138,22 +142,30 @@ export function applyAction(battle: Battle, action: Action): Step {
   const events: BattleEvent[] = [];
   const ctx = makeCtx(draft, events);
   const slot = draft.current;
-  const option = legal(ctx).find((a) => a.abilityId === action.abilityId);
+  const enhancement = action.enhancement ?? PLAIN;
+  const option = legal(ctx).find((a) => a.abilityId === action.abilityId && sameEnhancement(a.enhancement, enhancement));
   const choice = option?.choices[action.choice];
-  if (!slot || !option || !choice) throw new Error(`illegal action: ${JSON.stringify(action)}`);
+  const copies = (action.copies ?? []).map((i) => option?.choices[i]);
+  const picks = [action.choice, ...(action.copies ?? [])];
+  const wanted = enhancement.kind === "replicate" ? enhancement.copies : 0;
+  const valid = copies.length === wanted && copies.every((c) => c !== undefined) && new Set(picks).size === picks.length;
+  if (!slot || !option || !choice || !valid) throw new Error(`illegal action: ${JSON.stringify(action)}`);
+  const casts = [choice, ...copies.filter((c): c is TargetChoice => c !== undefined)];
 
   const unitId = slot.unitId;
   const found = active(action.abilityId);
   const self = activeSelf(ctx, unitId, action.abilityId);
   if (self.params["charges"] !== undefined) ctx.consumeCharge(unitId, action.abilityId);
+  ctx.unit(unitId).spellCharges -= option.spellCost;
 
   const bonus = slot.bonusAttacks.shift();
   slot.penaltyMultiplier = bonus ?? 1;
-  ctx.emit({ type: "ability", unitId, abilityId: action.abilityId, targets: choice.affected });
+  ctx.emit({ type: "ability", unitId, abilityId: action.abilityId, targets: casts.flatMap((c) => c.affected), enhancement });
+  // A cancel (Negate) spoils the whole cast, copies included.
   const cancelled =
     !found.reschedules && [...traitsOn(ctx, unitId)].some((t) => t.hooks.beforeAbility?.(ctx, t.self, action.abilityId) === "cancel");
   if (cancelled) ctx.emit({ type: "negated", unitId, abilityId: action.abilityId });
-  else found.resolve(ctx, self, choice);
+  else for (const cast of casts) found.resolve(ctx, self, cast);
   slot.penaltyMultiplier = 1;
 
   if (bonus === undefined && choice.cost === "free") slot.freeUsed.push(action.abilityId);
@@ -205,13 +217,28 @@ function legal(ctx: Ctx): LegalAbility[] {
     const b = active(id);
     const self = activeSelf(ctx, unitId, id);
     if (self.params["charges"] !== undefined && chargesLeft(ctx, unitId, id) <= 0) continue;
-    const choices = b
-      .choices(ctx, self)
-      .map((c) => (bonusMode ? { ...c, cost: "free" as const } : c))
-      .filter((c) => bonusMode || c.cost === "main" || !slot.freeUsed.includes(id));
-    if (choices.length > 0) result.push({ abilityId: id, name: abilityRef(unit, id).name ?? b.name, tags: b.tags, choices });
+    const usable = (choices: readonly TargetChoice[]) =>
+      choices.map((c) => (bonusMode ? { ...c, cost: "free" as const } : c)).filter((c) => bonusMode || c.cost === "main" || !slot.freeUsed.includes(id));
+    const name = abilityRef(unit, id).name ?? b.name;
+    const base = self.params["cost"] ?? 0;
+    const affordable = (cost: number) => cost <= unit.spellCharges;
+    const add = (choices: readonly TargetChoice[], enhancement: Enhancement, spellCost: number) => {
+      if (choices.length > 0 && affordable(spellCost)) result.push({ abilityId: id, name, tags: b.tags, choices, enhancement, spellCost });
+    };
+    const choices = usable(b.choices(ctx, self));
+    add(choices, PLAIN, base);
+    const overload = self.params["overload"];
+    if (overload !== undefined && b.overloadChoices) add(usable(b.overloadChoices(ctx, self)), { kind: "overload" }, base + overload);
+    const replicate = self.params["replicate"];
+    if (replicate !== undefined) {
+      for (let copies = 1; copies < choices.length && affordable(base + replicate * copies); copies++) add(choices, { kind: "replicate", copies }, base + replicate * copies);
+    }
   }
   return result;
+}
+
+export function sameEnhancement(a: Enhancement, b: Enhancement): boolean {
+  return a.kind === b.kind && (a.kind !== "replicate" || b.kind !== "replicate" || a.copies === b.copies);
 }
 
 /** Ends every effect with this lifetime that `matches`, running its expiry. */

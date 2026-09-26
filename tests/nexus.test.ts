@@ -1,4 +1,4 @@
-import { effectiveStats, legalActions } from "#rules/battle/engine";
+import { applyAction, effectiveStats, legalActions } from "#rules/battle/engine";
 import { allowedUnits, choose, openForks } from "#rules/forks";
 import { grow } from "#rules/progression";
 import { act, anchorKey, p, start, unit, until } from "#tests/helpers";
@@ -29,11 +29,44 @@ describe("Justiciar", () => {
 });
 
 describe("Thaumaturge", () => {
-  test("homing lightning strikes every unit with the target's name, on both sides", () => {
+  test("homing lightning strikes one enemy; overloaded, every unit with the target's name, on both sides", () => {
     const battle = until(start([p("thaumaturge", 1, 1), p("brigand", 0, 1)], [p("brigand", 0, 0), p("brigand", 0, 2), p("bandit", 1, 1)]), "0.1.1");
-    const lightning = legalActions(battle).find((a) => a.abilityId === "homing_lightning");
-    expect(lightning?.choices.find((c) => anchorKey(c) === "1.0.0")?.affected).toEqual(["0.0.1", "1.0.0", "1.0.2"]);
-    expect(lightning?.choices.find((c) => anchorKey(c) === "1.1.1")?.affected).toEqual(["1.1.1"]);
+    const lightning = legalActions(battle).filter((a) => a.abilityId === "homing_lightning");
+    const plain = lightning.find((a) => a.enhancement.kind === "none");
+    const overloaded = lightning.find((a) => a.enhancement.kind === "overload");
+    expect(plain?.choices.find((c) => anchorKey(c) === "1.0.0")?.affected).toEqual(["1.0.0"]);
+    expect(overloaded?.choices.find((c) => anchorKey(c) === "1.0.0")?.affected).toEqual(["0.0.1", "1.0.0", "1.0.2"]);
+    expect([plain?.spellCost, overloaded?.spellCost]).toEqual([1, 2]);
+  });
+});
+
+describe("spell charges (docs/design/factions/ral-vitahl.md)", () => {
+  test("an overloaded Burst hits every enemy and draws its extra cost from the caster's battery", () => {
+    const battle = until(start([p("thaumaturge", 1, 1)], [p("congregant", 0, 0), p("congregant", 0, 2), p("congregant", 2, 2)]), "0.1.1");
+    const overloaded = legalActions(battle).find((a) => a.abilityId === "plus_burst" && a.enhancement.kind === "overload");
+    if (!overloaded) throw new Error("no overloaded Burst");
+    const step = applyAction(battle, { abilityId: "plus_burst", choice: 0, enhancement: { kind: "overload" } });
+    expect(step.events.filter((e) => e.type === "damage").map((e) => (e.type === "damage" ? e.unitId : ""))).toEqual(["1.0.0", "1.0.2", "1.2.2"]);
+    expect(unit(step.battle, "0.1.1").spellCharges).toBe(4 - 2);
+  });
+
+  test("a replicated Negate marks several enemies with one free action; each copy needs its own target", () => {
+    const battle = start([p("justiciar", 1, 1)], [p("paladin", 0, 0), p("paladin", 0, 2)]);
+    const negate = legalActions(battle).find((a) => a.abilityId === "negate" && a.enhancement.kind === "replicate");
+    if (!negate || negate.enhancement.kind !== "replicate") throw new Error("no replicated Negate");
+    expect(negate.enhancement.copies).toBe(1);
+    const step = applyAction(battle, { abilityId: "negate", choice: 0, enhancement: negate.enhancement, copies: [1] });
+    expect(["1.0.0", "1.0.2"].every((id) => unit(step.battle, id).effects.some((e) => e.def === "negated"))).toBe(true);
+    expect(unit(step.battle, "0.1.1").spellCharges).toBe(4 - 2);
+    expect(() => applyAction(battle, { abilityId: "negate", choice: 0, enhancement: negate.enhancement, copies: [0] })).toThrow(/illegal/);
+  });
+
+  test("an empty battery leaves only the weak default attack", () => {
+    let battle = until(start([p("apprentice", 1, 1)], [p("custodian", 0, 1), p("custodian", 0, 0)]), "0.1.1");
+    for (let i = 0; i < 2; i++) battle = until(act(battle, "plus_burst", "1.0.1").battle, "0.1.1");
+    expect(unit(battle, "0.1.1").spellCharges).toBe(0);
+    expect(legalActions(battle).map((a) => a.abilityId)).toEqual(expect.arrayContaining(["bolt"]));
+    expect(legalActions(battle).map((a) => a.abilityId)).not.toContain("plus_burst");
   });
 });
 

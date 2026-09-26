@@ -1,13 +1,24 @@
 import { BEHAVIORS, describeAbility, paramsOf } from "#rules/abilities/index";
 import { effectDef } from "#rules/effects";
 import { abilityRef, actionsPerRound, effectiveStats, upcomingSlots } from "#rules/battle/engine";
-import type { Battle, BattleEvent, BattleUnit, EffectInstance, LegalAbility, Side } from "#rules/battle/types";
+import type { Battle, BattleEvent, BattleUnit, EffectInstance, Enhancement, LegalAbility, Side } from "#rules/battle/types";
 import { UNITS } from "#rules/units/index";
 import { art } from "#view/art";
 import { byId, element } from "#view/dom";
 
+/** " (overloaded)", " ×3": how an enhanced spell reads in buttons and the log. */
+export function enhancementLabel(enhancement: Enhancement): string {
+  if (enhancement.kind === "overload") return " (overloaded)";
+  if (enhancement.kind === "replicate") return ` ×${enhancement.copies + 1}`;
+  return "";
+}
+
+/** One button per ability variant: an ability can be offered plain, overloaded and replicated. */
+export const optionKey = (option: { abilityId: string; enhancement: Enhancement }) =>
+  `${option.abilityId}|${option.enhancement.kind}${option.enhancement.kind === "replicate" ? option.enhancement.copies : ""}`;
+
 export interface HudHandlers {
-  onAbility(abilityId: string): void;
+  onAbility(key: string): void;
   onAuto(): void;
 }
 
@@ -100,6 +111,11 @@ export class Hud {
     row("Damage", stats.damage, unit.base.damage);
     row("Armor", stats.armor, unit.base.armor);
     row("Initiative", stats.initiative, unit.base.initiative);
+    const battery = def?.spellCharges;
+    if (battery !== undefined) {
+      table.appendChild(element("span", "name", "Spell charges"));
+      table.appendChild(element("span", "value spell", `${unit.spellCharges} / ${battery}`));
+    }
     table.appendChild(element("span", "name", "Actions"));
     table.appendChild(element("span", "value", `${actionsPerRound(stats.initiative)} per round`));
     this.card.appendChild(table);
@@ -137,19 +153,26 @@ export class Hud {
     const unitId = battle.current?.unitId;
     const unit = unitId ? battle.units[unitId] : undefined;
     if (!enabled || !unit) return;
-    for (const option of options) {
-      const button = element("button", `action${option.abilityId === selected ? " selected" : ""}`);
+    // A replicated spell is one button, its largest version: targets are picked one by one, and it can be cast early.
+    const largest = (o: LegalAbility) =>
+      o.enhancement.kind !== "replicate" || !options.some((x) => x.abilityId === o.abilityId && x.enhancement.kind === "replicate" && x.enhancement.copies > (o.enhancement.kind === "replicate" ? o.enhancement.copies : 0));
+    for (const option of options.filter(largest)) {
+      const button = element("button", `action${optionKey(option) === selected ? " selected" : ""}`);
       button.appendChild(art({ kind: "ability", id: option.abilityId }, "small"));
-      button.appendChild(element("span", "name", option.name));
+      const replicate = option.enhancement.kind === "replicate";
+      button.appendChild(element("span", "name", `${option.name}${replicate ? " (replicate)" : enhancementLabel(option.enhancement)}`));
+      const plain = options.find((o) => o.abilityId === option.abilityId && o.enhancement.kind === "none");
+      const perCopy = replicate && plain && option.enhancement.kind === "replicate" ? (option.spellCost - plain.spellCost) / option.enhancement.copies : 0;
+      if (option.spellCost > 0) button.appendChild(element("span", "tag spell", replicate ? `+${perCopy} ⚡ per copy` : `${option.spellCost} ⚡`));
       const def = BEHAVIORS[option.abilityId];
-      const key = def?.kind === "active" ? def.hotkey : undefined;
+      const key = def?.kind === "active" && option.enhancement.kind === "none" ? def.hotkey : undefined;
       if (key) button.appendChild(element("span", "key", key.toUpperCase()));
       const ref = abilityRef(unit, option.abilityId);
       const charges = paramsOf(ref)["charges"];
       const used = unit.abilities.find((s) => s.ref.id === option.abilityId)?.chargesUsed ?? 0;
       if (charges !== undefined) button.appendChild(element("span", "tag", `${charges - used}/${charges}`));
       button.title = `${describeAbility(ref)}${key ? ` (${key.toUpperCase()})` : ""}`;
-      button.addEventListener("click", () => this.handlers.onAbility(option.abilityId));
+      button.addEventListener("click", () => this.handlers.onAbility(optionKey(option)));
       this.actions.appendChild(button);
     }
   }
@@ -212,7 +235,7 @@ function describe(event: BattleEvent, name: (id: string) => string, playerSide: 
     case "roundStart":
       return `Round ${event.round}`;
     case "ability": {
-      const ability = BEHAVIORS[event.abilityId]?.name ?? event.abilityId;
+      const ability = `${BEHAVIORS[event.abilityId]?.name ?? event.abilityId}${enhancementLabel(event.enhancement)}`;
       const targets = event.targets.filter((t) => t !== event.unitId).map(name);
       return targets.length > 0 ? `${name(event.unitId)}: ${ability} → ${targets.join(", ")}` : `${name(event.unitId)}: ${ability}`;
     }

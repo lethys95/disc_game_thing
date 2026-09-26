@@ -41,3 +41,6 @@ New units, abilities and effects get art slots automatically (placeholders until
 
 ## The user's design sheets
 The user writes unit intent in `docs/lethys-wrote-this-for-handover/faction-stuff/<faction>/<line>.md` (format: `_template.md`): relative stats ("high health for its tier"), abilities and why, look. Read the sheet first; turn intent into provisional numbers relative to the other units of that tier; keep the sheet's **Status** line current (`in game as <id>`). Anything Claude writes there is marked **(Claude)**. Don't delete the user's text; per their `note.md`, raise conflicts with existing units instead of removing either.
+
+## Spells that draw on spell charges (Nexus casters)
+Give the unit `spellCharges` (its battery) and give the spell a `cost` param. For the enhancements: `overload` (extra cost) plus an `overloadChoices` on the behavior (what the wider cast reaches), or `replicate` (extra cost per copy; copies reuse the normal choices, each on a different target). Scheme casters replicate, overload casters overload (decisions.md). Nothing else changes: legality, the AI, the preview and the buttons pick the variants up.
