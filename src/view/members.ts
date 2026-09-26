@@ -1,3 +1,4 @@
+import { BEHAVIORS, describeAbility } from "#rules/abilities/index";
 import { effectDef } from "#rules/effects";
 import type { Commitment } from "#rules/forks";
 import { nextForm, xpToEvolve, xpToLevel } from "#rules/progression";
@@ -6,6 +7,7 @@ import { UPGRADES } from "#rules/upgrades";
 import { LEADER_SKILLS } from "#rules/world/leaders";
 import { isLeaderOf, maxHpOf, recordOf } from "#rules/world/record";
 import type { Leader, Mark, SquadMember } from "#rules/world/state";
+import { art } from "#view/art";
 import { element } from "#view/dom";
 
 /** A squad member as the map's panels show it: name, health, progress, and its track record. */
@@ -55,4 +57,25 @@ export function memberRow(m: SquadMember, leader: Leader | undefined, commitment
   }
   for (const mark of recordOf(m, leader)) row.appendChild(element("div", "mark", markText(mark)));
   return row;
+}
+
+/** What a unit type is, before you have one: portrait, stats and abilities (for choosing a branch). */
+export function unitDefCard(defId: string): HTMLElement {
+  const def = UNITS[defId];
+  const card = element("div", "def-card");
+  if (!def) return card;
+  card.appendChild(art({ kind: "portrait", id: defId }, "card-portrait"));
+  card.append(element("div", "title", def.name), element("div", "subtitle", `Tier ${def.tier}`));
+  const s = def.stats;
+  const facts = [`${s.maxHp} HP`, s.shield > 0 ? `${s.shield} shield` : "", `${s.damage} damage${def.damageType === "fire" ? " (fire)" : ""}`, `${s.armor} armor`, `${s.initiative} initiative`];
+  if (def.spellCharges) facts.push(`${def.spellCharges} spell charges`);
+  card.appendChild(element("div", "stats", facts.filter((f) => f).join(" · ")));
+  for (const ref of def.abilities) {
+    const behavior = BEHAVIORS[ref.id];
+    if (!behavior || (behavior.kind === "active" && behavior.tags.includes("basic"))) continue;
+    const item = element("div", "ability");
+    item.append(element("span", "name", ref.name ?? behavior.name), element("div", "text", describeAbility(ref)));
+    card.appendChild(item);
+  }
+  return card;
 }

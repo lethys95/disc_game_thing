@@ -28,7 +28,7 @@ import { CapitolScreen } from "#view/capitol";
 import { applySideColors } from "#view/colors";
 import { buttonById, byId, element, gold, movementPips } from "#view/dom";
 import { LeaderScreen } from "#view/leader";
-import { memberRow, unitName } from "#view/members";
+import { memberRow, unitDefCard, unitName } from "#view/members";
 
 const PLAYER: Side = 0;
 const AI_STEP_MS = 350;
@@ -470,9 +470,20 @@ export class Campaign {
     this.prompt.appendChild(element("div", "subtitle", LOCK_WARNING(fork)));
     for (const to of forkOptions(fork)) {
       const choose = element("button", "action", branchName(fork, to));
+      choose.title = "Hold right-click to see what it is.";
       choose.addEventListener("click", () => void this.act({ type: "choose", fork, to }));
+      // Hold right-click on a branch to see the unit it leads to (released on pointerup, like the formation peek).
+      choose.addEventListener("contextmenu", (e) => e.preventDefault());
+      choose.addEventListener("pointerdown", (e) => {
+        if (e.button !== 2) return;
+        this.peek.replaceChildren(unitDefCard(to));
+        this.peek.hidden = false;
+        this.peek.style.left = `${Math.min(e.clientX + 16, window.innerWidth - 320)}px`;
+        this.peek.style.top = `${Math.min(e.clientY + 16, window.innerHeight - 300)}px`;
+      });
       this.prompt.appendChild(choose);
     }
+    this.prompt.appendChild(element("div", "note", "Hold right-click on a branch to see what it is."));
     const later = element("button", "small", "Decide later");
     later.addEventListener("click", () => {
       this.deferred.add(`${world.turn}:${fork}`);

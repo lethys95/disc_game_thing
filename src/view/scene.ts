@@ -11,6 +11,7 @@ import { buildFigure } from "#view/figures";
 import { buildStandee } from "#view/standee";
 import type { CameraPose, Stage } from "#view/stage";
 import { effectDef } from "#rules/effects";
+import { UNITS } from "#rules/units/index";
 
 export interface TileRef {
   readonly side: Side;
@@ -41,6 +42,8 @@ interface Figure {
   shownHp: number;
   maxHp: number;
   readonly shieldFill: HTMLDivElement;
+  /** Spell-charge pips over a caster's bar: filled for charges left, hollow for spent. */
+  readonly charges: HTMLDivElement;
   shownShield: number;
   maxShield: number;
   fallen: boolean;
@@ -178,6 +181,15 @@ export class BattleScene {
       figure.shownHp = unit.hp;
       figure.maxShield = unit.base.shield;
       figure.shownShield = unit.shield;
+      const battery = UNITS[unit.defId]?.spellCharges ?? 0;
+      figure.charges.hidden = battery === 0 || !unit.alive;
+      figure.charges.replaceChildren(
+        ...Array.from({ length: battery }, (_, i) => {
+          const pip = document.createElement("span");
+          pip.className = i < unit.spellCharges ? "pip" : "pip spent";
+          return pip;
+        }),
+      );
       this.updateBar(figure);
       figure.group.position.copy(tilePosition(unit.side, unit.tile)).setY(0.28);
       if (!unit.alive && !figure.fallen) this.topple(figure, 0);
@@ -219,8 +231,11 @@ export class BattleScene {
     const shieldFill = document.createElement("div");
     shieldFill.className = "shield";
     bar.appendChild(shieldFill);
+    const charges = document.createElement("div");
+    charges.className = "charges";
+    bar.appendChild(charges);
     const figure: Figure = {
-      group, bar, fill, label, preview, materials,
+      group, bar, fill, label, preview, materials, charges,
       shownHp: unit.hp, maxHp: unit.base.maxHp,
       shieldFill, shownShield: unit.shield, maxShield: unit.base.shield,
       fallen: false,

@@ -325,3 +325,18 @@ button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }
 .squad .swatch:disabled { opacity: 0.25; cursor: default; }
 #turns .chip.side0 .art.placeholder { background: var(--side0); border-color: var(--side0); }
 #turns .chip.side1 .art.placeholder { background: var(--side1); border-color: var(--side1); }
+
+/* Spell charges over a caster's bar: small lightning bolts, lit or spent. */
+.hpbar .charges { position: absolute; left: 50%; bottom: 9px; transform: translateX(-50%); display: flex; gap: 2px; }
+.hpbar .charges .pip { width: 7px; height: 11px; background: #4fd8cf; clip-path: polygon(55% 0, 10% 58%, 45% 58%, 30% 100%, 90% 38%, 55% 38%, 75% 0); filter: drop-shadow(0 0 2px #4fd8cf); }
+.hpbar .charges .pip.spent { background: #2a3a3a; filter: none; }
+
+.def-card { width: 280px; }
+.def-card .title { font: 700 20px var(--display); }
+.def-card .subtitle { color: var(--muted); font-size: 11px; margin-bottom: 6px; }
+.def-card .stats { font-size: 11px; margin: 4px 0 8px; clear: both; }
+.def-card .ability { margin: 6px 0; }
+.def-card .ability .name { font: 700 14px var(--display); }
+.def-card .ability .text { font-size: 11px; color: var(--muted); }
+#forkprompt .note { color: var(--muted); font-size: 11px; }
+#peek { z-index: 30; }
