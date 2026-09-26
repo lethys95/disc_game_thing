@@ -27,7 +27,12 @@ src/rules/
 src/view/
   stage.ts           the one renderer/camera/bloom/labels/tween loop
   scene.ts, map.ts   BattleScene, MapView
-  app.ts, campaign.ts battle and map controllers
+  app.ts, campaign.ts battle and map controllers (campaign: game flow, input, AI turns, what goes where)
+  map-panels.ts      beside the map: your warbands, your cities, the end banner
+  map-text.ts        the hint line and news, pure text over the known world (tested)
+  peek.ts            hold-right-click peeks (formations, as last seen)
+  fork-prompt.ts     "a unit is ready to evolve" and Decide later
+  forecasts.ts       battle forecasts for the hint, from the worker
   standee.ts         paper standees: a unit's portrait as a camera-facing card (stand-in battle figures)
   city.ts            a city's screen (City tab: squad grids, recruit on a tile, graveyard; Research tab for the Capitol); also two warbands meeting
   squad-grid.ts      a 3×3 squad grid with drag and drop, empty-tile menus and unit actions

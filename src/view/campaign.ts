@@ -1,61 +1,43 @@
-import { hexDistance, hexKey, sameHex } from "#rules/hex";
-import { knownWorld, sightOf, visionOf } from "#rules/world/vision";
+import { sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
-import { tileAt, TERRAIN_COST } from "#rules/map";
 import type { Battle, Side } from "#rules/battle/types";
-import { forkOptions, openForks } from "#rules/forks";
 import { toSave } from "#rules/save";
 import type { Save } from "#rules/save";
-import { EVOLUTIONS, GUARDIAN_ID } from "#rules/units/index";
 import { applyWorldAction } from "#rules/world/actions";
 import { concludeBattle, playersIn } from "#rules/world/battles";
+import { fallbackColor } from "#rules/world/colors";
 import { createWorld } from "#rules/world/create";
 import type { PlayerSetup } from "#rules/world/create";
-import { income, waitingForks } from "#rules/world/economy";
-import { leadershipOf, movementOf, unspentPoints } from "#rules/world/leaders";
+import { income } from "#rules/world/economy";
+import { movementOf } from "#rules/world/leaders";
 import { planMove, reachable } from "#rules/world/movement";
-import { isLeaderOf, maxHpOf } from "#rules/world/record";
-import { playerOf, capitolOf, cityById, lairById, leaderAt } from "#rules/world/state";
-import type { MovePlan, MoveTarget } from "#rules/world/movement";
-import type { Leader, SquadMember, World, WorldAction, WorldEvent } from "#rules/world/state";
+import type { MovePlan } from "#rules/world/movement";
+import { capitolOf, leaderAt, playerOf } from "#rules/world/state";
+import type { Leader, World, WorldAction } from "#rules/world/state";
+import { knownWorld, visionOf } from "#rules/world/vision";
 import type { AiClient } from "#view/ai-client";
 import type { App } from "#view/app";
-import type { MapView } from "#view/map";
-import type { Stage } from "#view/stage";
-import { cityName, CityScreen } from "#view/city";
+import { CityScreen } from "#view/city";
 import type { Place } from "#view/city";
 import { applySideColors, battleColors } from "#view/colors";
-import { fallbackColor } from "#rules/world/colors";
 import { buttonById, byId, element, gold, movementPips } from "#view/dom";
+import { Forecasts } from "#view/forecasts";
+import { ForkPrompt } from "#view/fork-prompt";
 import { LeaderScreen } from "#view/leader";
-import { memberRow, unitDefCard, unitName } from "#view/members";
+import type { MapView } from "#view/map";
+import { MapPanels } from "#view/map-panels";
+import { hintText, leaderName, newsText } from "#view/map-text";
+import { formation, groupAt, showPeek } from "#view/peek";
+import type { Stage } from "#view/stage";
 
 const PLAYER: Side = 0;
 const AI_STEP_MS = 350;
-
-/** "Paladin (Faith preserves)": a branch by the unit it leads to and the dichotomy it stands for. */
-function branchName(fork: string, to: string): string {
-  const label = EVOLUTIONS[fork]?.find((e) => e.to === to)?.label;
-  return label ? `${unitName(to)} (${label})` : unitName(to);
-}
-
-const LOCK_WARNING = (fork: string) => `Permanent: every ${unitName(fork)} in your army will take this branch.`;
-
-function leaderName(leader: Leader): string {
-  const figure = leader.squad.find((m) => m.tile.row === leader.leaderTile.row && m.tile.col === leader.leaderTile.col) ?? leader.squad[0];
-  return figure ? unitName(figure.defId) : "Leader";
-}
 
 export interface CampaignOptions {
   readonly onSetup: () => void;
   /** Called at the start of each of the player's turns with a save of the game. */
   readonly onAutosave: (save: Save) => void;
   readonly onMenu: () => void;
-}
-
-interface Forecast {
-  readonly key: string;
-  readonly text: string;
 }
 
 /** The map layer: select a warband, click a hex to march; walking into an enemy starts a battle. */
@@ -66,18 +48,28 @@ export class Campaign {
   private hovered: Hex | null = null;
   private busy = false;
   private generation = 0;
-  private forecastCache: Forecast | null = null;
+  private readonly forecasts: Forecasts;
   private readonly hud = byId("maphud");
   private readonly turn = byId("mapturn");
-  private readonly squad = byId("mapsquad");
-  private readonly city = byId("mapcity");
   private readonly hint = byId("maphint");
   private readonly endTurn = buttonById("endturn");
-  private readonly banner = byId("mapbanner");
   private readonly peek = byId("peek");
-  private readonly prompt = byId("forkprompt");
-  /** Forks the player put off with "Decide later", keyed by turn so the prompt returns next turn. */
-  private deferred = new Set<string>();
+  private readonly forkPrompt = new ForkPrompt(byId("forkprompt"), this.peek, (action) => void this.act(action), () => this.render());
+  private readonly panels = new MapPanels({
+    select: (leaderId) => {
+      this.selected = leaderId;
+      this.render();
+    },
+    openLeader: (leaderId) => {
+      this.leaderOpen = leaderId;
+      this.render();
+    },
+    openPlace: (place) => {
+      this.place = place;
+      this.render();
+    },
+    newGame: () => this.options.onSetup(),
+  });
   /** The city (or meeting warbands) whose screen is open. */
   private place: Place | null = null;
   private leaderOpen: string | null = null;
@@ -103,6 +95,7 @@ export class Campaign {
     private readonly ai: AiClient,
     private readonly options: CampaignOptions,
   ) {
+    this.forecasts = new Forecasts(ai, () => this.render());
     const canvas = stage.renderer.domElement;
     canvas.addEventListener("pointermove", (e) => this.hover(e.clientX, e.clientY));
     canvas.addEventListener("click", () => void this.click());
@@ -181,6 +174,7 @@ export class Campaign {
 
   stop(): void {
     this.generation += 1;
+    this.forecasts.clear();
     this.place = null;
     this.cityScreen.hide();
     this.leaderOpen = null;
@@ -268,7 +262,7 @@ export class Campaign {
     if (!world || this.busy || world.outcome || world.engagement) return;
     const generation = this.generation;
     this.busy = true;
-    this.forecastCache = null;
+    this.forecasts.clear();
     this.render();
     const step = applyWorldAction(world, action);
     for (const event of step.events) {
@@ -294,7 +288,7 @@ export class Campaign {
       return;
     }
     this.render();
-    this.announce(step.events, step.world);
+    this.announce(newsText(step.events, step.world, PLAYER));
     await this.runAi();
   }
 
@@ -303,26 +297,11 @@ export class Campaign {
     const step = concludeBattle(this.world, battle);
     this.world = step.world;
     this.enterMap();
-    this.announce(step.events, step.world);
+    this.announce(newsText(step.events, step.world, PLAYER));
   }
 
-  /** News for the player at this screen: its own, and what others do where it can see. */
-  private announce(events: readonly WorldEvent[], world: World): void {
-    const sight = sightOf(world, PLAYER);
-    const inSight = (hex: Hex | undefined) => hex !== undefined && sight.has(hexKey(hex));
-    const lairSeen = (id: string) => inSight(world.lairs.find((l) => l.id === id)?.hex);
-    const lines: string[] = [];
-    for (const e of events) {
-      if (e.type === "captured" && (e.player === PLAYER || inSight(world.cities.find((c) => c.id === e.cityId)?.hex)))
-        lines.push(`${e.player === PLAYER ? "You take" : "The enemy takes"} the city.`);
-      if (e.type === "xp" && e.player === PLAYER) lines.push(`Your survivors gain ${e.each} XP each.`);
-      if (e.type === "evolved" && e.player === PLAYER) lines.push(`${unitName(e.from)} becomes ${unitName(e.to)}.`);
-      if (e.type === "leveled" && e.player === PLAYER) lines.push(`${unitName(e.defId)} reaches level ${e.level}.`);
-      if (e.type === "cleared" && (e.player === PLAYER || lairSeen(e.lairId))) lines.push(e.player === PLAYER ? "The bandit camp is cleared." : "The enemy cleared a bandit camp.");
-      if (e.type === "leaderFell" && e.player === PLAYER) lines.push("One of your warbands fell.");
-      if (e.type === "looted" && e.player === PLAYER) lines.push(`The dungeon yields ${e.gold} gold${e.joins ? ` and a ${unitName(e.joins)} joins you` : ""}.`);
-    }
-    if (lines.length > 0) this.hint.textContent = lines.join(" ");
+  private announce(news: string): void {
+    if (news) this.hint.textContent = news;
   }
 
   private async runAi(): Promise<void> {
@@ -334,26 +313,6 @@ export class Campaign {
     const action = await this.ai.chooseWorldAction(world);
     if (generation !== this.generation) return;
     await this.act(action);
-  }
-
-  /**
-   * The deterministic forecast of a fight, played by the AI on both sides. Computed in the worker; the hint says
-   * "thinking" until it arrives, then re-renders.
-   */
-  private forecastText(world: World, leader: Leader, target: MoveTarget): string {
-    const key = `${world.turn}:${leader.id}:${leader.hex.q},${leader.hex.r}:${JSON.stringify(target)}`;
-    if (this.forecastCache?.key === key) return this.forecastCache.text;
-    this.forecastCache = { key, text: "AI forecast: thinking…" };
-    const generation = this.generation;
-    void this.ai.forecast(world, leader.id, target).then((result) => {
-      if (generation !== this.generation || this.forecastCache?.key !== key) return;
-      const text =
-        // You're the mover, side 0 of the forecast battle.
-        result.winner === 0 ? `AI forecast: victory, ${result.standing[0]} of yours standing.` : `AI forecast: defeat, ${result.standing[1]} of theirs standing.`;
-      this.forecastCache = { key, text };
-      this.render();
-    });
-    return this.forecastCache.text;
   }
 
   private render(): void {
@@ -376,114 +335,22 @@ export class Campaign {
       if (leader) this.turn.append(" · ", element("span", "movement", `Movement ${movementPips(leader.movement, movementOf(leader))}`));
     }
     this.endTurn.disabled = !this.myTurn();
-    this.renderWarbands(leader);
-    this.renderCities(world);
+    this.panels.render(world, PLAYER, leader);
     this.renderCityScreen(world);
-    this.hint.textContent = this.hintText(known, leader, plan);
-    this.renderBanner(world);
+    this.hint.textContent = this.myTurn()
+      ? hintText({ known, player: PLAYER, leader, hovered: this.hovered, plan, forecast: (l, target) => this.forecasts.text(known, l, target) })
+      : world.activePlayer === PLAYER
+        ? ""
+        : "The enemy is moving…";
     this.renderLeaderScreen(world);
-    this.renderPrompt(world);
+    this.forkPrompt.render(world, PLAYER, this.myTurn());
     this.stage.renderer.domElement.style.cursor = plan && (plan.steps > 0 || plan.target) ? "pointer" : "default";
-  }
-
-  private hintText(world: World, leader: Leader | undefined, plan: MovePlan | null): string {
-    if (!this.myTurn()) return world.activePlayer === PLAYER ? "" : "The enemy is moving…";
-    if (!leader) return "You have no warbands. Elevate a garrison unit in your Capitol.";
-    const hovered = this.hovered;
-    const own = hovered ? leaderAt(world, hovered) : undefined;
-    if (own?.player === PLAYER && own.id !== leader.id) return `Click to select ${leaderName(own)}'s warband.`;
-    const explored = hovered !== null && playerOf(world, PLAYER).explored.includes(hexKey(hovered));
-    const tile = hovered && explored ? tileAt(world.map, hovered) : undefined;
-    const terrain = hovered && !explored ? "unexplored land" : tile ? `${tile.terrain}${TERRAIN_COST[tile.terrain] === null ? " (impassable)" : `, costs ${TERRAIN_COST[tile.terrain]}`}` : "";
-    if (!plan) return `${leaderName(leader)}: ${leader.movement} movement left. ${terrain ? `Hovering ${terrain}.` : "Click a hex to march."}`;
-    const target = plan.target;
-    if (target?.kind === "capture") return "Click to take the undefended city.";
-    if (target?.kind === "leader") return `Click to attack the enemy warband. ${this.forecastText(world, leader, target)}`;
-    if (target?.kind === "garrison") {
-      const city = cityById(world, target.cityId);
-      const whose = city.owner === null ? "the bandit-held city" : city.kind === "capitol" ? "the Capitol" : "the city";
-      return `Click to storm ${whose}. ${this.forecastText(world, leader, target)}`;
-    }
-    if (target?.kind === "lair") {
-      const lair = lairById(world, target.lairId);
-      const reward = lair.reward ? ` Reward: ${lair.reward.gold} gold${lair.reward.joins ? ` and a ${unitName(lair.reward.joins)} joins you` : ""}.` : "";
-      return `Click to attack the ${lair.kind === "camp" ? "bandit camp" : "dungeon's guards"}.${reward} ${this.forecastText(world, leader, target)}`;
-    }
-    if (plan.steps === 0) return "Not enough movement left to go further. End your turn.";
-    const total = plan.path.hexes.length;
-    const walks = plan.steps === total ? `March there (${plan.path.cost} movement)` : `March ${plan.steps} of ${total} hexes this turn`;
-    return `${walks}. Hovering ${terrain}.`;
-  }
-
-  private renderWarbands(selected: Leader | undefined): void {
-    this.squad.replaceChildren();
-    const mine = this.myLeaders();
-    this.squad.hidden = mine.length === 0;
-    this.squad.appendChild(element("div", "title", mine.length === 1 ? "Your warband" : "Your warbands"));
-    for (const leader of mine) {
-      const isSelected = leader.id === selected?.id;
-      const head = element("button", `warband${isSelected ? " selected" : ""}`);
-      head.append(element("span", "name", leaderName(leader)), element("span", "meta", `${leader.squad.length}/${leadershipOf(leader)} units · ${movementPips(leader.movement, movementOf(leader))}`));
-      head.addEventListener("click", () => {
-        this.selected = leader.id;
-        this.render();
-      });
-      this.squad.appendChild(head);
-      if (!isSelected) continue;
-      const commitment = this.world ? playerOf(this.world, PLAYER).commitment : undefined;
-      for (const m of [...leader.squad].sort((a, b) => a.tile.row - b.tile.row || a.tile.col - b.tile.col)) this.squad.appendChild(memberRow(m, leader, commitment));
-      this.renderLeaderTree(leader);
-      // Warbands next to each other can trade units (pillars.md, "Warbands meeting").
-      for (const other of mine.filter((l) => l.id !== leader.id && hexDistance(l.hex, leader.hex) === 1)) {
-        const meet = element("button", "action small", `Meet ${leaderName(other)}'s warband`);
-        meet.addEventListener("click", () => {
-          this.place = { kind: "meet", a: leader.id, b: other.id };
-          this.render();
-        });
-        this.squad.appendChild(meet);
-      }
-    }
-  }
-
-  /** The leader tree has its own screen; the panel shows how many points wait there. */
-  private renderLeaderTree(leader: Leader): void {
-    const points = unspentPoints(leader);
-    const open = element("button", `action small${points > 0 ? " ready" : ""}`, `Leader tree${points > 0 ? ` · ${points} point${points === 1 ? "" : "s"} to spend` : ""}`);
-    open.addEventListener("click", () => {
-      this.leaderOpen = leader.id;
-      this.render();
-    });
-    this.squad.appendChild(open);
   }
 
   private renderLeaderScreen(world: World): void {
     const leader = world.leaders.find((l) => l.id === this.leaderOpen && l.player === PLAYER);
     if (leader) this.leaderScreen.show(world, leader, `${leaderName(leader)}, leader`, this.myTurn());
     else this.leaderScreen.hide();
-  }
-
-  /** Your cities, the Capitol first; each opens its own screen. Everything happens there. */
-  private renderCities(world: World): void {
-    this.city.replaceChildren();
-    const cities = world.cities.filter((c) => c.owner === PLAYER).sort((a, b) => Number(b.kind === "capitol") - Number(a.kind === "capitol"));
-    this.city.hidden = cities.length === 0 || world.outcome !== null;
-    this.city.appendChild(element("div", "title", cities.length === 1 ? "Your city" : "Your cities"));
-    const forks = openForks(playerOf(world, PLAYER).faction, playerOf(world, PLAYER).commitment).length;
-    for (const city of cities) {
-      const row = element("div", "city-row");
-      const visitor = world.leaders.find((l) => l.player === PLAYER && sameHex(l.hex, city.hex));
-      const facts = [`${city.garrison.filter((m) => m.defId !== GUARDIAN_ID).length} in the garrison`, visitor ? `${leaderName(visitor)}'s warband visiting` : ""];
-      if (city.kind === "capitol") facts.push(`${forks} open branch${forks === 1 ? "" : "es"}`, `${playerOf(world, PLAYER).graveyard.length} in the graveyard`);
-      const text = element("div", "city-text");
-      text.append(element("div", "name", cityName(city)), element("div", "note", facts.filter((f) => f).join(" · ")));
-      const enter = element("button", "small", "Enter");
-      enter.addEventListener("click", () => {
-        this.place = { kind: "city", cityId: city.id };
-        this.render();
-      });
-      row.append(text, enter);
-      this.city.appendChild(row);
-    }
   }
 
   private renderCityScreen(world: World): void {
@@ -500,95 +367,12 @@ export class Campaign {
     }
   }
 
-  /** A unit of ours reached an undecided fork: ask now rather than let it sit at full XP unnoticed. */
-  private renderPrompt(world: World): void {
-    const fork = this.myTurn() ? waitingForks(world, PLAYER).find((f) => !this.deferred.has(`${world.turn}:${f}`)) : undefined;
-    this.prompt.hidden = fork === undefined;
-    if (fork === undefined) return;
-    this.prompt.replaceChildren();
-    this.prompt.appendChild(element("div", "title", `A ${unitName(fork)} is ready to evolve`));
-    this.prompt.appendChild(element("div", "subtitle", LOCK_WARNING(fork)));
-    for (const to of forkOptions(fork)) {
-      const choose = element("button", "action", branchName(fork, to));
-      choose.title = "Hold right-click to see what it is.";
-      choose.addEventListener("click", () => void this.act({ type: "choose", fork, to }));
-      // Hold right-click on a branch to see the unit it leads to (released on pointerup, like the formation peek).
-      choose.addEventListener("contextmenu", (e) => e.preventDefault());
-      choose.addEventListener("pointerdown", (e) => {
-        if (e.button !== 2) return;
-        this.peek.replaceChildren(unitDefCard(to));
-        this.peek.hidden = false;
-        this.peek.style.left = `${Math.min(e.clientX + 16, window.innerWidth - 320)}px`;
-        this.peek.style.top = `${Math.min(e.clientY + 16, window.innerHeight - 300)}px`;
-      });
-      this.prompt.appendChild(choose);
-    }
-    this.prompt.appendChild(element("div", "note", "Hold right-click on a branch to see what it is."));
-    const later = element("button", "small", "Decide later");
-    later.addEventListener("click", () => {
-      this.deferred.add(`${world.turn}:${fork}`);
-      this.render();
-    });
-    this.prompt.appendChild(later);
-  }
-
-  private renderBanner(world: World): void {
-    this.banner.hidden = !world.outcome;
-    if (!world.outcome) return;
-    this.banner.replaceChildren();
-    const won = world.outcome.winner === PLAYER;
-    this.banner.appendChild(element("div", "title", won ? "The enemy Guardian has fallen" : "Your Guardian has fallen"));
-    this.banner.appendChild(element("div", "subtitle", `${won ? "Victory" : "Defeat"} on turn ${world.turn}`));
-    const again = element("button", "action", "New game");
-    again.addEventListener("click", () => this.options.onSetup());
-    this.banner.appendChild(again);
-  }
-
-  /** The squad standing on a hex, whoever it belongs to: a warband, a camp or dungeon's guards, a garrison. */
-  private groupAt(hex: Hex): { title: string; squad: readonly SquadMember[]; leader: Leader | undefined } | null {
-    const world = this.known();
-    if (!world) return null;
-    const leader = leaderAt(world, hex);
-    if (leader) {
-      const whose = leader.player === PLAYER ? "Your warband" : "Enemy warband";
-      return { title: `${whose}, led by a ${leaderName(leader)}`, squad: leader.squad, leader };
-    }
-    const lair = world.lairs.find((l) => sameHex(l.hex, hex) && l.guards.length > 0);
-    if (lair) return { title: `${lair.kind === "camp" ? "Bandit camp" : "Dungeon guards"}${this.view.sees(hex) ? "" : ", as last seen"}`, squad: lair.guards, leader: undefined };
-    const city = world.cities.find((c) => sameHex(c.hex, hex) && c.garrison.length > 0);
-    if (city) {
-      const whose = city.owner === null ? "Bandit-held" : city.owner === PLAYER ? "Your" : "Enemy";
-      return { title: `${whose} ${city.kind === "capitol" ? "Capitol" : "city"} garrison${this.view.sees(hex) ? "" : ", as last seen"}`, squad: city.garrison, leader: undefined };
-    }
-    return null;
-  }
-
   private peekAt(x: number, y: number): void {
     const hex = this.view.pick(x, y);
-    const group = hex ? this.groupAt(hex) : null;
-    this.peek.hidden = !group;
-    if (!group) return;
-    this.peek.replaceChildren(element("div", "title", group.title));
-    const grid = element("div", "formation");
-    for (const row of [0, 1, 2]) {
-      grid.appendChild(element("div", "row-label", ["Front", "Middle", "Back"][row] ?? ""));
-      for (const col of [0, 1, 2]) {
-        const m = group.squad.find((s) => s.tile.row === row && s.tile.col === col);
-        const cell = element("div", `cell${m ? " filled" : ""}`);
-        if (m) {
-          cell.appendChild(element("div", "name", `${isLeaderOf(m, group.leader) ? "♛ " : ""}${unitName(m.defId)}`));
-          const bar = element("div", "hp");
-          const fill = element("div", "fill");
-          fill.style.width = `${(100 * m.hp) / maxHpOf(m, group.leader)}%`;
-          bar.appendChild(fill);
-          cell.appendChild(bar);
-        }
-        grid.appendChild(cell);
-      }
-    }
-    this.peek.appendChild(grid);
-    this.peek.style.left = `${Math.min(x + 16, window.innerWidth - 300)}px`;
-    this.peek.style.top = `${Math.min(y + 16, window.innerHeight - 200)}px`;
+    const known = this.known();
+    const group = hex && known ? groupAt(known, PLAYER, hex, this.view.sees(hex)) : null;
+    if (group) showPeek(this.peek, formation(group), x, y, 300, 200);
+    else this.peek.hidden = true;
   }
 
   /** Where a hex appears on screen; used by automated play-testing. */
