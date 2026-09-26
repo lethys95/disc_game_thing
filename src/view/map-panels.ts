@@ -9,12 +9,15 @@ import type { Place } from "#view/city";
 import { byId, element, movementPips } from "#view/dom";
 import { leaderName } from "#view/map-text";
 import { memberRow } from "#view/members";
+import { spellBar } from "#view/spells";
 
 export interface MapPanelActions {
   readonly select: (leaderId: string) => void;
   readonly openLeader: (leaderId: string) => void;
   readonly openPlace: (place: Place) => void;
   readonly newGame: () => void;
+  /** Pick a spell to aim (null: stop aiming). */
+  readonly pickSpell: (id: string | null) => void;
 }
 
 /** The panels beside the map: the player's warbands, its cities, and the end-of-game banner. */
@@ -25,9 +28,11 @@ export class MapPanels {
 
   constructor(private readonly actions: MapPanelActions) {}
 
-  render(world: World, player: PlayerId, selected: Leader | undefined): void {
+  render(world: World, player: PlayerId, selected: Leader | undefined, casting: string | null, mayAct: boolean): void {
     this.renderWarbands(world, player, selected);
     this.renderCities(world, player);
+    const spells = spellBar(world, player, mayAct, casting, this.actions.pickSpell);
+    if (spells && !this.city.hidden) this.city.appendChild(spells);
     this.renderBanner(world, player);
   }
 

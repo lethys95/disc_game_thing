@@ -5,6 +5,8 @@ import type { MovePlan, MoveTarget } from "#rules/world/movement";
 import { cityById, lairById, leaderAt, playerOf } from "#rules/world/state";
 import type { Leader, PlayerId, World, WorldEvent } from "#rules/world/state";
 import { sightOf } from "#rules/world/vision";
+import { castProblem, spellVictims } from "#rules/world/spells";
+import { spellById } from "#rules/spells";
 import { unitName } from "#view/members";
 
 /** What the map's hint line says: the hover, the march, the news. Pure text over what the player knows. */
@@ -53,6 +55,18 @@ export function hintText({ known, player, leader, hovered, plan, forecast }: Hin
   return `${walks}. Hovering ${terrain}.`;
 }
 
+/** The hint while aiming a spell: what a click on the hovered hex would do. */
+export function castHint(world: World, spellId: string, hovered: Hex | null): string {
+  const spell = spellById(spellId);
+  const problem = hovered ? castProblem(world, spellId, hovered) : null;
+  if (!hovered || problem) return `${spell.name}: ${spell.describe} Click a highlighted hex; right-click or Esc to stop.${problem && hovered ? ` (Here: ${problem}.)` : ""}`;
+  if (spell.effect.kind === "damage") {
+    const units = spellVictims(world, spellId, hovered).flat().filter((m) => m.hp > 0).length;
+    return `Click to cast ${spell.name} here: ${units} unit${units === 1 ? "" : "s"} lose up to ${spell.effect.amount} HP.`;
+  }
+  return `Click to cast ${spell.name} here.`;
+}
+
 /** News for the player: its own, and what others do where it can see. */
 export function newsText(events: readonly WorldEvent[], world: World, player: PlayerId): string {
   const sight = sightOf(world, player);
@@ -67,6 +81,7 @@ export function newsText(events: readonly WorldEvent[], world: World, player: Pl
     if (e.type === "leveled" && e.player === player) lines.push(`${unitName(e.defId)} reaches level ${e.level}.`);
     if (e.type === "cleared" && (e.player === player || lairSeen(e.lairId))) lines.push(e.player === player ? "The bandit camp is cleared." : "The enemy cleared a bandit camp.");
     if (e.type === "leaderFell" && e.player === player) lines.push("One of your warbands fell.");
+    if (e.type === "spellCast" && (e.player === player || inSight(e.at))) lines.push(`${e.player === player ? "You cast" : "The enemy casts"} ${spellById(e.spell).name}.`);
     if (e.type === "looted" && e.player === player) lines.push(`The dungeon yields ${e.gold} gold${e.joins ? ` and a ${unitName(e.joins)} joins you` : ""}.`);
   }
   return lines.join(" ");

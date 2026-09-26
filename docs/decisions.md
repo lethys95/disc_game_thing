@@ -108,3 +108,6 @@ The Etherborn's Negate can go on an ally, so "hidden from the bearer's side" no 
 
 **2026-09-26 — Only the duality fork is labelled (user).**
 Fork labels name the side of a faction's duality a branch stands for (Faith preserves/consumes, Scheme/Overload). Later forks (the Zealot's Punisher/Fanatic, the Justiciar's Etherborn/Backlasher) come from one side, so a label there adds a term the faction doesn't hold; they show by unit name only.
+
+**2026-09-26 — Spells: a canon system with placeholder spells (M25).**
+Pillars fix overworld spells paid in typed mana, aimed at an ally, an enemy, a tile or an area. Built: typed mana per faction color, mana from the Capitol and a mana node, learning at the Capitol, casting at anything in sight (fog applies), once per spell per turn. A spell is data (`rules/spells.ts`): a target kind, a radius, and an effect that is either map damage (never below 1 HP, so spells soften and battles kill) or an enchantment: an effect seed a warband, or a city's defenders, bring into battles for a number of turns (the architecture's "overworld spells buffing a warband for N world turns"). The four spells are placeholders after each faction's stated direction, awaiting the user's designs (#51).

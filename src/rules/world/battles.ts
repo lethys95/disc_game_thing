@@ -15,7 +15,7 @@ import { isLeaderOf, placementOf } from "#rules/world/record";
 import type { MoveTarget } from "#rules/world/movement";
 import { updateVision } from "#rules/world/vision";
 import { alive, cityById, lairById, leaderAt, leaderById, leaderUnit, nodesHeldBy, playerOf, unitId } from "#rules/world/state";
-import type { City, Defender, Engagement, Leader, PlayerId, SquadMember, World, WorldEvent, WorldStep } from "#rules/world/state";
+import type { City, Defender, Enchantment, Engagement, Leader, PlayerId, SquadMember, World, WorldEvent, WorldStep } from "#rules/world/state";
 
 /**
  * Battles started on the map: who fights whom, with what context, and writing the result back. Every battle has
@@ -41,14 +41,17 @@ function defendingSquad(world: World, defender: Defender): Held & { player: Play
   return { player: city.owner, squad: city.garrison, leader: undefined };
 }
 
+/** The city whose walls the defenders stand behind: a garrison's own, or a warband's own city it stands in. */
+function defendedCity(world: World, defender: Defender, player: PlayerId | null): City | undefined {
+  if (defender.kind === "garrison") return cityById(world, defender.cityId);
+  if (defender.kind !== "leader") return undefined;
+  const hex = leaderById(world, defender.leaderId).hex;
+  return world.cities.find((c) => sameHex(c.hex, hex) && c.owner === player);
+}
+
 /** The armor a defender gets from a city's walls: a garrison always, a warband only in its own city. */
 function wallsFor(world: World, defender: Defender, player: PlayerId | null): number {
-  let city: City | undefined;
-  if (defender.kind === "garrison") city = cityById(world, defender.cityId);
-  if (defender.kind === "leader") {
-    const hex = leaderById(world, defender.leaderId).hex;
-    city = world.cities.find((c) => sameHex(c.hex, hex) && c.owner === player);
-  }
+  const city = defendedCity(world, defender, player);
   return city ? CITY_ARMOR_PER_TIER * (city.tier - 1) : 0;
 }
 
@@ -59,11 +62,16 @@ export function engage(world: World, attacker: Leader, defender: Defender): Enga
 
 function engagementBattle(world: World, attacker: Leader, defender: Defender): Battle {
   const defending = defendingSquad(world, defender);
-  const ours = attacker.squad.filter(alive).map((m) => placementOf(m, attacker));
+  const spelled = (placement: Placement, on: readonly Enchantment[]): Placement =>
+    on.length === 0 ? placement : { ...placement, effects: [...(placement.effects ?? []), ...on.map((e) => e.effect)] };
+  const ours = attacker.squad.filter(alive).map((m) => spelled(placementOf(m, attacker), attacker.enchantments));
+  // A warband brings its own spells; defenders behind a city's walls (its garrison, or a warband in its own city)
+  // also bring the city's.
+  const theirSpells = [...(defending.leader?.enchantments ?? []), ...(defendedCity(world, defender, defending.player)?.enchantments ?? [])];
   // Defenders in a city fight behind its walls: its garrison, or a warband standing in its own city.
   const walls = wallsFor(world, defender, defending.player);
   const theirs = defending.squad.filter(alive).map((m) => {
-    const placement = placementOf(m, defending.leader);
+    const placement = spelled(placementOf(m, defending.leader), theirSpells);
     return walls > 0 ? { ...placement, effects: [...(placement.effects ?? []), { def: "fortified", amount: walls }] } : placement;
   });
   const squads: [Placement[], Placement[]] = [ours, theirs];

@@ -6,6 +6,7 @@ import { hexDistance, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import type { WorldMap } from "#rules/map";
 import type { NodeKind } from "#rules/nodes";
+import type { ManaColor } from "#rules/spells";
 import { UNITS } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
 
@@ -63,6 +64,12 @@ export interface Player {
   research: string[];
   /** Out of the game: its Guardian fell. */
   eliminated: boolean;
+  /** Mana by color (pillars.md, "Spells"); a player earns its own faction's color. */
+  mana: Record<ManaColor, number>;
+  /** Spells learned at the Capitol (`rules/spells.ts`). */
+  spells: string[];
+  /** Spells cast this turn: each once per turn. */
+  cast: string[];
   /** Fog of war (`world/vision.ts`): every hex this player has seen, by `hexKey`. */
   explored: string[];
   /** What this player last saw of the cities, lairs and nodes out of its sight now. */
@@ -93,6 +100,15 @@ export interface Leader {
   squad: SquadMember[];
   /** The squad member who is the leader. Cosmetic for now: it picks the figure shown on the map. */
   leaderTile: Tile;
+  /** Spells on the warband that its units bring into battle for a while. */
+  enchantments: Enchantment[];
+}
+
+/** A spell's lasting effect on a warband or a city's defenders, until the end of turn `until`. */
+export interface Enchantment {
+  readonly spell: string;
+  readonly effect: EffectSeed;
+  readonly until: number;
 }
 
 /** A node on the map: it belongs to the nearest city (`cityOfNode`). */
@@ -115,6 +131,8 @@ export interface City {
   garrison: SquadMember[];
   /** Upgraded with gold: garrison slots and armor for defenders (balance.ts, CITY_SLOTS). Kept when captured. */
   tier: number;
+  /** Spells on the city: its defenders bring them into battle. */
+  enchantments: Enchantment[];
 }
 
 /** A one-time dungeon reward (user's 2024 design: gold, a creature that joins you; items once they exist). */
@@ -181,6 +199,10 @@ export type WorldAction =
   | { type: "research"; research: string }
   /** Raise a node of a city you hold one level. */
   | { type: "investNode"; nodeId: string }
+  /** Learn a spell at the Capitol. */
+  | { type: "learnSpell"; spell: string }
+  /** Cast a learned spell at a hex in sight. */
+  | { type: "castSpell"; spell: string; at: Hex }
   /** Raise a city you hold one tier. */
   | { type: "upgradeCity"; cityId: string }
   /** Buy a unit-type upgrade: units that become that type from now on receive it. */
@@ -210,6 +232,8 @@ export type WorldEvent =
   | { type: "researched"; player: PlayerId; research: string }
   | { type: "nodeInvested"; nodeId: string; level: number }
   | { type: "upgraded"; player: PlayerId; upgrade: string }
+  | { type: "spellLearned"; player: PlayerId; spell: string }
+  | { type: "spellCast"; player: PlayerId; spell: string; at: Hex }
   | { type: "worldEnd"; winner: PlayerId }
   | { type: "eliminated"; player: PlayerId };
 

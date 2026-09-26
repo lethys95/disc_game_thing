@@ -1,4 +1,4 @@
-import { CAMP_MEDIUM_FROM, CAMP_STRONG_FROM, CAPITOL_HEALING, CITY_MAX_TIER, CITY_UPGRADE_COST, NODE_INVEST_COST, NODE_MAX_LEVEL, CAPITOL_INCOME, RESURRECTION_BASE, RESURRECTION_PREMIUM } from "#rules/balance";
+import { CAPITOL_MANA, CAMP_MEDIUM_FROM, CAMP_STRONG_FROM, CAPITOL_HEALING, CITY_MAX_TIER, CITY_UPGRADE_COST, NODE_INVEST_COST, NODE_MAX_LEVEL, CAPITOL_INCOME, RESURRECTION_BASE, RESURRECTION_PREMIUM } from "#rules/balance";
 import type { Tile } from "#rules/battle/types";
 import { chooseProblem, isFork, openForks } from "#rules/forks";
 import { COLS, ROWS, sameTile } from "#rules/battle/grid";
@@ -10,8 +10,9 @@ import { learnProblem, movementOf, squadHealingOf } from "#rules/world/leaders";
 import { maxHpOf } from "#rules/world/record";
 import { CITY_RESURRECTION_PREMIUM, RESEARCH } from "#rules/research";
 import { UPGRADES, upgradesFor } from "#rules/upgrades";
+import { FACTION_MANA } from "#rules/spells";
 import { playerOf, alive, banditGroup, capitolOf, cityById, cityOfNode, leaderAt, leaderById, leaderUnit, member, nodesHeldBy } from "#rules/world/state";
-import type { PlayerId, City, Leader, MapNode, Mark, SquadMember, SquadRef, Strength, World, WorldEvent } from "#rules/world/state";
+import type { Enchantment, PlayerId, City, Leader, MapNode, Mark, SquadMember, SquadRef, Strength, World, WorldEvent } from "#rules/world/state";
 import { capacityOf, hexOf, ownerOf, squadAt } from "#rules/world/squads";
 
 /** Gold, recruiting, branch choices, resurrection, elevation, and the start of a side's turn. */
@@ -189,10 +190,18 @@ export function elevateProblem(world: World, tile: Tile): string | null {
 }
 
 
+/** Mana per turn, in the player's own color: a trickle from the Capitol, more from mana nodes. */
+export function manaIncome(world: World, side: PlayerId): number {
+  return (capitolOf(world, side) ? CAPITOL_MANA : 0) + nodesHeldBy(world, side).reduce((sum, n) => sum + NODES[n.kind].mana(n.level), 0);
+}
+
 export function startTurn(world: World, events: WorldEvent[]): void {
   const side = world.activePlayer;
   const earned = income(world, side);
-  playerOf(world, side).gold += earned;
+  const player = playerOf(world, side);
+  player.gold += earned;
+  player.mana[FACTION_MANA[player.faction]] += manaIncome(world, side);
+  player.cast = [];
   const capitol = capitolOf(world, side);
   for (const { squad, leader } of squadsOf(world, side)) {
     const resting = capitol !== undefined && (leader === undefined ? squad === capitol.garrison : sameHex(leader.hex, capitol.hex));
@@ -228,6 +237,10 @@ export function upgradeProblem(world: World, id: string): string | null {
 
 /** A new round (every player has moved): cleared camps regrow (provisional, #19), stronger as the game goes on. */
 export function startRound(world: World, events: WorldEvent[]): void {
+  // Spells on warbands and cities wear off.
+  const lasting = (e: Enchantment) => e.until >= world.turn;
+  for (const leader of world.leaders) leader.enchantments = leader.enchantments.filter(lasting);
+  for (const city of world.cities) city.enchantments = city.enchantments.filter(lasting);
   const strength: Strength = world.turn >= CAMP_STRONG_FROM ? "strong" : world.turn >= CAMP_MEDIUM_FROM ? "medium" : "weak";
   for (const lair of world.lairs) {
     if (lair.regrowsOn === null || lair.regrowsOn > world.turn || leaderAt(world, lair.hex)) continue;
