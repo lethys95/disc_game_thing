@@ -1,21 +1,26 @@
 import { effectiveStats, legalActions } from "#rules/battle/engine";
+import { UNITS } from "#rules/units/index";
 import { act, affectedBy, p, start, unit, until } from "#tests/helpers";
 import { describe, expect, test } from "vitest";
+
+/** The Custodian's shield (a tuned number, #52). */
+const SHIELD = UNITS["custodian"]?.stats.shield ?? 0;
 
 describe("shields (Custodian, Technician)", () => {
   test("a shield takes hits before health", () => {
     const battle = act(start([p("paladin", 0, 1)], [p("custodian", 0, 1)]), "attack", "1.0.1").battle;
-    expect(unit(battle, "1.0.1").shield).toBe(90 - 40);
+    expect(unit(battle, "1.0.1").shield).toBe(SHIELD - 40);
     expect(unit(battle, "1.0.1").hp).toBe(60);
   });
 
   test("damage past the shield hits health, and Defend doesn't halve what the shield takes", () => {
-    let battle = start([p("zealot", 0, 1)], [p("custodian", 0, 1)]);
+    let battle = start([p("paladin", 0, 1)], [p("custodian", 0, 1)]);
     battle = act(battle, "attack", "1.0.1").battle;
     battle = act(battle, "defend").battle;
     const step = act(battle, "attack", "1.0.1");
+    // The Paladin's 40 empties what's left of the shield; only the rest is halved.
     expect(unit(step.battle, "1.0.1").shield).toBe(0);
-    expect(unit(step.battle, "1.0.1").hp).toBe(60 - Math.floor((70 - 20) / 2));
+    expect(unit(step.battle, "1.0.1").hp).toBe(60 - Math.floor((40 - (SHIELD - 40)) / 2));
   });
 
   test("only shield restoration brings a shield back", () => {
@@ -24,7 +29,7 @@ describe("shields (Custodian, Technician)", () => {
     battle = act(battle, "defend").battle;
     expect(battle.current?.unitId).toBe("1.1.1");
     battle = act(battle, "restore_shield", "1.0.1").battle;
-    expect(unit(battle, "1.0.1").shield).toBe(90);
+    expect(unit(battle, "1.0.1").shield).toBe(SHIELD);
   });
 });
 
@@ -71,6 +76,6 @@ describe("bandits", () => {
   });
 
   test("effective stats report the shield", () => {
-    expect(effectiveStats(start([p("custodian", 0, 0)], [p("bandit", 0, 0)]), "0.0.0").shield).toBe(90);
+    expect(effectiveStats(start([p("custodian", 0, 0)], [p("bandit", 0, 0)]), "0.0.0").shield).toBe(SHIELD);
   });
 });

@@ -1,3 +1,4 @@
+import { UNITS } from "#rules/units/index";
 import { createBattle, effectiveStats, legalActions } from "#rules/battle/engine";
 import type { BattleContext } from "#rules/battle/engine";
 import type { BattleEvent } from "#rules/battle/types";
@@ -21,7 +22,8 @@ describe("world context reaches the battle as effects", () => {
     expect(damageTo(smithed.events, "1.0.1")).toBe(damageTo(plain.events, "1.0.1") + 10);
 
     const burst = act(until(createBattle([[p("apprentice", 1, 1)], [p("congregant", 1, 1)]], blacksmith(10)).battle, "0.1.1"), "plus_burst", "1.1.1");
-    expect(damageTo(burst.events, "1.1.1")).toBe(40 + 10);
+    const power = UNITS["apprentice"]?.abilities.find((a) => a.id === "plus_burst")?.params?.["power"] ?? 0;
+    expect(damageTo(burst.events, "1.1.1")).toBe(power + 10);
   });
 
   test("it's not a stat: heals scaled on damage don't grow, and the unit card's damage is unchanged", () => {

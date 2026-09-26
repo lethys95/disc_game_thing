@@ -67,6 +67,7 @@ The step-by-step recipes (units, abilities, effects, nodes, forks, recording the
 - **Fog of war: plan from `knownWorld(world, player)`** (`world/vision.ts`), never from the world, whenever a player's view matters: the map AI (`chooseWorldAction` does it first thing), hover previews, forecasts, peeks, and what the map draws (`visionOf` for the fog). Only the rules and the player's own screens (cities, warbands) read the world directly. Anything that changes the world ends with `updateVision`; `move` is planned on the known world and can stop early.
 - Nothing outside `abilities/` and `effects.ts` names an ability or effect id. The engine, AI and view use tags, flags (`reschedules`, `secretTarget`, `visibility`, `quiet`) and hooks.
 - Anything the design doesn't specify is marked provisional where it's defined and listed in `docs/questions.md`.
+- `pnpm sim:t1` plays tier-1 squads of Jilliath and Nexus against each other (battle only); the balance check while factions grow.
 - `pnpm verify` before calling anything done: types, tests, a screenshot, and the click-through playtests (battle, map, save/load).
 - **Changing the World's shape? Bump `SAVE_VERSION`** (`src/rules/save.ts`) and update the snapshot (`pnpm vitest -u tests/save.test.ts`); the shape test fails until you do. Old saves are then refused, never migrated.
 
