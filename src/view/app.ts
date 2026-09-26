@@ -5,7 +5,7 @@ import type { Action, Battle, BattleEvent, BattleUnit, Enhancement, LegalAbility
 import { PLAIN } from "#rules/battle/types";
 import type { PlayerColor } from "#rules/world/colors";
 import { applySideColors, colorPair } from "#view/colors";
-import { enhancementLabel, Hud, optionKey, unitLabel } from "#view/hud";
+import { actionButtons, enhancementLabel, Hud, optionKey, unitLabel } from "#view/hud";
 import { asKnown, masked } from "#view/secrecy";
 import type { BannerButton } from "#view/hud";
 import type { BattleScene, PreviewMark, TileRef } from "#view/scene";
@@ -69,7 +69,7 @@ export class App {
     private readonly settings: Settings,
     private readonly options: AppOptions,
   ) {
-    this.hud = new Hud((abilityId) => settings.keyFor(abilityId), {
+    this.hud = new Hud(settings, {
       onAbility: (id) => this.chooseAbility(id),
       onAuto: () => this.toggleAuto(),
       onFocus: (unitId) => {
@@ -191,7 +191,8 @@ export class App {
 
   /** An ability whose definition claims this key, among the ones the player may use now. */
   private hotkey(key: string): void {
-    const option = this.playerOptions().find((o) => o.enhancement.kind === "none" && this.settings.keyFor(o.abilityId) === key);
+    const slot = /^[1-9]$/.test(key) && this.settings.data.slotKeys ? actionButtons(this.playerOptions())[Number(key) - 1] : undefined;
+    const option = slot ?? this.playerOptions().find((o) => o.enhancement.kind === "none" && this.settings.keyFor(o.abilityId) === key);
     if (option) this.chooseAbility(optionKey(option));
   }
 

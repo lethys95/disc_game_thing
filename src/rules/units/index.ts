@@ -34,7 +34,10 @@ export const RECRUIT_COST: Readonly<Record<string, number>> = { congregant: 40, 
 /** One step up an evolution tree. */
 export interface Evolution {
   readonly to: string;
-  /** At a fork, the side of the line's dichotomy this branch stands for (docs/design/dichotomies.md). */
+  /**
+   * At the faction's duality fork, the side this branch stands for (docs/design/dichotomies.md). Later forks go
+   * unlabelled: both branches come from the same side (user, 2026-09-26).
+   */
   readonly label?: string;
 }
 
@@ -47,14 +50,14 @@ export const EVOLUTIONS: Readonly<Record<string, readonly Evolution[]>> = {
   congregant: [{ to: "paladin", label: "Faith preserves" }, { to: "zealot", label: "Faith consumes" }],
   paladin: [{ to: "templar" }],
   templar: [{ to: "immortal" }],
-  zealot: [{ to: "punisher", label: "Punishment" }, { to: "fanatic", label: "Self-sacrifice" }],
+  zealot: [{ to: "punisher" }, { to: "fanatic" }],
   punisher: [{ to: "torturer" }],
   fanatic: [{ to: "chosen" }],
   chosen: [{ to: "avatar_of_vengeance" }],
   // Ral-Vitahl: scheme vs overload, chosen per line (user, 2026-09-25).
   custodian: [{ to: "cyclops", label: "Scheme" }, { to: "mutant", label: "Overload" }],
   apprentice: [{ to: "justiciar", label: "Scheme" }, { to: "thaumaturge", label: "Overload" }],
-  // Tier 3 mages (user, 2026-09-26). The Justiciar forks; the fork has no dichotomy label yet.
+  // Tier 3 mages (user, 2026-09-26).
   justiciar: [{ to: "etherborn" }, { to: "backlasher" }],
   thaumaturge: [{ to: "maelstrom" }],
 };

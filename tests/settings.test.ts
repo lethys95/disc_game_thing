@@ -10,7 +10,9 @@ describe("settings", () => {
       rotate: 2.5,
       zoom: 1,
       hotkeys: { defend: "q" },
+      slotKeys: true,
     });
+    expect(parseSettings(JSON.stringify({ hotkeys: { defend: "3" }, slotKeys: false }))).toMatchObject({ hotkeys: {}, slotKeys: false });
   });
 
   test("abilities keep their own keys until changed; taking a key in use swaps the two", () => {

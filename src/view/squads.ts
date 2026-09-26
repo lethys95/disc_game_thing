@@ -64,8 +64,8 @@ export const FORMATIONS: Readonly<Record<Playable, readonly { readonly name: str
   jilliath: [
     { name: "Congregants", squad: PRESETS.uncommitted },
     { name: "Faith preserves", squad: PRESETS.preserve },
-    { name: "Faith consumes: Punishment", squad: PRESETS.punishment },
-    { name: "Faith consumes: Self-sacrifice", squad: PRESETS.sacrifice },
+    { name: "Faith consumes: Punisher", squad: PRESETS.punishment },
+    { name: "Faith consumes: Fanatic", squad: PRESETS.sacrifice },
   ],
   nexus: [
     { name: "Tier 1", squad: NEXUS_PRESETS.uncommitted },

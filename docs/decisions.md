@@ -105,3 +105,6 @@ Canon (pillars.md): unexplored hidden; explored-not-visible shows last-known sta
 
 **2026-09-26 — Secret effects are seen by the side that cast them; the battle AI looks past free actions (m21).**
 The Etherborn's Negate can go on an ally, so "hidden from the bearer's side" no longer fits: an effect's visibility is now `public` or `secret`, and a secret one is known only to the side of the unit that applied it (effect events carry their source for the mask). The greedy battle AI scored each action by the position right after it, so a free action that only pays off on the next one (Combustion) never won; an action that leaves the same unit's turn going is now worth its best follow-up, two steps deep. Counter and Negate are used more sensibly as a side effect.
+
+**2026-09-26 — Only the duality fork is labelled (user).**
+Fork labels name the side of a faction's duality a branch stands for (Faith preserves/consumes, Scheme/Overload). Later forks (the Zealot's Punisher/Fanatic, the Justiciar's Etherborn/Backlasher) come from one side, so a label there adds a term the faction doesn't hold; they show by unit name only.

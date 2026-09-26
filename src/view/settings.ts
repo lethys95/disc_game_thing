@@ -23,9 +23,11 @@ export interface SettingsData {
   readonly zoom: number;
   /** Hotkeys the player changed, by ability id; the rest use their ability's own. */
   readonly hotkeys: Readonly<Record<string, string>>;
+  /** Keys 1–9 pick the battle's ability buttons by position. */
+  readonly slotKeys: boolean;
 }
 
-export const DEFAULT_SETTINGS: SettingsData = { speed: "normal", rotate: 1, zoom: 1, hotkeys: {} };
+export const DEFAULT_SETTINGS: SettingsData = { speed: "normal", rotate: 1, zoom: 1, hotkeys: {}, slotKeys: true };
 
 /** Camera multipliers stay within this range. */
 export const CAMERA_RANGE = { min: 0.25, max: 2.5 } as const;
@@ -47,18 +49,23 @@ export function parseSettings(text: string | null): SettingsData {
   }
   if (typeof parsed !== "object" || parsed === null) return DEFAULT_SETTINGS;
   const speed: unknown = Reflect.get(parsed, "speed");
+  const slotKeys: unknown = Reflect.get(parsed, "slotKeys");
   const hotkeys: unknown = Reflect.get(parsed, "hotkeys");
   const keys: Record<string, string> = {};
   if (typeof hotkeys === "object" && hotkeys !== null) {
-    for (const [id, key] of Object.entries(hotkeys)) if (typeof key === "string" && key.length === 1 && remappable().includes(id)) keys[id] = key;
+    for (const [id, key] of Object.entries(hotkeys)) if (typeof key === "string" && assignable(key) && remappable().includes(id)) keys[id] = key;
   }
   return {
     speed: isSpeed(speed) ? speed : DEFAULT_SETTINGS.speed,
     rotate: clampCamera(Reflect.get(parsed, "rotate")) ?? DEFAULT_SETTINGS.rotate,
     zoom: clampCamera(Reflect.get(parsed, "zoom")) ?? DEFAULT_SETTINGS.zoom,
     hotkeys: keys,
+    slotKeys: typeof slotKeys === "boolean" ? slotKeys : DEFAULT_SETTINGS.slotKeys,
   };
 }
+
+/** A key an ability can be given: one character, not a space, and not a digit (1–9 are the ability slots). */
+export const assignable = (key: string): boolean => key.length === 1 && key !== " " && !/[0-9]/.test(key);
 
 /** Abilities that come with a hotkey of their own; those are the ones the player can move. */
 export function remappable(): string[] {
