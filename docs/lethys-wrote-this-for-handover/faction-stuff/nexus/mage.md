@@ -9,6 +9,9 @@
 - **Forks:** tier 2: **scheme** (Justiciar: foresight, counterplay) vs **overload** (Thaumaturge: power that doesn't care who it hits).
 - **Theme:** burst and gimmicks; "Storm" combo play.
 
+## Spell charges (you, 2026-09-26; converging, not locked)
+Nexus casters aren't real spellcasters: their power comes from batteries and equipment. Each caster has **finite spell charges** per fight, restored after combat and rarely otherwise. Spells can be **enhanced by spending more charges**, like MTG Izzet's *overload* (pay double: the spell hits "each" instead of one target) and *replicate* (pay again per copy, choosing new targets). The Apprentice is the simplest version (a limited area spell); later casters offer choices. The default attack is always weak: momentum matters, time is never on your side. Not sci-fi.
+
 ## Tier 1
 
 ### Apprentice

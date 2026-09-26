@@ -20,3 +20,7 @@ Fighter line displays dichotomy between faith and fanaticism. Paladin line being
 Spells: targeting infrastructure a lot, making it easier to conquer territory.
 
 Healing: most healing of any faction, with side effects (martyrdom).
+
+## User direction, 2026-09-26
+- **Resurrection** is likely a Jilliath mechanic (the Grove's fungal corpse explosion prevents it).
+- **Support-line idea:** something like WoW's Beacon of Light, as an ability of a support unit (from Claude's discarded "relic" summon pitch).
