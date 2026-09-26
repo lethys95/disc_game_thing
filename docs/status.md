@@ -20,7 +20,7 @@ Rules: `src/rules/` (93 tests). View: `src/view/`. Tools: the `verify` skill; `A
 
 ## Next
 **M26: Jilliath's tier-1 backline** (user, 2026-09-26: "keep it simple"): the Cleric (heal scaled by missing health, weak ranged attack) and "Jilliath mage 1" (placeholder name; Condemn: damage plus a share of the target's missing health). Recruitable; new recruits fill by line (melee from the front, the rest from the back). **Hovering an ability button previews it on every target it can reach** (the user asked for numbers, not abstractions). Sims are smoke tests only until both factions have their lines; `pnpm sim:t1` is the tier-1 balance check (#52).
-1. **Waiting on the user:** a name for the mage; playtest; #40–51; colors (#43). Sonniss GDC packs downloading to `~/programs/sfx-libraries/sonniss/` (an agent).
+1. **Waiting on the user:** a name for the mage; playtest; #40–51; colors (#43). Sonniss GDC 2015–2020 downloaded and extracted (81 GB, `~/programs/sfx-libraries/sonniss/`, `INDEX.md` lists the best fits); 2021–2024 blocked by Sonniss's site, 2026 over its Google Drive quota (retry in a browser).
 2. Candidates next: sound slots and playback with the Sonniss material; more of the backline lines when the user designs them.
 3. Open design: Nexus tiers 4–5 (#35), Jilliath lines past tier 1, fourth archetype (#37), real spells (#51), leader experience (#33).
 
