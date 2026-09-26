@@ -2,6 +2,7 @@ import * as THREE from "three";
 import type { PlayerColor } from "#rules/world/colors";
 import { cityOfNode } from "#rules/world/state";
 import type { PlayerId } from "#rules/world/state";
+import type { Vision } from "#rules/world/vision";
 import { threeColor } from "#view/colors";
 import { movementOf } from "#rules/world/leaders";
 import { movementPips } from "#view/dom";
@@ -39,7 +40,18 @@ export interface MapHighlights {
 interface HexTile {
   readonly mesh: THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial>;
   readonly top: number;
+  readonly color: THREE.Color;
+  readonly roughness: number;
+  readonly metalness: number;
+  /** Trees, peaks and mounds on the hex, hidden until it's explored. */
+  readonly decoration: THREE.Object3D[];
 }
+
+/** Unexplored hexes are all alike; explored ones out of sight are dimmed (fog of war). */
+const UNEXPLORED = new THREE.Color(0x0d0c0e);
+/** Every unexplored hex has the same height, so the fog doesn't give away mountains and water. */
+const UNEXPLORED_HEIGHT = 0.2;
+const REMEMBERED = 0.4;
 
 interface SiteModel {
   readonly group: THREE.Group;
@@ -91,8 +103,10 @@ export class MapView {
   private readonly hexes = new Map<string, HexTile>();
   private readonly leaders = new Map<string, LeaderFigure>();
   private readonly sites = new Map<string, SiteModel>();
+  private vision: Vision | null = null;
   /** Each node's link to its city, recolored when the city changes hands. */
-  private readonly links = new Map<string, { material: THREE.MeshStandardMaterial; city: string }>();
+  private readonly links = new Map<string, { mesh: THREE.Mesh; material: THREE.MeshStandardMaterial; city: string }>();
+  private readonly nodeModels = new Map<string, THREE.Group>();
   private readonly lairs = new Map<string, { group: THREE.Group; label: HTMLDivElement }>();
   private readonly siteLayer = new THREE.Group();
 
@@ -146,7 +160,8 @@ export class MapView {
       mesh.receiveShadow = true;
       mesh.userData = { hex: tile.hex };
       this.terrain.add(mesh);
-      this.hexes.set(hexKey(tile.hex), { mesh, top: look.height });
+      const decoration: THREE.Object3D[] = [];
+      this.hexes.set(hexKey(tile.hex), { mesh, top: look.height, color: material.color.clone(), roughness: material.roughness, metalness: material.metalness, decoration });
 
       if (tile.terrain === "forest") {
         for (let i = 0; i < 3; i++) {
@@ -163,6 +178,7 @@ export class MapView {
             o.castShadow = true;
           });
           this.terrain.add(tree);
+          decoration.push(tree);
         }
       }
       if (tile.terrain === "mountain") {
@@ -171,6 +187,7 @@ export class MapView {
         peak.rotation.y = jitter(tile.hex, 4) * Math.PI;
         peak.castShadow = true;
         this.terrain.add(peak);
+        decoration.push(peak);
       }
       if (tile.terrain === "hills") {
         const mound = new THREE.Mesh(new THREE.SphereGeometry(0.55, 8, 5, 0, Math.PI * 2, 0, Math.PI / 2), material);
@@ -178,6 +195,7 @@ export class MapView {
         mound.position.set(at.x, look.height, at.z);
         mound.castShadow = true;
         this.terrain.add(mound);
+        decoration.push(mound);
       }
     }
   }
@@ -243,6 +261,7 @@ export class MapView {
     }
 
     this.links.clear();
+    this.nodeModels.clear();
     for (const node of world.nodes) {
       const model = node.kind === "blacksmith" ? anvil(dark, forge) : orePile(node.hex, ore, dark);
       model.position.copy(this.standingPoint(node.hex));
@@ -251,6 +270,7 @@ export class MapView {
         o.castShadow = true;
       });
       this.siteLayer.add(model);
+      this.nodeModels.set(node.id, model);
       // A thin road from the node to its city, in the owner's color: which city it feeds (user, 2026-09-26).
       const city = cityOfNode(world, node);
       if (!city) continue;
@@ -262,7 +282,7 @@ export class MapView {
       link.position.copy(from).lerp(to, 0.5);
       link.lookAt(to);
       this.siteLayer.add(link);
-      this.links.set(node.id, { material, city: city.id });
+      this.links.set(node.id, { mesh: link, material, city: city.id });
     }
   }
 
@@ -324,7 +344,19 @@ export class MapView {
     }
   }
 
+  /**
+   * Cities, nodes and their links as the player at this screen knows them (`knownWorld`): a place it hasn't found
+   * is hidden, one out of sight shows as last seen.
+   */
   syncSites(world: World): void {
+    const cities = new Set(world.cities.map((c) => c.id));
+    for (const [id, site] of this.sites) {
+      site.group.visible = cities.has(id);
+      site.label.hidden = !cities.has(id);
+    }
+    const nodes = new Set(world.nodes.map((n) => n.id));
+    for (const [id, model] of this.nodeModels) model.visible = nodes.has(id);
+    for (const [id, link] of this.links) link.mesh.visible = nodes.has(id) && cities.has(link.city);
     for (const city of world.cities) {
       const site = this.sites.get(city.id);
       if (!site) continue;
@@ -403,6 +435,28 @@ export class MapView {
     return hexPosition(hex).setY(this.hexes.get(hexKey(hex))?.top ?? 0.2);
   }
 
+  /** Fog of war: what the player at this screen has explored and sees now (null: everything). */
+  setVision(vision: Vision | null): void {
+    this.vision = vision;
+    for (const [key, tile] of this.hexes) {
+      const explored = !vision || vision.explored.has(key);
+      const visible = !vision || vision.visible.has(key);
+      const { mesh } = tile;
+      mesh.material.color.copy(explored ? tile.color : UNEXPLORED);
+      if (explored && !visible) mesh.material.color.multiplyScalar(REMEMBERED);
+      mesh.material.roughness = explored ? tile.roughness : 1;
+      mesh.material.metalness = explored ? tile.metalness : 0;
+      mesh.scale.y = explored ? tile.top : UNEXPLORED_HEIGHT;
+      mesh.position.y = mesh.scale.y / 2;
+      for (const o of tile.decoration) o.visible = explored;
+    }
+  }
+
+  /** Whether the player at this screen sees this hex now. */
+  sees(hex: Hex): boolean {
+    return !this.vision || this.vision.visible.has(hexKey(hex));
+  }
+
   setHighlights(highlights: MapHighlights): void {
     const walked = new Set(highlights.path.slice(0, highlights.walked).map(hexKey));
     const later = new Set(highlights.path.slice(highlights.walked).map(hexKey));
@@ -435,10 +489,12 @@ export class MapView {
     return this.stage.project(this.standingPoint(hex).add(new THREE.Vector3(0, 0.1, 0)));
   }
 
-  async walk(leaderId: string, path: readonly Hex[]): Promise<void> {
+  /** Walks a warband's figure along its path; someone else's only as far as the player at this screen sees it go. */
+  async walk(leaderId: string, path: readonly Hex[], ours: boolean): Promise<void> {
     const figure = this.leaders.get(leaderId);
     if (!figure) return;
     for (const hex of path) {
+      if (!ours && !this.sees(hex)) return;
       const from = figure.group.position.clone();
       const to = this.standingPoint(hex);
       await this.stage.tween(190, (t) => {

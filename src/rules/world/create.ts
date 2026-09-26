@@ -4,7 +4,10 @@ import type { Commitment } from "#rules/forks";
 import { generateMap } from "#rules/map";
 import { GUARDIAN_ID } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
+import { hexDistance } from "#rules/hex";
+import type { Hex } from "#rules/hex";
 import { startTurn } from "#rules/world/economy";
+import { updateVision } from "#rules/world/vision";
 import type { PlayerColor } from "#rules/world/colors";
 import { banditGroup, DUNGEON_REWARDS, member, strengthAt } from "#rules/world/state";
 import type { City, Lair, Leader, Player, World } from "#rules/world/state";
@@ -69,13 +72,15 @@ export function createWorld(seed: number, setups: readonly PlayerSetup[]): World
       upgrades: [],
       research: [],
       eliminated: false,
+      explored: [],
+      memory: { cities: [], lairs: [], nodes: [] },
     }),
   );
   const world: World = {
     map,
     leaders,
     cities,
-    nodes: map.sites.flatMap((site) => site.nodes).map((n, index) => ({ id: `node${index}`, kind: n.kind, hex: n.hex, level: 1 })),
+    nodes: map.sites.flatMap((site) => site.nodes).map((n, index) => ({ id: `node${index}`, kind: n.kind, hex: n.hex, cityId: nearestCity(cities, n.hex).id, level: 1 })),
     lairs,
     players,
     turn: 1,
@@ -85,5 +90,17 @@ export function createWorld(seed: number, setups: readonly PlayerSetup[]): World
     nextLeader: setups.length,
   };
   startTurn(world, []);
+  updateVision(world);
   return world;
+}
+
+/**
+ * A node belongs to the nearest city, Capitols included (user, 2026-09-26). Ties go to the first city in the list,
+ * so it's deterministic.
+ */
+function nearestCity(cities: readonly City[], hex: Hex): City {
+  let best: City | undefined;
+  for (const city of cities) if (!best || hexDistance(city.hex, hex) < hexDistance(best.hex, hex)) best = city;
+  if (!best) throw new Error("a map without cities");
+  return best;
 }

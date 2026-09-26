@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines._
 
-**Updated:** 2026-09-25 (m8)
+**Updated:** 2026-09-26 (m19)
 
 ## Where we are
 **Foundation rebuilt (m7-foundation).** Rules are traits (passives and effects share one hook interface), effect definitions with lifetimes and stacking, a typed damage pipeline, ability params and tags, and world context entering battles as effects (the Blacksmith node; a fire-only shield works). The AI runs in a web worker. See `design/architecture.md` and the recipes in `engineering.md`. Run `pnpm verify` before calling anything done.
@@ -19,16 +19,16 @@ Git: tags `m2-playable` … `m7-foundation` mark tested states. Work happens on 
 Rules: `src/rules/` (93 tests). View: `src/view/`. Tools: the `verify` skill; `A=<preset|nexus> B=… pnpm sim:world`.
 
 ## Next
-**M18 done: any number of players on the map** (decisions.md). Battles stay two-sided (attacker side 0, defender side 1; the view draws yours on the left). Turns go round the table; a fallen Guardian eliminates its player; last one standing wins. Screens still two-player. `PLAYERS=uncommitted,uncommitted,nexus pnpm sim:world` runs bigger games. Measured: two-player AI games 16/16 end; a three-player game ends (turn 137); a four-player game runs clean but stalls without a winner. The AI keeps at most 4 warbands (not a rule), which kept big games fast. #44 answered: Capitols start with only the Guardian (already so) and enough gold to recruit.
-M17 Cities done before it (tag `m17-cities`).
-1. **Waiting on the user:** playtest the cities; spar on destructible cities (#42); questions #40–46; colors too brown (#43).
-2. Later: a setup screen for more players (and hotseat or several AIs), when wanted.
-3. Open: Nexus tiers 3+ (#35), Jilliath backline (#36), fourth archetype (#37), leader experience (#33), settings menu (#34).
+**M19 done: fog of war** (decisions.md). Each player has explored hexes and a memory of places as last seen; `knownWorld` is what a player knows, and the map AI, the map view, previews and forecasts all use it. Unexplored land is a flat dark board; remembered land is dimmed; marches stop when they sight an unseen warband; the AI explores when idle. Sight radii provisional (#49). 8/8 AI games end (4–4). Before it: M18 players, M17 cities (tags `m18-players`, `m17-cities`).
+1. **Waiting on the user:** playtest cities and fog; spar on destructible cities (#42); questions #40–49; colors too brown (#43).
+2. Candidates next: a settings menu (#34); splitting `view/campaign.ts` (≈600 lines); a setup screen for more players; spells and mana (canon).
+3. Open design: Nexus tiers 3+ (#35), Jilliath backline (#36), fourth archetype (#37), leader experience (#33).
 
 ## Waiting on the user
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.
 
 ## Recently done
+- 2026-09-26: M19 Fog of war.
 - 2026-09-26: M18 Players: any number of players in the rules, battles two-sided.
 - 2026-09-26: M17 Cities (steps 1–5); all AI games end.
 - 2026-09-26: m16 merged (levels, playtest fixes, player colors). M17 steps 1–2: charge pips, fork peek, squad grids, city screens, meeting warbands.

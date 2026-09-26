@@ -52,10 +52,13 @@ The user's city list (pillars.md, "Cities"), in steps, each playable:
 ## M18 — Players ✅ (2026-09-26)
 The world supports any number of players (battles stay two-sided); the screens stay you vs one AI for now.
 
+## M19 — Fog of war ✅ (2026-09-26)
+Canon fog: unexplored hidden, explored-not-visible as last seen. Per-player explored hexes and memory in the rules; the AI and the view see only what their player knows; marches stop on sighting; the AI explores.
+
 ## Then
 - Faction content as the user designs it (Nexus trees first; Grove and Wastes later). The user owns unit designs and looks.
 - Spells and mana (canon), a spell tree in the Capitol.
 - Settings menu (#34), leader experience (#33), the economy question.
 
 ## Later (not ordered yet)
-**Cinematics between missions** (user idea, 2026-09-25): image-to-video (Wan 2.2 / LTX-2.3, both installed) from style-consistent key art; story from the user (the Ton'Arilliet story is ready material). · city upgrades & nodes · fog of war · procedural maps · final art direction and battle figures · audio · desktop packaging (Electron preferred over Tauri for WebGL on Linux).
+**Cinematics between missions** (user idea, 2026-09-25): image-to-video (Wan 2.2 / LTX-2.3, both installed) from style-consistent key art; story from the user (the Ton'Arilliet story is ready material). · procedural maps · final art direction and battle figures · audio · desktop packaging (Electron preferred over Tauri for WebGL on Linux).

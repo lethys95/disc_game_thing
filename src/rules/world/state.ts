@@ -63,6 +63,17 @@ export interface Player {
   research: string[];
   /** Out of the game: its Guardian fell. */
   eliminated: boolean;
+  /** Fog of war (`world/vision.ts`): every hex this player has seen, by `hexKey`. */
+  explored: string[];
+  /** What this player last saw of the cities, lairs and nodes out of its sight now. */
+  memory: Memory;
+}
+
+/** Copies of places as a player last saw them. Warbands aren't remembered: they move on. */
+export interface Memory {
+  cities: City[];
+  lairs: Lair[];
+  nodes: MapNode[];
 }
 
 export interface Leader {
@@ -89,6 +100,8 @@ export interface MapNode {
   readonly id: string;
   readonly kind: NodeKind;
   readonly hex: Hex;
+  /** The city it belongs to: the nearest one, fixed when the map is made (cities never move). */
+  readonly cityId: string;
   /** Raised by investment (1 when found). */
   level: number;
 }
@@ -310,15 +323,8 @@ export function capitolOf(world: World, side: PlayerId): City | undefined {
   return world.cities.find((c) => c.kind === "capitol" && c.owner === side);
 }
 
-/**
- * The city a node belongs to: the nearest one, Capitols included (user, 2026-09-26). Ties go to the first city in
- * the list, so it's deterministic.
- */
-export function cityOfNode(world: World, node: MapNode): City | undefined {
-  let best: City | undefined;
-  for (const city of world.cities) if (!best || hexDistance(city.hex, node.hex) < hexDistance(best.hex, node.hex)) best = city;
-  return best;
-}
+/** The city a node belongs to; unknown to a player who hasn't found that city yet (`world/vision.ts`). */
+export const cityOfNode = (world: World, node: MapNode): City | undefined => world.cities.find((c) => c.id === node.cityId);
 
 export const nodesOf = (world: World, city: City): MapNode[] => world.nodes.filter((n) => cityOfNode(world, n)?.id === city.id);
 

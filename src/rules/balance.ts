@@ -16,6 +16,13 @@ export const AI_CHARGE_VALUE = 40;
 /** A new leader's Leadership: how many units its warband holds, itself included (user: "5 total makes sense"). */
 export const STARTING_LEADERSHIP = 5;
 export const LEADER_MOVEMENT = 4;
+/**
+ * Fog of war (pillars.md): how far each thing a player holds sees, in hexes. Provisional (questions.md): a warband
+ * sees half its march, a city its neighbours, a Capitol a little further. Terrain doesn't block sight.
+ */
+export const WARBAND_SIGHT = 2;
+export const CITY_SIGHT = 1;
+export const CAPITOL_SIGHT = 2;
 export const STARTING_GOLD = 100;
 export const CAPITOL_INCOME = 50;
 export const MINE_INCOME = 25;

@@ -13,6 +13,7 @@ import type { Held } from "#rules/world/economy";
 import { leadershipOf } from "#rules/world/leaders";
 import { isLeaderOf, placementOf } from "#rules/world/record";
 import type { MoveTarget } from "#rules/world/movement";
+import { updateVision } from "#rules/world/vision";
 import { alive, cityById, lairById, leaderAt, leaderById, leaderUnit, nodesHeldBy, playerOf, unitId } from "#rules/world/state";
 import type { City, Defender, Engagement, Leader, PlayerId, SquadMember, World, WorldEvent, WorldStep } from "#rules/world/state";
 
@@ -174,6 +175,7 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
   }
   draft.leaders = draft.leaders.filter((l) => l.squad.length > 0);
   draft.engagement = null;
+  updateVision(draft);
   return { world: draft, events };
 }
 
