@@ -169,18 +169,18 @@ describe("world", () => {
     expect(step.world.gold[0]).toBe(roomy.gold[0] + dungeon.reward.gold);
   });
 
-  test("recruiting costs gold and needs the leader in the Capitol", () => {
+  test("recruiting costs gold and needs the warband in a city of yours", () => {
     const world = createWorld(1, [squad, squad], both("preserve"), ["jilliath", "jilliath"]);
-    const step = applyWorldAction(world, { type: "recruit", defId: "congregant", into: { kind: "leader", leaderId: "leader0" } });
+    const step = applyWorldAction(world, { type: "recruit", defId: "congregant", into: { kind: "warband", leaderId: "leader0" } });
     expect(step.world.gold[0]).toBe(world.gold[0] - 40);
     expect(leaderById(step.world, "leader0").squad).toHaveLength(3);
     const away = withLeader(world, "leader0", { hex: walkableNeighbour(world, world.map.starts[0]) });
-    expect(() => applyWorldAction(away, { type: "recruit", defId: "congregant", into: { kind: "leader", leaderId: "leader0" } })).toThrow(/Capitol/);
+    expect(() => applyWorldAction(away, { type: "recruit", defId: "congregant", into: { kind: "warband", leaderId: "leader0" } })).toThrow(/must stand/);
   });
 
   test("a garrison unit can be elevated to lead a new squad, but never the Guardian", () => {
     let world = createWorld(1, [squad, squad], both("preserve"), ["jilliath", "jilliath"]);
-    world = applyWorldAction(world, { type: "recruit", defId: "congregant", into: { kind: "garrison" } }).world;
+    world = applyWorldAction(world, { type: "recruit", defId: "congregant", into: { kind: "garrison", cityId: "capitol0" } }).world;
     world = withLeader(world, "leader0", { hex: walkableNeighbour(world, world.map.starts[0]) });
     const recruit = capitolOf(world, 0)?.garrison.find((m) => m.defId === "congregant");
     const guardian = capitolOf(world, 0)?.garrison.find((m) => m.defId === GUARDIAN_ID);

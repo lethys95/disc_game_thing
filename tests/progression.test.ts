@@ -113,7 +113,7 @@ describe("graveyard", () => {
   test("the resurrected return to the Capitol at 1 HP", () => {
     let world = fight(createWorld(1, [congregants, punishers], [uncommitted, punishment], ["jilliath", "jilliath"])).world;
     world = { ...world, activeSide: 0, gold: [1000, 0] };
-    const step = applyWorldAction(world, { type: "resurrect", index: 0, into: { kind: "garrison" } });
+    const step = applyWorldAction(world, { type: "resurrect", index: 0, into: { kind: "garrison", cityId: "capitol0" } });
     expect(capitolOf(step.world, 0)?.garrison.find((m) => m.defId === "congregant")?.hp).toBe(1);
     expect(step.world.graveyard[0]).toHaveLength(2);
     expect(step.world.gold[0]).toBe(1000 - 3 * RESURRECTION_BASE);

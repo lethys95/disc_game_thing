@@ -13,7 +13,7 @@ import { leadershipOf, movementOf } from "#rules/world/leaders";
 import { destination, planMove } from "#rules/world/movement";
 import type { MovePlan, MoveTarget } from "#rules/world/movement";
 import { capitolOf, fullHp, leaderAt } from "#rules/world/state";
-import type { Leader, RecruitInto, SquadMember, World, WorldAction } from "#rules/world/state";
+import type { Leader, SquadMember, SquadRef, World, WorldAction } from "#rules/world/state";
 import { RESURRECTION_BASE } from "#rules/balance";
 
 /** The map AI. */
@@ -117,7 +117,8 @@ export function chooseWorldAction(world: World): WorldAction {
     const fallen = mine.find((l) => !reviveProblem(world, l.id));
     if (fallen) return { type: "revive", leaderId: fallen.id };
 
-    const into: RecruitInto = home ? { kind: "leader", leaderId: home.id } : { kind: "garrison" };
+    const garrison: SquadRef = { kind: "garrison", cityId: capitol.id };
+    const into: SquadRef = home ? { kind: "warband", leaderId: home.id } : garrison;
     const bargain = world.graveyard[side]
       .map((fallen, index) => ({ index, tier: UNITS[fallen.defId]?.tier ?? 1, cost: resurrectionCost(world, side, index) ?? Infinity }))
       .filter((f) => f.tier >= 2 && f.cost === RESURRECTION_BASE * f.tier && spare(f.cost) && !resurrectProblem(world, f.index, into))
@@ -126,15 +127,15 @@ export function chooseWorldAction(world: World): WorldAction {
 
     if (home) {
       const defId = pick(home.squad);
-      if (spare(RECRUIT_COST[defId] ?? Infinity) && !recruitProblem(world, defId, { kind: "leader", leaderId: home.id })) {
-        return { type: "recruit", defId, into: { kind: "leader", leaderId: home.id } };
+      if (spare(RECRUIT_COST[defId] ?? Infinity) && !recruitProblem(world, defId, { kind: "warband", leaderId: home.id })) {
+        return { type: "recruit", defId, into: { kind: "warband", leaderId: home.id } };
       }
     }
     // Under threat, recruits stand with the Guardian; a fresh leader in the Capitol would only be picked off.
     const underThreat = world.leaders.some((l) => l.side !== side && planMove({ ...world, leaders: world.leaders.map((x) => (x.id === l.id ? { ...x, movement: movementOf(x) } : x)) }, l.id, capitol.hex)?.target);
     const guard = pick(capitol.garrison);
-    if (underThreat && !recruitProblem(world, guard, { kind: "garrison" })) {
-      return { type: "recruit", defId: guard, into: { kind: "garrison" } };
+    if (underThreat && !recruitProblem(world, guard, garrison)) {
+      return { type: "recruit", defId: guard, into: garrison };
     }
     const rich = world.gold[side] >= cost * (STARTING_LEADERSHIP + 1);
     // Upgrades aren't retroactive: they pay off on units about to become that type, and on future recruits.
@@ -151,7 +152,7 @@ export function chooseWorldAction(world: World): WorldAction {
     if (!home && (!underThreat || canFill) && (mine.length === 0 || (rich && warbandsFull))) {
       const spare = capitol.garrison.find((m) => m.defId !== GUARDIAN_ID);
       if (spare && !elevateProblem(world, spare.tile)) return { type: "elevate", tile: spare.tile };
-      if (!recruitProblem(world, guard, { kind: "garrison" })) return { type: "recruit", defId: guard, into: { kind: "garrison" } };
+      if (!recruitProblem(world, guard, garrison)) return { type: "recruit", defId: guard, into: garrison };
     }
   }
 

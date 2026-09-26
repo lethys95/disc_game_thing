@@ -21,14 +21,16 @@ src/rules/
   balance.ts         provisional numbers that aren't unit stats or ability params
   ai.ts              battle AI (one ply, generic valuation + traits' aiValue), autoplay
   hex.ts, map.ts     hex math; seeded map generation (sites, nodes, lairs), A*
-  world/             state (data + lookups), create, movement, economy, battles (map→battle→map), actions, ai,
+  world/             state (data + lookups), create, movement, economy, battles (map→battle→map), actions, ai, squads (SquadRef, meeting, transfers),
                      leaders (the leader tree), record (a unit's marks + leader bonuses → battle placement, max HP)
 src/view/
   stage.ts           the one renderer/camera/bloom/labels/tween loop
   scene.ts, map.ts   BattleScene, MapView
   app.ts, campaign.ts battle and map controllers
   standee.ts         paper standees: a unit's portrait as a camera-facing card (stand-in battle figures)
-  capitol.ts         the Capitol screen (archetype tabs, trees with forks and upgrades, recruit, garrison, graveyard)
+  city.ts            a city's screen (City tab: squad grids, recruit on a tile, graveyard; Research tab for the Capitol); also two warbands meeting
+  squad-grid.ts      a 3×3 squad grid with drag and drop, empty-tile menus and unit actions
+  research.ts        the Capitol's Research tab (archetype tabs, trees with forks and upgrades)
   leader.ts          a leader's screen (the leader tree by prerequisites, its warband)
   members.ts         a squad member's row: HP, XP, track record
   saves.ts, menu.ts  where saves live (localStorage behind a SaveStore interface; file export/import) and the game menu

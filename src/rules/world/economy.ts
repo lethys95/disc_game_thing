@@ -1,4 +1,4 @@
-import { CAMP_MEDIUM_FROM, CAMP_STRONG_FROM, CAPITOL_HEALING, CAPITOL_INCOME, GARRISON_LIMIT, RESURRECTION_BASE, RESURRECTION_PREMIUM } from "#rules/balance";
+import { CAMP_MEDIUM_FROM, CAMP_STRONG_FROM, CAPITOL_HEALING, CAPITOL_INCOME, RESURRECTION_BASE, RESURRECTION_PREMIUM } from "#rules/balance";
 import type { Side, Tile } from "#rules/battle/types";
 import { chooseProblem, isFork, openForks } from "#rules/forks";
 import { COLS, ROWS, sameTile } from "#rules/battle/grid";
@@ -6,11 +6,12 @@ import { sameHex } from "#rules/hex";
 import { NODES } from "#rules/nodes";
 import { grow, xpToEvolve } from "#rules/progression";
 import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
-import { leadershipOf, learnProblem, movementOf, squadHealingOf } from "#rules/world/leaders";
+import { learnProblem, movementOf, squadHealingOf } from "#rules/world/leaders";
 import { maxHpOf } from "#rules/world/record";
 import { UPGRADES, upgradesFor } from "#rules/upgrades";
-import { alive, banditGroup, capitolOf, leaderAt, leaderById, leaderUnit, member } from "#rules/world/state";
-import type { City, Leader, Mark, RecruitInto, SquadMember, Strength, World, WorldEvent } from "#rules/world/state";
+import { alive, banditGroup, capitolOf, cityById, leaderAt, leaderById, leaderUnit, member } from "#rules/world/state";
+import type { City, Leader, Mark, SquadMember, SquadRef, Strength, World, WorldEvent } from "#rules/world/state";
+import { capacityOf, hexOf, ownerOf, squadAt } from "#rules/world/squads";
 
 /** Gold, recruiting, branch choices, resurrection, elevation, and the start of a side's turn. */
 
@@ -25,15 +26,28 @@ export function freeTile(squad: readonly SquadMember[]): Tile | null {
   return null;
 }
 
-/** Why a recruit order can't happen, or null if it can. */
-export function recruitProblem(world: World, defId: string, into: RecruitInto): string | null {
+/** Why a recruit order can't happen, or null if it can. Any city you hold recruits (pillars.md, "Cities"). */
+export function recruitProblem(world: World, defId: string, into: SquadRef, tile?: Tile): string | null {
   const side = world.activeSide;
   const cost = RECRUIT_COST[defId];
-  const capitol = capitolOf(world, side);
   if (cost === undefined || !FACTION_ROOTS[world.factions[side]].includes(defId)) return "not recruitable";
-  if (!capitol) return "no Capitol";
   if (world.gold[side] < cost) return "not enough gold";
-  return roomProblem(world, capitol, into);
+  return placeProblem(world, into, tile, (city) => city.owner === side);
+}
+
+/**
+ * Why a new unit can't be put into this squad, or null: a garrison of a city that qualifies, or a warband standing
+ * in one; room left; and the tile, if one is named, free.
+ */
+function placeProblem(world: World, into: SquadRef, tile: Tile | undefined, qualifies: (city: City) => boolean): string | null {
+  const side = world.activeSide;
+  if (ownerOf(world, into) !== side) return "not your squad";
+  const city = into.kind === "garrison" ? cityById(world, into.cityId) : world.cities.find((c) => sameHex(c.hex, hexOf(world, into)));
+  if (!city || !qualifies(city)) return into.kind === "garrison" ? "not here" : "the warband must stand in the right city";
+  const squad = squadAt(world, into);
+  if (squad.length >= capacityOf(world, into)) return into.kind === "warband" ? `squad full (Leadership ${capacityOf(world, into)})` : "garrison full";
+  if (tile && squad.some((m) => sameTile(m.tile, tile))) return "that spot is taken";
+  return null;
 }
 
 /** Why this side can't choose `to` at `fork` now, or null. */
@@ -77,26 +91,13 @@ export function reviveProblem(world: World, leaderId: string): string | null {
   return null;
 }
 
-export function resurrectProblem(world: World, index: number, into: RecruitInto): string | null {
+/** Resurrection happens at the Capitol: into its garrison, or a warband standing in it. */
+export function resurrectProblem(world: World, index: number, into: SquadRef, tile?: Tile): string | null {
   const side = world.activeSide;
   const cost = resurrectionCost(world, side, index);
-  const capitol = capitolOf(world, side);
   if (cost === null) return "nobody there";
-  if (!capitol) return "no Capitol";
   if (world.gold[side] < cost) return "not enough gold";
-  return roomProblem(world, capitol, into);
-}
-
-export function roomProblem(world: World, capitol: City, into: RecruitInto): string | null {
-  if (into.kind === "garrison") return capitol.garrison.length >= GARRISON_LIMIT ? "garrison full" : null;
-  const leader = leaderById(world, into.leaderId);
-  if (leader.side !== world.activeSide || !sameHex(leader.hex, capitol.hex)) return "leader not in the Capitol";
-  const leadership = leadershipOf(leader);
-  return leader.squad.length >= leadership ? `squad full (Leadership ${leadership})` : null;
-}
-
-export function squadFor(world: World, into: RecruitInto): SquadMember[] | undefined {
-  return into.kind === "garrison" ? capitolOf(world, world.activeSide)?.garrison : leaderById(world, into.leaderId).squad;
+  return placeProblem(world, into, tile, (city) => city.kind === "capitol" && city.owner === side);
 }
 
 /** A squad and its leader; garrisons have none. */

@@ -340,3 +340,28 @@ button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }
 .def-card .ability .text { font-size: 11px; color: var(--muted); }
 #forkprompt .note { color: var(--muted); font-size: 11px; }
 #peek { z-index: 30; }
+
+/* City screen and squad grids (view/city.ts, view/squad-grid.ts). */
+.city-body { display: grid; grid-template-columns: 1fr 320px; gap: 16px; min-height: 0; flex: 1; }
+.city-body .grids { display: flex; flex-wrap: wrap; gap: 28px; align-content: flex-start; padding: 14px 18px; overflow-y: auto; }
+.city-body .grids > .note { flex-basis: 100%; color: var(--muted); font-size: 11px; }
+.squad-grid .grid { display: grid; grid-template-columns: 52px repeat(3, 104px); gap: 6px; }
+.squad-grid .row-label { align-self: center; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+.squad-grid .cell { height: 92px; border: 1px dashed #3a2e28; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: pointer; background: #120f0d; }
+.squad-grid .cell.filled { border-style: solid; background: #1c1714; cursor: grab; }
+.squad-grid .cell.selected { border-color: #e0c070; box-shadow: 0 0 0 1px #e0c070; }
+.squad-grid .cell.over { border-color: #d9b36a; background: #2a2118; }
+.squad-grid .cell.refused { border-color: var(--blood); background: #2a1210; }
+.squad-grid .cell .art.thumb { width: 44px; height: 44px; margin: 0; }
+.squad-grid .cell .name { font: 600 11px var(--text); text-align: center; line-height: 1.1; padding: 0 4px; }
+.squad-grid .cell .hp { width: 80%; height: 4px; background: #231c1a; }
+.squad-grid .cell .hp .fill { height: 100%; background: linear-gradient(#8e1e16, #5e130e); }
+.squad-grid .cell .empty { color: #5a4a36; font: 700 22px var(--display); }
+.squad-grid .grid-details { margin-top: 10px; max-width: 380px; }
+.squad-grid .grid-details button { margin: 4px 4px 0 0; }
+.grid-menu { position: fixed; z-index: 40; display: flex; flex-direction: column; gap: 4px; padding: 8px; min-width: 220px; }
+.grid-menu button { text-align: left; }
+.capitol-header .tabs { display: flex; gap: 4px; }
+#mapcity .city-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid #2c2622; }
+#mapcity .city-row .city-text { flex: 1; }
+#mapcity .city-row .name { font: 700 15px var(--display); }

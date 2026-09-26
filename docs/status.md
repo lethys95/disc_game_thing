@@ -19,14 +19,17 @@ Git: tags `m2-playable` … `m7-foundation` mark tested states. Work happens on 
 Rules: `src/rules/` (93 tests). View: `src/view/`. Tools: the `verify` skill; `A=<preset|nexus> B=… pnpm sim:world`.
 
 ## Next
-**m14 done: Nexus spell charges** (decisions.md). Casters have batteries (Apprentice 2, Justiciar and Thaumaturge 4); spells cost charges; the Thaumaturge *overloads* (Burst hits every enemy; Homing Lightning hits every unit with the target's name), the Justiciar *replicates* (several secret Negates, several Bursts; pick targets one by one, click a picked one to cast early). The card shows charges; buttons show costs. M13 (games end) done before it.
-1. **Waiting on the user:** a playtest (pace, fairness, and now the Nexus casters).
-2. Open: Nexus tiers 3+ (#35) and balance (#36), camp regrowth (#19), fourth archetype (#37), leader experience (#33), settings menu (#34).
+**M17 Cities in progress (branch `m17-cities`; plan in `roadmap.md`).** Done: charge pips, fork peek (step 1); squad grids with drag and drop, recruit on a tile in any held city, a screen per city with City/Research tabs, warbands meeting (step 2).
+1. Step 3: city tiers (upgrade for gold: garrison slots, armor bonus for garrison and visitors; recruiting capped by tier).
+2. Step 4: resurrection at cities, unlocked by Capitol research, at a premium.
+3. Step 5: nodes tied to the nearest city (Capitols too), shown on the map; investment.
+4. Spar with the user: destructible cities (#42); colors too brown (#43); neutral difficulty (#41); levels (#40).
 
 ## Waiting on the user
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.
 
 ## Recently done
+- 2026-09-26: m16 merged (levels, playtest fixes, player colors). M17 steps 1–2: charge pips, fork peek, squad grids, city screens, meeting warbands.
 - 2026-09-26: m16 (branch `m16-playtest` on top of `m15-levels`, worktree `../new_disc-levels`; merge after the user's playtest): support abilities default by target, portrait turn queue with hover focus, gold coin and movement pips, tougher neutrals (#41), player colors.
 - 2026-09-26: m15 (branch `m15-levels`, worktree `../new_disc-levels`; merge after the user's playtest): levels past the end of a line.
 - 2026-09-26: m14: Nexus spell charges with overload and replicate.

@@ -13,9 +13,10 @@
     "check": "tsc && vitest run",
     "sim": "tsx scripts/sim.ts",
     "sim:world": "tsx scripts/sim-world.ts",
-    "verify": "pnpm check && tsx scripts/shot.ts shots/verify.png \"/?fight&steps=6\" && tsx scripts/playtest.ts && tsx scripts/playtest-map.ts 4 && tsx scripts/playtest-save.ts",
+    "verify": "pnpm check && tsx scripts/shot.ts shots/verify.png \"/?fight&steps=6\" && tsx scripts/playtest.ts && tsx scripts/playtest-map.ts 4 && tsx scripts/playtest-save.ts && tsx scripts/playtest-city.ts",
     "art": "tsx scripts/art/assets.ts",
-    "playtest:save": "tsx scripts/playtest-save.ts"
+    "playtest:save": "tsx scripts/playtest-save.ts",
+    "playtest:city": "tsx scripts/playtest-city.ts"
   },
   "devEngines": {
     "packageManager": {

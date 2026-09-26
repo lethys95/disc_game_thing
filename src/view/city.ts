@@ -1,0 +1,172 @@
+import type { Side, Tile } from "#rules/battle/types";
+import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST } from "#rules/units/index";
+import { elevateProblem, recruitProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem } from "#rules/world/economy";
+import { capacityOf, transferProblem } from "#rules/world/squads";
+import { cityById, leaderById, leaderUnit } from "#rules/world/state";
+import type { City, SquadMember, SquadRef, World, WorldAction } from "#rules/world/state";
+import { element, gold } from "#view/dom";
+import { unitName } from "#view/members";
+import { ResearchPanel } from "#view/research";
+import { squadGrid } from "#view/squad-grid";
+import type { GridChoice, GridSquad } from "#view/squad-grid";
+import { sameHex } from "#rules/hex";
+
+/** What the screen shows: one of your cities (the Capitol included), or two of your warbands side by side. */
+export type Place = { readonly kind: "city"; readonly cityId: string } | { readonly kind: "meet"; readonly a: string; readonly b: string };
+
+export interface CityScreenOptions {
+  readonly act: (action: WorldAction) => void;
+  readonly close: () => void;
+}
+
+/** Placeholder city names until the user names them. */
+export const cityName = (city: City): string => (city.kind === "capitol" ? "Capitol" : `City ${city.id.replace("city", "")}`);
+
+/**
+ * A city's screen (pillars.md, "Cities"): the *City* tab has the garrison and any visiting warband as grids to drag
+ * units between; clicking an empty tile recruits (or resurrects, at the Capitol). The Capitol adds *Research*. The
+ * same grids show two warbands that meet on the map.
+ */
+export class CityScreen {
+  private tab: "city" | "research" = "city";
+  private selected: { ref: SquadRef; tile: Tile } | null = null;
+  private shown: { world: World; side: Side; place: Place; mayAct: boolean } | null = null;
+  private readonly research: ResearchPanel;
+
+  constructor(
+    private readonly root: HTMLElement,
+    private readonly options: CityScreenOptions,
+  ) {
+    this.research = new ResearchPanel(options.act, () => this.rerender());
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !this.root.hidden) options.close();
+    });
+  }
+
+  hide(): void {
+    this.root.hidden = true;
+    this.selected = null;
+  }
+
+  show(world: World, side: Side, place: Place, mayAct: boolean): void {
+    if (this.shown?.place.kind !== place.kind || JSON.stringify(this.shown.place) !== JSON.stringify(place)) this.tab = "city";
+    this.shown = { world, side, place, mayAct };
+    this.root.hidden = false;
+    this.root.replaceChildren();
+    const city = place.kind === "city" ? cityById(world, place.cityId) : undefined;
+
+    const header = element("div", "capitol-header");
+    header.append(element("div", "title", city ? `Your ${cityName(city)}` : "Warbands meet"), gold(world.gold[side], "purse"));
+    if (city?.kind === "capitol") {
+      const tabs = element("div", "tabs");
+      for (const [id, label] of [["city", "City"], ["research", "Research"]] as const) {
+        const button = element("button", `action${this.tab === id ? " selected" : ""}`, label);
+        button.addEventListener("click", () => {
+          this.tab = id;
+          this.rerender();
+        });
+        tabs.appendChild(button);
+      }
+      header.appendChild(tabs);
+    }
+    const back = element("button", "action", "Back to the map");
+    back.addEventListener("click", () => this.options.close());
+    header.appendChild(back);
+    this.root.appendChild(header);
+
+    if (this.tab === "research" && city?.kind === "capitol") {
+      this.root.appendChild(this.research.render(world, side, mayAct));
+      return;
+    }
+    const body = element("div", "city-body");
+    const squads = this.squads(world, side, place);
+    const grids = element("div", "grids panel");
+    for (const squad of squads) grids.appendChild(squadGrid(squad, this.gridOptions(world, city, mayAct)));
+    grids.appendChild(element("div", "note", "Drag units between the grids; dropping on a unit swaps the two. Click an empty tile to recruit. Click a unit for its details."));
+    body.appendChild(grids);
+    if (city?.kind === "capitol") body.appendChild(this.graveyard(world, side, mayAct));
+    this.root.appendChild(body);
+  }
+
+  private rerender(): void {
+    const shown = this.shown;
+    if (shown && !this.root.hidden) this.show(shown.world, shown.side, shown.place, shown.mayAct);
+  }
+
+  private squads(world: World, side: Side, place: Place): GridSquad[] {
+    const warband = (leaderId: string, title: string): GridSquad => {
+      const leader = leaderById(world, leaderId);
+      const ref: SquadRef = { kind: "warband", leaderId };
+      return { ref, title, squad: leader.squad, leader, capacity: capacityOf(world, ref) };
+    };
+    const leaderName = (id: string) => unitName(leaderUnit(leaderById(world, id))?.defId ?? "");
+    if (place.kind === "meet") return [warband(place.a, `${leaderName(place.a)}'s warband`), warband(place.b, `${leaderName(place.b)}'s warband`)];
+    const city = cityById(world, place.cityId);
+    const ref: SquadRef = { kind: "garrison", cityId: city.id };
+    const garrison: GridSquad = { ref, title: "Garrison", squad: city.garrison, leader: undefined, capacity: capacityOf(world, ref) };
+    const visitor = world.leaders.find((l) => l.side === side && sameHex(l.hex, city.hex));
+    return visitor ? [garrison, warband(visitor.id, `Visiting: ${leaderName(visitor.id)}'s warband`)] : [garrison];
+  }
+
+  private gridOptions(world: World, city: City | undefined, mayAct: boolean) {
+    const side = world.activeSide;
+    return {
+      mayAct,
+      selected: this.selected,
+      select: (selection: { ref: SquadRef; tile: Tile } | null) => {
+        this.selected = selection;
+        this.rerender();
+      },
+      moveProblem: (from: SquadRef, fromTile: Tile, to: SquadRef, toTile: Tile) => transferProblem(world, { from, fromTile, to, toTile }),
+      move: (from: SquadRef, fromTile: Tile, to: SquadRef, toTile: Tile) => {
+        this.selected = null;
+        this.options.act({ type: "transfer", from, fromTile, to, toTile });
+      },
+      emptyChoices: (ref: SquadRef, tile: Tile): GridChoice[] => {
+        const recruits = FACTION_ROOTS[world.factions[side]].map((defId) => ({
+          label: `Recruit ${unitName(defId)} · ${RECRUIT_COST[defId] ?? 0} gold`,
+          problem: recruitProblem(world, defId, ref, tile),
+          run: () => this.options.act({ type: "recruit", defId, into: ref, tile }),
+        }));
+        const raised =
+          city?.kind === "capitol"
+            ? world.graveyard[side].map((fallen, index) => ({
+                label: `Resurrect ${unitName(fallen.defId)} · ${resurrectionCost(world, side, index) ?? 0} gold`,
+                problem: resurrectProblem(world, index, ref, tile),
+                run: () => this.options.act({ type: "resurrect", index, into: ref, tile }),
+              }))
+            : [];
+        return [...recruits, ...raised];
+      },
+      unitChoices: (ref: SquadRef, member: SquadMember): GridChoice[] =>
+        ref.kind === "garrison" && city?.kind === "capitol" && member.defId !== GUARDIAN_ID
+          ? [{ label: "Elevate to leader", problem: elevateProblem(world, member.tile), run: () => this.options.act({ type: "elevate", tile: member.tile }) }]
+          : [],
+    };
+  }
+
+  /** The fallen: warband leaders to revive here, and units to resurrect by clicking an empty tile. */
+  private graveyard(world: World, side: Side, mayAct: boolean): HTMLElement {
+    const column = element("div", "capitol-hall panel");
+    column.appendChild(element("div", "section", "Graveyard"));
+    const lost = world.leaders.filter((l) => l.side === side && l.fellOnTurn !== null);
+    for (const leader of lost) {
+      const own = leaderUnit(leader);
+      const problem = reviveProblem(world, leader.id);
+      const row = element("div", "fallen");
+      row.appendChild(element("span", "name", `♛ ${unitName(own?.defId ?? "")}, a warband's leader · ${reviveCost(world, leader) ?? 0} gold`));
+      const revive = element("button", "small", "Revive");
+      revive.disabled = !mayAct || problem !== null;
+      revive.title = problem ?? "Returns at 1 HP and leads its warband again. The price drops each turn you wait.";
+      revive.addEventListener("click", () => this.options.act({ type: "revive", leaderId: leader.id }));
+      row.appendChild(revive);
+      column.appendChild(row);
+    }
+    world.graveyard[side].forEach((fallen, index) => {
+      column.appendChild(element("div", "fallen", `${unitName(fallen.defId)} · ${resurrectionCost(world, side, index) ?? 0} gold`));
+    });
+    const empty = world.graveyard[side].length === 0 && lost.length === 0;
+    column.appendChild(element("div", "note", empty ? "Nobody has fallen yet." : "Resurrect by clicking an empty tile. The price drops each turn you wait."));
+    return column;
+  }
+}

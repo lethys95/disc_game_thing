@@ -118,16 +118,20 @@ export interface World {
   upgrades: [string[], string[]];
 }
 
-export type RecruitInto = { kind: "garrison" } | { kind: "leader"; leaderId: string };
+/** A squad on the map: a city's garrison, or a warband (`world/squads.ts`). */
+export type SquadRef = { readonly kind: "garrison"; readonly cityId: string } | { readonly kind: "warband"; readonly leaderId: string };
 
 export type WorldAction =
   | { type: "move"; leaderId: string; to: Hex }
   | { type: "endTurn" }
-  | { type: "recruit"; defId: string; into: RecruitInto }
+  /** `tile` picks the spot; without it, the first free one. */
+  | { type: "recruit"; defId: string; into: SquadRef; tile?: Tile }
+  /** Move a unit between squads that meet, or within one; onto an occupied tile, the two swap. */
+  | { type: "transfer"; from: SquadRef; fromTile: Tile; to: SquadRef; toTile: Tile }
   | { type: "elevate"; tile: Tile }
   /** Choose a branch at a fork: free and permanent, for every unit of that kind. */
   | { type: "choose"; fork: string; to: string }
-  | { type: "resurrect"; index: number; into: RecruitInto }
+  | { type: "resurrect"; index: number; into: SquadRef; tile?: Tile }
   | { type: "learn"; leaderId: string; skill: string }
   /** Revive a warband's fallen leader at the Capitol. */
   | { type: "revive"; leaderId: string }
@@ -139,7 +143,8 @@ export type WorldEvent =
   | { type: "engaged"; attackerId: string; defender: Defender }
   | { type: "captured"; cityId: string; side: Side }
   | { type: "turnStarted"; side: Side; turn: number; income: number }
-  | { type: "recruited"; defId: string; into: RecruitInto }
+  | { type: "recruited"; defId: string; into: SquadRef }
+  | { type: "transferred"; from: SquadRef; to: SquadRef }
   | { type: "elevated"; leaderId: string }
   | { type: "leaderFell"; leaderId: string; side: Side }
   | { type: "xp"; side: Side; pool: number; each: number }

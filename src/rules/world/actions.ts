@@ -4,9 +4,10 @@ import { stepCost } from "#rules/map";
 import { RECRUIT_COST } from "#rules/units/index";
 import { LEADER_MOVEMENT } from "#rules/balance";
 import { defenderOf, engagementBattle } from "#rules/world/battles";
-import { chooseBranchProblem, elevateProblem, freeTile, growSquad, learnSkillProblem, newcomer, recruitProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem, squadFor, squadsOf, startTurn, upgradeProblem } from "#rules/world/economy";
+import { chooseBranchProblem, elevateProblem, freeTile, growSquad, learnSkillProblem, newcomer, recruitProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem, squadsOf, startTurn, upgradeProblem } from "#rules/world/economy";
 import { movementOf, rankOf } from "#rules/world/leaders";
 import { planMove } from "#rules/world/movement";
+import { squadAt, transfer, transferProblem } from "#rules/world/squads";
 import { isLeaderOf } from "#rules/world/record";
 import { UPGRADES } from "#rules/upgrades";
 import { capitolOf, cityById, leaderById } from "#rules/world/state";
@@ -50,11 +51,11 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       break;
     }
     case "recruit": {
-      const problem = recruitProblem(draft, action.defId, action.into);
+      const problem = recruitProblem(draft, action.defId, action.into, action.tile);
       if (problem) throw new Error(`cannot recruit: ${problem}`);
-      const squad = squadFor(draft, action.into);
-      const tile = squad ? freeTile(squad) : null;
-      if (!squad || !tile) throw new Error("no room");
+      const squad = squadAt(draft, action.into);
+      const tile = action.tile ?? freeTile(squad);
+      if (!tile) throw new Error("no room");
       squad.push(newcomer(draft, side, action.defId, tile));
       draft.gold[side] -= RECRUIT_COST[action.defId] ?? 0;
       events.push({ type: "recruited", defId: action.defId, into: action.into });
@@ -82,13 +83,20 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       for (const held of squadsOf(draft, side)) growSquad(draft, held, 0, side, events);
       break;
     }
+    case "transfer": {
+      const problem = transferProblem(draft, action);
+      if (problem) throw new Error(`cannot transfer: ${problem}`);
+      transfer(draft, action);
+      events.push({ type: "transferred", from: action.from, to: action.to });
+      break;
+    }
     case "resurrect": {
-      const problem = resurrectProblem(draft, action.index, action.into);
+      const problem = resurrectProblem(draft, action.index, action.into, action.tile);
       const cost = resurrectionCost(draft, side, action.index);
       const fallen = draft.graveyard[side][action.index];
-      const squad = squadFor(draft, action.into);
-      const tile = squad ? freeTile(squad) : null;
-      if (problem || cost === null || !fallen || !squad || !tile) throw new Error(`cannot resurrect: ${problem}`);
+      const squad = squadAt(draft, action.into);
+      const tile = action.tile ?? freeTile(squad);
+      if (problem || cost === null || !fallen || !tile) throw new Error(`cannot resurrect: ${problem}`);
       draft.gold[side] -= cost;
       draft.graveyard[side].splice(action.index, 1);
       squad.push({ defId: fallen.defId, tile, hp: 1, xp: 0, marks: fallen.marks, level: fallen.level });
