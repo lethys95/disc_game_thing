@@ -27,6 +27,7 @@ src/view/
   stage.ts           the one renderer/camera/bloom/labels/tween loop
   scene.ts, map.ts   BattleScene, MapView
   app.ts, campaign.ts battle and map controllers
+  standee.ts         paper standees: a unit's portrait as a camera-facing card (stand-in battle figures)
   capitol.ts         the Capitol screen (archetype tabs, trees with forks and upgrades, recruit, garrison, graveyard)
   leader.ts          a leader's screen (the leader tree by prerequisites, its warband)
   members.ts         a squad member's row: HP, XP, track record

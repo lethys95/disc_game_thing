@@ -16,9 +16,6 @@ Small hex map with a rotatable camera. One leader per side; click to move (movem
 ## M3 — A tiny whole game ✅ (2026-09-25)
 Two players (hotseat or player vs AI) alternate faction turns. Capitol with guardian (loss condition), one or two neutral cities with gold nodes, recruiting at the Capitol, elevating a unit to leader. You can win or lose.
 
-## Art spike (time-boxed, after M3)
-One unit (Paladin) through both routes in `design/asset-pipeline.md` (rigid-part 3D vs painted sprites), shown in the real battle scene. Decide the route. Nothing more until the vertical slice.
-
 ## M4 — Progression ✅ (2026-09-25)
 XP → evolution tiers, branch investment for Jilliath's melee line, graveyard with decaying resurrection cost.
 
@@ -28,11 +25,19 @@ The user's bandits guard neutral cities, camps and dungeons (one-time rewards: g
 ## M6 — Nexus scheme vs overload ✅ (2026-09-25)
 Forks are per faction. Nexus's one fork (scheme = automata and the Justiciar, overload = mutants and the Thaumaturge) unlocks the Battery (Equalize: lent shields), the Mutant (Mutate), the Justiciar (a secret Negate mark) and the Thaumaturge (Homing Lightning). All designed by the user.
 
-## Design gate (needs the user)
-Only the Jilliath melee line has units. A second faction needs a unit design from the user before it can be built; Claude doesn't invent units. Raise this once M3 is done.
+## M7–M11 ✅ (2026-09-25/26)
+Foundation rebuild (traits, effect definitions, damage pipeline), first-playtest fixes, per-line forks, leader tree, unit-type upgrades and the Capitol screen (m8), fallen leaders and hotkeys (m9), art slots and the art pipeline (m10), save/load (m11). The art spike ran on Krea 2; the direction is **not settled** (`design/art.md`).
 
-## Vertical slice (after M4)
-One faction fully arted, animated and polished across a small complete game. The style LoRA and asset pipeline harden here; then production.
+## M12 — Paper standees ✅ (2026-09-26)
+Units with a portrait stand on the battlefield as camera-facing cards in their side's frame; the rest keep the statue placeholders. A stand-in, not the shipping look.
+
+## M13 — A game you can finish (next)
+The goal of the vertical slice: one Jilliath vs Ral-Vitahl match you can play to the end against the AI and enjoy. A map AI that plans (not one move deep), no cold wars (finite neutral XP, #19), win conditions it actually reaches, balance tuned by `pnpm sim` / `sim:world`.
+
+## Then
+- Faction content as the user designs it (Nexus trees first; Grove and Wastes later). The user owns unit designs and looks.
+- Spells and mana (canon), a spell tree in the Capitol.
+- Settings menu (#34), leader experience (#33), the economy question.
 
 ## Later (not ordered yet)
-**Cinematics between missions** (user idea, 2026-09-25): image-to-video (Wan 2.2 / LTX-2.3, both installed) from style-consistent key art, edited into short narrated sequences; depends on the art pipeline and campaign; story from the user (the Ton'Arilliet story is ready material). A cheap early use: an animated backdrop for the title screen. · Second faction · overworld spells + mana · city upgrades & nodes · fog of war · save/load (plain-data state → JSON) · better AI · procedural maps · art pipeline (ComfyUI concept art / 3D assets) · audio · desktop packaging (Tauri/Electron).
+**Cinematics between missions** (user idea, 2026-09-25): image-to-video (Wan 2.2 / LTX-2.3, both installed) from style-consistent key art; story from the user (the Ton'Arilliet story is ready material). · city upgrades & nodes · fog of war · procedural maps · final art direction and battle figures · audio · desktop packaging (Electron preferred over Tauri for WebGL on Linux).

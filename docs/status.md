@@ -19,15 +19,17 @@ Git: tags `m2-playable` … `m7-foundation` mark tested states. Work happens on 
 Rules: `src/rules/` (89 tests). View: `src/view/`. Tools: the `verify` skill; `A=<preset|nexus> B=… pnpm sim:world`.
 
 ## Next
-**m11 done: save/load.** Menu on the map (Save, saved games with Load/Export/Delete, Import, New game); "Load game" on the setup screen; autosave at the start of each of your turns; `pnpm verify` saves, reloads and loads a game. Art slots (m10) done before it.
-1. **Spar with the user on direction** (they asked, after saves): Claude brings a proposal, incl. browser vs desktop app and 3D performance in the browser.
-2. Art when the user supplies looks; readability fix (figure/ground contrast) later.
-3. Open items: leader experience (#33, postponed), settings menu (#34; the game menu is its home), placeholder upgrades, faction sparring, cold wars (#19).
+**Direction agreed with the user (decisions.md, 2026-09-26):** Claude owns roadmap, architecture, systems and AI; the user owns designs, looks, playtest verdicts and vetoes. Goal: a vertical slice, one Jilliath vs Ral-Vitahl match you can finish (`roadmap.md`).
+- m12 done: paper standees (portrait cards on the battlefield; statues where no portrait exists).
+1. **M13: a game you can finish.** Map AI that plans, no cold wars (#19), reachable win conditions, sim-tuned balance.
+2. The user will bring unit ideas as they come; implement through the add-content skill.
+3. Open: leader experience (#33, postponed), settings menu (#34), placeholder upgrades, art readability (figure/ground).
 
 ## Waiting on the user
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.
 
 ## Recently done
+- 2026-09-26: m12: paper standees; roadmap rewritten around the vertical slice.
 - 2026-09-26: m11: saves (snapshots, versioned, localStorage behind an interface, file export/import, autosave), game menu.
 - 2026-09-26: m10: art slots with fallbacks and placeholders, the art pipeline CLI, first art in the game.
 - 2026-09-25: art spike: Krea 2 set up; four rounds of style fishing with the user; the ink-brush style holds across the Zealot and the Grove's Psychopomp.

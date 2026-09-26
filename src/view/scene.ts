@@ -3,7 +3,9 @@ import { CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
 import { effectiveStats } from "#rules/battle/engine";
 import { COLS, ROWS } from "#rules/battle/grid";
 import type { Battle, BattleEvent, BattleUnit, Col, Row, Side, Tile } from "#rules/battle/types";
+import { artUrl } from "#view/art";
 import { buildFigure } from "#view/figures";
+import { buildStandee } from "#view/standee";
 import type { CameraPose, Stage } from "#view/stage";
 import { effectDef } from "#rules/effects";
 
@@ -171,7 +173,8 @@ export class BattleScene {
   }
 
   private addFigure(unit: BattleUnit): Figure {
-    const group = buildFigure(unit.defId, unit.side);
+    const portrait = artUrl({ kind: "portrait", id: unit.defId });
+    const group = portrait ? buildStandee(portrait, unit.side) : buildFigure(unit.defId, unit.side);
     group.rotation.y = unit.side === 0 ? 0 : Math.PI;
     group.userData = { unitId: unit.id };
     if (unit.leader) group.add(crown());
@@ -188,13 +191,15 @@ export class BattleScene {
     fill.className = "fill";
     bar.appendChild(fill);
     const label = new CSS2DObject(bar);
-    label.position.set(0, 1.75, 0);
+    // Standees are taller than the statues; their bars sit above the card.
+    const top = portrait ? 2.1 : 1.75;
+    label.position.set(0, top, 0);
     group.add(label);
     const preview = document.createElement("div");
     preview.className = "preview";
     preview.hidden = true;
     const previewLabel = new CSS2DObject(preview);
-    previewLabel.position.set(0, 2.15, 0);
+    previewLabel.position.set(0, top + 0.4, 0);
     group.add(previewLabel);
 
     this.scene.add(group);
@@ -221,6 +226,7 @@ export class BattleScene {
 
   private topple(figure: Figure, duration: number): Promise<void> {
     figure.fallen = true;
+    figure.group.userData["fallen"] = true;
     figure.bar.hidden = true;
     const startY = figure.group.position.y;
     for (const m of figure.materials) m.emissiveIntensity = 0;
