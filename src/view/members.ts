@@ -1,6 +1,6 @@
 import { effectDef } from "#rules/effects";
 import type { Commitment } from "#rules/forks";
-import { nextForm, xpToEvolve } from "#rules/progression";
+import { nextForm, xpToEvolve, xpToLevel } from "#rules/progression";
 import { UNITS } from "#rules/units/index";
 import { UPGRADES } from "#rules/upgrades";
 import { LEADER_SKILLS } from "#rules/world/leaders";
@@ -19,20 +19,30 @@ export function markText(mark: Mark): string {
   const from =
     source.kind === "leaderTree"
       ? `the leader tree (${LEADER_SKILLS[source.skill]?.name ?? source.skill})`
-      : `the ${unitName(UPGRADES.get(source.upgrade)?.unitType ?? source.upgrade)} upgrade at the Capitol`;
+      : source.kind === "levels"
+        ? `${source.levels} level${source.levels === 1 ? "" : "s"} past the end of its line`
+        : `the ${unitName(UPGRADES.get(source.upgrade)?.unitType ?? source.upgrade)} upgrade at the Capitol`;
   return `${text} From ${from}.`;
 }
 
 /** With a commitment, the row also shows XP toward the next form. */
 export function memberRow(m: SquadMember, leader: Leader | undefined, commitment?: Commitment): HTMLElement {
   const row = element("div", "member");
-  row.appendChild(element("span", "name", `${isLeaderOf(m, leader) ? "♛ " : ""}${unitName(m.defId)}`));
+  row.appendChild(element("span", "name", `${isLeaderOf(m, leader) ? "♛ " : ""}${unitName(m.defId)}${m.level > 0 ? ` · level ${m.level}` : ""}`));
   const max = maxHpOf(m, leader);
   const bar = element("div", "hp");
   const fill = element("div", "fill");
   fill.style.width = `${(100 * m.hp) / max}%`;
   bar.append(fill, element("span", "value", m.hp > 0 ? `${m.hp} / ${max}` : "Fallen: revive at the Capitol"));
   row.appendChild(bar);
+  const perLevel = xpToLevel(m.defId);
+  if (commitment && perLevel !== null) {
+    const xp = element("div", "xp");
+    const xpFill = element("div", "fill");
+    xpFill.style.width = `${(100 * Math.min(m.xp, perLevel)) / perLevel}%`;
+    xp.append(xpFill, element("span", "value", `XP ${m.xp} / ${perLevel} → level ${m.level + 1}`));
+    row.appendChild(xp);
+  }
   const needed = xpToEvolve(m.defId);
   if (commitment && needed !== null) {
     const next = nextForm(m.defId, commitment);

@@ -1,4 +1,8 @@
 import * as THREE from "three";
+import type { PlayerColor } from "#rules/world/colors";
+import { threeColor } from "#view/colors";
+import { movementOf } from "#rules/world/leaders";
+import { movementPips } from "#view/dom";
 import { CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
 import { hexKey } from "#rules/hex";
 import type { Hex } from "#rules/hex";
@@ -62,6 +66,13 @@ function jitter(hex: Hex, salt: number): number {
 }
 
 export class MapView {
+  private colors: [THREE.Color, THREE.Color] = [threeColor("red"), threeColor("teal")];
+
+  /** The owners' player colors, for warbands placed from now on (call before `build`). */
+  setColors(colors: readonly [PlayerColor, PlayerColor]): void {
+    this.colors = [threeColor(colors[0]), threeColor(colors[1])];
+  }
+
   readonly scene = new THREE.Scene();
   readonly pose: CameraPose = {
     position: new THREE.Vector3(-3, 11, 11.5),
@@ -257,7 +268,7 @@ export class MapView {
           group.add(mound, entrance);
         }
         const leaderDef = lair.guards[0]?.defId ?? "brigand";
-        const figure = buildFigure(leaderDef, 1);
+        const figure = buildFigure(leaderDef, 1, null);
         figure.scale.multiplyScalar(0.55);
         figure.rotation.y = -Math.PI / 2;
         figure.position.set(lair.kind === "dungeon" ? -0.25 : 0, 0, lair.kind === "dungeon" ? 0.25 : 0);
@@ -324,19 +335,22 @@ export class MapView {
       figure.group.position.copy(this.standingPoint(leader.hex));
       figure.group.userData = { hex: leader.hex };
       const alive = leader.squad.length;
-      figure.label.textContent = `${UNITS[defId]?.name ?? defId} · ${alive} unit${alive === 1 ? "" : "s"}`;
+      // Your own warbands also show the movement they have left.
+      const move = leader.side === 0 ? ` · ${movementPips(leader.movement, movementOf(leader))}` : "";
+      figure.label.textContent = `${UNITS[defId]?.name ?? defId} · ${alive} unit${alive === 1 ? "" : "s"}${move}`;
     }
   }
 
   private addLeader(leader: Leader, defId: string): LeaderFigure {
     const group = new THREE.Group();
-    const figure = buildFigure(defId, leader.side);
+    const owner = this.colors[leader.side];
+    const figure = buildFigure(defId, leader.side, owner);
     figure.scale.multiplyScalar(0.62);
     figure.rotation.y = leader.side === 0 ? -Math.PI / 4 : (Math.PI * 3) / 4;
     group.add(figure);
     const ring = new THREE.Mesh(
       new THREE.TorusGeometry(0.5, 0.05, 6, 24),
-      new THREE.MeshStandardMaterial({ color: PALETTES[leader.side].body, emissive: PALETTES[leader.side].accent, emissiveIntensity: 0.6 }),
+      new THREE.MeshStandardMaterial({ color: owner, emissive: owner, emissiveIntensity: 0.6 }),
     );
     ring.rotation.x = Math.PI / 2;
     ring.position.y = 0.03;

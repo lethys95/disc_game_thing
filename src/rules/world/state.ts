@@ -1,5 +1,7 @@
+import { levelBonus } from "#rules/balance";
 import type { Battle, EffectSeed, Side, Tile } from "#rules/battle/types";
 import type { Commitment } from "#rules/forks";
+import type { PlayerColor } from "#rules/world/colors";
 import { hexDistance, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import type { WorldMap } from "#rules/map";
@@ -10,7 +12,10 @@ import type { Playable } from "#rules/units/index";
 /** The world's data (warbands, cities, lairs, graveyards) and lookups over it. */
 
 /** Where a unit's difference from its baseline came from: the track record (docs/design/pillars.md). */
-export type MarkSource = { readonly kind: "leaderTree"; readonly skill: string } | { readonly kind: "upgrade"; readonly upgrade: string };
+export type MarkSource =
+  | { readonly kind: "leaderTree"; readonly skill: string }
+  | { readonly kind: "upgrade"; readonly upgrade: string }
+  | { readonly kind: "levels"; readonly levels: number };
 
 /** A lasting difference from the unit's baseline: an effect it brings into every battle, and its source. */
 export interface Mark {
@@ -25,14 +30,17 @@ export interface SquadMember {
   readonly hp: number;
   readonly xp: number;
   readonly marks: readonly Mark[];
+  /** Levels gained past the end of its line (pillars.md). */
+  readonly level: number;
 }
 
 /** A unit in its side's graveyard, waiting for resurrection at the Capitol. */
 export interface Fallen {
   readonly defId: string;
   readonly fellOnTurn: number;
-  /** Marks survive death: a resurrected unit keeps its track record. */
+  /** Marks and levels survive death: a resurrected unit keeps its track record. */
   readonly marks: readonly Mark[];
+  readonly level: number;
 }
 
 export interface Leader {
@@ -102,6 +110,8 @@ export interface World {
   outcome: { winner: Side } | null;
   nextLeader: number;
   factions: [Playable, Playable];
+  /** Who owns what, on screen (`world/colors.ts`). */
+  colors: [PlayerColor, PlayerColor];
   commitment: [Commitment, Commitment];
   graveyard: [Fallen[], Fallen[]];
   /** Unit-type upgrades each side has bought (`rules/upgrades.ts`). */
@@ -134,6 +144,7 @@ export type WorldEvent =
   | { type: "leaderFell"; leaderId: string; side: Side }
   | { type: "xp"; side: Side; pool: number; each: number }
   | { type: "evolved"; side: Side; from: string; to: string }
+  | { type: "leveled"; side: Side; defId: string; level: number }
   | { type: "fell"; side: Side; defId: string }
   | { type: "chose"; side: Side; fork: string; to: string }
   | { type: "cleared"; lairId: string; side: Side }
@@ -158,21 +169,43 @@ export const alive = (m: SquadMember) => m.hp > 0;
 
 export const leaderUnit = (leader: Leader): SquadMember | undefined => leader.squad.find((m) => m.tile.row === leader.leaderTile.row && m.tile.col === leader.leaderTile.col);
 
-export const member = (defId: string, tile: Tile): SquadMember => ({ defId, tile, hp: fullHp(defId), xp: 0, marks: [] });
+export const member = (defId: string, tile: Tile): SquadMember => ({ defId, tile, hp: fullHp(defId), xp: 0, marks: [], level: 0 });
 
 export type Strength = "weak" | "medium" | "strong";
 
 /** Provisional bandit groups (the user's bandit units; formations and sizes are placeholders). */
-const BANDIT_GROUPS: Readonly<Record<Strength, readonly [string, Tile][]>> = {
-  weak: [["brigand", { row: 0, col: 1 }], ["bandit", { row: 1, col: 1 }]],
-  medium: [["brigand", { row: 0, col: 0 }], ["marauder", { row: 0, col: 1 }], ["bandit", { row: 1, col: 1 }]],
-  strong: [
-    ["brigand", { row: 0, col: 0 }], ["marauder", { row: 0, col: 1 }], ["brigand", { row: 0, col: 2 }],
-    ["bandit", { row: 1, col: 0 }], ["hedge_mage", { row: 1, col: 1 }],
-  ],
+/**
+ * Provisional bandit groups (the user's bandit units; formations, sizes and levels are placeholders). The user:
+ * neutrals should be a challenge from the start. Stronger groups are bigger and seasoned (levels, pillars.md).
+ */
+const BANDIT_GROUPS: Readonly<Record<Strength, { readonly level: number; readonly units: readonly [string, Tile][] }>> = {
+  weak: {
+    level: 0,
+    units: [["brigand", { row: 0, col: 0 }], ["marauder", { row: 0, col: 1 }], ["bandit", { row: 1, col: 0 }], ["hedge_mage", { row: 1, col: 1 }]],
+  },
+  medium: {
+    level: 2,
+    units: [
+      ["brigand", { row: 0, col: 0 }], ["marauder", { row: 0, col: 1 }], ["brigand", { row: 0, col: 2 }],
+      ["bandit", { row: 1, col: 0 }], ["hedge_mage", { row: 1, col: 1 }],
+    ],
+  },
+  strong: {
+    level: 4,
+    units: [
+      ["marauder", { row: 0, col: 0 }], ["brigand", { row: 0, col: 1 }], ["marauder", { row: 0, col: 2 }],
+      ["bandit", { row: 1, col: 0 }], ["hedge_mage", { row: 1, col: 1 }], ["bandit", { row: 1, col: 2 }],
+    ],
+  },
 };
 
-export const banditGroup = (strength: Strength): SquadMember[] => BANDIT_GROUPS[strength].map(([defId, tile]) => member(defId, tile));
+export function banditGroup(strength: Strength): SquadMember[] {
+  const { level, units } = BANDIT_GROUPS[strength];
+  return units.map(([defId, tile]) => {
+    const hp = fullHp(defId);
+    return { ...member(defId, tile), level, hp: hp + levelBonus(hp, level) };
+  });
+}
 
 /** Stronger the further from both Capitols: easy fights near home, harder ones in the middle. */
 export function strengthAt(map: WorldMap, hex: Hex, atLeast: Strength): Strength {

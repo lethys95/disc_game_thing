@@ -88,8 +88,8 @@ button.action .key { font: 600 9px var(--text); margin-left: 6px; padding: 0 3px
 
 .hpbar { width: 54px; height: 5px; background: #1a1412; border: 1px solid #000; position: relative; }
 .hpbar .fill { position: absolute; inset: 0 auto 0 0; }
-.hpbar.side0 .fill { background: #c9b48e; }
-.hpbar.side1 .fill { background: #a8342a; }
+.hpbar.side0 .fill { background: var(--side0); }
+.hpbar.side1 .fill { background: var(--side1); }
 
 .float { font: 700 20px var(--display); text-shadow: 0 1px 4px #000; animation: rise 1.3s ease-out forwards; white-space: nowrap; }
 .float.damage { color: #f0e0cc; }
@@ -172,11 +172,11 @@ button.action:disabled { opacity: 0.4; cursor: not-allowed; }
 #forkprompt .subtitle { color: var(--muted); margin-bottom: 8px; }
 .leader-label { font: 600 11px var(--text); padding: 1px 6px; background: rgba(10, 9, 9, 0.75); border: 1px solid #3a2e28; white-space: nowrap; }
 .leader-label.side0 { color: var(--side0); }
-.leader-label.side1 { color: #b8aca4; }
+.leader-label.side1 { color: var(--side1); }
 #auto { position: fixed; right: 16px; top: 14px; min-width: 0; font-size: 14px; padding: 5px 12px; }
 .site-label { font: 600 10px var(--text); padding: 0 5px; background: rgba(10, 9, 9, 0.6); border: 1px solid #2c2622; color: var(--muted); white-space: nowrap; }
-.site-label.side0 { color: var(--side0); border-color: #5a4a36; }
-.site-label.side1 { color: #b8aca4; border-color: #5e2a22; }
+.site-label.side0 { color: var(--side0); border-color: var(--side0); }
+.site-label.side1 { color: var(--side1); border-color: var(--side1); }
 #mapsquad { max-height: calc(100vh - 150px); overflow-y: auto; }
 button.warband {
   display: flex; justify-content: space-between; width: 100%; margin: 6px 0 4px; padding: 4px 8px; cursor: pointer;
@@ -228,7 +228,7 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 }
 .capitol-header { display: flex; align-items: center; gap: 24px; }
 .capitol-header .title { font: 700 36px var(--display); letter-spacing: 0.06em; }
-.capitol-header .gold { color: #d9b36a; font: 600 18px var(--display); flex: 1; }
+.capitol-header .gold { font: 600 18px var(--display); flex: 1; }
 .capitol-body { display: grid; grid-template-columns: 1fr 340px; gap: 16px; min-height: 0; flex: 1; }
 .capitol-trees, .capitol-hall { padding: 12px 16px; overflow-y: auto; }
 .screen .section { font: 700 18px var(--display); margin: 12px 0 6px; }
@@ -303,3 +303,25 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 #menu .hidden-file { display: none; }
 #mapmenu { position: fixed; left: 50%; top: 44px; transform: translateX(-50%); min-width: 0; font-size: 13px; padding: 3px 14px; }
 button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }
+
+/* The turn order as portraits (view/hud.ts). */
+#turns .chip { position: relative; padding: 0; border-width: 1px 1px 3px; cursor: default; line-height: 0; }
+#turns .chip .art.queue { width: 34px; height: 42px; background-size: 200%; background-position: 50% 4%; }
+#turns .chip .art.queue-now { width: 46px; height: 56px; background-size: 200%; background-position: 50% 4%; }
+#turns .chip .art.placeholder { font-size: 11px; }
+#turns .chip .when { position: absolute; left: 0; right: 0; bottom: -15px; font: 600 9px var(--text); line-height: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); text-align: center; }
+#turns .chip.now .when { color: #d9b36a; }
+#turns .chip:hover { border-color: #e0c070; }
+#turns { align-items: flex-start; }
+
+.gold { display: inline-flex; align-items: center; gap: 4px; color: #e8c46a; }
+.coin { display: inline-block; width: 1em; height: 1em; vertical-align: -0.12em; }
+.coin svg { width: 100%; height: 100%; display: block; }
+#mapturn .movement { color: #cfe3d2; letter-spacing: 0.05em; }
+
+.squad .swatches { display: flex; gap: 4px; margin: 6px 0; }
+.squad .swatch { width: 20px; height: 20px; min-width: 0; padding: 0; border: 2px solid #1a1614; cursor: pointer; }
+.squad .swatch.selected { border-color: #f1eadb; box-shadow: 0 0 0 1px #000; }
+.squad .swatch:disabled { opacity: 0.25; cursor: default; }
+#turns .chip.side0 .art.placeholder { background: var(--side0); border-color: var(--side0); }
+#turns .chip.side1 .art.placeholder { background: var(--side1); border-color: var(--side1); }

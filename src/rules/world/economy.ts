@@ -128,7 +128,7 @@ export function newcomer(world: World, side: Side, defId: string, tile: Tile): S
   return { ...member(defId, tile), marks: marksOnBecoming(world, side, defId) };
 }
 
-/** Evolves members in place; the new form arrives at full health (provisional). */
+/** Evolves or levels members in place; a new form or level arrives at full health (provisional). */
 export function growSquad(world: World, { squad, leader }: Held, gained: number, side: Side, events: WorldEvent[]): void {
   squad.forEach((m, i) => {
     if (!alive(m)) return;
@@ -137,6 +137,12 @@ export function growSquad(world: World, { squad, leader }: Held, gained: number,
     for (const to of growth.evolvedInto) {
       events.push({ type: "evolved", side, from, to });
       from = to;
+    }
+    if (growth.levels > 0) {
+      const leveled = { ...m, xp: growth.xp, level: m.level + growth.levels };
+      events.push({ type: "leveled", side, defId: m.defId, level: leveled.level });
+      squad[i] = { ...leveled, hp: maxHpOf(leveled, leader) };
+      return;
     }
     if (growth.evolvedInto.length === 0) {
       squad[i] = { ...m, xp: growth.xp };

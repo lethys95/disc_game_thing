@@ -12,7 +12,7 @@ import { applyWorldAction } from "#rules/world/actions";
 import { concludeBattle, playersIn } from "#rules/world/battles";
 import { createWorld } from "#rules/world/create";
 import { income, waitingForks } from "#rules/world/economy";
-import { leadershipOf, unspentPoints } from "#rules/world/leaders";
+import { leadershipOf, movementOf, unspentPoints } from "#rules/world/leaders";
 import { planMove, reachable } from "#rules/world/movement";
 import { isLeaderOf, maxHpOf } from "#rules/world/record";
 import { capitolOf, cityById, lairById, leaderAt } from "#rules/world/state";
@@ -23,8 +23,10 @@ import type { App } from "#view/app";
 import type { MapView } from "#view/map";
 import type { Squads } from "#view/setup";
 import type { Stage } from "#view/stage";
+import type { PlayerColor } from "#rules/world/colors";
 import { CapitolScreen } from "#view/capitol";
-import { buttonById, byId, element } from "#view/dom";
+import { applySideColors } from "#view/colors";
+import { buttonById, byId, element, gold, movementPips } from "#view/dom";
 import { LeaderScreen } from "#view/leader";
 import { memberRow, unitName } from "#view/members";
 
@@ -117,10 +119,11 @@ export class Campaign {
     buttonById("mapmenu").addEventListener("click", () => this.options.onMenu());
   }
 
-  start(squads: Squads, factions: readonly [Playable, Playable], commitment: readonly [Commitment, Commitment], seed: number): void {
+  start(squads: Squads, factions: readonly [Playable, Playable], commitment: readonly [Commitment, Commitment], colors: readonly [PlayerColor, PlayerColor], seed: number): void {
     this.stop();
     this.seed = seed;
-    this.world = createWorld(seed, squads, commitment, factions);
+    this.world = createWorld(seed, squads, commitment, factions, colors);
+    this.view.setColors(colors);
     this.view.build(this.world.map);
     this.view.buildSites(this.world);
     this.enterMap();
@@ -132,6 +135,7 @@ export class Campaign {
     this.stop();
     this.seed = save.seed;
     this.world = save.world;
+    this.view.setColors(save.world.colors);
     this.view.build(save.world.map);
     this.view.buildSites(save.world);
     this.enterMap();
@@ -186,6 +190,7 @@ export class Campaign {
   private enterMap(): void {
     const world = this.world;
     if (!world) return;
+    applySideColors(document.documentElement, world.colors);
     this.view.show();
     this.syncView(world);
     this.hud.hidden = false;
@@ -271,7 +276,7 @@ export class Campaign {
         this.afterBattle(result, generation);
         return;
       }
-      this.app.fight(engagement.battle, PLAYER, (battle) => this.afterBattle(battle, generation));
+      this.app.fight(engagement.battle, PLAYER, step.world.colors, (battle) => this.afterBattle(battle, generation));
       return;
     }
     this.render();
@@ -293,6 +298,7 @@ export class Campaign {
       if (e.type === "captured") lines.push(`${e.side === PLAYER ? "You take" : "The enemy takes"} the city.`);
       if (e.type === "xp" && e.side === PLAYER) lines.push(`Your survivors gain ${e.each} XP each.`);
       if (e.type === "evolved" && e.side === PLAYER) lines.push(`${unitName(e.from)} becomes ${unitName(e.to)}.`);
+      if (e.type === "leveled" && e.side === PLAYER) lines.push(`${unitName(e.defId)} reaches level ${e.level}.`);
       if (e.type === "cleared") lines.push(e.side === PLAYER ? "The bandit camp is cleared." : "The enemy cleared a bandit camp.");
       if (e.type === "leaderFell") lines.push(e.side === PLAYER ? "One of your warbands fell." : "An enemy warband fell.");
       if (e.type === "looted" && e.side === PLAYER) lines.push(`The dungeon yields ${e.gold} gold${e.joins ? ` and a ${unitName(e.joins)} joins you` : ""}.`);
@@ -345,9 +351,11 @@ export class Campaign {
       attack: plan?.target && plan.target.kind !== "capture" ? this.hovered : null,
     });
 
-    this.turn.textContent = world.outcome
-      ? ""
-      : `Turn ${world.turn} · ${world.activeSide === PLAYER ? "your move" : "the enemy moves"} · ${world.gold[PLAYER]} gold (+${income(world, PLAYER)}/turn) · seed ${this.seed}`;
+    this.turn.replaceChildren();
+    if (!world.outcome) {
+      this.turn.append(`Turn ${world.turn} · ${world.activeSide === PLAYER ? "your move" : "the enemy moves"} · `, gold(world.gold[PLAYER]), ` (+${income(world, PLAYER)} per turn)`);
+      if (leader) this.turn.append(" · ", element("span", "movement", `Movement ${movementPips(leader.movement, movementOf(leader))}`));
+    }
     this.endTurn.disabled = !this.myTurn();
     this.renderWarbands(leader);
     this.renderCapitol(world, leader);
@@ -394,7 +402,7 @@ export class Campaign {
     for (const leader of mine) {
       const isSelected = leader.id === selected?.id;
       const head = element("button", `warband${isSelected ? " selected" : ""}`);
-      head.append(element("span", "name", leaderName(leader)), element("span", "meta", `${leader.squad.length}/${leadershipOf(leader)} units · ${leader.movement} move`));
+      head.append(element("span", "name", leaderName(leader)), element("span", "meta", `${leader.squad.length}/${leadershipOf(leader)} units · ${movementPips(leader.movement, movementOf(leader))}`));
       head.addEventListener("click", () => {
         this.selected = leader.id;
         this.render();

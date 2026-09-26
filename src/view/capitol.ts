@@ -7,7 +7,7 @@ import { chooseBranchProblem, elevateProblem, recruitProblem, resurrectionCost, 
 import { capitolOf, leaderUnit } from "#rules/world/state";
 import type { Leader, RecruitInto, World, WorldAction } from "#rules/world/state";
 import { art } from "#view/art";
-import { element } from "#view/dom";
+import { element, gold } from "#view/dom";
 import { memberRow, unitName } from "#view/members";
 
 export interface CapitolOptions {
@@ -54,7 +54,7 @@ export class CapitolScreen {
     this.root.hidden = false;
     this.root.replaceChildren();
     const header = element("div", "capitol-header");
-    header.append(element("div", "title", "Your Capitol"), element("div", "gold", `${world.gold[side]} gold`));
+    header.append(element("div", "title", "Your Capitol"), gold(world.gold[side], "purse"));
     const back = element("button", "action", "Back to the map");
     back.addEventListener("click", () => this.options.close());
     header.appendChild(back);

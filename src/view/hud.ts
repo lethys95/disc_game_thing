@@ -18,6 +18,8 @@ export const optionKey = (option: { abilityId: string; enhancement: Enhancement 
   `${option.abilityId}|${option.enhancement.kind}${option.enhancement.kind === "replicate" ? option.enhancement.copies : ""}`;
 
 export interface HudHandlers {
+  /** A unit in the turn order is hovered (null: no longer). */
+  onFocus(unitId: string | null): void;
   onAbility(key: string): void;
   onAuto(): void;
 }
@@ -40,6 +42,7 @@ function place(unit: BattleUnit): string {
 }
 
 export class Hud {
+  private turnsKey = "";
   private readonly turns = byId("turns");
   private readonly card = byId("card");
   private readonly actions = byId("actions");
@@ -66,14 +69,29 @@ export class Hud {
     }
   }
 
+  /**
+   * The turn order as portraits: who acts now, who's next. Hovering one highlights the unit. Rebuilt only when the
+   * order changes, so a hovered portrait isn't replaced under the pointer.
+   */
   renderTurns(battle: Battle, playerSide: Side | null): void {
+    const upcoming = upcomingSlots(battle)
+      .slice(0, 12)
+      .flatMap((id) => {
+        const unit = battle.units[id];
+        return unit?.alive ? [unit] : [];
+      });
+    const key = `${battle.round}:${upcoming.map((u) => u.id).join(",")}`;
+    if (key === this.turnsKey) return;
+    this.turnsKey = key;
     this.turns.replaceChildren();
     this.turns.appendChild(element("div", "round", `Round ${battle.round}`));
-    upcomingSlots(battle).slice(0, 14).forEach((id, index) => {
-      const unit = battle.units[id];
-      if (!unit?.alive) return;
-      const chip = element("div", `chip side${unit.side}${index === 0 ? " now" : ""}`, unit.name);
+    upcoming.forEach((unit, index) => {
+      const chip = element("div", `chip side${unit.side}${index === 0 ? " now" : index === 1 ? " next" : ""}`);
+      chip.appendChild(art({ kind: "portrait", id: unit.defId }, index === 0 ? "queue-now" : "queue"));
+      if (index < 2) chip.appendChild(element("span", "when", index === 0 ? "now" : "next"));
       chip.title = `${unitLabel(unit, playerSide)} (${place(unit)})`;
+      chip.addEventListener("mouseenter", () => this.handlers.onFocus(unit.id));
+      chip.addEventListener("mouseleave", () => this.handlers.onFocus(null));
       this.turns.appendChild(chip);
     });
   }

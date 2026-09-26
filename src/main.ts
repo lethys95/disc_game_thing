@@ -1,5 +1,7 @@
 import { createBattle } from "#rules/battle/engine";
+import { defaultColors } from "#rules/world/colors";
 import { AiClient } from "#view/ai-client";
+import { applySideColors } from "#view/colors";
 import { GameMenu } from "#view/menu";
 import { AUTOSAVE_ID, LocalSaveStore } from "#view/saves";
 import { applyOrnaments } from "#view/art";
@@ -42,19 +44,21 @@ const menu: GameMenu = new GameMenu(byId("menu"), {
   newGame: () => showSetup(),
 });
 const setup = new Setup(byId("setup"), {
-  onChange: (squads) => {
+  onChange: (squads, colors) => {
     battleScene.show();
+    battleScene.setColors(colors);
+    applySideColors(document.documentElement, colors);
     battleScene.reset();
     battleScene.sync(createBattle(squads).battle);
   },
-  onFight: (squads, playerSide) => {
+  onFight: (squads, playerSide, colors) => {
     setup.hide();
-    app.start(squads, playerSide);
+    app.start(squads, playerSide, colors);
   },
-  onMarch: (squads, factions, commitments) => {
+  onMarch: (squads, factions, commitments, colors) => {
     setup.hide();
     const seed = Number(params.get("seed") ?? Math.floor(Date.now() % 100000));
-    campaign.start(squads, factions, commitments, seed);
+    campaign.start(squads, factions, commitments, colors, seed);
   },
   onLoad: () => menu.show(),
 });
@@ -70,7 +74,8 @@ const presets = [PRESETS.preserve, PRESETS.punishment] as const;
 if (params.has("map")) {
   setup.hide();
   const nexus = params.get("map") === "nexus";
-  campaign.start([PRESETS.uncommitted, nexus ? NEXUS_PRESETS.uncommitted : PRESETS.uncommitted], ["jilliath", nexus ? "nexus" : "jilliath"], [{}, {}], Number(params.get("seed") ?? 1));
+  const factions = ["jilliath", nexus ? "nexus" : "jilliath"] as const;
+  campaign.start([PRESETS.uncommitted, nexus ? NEXUS_PRESETS.uncommitted : PRESETS.uncommitted], factions, [{}, {}], defaultColors(factions), Number(params.get("seed") ?? 1));
   if (params.has("xp")) campaign.startingXp(Number(params.get("xp")));
   if (params.has("capitol")) campaign.openCapitol();
   if (params.has("leader")) campaign.openLeader();
@@ -79,7 +84,7 @@ if (params.has("map")) {
   const fight = params.get("fight") ?? "";
   const nexusKey = fight.startsWith("nexus:") ? fight.slice(6) : "uncommitted";
   const enemy = fight.startsWith("nexus") ? (nexusKey === "scheme" || nexusKey === "overload" ? NEXUS_PRESETS[nexusKey] : NEXUS_PRESETS.uncommitted) : fight === "bandits" ? BANDIT_GROUP : presets[1];
-  app.start([presets[0], enemy], params.get("auto") === "1" ? null : 0, Number(params.get("steps") ?? 0));
+  app.start([presets[0], enemy], params.get("auto") === "1" ? null : 0, defaultColors(["jilliath", fight.startsWith("nexus") ? "nexus" : "jilliath"]), Number(params.get("steps") ?? 0));
 } else {
   showSetup();
 }

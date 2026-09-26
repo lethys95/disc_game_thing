@@ -85,7 +85,7 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
   graves[defending.side] = defending.neutral ? [] : buried(defending.squad, defenders);
   for (const side of [0, 1] as const) {
     for (const m of graves[side]) {
-      draft.graveyard[side].push({ defId: m.defId, fellOnTurn: draft.turn, marks: m.marks });
+      draft.graveyard[side].push({ defId: m.defId, fellOnTurn: draft.turn, marks: m.marks, level: m.level });
       events.push({ type: "fell", side, defId: m.defId });
     }
   }

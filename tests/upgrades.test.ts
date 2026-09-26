@@ -64,7 +64,7 @@ describe("unit-type upgrades", () => {
     if (!fallen) throw new Error("no recruit");
     const dead: World = {
       ...withLeader(world, { squad: leaderById(world, "leader0").squad.slice(0, 2) }),
-      graveyard: [[{ defId: "congregant", fellOnTurn: world.turn, marks: fallen.marks }], []],
+      graveyard: [[{ defId: "congregant", fellOnTurn: world.turn, marks: fallen.marks, level: 0 }], []],
     };
     const back = applyWorldAction(dead, { type: "resurrect", index: 0, into: { kind: "leader", leaderId: "leader0" } }).world;
     expect(upgradesOn(back)).toEqual([[], [], ["congregant_damage"]]);

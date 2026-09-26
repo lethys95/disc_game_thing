@@ -4,6 +4,9 @@ import { effectiveStats } from "#rules/battle/engine";
 import { COLS, ROWS } from "#rules/battle/grid";
 import type { Battle, BattleEvent, BattleUnit, Col, Row, Side, Tile } from "#rules/battle/types";
 import { artUrl } from "#view/art";
+import { defaultColors } from "#rules/world/colors";
+import type { PlayerColor } from "#rules/world/colors";
+import { threeColor } from "#view/colors";
 import { buildFigure } from "#view/figures";
 import { buildStandee } from "#view/standee";
 import type { CameraPose, Stage } from "#view/stage";
@@ -22,6 +25,8 @@ export interface PreviewMark {
 
 export interface Highlights {
   readonly current: TileRef | null;
+  /** A unit hovered elsewhere (the turn order): shown brighter than anything else. */
+  readonly focus?: TileRef | null;
   readonly candidates: readonly TileRef[];
   readonly affected: readonly TileRef[];
 }
@@ -55,6 +60,7 @@ const TILE_BASE = new THREE.Color(0x2a2724);
 const TILE_CANDIDATE = new THREE.Color(0x5a1410);
 const TILE_AFFECTED = new THREE.Color(0xd8321f);
 const TILE_CURRENT = new THREE.Color(0x8a7040);
+const TILE_FOCUS = new THREE.Color(0xe0c070);
 
 export class BattleScene {
   readonly scene = new THREE.Scene();
@@ -66,6 +72,7 @@ export class BattleScene {
   };
   private readonly tiles = new Map<string, THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial>>();
   private readonly figures = new Map<string, Figure>();
+  private colors: [THREE.Color, THREE.Color] = [threeColor(defaultColors(["jilliath", "jilliath"])[0]), threeColor(defaultColors(["jilliath", "jilliath"])[1])];
 
   constructor(private readonly stage: Stage) {
     this.buildArena();
@@ -158,6 +165,11 @@ export class BattleScene {
     }
   }
 
+  /** The owners' player colors, for figures made from now on (call before `reset`). */
+  setColors(colors: readonly [PlayerColor, PlayerColor]): void {
+    this.colors = [threeColor(colors[0]), threeColor(colors[1])];
+  }
+
   /** Places every figure where the battle says it is. */
   sync(battle: Battle): void {
     for (const unit of Object.values(battle.units)) {
@@ -174,7 +186,8 @@ export class BattleScene {
 
   private addFigure(unit: BattleUnit): Figure {
     const portrait = artUrl({ kind: "portrait", id: unit.defId });
-    const group = portrait ? buildStandee(portrait, unit.side) : buildFigure(unit.defId, unit.side);
+    const owner = this.colors[unit.side];
+    const group = portrait ? buildStandee(portrait, owner) : buildFigure(unit.defId, unit.side, owner);
     group.rotation.y = unit.side === 0 ? 0 : Math.PI;
     group.userData = { unitId: unit.id };
     if (unit.leader) group.add(crown());
@@ -268,10 +281,11 @@ export class BattleScene {
     const candidates = new Set(highlights.candidates.map(key));
     const affected = new Set(highlights.affected.map(key));
     const current = highlights.current ? key(highlights.current) : null;
+    const focus = highlights.focus ? key(highlights.focus) : null;
     for (const [k, tile] of this.tiles) {
-      const color = affected.has(k) ? TILE_AFFECTED : candidates.has(k) ? TILE_CANDIDATE : k === current ? TILE_CURRENT : TILE_BASE;
+      const color = k === focus ? TILE_FOCUS : affected.has(k) ? TILE_AFFECTED : candidates.has(k) ? TILE_CANDIDATE : k === current ? TILE_CURRENT : TILE_BASE;
       tile.material.emissive.copy(color);
-      tile.material.emissiveIntensity = color === TILE_BASE ? 0.2 : color === TILE_AFFECTED ? 1.6 : 1;
+      tile.material.emissiveIntensity = color === TILE_BASE ? 0.2 : color === TILE_AFFECTED || color === TILE_FOCUS ? 1.6 : 1;
     }
   }
 

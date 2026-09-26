@@ -1,5 +1,6 @@
 import { ownStats } from "#rules/battle/engine";
 import type { Placement } from "#rules/battle/engine";
+import { LEVEL_BONUS_PERCENT } from "#rules/balance";
 import { sameTile } from "#rules/battle/grid";
 import { leaderEffects } from "#rules/world/leaders";
 import { fullHp } from "#rules/world/state";
@@ -12,7 +13,8 @@ export const isLeaderOf = (m: SquadMember, leader: Leader | undefined): leader i
 /** Every difference from the unit's baseline, each with its source: the unit's track record. */
 export function recordOf(m: SquadMember, leader: Leader | undefined): Mark[] {
   const fromTree = isLeaderOf(m, leader) ? leaderEffects(leader).map(({ skill, effect }): Mark => ({ effect, source: { kind: "leaderTree", skill } })) : [];
-  return [...m.marks, ...fromTree];
+  const fromLevels: Mark[] = m.level > 0 ? [{ effect: { def: "veteran", amount: m.level * LEVEL_BONUS_PERCENT }, source: { kind: "levels", levels: m.level } }] : [];
+  return [...m.marks, ...fromLevels, ...fromTree];
 }
 
 export function placementOf(m: SquadMember, leader: Leader | undefined): Placement {

@@ -4,6 +4,9 @@ import { applyAction, createBattle, legalActions } from "#rules/battle/engine";
 import { sameTile } from "#rules/battle/grid";
 import type { Action, Battle, BattleEvent, BattleUnit, Enhancement, LegalAbility, Side, TargetChoice } from "#rules/battle/types";
 import { PLAIN } from "#rules/battle/types";
+import { defaultColors } from "#rules/world/colors";
+import type { PlayerColor } from "#rules/world/colors";
+import { applySideColors } from "#view/colors";
 import { enhancementLabel, Hud, optionKey, unitLabel } from "#view/hud";
 import { asKnown, masked } from "#view/secrecy";
 import type { BannerButton } from "#view/hud";
@@ -17,7 +20,8 @@ export interface AppOptions {
 }
 
 /** What happens when a battle ends: a skirmish offers a rematch, a map battle hands the result back. */
-type Finish = { kind: "skirmish"; squads: Squads } | { kind: "world"; onDone: (battle: Battle) => void };
+type Finish = { kind: "skirmish"; squads: Squads; colors: Colors } | { kind: "world"; onDone: (battle: Battle) => void };
+type Colors = readonly [PlayerColor, PlayerColor];
 
 interface Preview {
   readonly key: string;
@@ -38,11 +42,15 @@ function ownEvents(events: readonly BattleEvent[]): readonly BattleEvent[] {
 export class App {
   private battle: Battle | null = null;
   private playerSide: Side | null = 0;
-  private finish: Finish = { kind: "skirmish", squads: [[], []] };
+  private finish: Finish = { kind: "skirmish", squads: [[], []], colors: defaultColors(["jilliath", "jilliath"]) };
   /** The chosen ability variant (`optionKey`). */
   private selected: string | null = null;
   /** A replicated spell's targets picked so far (choice indices). */
   private picks: number[] = [];
+  /** A unit hovered in the turn order. */
+  private focus: string | null = null;
+  /** Whether the player picked the selected ability themselves; if not, hovering may fall back to another. */
+  private chosen = false;
   private hovered: TileRef | null = null;
   /** A unit whose card stays up (clicked), so the mouse can travel to the card to read its effects. */
   private pinned: string | null = null;
@@ -61,7 +69,14 @@ export class App {
     private readonly ai: AiClient,
     private readonly options: AppOptions,
   ) {
-    this.hud = new Hud({ onAbility: (id) => this.chooseAbility(id), onAuto: () => this.toggleAuto() });
+    this.hud = new Hud({
+      onAbility: (id) => this.chooseAbility(id),
+      onAuto: () => this.toggleAuto(),
+      onFocus: (unitId) => {
+        this.focus = unitId;
+        this.render();
+      },
+    });
     this.hud.setVisible(false);
     const canvas = stage.renderer.domElement;
     canvas.addEventListener("pointermove", (e) => this.hover(e.clientX, e.clientY));
@@ -77,18 +92,20 @@ export class App {
   }
 
   /** A standalone battle between two squads. */
-  start(squads: Squads, playerSide: Side | null, fastForward = 0): void {
+  start(squads: Squads, playerSide: Side | null, colors: Colors, fastForward = 0): void {
     const step = createBattle(squads);
-    this.run(step.battle, step.events, playerSide, { kind: "skirmish", squads }, fastForward);
+    this.run(step.battle, step.events, playerSide, colors, { kind: "skirmish", squads, colors }, fastForward);
   }
 
   /** A battle that came from the map; `onDone` receives the finished battle. */
-  fight(battle: Battle, playerSide: Side | null, onDone: (battle: Battle) => void): void {
-    this.run(battle, [], playerSide, { kind: "world", onDone }, 0);
+  fight(battle: Battle, playerSide: Side | null, colors: Colors, onDone: (battle: Battle) => void): void {
+    this.run(battle, [], playerSide, colors, { kind: "world", onDone }, 0);
   }
 
-  private run(start: Battle, events: readonly BattleEvent[], playerSide: Side | null, finish: Finish, fastForward: number): void {
+  private run(start: Battle, events: readonly BattleEvent[], playerSide: Side | null, colors: Colors, finish: Finish, fastForward: number): void {
     this.stop();
+    this.scene.setColors(colors);
+    applySideColors(document.documentElement, colors);
     this.playerSide = playerSide;
     this.finish = finish;
     this.auto = false;
@@ -147,13 +164,28 @@ export class App {
     this.select(attack ? optionKey(attack) : null);
   }
 
-  private select(key: string | null): void {
+  private select(key: string | null, chosen = false): void {
     this.selected = key;
+    this.chosen = chosen;
     this.picks = [];
   }
 
   private selectedOption(): LegalAbility | undefined {
     return this.playerOptions().find((o) => optionKey(o) === this.selected);
+  }
+
+  /**
+   * The option a click on the hovered tile would use. Until the player picks one, a tile the default can't reach
+   * falls back to the first plain, non-basic ability that can (a support's shield on an ally, its attack on an enemy).
+   * Never onto the acting unit itself, so a stray click can't spend a self-heal.
+   */
+  private targetOption(): LegalAbility | undefined {
+    const selected = this.selectedOption();
+    const hovered = this.hovered;
+    if (this.chosen || !hovered || selected?.choices.some((c) => matches(c, hovered))) return selected;
+    const self = this.battle?.current ? this.battle.units[this.battle.current.unitId] : undefined;
+    if (self && hovered.side === self.side && sameTile(hovered.tile, self.tile)) return selected;
+    return this.playerOptions().find((o) => o.enhancement.kind === "none" && !o.tags.includes("basic") && o.choices.some((c) => matches(c, hovered))) ?? selected;
   }
 
   /** An ability whose definition claims this key, among the ones the player may use now. */
@@ -174,7 +206,7 @@ export class App {
       void this.commit({ abilityId: option.abilityId, choice: 0, enhancement: option.enhancement });
       return;
     }
-    this.select(this.selected === key ? null : key);
+    this.select(this.selected === key ? null : key, true);
     this.render();
   }
 
@@ -194,7 +226,7 @@ export class App {
    * cast so far (a smaller replicate, or the plain spell) so the preview shows what the picks add up to.
    */
   private hoveredAction(): Action | null {
-    const option = this.selectedOption();
+    const option = this.targetOption();
     const hovered = this.hovered;
     if (!option || !hovered) return null;
     const choice = option.choices.findIndex((c, i) => matches(c, hovered) && !this.picks.includes(i));
@@ -207,7 +239,7 @@ export class App {
 
   private click(): void {
     const action = this.hoveredAction();
-    const option = this.selectedOption();
+    const option = this.targetOption();
     // Clicking a target already picked casts the replicated spell with the picks so far.
     const hovered = this.hovered;
     const again = option && hovered ? option.choices.findIndex((c, i) => matches(c, hovered) && this.picks.includes(i)) : -1;
@@ -313,7 +345,7 @@ export class App {
     const playerSide = this.playerSide;
     const currentId = battle.current?.unitId ?? null;
     const current = currentId ? battle.units[currentId] : undefined;
-    const option = this.selectedOption();
+    const option = this.targetOption();
     const action = this.hoveredAction();
     const hoveredChoice = action ? option?.choices[action.choice] : undefined;
     const picked = [...this.picks, ...(action ? [action.choice, ...(action.copies ?? [])] : [])].flatMap((i) => option?.choices[i]?.affected ?? []);
@@ -324,14 +356,16 @@ export class App {
     const preview = action ? this.previewOf(battle, action) : null;
     if (!action) this.preview = null;
 
+    const focused = this.focus && battle.units[this.focus]?.alive ? battle.units[this.focus] : undefined;
     this.scene.setHighlights({
       current: current ? { side: current.side, tile: current.tile } : null,
       candidates: option ? option.choices.map((c) => c.anchor) : [],
       affected,
+      focus: focused ? { side: focused.side, tile: focused.tile } : null,
     });
     this.scene.showPreview(preview?.marks ?? []);
 
-    const inspected = this.unitAt(this.hovered);
+    const inspected = focused ?? this.unitAt(this.hovered);
     const pinned = this.pinned && battle.units[this.pinned]?.alive ? this.pinned : null;
     this.hud.renderTurns(battle, playerSide);
     this.hud.renderCard(battle, inspected?.id ?? pinned ?? currentId, playerSide, pinned !== null && !inspected);
@@ -348,7 +382,7 @@ export class App {
       return [{ label: "Return to the map", onClick: () => { this.stop(); finish.onDone(battle); } }];
     }
     return [
-      { label: "Fight again", onClick: () => this.start(finish.squads, this.playerSide) },
+      { label: "Fight again", onClick: () => this.start(finish.squads, this.playerSide, finish.colors) },
       { label: "Change squads", onClick: () => this.options.onSetup() },
     ];
   }

@@ -84,3 +84,9 @@ Games stalled for two reasons besides finite XP: the AI never went home to refil
 
 **2026-09-26 — Nexus spell charges: scheme replicates, overload overloads (m14).**
 The user's idea (casters are researchers running on batteries; enhance spells by spending finite charges, after MTG Izzet's overload and replicate) and Claude's mapping (scheme = replicate: precise, every target chosen; overload = overload: wide, indiscriminate), agreed by the user. One pool per caster; no mid-fight recharge for now. Engine: charges are unit data, enhancements are params, each variant is its own legal option, so the AI (which ranks replicate copies by single-cast value rather than trying every combination) and the exact hover preview handle them without special cases. A cancel (Negate) spoils a whole replicated cast.
+
+**2026-09-26 — Levels past the end of a line (m15; the user's D2 rule).**
+A unit with no evolution left keeps leveling at its tier's fixed XP cost. A level is data on the squad member (it survives death, like marks) and enters battle as a derived "veteran" effect: a percentage of the base stats, so higher tiers gain more per level, and the track record shows it. A unit waiting at an undecided fork doesn't level. Side effect: Nexus's tier-2 units keep growing, and cross-faction stalemates fell from 3 to 1 in 16 games.
+
+**2026-09-26 — Player colors mark ownership; faction colors stay in the art (m16, user's playtest).**
+The user asked for WC3/AoE2-style colors so two Nexus players aren't both teal. Chosen in the setup from eight; defaults are each faction's own color, and a second player of the same faction gets the first free color no faction owns (so a second Jilliath isn't mistaken for Nexus). They color HP bars, the turn queue, labels, standee frames, statue trim and map rings; the art isn't hue-shifted (a Zealot's red hand means something). Part of the world, so saves keep them.

@@ -6,14 +6,16 @@ import { COLS } from "#rules/battle/grid";
 import { neighbors, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { stepCost } from "#rules/map";
-import { grow, xpValue } from "#rules/progression";
-import { RESURRECTION_BASE } from "#rules/balance";
+import { grow, xpToLevel, xpValue } from "#rules/progression";
+import { LEVEL_BONUS_PERCENT, RESURRECTION_BASE } from "#rules/balance";
+import { GUARDIAN_ID } from "#rules/units/index";
+import { maxHpOf, recordOf } from "#rules/world/record";
 import { applyWorldAction } from "#rules/world/actions";
 import { concludeBattle } from "#rules/world/battles";
 import { createWorld } from "#rules/world/create";
-import { resurrectionCost, waitingForks } from "#rules/world/economy";
+import { growSquad, resurrectionCost, waitingForks } from "#rules/world/economy";
 import { capitolOf, leaderById } from "#rules/world/state";
-import type { Leader, World } from "#rules/world/state";
+import type { Leader, World, WorldEvent } from "#rules/world/state";
 import { describe, expect, test } from "vitest";
 
 const uncommitted: Commitment = {};
@@ -69,13 +71,13 @@ describe("evolution", () => {
   });
 
   test("enough XP evolves a unit along its faction's branch, and the new form arrives fresh", () => {
-    expect(grow("congregant", 40, 60, preserve)).toEqual({ defId: "paladin", xp: 0, evolvedInto: ["paladin"] });
-    expect(grow("congregant", 40, 30, preserve)).toEqual({ defId: "congregant", xp: 70, evolvedInto: [] });
+    expect(grow("congregant", 40, 60, preserve)).toEqual({ defId: "paladin", xp: 0, evolvedInto: ["paladin"], levels: 0 });
+    expect(grow("congregant", 40, 30, preserve)).toEqual({ defId: "congregant", xp: 70, evolvedInto: [], levels: 0 });
     expect(grow("immortal", 0, 5000, preserve).evolvedInto).toEqual([]);
   });
 
   test("at an undecided fork a unit waits with a full bar, and evolves the moment its owner chooses, for free", () => {
-    expect(grow("congregant", 0, 500, uncommitted)).toEqual({ defId: "congregant", xp: 100, evolvedInto: [] });
+    expect(grow("congregant", 0, 500, uncommitted)).toEqual({ defId: "congregant", xp: 100, evolvedInto: [], levels: 0 });
     let world = createWorld(1, [congregants, congregants], [uncommitted, uncommitted], ["jilliath", "jilliath"]);
     world = withLeader(world, "leader0", { squad: leaderById(world, "leader0").squad.map((m) => ({ ...m, xp: 100 })) });
     world = { ...world, gold: [500, 500] };
@@ -115,5 +117,35 @@ describe("graveyard", () => {
     expect(capitolOf(step.world, 0)?.garrison.find((m) => m.defId === "congregant")?.hp).toBe(1);
     expect(step.world.graveyard[0]).toHaveLength(2);
     expect(step.world.gold[0]).toBe(1000 - 3 * RESURRECTION_BASE);
+  });
+});
+
+describe("levels past the end of a line (pillars.md, D2's rule)", () => {
+  test("a unit that can't evolve keeps leveling at a fixed requirement; a unit waiting at a fork doesn't", () => {
+    expect(grow("immortal", 0, 2500, preserve)).toEqual({ defId: "immortal", xp: 500, evolvedInto: [], levels: 2 });
+    expect(xpToLevel("immortal")).toBe(1000);
+    expect(xpToLevel("hedge_mage")).toBe(100);
+    expect(xpToLevel("avatar_of_vengeance")).toBe(1000);
+    expect(xpToLevel("congregant")).toBeNull();
+    expect(xpToLevel(GUARDIAN_ID)).toBeNull();
+    expect(grow("congregant", 0, 5000, uncommitted).levels).toBe(0);
+  });
+
+  test("each level adds a share of the base stats, heals fully, shows in the track record and survives death", () => {
+    const immortals: Placement[] = [{ defId: "immortal", tile: { row: 0, col: 1 } }];
+    let world = createWorld(1, [immortals, immortals], [preserve, preserve], ["jilliath", "jilliath"]);
+    world = withLeader(world, "leader0", { squad: leaderById(world, "leader0").squad.map((m) => ({ ...m, hp: 10, xp: 900 })) });
+    const draft = structuredClone(world);
+    const leader = leaderById(draft, "leader0");
+    const events: WorldEvent[] = [];
+    growSquad(draft, { squad: leader.squad, leader }, 1100, 0, events);
+    const veteran = leader.squad[0];
+    if (!veteran) throw new Error("no immortal");
+    expect(events).toContainEqual({ type: "leveled", side: 0, defId: "immortal", level: 2 });
+    expect(veteran.xp).toBe(0);
+    const bonus = 2 * LEVEL_BONUS_PERCENT;
+    expect(maxHpOf(veteran, undefined)).toBe(260 + Math.round((260 * bonus) / 100));
+    expect(veteran.hp).toBe(maxHpOf(veteran, leader));
+    expect(recordOf(veteran, undefined)).toEqual([{ effect: { def: "veteran", amount: bonus }, source: { kind: "levels", levels: 2 } }]);
   });
 });
