@@ -19,15 +19,16 @@ Git: tags `m2-playable` … `m7-foundation` mark tested states. Work happens on 
 Rules: `src/rules/` (93 tests). View: `src/view/`. Tools: the `verify` skill; `A=<preset|nexus> B=… pnpm sim:world`.
 
 ## Next
-**M22 done: settings** (Game menu → Settings): animation speed, camera rotation and zoom speed, hotkeys with swapping; per browser (`view/settings.ts`, `pnpm playtest:settings` in verify). Before it: M21 Nexus tier-3 mages (Etherborn, Backlasher, Maelstrom; renames Cyclops, Technician, Counter).
-1. **Waiting on the user:** #50 (Backlash's cut-off sentence, fork labels), playtest cities, fog, mages and settings; #34 (what else in settings), #40–49; colors (#43).
-2. Candidates next: a setup screen for more players (and hotseat); spells and mana (canon); audio (`design/audio-pipeline.md`, waiting on the user's go for a ~15 GB download); an MCP player (roadmap, later).
-3. Open design: Nexus tiers 4–5 and the other lines (#35), Jilliath backline (#36), fourth archetype (#37), leader experience (#33).
+**M24 done: more players from the setup screen.** Map games take up to four extra AI opponents (faction and formation each; colors follow the factions, then the free ones). The map camera opens on your home; if you're knocked out with others still standing, your game ends there. `pnpm playtest:setup` in verify; `?map&players=N`. Before it: settings (M22, slot keys and fullscreen), Nexus tier-3 mages (M21), fog of war (M19).
+1. **Waiting on the user:** playtest the lot; #40–50; colors (#43). An `sfx` skill (Stable Audio 3, `/home/lethys/programs/stable-audio-3`) is being set up.
+2. Candidates next: spells and mana (canon); audio slots and playback (`design/audio-pipeline.md`); an MCP player (roadmap, later).
+3. Open design: Nexus tiers 4–5 and the other lines (#35), Jilliath backline (#36), fourth archetype (#37), leader experience (#33); AI for 3+ players (#48).
 
 ## Waiting on the user
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.
 
 ## Recently done
+- 2026-09-26: M24 setup for more players.
 - 2026-09-26: M22 settings menu.
 - 2026-09-26: M21 Nexus tier-3 mages; renames Cyclops, Technician, Counter.
 - 2026-09-26: `view/campaign.ts` split (606 → 390 lines): map panels, hint and news text, peeks, fork prompt, forecasts.

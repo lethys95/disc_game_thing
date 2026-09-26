@@ -121,6 +121,7 @@ export class Campaign {
     this.view.setColors(setups.map((s) => s.color));
     this.view.build(this.world.map);
     this.view.buildSites(this.world);
+    this.view.centerOn(this.world.map.starts[PLAYER] ?? { q: 0, r: 0 });
     this.enterMap();
     this.autosave();
   }
@@ -133,6 +134,7 @@ export class Campaign {
     this.view.setColors(save.world.players.map((p) => p.color));
     this.view.build(save.world.map);
     this.view.buildSites(save.world);
+    this.view.centerOn(save.world.map.starts[PLAYER] ?? { q: 0, r: 0 });
     this.enterMap();
   }
 
@@ -306,7 +308,8 @@ export class Campaign {
 
   private async runAi(): Promise<void> {
     const world = this.world;
-    if (!world || world.outcome || world.engagement || world.activePlayer === PLAYER || this.busy) return;
+    // Once you're out, the game is over for this screen, even if others would play on.
+    if (!world || world.outcome || world.engagement || world.activePlayer === PLAYER || this.busy || playerOf(world, PLAYER).eliminated) return;
     const generation = this.generation;
     await this.stage.tween(AI_STEP_MS, () => {});
     if (generation !== this.generation) return;

@@ -13,6 +13,8 @@ import { Setup } from "#view/setup";
 import { BANDIT_GROUP, NEXUS_PRESETS, PRESETS } from "#view/squads";
 import { ANIMATION_SPEEDS, Settings } from "#view/settings";
 import { Stage } from "#view/stage";
+import { defaultColors } from "#rules/world/colors";
+import type { Playable } from "#rules/units/index";
 
 const params = new URLSearchParams(window.location.search);
 
@@ -77,11 +79,12 @@ const presets = [PRESETS.preserve, PRESETS.punishment] as const;
 if (params.has("map")) {
   setup.hide();
   const nexus = params.get("map") === "nexus";
-  const factions = ["jilliath", nexus ? "nexus" : "jilliath"] as const;
-  const colors = colorPair(factions);
-  const squads = [PRESETS.uncommitted, nexus ? NEXUS_PRESETS.uncommitted : PRESETS.uncommitted] as const;
+  // `players=N`: more AI opponents, alternating factions after the first two.
+  const count = Math.min(6, Math.max(2, Number(params.get("players") ?? 2)));
+  const factions = Array.from({ length: count }, (_, i): Playable => (i === 0 ? "jilliath" : i === 1 ? (nexus ? "nexus" : "jilliath") : i % 2 === 0 ? "nexus" : "jilliath"));
+  const colors = defaultColors(factions);
   campaign.start(
-    ([0, 1] as const).map((i) => ({ squad: squads[i], faction: factions[i], commitment: {}, color: colors[i] })),
+    factions.map((faction, i) => ({ squad: faction === "nexus" ? NEXUS_PRESETS.uncommitted : PRESETS.uncommitted, faction, commitment: {}, color: colors[i] ?? "white" })),
     Number(params.get("seed") ?? 1),
   );
   if (params.has("xp")) campaign.startingXp(Number(params.get("xp")));

@@ -16,6 +16,8 @@ import { buildFigure } from "#view/figures";
 import type { CameraPose, Stage } from "#view/stage";
 
 const SIZE = 1;
+/** Where the map camera sits relative to what it looks at. */
+const CAMERA_OFFSET = new THREE.Vector3(-3, 11, 11.2);
 
 export function hexPosition(hex: Hex): THREE.Vector3 {
   return new THREE.Vector3(SIZE * Math.sqrt(3) * (hex.q + hex.r / 2), 0, SIZE * 1.5 * hex.r);
@@ -136,6 +138,14 @@ export class MapView {
 
   show(): void {
     this.stage.show(this.scene, this.pose);
+  }
+
+  /** Aims the camera at the land between the map's middle and `home`, keeping its angle; for the next `show`. */
+  centerOn(home: Hex): void {
+    const offset = CAMERA_OFFSET.clone();
+    const target = new THREE.Vector3(0, 0, 0.3).lerp(hexPosition(home), 0.6);
+    this.pose.target.copy(target);
+    this.pose.position.copy(target).add(offset);
   }
 
   build(map: WorldMap): void {

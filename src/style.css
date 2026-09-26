@@ -387,3 +387,9 @@ button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }
 #menu .check-row input { accent-color: var(--blood); }
 #actions button { position: relative; }
 #actions button .slot { position: absolute; top: 2px; left: 4px; font: 600 10px var(--text); color: var(--muted); }
+.setup-extras { pointer-events: auto; align-self: center; display: flex; flex-direction: column; align-items: center; gap: 4px; margin: 8px 0; }
+.setup-extras .note { color: var(--muted); text-shadow: 0 1px 4px #000; }
+.setup-extras .extra { display: flex; align-items: center; gap: 6px; background: var(--panel); border: 1px solid var(--edge); padding: 4px 8px; }
+.setup-extras .extra button.doctrine { width: auto; margin: 0; }
+.setup-extras .dot { width: 14px; height: 14px; border-radius: 50%; border: 1px solid #000; }
+.setup-extras select { background: #171311; color: var(--ink); border: 1px solid #2c2622; font: 500 14px var(--display); padding: 3px 6px; }
