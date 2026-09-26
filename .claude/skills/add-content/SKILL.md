@@ -35,3 +35,6 @@ The rules model is in `docs/design/architecture.md`; read it if you haven't this
 
 ## 5. Notes
 Update `docs/status.md`, add provisional numbers and open questions to `docs/questions.md`, commit.
+
+## Art
+New units, abilities and effects get art slots automatically (placeholders until filled; see `docs/engineering.md` → Art). If the user describes how something looks, add it to `LOOKS` in `scripts/art/prompts.ts` (by slot key, e.g. `portrait/zealot`) and record it in the unit's design doc.

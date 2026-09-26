@@ -14,7 +14,7 @@
     "sim": "tsx scripts/sim.ts",
     "sim:world": "tsx scripts/sim-world.ts",
     "verify": "pnpm check && tsx scripts/shot.ts shots/verify.png \"/?fight&steps=6\" && tsx scripts/playtest.ts && tsx scripts/playtest-map.ts 4",
-    "art": "tsx scripts/art/generate.ts"
+    "art": "tsx scripts/art/assets.ts"
   },
   "devEngines": {
     "packageManager": {
@@ -33,6 +33,7 @@
     "@types/node": "^26.6.2",
     "@types/three": "^0.186.0",
     "playwright": "^1.63.0",
+    "sharp": "^0.35.4",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2",
     "vite": "^8.3.0",

@@ -6,6 +6,7 @@ import { upgradesFor } from "#rules/upgrades";
 import { chooseBranchProblem, elevateProblem, recruitProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem, squadsOf, upgradeProblem } from "#rules/world/economy";
 import { capitolOf, leaderUnit } from "#rules/world/state";
 import type { Leader, RecruitInto, World, WorldAction } from "#rules/world/state";
+import { art } from "#view/art";
 import { element } from "#view/dom";
 import { memberRow, unitName } from "#view/members";
 
@@ -76,7 +77,7 @@ export class CapitolScreen {
     const tabs = element("div", "tabs");
     for (const archetype of ARCHETYPES) {
       const lines = rootsOf(archetype);
-      const button = element("button", archetype === tab ? "selected" : "", ARCHETYPE_NAMES[archetype]);
+      const button = element("button", `action${archetype === tab ? " selected" : ""}`, ARCHETYPE_NAMES[archetype]);
       button.disabled = lines.length === 0;
       button.title = lines.length === 0 ? `No ${ARCHETYPE_NAMES[archetype].toLowerCase()} line yet.` : lines.map((r) => `${unitName(r)} line`).join(", ");
       button.addEventListener("click", () => {
@@ -109,7 +110,9 @@ export class CapitolScreen {
   private node(world: World, side: Side, defId: string, parent: string | undefined, open: boolean, count: number, mayAct: boolean): HTMLElement {
     const def = UNITS[defId];
     const node = element("div", `node${open ? "" : " closed"}`);
-    node.appendChild(element("div", "name", `${unitName(defId)}${count > 0 ? ` ×${count}` : ""}`));
+    const head = element("div", "head");
+    head.append(art({ kind: "portrait", id: defId }, "thumb"), element("div", "name", `${unitName(defId)}${count > 0 ? ` ×${count}` : ""}`));
+    node.appendChild(head);
     if (def) node.appendChild(element("div", "stats", `Tier ${def.tier} · ${def.stats.maxHp} HP · ${def.stats.damage} dmg · ${def.stats.armor} armor`));
     const commitment = world.commitment[side];
     if (parent && isFork(parent)) {

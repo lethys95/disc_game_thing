@@ -1,5 +1,6 @@
 import { createBattle } from "#rules/battle/engine";
 import { AiClient } from "#view/ai-client";
+import { applyOrnaments } from "#view/art";
 import { App } from "#view/app";
 import { byId } from "#view/dom";
 import { Campaign } from "#view/campaign";
@@ -11,6 +12,7 @@ import { Stage } from "#view/stage";
 
 const params = new URLSearchParams(window.location.search);
 
+applyOrnaments(document.documentElement);
 const stage = new Stage(byId("stage"));
 if (params.has("fast")) stage.timeScale = 0.1;
 const battleScene = new BattleScene(stage);

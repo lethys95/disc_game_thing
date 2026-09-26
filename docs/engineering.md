@@ -29,11 +29,18 @@ src/view/
   capitol.ts         the Capitol screen (archetype tabs, trees with forks and upgrades, recruit, garrison, graveyard)
   leader.ts          a leader's screen (the leader tree by prerequisites, its warband)
   members.ts         a squad member's row: HP, XP, track record
+  art-slots.ts, art.ts  art slots (pure: which content has which slot, fallbacks) and their DOM (image or placeholder)
   hud.ts, setup.ts   panels; dom.ts shared helpers
   secrecy.ts         what a player may see (hidden effects, secret targets)
   ai.worker.ts, ai-client.ts, ai-protocol.ts   the AI off the main thread
 ```
 Imports use `#rules/…`, `#view/…`, `#tests/…` (package.json `imports`), never `../`.
+
+## Art
+Art is assigned by **slot**: one per unit (`portrait/<unitId>`), ability (`ability/<id>`), effect (`effect/<id>`) and ornament. A slot's file is `assets/art/<kind>/<id>.webp`, found at build time by `import.meta.glob`, so adding art is dropping a file. A missing file falls back to a family default (`portrait/_<faction>`, `ability/_<tag>`, `effect/_effect`), then to a placeholder in the faction's color with initials, so every spot works before its art exists. The view calls `art(slot, size)`; ornaments reach CSS as `--ornament-<id>`.
+- `pnpm art report`: which slots have art. `pnpm art generate <kind|key> [seeds]`: candidates for slots without art (prompts from `scripts/art/prompts.ts`: the locked style + the user's `LOOKS`, else the content's name and rules text). `pnpm art accept <png> <key>`: resize to WebP and record prompt/seed in `assets/art/provenance.json`.
+- New content gets its slots automatically. `tests/art.test.ts` fails on art files that no slot uses (a rename would orphan them).
+- Candidates live in `art/candidates/` (not committed); only accepted art is.
 
 ## Adding content
 The step-by-step recipes (units, abilities, effects, nodes, forks, recording the user's design first) live in the `add-content` skill (`.claude/skills/add-content/SKILL.md`), so they come up whenever content is added.

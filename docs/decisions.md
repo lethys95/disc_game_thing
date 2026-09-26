@@ -69,3 +69,6 @@ Stat hooks run in battlefield order, so a multiplier applied before a flat bonus
 
 **2026-09-25 — Hotkeys live on ability definitions.**
 The user asked for D = Defend and W = Wait. A behavior's optional `hotkey` is its default binding; the battle view looks keys up among the legal actions and never names an ability. A settings menu later overrides them.
+
+**2026-09-26 — Art is assigned by slot, with fallbacks; the style is not Claude's to perfect.**
+The user: getting the style exactly right isn't the job now (it's a taste call for them, and `pnpm art` can restyle everything later); what matters is a strategy for assigning assets. Slots are keyed by content ids, files are discovered at build time, missing art falls back to family defaults and then placeholders, and the missing list doubles as the generation queue. Rules stay pure: assets are a view concern.

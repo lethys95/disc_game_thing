@@ -254,8 +254,36 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 .screen .fallen { display: flex; justify-content: space-between; align-items: center; margin: 4px 0; }
 #mapcity button.action { display: block; width: 100%; margin-top: 8px; }
 .screen .tabs { display: flex; gap: 4px; margin: 8px 0 4px; }
-.screen .tabs button { font: 600 14px var(--display); padding: 4px 14px; }
+.screen .tabs button { font: 600 14px var(--display); padding: 4px 14px; min-width: 0; }
 .screen .tabs button.selected { border-color: #d9b36a; color: #e6d2a6; }
 .screen .node.learned { border-color: #9b7c52; }
 .screen .node .text { font-size: 11px; }
 .screen .member .xp, .screen .member .name { grid-column: 1; }
+
+/* Art slots (view/art.ts): images, or placeholders in the faction's color until the art exists. */
+.art { display: inline-block; flex: none; vertical-align: middle; background: #e8e2d4 no-repeat 50% 50% / contain; }
+/* Portraits are full-body images; small sizes zoom into the head. */
+.art.portrait { background-size: 100%; background-position: 50% 0; }
+.art.portrait.tiny, .art.portrait.small, .art.portrait.thumb { background-size: 260%; background-position: 50% 4%; }
+.art.portrait.card-portrait { background-size: 170%; background-position: 50% 4%; }
+.art.placeholder { display: inline-flex; align-items: center; justify-content: center; font: 700 11px var(--display); color: #f1eadb; background: #2a2522; border: 1px solid #4a3f36; }
+.art.placeholder.faction-jilliath { background: #5a1a14; border-color: #8e2a1e; }
+.art.placeholder.faction-nexus { background: #0f4a4a; border-color: #1f7a78; }
+.art.placeholder.faction-neutral { background: #3a2e24; border-color: #6a5440; }
+.art.tiny { width: 14px; height: 14px; margin-right: 4px; font-size: 7px; }
+.art.small { width: 20px; height: 20px; margin-right: 6px; font-size: 9px; }
+.art.thumb { width: 34px; height: 34px; margin-right: 8px; font-size: 12px; }
+.art.card-portrait { float: right; width: 56px; height: 64px; margin: 0 0 6px 10px; font-size: 18px; }
+#card .hp { clear: both; }
+.screen .node .head, .palette .recruit { display: flex; align-items: center; }
+.palette .recruit { flex-wrap: wrap; }
+.palette .recruit .head { flex: 1; }
+.palette .recruit .stats, .palette .recruit .abilities { flex-basis: 100%; }
+/* The frame-corner ornament on two corners of every panel, mirrored; its black ground drops out. */
+.panel { position: relative; }
+.panel::before, .panel::after {
+  content: ""; position: absolute; width: 44px; height: 44px; pointer-events: none;
+  background: var(--ornament-frame-corner, none) no-repeat center / contain; mix-blend-mode: lighten; opacity: 0.85;
+}
+.panel::before { top: -6px; left: -6px; }
+.panel::after { bottom: -6px; right: -6px; transform: rotate(180deg); }

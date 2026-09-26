@@ -7,6 +7,7 @@ import { COLS, ROWS, sameTile } from "#rules/battle/grid";
 import type { Side, Tile } from "#rules/battle/types";
 import { UNITS } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
+import { art } from "#view/art";
 import { FORMATIONS, PRESETS } from "#view/squads";
 import { element } from "#view/dom";
 
@@ -197,6 +198,7 @@ export class Setup {
       const def = UNITS[defId];
       if (!def) continue;
       const card = element("button", `recruit${this.brush === defId ? " selected" : ""}`);
+      card.appendChild(art({ kind: "portrait", id: defId }, "thumb"));
       const head = element("div", "head");
       head.append(element("span", "name", def.name), element("span", "tier", `tier ${def.tier}`));
       card.appendChild(head);
