@@ -50,7 +50,7 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       const problem = recruitProblem(draft, action.defId, action.into, action.tile);
       if (problem) throw new Error(`cannot recruit: ${problem}`);
       const squad = squadAt(draft, action.into);
-      const tile = action.tile ?? freeTile(squad);
+      const tile = action.tile ?? freeTile(squad, action.defId);
       if (!tile) throw new Error("no room");
       squad.push(newcomer(draft, side, action.defId, tile));
       playerOf(draft, side).gold -= RECRUIT_COST[action.defId] ?? 0;
@@ -91,7 +91,7 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       const cost = resurrectionCost(draft, side, action.index, cityOfSquad(draft, action.into));
       const fallen = playerOf(draft, side).graveyard[action.index];
       const squad = squadAt(draft, action.into);
-      const tile = action.tile ?? freeTile(squad);
+      const tile = action.tile ?? (fallen ? freeTile(squad, fallen.defId) : null);
       if (problem || cost === null || !fallen || !tile) throw new Error(`cannot resurrect: ${problem}`);
       playerOf(draft, side).gold -= cost;
       playerOf(draft, side).graveyard.splice(action.index, 1);

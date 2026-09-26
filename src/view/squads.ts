@@ -5,10 +5,14 @@ import type { Playable } from "#rules/units/index";
 const at = (defId: string, row: Row, col: Col): Placement => ({ defId, tile: { row, col } });
 
 /** Starting formations, made only of canon units. The formations themselves are not canon. */
-export const PRESETS: Readonly<Record<"uncommitted" | "preserve" | "punishment" | "sacrifice", readonly Placement[]>> = {
+export const PRESETS: Readonly<Record<"uncommitted" | "backline" | "preserve" | "punishment" | "sacrifice", readonly Placement[]>> = {
   uncommitted: [
     at("congregant", 0, 0), at("congregant", 0, 1), at("congregant", 0, 2),
     at("congregant", 1, 0), at("congregant", 1, 2),
+  ],
+  backline: [
+    at("congregant", 0, 0), at("congregant", 0, 1), at("congregant", 0, 2),
+    at("cleric", 2, 0), at("jilliath_mage_1", 2, 1),
   ],
   preserve: [
     at("paladin", 0, 0), at("templar", 0, 1), at("paladin", 0, 2),
@@ -63,6 +67,7 @@ export const BANDIT_GROUP: readonly Placement[] = [
 export const FORMATIONS: Readonly<Record<Playable, readonly { readonly name: string; readonly squad: readonly Placement[] }[]>> = {
   jilliath: [
     { name: "Congregants", squad: PRESETS.uncommitted },
+    { name: "Congregants with a Cleric and a mage", squad: PRESETS.backline },
     { name: "Faith preserves", squad: PRESETS.preserve },
     { name: "Faith consumes: Punisher", squad: PRESETS.punishment },
     { name: "Faith consumes: Fanatic", squad: PRESETS.sacrifice },

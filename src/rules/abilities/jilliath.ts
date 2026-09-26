@@ -1,4 +1,4 @@
-import { at, single, uses } from "#rules/abilities/core";
+import { at, rangedChoices, single, uses } from "#rules/abilities/core";
 import { PUNISHMENT_MAX_STACKS } from "#rules/balance";
 import { PUNISHED_PER_STACK } from "#rules/effects";
 import { adjacent, frontLine, meleeTargets, occupant, opponent } from "#rules/battle/grid";
@@ -6,6 +6,46 @@ import type { Behavior, Row, TargetChoice } from "#rules/battle/types";
 
 /** The Jilliath melee line's abilities (docs/design/units/jilliath-melee-line.md). */
 export const jilliath: Readonly<Record<string, Behavior>> = {
+  /** Cleric (user, 2026-09-26): a single-target heal that restores more the more health the ally is missing. */
+  mend: {
+    kind: "active",
+    name: "Heal",
+    describe: (p) => `Heal a wounded ally for ${p["amount"]}, plus ${p["missing"]}% of the health it is missing.`,
+    tags: ["heal"],
+    defaults: { amount: 20, missing: 30 },
+    choices: (ctx, self) =>
+      ctx
+        .living(ctx.unit(self.unitId).side)
+        .filter((u) => u.hp < ctx.stats(u.id).maxHp)
+        .map((u) => single(u, "main")),
+    resolve: (ctx, self, choice) => {
+      for (const id of choice.affected) {
+        const missing = ctx.stats(id).maxHp - ctx.unit(id).hp;
+        ctx.heal(id, (self.params["amount"] ?? 0) + Math.floor((missing * (self.params["missing"] ?? 0)) / 100));
+      }
+    },
+  },
+
+  /**
+   * Jilliath's first mage (Claude's pitch, accepted in outline by the user, 2026-09-26): "thumb in the wound": a
+   * ranged hit that deals more the more health the target is missing. The name is a placeholder.
+   */
+  condemn: {
+    kind: "active",
+    name: "Condemn",
+    describe: (p) => `Ranged: hit any enemy for this unit's damage, plus ${p["missing"]}% of the health the target is missing.`,
+    tags: ["attack", "ranged", "spell", "damage"],
+    defaults: { missing: 30 },
+    choices: rangedChoices,
+    resolve: (ctx, self, choice) => {
+      const spec = ctx.hitSpec(self, ["attack", "ranged", "spell", "damage"]);
+      for (const id of choice.affected) {
+        const missing = ctx.stats(id).maxHp - ctx.unit(id).hp;
+        ctx.hit(self.unitId, [id], { ...spec, power: spec.power + Math.floor((missing * (self.params["missing"] ?? 0)) / 100) });
+      }
+    },
+  },
+
   /** One swing hits the entire enemy front line. */
   flail: {
     kind: "active",
