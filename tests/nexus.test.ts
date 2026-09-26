@@ -6,10 +6,10 @@ import { describe, expect, test } from "vitest";
 
 describe("Nexus forks", () => {
   test("scheme vs overload is chosen per line: Custodians going Scheme says nothing about Apprentices", () => {
-    expect(openForks("nexus", {})).toEqual(["custodian", "apprentice"]);
+    expect(openForks("nexus", {})).toEqual(["custodian", "apprentice", "justiciar"]);
     const scheming = choose({}, "custodian", "cyclops");
-    expect(openForks("nexus", scheming)).toEqual(["apprentice"]);
-    expect(allowedUnits("nexus", scheming)).toEqual(["custodian", "cyclops", "technician", "apprentice", "justiciar", "thaumaturge"]);
+    expect(openForks("nexus", scheming)).toEqual(["apprentice", "justiciar"]);
+    expect(allowedUnits("nexus", scheming)).toEqual(["custodian", "cyclops", "technician", "apprentice", "justiciar", "etherborn", "backlasher", "thaumaturge", "maelstrom"]);
     expect(grow("custodian", 0, 100, { custodian: "mutant" }).defId).toBe("mutant");
     expect(grow("apprentice", 0, 100, { ...scheming, apprentice: "thaumaturge" }).defId).toBe("thaumaturge");
   });

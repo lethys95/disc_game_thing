@@ -54,4 +54,7 @@ export const EVOLUTIONS: Readonly<Record<string, readonly Evolution[]>> = {
   // Ral-Vitahl: scheme vs overload, chosen per line (user, 2026-09-25).
   custodian: [{ to: "cyclops", label: "Scheme" }, { to: "mutant", label: "Overload" }],
   apprentice: [{ to: "justiciar", label: "Scheme" }, { to: "thaumaturge", label: "Overload" }],
+  // Tier 3 mages (user, 2026-09-26). The Justiciar forks; the fork has no dichotomy label yet.
+  justiciar: [{ to: "etherborn" }, { to: "backlasher" }],
+  thaumaturge: [{ to: "maelstrom" }],
 };

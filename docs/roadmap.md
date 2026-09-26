@@ -55,6 +55,9 @@ The world supports any number of players (battles stay two-sided); the screens s
 ## M19 — Fog of war ✅ (2026-09-26)
 Canon fog: unexplored hidden, explored-not-visible as last seen. Per-player explored hexes and memory in the rules; the AI and the view see only what their player knows; marches stop on sighting; the AI explores.
 
+## M21 — Nexus tier-3 mages ✅ (2026-09-26)
+The user's Etherborn, Backlasher and Maelstrom; the renames Cyclops, Technician and Counter.
+
 ## Then
 - Faction content as the user designs it (Nexus trees first; Grove and Wastes later). The user owns unit designs and looks.
 - Spells and mana (canon), a spell tree in the Capitol.

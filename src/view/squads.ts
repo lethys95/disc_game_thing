@@ -25,7 +25,7 @@ export const PRESETS: Readonly<Record<"uncommitted" | "preserve" | "punishment" 
 };
 
 /** Nexus formations, made of its units. Not canon. */
-export const NEXUS_PRESETS: Readonly<Record<"uncommitted" | "scheme" | "overload", readonly Placement[]>> = {
+export const NEXUS_PRESETS: Readonly<Record<"uncommitted" | "scheme" | "overload" | "etherborn" | "backlasher" | "maelstrom", readonly Placement[]>> = {
   uncommitted: [
     at("custodian", 0, 0), at("custodian", 0, 1), at("custodian", 0, 2),
     at("technician", 1, 0), at("apprentice", 1, 1),
@@ -37,6 +37,18 @@ export const NEXUS_PRESETS: Readonly<Record<"uncommitted" | "scheme" | "overload
   overload: [
     at("mutant", 0, 0), at("custodian", 0, 1), at("mutant", 0, 2),
     at("technician", 1, 0), at("thaumaturge", 1, 1),
+  ],
+  etherborn: [
+    at("cyclops", 0, 0), at("custodian", 0, 1), at("cyclops", 0, 2),
+    at("technician", 1, 0), at("etherborn", 1, 1),
+  ],
+  backlasher: [
+    at("cyclops", 0, 0), at("custodian", 0, 1), at("cyclops", 0, 2),
+    at("technician", 1, 0), at("backlasher", 1, 1),
+  ],
+  maelstrom: [
+    at("mutant", 0, 0), at("custodian", 0, 1), at("mutant", 0, 2),
+    at("technician", 1, 0), at("maelstrom", 1, 1),
   ],
 };
 
@@ -59,5 +71,8 @@ export const FORMATIONS: Readonly<Record<Playable, readonly { readonly name: str
     { name: "Tier 1", squad: NEXUS_PRESETS.uncommitted },
     { name: "Scheme", squad: NEXUS_PRESETS.scheme },
     { name: "Overload", squad: NEXUS_PRESETS.overload },
+    { name: "Scheme: Etherborn", squad: NEXUS_PRESETS.etherborn },
+    { name: "Scheme: Backlasher", squad: NEXUS_PRESETS.backlasher },
+    { name: "Overload: Maelstrom", squad: NEXUS_PRESETS.maelstrom },
   ],
 };

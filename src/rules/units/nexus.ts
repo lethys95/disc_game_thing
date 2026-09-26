@@ -43,4 +43,29 @@ export const NEXUS_UNITS: Readonly<Record<string, UnitDef>> = {
     abilities: [{ id: "homing_lightning", params: { overload: 1 } }, { id: "plus_burst", params: { overload: 1 } }, ...kit("bolt", "defend", "wait")],
     spellCharges: 4,
   },
+  // Tier 3 mages (the user's mage sheet, 2026-09-26). Stats and charges are provisional.
+  etherborn: {
+    id: "etherborn", name: "Etherborn", faction: "nexus", tier: 3, damageType: "weapon",
+    stats: { maxHp: 90, shield: 0, damage: 10, armor: 0, initiative: 60 },
+    // Loses Burst; Bolt becomes Absorb. Scheme still replicates its secrets.
+    abilities: [{ id: "counter", params: { replicate: 1 } }, { id: "negate", params: { replicate: 1 } }, ...kit("absorb", "defend", "wait")],
+    spellCharges: 6,
+  },
+  backlasher: {
+    id: "backlasher", name: "Backlasher", faction: "nexus", tier: 3, damageType: "weapon",
+    stats: { maxHp: 85, shield: 0, damage: 16, armor: 0, initiative: 60 },
+    abilities: [{ id: "counter", name: "Backlash", params: { replicate: 1, backlash: 40 } }, { id: "plus_burst", params: { replicate: 1, power: 55 } }, ...kit("bolt", "defend", "wait")],
+    spellCharges: 6,
+  },
+  maelstrom: {
+    id: "maelstrom", name: "Maelstrom", faction: "nexus", tier: 3, damageType: "weapon",
+    stats: { maxHp: 85, shield: 0, damage: 16, armor: 0, initiative: 55 },
+    // The Thaumaturge's kit, two more charges, and Combustion.
+    abilities: [
+      { id: "homing_lightning", params: { overload: 1, power: 60 } },
+      { id: "plus_burst", params: { overload: 1, power: 55 } },
+      ...kit("combustion", "bolt", "defend", "wait"),
+    ],
+    spellCharges: 6,
+  },
 };

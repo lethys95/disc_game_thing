@@ -58,6 +58,8 @@ Nexus casters aren't real spellcasters: their power comes from batteries and equ
     - Counter: secret Counterspell, costs charge
     - Negate: secret damage/healing negation on target. Works against shields too. costs charge. Any target who would be healed, is damaged by that amount instead once. Any target who would be damaged is healed for that amount instead once.
     - Absorb: basic attack replacement. Can target either enemy or ally. If enemy, deal very small amount of damage, next time they would deal damage, reduce the damage by x, and heal etherborn by the damage prevented. If ally, prevent y and heal etherborn by the damage prevented.
+- **Stats (Claude):** health below medium · damage very low · armor none · initiative high · 6 spell charges.
+- **Status:** in game as `etherborn` (provisional readings in questions.md #50).
 
 
 ### Backlasher
@@ -69,6 +71,8 @@ Nexus casters aren't real spellcasters: their power comes from batteries and equ
     - Burst
     - backlash: negate but upgraded. If an ability is prevented this way, and the ability, deal x amount of damage.
 - **look**: 
+- **Stats (Claude):** health below medium · damage low · armor none · initiative high · 6 spell charges.
+- **Status:** in game as `backlasher` (provisional readings in questions.md #50).
 
 
 ### Maelstrom 
@@ -80,3 +84,5 @@ Nexus casters aren't real spellcasters: their power comes from batteries and equ
     - Burst
     - Homing Lightning
     - Combustion: Costs 1 charge. Free action. Spells cast by this unit which cost charges become free actions this turn.
+- **Stats (Claude):** health below medium · damage low, high burst · armor none · initiative medium · 6 spell charges (the Thaumaturge's 4 + 2).
+- **Status:** in game as `maelstrom` (provisional readings in questions.md #50).

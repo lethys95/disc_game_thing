@@ -30,8 +30,8 @@ A **trait** is a bundle of hooks. Passive abilities are traits. Effects (buffs, 
 |---|---|---|
 | `stats(subject, stats)` | every trait on the battlefield (auras see other units) | Congregation, Devotion Aura, Punished, Mutated, context bonuses |
 | `grants(subject)` / `restrict(subject, allowed)` | every trait | Fanaticism Aura, Must Attack |
-| `outgoing(packet)` | the attacker's traits | Marauder (+10 vs armor), Blacksmith (+10), Domination (split into bleed) |
-| `incoming(packet)` | the target's traits | immunities, resistances |
+| `outgoing(packet)` | the attacker's traits | Marauder (+10 vs armor), Blacksmith (+10), Domination (split into bleed), Absorb on an enemy |
+| `incoming(packet)` | the target's traits | immunities, resistances, Negate (hit → healing), Absorb on an ally |
 | `absorb(packet)` → amount | the target's traits, in priority order | fire shield (fire only), shield pool (anything) |
 | `mitigate(packet)` | the target's traits | Defend (halve) |
 | `turnStart(unit)` → `skip`? | traits on the unit whose turn starts | Stun, bleed tick |
@@ -39,6 +39,8 @@ A **trait** is a bundle of hooks. Passive abilities are traits. Effects (buffs, 
 | `beforeAbility(action)` → `cancel`? | the actor's traits | Counter |
 | `afterHit`, `afterAttack`, `onKill` | the attacker's traits | Punishment, Zeal, Fanaticism, Hysteria |
 | `preventDeath` | the dying unit's traits | Guardian Spirit, its reprieve |
+| `healing(heal)` | the recipient's traits, before healing or a shield restoration lands | Negate (healing → damage) |
+| `castsFree()` | the actor's traits | Combustion (charged spells become free actions) |
 | `restored(pool, overflow)` | the target's traits | Mutate |
 | `aiValue(unit)` | every trait | the AI's valuation of a mark, a mutation, a shield |
 
@@ -48,7 +50,7 @@ Adding a mechanic means writing a trait. The engine and the AI don't change.
 An **effect definition** (registered by id, like abilities) holds the hooks plus metadata:
 - `stacking`: `unique` (re-applying refreshes it), `stack` (up to an optional cap), or `independent` (one instance per source; loans).
 - `lifetime`: `battle`, `untilOwnTurn` (ends when the bearer's next turn starts), `untilRoundEnd`, `untilSourceTurn` (ends when the source's next turn starts), or `permanent` (world-level; survives battles).
-- `visibility`: `public`, or `hiddenFromBearerSide` (Counter's mark). The view reads this flag; nothing checks effect names.
+- `visibility`: `public`, or `secret`: only the side of the unit that applied it sees it (Counter's mark, Negate). The view reads this flag; nothing checks effect names.
 - `onExpire`: cleanup, e.g. a lent shield takes back what's left of the loan.
 
 Every definition also carries `describe`: its rules text, computed from its own numbers, so the words can't drift from the rule.
@@ -80,7 +82,7 @@ An ability on a unit is `{ id, params }`; `params` are numbers (power, charges, 
 The world computes the context from what it owns. The battle doesn't know what a city is. City nodes become data (`gold mine`: income; `blacksmith`: a side trait), so new node kinds are additive.
 
 ### 6. Hidden information
-Visibility lives on definitions (`hiddenFromBearerSide` on the effect, `secretTarget` on the ability). The view's mask reads those flags. The AI sees everything for now; real multiplayer would need the rules to produce per-side views.
+Visibility lives on definitions (`secret` on the effect, `secretTarget` on the ability). The view's mask reads those flags. The AI sees everything for now; real multiplayer would need the rules to produce per-side views.
 
 ## Code layout
 ```
