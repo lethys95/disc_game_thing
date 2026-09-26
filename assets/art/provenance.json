@@ -1,0 +1,66 @@
+{
+  "portrait/zealot": {
+    "file": "zealot_inkBrush-1001.png",
+    "id": "zealot_inkBrush",
+    "seed": 1001,
+    "prompt": "A full-body illustration of a single figure in a menacing stance, on a pale off-white background. A zealot whose whole head is covered by a smooth, completely featureless mask: no mouth, no nose, no expression, only two wide, staring round eye holes with pure black behind them. Painted on the forehead of the mask is a burning outstretched hand with spread fingers. The mask is ominous, strange and inhuman, deranged and wrong. He wears spiked, tattered armor and holds a huge serrated two-handed sword. A pale, washed-out palette of bone white and ash grey with hard contrasting black and vivid blood red as the only strong colors. No text, no watermark. Bold black ink brushstrokes and washes, expressive dry-brush edges, large areas of untouched pale paper.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/zealot/zealot_inkBrush-1001.png"
+  },
+  "portrait/custodian": {
+    "file": "custodian-1000.png",
+    "id": "custodian",
+    "seed": 1000,
+    "prompt": "A full-body character concept of a golem guardian built of stone and dark brass, wrapped in a crackling protective shield of energy, standing in a neutral pose, the whole figure visible from head to feet, on a plain flat dark grey background. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of electric teal, like lightning where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/anchors/custodian-1000.png"
+  },
+  "portrait/punisher": {
+    "file": "punisher-1001.png",
+    "id": "punisher",
+    "seed": 1001,
+    "prompt": "A full-body character concept of an executioner of a militant faith carrying a heavy multi-headed flanged flail, standing in a neutral pose, the whole figure visible from head to feet, on a plain flat dark grey background. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of deep blood red where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/anchors/punisher-1001.png"
+  },
+  "ability/lay_on_hands": {
+    "file": "icon_heal-1000.png",
+    "id": "icon_heal",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a gauntleted hand pressed against a wound, glowing with healing light. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of deep blood red where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/anchors/icon_heal-1000.png"
+  },
+  "ability/flail": {
+    "file": "icon_flail-1000.png",
+    "id": "icon_flail",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a spiked multi-headed flail mid-swing. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of deep blood red where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/anchors/icon_flail-1000.png"
+  },
+  "ability/plus_burst": {
+    "file": "icon_burst-1001.png",
+    "id": "icon_burst",
+    "seed": 1001,
+    "prompt": "A single emblem for a game ability icon: a burst of lightning erupting in the shape of a plus sign. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of electric teal, like lightning where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/anchors/icon_burst-1001.png"
+  },
+  "ability/defend": {
+    "file": "icon_defend-1000.png",
+    "id": "icon_defend",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a battered, dented shield raised in defense. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/anchors/icon_defend-1000.png"
+  },
+  "ornament/frame-corner": {
+    "file": "ornament_corner-1001.png",
+    "id": "ornament_corner",
+    "seed": 1001,
+    "prompt": "An ornate gothic corner piece of tarnished iron filigree and bone, shaped like the corner of a picture frame, isolated on a plain black background, flat front view, symmetrical, for use as a game interface decoration. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of deep blood red where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/anchors/ornament_corner-1001.png"
+  }
+}

@@ -3,6 +3,7 @@ import { effectDef } from "#rules/effects";
 import { abilityRef, actionsPerRound, effectiveStats, upcomingSlots } from "#rules/battle/engine";
 import type { Battle, BattleEvent, BattleUnit, EffectInstance, LegalAbility, Side } from "#rules/battle/types";
 import { UNITS } from "#rules/units/index";
+import { art } from "#view/art";
 import { byId, element } from "#view/dom";
 
 export interface HudHandlers {
@@ -74,6 +75,7 @@ export class Hud {
     const def = UNITS[unit.defId];
     this.card.replaceChildren();
     this.card.className = `panel side${unit.side}`;
+    this.card.appendChild(art({ kind: "portrait", id: unit.defId }, "card-portrait"));
     this.card.appendChild(element("div", "title", unit.name));
     if (pinned) this.card.appendChild(element("div", "pin", "Pinned · click it again to release"));
     this.card.appendChild(element("div", "subtitle", `${unitLabel(unit, playerSide).split(" ")[0]}${unit.leader ? " leader" : ""} · tier ${def?.tier ?? "?"} · ${place(unit)}`));
@@ -107,7 +109,8 @@ export class Hud {
     if (shown.length > 0) {
       const effects = element("div", "effects");
       for (const effect of shown) {
-        const tag = element("span", `effect ${effect.def}`, effectLabel(effect));
+        const tag = element("span", `effect ${effect.def}`);
+        tag.append(art({ kind: "effect", id: effect.def }, "tiny"), effectLabel(effect));
         tag.title = effectDef(effect.def).describe(effect);
         effects.appendChild(tag);
       }
@@ -119,6 +122,7 @@ export class Hud {
       const behavior = BEHAVIORS[slot.ref.id];
       if (!behavior || (behavior.kind === "active" && behavior.tags.includes("basic"))) continue;
       const item = element("li", behavior.kind);
+      item.appendChild(art({ kind: "ability", id: slot.ref.id }, "small"));
       item.appendChild(element("span", "name", slot.ref.name ?? behavior.name));
       const charges = paramsOf(slot.ref)["charges"];
       if (charges !== undefined) item.appendChild(element("span", "charges", ` ${charges - slot.chargesUsed}/${charges}`));
@@ -135,6 +139,7 @@ export class Hud {
     if (!enabled || !unit) return;
     for (const option of options) {
       const button = element("button", `action${option.abilityId === selected ? " selected" : ""}`);
+      button.appendChild(art({ kind: "ability", id: option.abilityId }, "small"));
       button.appendChild(element("span", "name", option.name));
       const def = BEHAVIORS[option.abilityId];
       const key = def?.kind === "active" ? def.hotkey : undefined;
