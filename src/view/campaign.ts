@@ -293,6 +293,7 @@ export class Campaign {
       if (e.type === "captured") lines.push(`${e.side === PLAYER ? "You take" : "The enemy takes"} the city.`);
       if (e.type === "xp" && e.side === PLAYER) lines.push(`Your survivors gain ${e.each} XP each.`);
       if (e.type === "evolved" && e.side === PLAYER) lines.push(`${unitName(e.from)} becomes ${unitName(e.to)}.`);
+      if (e.type === "leveled" && e.side === PLAYER) lines.push(`${unitName(e.defId)} reaches level ${e.level}.`);
       if (e.type === "cleared") lines.push(e.side === PLAYER ? "The bandit camp is cleared." : "The enemy cleared a bandit camp.");
       if (e.type === "leaderFell") lines.push(e.side === PLAYER ? "One of your warbands fell." : "An enemy warband fell.");
       if (e.type === "looted" && e.side === PLAYER) lines.push(`The dungeon yields ${e.gold} gold${e.joins ? ` and a ${unitName(e.joins)} joins you` : ""}.`);

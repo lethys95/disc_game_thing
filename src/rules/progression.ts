@@ -13,6 +13,21 @@ export function xpValue(defId: string): number {
   return stats ? Math.round(stats.maxHp / 2 + stats.damage + stats.armor) : 0;
 }
 
+/** XP a unit of this tier needs for its next step (evolution or level); tiers past the table use its last entry. */
+function xpForTier(tier: number): number | null {
+  if (tier < 1) return null;
+  const tiers = Object.keys(XP_TO_EVOLVE).map(Number);
+  return XP_TO_EVOLVE[Math.min(tier, Math.max(...tiers))] ?? null;
+}
+
+/**
+ * XP for the next level of a unit at the end of its line (D2, user 2026-09-26): it keeps leveling without changing
+ * tier, and the requirement stays fixed. Null for units that still evolve, and for the tierless Guardian.
+ */
+export function xpToLevel(defId: string): number | null {
+  return (EVOLUTIONS[defId]?.length ?? 0) > 0 ? null : xpForTier(UNITS[defId]?.tier ?? 0);
+}
+
 /** XP needed for this unit's next form, or null for units at the end of their line. */
 export function xpToEvolve(defId: string): number | null {
   const tier = UNITS[defId]?.tier ?? 0;
@@ -31,6 +46,8 @@ export interface Growth {
   readonly xp: number;
   /** Forms passed through, in order, if the unit evolved. */
   readonly evolvedInto: readonly string[];
+  /** Levels gained at the end of the line. */
+  readonly levels: number;
 }
 
 /**
@@ -43,10 +60,14 @@ export function grow(defId: string, xp: number, gained: number, commitment: Comm
   const evolvedInto: string[] = [];
   for (;;) {
     const needed = xpToEvolve(form);
-    if (needed === null) return { defId: form, xp: total, evolvedInto };
+    if (needed === null) {
+      const perLevel = xpToLevel(form);
+      if (perLevel === null) return { defId: form, xp: total, evolvedInto, levels: 0 };
+      return { defId: form, xp: total % perLevel, evolvedInto, levels: Math.floor(total / perLevel) };
+    }
     const next = nextForm(form, commitment);
-    if (!next) return { defId: form, xp: Math.min(total, needed), evolvedInto };
-    if (total < needed) return { defId: form, xp: total, evolvedInto };
+    if (!next) return { defId: form, xp: Math.min(total, needed), evolvedInto, levels: 0 };
+    if (total < needed) return { defId: form, xp: total, evolvedInto, levels: 0 };
     form = next;
     total = 0;
     evolvedInto.push(next);

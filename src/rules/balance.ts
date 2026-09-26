@@ -31,6 +31,9 @@ export const RESURRECTION_PREMIUM = 3;
 export const BLACKSMITH_BONUS = 10;
 
 // Progression.
+/** Per level past the end of a line: this share of the unit's base max HP and damage (user: D2's rule; the size is provisional). */
+export const LEVEL_BONUS_PERCENT = 5;
+
 /** XP a unit of each tier needs to evolve. */
 export const XP_TO_EVOLVE: Readonly<Record<number, number>> = { 1: 100, 2: 250, 3: 500, 4: 1000 };
 

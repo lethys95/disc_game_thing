@@ -91,7 +91,7 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       if (problem || cost === null || !fallen || !squad || !tile) throw new Error(`cannot resurrect: ${problem}`);
       draft.gold[side] -= cost;
       draft.graveyard[side].splice(action.index, 1);
-      squad.push({ defId: fallen.defId, tile, hp: 1, xp: 0, marks: fallen.marks });
+      squad.push({ defId: fallen.defId, tile, hp: 1, xp: 0, marks: fallen.marks, level: fallen.level });
       events.push({ type: "resurrected", side, defId: fallen.defId });
       break;
     }

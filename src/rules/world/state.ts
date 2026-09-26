@@ -10,7 +10,10 @@ import type { Playable } from "#rules/units/index";
 /** The world's data (warbands, cities, lairs, graveyards) and lookups over it. */
 
 /** Where a unit's difference from its baseline came from: the track record (docs/design/pillars.md). */
-export type MarkSource = { readonly kind: "leaderTree"; readonly skill: string } | { readonly kind: "upgrade"; readonly upgrade: string };
+export type MarkSource =
+  | { readonly kind: "leaderTree"; readonly skill: string }
+  | { readonly kind: "upgrade"; readonly upgrade: string }
+  | { readonly kind: "levels"; readonly levels: number };
 
 /** A lasting difference from the unit's baseline: an effect it brings into every battle, and its source. */
 export interface Mark {
@@ -25,14 +28,17 @@ export interface SquadMember {
   readonly hp: number;
   readonly xp: number;
   readonly marks: readonly Mark[];
+  /** Levels gained past the end of its line (pillars.md). */
+  readonly level: number;
 }
 
 /** A unit in its side's graveyard, waiting for resurrection at the Capitol. */
 export interface Fallen {
   readonly defId: string;
   readonly fellOnTurn: number;
-  /** Marks survive death: a resurrected unit keeps its track record. */
+  /** Marks and levels survive death: a resurrected unit keeps its track record. */
   readonly marks: readonly Mark[];
+  readonly level: number;
 }
 
 export interface Leader {
@@ -134,6 +140,7 @@ export type WorldEvent =
   | { type: "leaderFell"; leaderId: string; side: Side }
   | { type: "xp"; side: Side; pool: number; each: number }
   | { type: "evolved"; side: Side; from: string; to: string }
+  | { type: "leveled"; side: Side; defId: string; level: number }
   | { type: "fell"; side: Side; defId: string }
   | { type: "chose"; side: Side; fork: string; to: string }
   | { type: "cleared"; lairId: string; side: Side }
@@ -158,7 +165,7 @@ export const alive = (m: SquadMember) => m.hp > 0;
 
 export const leaderUnit = (leader: Leader): SquadMember | undefined => leader.squad.find((m) => m.tile.row === leader.leaderTile.row && m.tile.col === leader.leaderTile.col);
 
-export const member = (defId: string, tile: Tile): SquadMember => ({ defId, tile, hp: fullHp(defId), xp: 0, marks: [] });
+export const member = (defId: string, tile: Tile): SquadMember => ({ defId, tile, hp: fullHp(defId), xp: 0, marks: [], level: 0 });
 
 export type Strength = "weak" | "medium" | "strong";
 

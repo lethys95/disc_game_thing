@@ -174,6 +174,25 @@ const effects: readonly EffectDef[] = [
     },
   },
   {
+    // Levels past the end of a line (pillars.md): a share of the base stat, so higher tiers gain more per level.
+    id: "veteran",
+    quiet: true,
+    name: "Veteran",
+    describe: (e) => `+${e.amount}% of its base max HP and damage.`,
+    stacking: { mode: "merge" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      stats: (ctx, self, subjectId, stats) => {
+        if (subjectId !== self.unitId) return;
+        const base = ctx.unit(subjectId).base;
+        const share = (self.effect?.amount ?? 0) / 100;
+        stats.maxHp += Math.round(base.maxHp * share);
+        stats.damage += Math.round(base.damage * share);
+      },
+    },
+  },
+  {
     // From the leader tree: the leader's own extra health.
     id: "extra_health",
     quiet: true,
