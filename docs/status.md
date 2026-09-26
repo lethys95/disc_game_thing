@@ -21,7 +21,7 @@ Rules: `src/rules/` (93 tests). View: `src/view/`. Tools: the `verify` skill; `A
 ## Next
 **M22 done: settings** (Game menu → Settings): animation speed, camera rotation and zoom speed, hotkeys with swapping; per browser (`view/settings.ts`, `pnpm playtest:settings` in verify). Before it: M21 Nexus tier-3 mages (Etherborn, Backlasher, Maelstrom; renames Cyclops, Technician, Counter).
 1. **Waiting on the user:** #50 (Backlash's cut-off sentence, fork labels), playtest cities, fog, mages and settings; #34 (what else in settings), #40–49; colors (#43).
-2. Candidates next: a setup screen for more players (and hotseat); spells and mana (canon); an MCP player (roadmap, later).
+2. Candidates next: a setup screen for more players (and hotseat); spells and mana (canon); audio (`design/audio-pipeline.md`, waiting on the user's go for a ~15 GB download); an MCP player (roadmap, later).
 3. Open design: Nexus tiers 4–5 and the other lines (#35), Jilliath backline (#36), fourth archetype (#37), leader experience (#33).
 
 ## Waiting on the user
