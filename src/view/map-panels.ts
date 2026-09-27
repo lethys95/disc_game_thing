@@ -75,7 +75,9 @@ export class MapPanels {
       const row = element("div", "city-row");
       const visitor = world.leaders.find((l) => l.player === player && sameHex(l.hex, city.hex));
       const facts = [`${city.garrison.filter((m) => m.defId !== GUARDIAN_ID).length} in the garrison`, visitor ? `${leaderName(visitor)}'s warband visiting` : ""];
-      if (city.kind === "capitol") facts.push(`${forks} open branch${forks === 1 ? "" : "es"}`, `${playerOf(world, player).graveyard.length} in the graveyard`);
+      if (city.kind === "capitol") facts.push(`${forks} open branch${forks === 1 ? "" : "es"}`);
+      // The graveyard shows where the dead can be raised: the Capitol, or every city once researched.
+      if (city.kind === "capitol" || playerOf(world, player).research.includes("city_resurrection")) facts.push(`${playerOf(world, player).graveyard.length} in the graveyard`);
       const text = element("div", "city-text");
       text.append(element("div", "name", cityName(city)), element("div", "note", facts.filter((f) => f).join(" · ")));
       const enter = element("button", "small", "Enter");

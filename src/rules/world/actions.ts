@@ -4,7 +4,7 @@ import { stepCost } from "#rules/map";
 import { RECRUIT_COST } from "#rules/units/index";
 import { LEADER_MOVEMENT } from "#rules/balance";
 import { defenderOf, engage } from "#rules/world/battles";
-import { chooseBranchProblem, elevateProblem, freeTile, growSquad, learnSkillProblem, newcomer, recruitProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem, squadsOf, startRound, startTurn, upgradeCityProblem, researchProblem, cityOfSquad, investNodeProblem, nodeInvestCost, upgradeProblem, cityUpgradeCost } from "#rules/world/economy";
+import { nodeMarks, chooseBranchProblem, elevateProblem, freeTile, growSquad, learnSkillProblem, newcomer, recruitProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem, squadsOf, startRound, startTurn, upgradeCityProblem, researchProblem, cityOfSquad, investNodeProblem, nodeInvestCost, upgradeProblem, cityUpgradeCost } from "#rules/world/economy";
 import { movementOf, rankOf } from "#rules/world/leaders";
 import { destination, planMove } from "#rules/world/movement";
 import { knownWorld, see, updateVision } from "#rules/world/vision";
@@ -52,7 +52,8 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       const squad = squadAt(draft, action.into);
       const tile = action.tile ?? freeTile(squad, action.defId);
       if (!tile) throw new Error("no room");
-      squad.push(newcomer(draft, side, action.defId, tile));
+      const recruit = newcomer(draft, side, action.defId, tile);
+      squad.push({ ...recruit, marks: [...recruit.marks, ...nodeMarks(draft, cityOfSquad(draft, action.into))] });
       playerOf(draft, side).gold -= RECRUIT_COST[action.defId] ?? 0;
       events.push({ type: "recruited", defId: action.defId, into: action.into });
       break;
@@ -63,7 +64,8 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       const unit = capitol?.garrison.find((m) => sameTile(m.tile, action.tile));
       if (problem || !capitol || !unit) throw new Error(`cannot elevate: ${problem}`);
       capitol.garrison = capitol.garrison.filter((m) => m !== unit);
-      const tile = { row: 0, col: 1 } as const;
+      // Where its line stands: a melee leader in the front middle, anyone else in the back middle.
+      const tile = { row: (freeTile([], unit.defId)?.row ?? 0), col: 1 } as const;
       const id = `leader${draft.nextLeader}`;
       draft.nextLeader += 1;
       draft.leaders.push({ id, player: side, hex: capitol.hex, movement: LEADER_MOVEMENT, experience: 0, skills: {}, fellOnTurn: null, squad: [{ ...unit, tile }], leaderTile: tile, enchantments: [] });

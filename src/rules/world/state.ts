@@ -16,7 +16,8 @@ import type { Playable } from "#rules/units/index";
 export type MarkSource =
   | { readonly kind: "leaderTree"; readonly skill: string }
   | { readonly kind: "upgrade"; readonly upgrade: string }
-  | { readonly kind: "levels"; readonly levels: number };
+  | { readonly kind: "levels"; readonly levels: number }
+  | { readonly kind: "node"; readonly node: NodeKind; readonly cityId: string };
 
 /** A lasting difference from the unit's baseline: an effect it brings into every battle, and its source. */
 export interface Mark {

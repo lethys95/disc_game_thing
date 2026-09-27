@@ -12,6 +12,7 @@ import type { Hex } from "#rules/hex";
 import type { Terrain, WorldMap } from "#rules/map";
 import { UNITS } from "#rules/units/index";
 import { spellById } from "#rules/spells";
+import { cityName } from "#view/city";
 import type { City, Leader, World } from "#rules/world/state";
 import { buildFigure } from "#view/figures";
 import type { CameraPose, Stage } from "#view/stage";
@@ -107,6 +108,7 @@ export class MapView {
   private readonly leaders = new Map<string, LeaderFigure>();
   private readonly sites = new Map<string, SiteModel>();
   private vision: Vision | null = null;
+  private radius = 4;
   /** Each node's link to its city, recolored when the city changes hands. */
   private readonly links = new Map<string, { mesh: THREE.Mesh; material: THREE.MeshStandardMaterial; city: string }>();
   private readonly nodeModels = new Map<string, THREE.Group>();
@@ -141,6 +143,11 @@ export class MapView {
     this.stage.show(this.scene, this.pose);
   }
 
+  /** Pans the map camera; it can't wander far past the map's edge. */
+  pan(right: number, forward: number): void {
+    this.stage.pan(right, forward, this.radius * SIZE * 1.8);
+  }
+
   /** Aims the camera at the land between the map's middle and `home`, keeping its angle; for the next `show`. */
   centerOn(home: Hex): void {
     const offset = CAMERA_OFFSET.clone();
@@ -150,6 +157,7 @@ export class MapView {
   }
 
   build(map: WorldMap): void {
+    this.radius = map.radius;
     this.terrain.clear();
     this.hexes.clear();
     const prism = new THREE.CylinderGeometry(SIZE * 0.95, SIZE * 0.97, 1, 6);
@@ -550,9 +558,10 @@ function anvil(iron: THREE.Material, fire: THREE.Material): THREE.Group {
   return g;
 }
 
+/** The city's name, as in the side panel, and whose it is: "City 2 (yours)". */
 function siteName(city: City): string {
-  const owner = city.owner === null ? "Neutral" : city.owner === 0 ? "Your" : "Enemy";
-  return city.kind === "capitol" ? `${owner} Capitol` : `${owner} city`;
+  const owner = city.owner === null ? "neutral" : city.owner === 0 ? "yours" : "enemy";
+  return `${cityName(city)} (${owner})`;
 }
 
 function figureDef(leader: Leader): string {

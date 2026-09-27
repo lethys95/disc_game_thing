@@ -1,3 +1,4 @@
+import { NODES } from "#rules/nodes";
 import { BEHAVIORS, describeAbility } from "#rules/abilities/index";
 import { effectDef } from "#rules/effects";
 import type { Commitment } from "#rules/forks";
@@ -5,7 +6,8 @@ import { nextForm, xpToEvolve, xpToLevel } from "#rules/progression";
 import { UNITS } from "#rules/units/index";
 import { UPGRADES } from "#rules/upgrades";
 import { LEADER_SKILLS } from "#rules/world/leaders";
-import { isLeaderOf, maxHpOf, recordOf } from "#rules/world/record";
+import { isLeaderOf, maxHpOf, placementOf, recordOf } from "#rules/world/record";
+import { ownStats } from "#rules/battle/engine";
 import type { Leader, Mark, SquadMember } from "#rules/world/state";
 import { art } from "#view/art";
 import { element } from "#view/dom";
@@ -23,7 +25,9 @@ export function markText(mark: Mark): string {
       ? `the leader tree (${LEADER_SKILLS[source.skill]?.name ?? source.skill})`
       : source.kind === "levels"
         ? `${source.levels} level${source.levels === 1 ? "" : "s"} past the end of its line`
-        : `the ${unitName(UPGRADES.get(source.upgrade)?.unitType ?? source.upgrade)} upgrade at the Capitol`;
+        : source.kind === "node"
+          ? `the ${NODES[source.node].name} of the city it was recruited in`
+          : `the ${unitName(UPGRADES.get(source.upgrade)?.unitType ?? source.upgrade)} upgrade at the Capitol`;
   return `${text} From ${from}.`;
 }
 
@@ -77,5 +81,22 @@ export function unitDefCard(defId: string): HTMLElement {
     item.append(element("span", "name", ref.name ?? behavior.name), element("div", "text", describeAbility(ref)));
     card.appendChild(item);
   }
+  return card;
+}
+
+/**
+ * A squad member's card for the hold-right-click peek: its type's card with the numbers it would fight with now
+ * (marks, levels and the leader tree included), its health, and its track record.
+ */
+export function memberCard(m: SquadMember, leader: Leader | undefined): HTMLElement {
+  const card = unitDefCard(m.defId);
+  const def = UNITS[m.defId];
+  const s = ownStats(placementOf(m, leader));
+  const facts = [`${m.hp} / ${maxHpOf(m, leader)} HP`, s.shield > 0 ? `${s.shield} shield` : "", `${s.damage} damage${def?.damageType === "fire" ? " (fire)" : ""}`, `${s.armor} armor`, `${s.initiative} initiative`];
+  if (def?.spellCharges) facts.push(`${def.spellCharges} spell charges`);
+  card.querySelector(".stats")?.replaceWith(element("div", "stats", facts.filter((f) => f).join(" · ")));
+  const title = card.querySelector(".title");
+  if (title) title.textContent = `${isLeaderOf(m, leader) ? "♛ " : ""}${unitName(m.defId)}${m.level > 0 ? ` · level ${m.level}` : ""}`;
+  for (const mark of recordOf(m, leader)) card.appendChild(element("div", "note", markText(mark)));
   return card;
 }

@@ -1,3 +1,4 @@
+import { spellById } from "#rules/spells";
 import type { Placement } from "#rules/battle/engine";
 import { COLS } from "#rules/battle/grid";
 import { CAPITOL_MANA } from "#rules/balance";
@@ -65,7 +66,7 @@ describe("casting", () => {
     expect(leaderById(cast, "leader1").squad.map((m) => m.hp)).toEqual([60, 60]);
     expect(playerOf(cast, 1).graveyard.map((f) => f.defId)).toEqual(["congregant"]);
     expect(step.events).toContainEqual({ type: "fell", player: 1, defId: "congregant" });
-    expect(playerOf(cast, 0).mana.teal).toBe(85);
+    expect(playerOf(cast, 0).mana.teal).toBe(100 - spellById("lightning_strike").cost);
     expect(castProblem(cast, "lightning_strike", enemyHex)).toBe("already cast this turn");
   });
 

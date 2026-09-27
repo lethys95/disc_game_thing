@@ -5,6 +5,7 @@ import { cityUpgradeCost, elevateProblem, investNodeProblem, nodeInvestCost, rec
 import { capacityOf, transferProblem } from "#rules/world/squads";
 import { playerOf, cityById, leaderById, leaderUnit, nodesOf } from "#rules/world/state";
 import { NODES } from "#rules/nodes";
+import type { NodeKind } from "#rules/nodes";
 import type { City, SquadMember, SquadRef, World, WorldAction } from "#rules/world/state";
 import { element, gold } from "#view/dom";
 import { unitName } from "#view/members";
@@ -24,6 +25,14 @@ export interface CityScreenOptions {
 
 /** Whether the dead can be raised in this city: at the Capitol, or anywhere once researched. */
 const raisesHere = (world: World, city: City): boolean => city.kind === "capitol" || playerOf(world, world.activePlayer).research.includes("city_resurrection");
+
+/** What a node gives at a level, in words. */
+function nodeYield(kind: NodeKind, level: number): string {
+  const def = NODES[kind];
+  if (kind === "gold") return `+${def.income(level)} gold per turn`;
+  if (kind === "mana") return `+${def.mana(level)} mana per turn`;
+  return `units recruited here deal +${BLACKSMITH_BONUS * level} damage, for good`;
+}
 
 /** Placeholder city names until the user names them. */
 export const cityName = (city: City): string => (city.kind === "capitol" ? "Capitol" : `City ${city.id.replace("city", "")}`);
@@ -62,7 +71,7 @@ export class CityScreen {
     const city = place.kind === "city" ? cityById(world, place.cityId) : undefined;
 
     const header = element("div", "capitol-header");
-    header.append(element("div", "title", city ? `Your ${cityName(city)}` : "Warbands meet"), gold(playerOf(world, side).gold, "purse"));
+    header.append(element("div", "title", city ? cityName(city) : "Warbands meet"), gold(playerOf(world, side).gold, "purse"));
     if (city?.kind === "capitol") {
       const tabs = element("div", "tabs");
       for (const [id, label] of [["city", "City"], ["research", "Research"], ["spells", "Spells"]] as const) {
@@ -101,6 +110,7 @@ export class CityScreen {
     grids.appendChild(element("div", "note", "Drag units between the grids; dropping on a unit swaps the two. Click an empty tile to recruit. Click a unit for its details."));
     body.appendChild(grids);
     if (city && raisesHere(world, city)) body.appendChild(this.graveyard(world, side, city, mayAct));
+    else if (city) body.appendChild(element("div", "note panel", "Resurrection here needs the Capitol's research (Research tab: Resurrection in cities)."));
     this.root.appendChild(body);
   }
 
@@ -167,7 +177,7 @@ export class CityScreen {
     row.appendChild(element("div", "name", "Nodes"));
     for (const node of nodesOf(world, city)) {
       const def = NODES[node.kind];
-      const yields = node.kind === "gold" ? `+${def.income(node.level)} gold per turn` : `+${BLACKSMITH_BONUS * node.level} ability damage in your battles`;
+      const yields = nodeYield(node.kind, node.level);
       const item = element("div", "node-item");
       item.append(element("div", "", `${def.name} · level ${node.level}`), element("div", "note", yields));
       if (node.level < NODE_MAX_LEVEL) {
@@ -175,7 +185,7 @@ export class CityScreen {
         const invest = element("button", "small");
         invest.append(`Invest · `, gold(nodeInvestCost(node)));
         invest.disabled = !mayAct || problem !== null;
-        invest.title = problem ?? `Level ${node.level + 1}: ${node.kind === "gold" ? `+${def.income(node.level + 1)} gold per turn` : `+${BLACKSMITH_BONUS * (node.level + 1)} ability damage`}.`;
+        invest.title = problem ?? `Level ${node.level + 1}: ${nodeYield(node.kind, node.level + 1)}.`;
         invest.addEventListener("click", () => this.options.act({ type: "investNode", nodeId: node.id }));
         item.appendChild(invest);
       }
@@ -205,7 +215,7 @@ export class CityScreen {
   /** The fallen: warband leaders to revive here, and units to resurrect by clicking an empty tile. */
   private graveyard(world: World, side: Side, city: City, mayAct: boolean): HTMLElement {
     const column = element("div", "capitol-hall panel");
-    column.appendChild(element("div", "section", "Graveyard"));
+    column.appendChild(element("div", "section", city.kind === "capitol" ? "Graveyard" : "Graveyard (researched: resurrect here for 25% more)"));
     // Fallen leaders are revived at the Capitol only.
     const lost = city.kind === "capitol" ? world.leaders.filter((l) => l.player === side && l.fellOnTurn !== null) : [];
     for (const leader of lost) {

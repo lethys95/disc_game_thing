@@ -26,8 +26,12 @@ export const CAPITOL_SIGHT = 2;
 export const STARTING_GOLD = 100;
 export const CAPITOL_INCOME = 50;
 export const MINE_INCOME = 25;
-/** Share of max HP restored at the start of its side's turn to every unit resting in its own Capitol. */
-export const CAPITOL_HEALING = 0.25;
+/**
+ * Share of max HP restored at the start of its side's turn to every unit resting in a city it holds (the garrison and
+ * a warband standing there): more in the Capitol (user's playtest, 2026-09-27: resurrected units otherwise stay at 1).
+ */
+export const CAPITOL_HEALING = 0.4;
+export const CITY_HEALING = 0.25;
 /**
  * City tiers (user, 2026-09-26: "upgrade the city: more garrison slots, a small armor bonus to the garrison and the
  * visiting squad"). Every number here is provisional. Index = tier. A Capitol's Guardian takes no slot.

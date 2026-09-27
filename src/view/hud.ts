@@ -20,19 +20,28 @@ export const optionKey = (option: { abilityId: string; enhancement: Enhancement 
   `${option.abilityId}|${option.enhancement.kind}${option.enhancement.kind === "replicate" ? option.enhancement.copies : ""}`;
 
 /**
- * The ability buttons, in order: one per option, except that a replicated spell is one button, its largest version
- * (targets are picked one by one, and it can be cast early). Keys 1–9 follow this order.
+ * The ability buttons, in order: one per ability. A replicated spell is one button, its largest version (targets are
+ * picked one by one, and it can be cast early); an overloaded one is a toggle on its spell's button (user,
+ * 2026-09-27), not a button of its own. Keys 1–9 follow this order.
  */
 export function actionButtons(options: readonly LegalAbility[]): LegalAbility[] {
   const largest = (o: LegalAbility) =>
     o.enhancement.kind !== "replicate" || !options.some((x) => x.abilityId === o.abilityId && x.enhancement.kind === "replicate" && x.enhancement.copies > (o.enhancement.kind === "replicate" ? o.enhancement.copies : 0));
-  return options.filter(largest);
+  return options.filter((o) => o.enhancement.kind !== "overload" && largest(o));
+}
+
+/** The option a button stands for, with its spell's overload toggled on or off. */
+export function withOverload(options: readonly LegalAbility[], button: LegalAbility, overloaded: boolean): LegalAbility {
+  if (!overloaded || button.enhancement.kind !== "none") return button;
+  return options.find((o) => o.abilityId === button.abilityId && o.enhancement.kind === "overload") ?? button;
 }
 
 export interface HudHandlers {
   /** A unit in the turn order is hovered (null: no longer). */
   onFocus(unitId: string | null): void;
   onAbility(key: string): void;
+  /** A spell's overload toggle was clicked. */
+  onOverload(abilityId: string): void;
   /** An ability button is hovered (null: no longer): preview it on every target it can reach. */
   onAbilityHover(key: string | null): void;
   onAuto(): void;
@@ -183,17 +192,21 @@ export class Hud {
     this.card.appendChild(abilities);
   }
 
-  renderActions(battle: Battle, options: readonly LegalAbility[], selected: string | null, enabled: boolean): void {
+  /** `overloaded`: the abilities whose overload toggle is on. */
+  renderActions(battle: Battle, options: readonly LegalAbility[], selected: string | null, enabled: boolean, overloaded: ReadonlySet<string>): void {
     this.actions.replaceChildren();
     const unitId = battle.current?.unitId;
     const unit = unitId ? battle.units[unitId] : undefined;
     if (!enabled || !unit) return;
-    for (const [index, option] of actionButtons(options).entries()) {
-      const button = element("button", `action${optionKey(option) === selected ? " selected" : ""}`);
+    for (const [index, shown] of actionButtons(options).entries()) {
+      const option = withOverload(options, shown, overloaded.has(shown.abilityId));
+      const slot = element("div", "ability-slot");
+      const button = element("button", `action ability${optionKey(option) === selected ? " selected" : ""}`);
+      // The icon fills the button (user, 2026-09-27); the words sit on top of it.
+      button.appendChild(art({ kind: "ability", id: option.abilityId }, "fill"));
       if (this.settings.data.slotKeys && index < 9) button.appendChild(element("span", "slot", String(index + 1)));
-      button.appendChild(art({ kind: "ability", id: option.abilityId }, "small"));
       const replicate = option.enhancement.kind === "replicate";
-      button.appendChild(element("span", "name", `${option.name}${replicate ? " (replicate)" : enhancementLabel(option.enhancement)}`));
+      button.appendChild(element("span", "name", `${option.name}${replicate ? " (replicate)" : ""}`));
       const plain = options.find((o) => o.abilityId === option.abilityId && o.enhancement.kind === "none");
       const perCopy = replicate && plain && option.enhancement.kind === "replicate" ? (option.spellCost - plain.spellCost) / option.enhancement.copies : 0;
       if (option.spellCost > 0) button.appendChild(element("span", "tag spell", replicate ? `+${perCopy} ⚡ per copy` : `${option.spellCost} ⚡`));
@@ -207,7 +220,16 @@ export class Hud {
       button.addEventListener("click", () => this.handlers.onAbility(optionKey(option)));
       button.addEventListener("mouseenter", () => this.handlers.onAbilityHover(optionKey(option)));
       button.addEventListener("mouseleave", () => this.handlers.onAbilityHover(null));
-      this.actions.appendChild(button);
+      slot.appendChild(button);
+      const overload = options.find((o) => o.abilityId === shown.abilityId && o.enhancement.kind === "overload");
+      if (overload && shown.enhancement.kind === "none") {
+        const on = overloaded.has(shown.abilityId);
+        const toggle = element("button", `overload${on ? " on" : ""}`, `Overload +${overload.spellCost - shown.spellCost} ⚡`);
+        toggle.title = on ? "Overloaded: click to cast it plain." : "Click to overload this spell: it reaches wider, for more charges.";
+        toggle.addEventListener("click", () => this.handlers.onOverload(shown.abilityId));
+        slot.appendChild(toggle);
+      }
+      this.actions.appendChild(slot);
     }
   }
 

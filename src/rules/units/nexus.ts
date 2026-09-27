@@ -40,7 +40,7 @@ export const NEXUS_UNITS: Readonly<Record<string, UnitDef>> = {
     id: "thaumaturge", name: "Thaumaturge", faction: "nexus", tier: 2, damageType: "weapon",
     stats: { maxHp: 65, shield: 0, damage: 12, armor: 0, initiative: 50 },
     // Overload overloads: wider, and it doesn't care who it hits.
-    abilities: [{ id: "homing_lightning", params: { overload: 1 } }, { id: "plus_burst", params: { overload: 1 } }, ...kit("bolt", "defend", "wait")],
+    abilities: [{ id: "homing_lightning", params: { overload: 1, power: 80 } }, { id: "plus_burst", params: { overload: 1 } }, ...kit("bolt", "defend", "wait")],
     spellCharges: 4,
   },
   // Tier 3 mages (the user's mage sheet, 2026-09-26). Stats and charges are provisional.
@@ -62,7 +62,7 @@ export const NEXUS_UNITS: Readonly<Record<string, UnitDef>> = {
     stats: { maxHp: 85, shield: 0, damage: 16, armor: 0, initiative: 55 },
     // The Thaumaturge's kit, two more charges, and Combustion.
     abilities: [
-      { id: "homing_lightning", params: { overload: 1, power: 60 } },
+      { id: "homing_lightning", params: { overload: 1, power: 105 } },
       { id: "plus_burst", params: { overload: 1, power: 55 } },
       ...kit("combustion", "bolt", "defend", "wait"),
     ],
