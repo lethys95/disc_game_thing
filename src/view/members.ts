@@ -1,3 +1,4 @@
+import { itemById } from "#rules/items";
 import { NODES } from "#rules/nodes";
 import { BEHAVIORS, describeAbility } from "#rules/abilities/index";
 import { effectDef } from "#rules/effects";
@@ -27,7 +28,9 @@ export function markText(mark: Mark): string {
         ? `${source.levels} level${source.levels === 1 ? "" : "s"} past the end of its line`
         : source.kind === "node"
           ? `the ${NODES[source.node].name} of the city it was recruited in`
-          : `the ${unitName(UPGRADES.get(source.upgrade)?.unitType ?? source.upgrade)} upgrade at the Capitol`;
+          : source.kind === "item"
+            ? `the ${itemById(source.item).name} its leader wears`
+            : `the ${unitName(UPGRADES.get(source.upgrade)?.unitType ?? source.upgrade)} upgrade at the Capitol`;
   return `${text} From ${from}.`;
 }
 

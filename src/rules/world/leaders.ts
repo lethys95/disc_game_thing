@@ -1,5 +1,6 @@
 import { LEADER_AURA, LEADER_EXTRA_HEALTH, LEADER_HEALING, LEADER_MOVEMENT, LEADER_XP_PER_POINT, MAX_LEADERSHIP, STARTING_LEADERSHIP } from "#rules/balance";
 import type { EffectSeed } from "#rules/battle/types";
+import { itemById, SLOT_CAPACITY, SLOT_NAMES } from "#rules/items";
 import type { Leader } from "#rules/world/state";
 
 /**
@@ -61,6 +62,18 @@ export function learnProblem(leader: Leader, skill: string): string | null {
   if (missing.length > 0) return `needs ${missing.map((r) => LEADER_SKILLS[r]?.name ?? r).join(", ")} first`;
   return null;
 }
+
+/** Why this leader can't put on `item` from its bag now, or null. */
+export function equipProblem(leader: Leader, item: string): string | null {
+  if (!leader.bag.includes(item)) return "not in the bag";
+  const slot = itemById(item).slot;
+  if (!slot) return "it's carried, not worn";
+  const used = leader.worn.filter((w) => itemById(w).slot === slot).length;
+  return used >= SLOT_CAPACITY[slot] ? `no free ${SLOT_NAMES[slot].toLowerCase()} slot` : null;
+}
+
+/** An item that makes reviving this leader free (the Ankh), worn or in the bag. */
+export const freeRevival = (leader: Leader): string | undefined => [...leader.worn, ...leader.bag].find((id) => itemById(id).revivesFree);
 
 /** The leader tree's effects on the leader's own unit in battle. */
 export function leaderEffects(leader: Leader): { skill: string; effect: EffectSeed }[] {

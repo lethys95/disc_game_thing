@@ -132,7 +132,7 @@ function strike(world: World, group: Group, amount: number, caster: PlayerId, ev
     } else if (group.lair.reward && !group.lair.looted) {
       group.lair.looted = true;
       playerOf(world, caster).gold += group.lair.reward.gold;
-      events.push({ type: "looted", lairId: group.lair.id, player: caster, gold: group.lair.reward.gold, joins: null });
+      events.push({ type: "looted", lairId: group.lair.id, player: caster, gold: group.lair.reward.gold, joins: null, item: null });
     }
     return;
   }

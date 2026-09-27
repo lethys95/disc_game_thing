@@ -6,7 +6,7 @@ import { sameHex } from "#rules/hex";
 import { NODES } from "#rules/nodes";
 import { grow, xpToEvolve } from "#rules/progression";
 import { EVOLUTIONS, FACTION_ROOTS, GUARDIAN_ID, LINE_ARCHETYPE, RECRUIT_COST, UNITS } from "#rules/units/index";
-import { learnProblem, movementOf, squadHealingOf } from "#rules/world/leaders";
+import { freeRevival, learnProblem, movementOf, squadHealingOf } from "#rules/world/leaders";
 import { maxHpOf } from "#rules/world/record";
 import { CITY_RESURRECTION_PREMIUM, RESEARCH } from "#rules/research";
 import { UPGRADES, upgradesFor } from "#rules/upgrades";
@@ -90,9 +90,11 @@ export function resurrectionCost(world: World, side: PlayerId, index: number, ci
 }
 
 /** Reviving a warband's fallen leader costs what resurrecting it would (provisional). */
+/** What reviving a fallen leader costs: what resurrecting it would (provisional), or nothing with an Ankh. */
 export function reviveCost(world: World, leader: Leader): number | null {
   const own = leaderUnit(leader);
-  return own && leader.fellOnTurn !== null ? raiseCost(world, own.defId, leader.fellOnTurn) : null;
+  if (!own || leader.fellOnTurn === null) return null;
+  return freeRevival(leader) ? 0 : raiseCost(world, own.defId, leader.fellOnTurn);
 }
 
 export function reviveProblem(world: World, leaderId: string): string | null {

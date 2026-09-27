@@ -2,6 +2,7 @@ import { ownStats } from "#rules/battle/engine";
 import type { Placement } from "#rules/battle/engine";
 import { LEVEL_BONUS_PERCENT } from "#rules/balance";
 import { sameTile } from "#rules/battle/grid";
+import { itemById } from "#rules/items";
 import { leaderEffects } from "#rules/world/leaders";
 import { fullHp } from "#rules/world/state";
 import type { Leader, Mark, SquadMember } from "#rules/world/state";
@@ -14,7 +15,12 @@ export const isLeaderOf = (m: SquadMember, leader: Leader | undefined): leader i
 export function recordOf(m: SquadMember, leader: Leader | undefined): Mark[] {
   const fromTree = isLeaderOf(m, leader) ? leaderEffects(leader).map(({ skill, effect }): Mark => ({ effect, source: { kind: "leaderTree", skill } })) : [];
   const fromLevels: Mark[] = m.level > 0 ? [{ effect: { def: "veteran", amount: m.level * LEVEL_BONUS_PERCENT }, source: { kind: "levels", levels: m.level } }] : [];
-  return [...m.marks, ...fromLevels, ...fromTree];
+  // Worn items: the leader's own unit wears them; a banner reaches the whole warband.
+  const worn = leader?.worn.map(itemById) ?? [];
+  const fromItems: Mark[] = worn.flatMap((item) =>
+    [...(isLeaderOf(m, leader) ? item.worn : []), ...item.banner].map((effect): Mark => ({ effect, source: { kind: "item", item: item.id } })),
+  );
+  return [...m.marks, ...fromLevels, ...fromTree, ...fromItems];
 }
 
 export function placementOf(m: SquadMember, leader: Leader | undefined): Placement {

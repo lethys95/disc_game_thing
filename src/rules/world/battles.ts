@@ -143,7 +143,8 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
         const joins = lair.reward.joins;
         const tile = joins ? freeTile(attacker.squad, joins) : null;
         if (joins && tile && attacker.squad.length < leadershipOf(attacker)) attacker.squad.push(newcomer(draft, attacker.player, joins, tile));
-        events.push({ type: "looted", lairId: lair.id, player: attacker.player, gold: lair.reward.gold, joins: joins && tile ? joins : null });
+        if (lair.reward.item) attacker.bag.push(lair.reward.item);
+        events.push({ type: "looted", lairId: lair.id, player: attacker.player, gold: lair.reward.gold, joins: joins && tile ? joins : null, item: lair.reward.item });
       }
     }
   } else {
@@ -176,6 +177,15 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
     }
   }
 
+  // Spoils (provisional, as in D2): a warband wiped out by another warband leaves its items to the victor's leader.
+  const beaten = draft.leaders.filter((l) => l.squad.length === 0 && (l.id === attacker.id || (engagement.defender.kind === "leader" && l.id === engagement.defender.leaderId)));
+  const victor = draft.leaders.find((l) => l.squad.length > 0 && (l.id === attacker.id || (engagement.defender.kind === "leader" && l.id === engagement.defender.leaderId)));
+  for (const loser of beaten) {
+    const items = [...loser.worn, ...loser.bag];
+    if (!victor || items.length === 0) continue;
+    victor.bag.push(...items);
+    events.push({ type: "spoils", leaderId: victor.id, items });
+  }
   for (const leader of draft.leaders) {
     if (leader.squad.length === 0) {
       events.push({ type: "leaderFell", leaderId: leader.id, player: leader.player });

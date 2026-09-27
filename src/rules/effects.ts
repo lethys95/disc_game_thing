@@ -322,6 +322,36 @@ const effects: readonly EffectDef[] = [
     },
   },
   {
+    // Worn items (headgear, armor): extra armor.
+    id: "extra_armor",
+    quiet: true,
+    name: "Extra armor",
+    describe: (e) => `+${e.amount} armor.`,
+    stacking: { mode: "merge" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      stats: (_ctx, self, subjectId, stats) => {
+        if (subjectId === self.unitId) stats.armor += self.effect?.amount ?? 0;
+      },
+    },
+  },
+  {
+    // Worn items (charms): extra initiative.
+    id: "extra_initiative",
+    quiet: true,
+    name: "Extra initiative",
+    describe: (e) => `+${e.amount} initiative.`,
+    stacking: { mode: "merge" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      stats: (_ctx, self, subjectId, stats) => {
+        if (subjectId === self.unitId) stats.initiative += self.effect?.amount ?? 0;
+      },
+    },
+  },
+  {
     // A city's walls: its garrison, and a warband defending in its own city, stand behind them (city tiers).
     id: "fortified",
     quiet: true,
