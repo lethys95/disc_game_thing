@@ -132,7 +132,6 @@ export class Campaign implements KeyLayer {
       this.place = null;
       this.render();
     },
-    closeUp: (hex) => (hex ? this.view.closeUp(hex) : this.view.leaveCloseUp()),
   });
 
   constructor(

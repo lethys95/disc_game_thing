@@ -440,13 +440,6 @@ button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }
 .rail-tab:hover { border-color: var(--gold-dim); color: var(--ink); }
 .rail-tab.selected { background: var(--line); border-color: var(--gold); color: var(--gold-light); box-shadow: inset 3px 0 0 var(--gold); }
 .rail-tab.selected .glyph { color: var(--gold); }
-/* Home: the map shows through, with only the header, the rail and a card over it. */
-.screen.home { background: linear-gradient(to bottom, rgba(8, 7, 7, 0.85), transparent 90px); pointer-events: none; }
-.screen.home .capitol-header, .screen.home .tab-rail, .screen.home .home-card { pointer-events: auto; }
-.screen.home .city-content { justify-content: flex-end; overflow: visible; }
-#maphud:has(#capitol.home:not([hidden])) > :is(#mapsquad, #mapcity, #mapbottom, #mapturn, #mapmenu) { visibility: hidden; }
-.home-card { align-self: flex-start; padding: 12px 16px; max-width: 420px; background: rgba(14, 12, 12, 0.88); }
-.home-card .hint { margin-top: 8px; font-style: italic; }
 /* Research trees top-down: tier 1 at the top, branches spreading below; a connector rises from each node to its parent. */
 .screen .tree.down { gap: 22px 10px; align-items: start; }
 .screen .tree.down .node { position: relative; align-items: center; text-align: center; }
@@ -471,10 +464,10 @@ button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }
 }
 #capitol button.action:hover:not(:disabled), #capitol button.small:hover:not(:disabled) { filter: brightness(1.3); }
 #capitol button:disabled { filter: grayscale(1) brightness(0.65); }
-#capitol .tab-rail { width: 100px; align-items: center; gap: 2px; }
-#capitol .tab-rail::before { content: ""; width: 96px; height: 116px; background: var(--ui-gargoyle, none) center bottom / contain no-repeat; }
+#capitol .tab-rail { width: 84px; align-items: center; gap: 2px; }
+#capitol .tab-rail::before { display: block; position: static; content: ""; width: 80px; height: 96px; mix-blend-mode: normal; opacity: 1; transform: none; background: var(--ui-gargoyle, none) center bottom / contain no-repeat; }
 #capitol .rail-tab {
-  width: 96px; height: 96px; border: none; background: var(--ui-medallion) center / 84px no-repeat; box-shadow: none;
+  width: 80px; height: 80px; border: none; background: var(--ui-medallion) center / 74px no-repeat; box-shadow: none;
   justify-content: center; gap: 0;
 }
 #capitol .rail-tab .glyph { font-size: 24px; color: var(--muted); margin-top: -4px; }
@@ -483,3 +476,17 @@ button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }
 #capitol .rail-tab.selected { background-color: transparent; filter: drop-shadow(0 0 10px rgba(217, 179, 106, 0.55)); }
 #capitol .rail-tab.selected .glyph, #capitol .rail-tab.selected .label { color: var(--gold-light); }
 #capitol button.selected { filter: brightness(1.35) drop-shadow(0 0 6px rgba(217, 179, 106, 0.6)); color: var(--gold); }
+
+/* The city view: a painting of the city in a frame (a placeholder for the montage, design/capitol-screen.md). */
+.city-view { position: relative; flex: 1; min-height: 0; overflow: hidden; padding: 0; }
+.city-scene {
+  position: absolute; inset: 0; background: #0b0a0c center / cover no-repeat;
+  animation: city-drift 40s ease-in-out infinite alternate;
+}
+@keyframes city-drift { from { transform: scale(1.06) translate(-1.5%, 0.5%); } to { transform: scale(1.14) translate(1.5%, -1%); } }
+.home-card {
+  position: absolute; left: 16px; bottom: 16px; padding: 10px 14px; max-width: 420px;
+  background: rgba(10, 9, 9, 0.8); border: 1px solid var(--line);
+}
+#capitol .tab-rail.panel { border-width: 10px; border-image-width: 14px; padding: 4px 0; width: 84px; justify-content: flex-start; }
+#capitol.screen { background: #080707; }

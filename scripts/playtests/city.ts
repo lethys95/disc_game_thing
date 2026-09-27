@@ -2,14 +2,12 @@ import type { Playtest } from "#scripts/playtests/harness";
 
 const city: Playtest = {
   name: "city",
-  about: "open on the home view, go to the garrison, drag a unit into it, recruit, peek at a unit, Escape out",
+  about: "open on the city view, go to the garrison, drag a unit into it, recruit, peek at a unit, Escape out",
   async run(t) {
     await t.open("/?map&seed=1&capitol");
-    // The Capitol opens on its home view: the city itself, the map showing through, the tab rail on the right.
-    const home = await t.page.locator("#capitol").getAttribute("class");
-    if (!home?.includes("home")) t.fail(`the Capitol didn't open on its home view: ${home}`);
-    if (await t.page.locator("#mapsquad").isVisible()) t.fail("the map's warband panel shows over the home view");
-    await t.page.waitForTimeout(700);
+    // The Capitol opens on its city view: a painting of the city in a frame, the tab rail on the right.
+    const painting = await t.page.locator("#capitol .city-scene").evaluate((el) => getComputedStyle(el).backgroundImage);
+    if (!painting.startsWith("url(")) t.fail(`the city view shows no painting: ${painting}`);
     await t.shot("playtest-city-home");
     await t.page.locator("#capitol .rail-tab", { hasText: "Garrison" }).click();
     const grids = t.page.locator("#capitol .squad-grid");

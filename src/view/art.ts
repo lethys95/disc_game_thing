@@ -58,3 +58,14 @@ export function applyUiKit(root: HTMLElement): void {
   }
 }
 
+/** Paintings of cities from the inside (`assets/city/<slot>.webp`), by the map's model slot chains. */
+const CITY_VIEWS = import.meta.glob<string>("/assets/city/*.webp", { eager: true, query: "?url", import: "default" });
+
+export function cityViewUrl(chain: readonly string[]): string | null {
+  for (const key of chain) {
+    const url = CITY_VIEWS[`/assets/city/${key.replace(/^site\//, "")}.webp`];
+    if (url) return url;
+  }
+  return null;
+}
+
