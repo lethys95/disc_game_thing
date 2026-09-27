@@ -1,12 +1,11 @@
 import type { Commitment } from "#rules/forks";
 import { EVOLUTIONS, UNITS } from "#rules/units/index";
+import { XP_TO_EVOLVE } from "#rules/balance";
 
 /**
  * XP and evolution. Canon: defeated enemies feed a pool the winners' survivors split, valued deterministically
  * from stats; tiers 2–3 common, 4 uncommon, 5 rare. The numbers are provisional (docs/questions.md).
  */
-export const XP_TO_EVOLVE: Readonly<Record<number, number>> = { 1: 100, 2: 250, 3: 500, 4: 1000 };
-
 /** What defeating one unit of this kind is worth. */
 export function xpValue(defId: string): number {
   const stats = UNITS[defId]?.stats;

@@ -100,5 +100,5 @@ Resolved:
 
 Still open:
 - **The AI is one ply deep.** It plays greedily. A better AI (look-ahead, or rollouts with the forecast machinery) is its own milestone.
-- **`App` and `Campaign` are still big controllers** mixing input, state and rendering. The Capitol screen went into its own class (`view/capitol.ts`); keep new screens out of `Campaign` the same way.
+- **`App` and `Campaign` are still big controllers** mixing input, state and rendering. The city screen went into its own class (`view/city.ts`); keep new screens out of `Campaign` the same way.
 - **Stats are recomputed often** (`stats()` walks every trait on the battlefield). It's fast enough at 18 units; memoise per action if battles grow.
