@@ -27,7 +27,7 @@ const sound = new Sound();
 settings.follow((s) => sound.setVolumes(s));
 // Every button clicks.
 document.addEventListener("click", (e) => {
-  if (e.target instanceof Element && e.target.closest("button")) sound.play("ui/click");
+  if (e.target instanceof Element && e.target.closest("button")) sound.play(["ui/click"]);
 });
 if (params.has("fast")) stage.testScale = 0.1;
 const battleScene = new BattleScene(stage);
@@ -80,6 +80,7 @@ function showSetup(): void {
   campaign.stop();
   setup.show();
   sound.mapMusic("jilliath");
+  sound.ambience(null);
 }
 
 const presets = [PRESETS.preserve, PRESETS.punishment] as const;

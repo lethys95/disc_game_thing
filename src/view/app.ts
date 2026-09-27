@@ -157,6 +157,7 @@ export class App {
     // The attacker (side 0) sets the music: its faction's battle tracks, in turn.
     const attacker = Object.values(start.units).find((u) => u.side === 0);
     this.sound.battleMusic(UNITS[attacker?.defId ?? ""]?.faction ?? "neutral");
+    this.sound.ambience(null);
     let battle = start;
     this.scene.show();
     this.hud.setVisible(true);
@@ -210,7 +211,7 @@ export class App {
     if (done.outcome) {
       const end: BattleEvent[] = [{ type: "battleEnd", outcome: done.outcome }];
       this.hud.appendLog(end, done, this.playerSide);
-      for (const cue of battleCues(end, this.playerSide)) this.sound.play(cue.key, cue.delay);
+      for (const cue of battleCues(end, done, this.playerSide)) this.sound.play(cue.chain, cue.delay);
     }
     this.scene.sync(done);
     this.render();
@@ -354,7 +355,7 @@ export class App {
     this.render();
     const step = applyAction(battle, action);
     const visible = masked(step.events, step.battle, this.playerSide);
-    for (const cue of battleCues(visible, this.playerSide)) this.sound.play(cue.key, cue.delay * this.stage.timeScale);
+    for (const cue of battleCues(visible, step.battle, this.playerSide)) this.sound.play(cue.chain, cue.delay * this.stage.timeScale, cue.duration);
     this.hud.appendLog(visible, step.battle, this.playerSide);
     this.battle = step.battle;
     await this.scene.play(visible, step.battle);

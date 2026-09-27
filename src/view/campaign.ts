@@ -234,6 +234,7 @@ export class Campaign {
     const world = this.world;
     if (!world) return;
     this.sound.mapMusic(playerOf(world, PLAYER).faction);
+    this.sound.ambience(["ambience/map"]);
     // Outside battles, --side0 is you and --side1 your first opponent.
     const you = playerOf(world, PLAYER).color;
     applySideColors(document.documentElement, [you, world.players.find((_, id) => id !== PLAYER)?.color ?? fallbackColor(you)]);
@@ -322,7 +323,7 @@ export class Campaign {
     this.render();
     const step = applyWorldAction(world, action);
     const stepMs = HEX_STEP_MS * this.stage.timeScale;
-    for (const cue of worldCues(step.events, PLAYER, world.activePlayer, stepMs)) this.sound.play(cue.key, cue.delay, cue.duration);
+    for (const cue of worldCues(step.events, PLAYER, world.activePlayer, stepMs)) this.sound.play(cue.chain, cue.delay, cue.duration);
     for (const event of step.events) {
       if (event.type === "moved") await this.view.walk(event.leaderId, event.path, world.leaders.some((l) => l.id === event.leaderId && l.player === PLAYER));
     }

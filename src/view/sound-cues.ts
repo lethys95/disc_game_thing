@@ -1,47 +1,51 @@
-import { behavior } from "#rules/abilities/index";
-import type { BattleEvent, Side } from "#rules/battle/types";
+import type { Battle, BattleEvent, Side } from "#rules/battle/types";
 import type { PlayerId, WorldEvent } from "#rules/world/state";
-import type { SoundKey } from "#view/sound";
+import { deathChain, HEAL_CHAIN, hitChain, spellChain, useChain } from "#view/sound-slots";
+import type { FixedSound } from "#view/sound-slots";
 
-/** Which sounds a step of play makes, and when (ms after it starts). By event and tag: no ability is named here. */
+/**
+ * Which sounds a step of play makes, and when (ms after it starts). Each sound is a chain of slots
+ * (`view/sound-slots.ts`): an ability's own sound first, its family's after. No ability is named here.
+ */
 export interface Cue {
-  readonly key: SoundKey;
+  readonly chain: readonly string[];
   readonly delay: number;
   /** Plays for exactly this long (looping if the sound is shorter): a march lasts as long as the walk. */
   readonly duration?: number;
 }
 
-/** A battle step: the swing or cast first, then what it did. `playerSide`: whose victory the stinger celebrates. */
-export function battleCues(events: readonly BattleEvent[], playerSide: Side | null): Cue[] {
+const fixed = (key: FixedSound, delay = 0, duration?: number): Cue => (duration === undefined ? { chain: [key], delay } : { chain: [key], delay, duration });
+
+/**
+ * A battle step: the ability's use first, then what it did. `battle` is the state after the step (a dead unit's
+ * type for its cry). `playerSide`: whose victory the stinger celebrates.
+ */
+export function battleCues(events: readonly BattleEvent[], battle: Battle, playerSide: Side | null): Cue[] {
   const cues: Cue[] = [];
-  let spell = false;
+  let ability: string | null = null;
   for (const e of events) {
     switch (e.type) {
-      case "ability": {
-        const b = behavior(e.abilityId);
-        const tags = b.kind === "active" ? b.tags : [];
-        spell = tags.includes("spell");
-        if (spell) cues.push({ key: "battle/cast", delay: 0 });
-        else if (tags.includes("attack")) cues.push({ key: "battle/swing", delay: 0 });
+      case "ability":
+        ability = e.abilityId;
+        cues.push({ chain: useChain(e.abilityId), delay: 0 });
         break;
-      }
       case "damage":
-        if (e.source !== null) cues.push({ key: spell ? "battle/spell-hit" : "battle/hit", delay: 220 });
-        break;
-      case "shieldHit":
-        cues.push({ key: "battle/shield", delay: 200 });
+        if (e.source !== null) cues.push({ chain: hitChain(ability), delay: 220 });
         break;
       case "heal":
-        cues.push({ key: "battle/heal", delay: 150 });
+        cues.push({ chain: ability ? hitChain(ability) : HEAL_CHAIN, delay: 150 });
+        break;
+      case "shieldHit":
+        cues.push(fixed("battle/shield", 200));
         break;
       case "death":
-        cues.push({ key: "battle/death", delay: 380 });
+        cues.push({ chain: deathChain(battle.units[e.unitId]?.defId ?? ""), delay: 380 });
         break;
       case "fled":
-        cues.push({ key: "battle/fled", delay: 0 });
+        cues.push(fixed("battle/fled"));
         break;
       case "battleEnd":
-        if (e.outcome.winner !== null && playerSide !== null) cues.push({ key: e.outcome.winner === playerSide ? "stinger/victory" : "stinger/defeat", delay: 500 });
+        if (e.outcome.winner !== null && playerSide !== null) cues.push(fixed(e.outcome.winner === playerSide ? "stinger/victory" : "stinger/defeat", 500));
         break;
       default:
         break;
@@ -59,13 +63,13 @@ export function worldCues(events: readonly WorldEvent[], player: PlayerId, mover
   for (const e of events) {
     switch (e.type) {
       case "moved":
-        if (mover === player) cues.push({ key: "map/march", delay: 0, duration: e.path.length * stepMs });
+        if (mover === player) cues.push(fixed("map/march", 0, e.path.length * stepMs));
         break;
       case "engaged":
-        if (mover === player) cues.push({ key: "map/battle", delay: 0 });
+        if (mover === player) cues.push(fixed("map/battle"));
         break;
       case "captured":
-        if (e.player === player) cues.push({ key: "map/capture", delay: 0 });
+        if (e.player === player) cues.push(fixed("map/capture"));
         break;
       case "recruited":
       case "resurrected":
@@ -74,10 +78,10 @@ export function worldCues(events: readonly WorldEvent[], player: PlayerId, mover
       case "spellLearned":
       case "cityUpgraded":
       case "nodeInvested":
-        if (mover === player) cues.push({ key: "ui/coins", delay: 0 });
+        if (mover === player) cues.push(fixed("ui/coins"));
         break;
       case "spellCast":
-        if (e.player === player) cues.push({ key: "battle/cast", delay: 0 });
+        if (e.player === player) cues.push({ chain: spellChain(e.spell), delay: 0 });
         break;
       default:
         break;
