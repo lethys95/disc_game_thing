@@ -4,7 +4,7 @@ import { applySideColors, colorPair } from "#view/colors";
 import { GameMenu } from "#view/menu";
 import { routeKeys } from "#view/input";
 import { AUTOSAVE_ID, LocalSaveStore } from "#view/saves";
-import { applyOrnaments } from "#view/art";
+import { applyOrnaments, applyUiKit } from "#view/art";
 import { App } from "#view/app";
 import { byId } from "#view/dom";
 import { Campaign } from "#view/campaign";
@@ -25,6 +25,7 @@ import { isTerrain } from "#rules/map";
 const params = new URLSearchParams(window.location.search);
 
 applyOrnaments(document.documentElement);
+applyUiKit(document.documentElement);
 const stage = new Stage(byId("stage"));
 const settings = new Settings();
 settings.follow((s) => stage.setFeel(ANIMATION_SPEEDS[s.speed].scale, s.rotate, s.zoom));

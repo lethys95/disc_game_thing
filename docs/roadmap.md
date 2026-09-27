@@ -112,8 +112,12 @@ Generated buildings, terrain props, ground textures and a sky.
 ## M44 — Battlefield (done)
 Arenas dressed from the terrain and place fought over.
 
+## M45 — UI kit pilot (done)
+Generated frame, plaque, buttons, medallions and a gargoyle on the city screen.
+
 ## Next up
-- A UI kit pilot on the Capitol screen.
+- Spread the UI kit (map HUD, battle HUD, setup, menus) once the user has judged the pilot.
+- The user's map notes: foliage, lighting, props sitting into the ground; TRELLIS.2 when access arrives.
 
 ## Then
 - Faction content as the user designs it (Nexus trees first; Grove and Wastes later). The user owns unit designs and looks.
