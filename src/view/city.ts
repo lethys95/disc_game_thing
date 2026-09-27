@@ -31,6 +31,7 @@ function nodeYield(kind: NodeKind, level: number): string {
   const def = NODES[kind];
   if (kind === "gold") return `+${def.income(level)} gold per turn`;
   if (kind === "mana") return `+${def.mana(level)} mana per turn`;
+  if (kind === "cathedral") return "units recruited here carry holy water (heal 30, once per combat)";
   return `units recruited here deal +${BLACKSMITH_BONUS * level} damage, for good`;
 }
 

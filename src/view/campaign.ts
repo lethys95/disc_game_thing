@@ -207,6 +207,19 @@ export class Campaign {
     this.render();
   }
 
+  /** Screenshots: the player at this screen has explored the whole map (the fog stays over what it can't see now). */
+  revealAll(): void {
+    const world = this.world;
+    if (!world) return;
+    const explored = Object.keys(world.map.tiles);
+    // Places out of sight show as remembered: remember them as they are now.
+    const memory = structuredClone({ cities: world.cities, lairs: world.lairs, nodes: world.nodes });
+    const next = { ...world, players: world.players.map((p, id) => (id === PLAYER ? { ...p, explored, memory } : p)) };
+    this.world = next;
+    this.syncView(next);
+    this.render();
+  }
+
   openLeader(): void {
     this.leaderOpen = this.myLeaders()[0]?.id ?? null;
     this.render();

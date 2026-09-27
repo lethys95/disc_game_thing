@@ -229,11 +229,11 @@ function hasMainAction(options: readonly LegalAbility[]): boolean {
   return options.some((a) => a.choices.some((c) => c.cost === "main"));
 }
 
+/** Uses left of an ability with `charges`. A granted ability (an item's, a node's) has no slot until first used. */
 function chargesLeft(ctx: Ctx, unitId: string, abilityId: string): number {
   const slot = ctx.unit(unitId).abilities.find((s) => s.ref.id === abilityId);
-  if (!slot) return 0;
-  const max = paramsOf(slot.ref)["charges"];
-  return max === undefined ? Infinity : max - slot.chargesUsed;
+  const max = paramsOf(slot?.ref ?? { id: abilityId })["charges"];
+  return max === undefined ? Infinity : max - (slot?.chargesUsed ?? 0);
 }
 
 function legal(ctx: Ctx): LegalAbility[] {
@@ -524,9 +524,12 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
       ctx.emit({ type: "effectEnded", unitId: targetId, effect: effect.def, source: effect.source });
     },
     consumeCharge: (unitId, abilityId) => {
-      const slot = unit(unitId).abilities.find((s) => s.ref.id === abilityId);
-      if (!slot || chargesLeft(ctx, unitId, abilityId) <= 0) return false;
-      slot.chargesUsed += 1;
+      if (chargesLeft(ctx, unitId, abilityId) <= 0) return false;
+      const owner = unit(unitId);
+      const slot = owner.abilities.find((s) => s.ref.id === abilityId);
+      // A granted ability gets a slot on first use, to count its charges.
+      if (slot) slot.chargesUsed += 1;
+      else owner.abilities.push({ ref: { id: abilityId }, chargesUsed: 1 });
       return true;
     },
     abilityIds,

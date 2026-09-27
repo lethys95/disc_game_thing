@@ -233,6 +233,8 @@ export class MapView {
     const dark = new THREE.MeshStandardMaterial({ color: 0x1f1c1a, roughness: 0.85 });
     const ore = new THREE.MeshStandardMaterial({ color: 0xd9a431, emissive: 0xd9a431, emissiveIntensity: 1.4, roughness: 0.4 });
     const forge = new THREE.MeshStandardMaterial({ color: 0xff6a1a, emissive: 0xff6a1a, emissiveIntensity: 2, roughness: 0.5 });
+    const crystal = new THREE.MeshStandardMaterial({ color: 0x9fd8ff, emissive: 0x6fb8ff, emissiveIntensity: 1.2, roughness: 0.2, flatShading: true });
+    const candle = new THREE.MeshStandardMaterial({ color: 0xffd9a0, emissive: 0xffc070, emissiveIntensity: 2 });
     for (const city of world.cities) {
       const group = new THREE.Group();
       const banner = new THREE.MeshStandardMaterial({ color: NEUTRAL_BANNER.clone(), emissive: new THREE.Color(0), roughness: 0.6 });
@@ -285,7 +287,7 @@ export class MapView {
     this.links.clear();
     this.nodeModels.clear();
     for (const node of world.nodes) {
-      const model = node.kind === "blacksmith" ? anvil(dark, forge) : orePile(node.hex, ore, dark);
+      const model = node.kind === "blacksmith" ? anvil(dark, forge) : node.kind === "mana" ? crystals(node.hex, crystal) : node.kind === "cathedral" ? chapel(stone, dark, candle) : orePile(node.hex, ore, dark);
       model.position.copy(this.standingPoint(node.hex));
       model.userData = { hex: node.hex };
       model.traverse((o) => {
@@ -544,6 +546,38 @@ function orePile(hex: Hex, ore: THREE.Material, rock: THREE.Material): THREE.Gro
   crystal.scale.y = 1.8;
   pile.add(crystal);
   return pile;
+}
+
+/** A mana node: a cluster of pale glowing crystals (its mana goes to its holder, in the holder's color). */
+function crystals(hex: Hex, glow: THREE.Material): THREE.Group {
+  const cluster = new THREE.Group();
+  for (let i = 0; i < 4; i++) {
+    const shard = new THREE.Mesh(new THREE.OctahedronGeometry(0.1 + jitter(hex, i + 20) * 0.06, 0), glow);
+    shard.scale.y = 2.2 + jitter(hex, i + 30);
+    shard.position.set((jitter(hex, i + 40) - 0.5) * 0.4, 0.2, (jitter(hex, i + 50) - 0.5) * 0.4);
+    shard.rotation.z = (jitter(hex, i + 60) - 0.5) * 0.6;
+    cluster.add(shard);
+  }
+  return cluster;
+}
+
+/** A Cathedral: a small stone chapel with a spire and a lit window. */
+function chapel(stone: THREE.Material, roof: THREE.Material, light: THREE.Material): THREE.Group {
+  const g = new THREE.Group();
+  const nave = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.26, 0.44), stone);
+  nave.position.y = 0.13;
+  const top = new THREE.Mesh(new THREE.ConeGeometry(0.24, 0.2, 4), roof);
+  top.position.y = 0.36;
+  top.rotation.y = Math.PI / 4;
+  top.scale.z = 1.4;
+  const tower = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.4, 0.14), stone);
+  tower.position.set(0, 0.2, -0.26);
+  const spire = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.34, 4), roof);
+  spire.position.set(0, 0.57, -0.26);
+  const window = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.1, 0.01), light);
+  window.position.set(0, 0.15, 0.225);
+  g.add(nave, top, tower, spire, window);
+  return g;
 }
 
 /** A Blacksmith: an anvil on a block beside a glowing forge. */
