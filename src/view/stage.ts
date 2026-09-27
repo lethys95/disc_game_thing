@@ -111,6 +111,23 @@ export class Stage {
     this.controls.update();
   }
 
+  /** Where the camera stands and what it looks at now. */
+  viewpoint(): { readonly position: THREE.Vector3; readonly target: THREE.Vector3 } {
+    return { position: this.camera.position.clone(), target: this.controls.target.clone() };
+  }
+
+  /** Glides the camera to `position`, looking at `target`; `minDistance` lets it come closer than the scene's pose. */
+  flyTo(position: THREE.Vector3, target: THREE.Vector3, minDistance: number, duration: number): Promise<void> {
+    const from = this.viewpoint();
+    this.controls.minDistance = Math.min(minDistance, this.controls.minDistance);
+    return this.tween(duration, (t) => {
+      const eased = 1 - (1 - t) ** 3;
+      this.camera.position.lerpVectors(from.position, position, eased);
+      this.controls.target.lerpVectors(from.target, target, eased);
+      if (t >= 1) this.controls.minDistance = minDistance;
+    });
+  }
+
   tween(duration: number, update: (t: number) => void): Promise<void> {
     return new Promise((resolve) => {
       this.tweens.push({ start: performance.now(), duration: Math.max(1, duration * this.timeScale), update, done: resolve });

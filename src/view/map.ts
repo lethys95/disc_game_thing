@@ -7,7 +7,7 @@ import { threeColor } from "#view/colors";
 import { movementOf } from "#rules/world/leaders";
 import { movementPips } from "#view/dom";
 import { CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
-import { hexKey } from "#rules/hex";
+import { hexKey, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import type { Terrain, WorldMap } from "#rules/map";
 import type { NodeKind } from "#rules/nodes";
@@ -26,6 +26,8 @@ const SIZE = 1;
 export const HEX_STEP_MS = 190;
 /** Where the map camera sits relative to what it looks at. */
 const CAMERA_OFFSET = new THREE.Vector3(-3, 11, 11.2);
+/** How far the camera stands from a city in its home view. */
+const CLOSE_UP_DISTANCE = 4.2;
 
 export function hexPosition(hex: Hex): THREE.Vector3 {
   return new THREE.Vector3(SIZE * Math.sqrt(3) * (hex.q + hex.r / 2), 0, SIZE * 1.5 * hex.r);
@@ -167,6 +169,9 @@ export class MapView {
   /** The player at this screen: its warbands face you and show their movement; its cities are "yours". */
   viewer: PlayerId = 0;
   private radius = 4;
+  /** Where the camera was before a close-up. */
+  private before: { readonly position: THREE.Vector3; readonly target: THREE.Vector3 } | null = null;
+  private closeOn: Hex | null = null;
   /** Each node's link to its city, recolored when the city changes hands. */
   private readonly links = new Map<string, { mesh: THREE.Mesh; material: THREE.MeshStandardMaterial; city: string }>();
   private readonly nodeModels = new Map<string, THREE.Group>();
@@ -205,6 +210,26 @@ export class MapView {
   /** Pans the map camera; it can't wander far past the map's edge. */
   pan(right: number, forward: number): void {
     this.stage.pan(right, forward, this.radius * SIZE * 1.8);
+  }
+
+  /**
+   * The camera glides in close on a place (a city's home view) and remembers where it was; `leaveCloseUp` glides back.
+   */
+  closeUp(hex: Hex): void {
+    if (this.closeOn && sameHex(this.closeOn, hex)) return;
+    this.closeOn = hex;
+    this.before ??= this.stage.viewpoint();
+    const target = this.standingPoint(hex).add(new THREE.Vector3(0, 0.45, 0));
+    const position = target.clone().add(CAMERA_OFFSET.clone().setLength(CLOSE_UP_DISTANCE));
+    void this.stage.flyTo(position, target, CLOSE_UP_DISTANCE * 0.6, 600);
+  }
+
+  leaveCloseUp(): void {
+    const before = this.before;
+    if (!before) return;
+    this.before = null;
+    this.closeOn = null;
+    void this.stage.flyTo(before.position, before.target, this.pose.minDistance, 450);
   }
 
   /** Aims the camera at the land between the map's middle and `home`, keeping its angle; for the next `show`. */

@@ -157,3 +157,6 @@ Four sizes (radius 5–8); the default grows with the number of players (five or
 - City healing is +5% per city tier, not a flat share.
 - `questions.md` now holds only what the user must decide; provisional values moved to `provisional.md`, answered and stale questions were dropped (their answers live in the design docs and here).
 
+**2026-09-27 — The city screen's home view is the map itself, close up (M41).**
+The user wants to see the city when entering it (HoMM5, AoE3's home city). Until there's art for a city scene, the home view flies the map camera in close on the city and lets the map show through; the rail and a summary card sit over it. The fourth archetype is now "joker" in the rules (was "ranged", which had no lines).
+

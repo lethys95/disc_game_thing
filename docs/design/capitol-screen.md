@@ -9,3 +9,11 @@ d. **Research:** tabs per archetype, much as now, but the tree more tree-like: s
 e. **Spell research.**
 
 Not limited to these: more Capitol functions can be added later.
+
+## Built (M41, 2026-09-27)
+- (a) Home view: the camera glides in close on the city itself on the map (drag to look around), with a small card of what matters; the map's own panels hide. Walking people and a proper city scene are for later.
+- (b) A tab rail on the right: square tiles with a glyph (placeholders) and a label, the active one lit in gold.
+- (c) Garrison: the grids, the city's tier and nodes, the graveyard on the right.
+- (d) Research: each line grows down from its tier-1 unit; archetype tabs Melee, Support, Mage and Joker (empty until designed). The connectors only rise straight up so far.
+- (e) Spells, as before. Ordinary cities get Home and Garrison.
+
