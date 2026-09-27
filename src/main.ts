@@ -98,6 +98,7 @@ if (params.has("map")) {
   );
   if (params.has("xp")) campaign.startingXp(Number(params.get("xp")));
   if (params.has("mana")) campaign.startingMana(Number(params.get("mana")));
+  if (params.has("reveal")) campaign.revealAll();
   if (params.has("capitol")) campaign.openCapitol();
   if (params.has("leader")) campaign.openLeader();
 } else if (params.has("steps") || params.has("auto") || params.has("fight")) {

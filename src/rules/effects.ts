@@ -322,6 +322,45 @@ const effects: readonly EffectDef[] = [
     },
   },
   {
+    // Carried from a Cathedral's city: the unit has Holy Water.
+    id: "holy_water",
+    quiet: true,
+    name: "Holy water",
+    describe: () => "Carries holy water: once per combat, heal an ally 30.",
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: { grants: (_ctx, self, subjectId) => (subjectId === self.unitId ? ["holy_water"] : []) },
+  },
+  {
+    // A worn Hatchet: the leader can throw it.
+    id: "hatchet",
+    quiet: true,
+    name: "Hatchet",
+    describe: () => "Carries a hatchet: once per combat, throw it for 30.",
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: { grants: (_ctx, self, subjectId) => (subjectId === self.unitId ? ["throw_hatchet"] : []) },
+  },
+  {
+    // A worn Outlaw's pocketwatch (user, 2026-09-27): every attack hits harder, and harder still against a shield.
+    id: "pocketwatch",
+    quiet: true,
+    name: "Outlaw's pocketwatch",
+    describe: (e) => `Attacks deal +${e.amount}, and +${e.amount * 2} more against a target that still has shield.`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      outgoing: (ctx, self, packet) => {
+        if (!packet.tags.includes("attack") || !self.effect) return;
+        packet.amount += self.effect.amount;
+        if (ctx.unit(packet.target).shield > 0) packet.amount += 2 * self.effect.amount;
+      },
+    },
+  },
+  {
     // Worn items (headgear, armor): extra armor.
     id: "extra_armor",
     quiet: true,

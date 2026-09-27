@@ -76,6 +76,32 @@ export const core: Readonly<Record<string, Behavior>> = {
     choices: (ctx, self) => [single(ctx.unit(self.unitId), "main")],
     resolve: (ctx, self) => ctx.addEffect(self.unitId, { def: "defending" }),
   },
+  /** Granted by a Cathedral (user, 2026-09-27): units recruited in its city carry holy water. */
+  holy_water: {
+    kind: "active",
+    name: "Holy Water",
+    describe: (p) => `${uses(p)}: an ally (or this unit) heals ${p["amount"]}.`,
+    tags: ["heal"],
+    defaults: { charges: 1, amount: 30 },
+    choices: (ctx, self) =>
+      ctx
+        .living(ctx.unit(self.unitId).side)
+        .filter((u) => u.hp < ctx.stats(u.id).maxHp)
+        .map((u) => single(u, "main")),
+    resolve: (ctx, self, choice) => {
+      for (const id of choice.affected) ctx.heal(id, self.params["amount"] ?? 0);
+    },
+  },
+  /** Granted by a Hatchet (user, 2026-09-27): thrown once per combat. */
+  throw_hatchet: {
+    kind: "active",
+    name: "Throw Hatchet",
+    describe: (p) => `${uses(p)}: throw it at any enemy for ${p["power"]}.`,
+    tags: ["attack", "ranged", "damage"],
+    defaults: { charges: 1, power: 30 },
+    choices: rangedChoices,
+    resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self, ["attack", "ranged", "damage"])),
+  },
   retreat: {
     kind: "active",
     name: "Retreat",

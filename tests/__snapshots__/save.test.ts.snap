@@ -648,6 +648,6 @@ exports[`saves > the saved shape is pinned to the save version: when this fails,
     "players[].upgrades[]",
     "turn",
   ],
-  "version": 14,
+  "version": 15,
 }
 `;

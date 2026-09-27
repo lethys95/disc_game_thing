@@ -139,8 +139,9 @@ function placeSites(map: WorldMap, seed: number, neutralCities: number): Site[] 
       .filter((n) => walkable(n) && !taken(n) && !map.starts.some((s) => sameHex(s, n)))
       .sort((a, b) => noise(seed + 37, a.q, a.r) - noise(seed + 37, b.q, b.r))[0];
     if (!mine) continue;
-    // Provisional: the second neutral city has a Blacksmith, the third a mana node, the others a gold mine.
-    const kind: NodeKind = cities === 1 ? "blacksmith" : cities === 2 ? "mana" : "gold";
+    // Provisional: the second neutral city has a Blacksmith, the third a mana node, the fourth a Cathedral, the
+    // others a gold mine.
+    const kind: NodeKind = cities === 1 ? "blacksmith" : cities === 2 ? "mana" : cities === 3 ? "cathedral" : "gold";
     sites.push({ id: `city${cities + 1}`, kind: "city", hex, nodes: [{ kind, hex: mine }] });
   }
   return sites;

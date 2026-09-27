@@ -313,6 +313,8 @@ export const DUNGEON_REWARDS: readonly Reward[] = [
   { gold: 50, joins: "hedge_mage", item: null },
   { gold: 50, joins: null, item: "ankh" },
   { gold: 0, joins: null, item: "war_banner" },
+  { gold: 50, joins: null, item: "hatchet" },
+  { gold: 0, joins: null, item: "outlaws_pocketwatch" },
 ];
 
 export function unitId(side: Side, tile: Tile): string {

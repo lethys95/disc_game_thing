@@ -6,7 +6,7 @@ import type { EffectSeed } from "#rules/battle/types";
  * Capitol counts), so whoever holds that city holds them. A node kind is data: gold and mana per turn, and what units
  * recruited in its city carry, all growing with the node's level (investment, provisional numbers).
  */
-export type NodeKind = "gold" | "blacksmith" | "mana";
+export type NodeKind = "gold" | "blacksmith" | "mana" | "cathedral";
 
 export interface NodeDef {
   readonly name: string;
@@ -22,6 +22,9 @@ export const NODES: Readonly<Record<NodeKind, NodeDef>> = {
   // User (2026-09-27): units recruited in the Blacksmith's city get +10 attack. It stays with them, as a mark.
   blacksmith: { name: "Blacksmith", income: () => 0, mana: () => 0, recruitEffects: (level) => [{ def: "blacksmith", amount: BLACKSMITH_BONUS * level }] },
   mana: { name: "Mana node", income: () => 0, mana: (level) => MANA_NODE_INCOME * level, recruitEffects: () => [] },
+  // User (2026-09-27): units hired in the Cathedral's city carry holy water (heal 30, once per combat). Levels don't
+  // change it yet (provisional).
+  cathedral: { name: "Cathedral", income: () => 0, mana: () => 0, recruitEffects: () => [{ def: "holy_water" }] },
 };
 
 /** Where a node is generated; the world gives it an id and a level. */

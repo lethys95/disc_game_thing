@@ -3,15 +3,16 @@ import type { EffectSeed } from "#rules/battle/types";
 /**
  * Items (pillars.md: elevation grants equipment slots; dungeons reward treasure items; the Ankh). The slots are the
  * user's 2024 design (`legacy/disc 5.6/Script/Creature/Leader/Inventory.as`): headgear, body armor, a banner, two
- * utility slots, and a bag for what isn't worn. The Ankh is canon; **every other item is a plain placeholder**
- * with provisional numbers until the user designs real ones (questions.md).
+ * utility slots, and a bag for what isn't worn. The Ankh is canon, the Hatchet and the Outlaw's pocketwatch are the
+ * user's (2026-09-27); **the others are plain placeholders** with provisional numbers (questions.md #53).
  */
-export type EquipmentSlot = "head" | "armor" | "utility" | "banner";
+export type EquipmentSlot = "head" | "armor" | "weapon" | "utility" | "banner";
 
 /** How many of each slot a leader has. */
-export const SLOT_CAPACITY: Readonly<Record<EquipmentSlot, number>> = { head: 1, armor: 1, utility: 2, banner: 1 };
+/** The weapon slot came with the user's Hatchet (2026-09-27); the 2024 layout had none. */
+export const SLOT_CAPACITY: Readonly<Record<EquipmentSlot, number>> = { head: 1, armor: 1, weapon: 1, utility: 2, banner: 1 };
 
-export const SLOT_NAMES: Readonly<Record<EquipmentSlot, string>> = { head: "Headgear", armor: "Body armor", utility: "Utility", banner: "Banner" };
+export const SLOT_NAMES: Readonly<Record<EquipmentSlot, string>> = { head: "Headgear", armor: "Body armor", weapon: "Weapon", utility: "Utility", banner: "Banner" };
 
 export interface ItemDef {
   readonly id: string;
@@ -29,6 +30,27 @@ export interface ItemDef {
 }
 
 export const ITEMS: readonly ItemDef[] = [
+  // The user's (2026-09-27); prices provisional.
+  {
+    id: "hatchet",
+    name: "Hatchet",
+    slot: "weapon",
+    price: 100,
+    worn: [{ def: "hatchet" }],
+    banner: [],
+    revivesFree: false,
+    describe: "Once per combat, the leader throws it at any enemy for 30.",
+  },
+  {
+    id: "outlaws_pocketwatch",
+    name: "Outlaw's pocketwatch",
+    slot: "utility",
+    price: 150,
+    worn: [{ def: "pocketwatch", amount: 5 }],
+    banner: [],
+    revivesFree: false,
+    describe: "The leader's attacks deal +5, and +10 more against a target that still has shield.",
+  },
   {
     id: "ankh",
     name: "Ankh",

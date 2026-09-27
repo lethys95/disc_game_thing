@@ -28,6 +28,7 @@ Rules: `src/rules/` (93 tests). View: `src/view/`. Tools: the `verify` skill; `A
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.
 
 ## Recently done
+- 2026-09-27: the user's items: Hatchet (weapon slot), Outlaw's pocketwatch, Cathedral node (Holy Water); node models for mana and Cathedral; `?reveal` for map screenshots.
 - 2026-09-27: M35 items: equipment slots and bag on leaders, the Ankh, placeholder items, dungeon items, spoils (#53).
 - 2026-09-27: sound slots with fallback chains (per ability, hit, death, spell), an ambience layer, `pnpm audio`.
 - 2026-09-27: music: ACE-Step map and battle themes (provisional takes), crossfaded, with a music volume.
