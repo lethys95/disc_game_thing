@@ -41,6 +41,7 @@ import { StructureScreen } from "#view/structure";
 import { structureAt } from "#rules/world/structures";
 import { defaultMapSize } from "#rules/map";
 import type { MapSize } from "#rules/map";
+import { battleSetting } from "#view/battle-setting";
 
 const AI_STEP_MS = 350;
 
@@ -425,7 +426,7 @@ export class Campaign implements KeyLayer {
         return;
       }
       const side: Side = engagement.players[0] === this.viewer ? 0 : 1;
-      this.app.fight(engagement.battle, side, battleColors(step.world, engagement.players), (battle) => this.afterBattle(battle, generation));
+      this.app.fight(engagement.battle, side, battleColors(step.world, engagement.players), battleSetting(step.world, engagement), (battle) => this.afterBattle(battle, generation));
       return;
     }
     this.render();

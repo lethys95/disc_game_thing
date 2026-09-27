@@ -9,10 +9,13 @@ import type { PlayerColor } from "#rules/world/colors";
 import { threeColor } from "#view/colors";
 import { buildFigure } from "#view/figures";
 import { buildStandee } from "#view/standee";
-import { discard } from "#view/stage";
+import { discard, discardChildren } from "#view/stage";
 import type { CameraPose, Stage } from "#view/stage";
 import { effectDef } from "#rules/effects";
 import { UNITS } from "#rules/units/index";
+import type { Terrain } from "#rules/map";
+import type { BattleSetting } from "#view/battle-setting";
+import { GroundTextures, HORIZON_MIST, Models, skyTexture, TERRAIN_VARIANTS } from "#view/models";
 
 export interface TileRef {
   readonly side: Side;
@@ -66,6 +69,28 @@ const TILE_AFFECTED = new THREE.Color(0xd8321f);
 const TILE_CURRENT = new THREE.Color(0x8a7040);
 const TILE_FOCUS = new THREE.Color(0xe0c070);
 
+/** What rings the arena on each terrain: model kind, how many, how far, how big (provisional look). */
+const ARENA_PROPS: Readonly<Record<Terrain, readonly { kind: keyof typeof TERRAIN_VARIANTS; variants: number; count: number; radius: [number, number]; height: number; width: number; offset: number }[]>> = {
+  plain: [
+    { kind: "bush", variants: TERRAIN_VARIANTS.bush, count: 8, radius: [9, 13], height: 0.9, width: 1.3, offset: 0.1 },
+    { kind: "rock", variants: TERRAIN_VARIANTS.rock, count: 5, radius: [10, 14], height: 1.1, width: 1.6, offset: 0.4 },
+    { kind: "tree", variants: TERRAIN_VARIANTS.tree, count: 5, radius: [15, 20], height: 3.4, width: 2.4, offset: 0.7 },
+  ],
+  forest: [
+    { kind: "tree", variants: TERRAIN_VARIANTS.tree, count: 22, radius: [9.5, 17], height: 3.6, width: 2.4, offset: 0.2 },
+    { kind: "bush", variants: TERRAIN_VARIANTS.bush, count: 8, radius: [8.5, 11], height: 0.8, width: 1.2, offset: 0.6 },
+  ],
+  hills: [
+    { kind: "hill", variants: TERRAIN_VARIANTS.hill, count: 5, radius: [13, 18], height: 1.6, width: 7, offset: 0.3 },
+    { kind: "rock", variants: TERRAIN_VARIANTS.rock, count: 8, radius: [9, 13], height: 1.2, width: 1.8, offset: 0.8 },
+  ],
+  mountain: [
+    { kind: "mountain", variants: TERRAIN_VARIANTS.mountain, count: 4, radius: [17, 23], height: 8, width: 11, offset: 0.15 },
+    { kind: "rock", variants: TERRAIN_VARIANTS.rock, count: 9, radius: [9, 13], height: 1.3, width: 1.9, offset: 0.55 },
+  ],
+  water: [{ kind: "rock", variants: TERRAIN_VARIANTS.rock, count: 6, radius: [9, 13], height: 1.1, width: 1.6, offset: 0.2 }],
+};
+
 export class BattleScene {
   readonly scene = new THREE.Scene();
   readonly pose: CameraPose = {
@@ -77,6 +102,13 @@ export class BattleScene {
   private readonly tiles = new Map<string, THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial>>();
   private readonly figures = new Map<string, Figure>();
   private left: Side = 0;
+  /** The ground, textured per terrain (`setSetting`). */
+  private readonly ground = new THREE.Mesh(new THREE.CircleGeometry(120, 64), new THREE.MeshStandardMaterial({ color: 0x1c2230, roughness: 1 }));
+  /** The terrain's props and the backdrop around the arena; rebuilt when the setting changes. */
+  private readonly settingLayer = new THREE.Group();
+  private setting: BattleSetting | null = null;
+  private readonly models = new Models();
+  private readonly grounds = new GroundTextures();
   private colors: [THREE.Color, THREE.Color] = [threeColor("red"), threeColor("blue")];
 
   constructor(private readonly stage: Stage) {
@@ -88,68 +120,28 @@ export class BattleScene {
   }
 
   private buildArena(): void {
-    const dusk = new THREE.Color(0x0b0a0c);
-    this.scene.background = dusk;
-    this.scene.fog = new THREE.FogExp2(dusk, 0.03);
+    const sky = skyTexture("map");
+    this.scene.background = sky ?? new THREE.Color(0x0b0a0c);
+    this.scene.fog = sky ? new THREE.Fog(HORIZON_MIST, 22, 60) : new THREE.FogExp2(0x0b0a0c, 0.03);
 
-    this.scene.add(new THREE.HemisphereLight(0x8a90b0, 0x2a1c16, 0.9));
-    const keyLight = new THREE.DirectionalLight(0xffd6a8, 3.2);
+    this.scene.add(new THREE.HemisphereLight(0x8a98b8, 0x2a2420, 1.0));
+    const keyLight = new THREE.DirectionalLight(0xffe0bc, 3.2);
     keyLight.position.set(-5, 11, 7);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.set(2048, 2048);
-    keyLight.shadow.camera.left = -10;
-    keyLight.shadow.camera.right = 10;
-    keyLight.shadow.camera.top = 10;
-    keyLight.shadow.camera.bottom = -10;
+    keyLight.shadow.camera.left = -14;
+    keyLight.shadow.camera.right = 14;
+    keyLight.shadow.camera.top = 14;
+    keyLight.shadow.camera.bottom = -14;
     keyLight.shadow.bias = -0.0005;
     this.scene.add(keyLight);
-    const rim = new THREE.DirectionalLight(0x7f9cff, 1.4);
+    const rim = new THREE.DirectionalLight(0x7f9cff, 1.2);
     rim.position.set(7, 5, -9);
     this.scene.add(rim);
 
-    const ground = new THREE.Mesh(
-      new THREE.CircleGeometry(40, 48),
-      new THREE.MeshStandardMaterial({ color: 0x121110, roughness: 1 }),
-    );
-    ground.rotation.x = -Math.PI / 2;
-    ground.receiveShadow = true;
-    this.scene.add(ground);
-
-    const floor = new THREE.Mesh(
-      new THREE.CylinderGeometry(8.2, 8.6, 0.12, 12),
-      new THREE.MeshStandardMaterial({ color: 0x1d1b19, roughness: 0.95 }),
-    );
-    floor.position.y = 0.06;
-    floor.receiveShadow = true;
-    this.scene.add(floor);
-
-    const pillarMaterial = new THREE.MeshStandardMaterial({ color: 0x1a1817, roughness: 0.9 });
-    const emberMaterial = new THREE.MeshStandardMaterial({ color: 0xc0281c, emissive: 0xc0281c, emissiveIntensity: 3 });
-    // Only behind and beside the arena: the default camera looks in from +z.
-    for (let i = 0; i < 9; i++) {
-      const angle = Math.PI * (0.95 + (i / 8) * 1.1);
-      const pillar = new THREE.Group();
-      const height = 5 + (i % 3) * 1.2;
-      const shaft = new THREE.Mesh(new THREE.BoxGeometry(0.7, height, 0.7), pillarMaterial);
-      shaft.position.y = height / 2;
-      shaft.castShadow = true;
-      pillar.add(shaft);
-      const spire = new THREE.Mesh(new THREE.ConeGeometry(0.5, 1.4, 4), pillarMaterial);
-      spire.position.y = height + 0.7;
-      spire.rotation.y = Math.PI / 4;
-      pillar.add(spire);
-      const ember = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.5, 0.08), emberMaterial);
-      ember.position.set(0, 1.4, 0.34);
-      pillar.add(ember);
-      pillar.position.set(Math.cos(angle) * 10.5, 0, Math.sin(angle) * 10.5);
-      pillar.lookAt(0, 0, 0);
-      this.scene.add(pillar);
-    }
-    for (const x of [-6, 6]) {
-      const glow = new THREE.PointLight(0xc0281c, 6, 9, 1.6);
-      glow.position.set(x, 1.2, -5);
-      this.scene.add(glow);
-    }
+    this.ground.rotation.x = -Math.PI / 2;
+    this.ground.receiveShadow = true;
+    this.scene.add(this.ground, this.settingLayer);
 
     const slab = new THREE.BoxGeometry(SPACING * 0.9, 0.16, SPACING * 0.9);
     for (const side of [0, 1] as const) {
@@ -167,6 +159,53 @@ export class BattleScene {
           this.scene.add(tile);
         }
       }
+    }
+  }
+
+  /**
+   * Dresses the arena for where the fight is: that terrain's ground, a ring of its props (behind and beside the
+   * lines: the camera looks in from the front), and the place fought over as a backdrop. Placement is fixed, so a
+   * setting always looks the same.
+   */
+  setSetting(setting: BattleSetting): void {
+    if (this.setting && JSON.stringify(this.setting) === JSON.stringify(setting)) return;
+    this.setting = setting;
+    discardChildren(this.settingLayer);
+    const texture = this.grounds.get(setting.terrain, 1);
+    const material = this.ground.material;
+    material.map?.dispose();
+    material.map = null;
+    if (texture) {
+      const tiled = texture.clone();
+      tiled.userData = {};
+      tiled.wrapS = THREE.MirroredRepeatWrapping;
+      tiled.wrapT = THREE.MirroredRepeatWrapping;
+      tiled.repeat.set(44, 44);
+      tiled.needsUpdate = true;
+      material.map = tiled;
+      material.color.set(0xffffff);
+    } else material.color.set(0x1c2230);
+    material.needsUpdate = true;
+    for (const prop of ARENA_PROPS[setting.terrain]) {
+      for (let i = 0; i < prop.count; i++) {
+        // Spread over the back arc and the flanks, by golden-angle steps so props don't line up.
+        const t = (i * 0.618 + prop.offset) % 1;
+        const angle = Math.PI * (0.92 + t * 1.16);
+        const radius = prop.radius[0] + ((i * 0.37 + prop.offset) % 1) * (prop.radius[1] - prop.radius[0]);
+        const host = new THREE.Group();
+        host.position.set(Math.cos(angle) * radius, 0, Math.sin(angle) * radius);
+        host.rotation.y = i * 2.3;
+        this.settingLayer.add(host);
+        const variant = 1 + (i % prop.variants);
+        const scale = 0.8 + ((i * 0.53) % 1) * 0.4;
+        this.models.dress(host, [`terrain/${prop.kind}-${variant}`, `terrain/${prop.kind}-1`], prop.height * scale, prop.width * scale);
+      }
+    }
+    if (setting.backdrop) {
+      const host = new THREE.Group();
+      host.position.set(0, 0, -13);
+      this.settingLayer.add(host);
+      this.models.dress(host, setting.backdrop, 6, 11);
     }
   }
 

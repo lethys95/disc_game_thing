@@ -109,8 +109,10 @@ Map model slots; generated Capitol and mage tower; the pipeline works for static
 ## M43 — Dress the map (done)
 Generated buildings, terrain props, ground textures and a sky.
 
+## M44 — Battlefield (done)
+Arenas dressed from the terrain and place fought over.
+
 ## Next up
-- The battlefield, dressed from the terrain where the fight happens (reusing the map's props).
 - A UI kit pilot on the Capitol screen.
 
 ## Then

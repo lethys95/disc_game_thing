@@ -41,6 +41,9 @@ export class GroundTextures {
   }
 }
 
+/** The haze where the sky's painted mountains meet the land (`assets/sky/map.webp`); fog fades into it. */
+export const HORIZON_MIST = 0x5a70a0;
+
 const SKIES = import.meta.glob<string>("/assets/sky/*.webp", { eager: true, query: "?url", import: "default" });
 
 /** A panorama wrapped around a scene as its background (`assets/sky/<name>.webp`), or null if there's none. */

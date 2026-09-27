@@ -18,6 +18,8 @@ import { battleCues } from "#view/sound-cues";
 import type { Stage } from "#view/stage";
 import { plainKey } from "#view/input";
 import type { KeyLayer } from "#view/input";
+import { OPEN_FIELD } from "#view/battle-setting";
+import type { BattleSetting } from "#view/battle-setting";
 
 export interface AppOptions {
   readonly onSetup: () => void;
@@ -147,18 +149,19 @@ export class App implements KeyLayer {
   }
 
   /** A standalone battle between two squads. */
-  start(squads: Squads, playerSide: Side | null, colors: Colors, fastForward = 0): void {
+  start(squads: Squads, playerSide: Side | null, colors: Colors, fastForward = 0, setting: BattleSetting = OPEN_FIELD): void {
     const step = createBattle(squads);
-    this.run(step.battle, step.events, playerSide, colors, { kind: "skirmish", squads, colors }, fastForward);
+    this.run(step.battle, step.events, playerSide, colors, setting, { kind: "skirmish", squads, colors }, fastForward);
   }
 
-  /** A battle that came from the map; `onDone` receives the finished battle. */
-  fight(battle: Battle, playerSide: Side | null, colors: Colors, onDone: (battle: Battle) => void): void {
-    this.run(battle, [], playerSide, colors, { kind: "world", onDone }, 0);
+  /** A battle that came from the map, fought where `setting` says; `onDone` receives the finished battle. */
+  fight(battle: Battle, playerSide: Side | null, colors: Colors, setting: BattleSetting, onDone: (battle: Battle) => void): void {
+    this.run(battle, [], playerSide, colors, setting, { kind: "world", onDone }, 0);
   }
 
-  private run(start: Battle, events: readonly BattleEvent[], playerSide: Side | null, colors: Colors, finish: Finish, fastForward: number): void {
+  private run(start: Battle, events: readonly BattleEvent[], playerSide: Side | null, colors: Colors, setting: BattleSetting, finish: Finish, fastForward: number): void {
     this.stop();
+    this.scene.setSetting(setting);
     this.scene.setColors(colors);
     this.scene.setLeft(playerSide ?? 0);
     applySideColors(document.documentElement, colors);
