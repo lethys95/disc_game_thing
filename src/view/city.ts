@@ -14,8 +14,9 @@ import { squadGrid } from "#view/squad-grid";
 import { spellsTab } from "#view/spells";
 import type { GridChoice, GridSquad } from "#view/squad-grid";
 import { sameHex } from "#rules/hex";
-import type { Hex } from "#rules/hex";
 import type { KeyLayer } from "#view/input";
+import { cityViewUrl } from "#view/art";
+import { MODEL_CHAINS } from "#view/models";
 
 /** What the screen shows: one of your cities (the Capitol included), or two of your warbands side by side. */
 export type Place = { readonly kind: "city"; readonly cityId: string } | { readonly kind: "meet"; readonly a: string; readonly b: string };
@@ -23,8 +24,6 @@ export type Place = { readonly kind: "city"; readonly cityId: string } | { reado
 export interface CityScreenOptions {
   readonly act: (action: WorldAction) => void;
   readonly close: () => void;
-  /** The home view looks at the city itself on the map (null: back to where the camera was). */
-  readonly closeUp: (hex: Hex | null) => void;
 }
 
 type CityTab = "home" | "garrison" | "research" | "spells";
@@ -81,7 +80,6 @@ export class CityScreen implements KeyLayer {
   }
 
   hide(): void {
-    if (!this.root.hidden) this.options.closeUp(null);
     this.root.hidden = true;
     this.selected = null;
   }
@@ -93,8 +91,6 @@ export class CityScreen implements KeyLayer {
     this.root.replaceChildren();
     const city = place.kind === "city" ? cityById(world, place.cityId) : undefined;
     const tab: CityTab = city ? (TABS[this.tab].capitolOnly && city.kind !== "capitol" ? "home" : this.tab) : "garrison";
-    this.root.classList.toggle("home", tab === "home");
-    this.options.closeUp(tab === "home" && city ? city.hex : null);
 
     const header = element("div", "capitol-header");
     header.append(element("div", "title", city ? cityName(city) : "Warbands meet"), gold(playerOf(world, side).gold, "purse"));
@@ -114,7 +110,7 @@ export class CityScreen implements KeyLayer {
   }
 
   private rail(city: City, current: CityTab): HTMLElement {
-    const rail = element("div", "tab-rail");
+    const rail = element("div", "tab-rail panel");
     for (const [id, tab] of Object.entries(TABS)) {
       if (!isCityTab(id) || (tab.capitolOnly && city.kind !== "capitol")) continue;
       const tile = button(`rail-tab${id === current ? " selected" : ""}`, [element("span", "glyph", tab.glyph), element("span", "label", tab.label)], () => {
@@ -126,9 +122,18 @@ export class CityScreen implements KeyLayer {
     return rail;
   }
 
-  /** The city itself: the camera looks at it on the map, with what matters at a glance beside it. */
+  /**
+   * The city itself, in a frame: a painting of it from the inside (`assets/city/`), drifting slowly, standing in for
+   * the montage the user wants (`docs/design/capitol-screen.md`), with what matters at a glance over it.
+   */
   private home(world: World, side: PlayerId, city: City): HTMLElement {
-    const card = element("div", "home-card panel");
+    const view = element("div", "city-view panel");
+    const owner = city.owner === null ? null : playerOf(world, city.owner).faction;
+    const painting = cityViewUrl(city.kind === "capitol" ? MODEL_CHAINS.capitol(owner) : MODEL_CHAINS.city());
+    const scene = element("div", "city-scene");
+    if (painting) scene.style.backgroundImage = `url("${painting}")`;
+    view.appendChild(scene);
+    const card = element("div", "home-card");
     const defenders = city.garrison.filter((m) => m.defId !== GUARDIAN_ID).length;
     const visitor = world.leaders.find((l) => l.player === side && sameHex(l.hex, city.hex));
     const facts = [
@@ -138,8 +143,8 @@ export class CityScreen implements KeyLayer {
       ...nodesOf(world, city).map((n) => `${NODES[n.kind].name}, level ${n.level}`),
     ];
     for (const fact of facts) card.appendChild(element("div", "note", fact));
-    card.appendChild(element("div", "note hint", "Drag to look around. The tabs on the right lead into the city."));
-    return card;
+    view.appendChild(card);
+    return view;
   }
 
   private garrison(world: World, side: PlayerId, place: Place, city: City | undefined, mayAct: boolean): HTMLElement {

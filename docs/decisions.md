@@ -166,3 +166,6 @@ Like art and sound: `assets/models/<kind>/<id>.glb` found at build time, fallbac
 **2026-09-27 — Battles are fought where they happen (M44).**
 The arena takes the terrain of the hex fought over (its ground texture, a ring of its props behind and beside the lines) and what stands there as a backdrop (a city's or Capitol's walls, a dungeon's mouth), under the map's sky. The backdrop comes from the hex, not the defender's kind, so a warband defending its own city fights before its walls. Skirmishes from the setup screen are on open plains. Prop counts and sizes are a provisional look.
 
+**2026-09-27 — The city view is a framed painting until the montage exists (M46, the user's sketch).**
+The map close-up stand-in is gone: the city screen opens on a painting of the city from the inside (per faction's Capitol, and one for neutral cities) in the UI kit's frame, drifting slowly, with the city's summary over it; the tabs sit in a framed column. The montage the user wants (the city's own scene, people walking, like Unreal Gold's intro) replaces the painting later.
+
