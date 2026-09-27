@@ -28,6 +28,7 @@ Rules: `src/rules/` (93 tests). View: `src/view/`. Tools: the `verify` skill; `A
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.
 
 ## Recently done
+- 2026-09-27: sound slots with fallback chains (per ability, hit, death, spell), an ambience layer, `pnpm audio`.
 - 2026-09-27: music: ACE-Step map and battle themes (provisional takes), crossfaded, with a music volume.
 - 2026-09-27: map palette first pass (#43); the battle AI retreats veterans from lost fights.
 - 2026-09-27: M31 sound effects: 15 slots from the Sonniss library, cues for battle and map, volume settings (`design/audio-pipeline.md`, `assets/audio/SOURCES.md`).
