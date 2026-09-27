@@ -57,12 +57,14 @@ export function createWorld(seed: number, setups: readonly PlayerSetup[]): World
       enchantments: [],
     };
   });
-  const lairs = map.lairs.map((site, index): Lair => ({
+  // Rewards cycle over the dungeons in order (camps have none).
+  const dungeons = map.lairs.filter((l) => l.kind === "dungeon");
+  const lairs = map.lairs.map((site): Lair => ({
     id: site.id,
     kind: site.kind,
     hex: site.hex,
     guards: banditGroup(strengthAt(map, site.hex, site.kind === "dungeon" ? "medium" : "weak")),
-    reward: site.kind === "dungeon" ? (DUNGEON_REWARDS[index % DUNGEON_REWARDS.length] ?? null) : null,
+    reward: site.kind === "dungeon" ? (DUNGEON_REWARDS[dungeons.indexOf(site) % DUNGEON_REWARDS.length] ?? null) : null,
     looted: false,
     regrowsOn: null,
   }));
