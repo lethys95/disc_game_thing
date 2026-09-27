@@ -8,7 +8,7 @@ import { UNITS } from "#rules/units/index";
  * `assets/art/<kind>/<id>.webp`; when it's missing, the view falls back to a family default, then to a placeholder.
  * Plain data and pure functions, so the art scripts can list the same slots the game uses.
  */
-export type SlotKind = "portrait" | "ability" | "effect" | "ornament";
+export type SlotKind = "portrait" | "ability" | "effect";
 
 export interface Slot {
   readonly kind: SlotKind;
@@ -17,8 +17,6 @@ export interface Slot {
 
 export const slotKey = (slot: Slot): string => `${slot.kind}/${slot.id}`;
 
-/** Decorations the interface uses. */
-export const ORNAMENTS = ["frame-corner"] as const;
 
 /** What a slot shows, for placeholders, reports and prompts. */
 export interface SlotInfo {
@@ -49,8 +47,6 @@ export function slotInfo(slot: Slot): SlotInfo {
       const def = EFFECTS.get(slot.id);
       return { name: def?.name ?? slot.id, faction: "neutral", text: def?.describe({ def: slot.id, source: null, stacks: 1, amount: 10 }) ?? "" };
     }
-    case "ornament":
-      return { name: slot.id, faction: "neutral", text: "" };
   }
 }
 
@@ -67,8 +63,6 @@ export function fallbackKeys(slot: Slot): string[] {
     }
     case "effect":
       return [own, "effect/_effect"];
-    case "ornament":
-      return [own];
   }
 }
 
@@ -78,6 +72,5 @@ export function allSlots(): Slot[] {
     ...Object.keys(UNITS).map((id): Slot => ({ kind: "portrait", id })),
     ...Object.keys(BEHAVIORS).map((id): Slot => ({ kind: "ability", id })),
     ...[...EFFECTS.keys()].map((id): Slot => ({ kind: "effect", id })),
-    ...ORNAMENTS.map((id): Slot => ({ kind: "ornament", id })),
   ];
 }

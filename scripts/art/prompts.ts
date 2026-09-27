@@ -30,7 +30,6 @@ const SIZE: Readonly<Record<Slot["kind"], { width: number; height: number }>> = 
   portrait: { width: 896, height: 1152 },
   ability: { width: 1024, height: 1024 },
   effect: { width: 1024, height: 1024 },
-  ornament: { width: 1024, height: 1024 },
 };
 
 function subject(slot: Slot): string {
@@ -43,8 +42,6 @@ function subject(slot: Slot): string {
       return `A single emblem for a game ability icon, one centered subject with a bold readable silhouette that fills the frame, on a pale off-white background, no border, no frame. ${look ?? `The ability "${info.name}": ${info.text}`}`;
     case "effect":
       return `A single emblem for a game status-effect icon, one centered subject with a bold readable silhouette that fills the frame, on a pale off-white background, no border, no frame. ${look ?? `The effect "${info.name}": ${info.text}`}`;
-    case "ornament":
-      return `${look ?? `An ornate gothic ${info.name.replace("-", " ")} of tarnished iron filigree`}, isolated on a pale off-white background, flat front view, for use as a game interface decoration.`;
   }
 }
 
