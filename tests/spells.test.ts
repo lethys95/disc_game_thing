@@ -53,16 +53,32 @@ describe("mana and learning", () => {
 });
 
 describe("casting", () => {
-  test("Lightning strike wounds an enemy warband in sight, never below 1 HP; once per turn; not out of sight", () => {
+  test("Lightning strike hits an enemy warband in sight and can kill; once per turn; not out of sight", () => {
     let w = world("nexus", ["lightning_strike"]);
     const enemyHex = leaderById(w, "leader1").hex;
     expect(castProblem(w, "lightning_strike", enemyHex)).toBe("out of sight");
     w = withLeader(w, "leader0", { hex: beside(w, enemyHex) });
-    w = withLeader(w, "leader1", { squad: leaderById(w, "leader1").squad.map((m, i) => (i === 0 ? { ...m, hp: 10 } : m)) });
-    const cast = applyWorldAction(w, { type: "castSpell", spell: "lightning_strike", at: enemyHex }).world;
-    expect(leaderById(cast, "leader1").squad.map((m) => m.hp)).toEqual([1, 60, 60]);
+    // The second Congregant is nearly dead; the first is the leader.
+    w = withLeader(w, "leader1", { squad: leaderById(w, "leader1").squad.map((m, i) => (i === 1 ? { ...m, hp: 10 } : m)) });
+    const step = applyWorldAction(w, { type: "castSpell", spell: "lightning_strike", at: enemyHex });
+    const cast = step.world;
+    expect(leaderById(cast, "leader1").squad.map((m) => m.hp)).toEqual([60, 60]);
+    expect(playerOf(cast, 1).graveyard.map((f) => f.defId)).toEqual(["congregant"]);
+    expect(step.events).toContainEqual({ type: "fell", player: 1, defId: "congregant" });
     expect(playerOf(cast, 0).mana.teal).toBe(85);
     expect(castProblem(cast, "lightning_strike", enemyHex)).toBe("already cast this turn");
+  });
+
+  test("a warband whose leader dies to a spell keeps its fallen leader; one with nobody left falls", () => {
+    let w = world("nexus", ["lightning_strike"]);
+    const enemyHex = leaderById(w, "leader1").hex;
+    w = withLeader(w, "leader0", { hex: beside(w, enemyHex) });
+    const weak = (hp: number) => withLeader(w, "leader1", { squad: leaderById(w, "leader1").squad.map((m, i) => (i === 0 ? { ...m, hp: 10 } : { ...m, hp })) });
+    const leaderDown = applyWorldAction(weak(90), { type: "castSpell", spell: "lightning_strike", at: enemyHex }).world;
+    expect(leaderById(leaderDown, "leader1").fellOnTurn).toBe(leaderDown.turn);
+    const wiped = applyWorldAction(weak(10), { type: "castSpell", spell: "lightning_strike", at: enemyHex });
+    expect(wiped.world.leaders.some((l) => l.id === "leader1")).toBe(false);
+    expect(wiped.events).toContainEqual({ type: "leaderFell", leaderId: "leader1", player: 1 });
   });
 
   test("Lightning storm hits every enemy group around the hex, never your own", () => {

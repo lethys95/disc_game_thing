@@ -99,7 +99,7 @@ function siegeViable(world: World, capitolHex: Hex): boolean {
   return siegeOpener(placed, capitolHex) !== null;
 }
 
-/** Least a damage spell must take off enemy squads (HP, never counting the last point) to be worth casting. */
+/** Least a damage spell's score (HP taken off enemy squads, kills counted double) must reach to be worth casting. */
 const AI_SPELL_WORTH = 40;
 
 /**
@@ -121,7 +121,8 @@ function chooseCast(world: World): WorldAction | null {
       let score = 0;
       if (spell.effect.kind === "damage") {
         const amount = spell.effect.amount;
-        score = spellVictims(world, id, hex).flat().reduce((sum, m) => sum + (m.hp > 0 ? Math.min(amount, m.hp - 1) : 0), 0);
+        // HP taken off, and a kill is worth a unit's remaining health again.
+        score = spellVictims(world, id, hex).flat().reduce((sum, m) => sum + (m.hp <= 0 ? 0 : m.hp <= amount ? 2 * m.hp : amount), 0);
         if (score < AI_SPELL_WORTH) continue;
       } else if (spell.target === "enemyCity") {
         if (!mine.some((l) => canAttack(l, hex))) continue;

@@ -150,7 +150,7 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
     case "castSpell": {
       const problem = castProblem(draft, action.spell, action.at);
       if (problem) throw new Error(`cannot cast ${action.spell}: ${problem}`);
-      castSpell(draft, action.spell, action.at);
+      castSpell(draft, action.spell, action.at, events);
       events.push({ type: "spellCast", player: side, spell: action.spell, at: action.at });
       break;
     }

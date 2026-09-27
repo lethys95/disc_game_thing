@@ -18,7 +18,7 @@ export type SpellTarget = "enemyGroup" | "ownWarband" | "enemyCity" | "area";
 
 /** What a spell does, as data: the world applies it, whatever the spell. */
 export type SpellEffect =
-  /** Every unit hit loses this much HP, never below 1: spells soften, battles kill. */
+  /** Every unit hit loses this much HP, and may die of it (`world/spells.ts`). */
   | { readonly kind: "damage"; readonly amount: number }
   /** An effect every unit of the target brings into its battles for a number of turns. */
   | { readonly kind: "enchant"; readonly effect: EffectSeed; readonly turns: number };
@@ -74,7 +74,7 @@ export const SPELLS: readonly SpellDef[] = [
     target: "enemyGroup",
     radius: 0,
     effect: { kind: "damage", amount: 30 },
-    describe: "An enemy warband or neutral group in sight: each of its units loses 30 HP (never below 1).",
+    describe: "An enemy warband or neutral group in sight: each of its units loses 30 HP.",
   },
   {
     id: "lightning_storm",
@@ -86,7 +86,7 @@ export const SPELLS: readonly SpellDef[] = [
     target: "area",
     radius: 1,
     effect: { kind: "damage", amount: 15 },
-    describe: "A hex in sight and its neighbours: every unit of every enemy warband and neutral group there loses 15 HP (never below 1).",
+    describe: "A hex in sight and its neighbours: every unit of every enemy warband and neutral group there loses 15 HP.",
   },
 ];
 
