@@ -25,15 +25,19 @@ export interface SettingsData {
   readonly hotkeys: Readonly<Record<string, string>>;
   /** Keys 1–9 pick the battle's ability buttons by position. */
   readonly slotKeys: boolean;
+  /** Volumes, 0 to 1. Music will get its own when there is some. */
+  readonly masterVolume: number;
+  readonly effectsVolume: number;
 }
 
-export const DEFAULT_SETTINGS: SettingsData = { speed: "normal", rotate: 1, zoom: 1, hotkeys: {}, slotKeys: true };
+export const DEFAULT_SETTINGS: SettingsData = { speed: "normal", rotate: 1, zoom: 1, hotkeys: {}, slotKeys: true, masterVolume: 0.8, effectsVolume: 1 };
 
 /** Camera multipliers stay within this range. */
 export const CAMERA_RANGE = { min: 0.25, max: 2.5 } as const;
 
 const STORAGE_KEY = "disc-settings";
 
+const volume = (value: unknown): number | null => (typeof value === "number" && Number.isFinite(value) ? Math.min(1, Math.max(0, value)) : null);
 const isSpeed = (value: unknown): value is AnimationSpeed => typeof value === "string" && value in ANIMATION_SPEEDS;
 const clampCamera = (value: unknown): number | null =>
   typeof value === "number" && Number.isFinite(value) ? Math.min(CAMERA_RANGE.max, Math.max(CAMERA_RANGE.min, value)) : null;
@@ -61,6 +65,8 @@ export function parseSettings(text: string | null): SettingsData {
     zoom: clampCamera(Reflect.get(parsed, "zoom")) ?? DEFAULT_SETTINGS.zoom,
     hotkeys: keys,
     slotKeys: typeof slotKeys === "boolean" ? slotKeys : DEFAULT_SETTINGS.slotKeys,
+    masterVolume: volume(Reflect.get(parsed, "masterVolume")) ?? DEFAULT_SETTINGS.masterVolume,
+    effectsVolume: volume(Reflect.get(parsed, "effectsVolume")) ?? DEFAULT_SETTINGS.effectsVolume,
   };
 }
 

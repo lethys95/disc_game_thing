@@ -12,6 +12,8 @@ import type { BattleScene, PreviewMark, TileRef } from "#view/scene";
 import type { Squads } from "#view/setup";
 import type { AiClient } from "#view/ai-client";
 import type { Settings } from "#view/settings";
+import type { Sound } from "#view/sound";
+import { battleCues } from "#view/sound-cues";
 import type { Stage } from "#view/stage";
 
 export interface AppOptions {
@@ -89,6 +91,7 @@ export class App {
     private readonly scene: BattleScene,
     private readonly ai: AiClient,
     private readonly settings: Settings,
+    private readonly sound: Sound,
     private readonly options: AppOptions,
   ) {
     this.hud = new Hud(settings, {
@@ -200,7 +203,11 @@ export class App {
     if (generation !== this.generation) return;
     this.busy = false;
     this.battle = done;
-    if (done.outcome) this.hud.appendLog([{ type: "battleEnd", outcome: done.outcome }], done, this.playerSide);
+    if (done.outcome) {
+      const end: BattleEvent[] = [{ type: "battleEnd", outcome: done.outcome }];
+      this.hud.appendLog(end, done, this.playerSide);
+      for (const cue of battleCues(end, this.playerSide)) this.sound.play(cue.key, cue.delay);
+    }
     this.scene.sync(done);
     this.render();
   }
@@ -343,6 +350,7 @@ export class App {
     this.render();
     const step = applyAction(battle, action);
     const visible = masked(step.events, step.battle, this.playerSide);
+    for (const cue of battleCues(visible, this.playerSide)) this.sound.play(cue.key, cue.delay * this.stage.timeScale);
     this.hud.appendLog(visible, step.battle, this.playerSide);
     this.battle = step.battle;
     await this.scene.play(visible, step.battle);

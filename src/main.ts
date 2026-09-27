@@ -12,6 +12,7 @@ import { BattleScene } from "#view/scene";
 import { Setup } from "#view/setup";
 import { BANDIT_GROUP, NEXUS_PRESETS, PRESETS } from "#view/squads";
 import { ANIMATION_SPEEDS, Settings } from "#view/settings";
+import { Sound } from "#view/sound";
 import { Stage } from "#view/stage";
 import { defaultColors } from "#rules/world/colors";
 import type { Playable } from "#rules/units/index";
@@ -22,13 +23,19 @@ applyOrnaments(document.documentElement);
 const stage = new Stage(byId("stage"));
 const settings = new Settings();
 settings.follow((s) => stage.setFeel(ANIMATION_SPEEDS[s.speed].scale, s.rotate, s.zoom));
+const sound = new Sound();
+settings.follow((s) => sound.setVolumes(s));
+// Every button clicks.
+document.addEventListener("click", (e) => {
+  if (e.target instanceof Element && e.target.closest("button")) sound.play("ui/click");
+});
 if (params.has("fast")) stage.testScale = 0.1;
 const battleScene = new BattleScene(stage);
 const mapView = new MapView(stage);
 const ai = new AiClient();
-const app: App = new App(stage, battleScene, ai, settings, { onSetup: () => showSetup() });
+const app: App = new App(stage, battleScene, ai, settings, sound, { onSetup: () => showSetup() });
 const saves = new LocalSaveStore();
-const campaign: Campaign = new Campaign(stage, mapView, app, ai, {
+const campaign: Campaign = new Campaign(stage, mapView, app, ai, sound, {
   onSetup: () => showSetup(),
   onAutosave: (save) => saves.write(AUTOSAVE_ID, save),
   onMenu: () => menu.show(),

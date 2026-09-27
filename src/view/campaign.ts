@@ -32,6 +32,8 @@ import { MapPanels } from "#view/map-panels";
 import { castHint, hintText, leaderName, newsText } from "#view/map-text";
 import { formation, groupAt, showPeek } from "#view/peek";
 import type { Stage } from "#view/stage";
+import type { Sound } from "#view/sound";
+import { worldCues } from "#view/sound-cues";
 
 const PLAYER: Side = 0;
 const AI_STEP_MS = 350;
@@ -102,6 +104,7 @@ export class Campaign {
     private readonly view: MapView,
     private readonly app: App,
     private readonly ai: AiClient,
+    private readonly sound: Sound,
     private readonly options: CampaignOptions,
   ) {
     this.forecasts = new Forecasts(ai, () => this.render());
@@ -316,6 +319,7 @@ export class Campaign {
     this.forecasts.clear();
     this.render();
     const step = applyWorldAction(world, action);
+    for (const cue of worldCues(step.events, PLAYER, world.activePlayer)) this.sound.play(cue.key, cue.delay);
     for (const event of step.events) {
       if (event.type === "moved") await this.view.walk(event.leaderId, event.path, world.leaders.some((l) => l.id === event.leaderId && l.player === PLAYER));
     }
