@@ -34,9 +34,12 @@ const map: Playtest = {
       // Like a person, pan the camera until the target isn't under a panel or a button.
       let point = await t.hexScreen(enemy);
       for (let pan = 0; pan < 12 && !(await t.page.evaluate((p) => document.elementFromPoint(p.x, p.y) instanceof HTMLCanvasElement, point)); pan++) {
-        await t.page.keyboard.press(point.y < 360 ? "ArrowUp" : "ArrowDown");
-        await t.page.keyboard.press(point.x < 640 ? "ArrowLeft" : "ArrowRight");
-        await t.frames();
+        // The camera glides while keys are held.
+        const keys = [point.y < 360 ? "ArrowUp" : "ArrowDown", point.x < 640 ? "ArrowLeft" : "ArrowRight"];
+        for (const key of keys) await t.page.keyboard.down(key);
+        for (let frame = 0; frame < 8; frame++) await t.frames();
+        for (const key of keys) await t.page.keyboard.up(key);
+        for (let frame = 0; frame < 8; frame++) await t.frames();
         point = await t.hexScreen(enemy);
       }
       await t.page.mouse.move(point.x, point.y);

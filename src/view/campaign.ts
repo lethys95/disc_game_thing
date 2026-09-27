@@ -53,6 +53,9 @@ export interface CampaignOptions {
 }
 
 /** The map layer: select a warband, click a hex to march; walking into an enemy starts a battle. */
+/** World units per second while an arrow key or WASD is held. */
+const PAN_SPEED = 14;
+
 const PAN: Readonly<Record<string, readonly [number, number]>> = {
   ArrowUp: [0, 1], w: [0, 1], ArrowDown: [0, -1], s: [0, -1], ArrowLeft: [-1, 0], a: [-1, 0], ArrowRight: [1, 0], d: [1, 0],
 };
@@ -102,6 +105,8 @@ export class Campaign implements KeyLayer {
   });
   /** The spell being aimed on the map, if any: the next click on a valid hex casts it. */
   private casting: string | null = null;
+  /** Pan keys held down now. */
+  private readonly panning = new Set<string>();
   /** The city (or meeting warbands) whose screen is open. */
   private place: Place | null = null;
   private leaderOpen: string | null = null;
@@ -159,11 +164,33 @@ export class Campaign implements KeyLayer {
         this.render();
       } else this.peekAt(e.clientX, e.clientY);
     });
+    // Letting go of a pan key (or leaving the window) eases the glide out.
+    window.addEventListener("keyup", (e) => {
+      if (this.panning.delete(e.key.length === 1 ? e.key.toLowerCase() : e.key)) this.glide();
+    });
+    window.addEventListener("blur", () => {
+      this.panning.clear();
+      this.glide();
+    });
     window.addEventListener("pointerup", (e) => {
       if (e.button === 2) this.peek.hidden = true;
     });
     this.endTurn.addEventListener("click", () => void this.act({ type: "endTurn" }));
     buttonById("mapmenu").addEventListener("click", () => this.options.onMenu());
+  }
+
+  /** The camera glides while pan keys are held: the sum of their directions. */
+  private glide(): void {
+    let right = 0;
+    let forward = 0;
+    for (const key of this.panning) {
+      const step = PAN[key];
+      if (step) {
+        right += step[0];
+        forward += step[1];
+      }
+    }
+    this.view.glide(right * PAN_SPEED, forward * PAN_SPEED);
   }
 
   /** The map, with its own screens (a city, a leader) over it. */
@@ -181,9 +208,10 @@ export class Campaign implements KeyLayer {
       return true;
     }
     // Arrow keys and WASD pan the map camera (user, 2026-09-27: panning shouldn't need a warband to move).
-    const step = PAN[e.key.length === 1 ? e.key.toLowerCase() : e.key];
-    if (!step || this.hud.hidden || !plainKey(e)) return false;
-    this.view.pan(step[0] * 0.8, step[1] * 0.8);
+    const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    if (!PAN[key] || this.hud.hidden || !plainKey(e)) return false;
+    this.panning.add(key);
+    this.glide();
     return true;
   }
 

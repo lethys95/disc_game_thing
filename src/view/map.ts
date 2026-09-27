@@ -213,9 +213,9 @@ export class MapView {
     this.stage.show(this.scene, this.pose);
   }
 
-  /** Pans the map camera; it can't wander far past the map's edge. */
-  pan(right: number, forward: number): void {
-    this.stage.pan(right, forward, this.radius * SIZE * 1.8);
+  /** Glides the map camera (speed in world units per second, zero to stop); it can't wander far past the map's edge. */
+  glide(right: number, forward: number): void {
+    this.stage.glide(right, forward, this.radius * SIZE * 1.8);
   }
 
   /**

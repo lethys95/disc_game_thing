@@ -21,7 +21,14 @@ interface Tween {
 }
 
 /** One renderer, camera and post-processing chain; the battle and the map take turns being shown. */
+/** How quickly a glide eases towards its speed, and to a stop (per second, exponential). */
+const GLIDE_EASE = 8;
+
 export class Stage {
+  private readonly glideVelocity = new THREE.Vector2();
+  private readonly glideTarget = new THREE.Vector2();
+  private glideLimit = 0;
+  private lastFrame = 0;
   readonly renderer: THREE.WebGLRenderer;
   readonly camera = new THREE.PerspectiveCamera(40, 1, 0.1, 200);
   private readonly labels = new CSS2DRenderer();
@@ -128,6 +135,15 @@ export class Stage {
     });
   }
 
+  /**
+   * Sets the speed the camera glides over the ground at (world units per second; zero to stop). It eases into and
+   * out of it rather than stepping. `limit` as for `pan`.
+   */
+  glide(right: number, forward: number, limit: number): void {
+    this.glideTarget.set(right, forward);
+    this.glideLimit = limit;
+  }
+
   tween(duration: number, update: (t: number) => void): Promise<void> {
     return new Promise((resolve) => {
       this.tweens.push({ start: performance.now(), duration: Math.max(1, duration * this.timeScale), update, done: resolve });
@@ -160,6 +176,10 @@ export class Stage {
   }
 
   private frame(time: number): void {
+    const dt = Math.min(0.05, (time - this.lastFrame) / 1000);
+    this.lastFrame = time;
+    this.glideVelocity.lerp(this.glideTarget, 1 - Math.exp(-dt * GLIDE_EASE));
+    if (this.glideVelocity.lengthSq() > 1e-4) this.pan(this.glideVelocity.x * dt, this.glideVelocity.y * dt, this.glideLimit);
     for (let i = this.tweens.length - 1; i >= 0; i--) {
       const tween = this.tweens[i];
       if (!tween) continue;
