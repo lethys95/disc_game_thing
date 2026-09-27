@@ -46,3 +46,15 @@ export function applyOrnaments(root: HTMLElement): void {
     if (url) root.style.setProperty(`--ornament-${id}`, `url("${url}")`);
   }
 }
+
+/** The UI kit (`assets/ui/<name>.webp`: frames, plaques, buttons), found at build time. */
+const UI_KIT = import.meta.glob<string>("/assets/ui/*.webp", { eager: true, query: "?url", import: "default" });
+
+/** The UI kit reaches the stylesheet as custom properties (`--ui-frame`); CSS decides where each piece goes. */
+export function applyUiKit(root: HTMLElement): void {
+  for (const [path, url] of Object.entries(UI_KIT)) {
+    const name = /\/assets\/ui\/(.+)\.webp$/.exec(path)?.[1];
+    if (name) root.style.setProperty(`--ui-${name}`, `url("${url}")`);
+  }
+}
+
