@@ -137,3 +137,6 @@ The Capitol gets the same layout: **tabs**: *City* (the garrison and visiting gr
 
 ## Warbands meeting (user, 2026-09-26)
 Two of your warbands directly next to each other anywhere on the map can trade units, through the same drag-and-drop grids as the garrison.
+
+## The fourth line: a joker (user, 2026-09-27)
+Melee, support and mage are shared; the fourth line is a "joker": a concept unique to each faction, so not everything is put into boxes (it replaces the idea of a ranged line; mages already cover single-target ranged). Designing them is open creative work for the user.

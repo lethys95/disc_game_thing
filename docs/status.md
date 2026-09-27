@@ -13,8 +13,8 @@ Architecture: `design/architecture.md`; recipes and gotchas: `engineering.md`. `
 **M40 map sizes** (merged into main): Small/Medium/Large/Huge at setup, defaulting by player count; neutrals and structures scale with area. Before that, M39 (unlimited mercenaries, merchant potions and changing wares) and M38 (structures). Save version 19. Routes: `?map&players=N&size=huge`, `?map&structure=merchant`.
 
 ## Next
-1. Waiting on the user: a playtest of M38–M39; #49–55 (#55: a map-size setting?), the Jilliath mage's name, the Grove/Wastes pitch, music.
-2. Claude's plan: faction content as the user designs it; the open debt in `engineering.md` when something touches it.
+1. **M41 Capitol screen** (user's spec, `design/capitol-screen.md`): home view, right-side tab menu, garrison, research tree, spells.
+2. What Claude needs from the user: `questions.md` (now short). Placeholders to overrule: `provisional.md`.
 
 ## Recently done
 - 2026-09-27: M40 map sizes; M39 merchant wares and potions; M38 map structures; M37 review cleanup; the user's items: Hatchet, Outlaw's pocketwatch, Cathedral node.

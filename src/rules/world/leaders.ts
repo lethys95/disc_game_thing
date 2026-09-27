@@ -5,7 +5,7 @@ import type { Leader } from "#rules/world/state";
 
 /**
  * The leader tree v1 (user, docs/design/pillars.md): one shared tree. The skills are the user's; the ranks,
- * prerequisites and names are provisional placeholders (docs/questions.md).
+ * prerequisites and names are provisional placeholders (docs/provisional.md).
  */
 export interface LeaderSkill {
   readonly name: string;

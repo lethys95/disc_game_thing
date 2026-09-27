@@ -7,7 +7,7 @@ import type { ManaColor } from "#rules/factions";
  * Overworld spells (pillars.md, "Spells": cast on the map, HoMM3-ish, paid in typed mana, not combat abilities;
  * targets an ally, an enemy, an empty tile or an area). The system is canon; **every spell here is a provisional
  * placeholder** following each faction's direction (factions/*.md: Jilliath targets infrastructure, Ral-Vitahl
- * mostly nukes) until the user designs the real ones (questions.md). Names are plain descriptions, not lore.
+ * mostly nukes) until the user designs the real ones (provisional.md). Names are plain descriptions, not lore.
  */
 
 export const MANA_NAMES: Readonly<Record<ManaColor, string>> = { red: "red mana", teal: "teal mana" };

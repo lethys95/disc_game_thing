@@ -38,3 +38,8 @@ The Ton'Arilliet story (`../lore/ton-arilliet.md`) is the user's and establishes
 - **Death:** they can't really die. Like demons in WoW sent back to the Twisting Nether, a Vexumphat unit that dies doesn't really go away. **Mechanically, Vexumphat abuses the graveyard:** its units come back really quickly and cheaply, at the cost of unit strength. Cheap to recruit, cheap to revive, but they don't hit very hard. You have to be really annoying and difficult to get rid of.
 - **The cost is the baseline** (user, 2026-09-26): Vexumphat units are weak by design; a revived unit comes back as it was, not weaker.
 - **Double-edged:** every defeat feeds XP to the enemy. "It's not all fun and games. You have to use your brain."
+
+## The graveyard as an advantage (user, 2026-09-27)
+"Vexumphat is intended to use the graveyard to their advantage": resurrection is much cheaper for them, and the city upgrade that unlocks the graveyard (resurrection outside the Capitol) is available from the start. Unit mechanics can lean the same way. It is **not their entire identity**: when their units are designed, find more themes, mechanics and playstyle unique to them.
+- Stickiness idea (user, not settled): a death ward, stopping a unit from going below 1 HP once; maybe the tier-1 melee line.
+- The user isn't sold on all of the Wastes' mechanics yet.

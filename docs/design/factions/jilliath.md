@@ -24,3 +24,8 @@ Healing: most healing of any faction, with side effects (martyrdom).
 ## User direction, 2026-09-26
 - **Resurrection** is likely a Jilliath mechanic (the Grove's fungal corpse explosion prevents it).
 - **Support-line idea:** something like WoW's Beacon of Light, as an ability of a support unit (from Claude's discarded "relic" summon pitch).
+
+## Directions for the backline (user, 2026-09-27; ideas, not designs)
+- **Mage line:** at least partly about self-sacrifice: using their own health as a resource, "if done correctly". A later unit: a *martyrdom mage* shooting a beam (a line, up to three in a row), hitting very hard but backfiring on every shot. Early units stay basic.
+- The other mage branch might be about absorbing damage dealt: *castigation*, less damage but it prevents damage from the units it hits; or damage over time (burning). An inquisition fits fire and holy: the two mage branches might be holy and fire damage (or both).
+- **Support line:** buffs as well as healing. One should have "inner fire": e.g. extra armor against the next hit taken.

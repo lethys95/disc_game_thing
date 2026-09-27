@@ -8,15 +8,16 @@ A deterministic, Disciples II–inspired turn-based strategy game: squads on 3x3
    - `docs/roadmap.md` — milestones, each ending in something playable
    - `docs/design/` — the game design canon (pillars, combat, abilities, art, factions, units, lore)
    - `docs/lethys-wrote-this-for-handover/faction-stuff/` — the user's unit design sheets (intent, no numbers; `_template.md`); read the relevant sheet before adding or changing a unit
-   - `docs/questions.md` — open questions for the user; check for inline answers
+   - `docs/questions.md` — what Claude needs from the user (short; check for inline answers)
+   - `docs/provisional.md` — placeholder numbers and rules Claude picked; the user overrules when something bothers them
    - `docs/decisions.md` — why things are the way they are
    - `docs/engineering.md` — code map, engine conventions, gotchas that cost time before
    - `docs/prior-attempts.md` — why this repo works the way it does (read once)
-3. **Take notes as you go, not at the end.** A session can end at any moment. Update `docs/status.md` with each commit (rewrite it; keep it short), record a decision in `docs/decisions.md` when you make one, and put a question in `docs/questions.md` when you hit one. The repo is the only memory that survives between sessions.
+3. **Take notes as you go, not at the end.** A session can end at any moment. Update `docs/status.md` with each commit (rewrite it; keep it short), record a decision in `docs/decisions.md` when you make one, a placeholder in `docs/provisional.md` when you pick one, and a question in `docs/questions.md` only when you're blocked or the choice is clearly the user's. The repo is the only memory that survives between sessions.
 
 ## Rules
 - **Playable first.** Build only what the current milestone needs. No speculative systems: no save framework, event bus, plugin registry, or catalog loader until a milestone requires one.
-- **Never invent mechanics, names, or lore.** If the design is silent, implement the simplest provisional rule, mark it provisional where it's defined, and add a question to `docs/questions.md`. Placeholder names stay plainly placeholder ("Capitol A", "unit_1"). Past AIs filled this project with invented content (see `docs/prior-attempts.md`).
+- **Never invent mechanics, names, or lore.** If the design is silent, implement the simplest provisional rule, mark it provisional where it's defined, and list it in `docs/provisional.md`. Placeholder names stay plainly placeholder ("Capitol A", "unit_1"). Past AIs filled this project with invented content (see `docs/prior-attempts.md`).
 - **`src/rules/` is pure.** Plain serializable data + pure functions. It never imports three.js, the DOM, or `src/view/`. No randomness; the game is deterministic.
 - **Verify what you build.** `pnpm verify` (types, tests, screenshot, playtests) before calling anything done; for visual work use the `verify` skill and look at the PNGs. Don't call visual work done without having seen it.
 - **Extend through the architecture** (`docs/design/architecture.md`, recipes in `docs/engineering.md`): new mechanics are traits, effect definitions, params and tags. The engine, AI and view never name an ability or effect id.

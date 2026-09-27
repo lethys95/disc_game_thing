@@ -159,7 +159,7 @@ interface LairBase {
 /** A bandit camp: cleared, it regrows. */
 export interface Camp extends LairBase {
   readonly kind: "camp";
-  /** The turn a cleared camp regrows (provisional, questions.md #19); null while guarded. */
+  /** The turn a cleared camp regrows (provisional, provisional.md #19); null while guarded. */
   regrowsOn: number | null;
 }
 
