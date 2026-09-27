@@ -168,7 +168,7 @@ describe("world", () => {
     const battle = engaged.engagement?.battle;
     if (!battle) throw new Error("no battle");
     const step = concludeBattle(engaged, autoplay(battle));
-    expect(step.events).toContainEqual({ type: "looted", lairId: dungeon.id, player: 0, gold: dungeon.reward.gold, joins: dungeon.reward.joins });
+    expect(step.events).toContainEqual({ type: "looted", lairId: dungeon.id, player: 0, gold: dungeon.reward.gold, joins: dungeon.reward.joins, item: dungeon.reward.item });
     expect(leaderById(step.world, "leader0").squad.some((m) => m.defId === dungeon.reward?.joins)).toBe(true);
     expect(playerOf(step.world, 0).gold).toBe(playerOf(roomy, 0).gold + dungeon.reward.gold);
   });

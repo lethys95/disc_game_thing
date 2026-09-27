@@ -17,7 +17,8 @@ export type MarkSource =
   | { readonly kind: "leaderTree"; readonly skill: string }
   | { readonly kind: "upgrade"; readonly upgrade: string }
   | { readonly kind: "levels"; readonly levels: number }
-  | { readonly kind: "node"; readonly node: NodeKind; readonly cityId: string };
+  | { readonly kind: "node"; readonly node: NodeKind; readonly cityId: string }
+  | { readonly kind: "item"; readonly item: string };
 
 /** A lasting difference from the unit's baseline: an effect it brings into every battle, and its source. */
 export interface Mark {
@@ -103,6 +104,9 @@ export interface Leader {
   leaderTile: Tile;
   /** Spells on the warband that its units bring into battle for a while. */
   enchantments: Enchantment[];
+  /** Items worn in the leader's equipment slots (`rules/items.ts`), and carried unworn. */
+  worn: string[];
+  bag: string[];
 }
 
 /** A spell's lasting effect on a warband or a city's defenders, until the end of turn `until`. */
@@ -140,6 +144,8 @@ export interface City {
 export interface Reward {
   readonly gold: number;
   readonly joins: string | null;
+  /** An item for the victor's leader's bag. */
+  readonly item: string | null;
 }
 
 /** A neutral group on the map: a camp, or the guards of a dungeon and its reward. */
@@ -204,6 +210,9 @@ export type WorldAction =
   | { type: "learnSpell"; spell: string }
   /** Cast a learned spell at a hex in sight. */
   | { type: "castSpell"; spell: string; at: Hex }
+  /** Put on an item from the leader's bag; take one off into the bag. */
+  | { type: "equip"; leaderId: string; item: string }
+  | { type: "unequip"; leaderId: string; item: string }
   /** Raise a city you hold one tier. */
   | { type: "upgradeCity"; cityId: string }
   /** Buy a unit-type upgrade: units that become that type from now on receive it. */
@@ -225,7 +234,8 @@ export type WorldEvent =
   | { type: "chose"; player: PlayerId; fork: string; to: string }
   | { type: "cleared"; lairId: string; player: PlayerId }
   | { type: "regrew"; lairId: string }
-  | { type: "looted"; lairId: string; player: PlayerId; gold: number; joins: string | null }
+  | { type: "looted"; lairId: string; player: PlayerId; gold: number; joins: string | null; item: string | null }
+  | { type: "spoils"; leaderId: string; items: readonly string[] }
   | { type: "resurrected"; player: PlayerId; defId: string }
   | { type: "learned"; leaderId: string; skill: string }
   | { type: "revived"; leaderId: string }
@@ -298,7 +308,12 @@ export function strengthAt(map: WorldMap, hex: Hex, atLeast: Strength): Strength
 }
 
 /** Provisional dungeon rewards, alternating between gold and a unit that joins. */
-export const DUNGEON_REWARDS: readonly Reward[] = [{ gold: 200, joins: null }, { gold: 50, joins: "hedge_mage" }];
+export const DUNGEON_REWARDS: readonly Reward[] = [
+  { gold: 200, joins: null, item: null },
+  { gold: 50, joins: "hedge_mage", item: null },
+  { gold: 50, joins: null, item: "ankh" },
+  { gold: 0, joins: null, item: "war_banner" },
+];
 
 export function unitId(side: Side, tile: Tile): string {
   return `${side}.${tile.row}.${tile.col}`;

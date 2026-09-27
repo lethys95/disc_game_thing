@@ -14,7 +14,7 @@ import type { Battle } from "#rules/battle/types";
 import { applyWorldAction } from "#rules/world/actions";
 import { concludeBattle, openingBattle } from "#rules/world/battles";
 import { chooseBranchProblem, elevateProblem, income, learnSkillProblem, recruitProblem, resurrectionCost, resurrectProblem, reviveProblem, squadsOf, upgradeProblem, cityUpgradeCost, upgradeCityProblem, investNodeProblem, nodeInvestCost } from "#rules/world/economy";
-import { leadershipOf, movementOf } from "#rules/world/leaders";
+import { equipProblem, leadershipOf, movementOf } from "#rules/world/leaders";
 import { destination, planMove } from "#rules/world/movement";
 import type { MovePlan, MoveTarget } from "#rules/world/movement";
 import { playerOf, capitolOf, fullHp, lairAt, leaderAt } from "#rules/world/state";
@@ -227,6 +227,9 @@ export function chooseWorldAction(truth: World, memo: BattleMemo = new Map()): W
   for (const leader of mine) {
     const skill = AI_SKILL_ORDER.find((s) => !learnSkillProblem(world, leader.id, s));
     if (skill) return { type: "learn", leaderId: leader.id, skill };
+    // Whatever it carries and can wear, it wears.
+    const item = leader.bag.find((i) => !equipProblem(leader, i));
+    if (item) return { type: "equip", leaderId: leader.id, item };
   }
 
   if (capitol) {

@@ -5,7 +5,7 @@ import { RECRUIT_COST } from "#rules/units/index";
 import { LEADER_MOVEMENT } from "#rules/balance";
 import { defenderOf, engage } from "#rules/world/battles";
 import { nodeMarks, chooseBranchProblem, elevateProblem, freeTile, growSquad, learnSkillProblem, newcomer, recruitProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem, squadsOf, startRound, startTurn, upgradeCityProblem, researchProblem, cityOfSquad, investNodeProblem, nodeInvestCost, upgradeProblem, cityUpgradeCost } from "#rules/world/economy";
-import { movementOf, rankOf } from "#rules/world/leaders";
+import { equipProblem, freeRevival, movementOf, rankOf } from "#rules/world/leaders";
 import { destination, planMove } from "#rules/world/movement";
 import { knownWorld, see, updateVision } from "#rules/world/vision";
 import { castProblem, castSpell, learnSpellProblem } from "#rules/world/spells";
@@ -68,7 +68,7 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       const tile = { row: (freeTile([], unit.defId)?.row ?? 0), col: 1 } as const;
       const id = `leader${draft.nextLeader}`;
       draft.nextLeader += 1;
-      draft.leaders.push({ id, player: side, hex: capitol.hex, movement: LEADER_MOVEMENT, experience: 0, skills: {}, fellOnTurn: null, squad: [{ ...unit, tile }], leaderTile: tile, enchantments: [] });
+      draft.leaders.push({ id, player: side, hex: capitol.hex, movement: LEADER_MOVEMENT, experience: 0, skills: {}, fellOnTurn: null, squad: [{ ...unit, tile }], leaderTile: tile, enchantments: [], worn: [], bag: [] });
       events.push({ type: "elevated", leaderId: id });
       break;
     }
@@ -118,6 +118,13 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       const cost = reviveCost(draft, leader);
       if (problem || cost === null) throw new Error(`cannot revive: ${problem}`);
       playerOf(draft, side).gold -= cost;
+      // An Ankh pays for it, and is used up.
+      const ankh = freeRevival(leader);
+      if (ankh) {
+        leader.worn = leader.worn.filter((i) => i !== ankh);
+        const at = leader.bag.indexOf(ankh);
+        if (at >= 0) leader.bag.splice(at, 1);
+      }
       leader.squad = leader.squad.map((m) => (isLeaderOf(m, leader) ? { ...m, hp: 1 } : m));
       leader.fellOnTurn = null;
       events.push({ type: "revived", leaderId: leader.id });
@@ -154,6 +161,22 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       if (problem) throw new Error(`cannot cast ${action.spell}: ${problem}`);
       castSpell(draft, action.spell, action.at, events);
       events.push({ type: "spellCast", player: side, spell: action.spell, at: action.at });
+      break;
+    }
+    case "equip": {
+      const leader = leaderById(draft, action.leaderId);
+      if (leader.player !== side) throw new Error("not your leader");
+      const problem = equipProblem(leader, action.item);
+      if (problem) throw new Error(`cannot equip ${action.item}: ${problem}`);
+      leader.bag.splice(leader.bag.indexOf(action.item), 1);
+      leader.worn.push(action.item);
+      break;
+    }
+    case "unequip": {
+      const leader = leaderById(draft, action.leaderId);
+      if (leader.player !== side || !leader.worn.includes(action.item)) throw new Error(`cannot take off ${action.item}`);
+      leader.worn.splice(leader.worn.indexOf(action.item), 1);
+      leader.bag.push(action.item);
       break;
     }
     case "upgradeCity": {

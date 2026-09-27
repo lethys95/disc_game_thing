@@ -38,6 +38,8 @@ export function createWorld(seed: number, setups: readonly PlayerSetup[]): World
       skills: {},
       fellOnTurn: null,
       enchantments: [],
+      worn: [],
+      bag: [],
       squad: setup.squad.map((p) => member(p.defId, p.tile)),
       leaderTile: first.tile,
     };

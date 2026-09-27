@@ -411,3 +411,6 @@ button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }
 .spell-bar { display: flex; flex-direction: column; gap: 4px; margin-top: 10px; border-top: 1px solid #2c2622; padding-top: 8px; }
 .spell-bar .title { font: 700 18px var(--display); }
 .spell-bar button.selected { border-color: var(--blood); box-shadow: 0 0 10px rgba(192, 40, 28, 0.4); }
+.equipment { margin-top: 12px; display: flex; flex-direction: column; gap: 4px; }
+.equipment .slot-row { display: flex; align-items: center; gap: 8px; }
+.equipment .slot-name { width: 84px; color: var(--muted); font-size: 12px; }

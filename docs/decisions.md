@@ -132,3 +132,6 @@ When its side's strength (health weighted by damage) falls under 15% of the enem
 
 **2026-09-27 — Music by faction (the user's idea).**
 On the map you hear your own faction's theme; in a battle, the attacker's faction's battle tracks, one after another across battles (Inquisition attacks Nexus: Inquisition music). Tracks are files at `assets/audio/music/<faction>/map.ogg` and `battle-<n>.ogg`; a faction without its own falls back to any. The musical direction per faction follows the canon (Jilliath: sacred and severe; Nexus: arcane and cold, not sci-fi) and is provisional.
+
+**2026-09-27 — Items: the 2024 slots, effects as marks.**
+Leaders carry items in the user's 2024 slots (headgear, body armor, two utility, a banner) and a bag. An item is data (`rules/items.ts`): effects the leader's own unit brings into battle, effects every warband unit brings (banners), and whether it pays for a revival (the Ankh, canon). Worn effects enter battle through the unit's track record (a mark with an item source), so the engine needs nothing new. Only the Ankh is canon; the rest are placeholders (#53).

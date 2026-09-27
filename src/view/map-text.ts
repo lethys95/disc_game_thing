@@ -7,6 +7,7 @@ import type { Leader, PlayerId, World, WorldEvent } from "#rules/world/state";
 import { sightOf } from "#rules/world/vision";
 import { castProblem, spellVictims } from "#rules/world/spells";
 import { spellById } from "#rules/spells";
+import { itemById } from "#rules/items";
 import { unitName } from "#view/members";
 
 /** What the map's hint line says: the hover, the march, the news. Pure text over what the player knows. */
@@ -84,7 +85,8 @@ export function newsText(events: readonly WorldEvent[], world: World, player: Pl
     if (e.type === "cleared" && (e.player === player || lairSeen(e.lairId))) lines.push(e.player === player ? "The bandit camp is cleared." : "The enemy cleared a bandit camp.");
     if (e.type === "leaderFell" && e.player === player) lines.push("One of your warbands fell.");
     if (e.type === "spellCast" && (e.player === player || inSight(e.at))) lines.push(`${e.player === player ? "You cast" : "The enemy casts"} ${spellById(e.spell).name}.`);
-    if (e.type === "looted" && e.player === player) lines.push(`The dungeon yields ${e.gold} gold${e.joins ? ` and a ${unitName(e.joins)} joins you` : ""}.`);
+    if (e.type === "looted" && e.player === player) lines.push(`The dungeon yields ${e.gold} gold${e.joins ? ` and a ${unitName(e.joins)} joins you` : ""}${e.item ? `, and a ${itemById(e.item).name}` : ""}.`);
+    if (e.type === "spoils" && world.leaders.some((l) => l.id === e.leaderId && l.player === player)) lines.push(`Spoils: ${e.items.map((i) => itemById(i).name).join(", ")}.`);
   }
   return lines.join(" ");
 }

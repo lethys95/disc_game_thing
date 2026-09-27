@@ -1,0 +1,64 @@
+import type { Placement } from "#rules/battle/engine";
+import { COLS } from "#rules/battle/grid";
+import { neighbors, sameHex } from "#rules/hex";
+import { stepCost } from "#rules/map";
+import { applyWorldAction } from "#rules/world/actions";
+import { concludeBattle } from "#rules/world/battles";
+import { createWorld } from "#rules/world/create";
+import { reviveCost } from "#rules/world/economy";
+import { equipProblem } from "#rules/world/leaders";
+import { placementOf } from "#rules/world/record";
+import { leaderById, playerOf } from "#rules/world/state";
+import type { Leader, World } from "#rules/world/state";
+import { autoplay } from "#rules/ai";
+import { twoPlayers, withGold } from "#tests/helpers";
+import { describe, expect, test } from "vitest";
+
+/** Items (pillars.md; the user's 2024 slots). Everything but the Ankh is a placeholder. */
+
+const congregants: Placement[] = COLS.map((col) => ({ defId: "congregant", tile: { row: 0, col } }));
+const fresh = (): World => createWorld(1, twoPlayers([congregants, congregants], [{}, {}], ["jilliath", "jilliath"]));
+
+function withLeader(world: World, id: string, change: Partial<Leader>): World {
+  return { ...world, leaders: world.leaders.map((l) => (l.id === id ? { ...l, ...change } : l)) };
+}
+
+describe("equipment", () => {
+  test("worn items reach the leader's own unit; a banner reaches the whole warband; slots fill up", () => {
+    let w = withLeader(fresh(), "leader0", { bag: ["iron_helm", "war_banner", "swift_charm", "swift_charm", "swift_charm"] });
+    for (const item of ["iron_helm", "war_banner", "swift_charm", "swift_charm"]) w = applyWorldAction(w, { type: "equip", leaderId: "leader0", item }).world;
+    const leader = leaderById(w, "leader0");
+    expect(equipProblem(leader, "swift_charm")).toBe("no free utility slot");
+    const [own, other] = leader.squad.map((m) => (placementOf(m, leader).effects ?? []).map((e) => e.def));
+    expect(own).toEqual(expect.arrayContaining(["extra_armor", "extra_damage", "extra_initiative"]));
+    expect(other).toEqual(["extra_damage"]);
+    w = applyWorldAction(w, { type: "unequip", leaderId: "leader0", item: "iron_helm" }).world;
+    expect(leaderById(w, "leader0").bag).toContain("iron_helm");
+  });
+
+  test("an Ankh makes reviving its fallen leader free, and is used up", () => {
+    let w = withGold(fresh(), [0, 0]);
+    const leader = leaderById(w, "leader0");
+    w = withLeader(w, "leader0", { bag: ["ankh"], fellOnTurn: w.turn, squad: leader.squad.map((m, i) => (i === 0 ? { ...m, hp: 0 } : m)) });
+    expect(reviveCost(w, leaderById(w, "leader0"))).toBe(0);
+    w = applyWorldAction(w, { type: "revive", leaderId: "leader0" }).world;
+    expect(leaderById(w, "leader0").fellOnTurn).toBeNull();
+    expect(leaderById(w, "leader0").bag).toEqual([]);
+    expect(playerOf(w, 0).gold).toBe(0);
+  });
+
+  test("a warband wiped out by another leaves its items to the victor", () => {
+    const army: Placement[] = COLS.map((col) => ({ defId: "templar", tile: { row: 0, col } }));
+    let w = createWorld(1, twoPlayers([army, [{ defId: "congregant", tile: { row: 0, col: 1 } }]], [{}, {}], ["jilliath", "jilliath"]));
+    const target = leaderById(w, "leader1").hex;
+    const beside = neighbors(target).find((h) => stepCost(w.map, h) !== null && !w.cities.some((c) => sameHex(c.hex, h)) && !w.lairs.some((l) => sameHex(l.hex, h)));
+    if (!beside) throw new Error("no free hex");
+    w = withLeader(withLeader(w, "leader0", { hex: beside }), "leader1", { worn: ["iron_helm"], bag: ["ankh"] });
+    const step = applyWorldAction(w, { type: "move", leaderId: "leader0", to: target }).world;
+    const battle = step.engagement?.battle;
+    if (!battle) throw new Error("no battle");
+    const done = concludeBattle(step, autoplay(battle));
+    expect(leaderById(done.world, "leader0").bag).toEqual(["iron_helm", "ankh"]);
+    expect(done.events).toContainEqual({ type: "spoils", leaderId: "leader0", items: ["iron_helm", "ankh"] });
+  });
+});
