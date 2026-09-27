@@ -14,6 +14,13 @@ export const SLOT_CAPACITY: Readonly<Record<EquipmentSlot, number>> = { head: 1,
 
 export const SLOT_NAMES: Readonly<Record<EquipmentSlot, string>> = { head: "Headgear", armor: "Body armor", weapon: "Weapon", utility: "Utility", banner: "Banner" };
 
+/** What a consumable does when its leader uses it on the map; used up doing so. */
+export type ItemUse =
+  /** Every living unit of the warband heals this much, up to its max. */
+  | { readonly kind: "healWarband"; readonly amount: number }
+  /** The player's most recently fallen unit rises into this warband, at 1 HP (as a resurrection does). */
+  | { readonly kind: "raiseFallen" };
+
 export interface ItemDef {
   readonly id: string;
   readonly name: string;
@@ -26,6 +33,8 @@ export interface ItemDef {
   readonly banner: readonly EffectSeed[];
   /** Carried (worn or in the bag), it makes reviving its fallen leader free, and is used up doing so (the Ankh). */
   readonly revivesFree: boolean;
+  /** A consumable's use (potions); absent for items that are worn or just carried. */
+  readonly use?: ItemUse;
   readonly describe: string;
 }
 
@@ -100,6 +109,29 @@ export const ITEMS: readonly ItemDef[] = [
     banner: [{ def: "extra_damage", amount: 5 }],
     revivesFree: false,
     describe: "Every unit of the warband deals +5 damage.",
+  },
+  // Potions: the merchant's staples (user, 2026-09-27: "resurrection potions or healing potions"); numbers provisional (#54).
+  {
+    id: "healing_potion",
+    name: "Healing potion",
+    slot: null,
+    price: 60,
+    worn: [],
+    banner: [],
+    revivesFree: false,
+    use: { kind: "healWarband", amount: 50 },
+    describe: "Use on the map: every living unit of the warband heals 50 HP. Used up.",
+  },
+  {
+    id: "resurrection_potion",
+    name: "Resurrection potion",
+    slot: null,
+    price: 120,
+    worn: [],
+    banner: [],
+    revivesFree: false,
+    use: { kind: "raiseFallen" },
+    describe: "Use on the map: your most recently fallen unit rises into this warband at 1 HP, wherever it stands. Used up.",
   },
 ];
 

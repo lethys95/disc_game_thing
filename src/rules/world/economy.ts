@@ -14,6 +14,7 @@ import { FACTIONS } from "#rules/factions";
 import { playerOf, alive, banditGroup, capitolOf, cityById, cityOfNode, leaderAt, leaderById, leaderUnit, member, nodesHeldBy, nodesOf } from "#rules/world/state";
 import type { Enchantment, PlayerId, City, Leader, MapNode, Mark, SquadMember, SquadRef, Strength, World, WorldEvent } from "#rules/world/state";
 import { capacityOf, cityOfSquad, ownerOf, squadAt } from "#rules/world/squads";
+import { MERCHANT_RESTOCK_TURNS, merchantWares } from "#rules/structures";
 
 /** Gold, recruiting, branch choices, resurrection, elevation, and the start of a side's turn. */
 
@@ -263,6 +264,13 @@ export function startRound(world: World, events: WorldEvent[]): void {
   for (const leader of world.leaders) leader.enchantments = leader.enchantments.filter(lasting);
   for (const city of world.cities) city.enchantments = city.enchantments.filter(lasting);
   const strength: Strength = world.turn >= CAMP_STRONG_FROM ? "strong" : world.turn >= CAMP_MEDIUM_FROM ? "medium" : "weak";
+  // Merchants lay out new wares every few rounds (user: limited, changing, and they come back).
+  for (const merchant of world.structures) {
+    if (merchant.kind !== "merchant" || merchant.restocksOn > world.turn) continue;
+    merchant.wares = merchantWares(merchant.id, world.turn);
+    merchant.restocksOn = world.turn + MERCHANT_RESTOCK_TURNS;
+    events.push({ type: "restocked", structureId: merchant.id });
+  }
   for (const lair of world.lairs) {
     if (lair.kind !== "camp" || lair.regrowsOn === null || lair.regrowsOn > world.turn || leaderAt(world, lair.hex)) continue;
     lair.guards = banditGroup(strength);

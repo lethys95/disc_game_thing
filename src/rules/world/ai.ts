@@ -18,7 +18,8 @@ import { chooseBranchProblem, elevateProblem, income, learnSkillProblem, recruit
 import { equipProblem, leadershipOf, movementOf } from "#rules/world/leaders";
 import { itemById } from "#rules/items";
 import { hireCost } from "#rules/structures";
-import { buyItemProblem, buySpellProblem, hireProblem } from "#rules/world/structures";
+import { buyItemProblem, buySpellProblem, forSale, hireProblem } from "#rules/world/structures";
+import { useItemProblem } from "#rules/world/items";
 import { destination, planMove } from "#rules/world/movement";
 import type { MovePlan, MoveTarget } from "#rules/world/movement";
 import { playerOf, capitolOf, fullHp, lairAt, leaderAt } from "#rules/world/state";
@@ -275,9 +276,16 @@ function aiContext(truth: World, memo: BattleMemo): AiContext {
   };
 }
 
-/** Leader tree points and carried items: free, so first. */
+/** Leader tree points, carried items and potions: free, so first. */
 const leaderUpkeep: Planner = ({ world, mine }) => {
   for (const leader of mine) {
+    // A healing potion once the warband is badly hurt; a resurrection potion whenever it can raise someone.
+    const potion = leader.bag.find((i) => {
+      const use = itemById(i).use;
+      if (!use || useItemProblem(world, leader.id, i)) return false;
+      return use.kind === "raiseFallen" || strength(leader.squad) < 0.6 * fullStrength(leader.squad);
+    });
+    if (potion) return { type: "useItem", leaderId: leader.id, item: potion };
     const skill = AI_SKILL_ORDER.find((s) => !learnSkillProblem(world, leader.id, s));
     if (skill) return { type: "learn", leaderId: leader.id, skill };
     const item = leader.bag.find((i) => !equipProblem(leader, i));
@@ -407,8 +415,10 @@ function tradeAt({ world, spareFor }: AiContext, leader: Leader, structure: Stru
       return best ? { type: "hire", leaderId: leader.id, index: best.index } : null;
     }
     case "merchant": {
-      const item = structure.stock
-        .filter((id) => spareFor(itemById(id).price) && !buyItemProblem(there, leader.id, id) && !equipProblem({ ...leader, bag: [...leader.bag, id] }, id))
+      // Something it can wear in a free slot, or a healing potion to carry if it has none.
+      const worth = (id: string) => !equipProblem({ ...leader, bag: [...leader.bag, id] }, id) || (itemById(id).use?.kind === "healWarband" && !leader.bag.includes(id));
+      const item = forSale(structure)
+        .filter((id) => spareFor(itemById(id).price) && !buyItemProblem(there, leader.id, id) && worth(id))
         .sort((a, b) => itemById(a).price - itemById(b).price)[0];
       return item ? { type: "buyItem", leaderId: leader.id, item } : null;
     }

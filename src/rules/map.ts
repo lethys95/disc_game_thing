@@ -1,7 +1,8 @@
 import { hexagon, hexDistance, hexKey, neighbors, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import type { NodeKind, NodeSite } from "#rules/nodes";
-import { STRUCTURE_KINDS } from "#rules/structures";
+import { noise } from "#rules/noise";
+import { STRUCTURE_KINDS, structuresPerKind } from "#rules/structures";
 import type { StructureKind } from "#rules/structures";
 
 /** Provisional terrain (docs/design/pillars.md leaves terrain to the map model): costs are placeholders. */
@@ -65,14 +66,6 @@ export function stepCost(map: WorldMap, hex: Hex): number | null {
   return tile ? TERRAIN_COST[tile.terrain] : null;
 }
 
-/** Deterministic integer hash noise in [0, 1): the map is a pure function of its seed. */
-function noise(seed: number, q: number, r: number): number {
-  let h = (seed ^ Math.imul(q, 374761393) ^ Math.imul(r, 668265263)) >>> 0;
-  h = Math.imul(h ^ (h >>> 13), 1274126177) >>> 0;
-  h = (h ^ (h >>> 16)) >>> 0;
-  return h / 4294967296;
-}
-
 /** Noise smoothed over a hex and its neighbours, so terrain comes in patches rather than speckles. */
 function smooth(seed: number, hex: Hex): number {
   const around = neighbors(hex).map((n) => noise(seed, n.q, n.r));
@@ -121,7 +114,7 @@ export function generateMap(seed: number, players = 2, radius = players <= 2 ? 5
     const sites = placeSites(bare, variant, players + 2);
     const lairs = placeLairs(bare, sites, variant, players + 1);
     const structures = placeStructures(bare, sites, lairs, variant);
-    if (structures.length < STRUCTURE_KINDS.length) continue;
+    if (STRUCTURE_KINDS.some((kind) => !structures.some((s) => s.kind === kind))) continue;
     const map: WorldMap = { ...bare, sites, lairs, structures };
     const spots = [...sites.map((s) => s.hex), ...lairs.map((l) => l.hex), ...structures.map((s) => s.hex)];
     const everyoneReaches = spots.every((hex) => starts.every((start) => sameHex(start, hex) || findPath(map, start, hex, () => false)));
@@ -182,8 +175,9 @@ function placeLairs(map: WorldMap, sites: readonly Site[], seed: number, each: n
 }
 
 /**
- * One structure of each kind (provisional, #54) on free walkable hexes on contested ground: its nearest two
- * Capitols are within a hex of the same distance, so no player has the shops to itself.
+ * Structures on free walkable hexes. Of each kind, one per so many hexes (user: more on bigger maps, #54). The first
+ * of each stands on contested ground (its nearest two Capitols within a hex of the same distance, so no player has
+ * it to itself); more, where contested ground runs out, anywhere at least 3 hexes from every Capitol.
  */
 function placeStructures(map: WorldMap, sites: readonly Site[], lairs: readonly LairSite[], seed: number): StructureSite[] {
   const structures: StructureSite[] = [];
@@ -191,17 +185,21 @@ function placeStructures(map: WorldMap, sites: readonly Site[], lairs: readonly 
     sites.some((s) => hexDistance(s.hex, hex) < 2 || s.nodes.some((n) => sameHex(n.hex, hex))) ||
     lairs.some((l) => hexDistance(l.hex, hex) < 2) ||
     structures.some((s) => hexDistance(s.hex, hex) < 2);
-  const fair = (hex: Hex) => {
-    const [nearest, next] = map.starts.map((s) => hexDistance(s, hex)).sort((a, b) => a - b);
-    return nearest !== undefined && next !== undefined && nearest >= 3 && next - nearest <= 1;
-  };
-  const candidates = Object.values(map.tiles)
+  const distances = (hex: Hex) => map.starts.map((s) => hexDistance(s, hex)).sort((a, b) => a - b);
+  const open = Object.values(map.tiles)
     .map((t) => t.hex)
-    .filter((hex) => stepCost(map, hex) !== null && fair(hex))
+    .filter((hex) => stepCost(map, hex) !== null && (distances(hex)[0] ?? 0) >= 3)
     .sort((a, b) => noise(seed + 67, a.q, a.r) - noise(seed + 67, b.q, b.r));
-  for (const kind of STRUCTURE_KINDS) {
-    const hex = candidates.find((h) => !used(h));
-    if (hex) structures.push({ id: kind, kind, hex });
+  const contested = open.filter((hex) => {
+    const [nearest, next] = distances(hex);
+    return nearest !== undefined && next !== undefined && next - nearest <= 1;
+  });
+  const each = structuresPerKind(Object.keys(map.tiles).length);
+  for (let i = 0; i < each; i++) {
+    for (const kind of STRUCTURE_KINDS) {
+      const hex = contested.find((h) => !used(h)) ?? (i > 0 ? open.find((h) => !used(h)) : undefined);
+      if (hex) structures.push({ id: `${kind}${i}`, kind, hex });
+    }
   }
   return structures;
 }

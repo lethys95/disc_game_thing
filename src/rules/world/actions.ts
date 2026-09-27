@@ -10,6 +10,7 @@ import { destination, planMove } from "#rules/world/movement";
 import { knownWorld, see, updateVision } from "#rules/world/vision";
 import { castProblem, castSpell, learnSpellProblem } from "#rules/world/spells";
 import { buyItem, buySpell, hire, sellItem } from "#rules/world/structures";
+import { useItem } from "#rules/world/items";
 import { spellById } from "#rules/spells";
 import type { Hex } from "#rules/hex";
 import { cityOfSquad, squadAt, transfer, transferProblem } from "#rules/world/squads";
@@ -209,6 +210,9 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       break;
     case "buySpell":
       buySpell(draft, action.leaderId, action.spell, events);
+      break;
+    case "useItem":
+      useItem(draft, action.leaderId, action.item, events);
       break;
     default: {
       const unhandled: never = action;

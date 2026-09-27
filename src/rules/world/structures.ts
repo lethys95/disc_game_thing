@@ -3,12 +3,12 @@ import type { Tile } from "#rules/battle/types";
 import { sameHex } from "#rules/hex";
 import { itemById } from "#rules/items";
 import { spellById } from "#rules/spells";
-import { hireCost, resalePrice } from "#rules/structures";
+import { hireCost, MERCHANT_STAPLES, resalePrice } from "#rules/structures";
 import { freeTile, newcomer } from "#rules/world/economy";
 import { leadershipOf } from "#rules/world/leaders";
 import { maxHpOf } from "#rules/world/record";
 import { leaderById, playerOf } from "#rules/world/state";
-import type { Leader, Structure, World, WorldEvent } from "#rules/world/state";
+import type { Leader, Merchant, Structure, World, WorldEvent } from "#rules/world/state";
 
 /**
  * Visiting map structures (`rules/structures.ts`): a warband standing on one trades there, on its player's turn.
@@ -53,7 +53,7 @@ export function hire(world: World, leaderId: string, index: number, tile: Tile |
   const problem = hireProblem(world, leaderId, index, tile);
   const visit = visitProblem(world, leaderId, "mercenaries");
   if (problem || "problem" in visit) throw new Error(`cannot hire: ${problem}`);
-  const [hired] = visit.structure.stock.splice(index, 1);
+  const hired = visit.structure.stock[index];
   const spot = tile ?? (hired ? freeTile(visit.leader.squad, hired.defId) : null);
   if (!hired || !spot) throw new Error("cannot hire: no free spot");
   playerOf(world, world.activePlayer).gold -= hireCost(hired);
@@ -63,10 +63,13 @@ export function hire(world: World, leaderId: string, index: number, tile: Tile |
   events.push({ type: "hired", leaderId, defId: hired.defId });
 }
 
+/** What a merchant sells now: its staples, always, and its wares. */
+export const forSale = (merchant: Merchant): string[] => [...MERCHANT_STAPLES, ...merchant.wares];
+
 export function buyItemProblem(world: World, leaderId: string, item: string): string | null {
   const visit = visitProblem(world, leaderId, "merchant");
   if ("problem" in visit) return visit.problem;
-  if (!visit.structure.stock.includes(item)) return "not for sale here";
+  if (!forSale(visit.structure).includes(item)) return "not for sale here";
   if (playerOf(world, world.activePlayer).gold < itemById(item).price) return "not enough gold";
   return null;
 }
@@ -75,7 +78,8 @@ export function buyItem(world: World, leaderId: string, item: string, events: Wo
   const problem = buyItemProblem(world, leaderId, item);
   const visit = visitProblem(world, leaderId, "merchant");
   if (problem || "problem" in visit) throw new Error(`cannot buy ${item}: ${problem}`);
-  visit.structure.stock.splice(visit.structure.stock.indexOf(item), 1);
+  // Staples never run out; a ware is gone once bought.
+  if (!MERCHANT_STAPLES.includes(item)) visit.structure.wares.splice(visit.structure.wares.indexOf(item), 1);
   playerOf(world, world.activePlayer).gold -= itemById(item).price;
   visit.leader.bag.push(item);
   events.push({ type: "bought", leaderId, item });
@@ -95,7 +99,8 @@ export function sellItem(world: World, leaderId: string, item: string, events: W
   if (problem || "problem" in visit) throw new Error(`cannot sell ${item}: ${problem}`);
   const gold = resalePrice(itemById(item).price);
   visit.leader.bag.splice(visit.leader.bag.indexOf(item), 1);
-  visit.structure.stock.push(item);
+  // Bought staples are just more of the same; anything else joins the wares until the next restock.
+  if (!MERCHANT_STAPLES.includes(item)) visit.structure.wares.push(item);
   playerOf(world, world.activePlayer).gold += gold;
   events.push({ type: "sold", leaderId, item, gold });
 }
