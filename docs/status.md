@@ -10,7 +10,7 @@ A playable map game for 2–6 players (hotseat viewer vs AIs): two factions (**J
 Architecture: `design/architecture.md`; recipes and gotchas: `engineering.md`. `pnpm verify` before calling anything done. Sims: `pnpm sim:many --seeds 1-16 "p1,p2"` (smoke tests only until factions have their lines).
 
 ## Now
-**M38 map structures done** (merged into main, tag `m38-structures`): a mercenary camp, a merchant and a mage merchant on every map. Stand a warband on one to trade (the screen opens at the end of the march; the warband panel has "Visit"). Neutral spells come from the mage merchant. The AI uses all three. Save version 18. Stocks and prices are provisional (#54). Route for screenshots: `?map&structure=mercenaries|merchant|mage`.
+**M38 map structures done** (merged into main, tag `m38-structures-done`): a mercenary camp, a merchant and a mage merchant on every map. Stand a warband on one to trade (the screen opens at the end of the march; the warband panel has "Visit"). Neutral spells come from the mage merchant. The AI uses all three. Save version 18. Stocks and prices are provisional (#54). Route for screenshots: `?map&structure=mercenaries|merchant|mage`.
 
 ## Next
 1. Waiting on the user: a playtest of M38; #49–54, the Jilliath mage's name, the Grove/Wastes pitch, music.
