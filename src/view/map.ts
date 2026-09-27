@@ -364,7 +364,7 @@ export class MapView {
       this.siteLayer.add(group);
       this.sites.set(city.id, { group, banner, label });
       const owner = city.owner === null ? null : (world.players[city.owner]?.faction ?? null);
-      this.models.dress(group, city.kind === "capitol" ? MODEL_CHAINS.capitol(owner) : MODEL_CHAINS.city(), city.kind === "capitol" ? 1.9 : 1.1);
+      this.models.dress(group, city.kind === "capitol" ? MODEL_CHAINS.capitol(owner) : MODEL_CHAINS.city(), city.kind === "capitol" ? 1.9 : 1.1, city.kind === "capitol" ? 1.3 : 0.9);
     }
 
     this.links.clear();
@@ -385,7 +385,7 @@ export class MapView {
       });
       this.siteLayer.add(model);
       this.nodeModels.set(node.id, model);
-      this.models.dress(model, MODEL_CHAINS.node(node.kind), 0.6);
+      this.models.dress(model, MODEL_CHAINS.node(node.kind), 0.6, 0.7);
       // A thin road from the node to its city, in the owner's color: which city it feeds (user, 2026-09-26).
       const city = cityOfNode(world, node);
       if (!city) continue;
@@ -444,7 +444,7 @@ export class MapView {
         this.siteLayer.add(group);
         model = { group, label };
         this.lairs.set(lair.id, model);
-        if (lair.kind === "dungeon") this.models.dress(group, MODEL_CHAINS.dungeon(), 0.7);
+        if (lair.kind === "dungeon") this.models.dress(group, MODEL_CHAINS.dungeon(), 0.7, 1);
       }
       const guard = model.group.getObjectByName("guard");
       if (guard) guard.visible = lair.guards.length > 0;
@@ -488,7 +488,7 @@ export class MapView {
         this.siteLayer.add(group);
         model = { group, label };
         this.structures.set(structure.id, model);
-        this.models.dress(group, MODEL_CHAINS.structure(structure.kind), 1.2);
+        this.models.dress(group, MODEL_CHAINS.structure(structure.kind), 1.3, 0.8);
       }
       model.label.textContent = STRUCTURES[structure.kind].name;
     }

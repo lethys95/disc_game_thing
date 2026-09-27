@@ -103,6 +103,9 @@ Small to Huge at setup, defaulting by player count; neutral counts scale with ar
 ## M41 — Capitol screen (user's layout; done)
 Home view, right-side tab rail, garrison, top-down research trees, spells.
 
+## M42 — 3D props spike (done)
+Map model slots; generated Capitol and mage tower; the pipeline works for static props.
+
 ## Then
 - Faction content as the user designs it (Nexus trees first; Grove and Wastes later). The user owns unit designs and looks.
 - A spell tree in the Capitol, and the real spells (#51).

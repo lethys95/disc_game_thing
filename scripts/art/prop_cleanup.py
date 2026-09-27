@@ -2,8 +2,8 @@
 
     blender -b -P scripts/art/prop_cleanup.py -- <in.glb> <out.glb> [max_triangles] [texture_size]
 
-Joins the meshes, drops loose specks, recalculates normals, decimates to the triangle budget, and scales textures
-down so the file stays small. The game fits the model's size and position itself (`src/view/models.ts`).
+Joins the meshes, welds seams, drops loose specks, recalculates normals, decimates to the triangle budget, scales
+textures down so the file stays small, and makes materials matte. The game fits the model's size and position itself (`src/view/models.ts`).
 """
 
 import sys
@@ -96,6 +96,15 @@ def shrink_textures(size: int) -> None:
             image.scale(max(1, round(width * scale)), max(1, round(height * scale)))
 
 
+def matte(roughness: float) -> None:
+    """Generators export fully metallic materials, which render near-black without reflections to show: stone isn't metal."""
+    for material in bpy.data.materials:
+        shader = material.node_tree.nodes.get("Principled BSDF") if material.node_tree else None
+        if shader:
+            shader.inputs["Metallic"].default_value = 0.0
+            shader.inputs["Roughness"].default_value = roughness
+
+
 def main() -> None:
     options = parse_options(sys.argv)
     bpy.ops.wm.read_factory_settings(use_empty=True)
@@ -107,6 +116,7 @@ def main() -> None:
     obj = bpy.context.view_layer.objects.active
     decimate(obj, options.max_triangles)
     shrink_textures(options.texture_size)
+    matte(0.85)
     bpy.ops.export_scene.gltf(filepath=options.target, export_format="GLB", export_image_format="WEBP")
     print(f"prop_cleanup: {before} -> {triangle_count(obj)} triangles, textures <= {options.texture_size}px, {options.target}")
 

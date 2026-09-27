@@ -32,10 +32,10 @@ export class Models {
   private readonly loaded = new Map<string, Promise<THREE.Object3D | null>>();
 
   /**
-   * Swaps `host`'s placeholder for the chain's model once it has loaded, fitted to `height` and standing on the
-   * ground at the host's origin. Labels and children marked `userData.keep` (a lair's guard) stay.
+   * Swaps `host`'s placeholder for the chain's model once it has loaded, fitted within `height` and `width` and
+   * standing on the ground at the host's origin. Labels and children marked `userData.keep` (a lair's guard) stay.
    */
-  dress(host: THREE.Group, chain: readonly string[], height: number): void {
+  dress(host: THREE.Group, chain: readonly string[], height: number, width: number): void {
     const url = modelUrl(chain);
     if (!url) return;
     void this.load(url).then((source) => {
@@ -44,7 +44,7 @@ export class Models {
         if (!(child instanceof CSS2DObject) && !child.userData["keep"]) child.removeFromParent();
       }
       const model = source.clone(true);
-      fit(model, height);
+      fit(model, height, width);
       model.traverse((o) => {
         o.castShadow = true;
         o.receiveShadow = true;
@@ -67,11 +67,11 @@ export class Models {
   }
 }
 
-/** Scales a model to `height` and stands it on the ground, centered. */
-function fit(model: THREE.Object3D, height: number): void {
+/** Scales a model to `height`, or less if it would be wider than `width`, and stands it on the ground, centered. */
+function fit(model: THREE.Object3D, height: number, width: number): void {
   const box = new THREE.Box3().setFromObject(model);
   const size = box.getSize(new THREE.Vector3());
-  const scale = size.y > 0 ? height / size.y : 1;
+  const scale = Math.min(size.y > 0 ? height / size.y : 1, Math.max(size.x, size.z) > 0 ? width / Math.max(size.x, size.z) : 1);
   model.scale.multiplyScalar(scale);
   const center = box.getCenter(new THREE.Vector3()).multiplyScalar(scale);
   model.position.set(-center.x, -box.min.y * scale, -center.z);

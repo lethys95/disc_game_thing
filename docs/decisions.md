@@ -160,3 +160,6 @@ Four sizes (radius 5–8); the default grows with the number of players (five or
 **2026-09-27 — The city screen's home view is the map itself, close up (M41).**
 The user wants to see the city when entering it (HoMM5, AoE3's home city). Until there's art for a city scene, the home view flies the map camera in close on the city and lets the map show through; the rail and a summary card sit over it. The fourth archetype is now "joker" in the rules (was "ranged", which had no lines).
 
+**2026-09-27 — Map models load from slots (M42).**
+Like art and sound: `assets/models/<kind>/<id>.glb` found at build time, fallback chains (a Capitol per faction, then any Capitol), and the hand-built shapes stay as the placeholders where no file exists. Loaded models are shared between places, so `discard` leaves their GPU resources alone. The spike showed static props from concept images are good enough to pursue (`design/asset-pipeline.md`).
+
