@@ -207,6 +207,11 @@ export interface TraitSelf {
   readonly effect: EffectInstance | null;
 }
 
+/** An active ability resolving: its tags travel with it, so hits it makes carry them. */
+export interface ActiveSelf extends TraitSelf {
+  readonly tags: readonly Tag[];
+}
+
 /** A hook bundle together with whom it runs for. Passive abilities and effects are both traits. */
 export interface Trait {
   readonly hooks: Hooks;
@@ -306,7 +311,7 @@ export interface ActiveBehavior {
   /** Rules text, written from the ability's effective params. */
   describe(params: Params): string;
   choices(ctx: Ctx, self: TraitSelf): TargetChoice[];
-  resolve(ctx: Ctx, self: TraitSelf, choice: TargetChoice): void;
+  resolve(ctx: Ctx, self: ActiveSelf, choice: TargetChoice): void;
 }
 
 export interface PassiveBehavior {
@@ -332,7 +337,8 @@ export interface Ctx {
   /** The damage pipeline: power → outgoing → conversion → incoming → armor → pools → mitigation → HP, then reactions. */
   hit(sourceId: string, targetIds: readonly string[], spec: HitSpec): void;
   /** The power and type an ability of this unit hits with: `params.power` if given, else the unit's damage. */
-  hitSpec(self: TraitSelf, tags: readonly Tag[], type?: DamageType): HitSpec;
+  /** A hit with the resolving ability's power and tags. */
+  hitSpec(self: ActiveSelf, type?: DamageType): HitSpec;
   /** Direct HP loss that skips the pipeline (bleed, self-sacrifice). Returns the HP actually removed. */
   lose(targetId: string, amount: number, sourceId: string | null): number;
   heal(targetId: string, amount: number): void;

@@ -13,7 +13,7 @@ export const nexus: Readonly<Record<string, Behavior>> = {
       "Very weak ranged hit on any enemy. Unlimited.",
     tags: ["attack", "ranged", "spell", "damage"],
     choices: rangedChoices,
-    resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self, ["attack", "ranged", "spell", "damage"])),
+    resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self)),
   },
 
   /** A plus shape around the chosen tile; overloaded, every enemy. */
@@ -30,7 +30,7 @@ export const nexus: Readonly<Record<string, Behavior>> = {
       const enemies = ctx.living(opponent(ctx.unit(self.unitId).side));
       return enemies.map((target) => at(target, enemies.map((u) => u.id), "main"));
     },
-    resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self, ["attack", "ranged", "spell", "damage", "area"])),
+    resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self)),
   },
 
   /** Restore an ally's shield. Only units with a shield stat; full shields too (that's how a Mutant is fed). */
@@ -116,7 +116,7 @@ export const nexus: Readonly<Record<string, Behavior>> = {
           ctx.addEffect(id, { def: "absorbing_guard", source: self.unitId, amount: prevent });
           continue;
         }
-        ctx.hit(self.unitId, [id], ctx.hitSpec(self, ["attack", "ranged", "spell", "damage"]));
+        ctx.hit(self.unitId, [id], ctx.hitSpec(self));
         ctx.addEffect(id, { def: "absorbing_hit", source: self.unitId, amount: prevent });
       }
     },
@@ -155,7 +155,7 @@ export const nexus: Readonly<Record<string, Behavior>> = {
         .living(opponent(ctx.unit(self.unitId).side))
         .map((target) => at(target, everyone.filter((u) => u.defId === target.defId).map((u) => u.id), "main"));
     },
-    resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self, ["attack", "ranged", "spell", "damage", "area"])),
+    resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self)),
   },
 
   /** Cyclops (scheme): share shield with an ally until both are equal; the loan perishes on the Cyclops's next turn. */

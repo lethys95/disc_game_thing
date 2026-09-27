@@ -21,7 +21,7 @@ import type {
   TargetChoice,
   Tile,
   Trait,
-  TraitSelf,
+  ActiveSelf,
 } from "#rules/battle/types";
 import { PLAIN } from "#rules/battle/types";
 import { effectDef } from "#rules/effects";
@@ -147,8 +147,8 @@ export function abilityRef(battle: Battle, unitId: string, abilityId: string): A
   return makeCtx(battle, []).abilityRef(unitId, abilityId);
 }
 
-function activeSelf(ctx: Ctx, unitId: string, abilityId: string): TraitSelf {
-  return { unitId, params: paramsOf(ctx.abilityRef(unitId, abilityId)), effect: null };
+function activeSelf(ctx: Ctx, unitId: string, abilityId: string): ActiveSelf {
+  return { unitId, params: paramsOf(ctx.abilityRef(unitId, abilityId)), effect: null, tags: active(abilityId).tags };
 }
 
 function active(abilityId: string): ActiveBehavior {
@@ -506,10 +506,10 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
     stats,
     living,
     hit: (sourceId, targetIds, spec) => hit(ctx, sourceId, targetIds, spec),
-    hitSpec: (self, tags, type) => ({
+    hitSpec: (self, type) => ({
       power: self.params["power"] ?? stats(self.unitId).damage,
       type: type ?? unit(self.unitId).damageType,
-      tags,
+      tags: self.tags,
     }),
     lose: (targetId, amount, sourceId) => lose(ctx, targetId, amount, sourceId),
     heal: (targetId, offered) => {

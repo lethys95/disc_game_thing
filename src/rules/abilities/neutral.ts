@@ -17,7 +17,7 @@ export const neutral: Readonly<Record<string, Behavior>> = {
         const c = Math.min(col, 1);
         return [{ row: r, col: c }, { row: r + 1, col: c }, { row: r, col: c + 1 }, { row: r + 1, col: c + 1 }];
       }),
-    resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self, ["attack", "ranged", "spell", "damage", "area"])),
+    resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self)),
   },
 
   /** Brigand: once per combat, stun the enemy directly in front (same column, enemy front line). */
