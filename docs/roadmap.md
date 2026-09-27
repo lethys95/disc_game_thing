@@ -84,7 +84,7 @@ The canon overworld spell system with placeholder spells (#51): typed mana, lear
 14. [x] Mana nodes are labelled as ability damage; they give mana.
 15. [x] Spells cost at least 3× more mana.
 16. [x] The AI sat next to an empty city it could take, boxed in, instead of taking it.
-17. [ ] Colors still very brown (#43; visual, later).
+17. [x] Colors: the map's terrain recolored (first pass, #43).
 
 ## Then
 - Faction content as the user designs it (Nexus trees first; Grove and Wastes later). The user owns unit designs and looks.
