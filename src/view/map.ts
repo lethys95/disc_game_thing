@@ -20,13 +20,15 @@ import { discard, discardChildren } from "#view/stage";
 import type { CameraPose, Stage } from "#view/stage";
 import { STRUCTURES } from "#rules/structures";
 import type { StructureKind } from "#rules/structures";
-import { MODEL_CHAINS, Models } from "#view/models";
+import { GROUND_VARIANTS, GroundTextures, MODEL_CHAINS, Models, skyTexture, TERRAIN_VARIANTS } from "#view/models";
 
 const SIZE = 1;
 /** How long a warband's figure takes to walk one hex. */
 export const HEX_STEP_MS = 190;
 /** Where the map camera sits relative to what it looks at. */
 const CAMERA_OFFSET = new THREE.Vector3(-3, 11, 11.2);
+/** The haze where the map sky's mountains meet the land (`assets/sky/map.webp`). */
+const HORIZON_MIST = 0x5a70a0;
 /** How far the camera stands from a city in its home view. */
 const CLOSE_UP_DISTANCE = 4.2;
 
@@ -53,6 +55,8 @@ export interface MapHighlights {
 
 interface HexTile {
   readonly mesh: THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial>;
+  /** The textured ground on top (`assets/art/ground/`), if the terrain has a texture. */
+  readonly cap: THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial> | null;
   readonly top: number;
   readonly color: THREE.Color;
   readonly roughness: number;
@@ -180,11 +184,13 @@ export class MapView {
   private readonly structures = new Map<string, { group: THREE.Group; label: HTMLDivElement }>();
   private readonly siteLayer = new THREE.Group();
   private readonly models = new Models();
+  private readonly ground = new GroundTextures();
 
   constructor(private readonly stage: Stage) {
-    const dusk = new THREE.Color(0x0b0a0c);
-    this.scene.background = dusk;
-    this.scene.fog = new THREE.FogExp2(dusk, 0.028);
+    const sky = skyTexture("map");
+    this.scene.background = sky ?? new THREE.Color(0x0b0a0c);
+    // The land beyond the map fades into the sky's misty horizon (sampled from the panorama), so the two meet.
+    this.scene.fog = sky ? new THREE.Fog(HORIZON_MIST, 24, 55) : new THREE.FogExp2(0x0b0a0c, 0.028);
     this.scene.add(new THREE.HemisphereLight(0x8a98b8, 0x1c1c22, 0.95));
     const keyLight = new THREE.DirectionalLight(0xffe4c8, 3);
     keyLight.position.set(-6, 12, 8);
@@ -197,7 +203,7 @@ export class MapView {
     const rim = new THREE.DirectionalLight(0x7f9cff, 1.2);
     rim.position.set(8, 5, -10);
     this.scene.add(rim);
-    const ground = new THREE.Mesh(new THREE.CircleGeometry(60, 48), new THREE.MeshStandardMaterial({ color: 0x0f0e0d, roughness: 1 }));
+    const ground = new THREE.Mesh(new THREE.CircleGeometry(400, 64), new THREE.MeshStandardMaterial({ color: sky ? 0x1c2230 : 0x0f0e0d, roughness: 1 }));
     ground.rotation.x = -Math.PI / 2;
     ground.receiveShadow = true;
     this.scene.add(ground);
@@ -247,6 +253,8 @@ export class MapView {
     discardChildren(this.terrain);
     this.hexes.clear();
     const prism = new THREE.CylinderGeometry(SIZE * 0.95, SIZE * 0.97, 1, 6);
+    // Lying flat, its corners where the prism's are (a cylinder's first corner points along +z).
+    const capShape = new THREE.CircleGeometry(SIZE * 0.95, 6, Math.PI / 2).rotateX(-Math.PI / 2);
     const trunk = new THREE.MeshStandardMaterial({ color: 0x1a1512, roughness: 1 });
     const canopy = new THREE.MeshStandardMaterial({ color: 0x1a2c1e, roughness: 0.95 });
     const rock = new THREE.MeshStandardMaterial({ color: 0x3c3f47, roughness: 0.9, flatShading: true });
@@ -266,41 +274,66 @@ export class MapView {
       mesh.userData = { hex: tile.hex };
       this.terrain.add(mesh);
       const decoration: THREE.Object3D[] = [];
-      this.hexes.set(hexKey(tile.hex), { mesh, top: look.height, color: material.color.clone(), roughness: material.roughness, metalness: material.metalness, decoration });
+      // The ground: a textured hexagon over the prism's top, turned in steps of 60° so neighbours differ.
+      const texture = this.ground.get(tile.terrain, 1 + Math.floor(jitter(tile.hex, 60) * GROUND_VARIANTS));
+      const cap = texture ? new THREE.Mesh(capShape, new THREE.MeshStandardMaterial({ map: texture, roughness: 0.95, emissive: NONE.clone() })) : null;
+      if (cap) {
+        cap.position.set(at.x, look.height + 0.003, at.z);
+        cap.rotation.y = Math.floor(jitter(tile.hex, 61) * 6) * (Math.PI / 3);
+        cap.receiveShadow = true;
+        cap.userData = { hex: tile.hex };
+        this.terrain.add(cap);
+      }
+      this.hexes.set(hexKey(tile.hex), { mesh, cap, top: look.height, color: material.color.clone(), roughness: material.roughness, metalness: material.metalness, decoration });
 
+      // Terrain props: a model slot per kind with several variants (`view/models.ts`), picked per hex by jitter so
+      // no two hexes look copied; the hand-built shapes stay where a slot has no model yet.
+      const prop = (placeholder: THREE.Object3D | null, kind: string, variants: number, salt: number, x: number, z: number, height: number, width: number) => {
+        const host = new THREE.Group();
+        if (placeholder) host.add(placeholder);
+        host.position.set(at.x + x, look.height, at.z + z);
+        host.rotation.y = jitter(tile.hex, salt + 50) * Math.PI * 2;
+        host.traverse((o) => {
+          o.castShadow = true;
+        });
+        this.terrain.add(host);
+        decoration.push(host);
+        const variant = 1 + Math.floor(jitter(tile.hex, salt) * variants);
+        this.models.dress(host, [`terrain/${kind}-${variant}`, `terrain/${kind}-1`], height, width);
+      };
       if (tile.terrain === "forest") {
-        for (let i = 0; i < 3; i++) {
-          const angle = (i / 3) * Math.PI * 2 + jitter(tile.hex, i) * 1.5;
+        // A ring of five and one in the middle: a forest should read as a forest from the map's height.
+        for (let i = 0; i < 6; i++) {
+          const angle = (i / 5) * Math.PI * 2 + jitter(tile.hex, i) * 1.0;
+          const reach = i === 5 ? 0.08 : 0.38 + jitter(tile.hex, i + 20) * 0.18;
+          const height = 0.75 + jitter(tile.hex, i + 10) * 0.4;
           const tree = new THREE.Group();
-          const height = 0.5 + jitter(tile.hex, i + 10) * 0.35;
           const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.05, height, 5), trunk);
           stem.position.y = height / 2;
           const crown = new THREE.Mesh(new THREE.ConeGeometry(0.2, height * 0.9, 6), canopy);
           crown.position.y = height * 0.85;
           tree.add(stem, crown);
-          tree.position.set(at.x + Math.cos(angle) * 0.45, look.height, at.z + Math.sin(angle) * 0.45);
-          tree.traverse((o) => {
-            o.castShadow = true;
-          });
-          this.terrain.add(tree);
-          decoration.push(tree);
+          prop(tree, "tree", TERRAIN_VARIANTS.tree, i + 30, Math.cos(angle) * reach, Math.sin(angle) * reach, height, 0.6);
         }
       }
       if (tile.terrain === "mountain") {
-        const peak = new THREE.Mesh(new THREE.ConeGeometry(0.7, 1.1 + jitter(tile.hex, 3) * 0.6, 5), rock);
-        peak.position.set(at.x, look.height + 0.5, at.z);
-        peak.rotation.y = jitter(tile.hex, 4) * Math.PI;
-        peak.castShadow = true;
-        this.terrain.add(peak);
-        decoration.push(peak);
+        const height = 1.1 + jitter(tile.hex, 3) * 0.6;
+        const peak = new THREE.Mesh(new THREE.ConeGeometry(0.7, height, 5), rock);
+        peak.position.y = height / 2;
+        prop(peak, "mountain", TERRAIN_VARIANTS.mountain, 4, 0, 0, height + 0.3, 1.8);
       }
       if (tile.terrain === "hills") {
         const mound = new THREE.Mesh(new THREE.SphereGeometry(0.55, 8, 5, 0, Math.PI * 2, 0, Math.PI / 2), material);
         mound.scale.y = 0.45;
-        mound.position.set(at.x, look.height, at.z);
-        mound.castShadow = true;
-        this.terrain.add(mound);
-        decoration.push(mound);
+        prop(mound, "hill", TERRAIN_VARIANTS.hill, 5, 0, 0, 0.3, 1.5);
+      }
+      // Plains get the odd bush or rock, off-center so a warband standing there stays clear.
+      if (tile.terrain === "plain") {
+        const roll = jitter(tile.hex, 6);
+        const x = (jitter(tile.hex, 7) - 0.5) * 0.9;
+        const z = 0.3 + jitter(tile.hex, 8) * 0.2;
+        if (roll < 0.2) prop(null, "bush", TERRAIN_VARIANTS.bush, 9, x, z, 0.28, 0.4);
+        else if (roll < 0.3) prop(null, "rock", TERRAIN_VARIANTS.rock, 10, x, z, 0.3, 0.45);
       }
     }
   }
@@ -593,7 +626,11 @@ export class MapView {
     for (const [key, tile] of this.hexes) {
       const explored = !vision || vision.explored.has(key);
       const visible = !vision || vision.visible.has(key);
-      const { mesh } = tile;
+      const { mesh, cap } = tile;
+      if (cap) {
+        cap.visible = explored;
+        cap.material.color.setScalar(visible ? 1 : REMEMBERED);
+      }
       mesh.material.color.copy(explored ? tile.color : UNEXPLORED);
       if (explored && !visible) mesh.material.color.multiplyScalar(REMEMBERED);
       mesh.material.roughness = explored ? tile.roughness : 1;
@@ -613,10 +650,12 @@ export class MapView {
     const walked = new Set(highlights.path.slice(0, highlights.walked).map(hexKey));
     const later = new Set(highlights.path.slice(highlights.walked).map(hexKey));
     const attack = highlights.attack ? hexKey(highlights.attack) : null;
-    for (const [key, { mesh }] of this.hexes) {
+    for (const [key, { mesh, cap }] of this.hexes) {
       const color = key === attack ? ATTACK : walked.has(key) ? WALK : later.has(key) ? LATER : highlights.reachable.has(key) ? REACH : NONE;
-      mesh.material.emissive.copy(color);
-      mesh.material.emissiveIntensity = color === ATTACK ? 1.2 : color === WALK ? 0.7 : 1;
+      for (const material of cap ? [mesh.material, cap.material] : [mesh.material]) {
+        material.emissive.copy(color);
+        material.emissiveIntensity = color === ATTACK ? 1.2 : color === WALK ? 0.7 : 1;
+      }
     }
   }
 

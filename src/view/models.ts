@@ -17,6 +17,57 @@ export const modelUrl = (chain: readonly string[]): string | null => {
   return null;
 };
 
+/** Ground textures for hex tops, `assets/ground/<terrain>-<n>.webp`, loaded once each. */
+const GROUND = import.meta.glob<string>("/assets/ground/*.webp", { eager: true, query: "?url", import: "default" });
+export const GROUND_VARIANTS = 3;
+
+export class GroundTextures {
+  private readonly loader = new THREE.TextureLoader();
+  private readonly loaded = new Map<string, THREE.Texture>();
+
+  /** The texture for this terrain and variant (falling back to variant 1), or null if the terrain has none. */
+  get(terrain: string, variant: number): THREE.Texture | null {
+    const url = GROUND[`/assets/ground/${terrain}-${variant}.webp`] ?? GROUND[`/assets/ground/${terrain}-1.webp`];
+    if (!url) return null;
+    let texture = this.loaded.get(url);
+    if (!texture) {
+      texture = this.loader.load(url);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.anisotropy = 8;
+      texture.userData["shared"] = true;
+      this.loaded.set(url, texture);
+    }
+    return texture;
+  }
+}
+
+const SKIES = import.meta.glob<string>("/assets/sky/*.webp", { eager: true, query: "?url", import: "default" });
+
+/** A panorama wrapped around a scene as its background (`assets/sky/<name>.webp`), or null if there's none. */
+export function skyTexture(name: string): THREE.Texture | null {
+  const url = SKIES[`/assets/sky/${name}.webp`];
+  if (!url) return null;
+  const texture = new THREE.TextureLoader().load(url);
+  texture.mapping = THREE.EquirectangularReflectionMapping;
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+}
+
+/** How many variants each terrain prop has (`terrain/<kind>-<n>.glb`). */
+export const TERRAIN_VARIANTS = { tree: 4, mountain: 3, hill: 2, rock: 2, bush: 2 } as const;
+
+/** Every model slot the map can show, for the orphan check (`tests/models.test.ts`). */
+export function modelSlots(factions: readonly string[], structures: readonly string[], nodes: readonly string[]): string[] {
+  return [
+    ...factions.flatMap((f) => MODEL_CHAINS.capitol(f)),
+    ...MODEL_CHAINS.city(),
+    ...structures.flatMap((s) => MODEL_CHAINS.structure(s)),
+    ...nodes.flatMap((n) => MODEL_CHAINS.node(n)),
+    ...MODEL_CHAINS.dungeon(),
+    ...Object.entries(TERRAIN_VARIANTS).flatMap(([kind, count]) => Array.from({ length: count }, (_, i) => `terrain/${kind}-${i + 1}`)),
+  ];
+}
+
 /** Model slots: the map's places by kind (a Capitol may have one per faction). */
 export const MODEL_CHAINS = {
   capitol: (faction: string | null) => [...(faction ? [`site/capitol-${faction}`] : []), "site/capitol"],

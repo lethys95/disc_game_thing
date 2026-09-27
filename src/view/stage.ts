@@ -189,7 +189,8 @@ export function discard(object: THREE.Object3D): void {
     child.geometry.dispose();
     const materials: THREE.Material[] = Array.isArray(child.material) ? child.material : [child.material];
     for (const material of materials) {
-      if (material instanceof THREE.MeshStandardMaterial) material.map?.dispose();
+      // Textures a cache hands out (`view/models.ts`) outlive any one place.
+      if (material instanceof THREE.MeshStandardMaterial && !material.map?.userData["shared"]) material.map?.dispose();
       material.dispose();
     }
   });
