@@ -17,3 +17,6 @@ Not limited to these: more Capitol functions can be added later.
 - (d) Research: each line grows down from its tier-1 unit; archetype tabs Melee, Support, Mage and Joker (empty until designed). The connectors only rise straight up so far.
 - (e) Spells, as before. Ordinary cities get Home and Garrison.
 
+## The city view the user means (2026-09-27)
+Not the map camera close up (what M41 built as a stand-in): a **painted town screen**, like HoMM3's town view (`references/homm3-town.png`: the whole town as one scene, each building its own piece) or Disciples II's city screen (`references/disciples2-city.png`: a dark painted city filling the view, an ornate panel on the right with round buttons and stone plaques). "A side thing" for now.
+

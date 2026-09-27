@@ -5,3 +5,11 @@
 - **Idea (user):** several terrain types, and a city's possible nodes depend on its terrain: haunted woods might spawn a witch hut, a regular forest the Cathedral, and so on.
 - **Biomes (user, 2026-09-27):** "I do like the idea of different biomes with different nodes, cities, etc." More biomes than forests will be needed later; a forest to begin with is fine.
 
+## The user's read of the dressed map (2026-09-27, M43–M44)
+- Foliage needs work.
+- There's a lighting problem.
+- The props are rather low poly (the dungeon especially): we'll very likely need TRELLIS.2.
+- Many hills and rocks look "just dumped in": they don't sit into the ground.
+- WASD panning should glide smoothly.
+- The user will playtest after the UI elements.
+

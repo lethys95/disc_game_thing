@@ -77,3 +77,7 @@ The game now has art slots (`docs/engineering.md` → Art). Installed from the u
 
 ## Environment (user, 2026-09-26)
 Regular trees, maybe with autumn colors; withered trees for the Grove's decay. Not every tree shows the life/death dichotomy; no skeleton trees. The agent-built Grove tree (`art/blender/grove-tree/`) was a nice test, too literal.
+
+## UI references (user, 2026-09-27)
+Disciples II's city screen (`references/disciples2-city.png`): the ornate right-hand panel (carved metal and stone, round buttons, pale marble plaques for names and pictures). Also Diablo II's HUD; gargoyles, statues and arches fit.
+
