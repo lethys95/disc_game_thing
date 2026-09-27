@@ -115,3 +115,13 @@ describe("fog of war", () => {
     if (near) expect(newsText([{ type: "captured", cityId: near.id, player: 1 }], w, 0)).toBe("The enemy takes the city.");
   });
 });
+
+describe("what a player knows of the others", () => {
+  test("only their faction, color and whether they're out; never their gold, spells or research", () => {
+    const w = createWorld(1, twoPlayers([squad, squad], [{}, {}], ["jilliath", "jilliath"]));
+    const rich = { ...w, players: w.players.map((pl, i) => (i === 1 ? { ...pl, gold: 999, research: ["city_resurrection"], spells: ["bless_warband"] } : pl)) };
+    const seen = playerOf(knownWorld(rich, 0), 1);
+    expect([seen.gold, seen.research, seen.spells, seen.faction]).toEqual([0, [], [], "jilliath"]);
+    expect(playerOf(knownWorld(rich, 1), 1).gold).toBe(999);
+  });
+});
