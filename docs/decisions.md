@@ -123,3 +123,6 @@ The sims have no animation; their time was the AI replaying the same battles. Pr
 
 **2026-09-27 — Retreat: every faction unit can flee a battle (the user's surrender design from the Godot attempt).**
 Retreat is a basic main action (R): the unit turns its back and loses its next turn, then leaves the battle alive at the start of the one after, keeping its health; it isn't a kill, so the enemy gains no XP for it. Guardians and neutrals lack it; defenders in a city are cornered and can't. A side with nobody left on the field loses as usual. The AI doesn't retreat yet. Also: Resolve now (D2's auto-resolve) plays a battle to its end at once.
+
+**2026-09-27 — The map AI guards its Capitol and gangs up (momentum, user's playtest).**
+Losing AI Capitols fell holding only their Guardian (user: "less the Guardian being bad than bad decisions"). The AI now fills its Capitol garrison with spare gold once its warbands are full. And it blitzes: an enemy warband that none of its warbands beats alone, but two or more can reach this turn, is attacked in a chain (after spells) when the chain destroys it; sieges use the same chain and now count as won when the Capitol changes hands, which also fixes sieges in games of 3+ players. Mirror games went from a median of turn 32 to 43. The earlier 12–4 seat split was noise: 26–22 over 48 more seeds.

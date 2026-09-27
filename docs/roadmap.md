@@ -76,7 +76,7 @@ The canon overworld spell system with placeholder spells (#51): typed mana, lear
 6. [x] Homing Lightning is never worth it next to Burst: rebalance.
 7. [x] The AI put Technicians in the front row with room in the back.
 8. [x] Cities and the Capitol heal garrisons and visiting warbands, more than now (resurrected units stay at 1 HP otherwise).
-9. [ ] Momentum snowballs: an early lead decides the game. (Discuss; partly the AI, partly design.)
+9. [x] Momentum: the AI now guards its Capitol and blitzes strong warbands; retreat and Resolve now exist (user's ideas). More to learn from playtests.
 10. [x] Maps too small: the enemy Capitol is two turns away ("spawn camping").
 11. [x] Camera: pan without moving a warband; orbit around the map's middle.
 12. [x] Blacksmith: +10 attack for units recruited in its city (not every battle).

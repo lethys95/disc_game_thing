@@ -65,25 +65,48 @@ function threatened(world: World, leader: Leader, hex: Hex, wins: Wins): boolean
 }
 
 /**
- * A siege: this side's warbands that can reach the enemy Capitol this turn attack it one after another (wounds
- * carry over, and the Capitol only heals between turns). Returns the first attacker of an order that brings the
- * Guardian down, or null. A lone assault that fails makes the garrison stronger (it earns XP), so the AI commits
- * only to chains that win.
+ * A chain of attacks: this side's warbands that can reach `hex` this turn attack it one after another (wounds carry
+ * over; nothing heals between). Returns the first attacker of an order after which `won` holds, or null. A lone
+ * assault that fails feeds the enemy XP, so the AI commits only to chains that win. Used for sieges, and for ganging
+ * up on an enemy warband no single one of ours can beat (the user's "blitz": layer squads on a snowballed one).
  */
-function siegeOpener(world: World, capitolHex: Hex, memo: BattleMemo): string | null {
+function chainOpener(world: World, hex: Hex, memo: BattleMemo, won: (w: World) => boolean): string | null {
   const side = world.activePlayer;
-  const ready = world.leaders.filter((l) => l.player === side && l.fellOnTurn === null && planMove(world, l.id, capitolHex)?.target);
+  const ready = world.leaders.filter((l) => l.player === side && l.fellOnTurn === null && planMove(world, l.id, hex)?.target);
   if (ready.length === 0) return null;
   const orders = [[...ready].sort((a, b) => strength(a.squad) - strength(b.squad)), [...ready].sort((a, b) => strength(b.squad) - strength(a.squad))];
   for (const order of orders) {
     let w = world;
     for (const leader of order) {
-      if (w.outcome || !w.leaders.some((l) => l.id === leader.id) || !planMove(w, leader.id, capitolHex)?.target) continue;
-      const step = applyWorldAction(w, { type: "move", leaderId: leader.id, to: capitolHex }).world;
+      if (w.outcome || won(w) || !w.leaders.some((l) => l.id === leader.id) || !planMove(w, leader.id, hex)?.target) continue;
+      const step = applyWorldAction(w, { type: "move", leaderId: leader.id, to: hex }).world;
       w = step.engagement ? concludeBattle(step, played(memo, step.engagement.battle)).world : step;
     }
     const first = order[0];
-    if (w.outcome?.winner === side && first) return first.id;
+    if (won(w) && first) return first.id;
+  }
+  return null;
+}
+
+/** A siege: a chain on an enemy Capitol that ends with it no longer its owner's (its Guardian fell). */
+function siegeOpener(world: World, capitolHex: Hex, memo: BattleMemo): string | null {
+  const owner = world.cities.find((c) => sameHex(c.hex, capitolHex))?.owner ?? null;
+  return chainOpener(world, capitolHex, memo, (w) => !w.cities.some((c) => sameHex(c.hex, capitolHex) && c.owner === owner && owner !== null));
+}
+
+/**
+ * The blitz: an enemy warband in reach of two or more of ours that none of them beats alone, which a chain would
+ * destroy. Spells come first (they're cast before any march), so the chain meets it softened.
+ */
+function blitzOpener(world: World, memo: BattleMemo, wins: Wins): WorldAction | null {
+  const side = world.activePlayer;
+  const mine = world.leaders.filter((l) => l.player === side && l.fellOnTurn === null);
+  for (const enemy of world.leaders.filter((l) => l.player !== side)) {
+    const reaching = mine.filter((l) => planMove(world, l.id, enemy.hex)?.target?.kind === "leader");
+    if (reaching.length < 2) continue;
+    if (reaching.some((l) => wins(world, l.id, { kind: "leader", leaderId: enemy.id }))) continue;
+    const first = chainOpener(world, enemy.hex, memo, (w) => !w.leaders.some((l) => l.id === enemy.id));
+    if (first) return { type: "move", leaderId: first, to: enemy.hex };
   }
   return null;
 }
@@ -239,6 +262,12 @@ export function chooseWorldAction(truth: World, memo: BattleMemo = new Map()): W
     if (underThreat && !recruitProblem(world, guard, garrison)) {
       return { type: "recruit", defId: guard, into: garrison };
     }
+    // The Capitol is the loss condition: once the warbands are full, spare gold stands guard there (user's playtest:
+    // AI Capitols fell holding only their Guardian). A reserve stays for refilling warbands.
+    const warbandsReady = mine.length > 0 && mine.every((l) => l.squad.length >= leadershipOf(l));
+    if (warbandsReady && playerOf(world, side).gold >= (RECRUIT_COST[guard] ?? Infinity) + cost * 2 && !recruitProblem(world, guard, garrison)) {
+      return { type: "recruit", defId: guard, into: garrison };
+    }
     const rich = playerOf(world, side).gold >= cost * (STARTING_LEADERSHIP + 1);
     // Upgrades aren't retroactive: they pay off on units about to become that type, and on future recruits.
     const everyone = squadsOf(world, side).flatMap((h) => h.squad);
@@ -285,6 +314,9 @@ export function chooseWorldAction(truth: World, memo: BattleMemo = new Map()): W
     const opener = siegeOpener(world, target.hex, memo);
     if (opener) return { type: "move", leaderId: opener, to: target.hex };
   }
+
+  const blitz = blitzOpener(world, memo, wins);
+  if (blitz) return blitz;
 
   const rally = target !== undefined && siegeViable(world, target.hex, memo);
   const staging: { leader: Leader; to: Hex }[] = [];
