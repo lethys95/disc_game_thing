@@ -1,7 +1,8 @@
-import { STARTING_LEADERSHIP } from "#rules/balance";
+import { RESURRECTION_BASE, STARTING_LEADERSHIP } from "#rules/balance";
 import { forkOptions, openForks } from "#rules/forks";
 import { hexDistance, hexKey, neighbors, sameHex } from "#rules/hex";
 import { knownWorld } from "#rules/world/vision";
+import { NODES } from "#rules/nodes";
 import { castProblem, learnSpellProblem, spellTargets, spellVictims } from "#rules/world/spells";
 import { spellById, spellsOf } from "#rules/spells";
 import type { Hex } from "#rules/hex";
@@ -18,8 +19,7 @@ import { equipProblem, leadershipOf, movementOf } from "#rules/world/leaders";
 import { destination, planMove } from "#rules/world/movement";
 import type { MovePlan, MoveTarget } from "#rules/world/movement";
 import { playerOf, capitolOf, fullHp, lairAt, leaderAt } from "#rules/world/state";
-import type { Leader, SquadMember, SquadRef, World, WorldAction } from "#rules/world/state";
-import { RESURRECTION_BASE } from "#rules/balance";
+import type { City, Leader, PlayerId, SquadMember, SquadRef, World, WorldAction } from "#rules/world/state";
 
 /** The map AI. */
 
@@ -207,120 +207,204 @@ const strength = (squad: readonly SquadMember[]) => squad.reduce((sum, m) => sum
 const fullStrength = (squad: readonly SquadMember[]) => squad.reduce((sum, m) => sum + fullHp(m.defId), 0);
 
 /**
- * Map AI: fill the Capitol, raise a leader when it has none (or gold to spare), then march each leader on the
- * nearest target it can take. It uses deterministic battle forecasts both ways: it skips fights it would lose and
- * won't stop where an enemy could reach it next turn and win. Badly wounded leaders go home to heal. It plans from
- * what it knows (fog of war), and explores when it knows of nothing to do.
+ * What every planner needs, worked out once per decision: the world as this player knows it, battle forecasts, its
+ * Capitol and warbands, and its gold with the reserve it keeps for refilling warbands.
  */
-export function chooseWorldAction(truth: World, memo: BattleMemo = new Map()): WorldAction {
+interface AiContext {
+  readonly world: World;
+  readonly side: PlayerId;
+  readonly memo: BattleMemo;
+  readonly wins: Wins;
+  readonly capitol: City | undefined;
+  readonly mine: readonly Leader[];
+  /** Its tier-1 units, and the cheapest one's price. */
+  readonly roots: readonly string[];
+  readonly cost: number;
+  readonly gold: number;
+  /** Whether it can pay `price` and still fill a new warband afterwards. */
+  readonly spareFor: (price: number) => boolean;
+  /** Gold enough for a whole new warband and one more unit. */
+  readonly rich: boolean;
+  /** A warband of its own standing in the Capitol. */
+  readonly home: Leader | undefined;
+  /** An enemy warband could attack the Capitol next turn. */
+  readonly underThreat: boolean;
+  /** The nearest enemy Capitol: the siege target. */
+  readonly target: City | undefined;
+  /** The root unit a squad has fewest of: recruits keep armies mixed. */
+  readonly pick: (squad: readonly SquadMember[]) => string;
+}
+
+type Planner = (ai: AiContext) => WorldAction | null;
+
+/** Would an enemy warband, with a fresh turn's movement, reach `hex` with an attack? */
+function reachedByEnemy(world: World, side: PlayerId, hex: Hex): boolean {
+  return world.leaders.some((l) => l.player !== side && planMove({ ...world, leaders: world.leaders.map((x) => (x.id === l.id ? { ...x, movement: movementOf(x) } : x)) }, l.id, hex)?.target);
+}
+
+function aiContext(truth: World, memo: BattleMemo): AiContext {
   const side = truth.activePlayer;
   const world = knownWorld(truth, side);
-  const wins = winsCache(memo);
   const capitol = capitolOf(world, side);
   const mine = world.leaders.filter((l) => l.player === side);
   const roots = FACTION_ROOTS[playerOf(world, side).faction];
   const cost = Math.min(...roots.map((r) => RECRUIT_COST[r] ?? Infinity));
-  // Recruit whichever root unit the target squad has fewest of, for a mixed army.
-  const pick = (squad: readonly SquadMember[]) =>
-    [...roots].sort((a, b) => squad.filter((m) => m.defId === a).length - squad.filter((m) => m.defId === b).length)[0] ?? roots[0] ?? "";
+  const gold = playerOf(world, side).gold;
+  const base = capitol?.hex ?? mine[0]?.hex;
+  return {
+    world,
+    side,
+    memo,
+    wins: winsCache(memo),
+    capitol,
+    mine,
+    roots,
+    cost,
+    gold,
+    spareFor: (price) => gold >= price + cost * STARTING_LEADERSHIP,
+    rich: gold >= cost * (STARTING_LEADERSHIP + 1),
+    home: capitol ? mine.find((l) => sameHex(l.hex, capitol.hex)) : undefined,
+    underThreat: capitol !== undefined && reachedByEnemy(world, side, capitol.hex),
+    target: world.cities
+      .filter((c) => c.kind === "capitol" && c.owner !== side && c.owner !== null)
+      .sort((a, b) => (base ? hexDistance(base, a.hex) - hexDistance(base, b.hex) : 0))[0],
+    pick: (squad) => [...roots].sort((a, b) => squad.filter((m) => m.defId === a).length - squad.filter((m) => m.defId === b).length)[0] ?? roots[0] ?? "",
+  };
+}
 
+/** Leader tree points and carried items: free, so first. */
+const leaderUpkeep: Planner = ({ world, mine }) => {
   for (const leader of mine) {
     const skill = AI_SKILL_ORDER.find((s) => !learnSkillProblem(world, leader.id, s));
     if (skill) return { type: "learn", leaderId: leader.id, skill };
-    // Whatever it carries and can wear, it wears.
     const item = leader.bag.find((i) => !equipProblem(leader, i));
     if (item) return { type: "equip", leaderId: leader.id, item };
   }
+  return null;
+};
 
-  if (capitol) {
-    const home = mine.find((l) => sameHex(l.hex, capitol.hex));
-    // Choosing is free, so the AI settles every fork it can reach right away.
-    const fork = openForks(playerOf(world, side).faction, playerOf(world, side).commitment)[0];
-    if (fork) {
-      const options = forkOptions(fork);
-      const to = options.find((o) => AI_PREFERRED_BRANCHES.includes(o)) ?? options[0];
-      if (to && !chooseBranchProblem(world, fork, to)) return { type: "choose", fork, to };
-    }
-    const spare = (price: number) => playerOf(world, side).gold >= price;
-    const fallen = mine.find((l) => !reviveProblem(world, l.id));
-    if (fallen) return { type: "revive", leaderId: fallen.id };
+/** Choosing is free, so the AI settles every fork it can reach right away. */
+const forks: Planner = ({ world, side, capitol }) => {
+  if (!capitol) return null;
+  const fork = openForks(playerOf(world, side).faction, playerOf(world, side).commitment)[0];
+  if (!fork) return null;
+  const options = forkOptions(fork);
+  const to = options.find((o) => AI_PREFERRED_BRANCHES.includes(o)) ?? options[0];
+  return to && !chooseBranchProblem(world, fork, to) ? { type: "choose", fork, to } : null;
+};
 
-    const garrison: SquadRef = { kind: "garrison", cityId: capitol.id };
-    const into: SquadRef = home ? { kind: "warband", leaderId: home.id } : garrison;
-    const bargain = playerOf(world, side).graveyard
-      .map((fallen, index) => ({ index, tier: UNITS[fallen.defId]?.tier ?? 1, cost: resurrectionCost(world, side, index) ?? Infinity }))
-      .filter((f) => f.tier >= 2 && f.cost === RESURRECTION_BASE * f.tier && spare(f.cost) && !resurrectProblem(world, f.index, into))
-      .sort((a, b) => b.tier - a.tier)[0];
-    if (bargain) return { type: "resurrect", index: bargain.index, into };
+const revival: Planner = ({ world, capitol, mine }) => {
+  if (!capitol) return null;
+  const fallen = mine.find((l) => !reviveProblem(world, l.id));
+  return fallen ? { type: "revive", leaderId: fallen.id } : null;
+};
 
-    if (home) {
-      const defId = pick(home.squad);
-      if (spare(RECRUIT_COST[defId] ?? Infinity) && !recruitProblem(world, defId, { kind: "warband", leaderId: home.id })) {
-        return { type: "recruit", defId, into: { kind: "warband", leaderId: home.id } };
-      }
-    }
-    // Under threat, recruits stand with the Guardian; a fresh leader in the Capitol would only be picked off.
-    const underThreat = world.leaders.some((l) => l.player !== side && planMove({ ...world, leaders: world.leaders.map((x) => (x.id === l.id ? { ...x, movement: movementOf(x) } : x)) }, l.id, capitol.hex)?.target);
-    const guard = pick(capitol.garrison);
-    if (underThreat && !recruitProblem(world, guard, garrison)) {
-      return { type: "recruit", defId: guard, into: garrison };
-    }
-    // The Capitol is the loss condition: once the warbands are full, spare gold stands guard there (user's playtest:
-    // AI Capitols fell holding only their Guardian). A reserve stays for refilling warbands.
-    const warbandsReady = mine.length > 0 && mine.every((l) => l.squad.length >= leadershipOf(l));
-    if (warbandsReady && playerOf(world, side).gold >= (RECRUIT_COST[guard] ?? Infinity) + cost * 2 && !recruitProblem(world, guard, garrison)) {
-      return { type: "recruit", defId: guard, into: garrison };
-    }
-    const rich = playerOf(world, side).gold >= cost * (STARTING_LEADERSHIP + 1);
-    // Upgrades aren't retroactive: they pay off on units about to become that type, and on future recruits.
-    const everyone = squadsOf(world, side).flatMap((h) => h.squad);
-    const upgrade = upgradesOf(playerOf(world, side).faction)
-      .map((u) => ({ u, value: everyone.filter((m) => nextForm(m.defId, playerOf(world, side).commitment) === u.unitType).length + (roots.includes(u.unitType) ? 1 : 0) }))
-      .filter(({ u, value }) => value > 0 && playerOf(world, side).gold >= u.price + cost * STARTING_LEADERSHIP && !upgradeProblem(world, u.id))
-      .sort((a, b) => b.value - a.value)[0];
-    if (upgrade) return { type: "upgrade", upgrade: upgrade.u.id };
-    // Spells with spare gold, cheapest first.
-    const spell = spellsOf(playerOf(world, side).faction)
-      .filter((s) => !learnSpellProblem(world, s.id) && playerOf(world, side).gold >= s.learnCost + cost * STARTING_LEADERSHIP)
-      .sort((a, b) => a.learnCost - b.learnCost)[0];
-    if (spell && rich) return { type: "learnSpell", spell: spell.id };
-    // Walls with spare gold: the Capitol first (it's the loss condition), then the cheapest city.
-    const walls = world.cities
-      .filter((c) => c.owner === side && !upgradeCityProblem(world, c.id) && playerOf(world, side).gold >= cityUpgradeCost(c) + cost * STARTING_LEADERSHIP)
-      .sort((a, b) => Number(b.kind === "capitol") - Number(a.kind === "capitol") || cityUpgradeCost(a) - cityUpgradeCost(b))[0];
-    if (walls && rich) return { type: "upgradeCity", cityId: walls.id };
-    // Mines pay for themselves; invest with spare gold, cheapest first.
-    const mineToInvest = world.nodes
-      .filter((n) => n.kind === "gold" && !investNodeProblem(world, n.id) && playerOf(world, side).gold >= nodeInvestCost(n) + cost * STARTING_LEADERSHIP)
-      .sort((a, b) => nodeInvestCost(a) - nodeInvestCost(b))[0];
-    if (mineToInvest && rich) return { type: "investNode", nodeId: mineToInvest.id };
-    // Under threat, only with the gold to fill the new warband at once: a lone new leader stands in front of the
-    // garrison and only feeds the enemy XP. New warbands only once the existing ones are full.
-    const canFill = playerOf(world, side).gold >= cost * STARTING_LEADERSHIP;
-    const warbandsFull = mine.every((l) => l.squad.length >= leadershipOf(l));
-    if (!home && (!underThreat || canFill) && (mine.length === 0 || (rich && warbandsFull && mine.length < AI_MAX_WARBANDS))) {
-      const spare = capitol.garrison.find((m) => m.defId !== GUARDIAN_ID);
-      if (spare && !elevateProblem(world, spare.tile)) return { type: "elevate", tile: spare.tile };
-      if (!recruitProblem(world, guard, garrison)) return { type: "recruit", defId: guard, into: garrison };
-    }
-  }
+/** Tier 2+ dead, once their price has fallen to its floor. */
+const bargains: Planner = ({ world, side, capitol, home, gold }) => {
+  if (!capitol) return null;
+  const into: SquadRef = home ? { kind: "warband", leaderId: home.id } : { kind: "garrison", cityId: capitol.id };
+  const bargain = playerOf(world, side)
+    .graveyard.map((fallen, index) => ({ index, tier: UNITS[fallen.defId]?.tier ?? 1, cost: resurrectionCost(world, side, index) ?? Infinity }))
+    .filter((f) => f.tier >= 2 && f.cost === RESURRECTION_BASE * f.tier && gold >= f.cost && !resurrectProblem(world, f.index, into))
+    .sort((a, b) => b.tier - a.tier)[0];
+  return bargain ? { type: "resurrect", index: bargain.index, into } : null;
+};
 
-  const cast = chooseCast(world);
-  if (cast) return cast;
+/** A warband at home takes recruits first. */
+const recruitHome: Planner = ({ world, home, gold, pick }) => {
+  if (!home) return null;
+  const defId = pick(home.squad);
+  const into: SquadRef = { kind: "warband", leaderId: home.id };
+  return gold >= (RECRUIT_COST[defId] ?? Infinity) && !recruitProblem(world, defId, into) ? { type: "recruit", defId, into } : null;
+};
 
-  // The nearest enemy Capitol (with several enemies, the closest one is the siege target).
-  const base = capitol?.hex ?? mine[0]?.hex;
-  const target = world.cities
-    .filter((c) => c.kind === "capitol" && c.owner !== side && c.owner !== null)
-    .sort((a, b) => (base ? hexDistance(base, a.hex) - hexDistance(base, b.hex) : 0))[0];
-  if (target) {
-    const opener = siegeOpener(world, target.hex, memo);
-    if (opener) return { type: "move", leaderId: opener, to: target.hex };
-  }
+/**
+ * The Capitol is the loss condition. Under threat, recruits stand with the Guardian (a fresh leader there would
+ * only be picked off); otherwise, once the warbands are full, spare gold stands guard there too (user's playtest:
+ * AI Capitols fell holding only their Guardian), keeping a reserve for refilling warbands.
+ */
+const guardCapitol: Planner = ({ world, capitol, mine, underThreat, gold, cost, pick }) => {
+  if (!capitol) return null;
+  const garrison: SquadRef = { kind: "garrison", cityId: capitol.id };
+  const guard = pick(capitol.garrison);
+  if (recruitProblem(world, guard, garrison)) return null;
+  const warbandsReady = mine.length > 0 && mine.every((l) => l.squad.length >= leadershipOf(l));
+  const spare = warbandsReady && gold >= (RECRUIT_COST[guard] ?? Infinity) + cost * 2;
+  return underThreat || spare ? { type: "recruit", defId: guard, into: garrison } : null;
+};
 
-  const blitz = blitzOpener(world, memo, wins);
-  if (blitz) return blitz;
+/** Upgrades aren't retroactive: they pay off on units about to become that type, and on future recruits. */
+const upgrades: Planner = ({ world, side, capitol, roots, spareFor }) => {
+  if (!capitol) return null;
+  const everyone = squadsOf(world, side).flatMap((h) => h.squad);
+  const commitment = playerOf(world, side).commitment;
+  const best = upgradesOf(playerOf(world, side).faction)
+    .map((u) => ({ u, value: everyone.filter((m) => nextForm(m.defId, commitment) === u.unitType).length + (roots.includes(u.unitType) ? 1 : 0) }))
+    .filter(({ u, value }) => value > 0 && spareFor(u.price) && !upgradeProblem(world, u.id))
+    .sort((a, b) => b.value - a.value)[0];
+  return best ? { type: "upgrade", upgrade: best.u.id } : null;
+};
 
+/** Spells with spare gold, cheapest first. */
+const learnSpells: Planner = ({ world, side, capitol, rich, spareFor }) => {
+  if (!capitol || !rich) return null;
+  const spell = spellsOf(playerOf(world, side).faction)
+    .filter((s) => !learnSpellProblem(world, s.id) && spareFor(s.learnCost))
+    .sort((a, b) => a.learnCost - b.learnCost)[0];
+  return spell ? { type: "learnSpell", spell: spell.id } : null;
+};
+
+/** Walls with spare gold: the Capitol first (it's the loss condition), then the cheapest city. */
+const walls: Planner = ({ world, side, capitol, rich, spareFor }) => {
+  if (!capitol || !rich) return null;
+  const city = world.cities
+    .filter((c) => c.owner === side && !upgradeCityProblem(world, c.id) && spareFor(cityUpgradeCost(c)))
+    .sort((a, b) => Number(b.kind === "capitol") - Number(a.kind === "capitol") || cityUpgradeCost(a) - cityUpgradeCost(b))[0];
+  return city ? { type: "upgradeCity", cityId: city.id } : null;
+};
+
+/** Nodes that pay gold pay for themselves: invest with spare gold, cheapest first. */
+const invest: Planner = ({ world, capitol, rich, spareFor }) => {
+  if (!capitol || !rich) return null;
+  const node = world.nodes
+    .filter((n) => NODES[n.kind].income(n.level + 1) > NODES[n.kind].income(n.level) && !investNodeProblem(world, n.id) && spareFor(nodeInvestCost(n)))
+    .sort((a, b) => nodeInvestCost(a) - nodeInvestCost(b))[0];
+  return node ? { type: "investNode", nodeId: node.id } : null;
+};
+
+/**
+ * A new warband: when there's none, or with gold to spare once the others are full (at most AI_MAX_WARBANDS). Under
+ * threat, only with the gold to fill it at once: a lone new leader stands in front of the garrison and only feeds
+ * the enemy XP.
+ */
+const newWarband: Planner = ({ world, capitol, mine, home, underThreat, rich, gold, cost, pick }) => {
+  if (!capitol || home) return null;
+  const canFill = gold >= cost * STARTING_LEADERSHIP;
+  const warbandsFull = mine.every((l) => l.squad.length >= leadershipOf(l));
+  if ((underThreat && !canFill) || !(mine.length === 0 || (rich && warbandsFull && mine.length < AI_MAX_WARBANDS))) return null;
+  const spare = capitol.garrison.find((m) => m.defId !== GUARDIAN_ID);
+  if (spare && !elevateProblem(world, spare.tile)) return { type: "elevate", tile: spare.tile };
+  const garrison: SquadRef = { kind: "garrison", cityId: capitol.id };
+  const guard = pick(capitol.garrison);
+  return recruitProblem(world, guard, garrison) ? null : { type: "recruit", defId: guard, into: garrison };
+};
+
+const castSpells: Planner = ({ world }) => chooseCast(world);
+
+const siege: Planner = ({ world, target, memo }) => {
+  if (!target) return null;
+  const opener = siegeOpener(world, target.hex, memo);
+  return opener ? { type: "move", leaderId: opener, to: target.hex } : null;
+};
+
+const blitz: Planner = ({ world, memo, wins }) => blitzOpener(world, memo, wins);
+
+/**
+ * Each warband's march: home when hurt (or short of units it can afford), closing in when a rally on the enemy
+ * Capitol would win, otherwise the nearest target it can take without being caught; failing all that, staging
+ * within reach of the enemy Capitol, then exploring.
+ */
+const marches: Planner = ({ world, side, capitol, mine, wins, memo, target, cost, gold }) => {
   const rally = target !== undefined && siegeViable(world, target.hex, memo);
   const staging: { leader: Leader; to: Hex }[] = [];
   for (const leader of mine) {
@@ -330,7 +414,7 @@ export function chooseWorldAction(truth: World, memo: BattleMemo = new Map()): W
     if (atHome && leader.squad.length < 3 && income(world, side) >= cost) continue;
     // Wounded, leaderless until revived, or short of units with the gold to fill them: home to the Capitol.
     const missing = leadershipOf(leader) - leader.squad.length;
-    const refill = missing >= 1 && playerOf(world, side).gold >= cost * missing;
+    const refill = missing >= 1 && gold >= cost * missing;
     const hurt = strength(leader.squad) < 0.5 * fullStrength(leader.squad) || leader.fellOnTurn !== null || refill;
     if (hurt && capitol && !atHome && !leaderAt(world, capitol.hex)) {
       const plan = planMove(world, leader.id, capitol.hex);
@@ -370,15 +454,47 @@ export function chooseWorldAction(truth: World, memo: BattleMemo = new Map()): W
     if (target && leader.fellOnTurn === null) {
       const plan = planMove(world, leader.id, target.hex);
       if (plan && !plan.target) {
-        const stops = plan.path.hexes.slice(0, plan.steps).reverse();
-        const stop = stops.find((hex) => !threatened(world, leader, hex, wins));
+        const stop = plan.path.hexes.slice(0, plan.steps).reverse().find((hex) => !threatened(world, leader, hex, wins));
         if (stop) staging.push({ leader, to: stop });
       }
     }
   }
   const approach = staging[0];
   if (approach) return { type: "move", leaderId: approach.leader.id, to: approach.to };
-  const scout = explore(world, mine, wins);
-  if (scout) return scout;
+  return explore(world, mine, wins);
+};
+
+/**
+ * The planners, in priority order: the first with something to do decides. Free choices first, then spending gold
+ * (the Capitol's safety before growth), then spells, then the army: sieges, blitzes, marches.
+ */
+const PLANNERS: readonly Planner[] = [
+  leaderUpkeep,
+  forks,
+  revival,
+  bargains,
+  recruitHome,
+  guardCapitol,
+  upgrades,
+  learnSpells,
+  walls,
+  invest,
+  newWarband,
+  castSpells,
+  siege,
+  blitz,
+  marches,
+];
+
+/**
+ * Map AI: plans from what it knows (fog of war), using deterministic battle forecasts both ways: it skips fights it
+ * would lose and won't stop where an enemy could reach it next turn and win. The planners above, in order.
+ */
+export function chooseWorldAction(truth: World, memo: BattleMemo = new Map()): WorldAction {
+  const ai = aiContext(truth, memo);
+  for (const plan of PLANNERS) {
+    const action = plan(ai);
+    if (action) return action;
+  }
   return { type: "endTurn" };
 }
