@@ -66,5 +66,7 @@ for (const seed of seeds.length > 0 ? seeds : [1, 2, 3, 4, 5]) {
     const garrisons = world.cities.filter((c) => c.kind === "capitol").map((c) => `${c.owner}{${c.garrison.map((m) => m.defId).join(",")}}`).join(" ");
     console.log(`  battles ${timeline.join(" ")}\n  lairs left ${world.lairs.filter((l) => l.guards.length > 0).length}\n  armies ${armies}\n  capitols ${garrisons}`);
   }
+  // For `sim-many`: the result as data, on a line of its own.
+  console.log(`RESULT ${JSON.stringify({ winner: world.outcome?.winner ?? null, turn: world.turn, battles })}`);
   console.log(`seed ${seed}: ${world.outcome ? `player ${world.outcome.winner} wins` : "cold war"} on turn ${world.turn}, ${battles} battles, gold ${world.players.map((p) => p.gold).join("/")}, leaders ${world.leaders.length} | ${owners} | ${JSON.stringify(tally)}`);
 }

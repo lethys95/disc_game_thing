@@ -46,12 +46,13 @@ function play(game: Game): Promise<Result> {
     child.stdout.on("data", (d: Buffer) => (out += d.toString()));
     child.stderr.on("data", (d: Buffer) => (err += d.toString()));
     child.on("close", () => {
-      const line = /seed \d+: (player (\d+) wins|cold war) on turn (\d+), (\d+) battles/.exec(out);
+      const line = /^RESULT (.*)$/m.exec(out)?.[1];
       if (!line) {
         resolve({ ...game, winner: null, turn: 0, battles: 0, failed: err.trim().split("\n").slice(-1)[0] ?? "no result" });
         return;
       }
-      resolve({ ...game, winner: line[2] === undefined ? null : Number(line[2]), turn: Number(line[3]), battles: Number(line[4]), failed: null });
+      const result: { winner: number | null; turn: number; battles: number } = JSON.parse(line);
+      resolve({ ...game, ...result, failed: null });
     });
   });
 }

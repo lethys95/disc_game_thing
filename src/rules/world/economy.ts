@@ -13,7 +13,7 @@ import { UPGRADES, upgradesFor } from "#rules/upgrades";
 import { FACTIONS } from "#rules/factions";
 import { playerOf, alive, banditGroup, capitolOf, cityById, cityOfNode, leaderAt, leaderById, leaderUnit, member, nodesHeldBy, nodesOf } from "#rules/world/state";
 import type { Enchantment, PlayerId, City, Leader, MapNode, Mark, SquadMember, SquadRef, Strength, World, WorldEvent } from "#rules/world/state";
-import { capacityOf, hexOf, ownerOf, squadAt } from "#rules/world/squads";
+import { capacityOf, cityOfSquad, ownerOf, squadAt } from "#rules/world/squads";
 
 /** Gold, recruiting, branch choices, resurrection, elevation, and the start of a side's turn. */
 
@@ -54,7 +54,7 @@ export function recruitProblem(world: World, defId: string, into: SquadRef, tile
 function placeProblem(world: World, into: SquadRef, tile: Tile | undefined, qualifies: (city: City) => boolean, refusal: string): string | null {
   const side = world.activePlayer;
   if (ownerOf(world, into) !== side) return "not your squad";
-  const city = into.kind === "garrison" ? cityById(world, into.cityId) : world.cities.find((c) => sameHex(c.hex, hexOf(world, into)));
+  const city = cityOfSquad(world, into);
   if (!city || !qualifies(city)) return into.kind === "garrison" ? refusal : `the warband must stand there: ${refusal}`;
   const squad = squadAt(world, into);
   if (squad.length >= capacityOf(world, into)) return into.kind === "warband" ? `squad full (Leadership ${capacityOf(world, into)})` : "garrison full";
@@ -118,19 +118,16 @@ export function resurrectProblem(world: World, index: number, into: SquadRef, ti
   const cost = resurrectionCost(world, side, index, city);
   if (cost === null) return "nobody there";
   if (playerOf(world, side).gold < cost) return "not enough gold";
-  const anywhere = playerOf(world, side).research.includes("city_resurrection");
-  return placeProblem(world, into, tile, (c) => raisesDeadAt(world, side, c), anywhere ? "only in a city you hold" : "only at the Capitol, until researched for cities");
+  const refusal = raisesDeadAnywhere(world, side) ? "only in a city you hold" : "only at the Capitol, until researched for cities";
+  return placeProblem(world, into, tile, (c) => raisesDeadAt(world, side, c), refusal);
 }
 
 /** Whether `player` can raise its dead in `city`: at its Capitol, or in any city it holds once researched. */
 export function raisesDeadAt(world: World, player: PlayerId, city: City): boolean {
-  return city.owner === player && (city.kind === "capitol" || playerOf(world, player).research.includes("city_resurrection"));
+  return city.owner === player && (city.kind === "capitol" || raisesDeadAnywhere(world, player));
 }
 
-/** The city a squad is in: a garrison's own, or the one a warband stands in. */
-export function cityOfSquad(world: World, ref: SquadRef): City | undefined {
-  return ref.kind === "garrison" ? cityById(world, ref.cityId) : world.cities.find((c) => sameHex(c.hex, hexOf(world, ref)));
-}
+const raisesDeadAnywhere = (world: World, player: PlayerId): boolean => playerOf(world, player).research.includes("city_resurrection");
 
 export function researchProblem(world: World, id: string): string | null {
   const side = world.activePlayer;
