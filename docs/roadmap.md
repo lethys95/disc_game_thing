@@ -86,10 +86,10 @@ The canon overworld spell system with placeholder spells (#51): typed mana, lear
 16. [x] The AI sat next to an empty city it could take, boxed in, instead of taking it.
 17. [x] Colors: the map's terrain recolored (first pass, #43).
 
-## M37 — Code review cleanup (in progress, 2026-09-27)
-The user asked for a review of the code for technical debt; four reviewers (battle, world, view, tooling) reported. Fixing in priority order; see decisions.md.
+## M37 — Code review cleanup (done, 2026-09-27)
+The user asked for a review of the code for technical debt; four reviewers (battle, world, view, tooling) reported. Fixed what M38 builds on; the rest is listed with reasons in engineering.md ("Debt").
 
-## M38 — Map structures (user, 2026-09-27; next)
+## M38 — Map structures (user, 2026-09-27; in progress)
 - **Mercenary camps:** recruit a few select neutral units, per map.
 - **Merchant:** buy and sell items.
 - **Mage merchant:** sells spells.
