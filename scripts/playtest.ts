@@ -1,55 +1,57 @@
 import { mkdir } from "node:fs/promises";
 import { chromium } from "playwright";
 import { createServer } from "vite";
+import battle from "#scripts/playtests/battle";
+import city from "#scripts/playtests/city";
+import { harness } from "#scripts/playtests/harness";
+import type { Playtest } from "#scripts/playtests/harness";
+import map from "#scripts/playtests/map";
+import save from "#scripts/playtests/save";
+import settings from "#scripts/playtests/settings";
+import setup from "#scripts/playtests/setup";
+import spells from "#scripts/playtests/spells";
 
-/** Plays a few player turns by clicking, like a person would, and screenshots along the way. */
+/**
+ * Plays the game by hand, like a person would: `pnpm playtest [name…]` runs the named playtests (all by default)
+ * against one dev server and one browser, each in a fresh context (its own storage). Fails on any page error.
+ */
+const PLAYTESTS: readonly Playtest[] = [battle, map, save, city, settings, setup, spells];
+
+const wanted = process.argv.slice(2).filter((a) => a !== "--");
+const unknown = wanted.filter((w) => !PLAYTESTS.some((p) => p.name === w));
+if (unknown.length > 0) throw new Error(`no playtest named ${unknown.join(", ")}; there are ${PLAYTESTS.map((p) => p.name).join(", ")}`);
+const chosen = wanted.length > 0 ? PLAYTESTS.filter((p) => wanted.includes(p.name)) : PLAYTESTS;
+
 const server = await createServer({ logLevel: "error", server: { port: 0 } });
 await server.listen();
 const base = server.resolvedUrls?.local[0];
 if (!base) throw new Error("vite did not report a local URL");
 const browser = await chromium.launch({ args: ["--use-angle=vulkan", "--enable-gpu", "--ignore-gpu-blocklist"] });
-const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
-const errors: string[] = [];
-page.on("pageerror", (e) => errors.push(e.message));
-page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
-await page.goto(new URL("/?debug&fight", base).href);
-await page.waitForSelector("body[data-ready=true]");
 await mkdir("shots", { recursive: true });
 
-type Point = { x: number; y: number };
-const tile = (side: number, row: number, col: number) =>
-  page.evaluate(
-    (ref) => (window as unknown as { discDebug: { tileScreen: (s: number, r: number, c: number) => Point } }).discDebug.tileScreen(ref.side, ref.row, ref.col),
-    { side, row, col },
-  );
-const waitPlayer = () => page.waitForFunction(() => document.querySelectorAll("#actions button").length > 0, null, { timeout: 20000 });
-
-for (let turn = 0; turn < 4; turn++) {
-  await waitPlayer();
-  const hint = await page.textContent("#hint");
-  const target = await tile(1, 0, turn % 3);
-  await page.mouse.move(target.x, target.y);
-  await page.waitForTimeout(150);
-  if (turn === 0) await page.screenshot({ path: "shots/playtest-aim.png" });
-  await page.mouse.click(target.x, target.y);
-  await page.waitForTimeout(250);
-  console.log(`turn ${turn}: ${hint}`);
+const failures: string[] = [];
+for (const test of chosen) {
+  const started = Date.now();
+  console.log(`${test.name}: ${test.about}`);
+  const context = await browser.newContext({ viewport: { width: 1280, height: 720 } });
+  const page = await context.newPage();
+  page.on("pageerror", (e) => failures.push(`${test.name}: page error: ${e.message}`));
+  page.on("console", (m) => {
+    if (m.type() === "error") failures.push(`${test.name}: console error: ${m.text()}`);
+  });
+  try {
+    await test.run(harness(page, base, failures, test.name));
+  } catch (error) {
+    failures.push(`${test.name}: ${error instanceof Error ? error.message : String(error)}`);
+    await page.screenshot({ path: `shots/failed-${test.name}.png` });
+  }
+  await context.close();
+  console.log(`  (${((Date.now() - started) / 1000).toFixed(1)} s)`);
 }
-await waitPlayer();
-// The keyboard: D defends, as its button says.
-const before = await page.evaluate(() => (window as unknown as { discDebug: { log: () => string[] } }).discDebug.log().length);
-await page.keyboard.press("d");
-await page.waitForFunction((n) => (window as unknown as { discDebug: { log: () => string[] } }).discDebug.log().length > n, before, { timeout: 5000 });
-const pressed = await page.evaluate((n) => (window as unknown as { discDebug: { log: () => string[] } }).discDebug.log().slice(n), before);
-console.log(`hotkey d: ${pressed[0]}`);
-if (!pressed[0]?.includes("Defend")) errors.push(`the D hotkey did not defend: ${pressed.join(" | ")}`);
-await waitPlayer();
-await page.screenshot({ path: "shots/playtest-after.png" });
-const log = await page.evaluate(() => (window as unknown as { discDebug: { log: () => string[] } }).discDebug.log());
-console.log(log.slice(-12).join("\n"));
 await browser.close();
 await server.close();
-if (errors.length) {
-  console.error(errors.join("\n"));
+if (failures.length > 0) {
+  console.error(`\n${failures.join("\n")}`);
   process.exit(1);
 }
+console.log(`${chosen.length} playtests passed`);

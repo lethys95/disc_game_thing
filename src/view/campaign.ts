@@ -292,7 +292,8 @@ export class Campaign {
     return mine.find((l) => l.id === this.selected) ?? mine.find((l) => l.movement > 0) ?? mine[0];
   }
 
-  private myTurn(): boolean {
+  /** Whether the map waits for the viewer's orders. */
+  myTurn(): boolean {
     const world = this.world;
     return world !== null && !this.busy && !world.outcome && !world.engagement && world.activePlayer === this.viewer;
   }

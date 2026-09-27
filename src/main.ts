@@ -119,6 +119,8 @@ if (params.has("debug")) {
       leaderHex: (side: 0 | 1) => campaign.hexOfLeader(side),
       capitolHex: (side: 0 | 1) => campaign.capitolHex(side),
       log: () => [...document.querySelectorAll("#log .entry")].map((e) => e.textContent),
+      /** What waits for the player's input now, so playtests wait on state rather than on time. */
+      awaiting: (): "battle" | "map" | null => (app.playersTurn() ? "battle" : campaign.myTurn() ? "map" : null),
     },
   });
 }

@@ -188,7 +188,8 @@ export class App {
     this.hud.setVisible(false);
   }
 
-  private playersTurn(): boolean {
+  /** Whether the battle waits for the player's action. */
+  playersTurn(): boolean {
     const battle = this.battle;
     const id = battle?.current?.unitId;
     const unit = id ? battle?.units[id] : undefined;

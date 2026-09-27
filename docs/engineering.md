@@ -71,7 +71,7 @@ The step-by-step recipes (units, abilities, effects, nodes, forks, recording the
 - **Sims are bundled** (`scripts/bundle-sims.sh`, esbuild into `.sim/`) and run as plain node. `pnpm sim:many --seeds 1-16 "a,b" "c,d"` plays whole AI games in parallel, one process per game (about 100 s for 48 games on this machine); run it in the background, or in a worktree, while developing. Profile with `node --cpu-prof .sim/sim-world.mjs <seed>`.
 - **AI speed:** the map AI replays battles through a `BattleMemo` the caller keeps (the worker, the sims); the battle context caches trait lists; the engine copies battles by hand (`cloneBattle`), not with structuredClone. A seed that took 65 s takes about 7.
 - `pnpm sim:t1` plays tier-1 squads of Jilliath and Nexus against each other (battle only); the balance check while factions grow.
-- `pnpm verify` before calling anything done: types, tests, a screenshot, and the click-through playtests (battle, map, save/load).
+- `pnpm verify` before calling anything done: types, tests, a screenshot, and the click-through playtests (`scripts/playtests/`, one harness).
 - **Changing the World's shape? Bump `SAVE_VERSION`** (`src/rules/save.ts`) and update the snapshot (`pnpm vitest -u tests/save.test.ts`); the shape test fails until you do. Old saves are then refused, never migrated.
 
 ## Gotchas
