@@ -48,3 +48,27 @@ describe("the round limit (#52, provisional)", () => {
     expect(Object.values(battle.units).some((u) => u.side === 0 && u.alive)).toBe(true);
   });
 });
+
+describe("Retreat (the user's surrender design)", () => {
+  test("a unit that retreats loses its next turn, then leaves alive; the battle goes on", () => {
+    let battle = until(start([p("congregant", 0, 0), p("congregant", 0, 1)], [p("congregant", 0, 1)]), "0.0.0");
+    battle = act(battle, "retreat").battle;
+    battle = until(battle, "0.0.1");
+    // Its own next turn is lost; the one after, it's gone.
+    let left = false;
+    for (let i = 0; i < 20 && !left; i++) {
+      const step = act(battle, "defend");
+      left = step.events.some((e) => e.type === "fled" && e.unitId === "0.0.0");
+      battle = step.battle;
+      if (!left && battle.current?.unitId !== "0.0.1") battle = until(battle, "0.0.1");
+    }
+    const fled = unit(battle, "0.0.0");
+    expect([fled.alive, fled.fled, fled.hp > 0]).toEqual([false, true, true]);
+    expect(battle.outcome).toBeNull();
+  });
+
+  test("garrison defenders are cornered: no retreat", () => {
+    const battle = until(start([p("congregant", 0, 1)], [{ ...p("congregant", 0, 1), effects: [{ def: "cornered" }] }]), "1.0.1");
+    expect(legalActions(battle).map((a) => a.abilityId)).not.toContain("retreat");
+  });
+});

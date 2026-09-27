@@ -120,3 +120,6 @@ Every faction keeps the same starting Leadership; unequal armies are evened out 
 
 **2026-09-27 — Sims must be fast (user: "a symptom of these sims needing work").**
 The sims have no animation; their time was the AI replaying the same battles. Profiled and fixed: a hand-written battle copy (structuredClone was a quarter of all time), per-action caches of trait lists (Congregation's bonus made every stats query walk the field twice over), battles played out once per game through a memo the caller keeps, and the sims bundled with esbuild. Three games went from 80 s to 10 s with identical results. `pnpm sim:many` runs games in parallel. A battle round limit (30, provisional) came with it: stalemates crashed the forecasts.
+
+**2026-09-27 — Retreat: every faction unit can flee a battle (the user's surrender design from the Godot attempt).**
+Retreat is a basic main action (R): the unit turns its back and loses its next turn, then leaves the battle alive at the start of the one after, keeping its health; it isn't a kill, so the enemy gains no XP for it. Guardians and neutrals lack it; defenders in a city are cornered and can't. A side with nobody left on the field loses as usual. The AI doesn't retreat yet. Also: Resolve now (D2's auto-resolve) plays a battle to its end at once.

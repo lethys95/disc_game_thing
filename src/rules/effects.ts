@@ -273,6 +273,41 @@ const effects: readonly EffectDef[] = [
     },
   },
   {
+    // Retreat (the user's surrender design from an earlier attempt): the unit turns its back and loses its next
+    // turn, then leaves the battle alive at the start of the one after. `amount` counts the turns it has spent so.
+    id: "retreating",
+    name: "Retreating",
+    describe: (e) => (e.amount === 0 ? "Has turned its back: it loses its next turn, then leaves the battle alive." : "Leaves the battle at the start of its next turn."),
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      turnStart: (_ctx, self) => {
+        const turning = self.effect;
+        if (!turning) return null;
+        if (turning.amount > 0) return "leave";
+        turning.amount += 1;
+        return "skip";
+      },
+    },
+  },
+  {
+    // Defenders in a city (a garrison, or a warband in its own city) have nowhere to run.
+    id: "cornered",
+    quiet: true,
+    name: "Cornered",
+    describe: () => "Defending a city: nowhere to retreat to.",
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      restrict: (ctx, self, subjectId, allowed) => {
+        if (subjectId !== self.unitId) return;
+        for (const id of [...allowed]) if (ctx.hasTag(id, "flee")) allowed.delete(id);
+      },
+    },
+  },
+  {
     // A spell on a city (provisional Break walls): its defenders fight with less armor.
     id: "sundered",
     name: "Sundered",

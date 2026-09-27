@@ -324,8 +324,10 @@ function describe(event: BattleEvent, name: (id: string) => string, playerSide: 
       return `${name(event.unitId)} is dragged to the front`;
     case "countered":
       return `${name(event.unitId)}'s action is countered!`;
+    case "fled":
+      return `${name(event.unitId)} flees the battle.`;
     case "skipped":
-      return event.reason === "stunned" ? `${name(event.unitId)} is stunned` : `${name(event.unitId)} cannot act`;
+      return event.reason === "lostTurn" ? `${name(event.unitId)} loses its turn` : `${name(event.unitId)} cannot act`;
     case "battleEnd":
       if (event.outcome.winner === null) return "None survive.";
       if (event.outcome.withdrew) return `Neither side can finish the other: the attackers withdraw. ${playerSide === null ? "The defenders hold the field." : playerSide === 1 ? "Victory." : "Defeat."}`;

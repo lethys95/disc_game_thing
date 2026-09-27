@@ -208,7 +208,8 @@ export class BattleScene {
       );
       this.updateBar(figure);
       figure.group.position.copy(this.position(unit.side, unit.tile)).setY(0.28);
-      if (!unit.alive && !figure.fallen) this.topple(figure, 0);
+      figure.group.visible = !unit.fled;
+      if (!unit.alive && !unit.fled && !figure.fallen) this.topple(figure, 0);
     }
   }
 
@@ -372,6 +373,14 @@ export class BattleScene {
           if (figure) pending.push(this.topple(figure, 650));
           break;
         }
+        case "fled": {
+          const figure = this.figures.get(event.unitId);
+          if (figure) {
+            this.float(event.unitId, "Fled", "effect");
+            figure.group.visible = false;
+          }
+          break;
+        }
         case "deathPrevented":
           this.float(event.unitId, "Spared", "spared");
           break;
@@ -390,7 +399,7 @@ export class BattleScene {
           this.float(event.unitId, "Countered!", "spared");
           break;
         case "skipped":
-          this.float(event.unitId, event.reason === "stunned" ? "Stunned" : "No action", "effect");
+          this.float(event.unitId, event.reason === "lostTurn" ? "Loses turn" : "No action", "effect");
           break;
         case "turnStart":
         case "roundStart":

@@ -79,6 +79,7 @@ export function createBattle(sides: readonly [readonly Placement[], readonly Pla
         abilities: def.abilities.map((ref) => ({ ref, chargesUsed: 0 })),
         effects: [...(effects ?? []), ...context.sideEffects[side]].map(instance),
         alive: true,
+        fled: false,
         spellCharges: def.spellCharges ?? 0,
         leader: leader ?? false,
       };
@@ -301,15 +302,23 @@ function advance(ctx: Ctx): void {
     expire(ctx, "untilSourceTurn", (_u, e) => e.source === next);
 
     let skip = false;
-    for (const t of traitsOn(ctx, next)) {
+    let leave = false;
+    for (const t of [...traitsOn(ctx, next)]) {
       if (!unit.alive) break;
-      if (t.hooks.turnStart?.(ctx, t.self) === "skip") skip = true;
+      const result = t.hooks.turnStart?.(ctx, t.self);
+      if (result === "skip") skip = true;
+      if (result === "leave") leave = true;
+    }
+    if (leave && unit.alive) {
+      unit.alive = false;
+      unit.fled = true;
+      ctx.emit({ type: "fled", unitId: next });
     }
     checkOutcome(ctx);
     expire(ctx, "untilOwnTurn", (u) => u.id === next);
     if (!unit.alive || battle.outcome) continue;
     if (skip) {
-      ctx.emit({ type: "skipped", unitId: next, reason: "stunned" });
+      ctx.emit({ type: "skipped", unitId: next, reason: "lostTurn" });
       continue;
     }
     battle.current = { unitId: next, freeUsed: [], mainTaken: false, bonusAttacks: [], hysteriaTriggers: 0, penaltyMultiplier: 1 };

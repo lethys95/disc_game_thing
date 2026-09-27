@@ -60,7 +60,8 @@ function evaluate(battle: Battle, side: Side): number {
     const spentSpells = (UNITS[unit.defId]?.spellCharges ?? 0) - unit.spellCharges;
     score -= sign * AI_CHARGE_VALUE * (unit.abilities.reduce((sum, a) => sum + a.chargesUsed, 0) + spentSpells);
     if (!unit.alive) {
-      score -= sign * 100;
+      // A unit that fled is saved, not lost: its health still counts, less its absence from the fight.
+      score += unit.fled ? sign * 0.5 * unit.hp : -sign * 100;
       continue;
     }
     // Shields are worth less than health: they return after battle, and lent ones perish.
