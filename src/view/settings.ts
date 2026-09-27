@@ -28,9 +28,10 @@ export interface SettingsData {
   /** Volumes, 0 to 1. Music will get its own when there is some. */
   readonly masterVolume: number;
   readonly effectsVolume: number;
+  readonly musicVolume: number;
 }
 
-export const DEFAULT_SETTINGS: SettingsData = { speed: "normal", rotate: 1, zoom: 1, hotkeys: {}, slotKeys: true, masterVolume: 0.8, effectsVolume: 1 };
+export const DEFAULT_SETTINGS: SettingsData = { speed: "normal", rotate: 1, zoom: 1, hotkeys: {}, slotKeys: true, masterVolume: 0.8, effectsVolume: 1, musicVolume: 0.6 };
 
 /** Camera multipliers stay within this range. */
 export const CAMERA_RANGE = { min: 0.25, max: 2.5 } as const;
@@ -67,6 +68,7 @@ export function parseSettings(text: string | null): SettingsData {
     slotKeys: typeof slotKeys === "boolean" ? slotKeys : DEFAULT_SETTINGS.slotKeys,
     masterVolume: volume(Reflect.get(parsed, "masterVolume")) ?? DEFAULT_SETTINGS.masterVolume,
     effectsVolume: volume(Reflect.get(parsed, "effectsVolume")) ?? DEFAULT_SETTINGS.effectsVolume,
+    musicVolume: volume(Reflect.get(parsed, "musicVolume")) ?? DEFAULT_SETTINGS.musicVolume,
   };
 }
 

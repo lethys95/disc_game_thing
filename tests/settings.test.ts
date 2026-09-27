@@ -13,6 +13,7 @@ describe("settings", () => {
       slotKeys: true,
       masterVolume: DEFAULT_SETTINGS.masterVolume,
       effectsVolume: DEFAULT_SETTINGS.effectsVolume,
+      musicVolume: DEFAULT_SETTINGS.musicVolume,
     });
     expect(parseSettings(JSON.stringify({ masterVolume: 3, effectsVolume: -1 }))).toMatchObject({ masterVolume: 1, effectsVolume: 0 });
     expect(parseSettings(JSON.stringify({ hotkeys: { defend: "3" }, slotKeys: false }))).toMatchObject({ hotkeys: {}, slotKeys: false });

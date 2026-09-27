@@ -232,6 +232,7 @@ export class Campaign {
   private enterMap(): void {
     const world = this.world;
     if (!world) return;
+    this.sound.music("map");
     // Outside battles, --side0 is you and --side1 your first opponent.
     const you = playerOf(world, PLAYER).color;
     applySideColors(document.documentElement, [you, world.players.find((_, id) => id !== PLAYER)?.color ?? fallbackColor(you)]);

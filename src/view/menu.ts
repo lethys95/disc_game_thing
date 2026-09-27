@@ -93,7 +93,7 @@ export class GameMenu {
     this.root.append(speeds, element("div", "note", "Also how long the AI pauses between its moves."));
 
     this.root.appendChild(element("div", "section", "Sound"));
-    for (const [field, label] of [["masterVolume", "Master volume"], ["effectsVolume", "Effects"]] as const) {
+    for (const [field, label] of [["masterVolume", "Master volume"], ["effectsVolume", "Effects"], ["musicVolume", "Music"]] as const) {
       const row = element("label", "slider-row");
       const slider = element("input", "slider");
       slider.type = "range";

@@ -153,6 +153,7 @@ export class App {
     this.playerSide = playerSide;
     this.finish = finish;
     this.auto = false;
+    this.sound.music("battle");
     let battle = start;
     this.scene.show();
     this.hud.setVisible(true);

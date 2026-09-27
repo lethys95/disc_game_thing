@@ -79,6 +79,7 @@ function showSetup(): void {
   app.stop();
   campaign.stop();
   setup.show();
+  sound.music("map");
 }
 
 const presets = [PRESETS.preserve, PRESETS.punishment] as const;
