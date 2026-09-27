@@ -1,6 +1,6 @@
 import type { Tile } from "#rules/battle/types";
 import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST } from "#rules/units/index";
-import { CITY_ARMOR_PER_TIER, CITY_MAX_TIER, CITY_SLOTS, NODE_MAX_LEVEL } from "#rules/balance";
+import { CITY_ARMOR_PER_TIER, CITY_HEALING_PER_TIER, CITY_MAX_TIER, CITY_SLOTS, NODE_MAX_LEVEL } from "#rules/balance";
 import { raisesDeadAt, cityUpgradeCost, elevateProblem, investNodeProblem, nodeInvestCost, recruitProblem, upgradeCityProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem } from "#rules/world/economy";
 import { capacityOf, transferProblem } from "#rules/world/squads";
 import { playerOf, cityById, leaderById, leaderUnit, nodesOf } from "#rules/world/state";
@@ -14,6 +14,7 @@ import { squadGrid } from "#view/squad-grid";
 import { spellsTab } from "#view/spells";
 import type { GridChoice, GridSquad } from "#view/squad-grid";
 import { sameHex } from "#rules/hex";
+import type { Hex } from "#rules/hex";
 import type { KeyLayer } from "#view/input";
 
 /** What the screen shows: one of your cities (the Capitol included), or two of your warbands side by side. */
@@ -22,19 +23,34 @@ export type Place = { readonly kind: "city"; readonly cityId: string } | { reado
 export interface CityScreenOptions {
   readonly act: (action: WorldAction) => void;
   readonly close: () => void;
+  /** The home view looks at the city itself on the map (null: back to where the camera was). */
+  readonly closeUp: (hex: Hex | null) => void;
 }
 
+type CityTab = "home" | "garrison" | "research" | "spells";
+
+/** The tab rail (user, 2026-09-27: a neat tab menu on the right, as in a strategy game); glyphs are placeholders. */
+const TABS: Readonly<Record<CityTab, { readonly label: string; readonly glyph: string; readonly capitolOnly: boolean }>> = {
+  home: { label: "City", glyph: "⌂", capitolOnly: false },
+  garrison: { label: "Garrison", glyph: "⚔", capitolOnly: false },
+  research: { label: "Research", glyph: "✦", capitolOnly: true },
+  spells: { label: "Spells", glyph: "✧", capitolOnly: true },
+};
+
+
+const isCityTab = (key: string): key is CityTab => key in TABS;
 
 /** Placeholder city names until the user names them. */
 export const cityName = (city: City): string => (city.kind === "capitol" ? "Capitol" : `City ${city.id.replace("city", "")}`);
 
 /**
- * A city's screen (pillars.md, "Cities"): the *City* tab has the garrison and any visiting warband as grids to drag
- * units between; clicking an empty tile recruits (or resurrects, at the Capitol). The Capitol adds *Research*. The
- * same grids show two warbands that meet on the map.
+ * A city's screen (pillars.md, "Cities"; the user's layout, `design/capitol-screen.md`): it opens on the city itself
+ * (the camera close on it), with a tab rail on the right. *Garrison* has the garrison and any visiting warband as
+ * grids to drag units between (clicking an empty tile recruits or resurrects) and the graveyard; the Capitol adds
+ * *Research* and *Spells*. The same grids, without the rail, show two warbands that meet on the map.
  */
 export class CityScreen implements KeyLayer {
-  private tab: "city" | "research" | "spells" = "city";
+  private tab: CityTab = "home";
   private selected: { ref: SquadRef; tile: Tile } | null = null;
   private shown: { world: World; side: PlayerId; place: Place; mayAct: boolean } | null = null;
   private readonly research: ResearchPanel;
@@ -57,43 +73,76 @@ export class CityScreen implements KeyLayer {
     return true;
   }
 
+  /** Shows a tab by name, if the screen has it. */
+  openTab(name: string): void {
+    if (!isCityTab(name)) return;
+    this.tab = name;
+    this.rerender();
+  }
+
   hide(): void {
+    if (!this.root.hidden) this.options.closeUp(null);
     this.root.hidden = true;
     this.selected = null;
   }
 
   show(world: World, side: PlayerId, place: Place, mayAct: boolean): void {
-    if (this.shown?.place.kind !== place.kind || JSON.stringify(this.shown.place) !== JSON.stringify(place)) this.tab = "city";
+    if (this.shown?.place.kind !== place.kind || JSON.stringify(this.shown.place) !== JSON.stringify(place)) this.tab = "home";
     this.shown = { world, side, place, mayAct };
     this.root.hidden = false;
     this.root.replaceChildren();
     const city = place.kind === "city" ? cityById(world, place.cityId) : undefined;
+    const tab: CityTab = city ? (TABS[this.tab].capitolOnly && city.kind !== "capitol" ? "home" : this.tab) : "garrison";
+    this.root.classList.toggle("home", tab === "home");
+    this.options.closeUp(tab === "home" && city ? city.hex : null);
 
     const header = element("div", "capitol-header");
     header.append(element("div", "title", city ? cityName(city) : "Warbands meet"), gold(playerOf(world, side).gold, "purse"));
-    if (city?.kind === "capitol") {
-      const tabs = element("div", "tabs");
-      for (const [id, label] of [["city", "City"], ["research", "Research"], ["spells", "Spells"]] as const) {
-        tabs.appendChild(
-          button(`action${this.tab === id ? " selected" : ""}`, label, () => {
-            this.tab = id;
-            this.rerender();
-          }),
-        );
-      }
-      header.appendChild(tabs);
-    }
     header.appendChild(button("action", "Back to the map", () => this.options.close()));
     this.root.appendChild(header);
 
-    if (this.tab === "research" && city?.kind === "capitol") {
-      this.root.appendChild(this.research.render(world, side, mayAct));
-      return;
+    const layout = element("div", "city-layout");
+    const content = element("div", "city-content");
+    layout.appendChild(content);
+    if (city) layout.appendChild(this.rail(city, tab));
+    this.root.appendChild(layout);
+
+    if (tab === "home" && city) content.appendChild(this.home(world, side, city));
+    else if (tab === "research") content.appendChild(this.research.render(world, side, mayAct));
+    else if (tab === "spells") content.appendChild(spellsTab(world, side, mayAct, this.options.act));
+    else content.appendChild(this.garrison(world, side, place, city, mayAct));
+  }
+
+  private rail(city: City, current: CityTab): HTMLElement {
+    const rail = element("div", "tab-rail");
+    for (const [id, tab] of Object.entries(TABS)) {
+      if (!isCityTab(id) || (tab.capitolOnly && city.kind !== "capitol")) continue;
+      const tile = button(`rail-tab${id === current ? " selected" : ""}`, [element("span", "glyph", tab.glyph), element("span", "label", tab.label)], () => {
+        this.tab = id;
+        this.rerender();
+      });
+      rail.appendChild(tile);
     }
-    if (this.tab === "spells" && city?.kind === "capitol") {
-      this.root.appendChild(spellsTab(world, side, mayAct, this.options.act));
-      return;
-    }
+    return rail;
+  }
+
+  /** The city itself: the camera looks at it on the map, with what matters at a glance beside it. */
+  private home(world: World, side: PlayerId, city: City): HTMLElement {
+    const card = element("div", "home-card panel");
+    const defenders = city.garrison.filter((m) => m.defId !== GUARDIAN_ID).length;
+    const visitor = world.leaders.find((l) => l.player === side && sameHex(l.hex, city.hex));
+    const facts = [
+      `Tier ${city.tier} · heals ${Math.round(CITY_HEALING_PER_TIER * city.tier * 100)}% a turn · defenders +${CITY_ARMOR_PER_TIER * (city.tier - 1)} armor`,
+      `${defenders} in the garrison${city.kind === "capitol" ? ", with the Guardian" : ""}`,
+      visitor ? `${unitName(leaderUnit(visitor)?.defId ?? "")}'s warband is visiting` : "No warband visiting",
+      ...nodesOf(world, city).map((n) => `${NODES[n.kind].name}, level ${n.level}`),
+    ];
+    for (const fact of facts) card.appendChild(element("div", "note", fact));
+    card.appendChild(element("div", "note hint", "Drag to look around. The tabs on the right lead into the city."));
+    return card;
+  }
+
+  private garrison(world: World, side: PlayerId, place: Place, city: City | undefined, mayAct: boolean): HTMLElement {
     const body = element("div", "city-body");
     if (city) {
       const head = element("div", "city-head");
@@ -101,14 +150,13 @@ export class CityScreen implements KeyLayer {
       if (nodesOf(world, city).length > 0) head.appendChild(this.nodes(world, city, mayAct));
       body.appendChild(head);
     }
-    const squads = this.squads(world, side, place);
     const grids = element("div", "grids panel");
-    for (const squad of squads) grids.appendChild(squadGrid(squad, this.gridOptions(world, side, city, mayAct)));
+    for (const squad of this.squads(world, side, place)) grids.appendChild(squadGrid(squad, this.gridOptions(world, side, city, mayAct)));
     grids.appendChild(element("div", "note", "Drag units between the grids; dropping on a unit swaps the two. Click an empty tile to recruit. Click a unit for its details."));
     body.appendChild(grids);
     if (city && raisesDeadAt(world, side, city)) body.appendChild(this.graveyard(world, side, city, mayAct));
     else if (city) body.appendChild(element("div", "note panel", "Resurrection here needs the Capitol's research (Research tab: Resurrection in cities)."));
-    this.root.appendChild(body);
+    return body;
   }
 
   private rerender(): void {
@@ -197,7 +245,7 @@ export class CityScreen implements KeyLayer {
   private fortifications(world: World, city: City, mayAct: boolean): HTMLElement {
     const row = element("div", "fortifications panel");
     const armor = CITY_ARMOR_PER_TIER * (city.tier - 1);
-    row.append(element("div", "name", `Tier ${city.tier}`), element("div", "note", `${CITY_SLOTS[city.tier] ?? 0} garrison slots · defenders +${armor} armor`));
+    row.append(element("div", "name", `Tier ${city.tier}`), element("div", "note", `${CITY_SLOTS[city.tier] ?? 0} garrison slots · defenders +${armor} armor · heals ${Math.round(CITY_HEALING_PER_TIER * city.tier * 100)}% a turn`));
     if (city.tier < CITY_MAX_TIER) {
       const next = city.tier + 1;
       const problem = upgradeCityProblem(world, city.id);
@@ -205,7 +253,7 @@ export class CityScreen implements KeyLayer {
         orderButton("action small", [`Upgrade to tier ${next} · `, gold(cityUpgradeCost(city))], {
           mayAct,
           problem,
-          explain: `Tier ${next}: ${CITY_SLOTS[next] ?? 0} garrison slots; the garrison and a warband defending here get +${CITY_ARMOR_PER_TIER * (next - 1)} armor.`,
+          explain: `Tier ${next}: ${CITY_SLOTS[next] ?? 0} garrison slots; the garrison and a warband defending here get +${CITY_ARMOR_PER_TIER * (next - 1)} armor; units resting here heal ${Math.round(CITY_HEALING_PER_TIER * next * 100)}% a turn.`,
           give: () => this.options.act({ type: "upgradeCity", cityId: city.id }),
         }),
       );

@@ -105,7 +105,7 @@ if (params.has("map")) {
   if (params.has("xp")) campaign.startingXp(Number(params.get("xp")));
   if (params.has("mana")) campaign.startingMana(Number(params.get("mana")));
   if (params.has("reveal")) campaign.revealAll();
-  if (params.has("capitol")) campaign.openCapitol();
+  if (params.has("capitol")) campaign.openCapitol(params.get("capitol") ?? "");
   if (params.has("leader")) campaign.openLeader();
   const structure = params.get("structure");
   if (structure) campaign.openStructure(structure);

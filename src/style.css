@@ -425,3 +425,32 @@ button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }
 .offer-row > :first-child { flex: 1; }
 .setup-extras .map-size { gap: 6px; align-items: center; }
 .setup-extras .map-size .note { margin-left: 14px; }
+
+/* The city screen: content on the left, the tab rail on the right (user's layout, design/capitol-screen.md). */
+.city-layout { display: flex; gap: 16px; flex: 1; min-height: 0; }
+.city-content { flex: 1; min-width: 0; display: flex; flex-direction: column; min-height: 0; overflow-y: auto; }
+.city-content > .city-body, .city-content > .capitol-trees, .city-content > .spells-tab { flex: 1; min-height: 0; }
+.tab-rail { display: flex; flex-direction: column; gap: 6px; width: 84px; flex: none; }
+.rail-tab {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; height: 76px;
+  background: var(--field); border: 1px solid var(--rule); color: var(--muted); cursor: pointer; font: 600 10px var(--text);
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.rail-tab .glyph { font-size: 26px; line-height: 1; color: var(--muted); }
+.rail-tab:hover { border-color: var(--gold-dim); color: var(--ink); }
+.rail-tab.selected { background: var(--line); border-color: var(--gold); color: var(--gold-light); box-shadow: inset 3px 0 0 var(--gold); }
+.rail-tab.selected .glyph { color: var(--gold); }
+/* Home: the map shows through, with only the header, the rail and a card over it. */
+.screen.home { background: linear-gradient(to bottom, rgba(8, 7, 7, 0.85), transparent 90px); pointer-events: none; }
+.screen.home .capitol-header, .screen.home .tab-rail, .screen.home .home-card { pointer-events: auto; }
+.screen.home .city-content { justify-content: flex-end; overflow: visible; }
+#maphud:has(#capitol.home:not([hidden])) > :is(#mapsquad, #mapcity, #mapbottom, #mapturn, #mapmenu) { visibility: hidden; }
+.home-card { align-self: flex-start; padding: 12px 16px; max-width: 420px; background: rgba(14, 12, 12, 0.88); }
+.home-card .hint { margin-top: 8px; font-style: italic; }
+/* Research trees top-down: tier 1 at the top, branches spreading below; a connector rises from each node to its parent. */
+.screen .tree.down { gap: 22px 10px; align-items: start; }
+.screen .tree.down .node { position: relative; align-items: center; text-align: center; }
+.screen .tree.down .node .head { flex-direction: column; align-items: center; }
+.screen .tree.down .node .head .thumb { width: 52px; height: 52px; }
+.screen .tree.down .node:not(.root)::before { content: ""; position: absolute; top: -22px; left: 50%; height: 22px; border-left: 2px solid var(--line); }
+.screen .tree.down .node { justify-self: center; width: min(100%, 230px); box-sizing: border-box; }

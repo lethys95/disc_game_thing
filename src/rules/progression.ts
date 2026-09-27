@@ -4,7 +4,7 @@ import { XP_TO_EVOLVE } from "#rules/balance";
 
 /**
  * XP and evolution. Canon: defeated enemies feed a pool the winners' survivors split, valued deterministically
- * from stats; tiers 2–3 common, 4 uncommon, 5 rare. The numbers are provisional (docs/questions.md).
+ * from stats; tiers 2–3 common, 4 uncommon, 5 rare. The numbers are provisional (docs/provisional.md).
  */
 /** What defeating one unit of this kind is worth. */
 export function xpValue(defId: string): number {

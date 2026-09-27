@@ -100,6 +100,9 @@ Unlimited mercenaries; merchant staples (potions) and changing wares; structure 
 ## M40 — Map sizes (user; done)
 Small to Huge at setup, defaulting by player count; neutral counts scale with area.
 
+## M41 — Capitol screen (user's layout; done)
+Home view, right-side tab rail, garrison, top-down research trees, spells.
+
 ## Then
 - Faction content as the user designs it (Nexus trees first; Grove and Wastes later). The user owns unit designs and looks.
 - A spell tree in the Capitol, and the real spells (#51).

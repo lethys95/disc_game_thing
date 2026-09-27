@@ -1,4 +1,4 @@
-import { CAPITOL_MANA, CAMP_MEDIUM_FROM, CAMP_STRONG_FROM, CAPITOL_HEALING, CITY_HEALING, CITY_MAX_TIER, CITY_UPGRADE_COST, NODE_INVEST_COST, NODE_MAX_LEVEL, CAPITOL_INCOME, RESURRECTION_BASE, RESURRECTION_PREMIUM } from "#rules/balance";
+import { CAPITOL_MANA, CAMP_MEDIUM_FROM, CAMP_STRONG_FROM, CITY_HEALING_PER_TIER, CITY_MAX_TIER, CITY_UPGRADE_COST, NODE_INVEST_COST, NODE_MAX_LEVEL, CAPITOL_INCOME, RESURRECTION_BASE, RESURRECTION_PREMIUM } from "#rules/balance";
 import type { Tile } from "#rules/battle/types";
 import { chooseProblem, isFork, openForks } from "#rules/forks";
 import { COLS, ROWS, sameTile } from "#rules/battle/grid";
@@ -226,7 +226,7 @@ export function startTurn(world: World, events: WorldEvent[]): void {
   player.cast = [];
   for (const { squad, leader } of squadsOf(world, side)) {
     const home = world.cities.find((c) => c.owner === side && (leader === undefined ? squad === c.garrison : sameHex(leader.hex, c.hex)));
-    const resting = home ? (home.kind === "capitol" ? CAPITOL_HEALING : CITY_HEALING) : 0;
+    const resting = home ? CITY_HEALING_PER_TIER * home.tier : 0;
     const share = resting + (leader && leader.fellOnTurn === null ? squadHealingOf(leader) : 0);
     if (share === 0) continue;
     squad.forEach((m, i) => {

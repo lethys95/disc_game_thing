@@ -126,6 +126,7 @@ export class Campaign implements KeyLayer {
       this.place = null;
       this.render();
     },
+    closeUp: (hex) => (hex ? this.view.closeUp(hex) : this.view.leaveCloseUp()),
   });
 
   constructor(
@@ -138,14 +139,19 @@ export class Campaign implements KeyLayer {
   ) {
     this.forecasts = new Forecasts(ai, () => this.render());
     const canvas = stage.renderer.domElement;
-    canvas.addEventListener("pointermove", (e) => this.hover(e.clientX, e.clientY));
-    canvas.addEventListener("click", () => void this.click());
+    // A city's home view lets the map show through (to look at the city); the map itself takes no orders then.
+    canvas.addEventListener("pointermove", (e) => {
+      if (!this.cityScreen.open()) this.hover(e.clientX, e.clientY);
+    });
+    canvas.addEventListener("click", () => {
+      if (!this.cityScreen.open()) void this.click();
+    });
     // Hold right-click on any group to see its formation.
     canvas.addEventListener("contextmenu", (e) => {
       if (this.world) e.preventDefault();
     });
     canvas.addEventListener("pointerdown", (e) => {
-      if (e.button !== 2) return;
+      if (e.button !== 2 || this.cityScreen.open()) return;
       // Right-click stops aiming a spell; otherwise it peeks at a formation.
       if (this.casting) {
         this.casting = null;
@@ -270,10 +276,12 @@ export class Campaign implements KeyLayer {
     this.render();
   }
 
-  openCapitol(): void {
+  /** Screenshots and playtests: the Capitol's screen, on a tab by name (its home view otherwise). */
+  openCapitol(tab: string): void {
     const capitol = this.world ? capitolOf(this.world, this.viewer) : undefined;
     this.place = capitol ? { kind: "city", cityId: capitol.id } : null;
     this.render();
+    this.cityScreen.openTab(tab);
   }
 
   stop(): void {

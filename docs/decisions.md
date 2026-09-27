@@ -148,3 +148,15 @@ Mercenaries never run out. Merchants sell staples always (potions, the first con
 **2026-09-27 — Map sizes at setup (M40, user).**
 Four sizes (radius 5–8); the default grows with the number of players (five or six now get Large, not Medium). Neutral counts are defined on the default size for the player count and scale with area on the others, so default maps are the same as before for two to four players. Sims take `SIZE=`, routes `&size=`.
 
+**2026-09-27 — Answers from the questions review (user).**
+- Destructible cities: no.
+- Leader tree points come from unit experience only (as now); Warlords-style quests maybe, far off, not sold.
+- The fourth line is a per-faction "joker" concept, not ranged (`design/pillars.md`).
+- Vexumphat: cheap resurrection and the graveyard upgrade from the start, among other themes (`design/factions/vexumphat.md`).
+- The Capitol screen gets a home view and a right-side tab menu (`design/capitol-screen.md`).
+- City healing is +5% per city tier, not a flat share.
+- `questions.md` now holds only what the user must decide; provisional values moved to `provisional.md`, answered and stale questions were dropped (their answers live in the design docs and here).
+
+**2026-09-27 — The city screen's home view is the map itself, close up (M41).**
+The user wants to see the city when entering it (HoMM5, AoE3's home city). Until there's art for a city scene, the home view flies the map camera in close on the city and lets the map show through; the rail and a summary card sit over it. The fourth archetype is now "joker" in the rules (was "ranged", which had no lines).
+

@@ -10,7 +10,7 @@ import { art } from "#view/art";
 import { element, gold, orderButton } from "#view/dom";
 import { unitName } from "#view/members";
 
-const ARCHETYPE_NAMES: Readonly<Record<Archetype, string>> = { melee: "Melee", ranged: "Ranged", support: "Support", mage: "Mage" };
+const ARCHETYPE_NAMES: Readonly<Record<Archetype, string>> = { melee: "Melee", support: "Support", mage: "Mage", joker: "Joker" };
 
 /** Every route from `defId` to the top of its tree. */
 function routes(defId: string): string[][] {
@@ -65,17 +65,22 @@ export class ResearchPanel {
       tabs.appendChild(button);
     }
     column.appendChild(tabs);
+    // Each line grows down from its tier-1 unit at the top (user, 2026-09-27: "more tree like"): a column per route
+    // to the top of the tree; a unit two routes share sits once, over the first of them.
     const trees = (tab ? rootsOf(tab) : []).map(routes);
-    const tiers = Math.max(5, ...trees.flat().map((route) => route.length));
     for (const lines of trees) {
-      const grid = element("div", "tree");
-      grid.style.gridTemplateColumns = `repeat(${tiers}, minmax(0, 1fr))`;
-      lines.forEach((route, row) => {
-        route.forEach((defId, col) => {
-          const shared = row > 0 && lines[row - 1]?.slice(0, col + 1).join() === route.slice(0, col + 1).join();
-          const cell = shared ? element("div", "node continued") : this.node(world, side, defId, route[col - 1], allowed.includes(defId), owned.filter((m) => m.defId === defId).length, mayAct);
-          cell.style.gridRow = `${row + 1}`;
-          cell.style.gridColumn = `${col + 1}`;
+      const grid = element("div", "tree down");
+      grid.style.gridTemplateColumns = `repeat(${lines.length}, minmax(0, 1fr))`;
+      lines.forEach((route, col) => {
+        route.forEach((defId, tier) => {
+          const shared = col > 0 && lines[col - 1]?.slice(0, tier + 1).join() === route.slice(0, tier + 1).join();
+          if (shared) return;
+          const cell = this.node(world, side, defId, route[tier - 1], allowed.includes(defId), owned.filter((m) => m.defId === defId).length, mayAct);
+          // A unit shared by the routes to its right spans them.
+          const span = lines.slice(col).findIndex((other) => other.slice(0, tier + 1).join() !== route.slice(0, tier + 1).join());
+          if (tier === 0) cell.classList.add("root");
+          cell.style.gridRow = `${tier + 1}`;
+          cell.style.gridColumn = `${col + 1} / span ${span === -1 ? lines.length - col : span}`;
           grid.appendChild(cell);
         });
       });
@@ -93,7 +98,8 @@ export class ResearchPanel {
     if (def) node.appendChild(element("div", "stats", `Tier ${def.tier} · ${def.stats.maxHp} HP · ${def.stats.damage} dmg · ${def.stats.armor} armor`));
     const commitment = playerOf(world, side).commitment;
     if (parent && isFork(parent)) {
-      const label = EVOLUTIONS[parent]?.find((e) => e.to === defId)?.label ?? "";
+      // Only the duality fork is labelled; later forks go by the unit's name.
+      const label = EVOLUTIONS[parent]?.find((e) => e.to === defId)?.label || unitName(defId);
       const chosen = commitment[parent];
       if (chosen === defId) node.appendChild(element("div", "branch chosen", `Chosen: ${label}`));
       else if (chosen !== undefined) node.appendChild(element("div", "branch", `Closed: ${label}`));

@@ -4,7 +4,7 @@ import type { EffectSeed } from "#rules/battle/types";
  * Items (pillars.md: elevation grants equipment slots; dungeons reward treasure items; the Ankh). The slots are the
  * user's 2024 design (`legacy/disc 5.6/Script/Creature/Leader/Inventory.as`): headgear, body armor, a banner, two
  * utility slots, and a bag for what isn't worn. The Ankh is canon, the Hatchet and the Outlaw's pocketwatch are the
- * user's (2026-09-27); **the others are plain placeholders** with provisional numbers (questions.md #53).
+ * user's (2026-09-27); **the others are plain placeholders** with provisional numbers (provisional.md #53).
  */
 export type EquipmentSlot = "head" | "armor" | "weapon" | "utility" | "banner";
 

@@ -1,7 +1,7 @@
 import { BEHAVIORS } from "#rules/abilities/index";
 
 /**
- * Player preferences (questions.md #34): animation speed, camera feel, hotkeys. Kept in this browser only; they
+ * Player preferences: animation speed, camera feel, hotkeys. Kept in this browser only; they
  * aren't part of a game or a save. Reading or writing storage can fail (private windows): the defaults apply.
  */
 

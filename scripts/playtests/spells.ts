@@ -5,7 +5,7 @@ const spells: Playtest = {
   about: "learn a spell in the Capitol's Spells tab, then aim it on the map and cast it on our own warband",
   async run(t) {
     await t.open("/?map&seed=1&capitol&mana=50");
-    await t.page.locator("#capitol .tabs button", { hasText: "Spells" }).click();
+    await t.page.locator("#capitol .rail-tab", { hasText: "Spells" }).click();
     await t.page.locator(".spell-row", { hasText: "Bless warband" }).locator("button").click();
     await t.shot("playtest-spells-tab");
     const learned = await t.page.locator(".spell-row", { hasText: "Bless warband" }).textContent();

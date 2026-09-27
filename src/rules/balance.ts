@@ -1,6 +1,6 @@
 /**
  * Provisional numbers that aren't a unit's stats or an ability's params, in one place for balancing.
- * None of these are canon unless noted; see docs/questions.md.
+ * None of these are canon unless noted; see docs/provisional.md.
  */
 
 /** Initiative per action in a round (actions = floor(initiative / this), at least 1). */
@@ -8,7 +8,7 @@ export const INITIATIVE_PER_ACTION = 15;
 
 /**
  * A battle that reaches this many rounds is over: the attacker (side 0) withdraws and the defender holds the field;
- * the attacker's survivors leave alive. Provisional (questions.md #52): healing and shield restores can otherwise
+ * the attacker's survivors leave alive. Provisional (provisional.md #52): healing and shield restores can otherwise
  * outlast the damage forever.
  */
 export const BATTLE_ROUND_LIMIT = 30;
@@ -24,7 +24,7 @@ export const AI_CHARGE_VALUE = 40;
 export const STARTING_LEADERSHIP = 5;
 export const LEADER_MOVEMENT = 4;
 /**
- * Fog of war (pillars.md): how far each thing a player holds sees, in hexes. Provisional (questions.md): a warband
+ * Fog of war (pillars.md): how far each thing a player holds sees, in hexes. Provisional (provisional.md): a warband
  * sees half its march, a city its neighbours, a Capitol a little further. Terrain doesn't block sight.
  */
 export const WARBAND_SIGHT = 2;
@@ -35,10 +35,9 @@ export const CAPITOL_INCOME = 50;
 export const MINE_INCOME = 25;
 /**
  * Share of max HP restored at the start of its side's turn to every unit resting in a city it holds (the garrison and
- * a warband standing there): more in the Capitol (user's playtest, 2026-09-27: resurrected units otherwise stay at 1).
+ * a warband standing there), per city tier (user, 2026-09-27: "+5% regen per city upgrade"). The Capitol too.
  */
-export const CAPITOL_HEALING = 0.4;
-export const CITY_HEALING = 0.25;
+export const CITY_HEALING_PER_TIER = 0.05;
 /**
  * City tiers (user, 2026-09-26: "upgrade the city: more garrison slots, a small armor bonus to the garrison and the
  * visiting squad"). Every number here is provisional. Index = tier. A Capitol's Guardian takes no slot.

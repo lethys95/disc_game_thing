@@ -4,7 +4,7 @@ import { hexagon, hexDistance, hexKey } from "#rules/hex";
 import { findPath, generateMap, TERRAIN_COST } from "#rules/map";
 import type { Commitment } from "#rules/forks";
 import { GUARDIAN_ID } from "#rules/units/index";
-import { CAPITOL_HEALING, CAMP_REGROWTH_TURNS, CAMP_STRONG_FROM, CAPITOL_INCOME, MINE_INCOME, STARTING_GOLD } from "#rules/balance";
+import { CITY_HEALING_PER_TIER, CAMP_REGROWTH_TURNS, CAMP_STRONG_FROM, CAPITOL_INCOME, MINE_INCOME, STARTING_GOLD } from "#rules/balance";
 import { applyWorldAction } from "#rules/world/actions";
 import { chooseWorldAction } from "#rules/world/ai";
 import { concludeBattle, playersIn } from "#rules/world/battles";
@@ -192,7 +192,8 @@ describe("world", () => {
     const leader = leaderById(world, "leader0");
     world = withLeader(world, "leader0", { squad: leader.squad.map((m) => ({ ...m, hp: 10 })) });
     world = applyWorldAction(applyWorldAction(world, { type: "endTurn" }).world, { type: "endTurn" }).world;
-    const healed = (max: number) => 10 + Math.ceil(max * CAPITOL_HEALING);
+    // A tier-1 Capitol: one tier's worth.
+    const healed = (max: number) => 10 + Math.ceil(max * CITY_HEALING_PER_TIER);
     expect(leaderById(world, "leader0").squad.map((m) => m.hp)).toEqual([healed(150), healed(90)]);
   });
 

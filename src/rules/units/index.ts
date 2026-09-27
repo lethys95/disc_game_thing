@@ -26,8 +26,11 @@ export const FACTION_ROOTS: Readonly<Record<Playable, readonly string[]>> = {
   nexus: ["custodian", "technician", "apprentice"],
 };
 
-/** The kinds of line a faction's units come in (D2's archetypes, which the user pointed to). */
-export const ARCHETYPES = ["melee", "ranged", "support", "mage"] as const;
+/**
+ * The kinds of line a faction's units come in (D2's archetypes, which the user pointed to). The fourth is a joker:
+ * a concept unique to each faction (user, 2026-09-27), none designed yet.
+ */
+export const ARCHETYPES = ["melee", "support", "mage", "joker"] as const;
 export type Archetype = (typeof ARCHETYPES)[number];
 
 /** Which kind of line each tier-1 unit starts (user: the melee lines, the Technician supports, the Apprentice casts). */
