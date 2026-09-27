@@ -11,6 +11,9 @@ Kept short: only what is the user's to decide, most blocking first. Answer inlin
 4. **The map's look:** "actual grass", and which way terrain goes (`design/map-look.md`). Reference images or games whose map look you like would help most.
 5. **Music:** the placeholder tracks are ACE-Step takes; you mentioned Suno for final AI music. Direction per faction, or references?
 
+## Access
+9. **Hugging Face access for TRELLIS.2** (the better mesh generator; TRELLIS v1 works meanwhile): request access at https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m, then run `! hf auth login` here. Only if you want it.
+
 ## Rules
 6. **Terrain and nodes (your idea):** which terrain types, and which nodes each can spawn (`design/map-look.md`).
 7. **Spells:** should mana nodes have a color of their own (D2's typed crystals), so capturing one gives that color? And what gates the spell tree: Capitol tier, research, mana spent? The real spells are yours to design whenever you like (placeholders now).

@@ -184,7 +184,8 @@ export function discard(object: THREE.Object3D): void {
   object.removeFromParent();
   object.traverse((child) => {
     if (child instanceof CSS2DObject) child.element.remove();
-    if (!(child instanceof THREE.Mesh)) return;
+    // A loaded model's geometry and materials are shared by every place that shows it (`view/models.ts`).
+    if (!(child instanceof THREE.Mesh) || child.userData["shared"]) return;
     child.geometry.dispose();
     const materials: THREE.Material[] = Array.isArray(child.material) ? child.material : [child.material];
     for (const material of materials) {
