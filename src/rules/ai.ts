@@ -1,5 +1,5 @@
 import { AI_CHARGE_VALUE } from "#rules/balance";
-import { applyAction, legalActions, traitValues } from "#rules/battle/engine";
+import { applyAction, effectiveStatsOf, legalActions, traitValues } from "#rules/battle/engine";
 import { UNITS } from "#rules/units/index";
 import type { Action, Battle, Side } from "#rules/battle/types";
 
@@ -9,7 +9,30 @@ import type { Action, Battle, Side } from "#rules/battle/types";
  * otherwise a free action that only pays off on the next one (Combustion) never looks worth it.
  */
 export function chooseAction(battle: Battle): Action | null {
-  return bestAction(battle, FOLLOW_UP_DEPTH)?.action ?? null;
+  return fleeing(battle) ?? bestAction(battle, FOLLOW_UP_DEPTH)?.action ?? null;
+}
+
+/** Below this share of the enemy's strength a fight is lost: a unit that can flee saves itself for the next one. */
+const HOPELESS = 0.15;
+
+/** What a side can still do: each living unit's health (shields at half) weighted by its damage. */
+function strengthOf(battle: Battle, side: Side): number {
+  const stats = effectiveStatsOf(battle);
+  return Object.values(battle.units)
+    .filter((u) => u.alive && u.side === side)
+    .reduce((sum, u) => sum + (u.hp + 0.5 * u.shield) * (1 + (stats[u.id]?.damage ?? 0)), 0);
+}
+
+/** A losing unit's way out: an ability tagged `flee` (Retreat), when its side is hopelessly behind. */
+function fleeing(battle: Battle): Action | null {
+  const unit = battle.current ? battle.units[battle.current.unitId] : undefined;
+  // Only units worth saving flee: tier-1 fodder fights on.
+  if (!unit || (UNITS[unit.defId]?.tier ?? 1) < 2) return null;
+  const option = legalActions(battle).find((o) => o.tags.includes("flee") && o.enhancement.kind === "none");
+  if (!option) return null;
+  const ours = strengthOf(battle, unit.side);
+  const theirs = strengthOf(battle, unit.side === 0 ? 1 : 0);
+  return ours < HOPELESS * theirs ? { abilityId: option.abilityId, choice: 0 } : null;
 }
 
 const FOLLOW_UP_DEPTH = 2;

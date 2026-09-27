@@ -126,3 +126,6 @@ Retreat is a basic main action (R): the unit turns its back and loses its next t
 
 **2026-09-27 — The map AI guards its Capitol and gangs up (momentum, user's playtest).**
 Losing AI Capitols fell holding only their Guardian (user: "less the Guardian being bad than bad decisions"). The AI now fills its Capitol garrison with spare gold once its warbands are full. And it blitzes: an enemy warband that none of its warbands beats alone, but two or more can reach this turn, is attacked in a chain (after spells) when the chain destroys it; sieges use the same chain and now count as won when the Capitol changes hands, which also fixes sieges in games of 3+ players. Mirror games went from a median of turn 32 to 43. The earlier 12–4 seat split was noise: 26–22 over 48 more seeds.
+
+**2026-09-27 — The battle AI retreats its veterans from lost fights.**
+When its side's strength (health weighted by damage) falls under 15% of the enemy's, a tier-2-or-higher unit that can flee does. Measured over 96 games each: letting every unit flee at 35% doubled game length (median turn 83, 4 cold wars) and halved Jilliath's wins against Nexus (13 → 6); veterans only, at 15%, keeps Jilliath at 13 and games at a median of turn 48 (was 43), 1 cold war.

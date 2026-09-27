@@ -104,6 +104,12 @@ export function createBattle(sides: readonly [readonly Placement[], readonly Pla
   return { battle, events };
 }
 
+/** Every living unit's effective stats, from one context. */
+export function effectiveStatsOf(battle: Battle): Record<string, Stats> {
+  const ctx = makeCtx(battle, []);
+  return Object.fromEntries(ctx.living().map((u) => [u.id, ctx.stats(u.id)]));
+}
+
 export function effectiveStats(battle: Battle, unitId: string): Stats {
   return makeCtx(battle, []).stats(unitId);
 }
