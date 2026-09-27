@@ -7,6 +7,8 @@ import type { SoundKey } from "#view/sound";
 export interface Cue {
   readonly key: SoundKey;
   readonly delay: number;
+  /** Plays for exactly this long (looping if the sound is shorter): a march lasts as long as the walk. */
+  readonly duration?: number;
 }
 
 /** A battle step: the swing or cast first, then what it did. `playerSide`: whose victory the stinger celebrates. */
@@ -48,13 +50,16 @@ export function battleCues(events: readonly BattleEvent[], playerSide: Side | nu
   return cues;
 }
 
-/** A map step, for the player at this screen: its own marches, fights, captures and purchases. */
-export function worldCues(events: readonly WorldEvent[], player: PlayerId, mover: PlayerId): Cue[] {
+/**
+ * A map step, for the player at this screen: its own marches (as long as the walk, `stepMs` a hex), fights,
+ * captures and purchases.
+ */
+export function worldCues(events: readonly WorldEvent[], player: PlayerId, mover: PlayerId, stepMs: number): Cue[] {
   const cues: Cue[] = [];
   for (const e of events) {
     switch (e.type) {
       case "moved":
-        if (mover === player) cues.push({ key: "map/march", delay: 0 });
+        if (mover === player) cues.push({ key: "map/march", delay: 0, duration: e.path.length * stepMs });
         break;
       case "engaged":
         if (mover === player) cues.push({ key: "map/battle", delay: 0 });

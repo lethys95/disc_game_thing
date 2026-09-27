@@ -15,10 +15,11 @@ describe("sound cues", () => {
   });
 
   test("on the map, only the player's own marches and purchases make noise", () => {
-    const march = [{ type: "moved" as const, leaderId: "leader0", path: [] }];
-    expect(worldCues(march, 0, 0).map((c) => c.key)).toEqual(["map/march"]);
-    expect(worldCues(march, 0, 1)).toEqual([]);
-    expect(worldCues([{ type: "recruited", defId: "congregant", into: { kind: "garrison", cityId: "capitol0" } }], 0, 0).map((c) => c.key)).toEqual(["ui/coins"]);
+    const march = [{ type: "moved" as const, leaderId: "leader0", path: [{ q: 0, r: 1 }, { q: 0, r: 2 }, { q: 1, r: 2 }] }];
+    // As long as the walk: three hexes.
+    expect(worldCues(march, 0, 0, 190)).toEqual([{ key: "map/march", delay: 0, duration: 570 }]);
+    expect(worldCues(march, 0, 1, 190)).toEqual([]);
+    expect(worldCues([{ type: "recruited", defId: "congregant", into: { kind: "garrison", cityId: "capitol0" } }], 0, 0, 190).map((c) => c.key)).toEqual(["ui/coins"]);
   });
 });
 

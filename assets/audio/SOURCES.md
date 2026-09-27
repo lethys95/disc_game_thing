@@ -4,7 +4,7 @@ Provisional first pass (Claude, 2026-09-27), picked by filename and checked by t
 
 | Slot | Source file | Length | Loudness |
 |---|---|---|---|
-| `ui/click` | 2016/extracted/Sonniss.com - GDC 2016- Game Audio Bundle Part 2of6/Digital Rain Lab - Signal Frontiers/Navigation_Button_19.wav | 0.35 s max | -22 LUFS |
+| `ui/click` | the user's own recording: finger snaps (2026-09-27) | as recorded | as recorded |
 | `ui/coins` | 2020/packs/The Sound Pack Tree - Money/262703 - Drop Couple of Gold Coins on Coins 03.wav | 1.2 s max | -19 LUFS |
 | `battle/swing` | 2019/extracted/Sonniss.com - GDC 2019 - Game Audio Bundle Part 5of8/Sonniss.com - GDC 2019 - Game Audio Bundle Part 5of8/Sound Spark LLC – Gore/Melee_Sword_Attack_04.wav | 0.8 s max | -18 LUFS |
 | `battle/hit` | 2020/packs/SmartSoundFX - Medieval/SWORD Hit Metal 02.wav | 0.8 s max | -16 LUFS |

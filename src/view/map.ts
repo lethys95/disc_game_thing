@@ -18,6 +18,8 @@ import { buildFigure } from "#view/figures";
 import type { CameraPose, Stage } from "#view/stage";
 
 const SIZE = 1;
+/** How long a warband's figure takes to walk one hex. */
+export const HEX_STEP_MS = 190;
 /** Where the map camera sits relative to what it looks at. */
 const CAMERA_OFFSET = new THREE.Vector3(-3, 11, 11.2);
 
@@ -521,7 +523,7 @@ export class MapView {
       if (!ours && !this.sees(hex)) return;
       const from = figure.group.position.clone();
       const to = this.standingPoint(hex);
-      await this.stage.tween(190, (t) => {
+      await this.stage.tween(HEX_STEP_MS, (t) => {
         figure.group.position.lerpVectors(from, to, t);
         figure.group.position.y += Math.sin(t * Math.PI) * 0.12;
       });

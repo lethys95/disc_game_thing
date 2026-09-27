@@ -27,6 +27,7 @@ import { buttonById, byId, element, gold, mana, movementPips } from "#view/dom";
 import { Forecasts } from "#view/forecasts";
 import { ForkPrompt } from "#view/fork-prompt";
 import { LeaderScreen } from "#view/leader";
+import { HEX_STEP_MS } from "#view/map";
 import type { MapView } from "#view/map";
 import { MapPanels } from "#view/map-panels";
 import { castHint, hintText, leaderName, newsText } from "#view/map-text";
@@ -320,7 +321,8 @@ export class Campaign {
     this.forecasts.clear();
     this.render();
     const step = applyWorldAction(world, action);
-    for (const cue of worldCues(step.events, PLAYER, world.activePlayer)) this.sound.play(cue.key, cue.delay);
+    const stepMs = HEX_STEP_MS * this.stage.timeScale;
+    for (const cue of worldCues(step.events, PLAYER, world.activePlayer, stepMs)) this.sound.play(cue.key, cue.delay, cue.duration);
     for (const event of step.events) {
       if (event.type === "moved") await this.view.walk(event.leaderId, event.path, world.leaders.some((l) => l.id === event.leaderId && l.player === PLAYER));
     }

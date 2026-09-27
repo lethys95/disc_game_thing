@@ -97,8 +97,11 @@ export class Sound {
       .catch(() => undefined);
   }
 
-  /** Plays a sound now, or `delay` ms from now. Silent until audio is open, and for slots without a file. */
-  play(key: SoundKey, delay = 0): void {
+  /**
+   * Plays a sound now, or `delay` ms from now; with `duration`, for exactly that long (looping a shorter sound, and
+   * fading out at the end). Silent until audio is open, and for slots without a file.
+   */
+  play(key: SoundKey, delay = 0, duration?: number): void {
     const context = this.context;
     const bus = this.effects;
     if (!context || !bus || this.volumes.master === 0 || this.volumes.effects === 0) return;
@@ -109,8 +112,21 @@ export class Sound {
       if (!buffer) return;
       const source = context.createBufferSource();
       source.buffer = buffer;
-      source.connect(bus);
-      source.start(context.currentTime + delay / 1000);
+      const start = context.currentTime + delay / 1000;
+      if (duration === undefined) {
+        source.connect(bus);
+        source.start(start);
+        return;
+      }
+      const seconds = duration / 1000;
+      const fade = context.createGain();
+      source.loop = seconds > buffer.duration;
+      source.connect(fade);
+      fade.connect(bus);
+      fade.gain.setValueAtTime(1, start + Math.max(0, seconds - 0.08));
+      fade.gain.linearRampToValueAtTime(0, start + seconds);
+      source.start(start);
+      source.stop(start + seconds);
     });
   }
 
