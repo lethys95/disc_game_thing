@@ -6,6 +6,7 @@ import { learnSkillProblem } from "#rules/world/economy";
 import type { Leader, World, WorldAction } from "#rules/world/state";
 import { button, element, orderButton } from "#view/dom";
 import { memberRow } from "#view/members";
+import type { KeyLayer } from "#view/input";
 
 export interface LeaderScreenOptions {
   readonly act: (action: WorldAction) => void;
@@ -21,14 +22,11 @@ function depth(skill: string): number {
 }
 
 /** A warband leader's own menu: its unit, its equipment, and the leader tree laid out by prerequisites. */
-export class LeaderScreen {
+export class LeaderScreen implements KeyLayer {
   constructor(
     private readonly root: HTMLElement,
     private readonly options: LeaderScreenOptions,
   ) {
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && !this.root.hidden) options.close();
-    });
   }
 
   /** The equipment slots (the user's 2024 layout) with what's worn, and the bag: click to put on or take off. */
@@ -63,6 +61,17 @@ export class LeaderScreen {
       box.appendChild(row);
     });
     return box;
+  }
+
+  open(): boolean {
+    return !this.root.hidden;
+  }
+
+  /** Escape closes the screen. */
+  key(e: KeyboardEvent): boolean {
+    if (e.key !== "Escape") return false;
+    this.options.close();
+    return true;
   }
 
   hide(): void {

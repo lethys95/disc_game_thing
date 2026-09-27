@@ -2,6 +2,7 @@ import { createBattle } from "#rules/battle/engine";
 import { AiClient } from "#view/ai-client";
 import { applySideColors, colorPair } from "#view/colors";
 import { GameMenu } from "#view/menu";
+import { routeKeys } from "#view/input";
 import { AUTOSAVE_ID, LocalSaveStore } from "#view/saves";
 import { applyOrnaments } from "#view/art";
 import { App } from "#view/app";
@@ -55,6 +56,7 @@ const menu: GameMenu = new GameMenu(byId("menu"), {
   },
   newGame: () => showSetup(),
 });
+routeKeys([menu, app, campaign]);
 const setup = new Setup(byId("setup"), {
   onChange: (squads, colors) => {
     battleScene.show();

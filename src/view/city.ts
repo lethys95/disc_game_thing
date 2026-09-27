@@ -14,6 +14,7 @@ import { squadGrid } from "#view/squad-grid";
 import { spellsTab } from "#view/spells";
 import type { GridChoice, GridSquad } from "#view/squad-grid";
 import { sameHex } from "#rules/hex";
+import type { KeyLayer } from "#view/input";
 
 /** What the screen shows: one of your cities (the Capitol included), or two of your warbands side by side. */
 export type Place = { readonly kind: "city"; readonly cityId: string } | { readonly kind: "meet"; readonly a: string; readonly b: string };
@@ -32,7 +33,7 @@ export const cityName = (city: City): string => (city.kind === "capitol" ? "Capi
  * units between; clicking an empty tile recruits (or resurrects, at the Capitol). The Capitol adds *Research*. The
  * same grids show two warbands that meet on the map.
  */
-export class CityScreen {
+export class CityScreen implements KeyLayer {
   private tab: "city" | "research" | "spells" = "city";
   private selected: { ref: SquadRef; tile: Tile } | null = null;
   private shown: { world: World; side: PlayerId; place: Place; mayAct: boolean } | null = null;
@@ -43,9 +44,17 @@ export class CityScreen {
     private readonly options: CityScreenOptions,
   ) {
     this.research = new ResearchPanel(options.act, () => this.rerender());
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && !this.root.hidden) options.close();
-    });
+  }
+
+  open(): boolean {
+    return !this.root.hidden;
+  }
+
+  /** Escape closes the screen. */
+  key(e: KeyboardEvent): boolean {
+    if (e.key !== "Escape") return false;
+    this.options.close();
+    return true;
   }
 
   hide(): void {

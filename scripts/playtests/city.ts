@@ -2,7 +2,7 @@ import type { Playtest } from "#scripts/playtests/harness";
 
 const city: Playtest = {
   name: "city",
-  about: "drag a unit from the visiting warband into the garrison, recruit on an empty tile, peek at a unit",
+  about: "drag a unit from the visiting warband into the garrison, recruit on an empty tile, peek at a unit, Escape out",
   async run(t) {
     await t.open("/?map&seed=1&capitol");
     const grids = t.page.locator("#capitol .squad-grid");
@@ -38,6 +38,8 @@ const city: Playtest = {
     await t.shot("playtest-city-peek");
     await t.page.mouse.up({ button: "right" });
     await t.shot("playtest-city");
+    await t.page.keyboard.press("Escape");
+    await t.page.locator("#capitol").waitFor({ state: "hidden", timeout: 2000 }).catch(() => t.fail("Escape didn't close the city screen"));
   },
 };
 

@@ -35,6 +35,8 @@ import { formation, groupAt, showPeek } from "#view/peek";
 import type { Stage } from "#view/stage";
 import type { Sound } from "#view/sound";
 import { worldCues } from "#view/sound-cues";
+import { plainKey } from "#view/input";
+import type { KeyLayer } from "#view/input";
 
 const AI_STEP_MS = 350;
 
@@ -46,7 +48,11 @@ export interface CampaignOptions {
 }
 
 /** The map layer: select a warband, click a hex to march; walking into an enemy starts a battle. */
-export class Campaign {
+const PAN: Readonly<Record<string, readonly [number, number]>> = {
+  ArrowUp: [0, 1], w: [0, 1], ArrowDown: [0, -1], s: [0, -1], ArrowLeft: [-1, 0], a: [-1, 0], ArrowRight: [1, 0], d: [1, 0],
+};
+
+export class Campaign implements KeyLayer {
   private world: World | null = null;
   /**
    * The player at this screen (not a battle side). Player 0 for now: games are you against the AI. Hotseat or network
@@ -129,29 +135,31 @@ export class Campaign {
         this.render();
       } else this.peekAt(e.clientX, e.clientY);
     });
-    // Arrow keys and WASD pan the map camera (user, 2026-09-27: panning shouldn't need a warband to move).
-    const PAN: Readonly<Record<string, readonly [number, number]>> = {
-      ArrowUp: [0, 1], w: [0, 1], ArrowDown: [0, -1], s: [0, -1], ArrowLeft: [-1, 0], a: [-1, 0], ArrowRight: [1, 0], d: [1, 0],
-    };
-    window.addEventListener("keydown", (e) => {
-      const step = PAN[e.key.length === 1 ? e.key.toLowerCase() : e.key];
-      const typing = e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement;
-      if (step && this.world && !this.hud.hidden && !typing && !e.ctrlKey && !e.metaKey && !e.altKey) {
-        e.preventDefault();
-        this.view.pan(step[0] * 0.8, step[1] * 0.8);
-      }
-    });
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && this.casting) {
-        this.casting = null;
-        this.render();
-      }
-    });
     window.addEventListener("pointerup", (e) => {
       if (e.button === 2) this.peek.hidden = true;
     });
     this.endTurn.addEventListener("click", () => void this.act({ type: "endTurn" }));
     buttonById("mapmenu").addEventListener("click", () => this.options.onMenu());
+  }
+
+  /** The map, with its own screens (a city, a leader) over it. */
+  open(): boolean {
+    return this.world !== null;
+  }
+
+  key(e: KeyboardEvent): boolean {
+    if (this.cityScreen.open()) return this.cityScreen.key(e);
+    if (this.leaderScreen.open()) return this.leaderScreen.key(e);
+    if (e.key === "Escape" && this.casting) {
+      this.casting = null;
+      this.render();
+      return true;
+    }
+    // Arrow keys and WASD pan the map camera (user, 2026-09-27: panning shouldn't need a warband to move).
+    const step = PAN[e.key.length === 1 ? e.key.toLowerCase() : e.key];
+    if (!step || this.hud.hidden || !plainKey(e)) return false;
+    this.view.pan(step[0] * 0.8, step[1] * 0.8);
+    return true;
   }
 
   /** A new game; player 0 is the human at this screen, the others are played by the AI. */
