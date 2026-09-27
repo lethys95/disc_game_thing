@@ -62,7 +62,9 @@ export function castHint(world: World, spellId: string, hovered: Hex | null): st
   if (!hovered || problem) return `${spell.name}: ${spell.describe} Click a highlighted hex; right-click or Esc to stop.${problem && hovered ? ` (Here: ${problem}.)` : ""}`;
   if (spell.effect.kind === "damage") {
     const units = spellVictims(world, spellId, hovered).flat().filter((m) => m.hp > 0).length;
-    return `Click to cast ${spell.name} here: ${units} unit${units === 1 ? "" : "s"} lose up to ${spell.effect.amount} HP.`;
+    const amount = spell.effect.amount;
+    const kills = spellVictims(world, spellId, hovered).flat().filter((m) => m.hp > 0 && m.hp <= amount).length;
+    return `Click to cast ${spell.name} here: ${units} unit${units === 1 ? "" : "s"} lose ${amount} HP${kills > 0 ? `, ${kills} would die` : ""}.`;
   }
   return `Click to cast ${spell.name} here.`;
 }
