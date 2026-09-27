@@ -3,7 +3,7 @@ import { COLS } from "#rules/battle/grid";
 import { WARBAND_SIGHT } from "#rules/balance";
 import { hexDistance, hexKey, neighbors, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
-import { stepCost } from "#rules/map";
+import { findPath, stepCost } from "#rules/map";
 import { applyWorldAction } from "#rules/world/actions";
 import { chooseWorldAction } from "#rules/world/ai";
 import { createWorld } from "#rules/world/create";
@@ -67,14 +67,17 @@ describe("fog of war", () => {
   test("a march stops when it sights a warband it hadn't seen", () => {
     let w = world();
     const mover = leaderById(w, "leader0");
-    // Find a straight-ish route of free hexes and hide an enemy just out of sight beyond its first step.
+    // A hex just out of sight, reached the same way on the real map as through the fog (so only the sighting can
+    // stop the march), with an enemy hidden on it.
+    const sameRoute = (far: Hex) => {
+      const real = findPath(w.map, mover.hex, far, () => false);
+      const blind = findPath(knownWorld(w, 0).map, mover.hex, far, () => false);
+      return real !== null && blind !== null && JSON.stringify(real.hexes) === JSON.stringify(blind.hexes) && real.hexes.every((h) => free(w, h));
+    };
     const route = [...Object.values(w.map.tiles)]
       .map((t) => t.hex)
       .filter((h) => free(w, h) && hexDistance(h, mover.hex) === WARBAND_SIGHT + 2)
-      .find((far) => {
-        const known = knownWorld(w, 0);
-        return !sightOf(w, 0).has(hexKey(far)) && known.leaders.length === 1;
-      });
+      .find((far) => !sightOf(w, 0).has(hexKey(far)) && knownWorld(w, 0).leaders.length === 1 && sameRoute(far));
     if (!route) throw new Error("no hex out of sight");
     w = withLeader(w, "leader1", { hex: route });
     expect(knownWorld(w, 0).leaders.some((l) => l.id === "leader1")).toBe(false);

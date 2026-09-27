@@ -89,7 +89,7 @@ The canon overworld spell system with placeholder spells (#51): typed mana, lear
 ## M37 — Code review cleanup (done, 2026-09-27)
 The user asked for a review of the code for technical debt; four reviewers (battle, world, view, tooling) reported. Fixed what M38 builds on; the rest is listed with reasons in engineering.md ("Debt").
 
-## M38 — Map structures (user, 2026-09-27; in progress)
+## M38 — Map structures (user, 2026-09-27; done)
 - **Mercenary camps:** recruit a few select neutral units, per map.
 - **Merchant:** buy and sell items.
 - **Mage merchant:** sells spells.

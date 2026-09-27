@@ -18,6 +18,8 @@ import type { City, Leader, World } from "#rules/world/state";
 import { buildFigure } from "#view/figures";
 import { discard, discardChildren } from "#view/stage";
 import type { CameraPose, Stage } from "#view/stage";
+import { STRUCTURES } from "#rules/structures";
+import type { StructureKind } from "#rules/structures";
 
 const SIZE = 1;
 /** How long a warband's figure takes to walk one hex. */
@@ -89,6 +91,55 @@ function jitter(hex: Hex, salt: number): number {
   return (h % 1000) / 1000;
 }
 
+/** Placeholder models for the structures (docs/design/art.md: stand-ins until the art is made). */
+const STRUCTURE_MODELS: Readonly<Record<StructureKind, () => THREE.Group>> = {
+  mercenaries: () => {
+    const group = new THREE.Group();
+    const canvas = new THREE.MeshStandardMaterial({ color: 0x6b5a44, roughness: 0.95, flatShading: true });
+    const tent = new THREE.Mesh(new THREE.ConeGeometry(0.34, 0.55, 4), canvas);
+    tent.position.y = 0.27;
+    tent.rotation.y = Math.PI / 4;
+    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.8, 5), new THREE.MeshStandardMaterial({ color: 0x2a211a }));
+    pole.position.set(0.3, 0.4, 0.15);
+    const flag = new THREE.Mesh(new THREE.PlaneGeometry(0.22, 0.14), new THREE.MeshStandardMaterial({ color: 0x8e1e16, side: THREE.DoubleSide }));
+    flag.position.set(0.41, 0.72, 0.15);
+    group.add(tent, pole, flag);
+    return group;
+  },
+  merchant: () => {
+    const group = new THREE.Group();
+    const wood = new THREE.MeshStandardMaterial({ color: 0x4a3526, roughness: 0.9 });
+    const cloth = new THREE.MeshStandardMaterial({ color: 0xb8862b, roughness: 0.8 });
+    const counter = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.25, 0.3), wood);
+    counter.position.y = 0.125;
+    const awning = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.03, 0.4), cloth);
+    awning.position.set(0, 0.55, 0.03);
+    awning.rotation.x = 0.25;
+    const posts = [-0.26, 0.26].map((x) => {
+      const post = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.55, 5), wood);
+      post.position.set(x, 0.27, -0.12);
+      return post;
+    });
+    group.add(counter, awning, ...posts);
+    return group;
+  },
+  mage: () => {
+    const group = new THREE.Group();
+    const stone = new THREE.MeshStandardMaterial({ color: 0x3b3a44, roughness: 0.9 });
+    const tower = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.2, 0.9, 8), stone);
+    tower.position.y = 0.45;
+    const roof = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.3, 8), new THREE.MeshStandardMaterial({ color: 0x2a2440, roughness: 0.8 }));
+    roof.position.y = 1.05;
+    const orb = new THREE.Mesh(
+      new THREE.OctahedronGeometry(0.07),
+      new THREE.MeshStandardMaterial({ color: 0xb49cff, emissive: 0x8a6cff, emissiveIntensity: 1.6 }),
+    );
+    orb.position.y = 1.3;
+    group.add(tower, roof, orb);
+    return group;
+  },
+};
+
 export class MapView {
   private colors: THREE.Color[] = [];
 
@@ -120,6 +171,7 @@ export class MapView {
   private readonly links = new Map<string, { mesh: THREE.Mesh; material: THREE.MeshStandardMaterial; city: string }>();
   private readonly nodeModels = new Map<string, THREE.Group>();
   private readonly lairs = new Map<string, { group: THREE.Group; label: HTMLDivElement }>();
+  private readonly structures = new Map<string, { group: THREE.Group; label: HTMLDivElement }>();
   private readonly siteLayer = new THREE.Group();
 
   constructor(private readonly stage: Stage) {
@@ -373,6 +425,40 @@ export class MapView {
           : lair.looted
             ? "Dungeon (looted)"
             : `Dungeon · ${lair.guards.length} guards`;
+    }
+  }
+
+  /**
+   * Structures as the player at this screen knows them: placeholder models (a tent, a stall, a tower) at the back of
+   * the hex, so a visiting warband stands in front of them.
+   */
+  syncStructures(world: World): void {
+    const present = new Set(world.structures.map((s) => s.id));
+    for (const [id, model] of this.structures) {
+      if (present.has(id)) continue;
+      discard(model.group);
+      this.structures.delete(id);
+    }
+    for (const structure of world.structures) {
+      let model = this.structures.get(structure.id);
+      if (!model) {
+        const group = STRUCTURE_MODELS[structure.kind]();
+        group.traverse((o) => {
+          o.castShadow = true;
+        });
+        group.position.copy(this.standingPoint(structure.hex)).add(new THREE.Vector3(0.28, 0, -0.32));
+        group.userData = { hex: structure.hex };
+        const label = document.createElement("div");
+        label.className = "site-label neutral";
+        const tag = new CSS2DObject(label);
+        tag.position.set(-0.28, 1.5, 0.32);
+        group.add(tag);
+        this.siteLayer.add(group);
+        model = { group, label };
+        this.structures.set(structure.id, model);
+      }
+      const name = STRUCTURES[structure.kind].name;
+      model.label.textContent = structure.kind === "mercenaries" ? `${name} · ${structure.stock.length} to hire` : name;
     }
   }
 

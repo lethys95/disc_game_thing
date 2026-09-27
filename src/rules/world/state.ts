@@ -9,6 +9,7 @@ import type { NodeKind } from "#rules/nodes";
 import type { ManaColor } from "#rules/factions";
 import { UNITS } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
+import type { Hire } from "#rules/structures";
 
 /** The world's data (warbands, cities, lairs, graveyards) and lookups over it. */
 
@@ -83,6 +84,7 @@ export interface Memory {
   cities: City[];
   lairs: Lair[];
   nodes: MapNode[];
+  structures: Structure[];
 }
 
 export interface Leader {
@@ -171,6 +173,32 @@ export interface Dungeon extends LairBase {
 /** A neutral group on the map. */
 export type Lair = Camp | Dungeon;
 
+interface StructureBase {
+  readonly id: string;
+  readonly hex: Hex;
+}
+
+/** Hires out what's left of its stock. */
+export interface MercenaryCamp extends StructureBase {
+  readonly kind: "mercenaries";
+  stock: Hire[];
+}
+
+/** Sells what's left of its stock; what it buys joins the stock. */
+export interface Merchant extends StructureBase {
+  readonly kind: "merchant";
+  stock: string[];
+}
+
+/** Sells spells; each player learns each once, and the stock never runs out. */
+export interface MageMerchant extends StructureBase {
+  readonly kind: "mage";
+  readonly stock: readonly string[];
+}
+
+/** A map structure a warband visits by standing on it (`rules/structures.ts`). */
+export type Structure = MercenaryCamp | Merchant | MageMerchant;
+
 export type Defender = { kind: "leader"; leaderId: string } | { kind: "garrison"; cityId: string } | { kind: "lair"; lairId: string };
 
 export interface Engagement {
@@ -187,6 +215,7 @@ export interface World {
   cities: City[];
   nodes: MapNode[];
   lairs: Lair[];
+  structures: Structure[];
   players: Player[];
   turn: number;
   /** Whose turn it is. Players take turns in order; a round ends when the order wraps around. */
@@ -227,7 +256,14 @@ export type WorldAction =
   /** Raise a city you hold one tier. */
   | { type: "upgradeCity"; cityId: string }
   /** Buy a unit-type upgrade: units that become that type from now on receive it. */
-  | { type: "upgrade"; upgrade: string };
+  | { type: "upgrade"; upgrade: string }
+  /** At a mercenary camp the warband stands on: hire the stock's `index`th unit into the warband. */
+  | { type: "hire"; leaderId: string; index: number; tile?: Tile }
+  /** At a merchant the warband stands on: buy an item into the leader's bag, or sell one from it. */
+  | { type: "buyItem"; leaderId: string; item: string }
+  | { type: "sellItem"; leaderId: string; item: string }
+  /** At a mage merchant the warband stands on: learn a spell. */
+  | { type: "buySpell"; leaderId: string; spell: string };
 
 export type WorldEvent =
   | { type: "moved"; leaderId: string; path: readonly Hex[] }
@@ -256,6 +292,9 @@ export type WorldEvent =
   | { type: "upgraded"; player: PlayerId; upgrade: string }
   | { type: "spellLearned"; player: PlayerId; spell: string }
   | { type: "spellCast"; player: PlayerId; spell: string; at: Hex }
+  | { type: "hired"; leaderId: string; defId: string }
+  | { type: "bought"; leaderId: string; item: string }
+  | { type: "sold"; leaderId: string; item: string; gold: number }
   | { type: "worldEnd"; winner: PlayerId }
   | { type: "eliminated"; player: PlayerId };
 
@@ -274,9 +313,10 @@ export const leaderUnit = (leader: Leader): SquadMember | undefined => leader.sq
 
 export const member = (defId: string, tile: Tile): SquadMember => ({ defId, tile, hp: fullHp(defId), xp: 0, marks: [], level: 0 });
 
+export const emptyMemory = (): Memory => ({ cities: [], lairs: [], nodes: [], structures: [] });
+
 export type Strength = "weak" | "medium" | "strong";
 
-/** Provisional bandit groups (the user's bandit units; formations and sizes are placeholders). */
 /**
  * Provisional bandit groups (the user's bandit units; formations, sizes and levels are placeholders). The user:
  * neutrals should be a challenge from the start. Stronger groups are bigger and seasoned (levels, pillars.md).

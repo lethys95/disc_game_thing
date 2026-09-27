@@ -31,7 +31,14 @@ const map: Playtest = {
       }
       const enemy = await t.leaderHex(1);
       if (!enemy) break;
-      const point = await t.hexScreen(enemy);
+      // Like a person, pan the camera until the target isn't under a panel or a button.
+      let point = await t.hexScreen(enemy);
+      for (let pan = 0; pan < 12 && !(await t.page.evaluate((p) => document.elementFromPoint(p.x, p.y) instanceof HTMLCanvasElement, point)); pan++) {
+        await t.page.keyboard.press(point.y < 360 ? "ArrowUp" : "ArrowDown");
+        await t.page.keyboard.press(point.x < 640 ? "ArrowLeft" : "ArrowRight");
+        await t.frames();
+        point = await t.hexScreen(enemy);
+      }
       await t.page.mouse.move(point.x, point.y);
       await t.frames();
       if (step === 0) await t.shot("map-aim");

@@ -16,10 +16,13 @@ import { applyWorldAction } from "#rules/world/actions";
 import { concludeBattle, openingBattle } from "#rules/world/battles";
 import { chooseBranchProblem, elevateProblem, income, learnSkillProblem, recruitProblem, resurrectionCost, resurrectProblem, reviveProblem, squadsOf, upgradeProblem, cityUpgradeCost, upgradeCityProblem, investNodeProblem, nodeInvestCost } from "#rules/world/economy";
 import { equipProblem, leadershipOf, movementOf } from "#rules/world/leaders";
+import { itemById } from "#rules/items";
+import { hireCost } from "#rules/structures";
+import { buyItemProblem, buySpellProblem, hireProblem } from "#rules/world/structures";
 import { destination, planMove } from "#rules/world/movement";
 import type { MovePlan, MoveTarget } from "#rules/world/movement";
 import { playerOf, capitolOf, fullHp, lairAt, leaderAt } from "#rules/world/state";
-import type { City, Leader, PlayerId, SquadMember, SquadRef, World, WorldAction } from "#rules/world/state";
+import type { City, Leader, PlayerId, SquadMember, SquadRef, Structure, World, WorldAction } from "#rules/world/state";
 
 /** The map AI. */
 
@@ -389,6 +392,43 @@ const newWarband: Planner = ({ world, capitol, mine, home, underThreat, rich, go
   return recruitProblem(world, guard, garrison) ? null : { type: "recruit", defId: guard, into: garrison };
 };
 
+/**
+ * What a warband would do at a structure, standing there, with gold it can spare: the strongest mercenary it has
+ * room for, an item it can wear in a free slot, the cheapest spell it hasn't learned. Null: nothing worth it.
+ */
+function tradeAt({ world, spareFor }: AiContext, leader: Leader, structure: Structure): WorldAction | null {
+  const there = sameHex(leader.hex, structure.hex) ? world : { ...world, leaders: world.leaders.map((l) => (l.id === leader.id ? { ...l, hex: structure.hex } : l)) };
+  switch (structure.kind) {
+    case "mercenaries": {
+      const best = structure.stock
+        .map((hire, index) => ({ index, cost: hireCost(hire) }))
+        .filter(({ index, cost }) => spareFor(cost) && !hireProblem(there, leader.id, index))
+        .sort((a, b) => b.cost - a.cost)[0];
+      return best ? { type: "hire", leaderId: leader.id, index: best.index } : null;
+    }
+    case "merchant": {
+      const item = structure.stock
+        .filter((id) => spareFor(itemById(id).price) && !buyItemProblem(there, leader.id, id) && !equipProblem({ ...leader, bag: [...leader.bag, id] }, id))
+        .sort((a, b) => itemById(a).price - itemById(b).price)[0];
+      return item ? { type: "buyItem", leaderId: leader.id, item } : null;
+    }
+    case "mage": {
+      const spell = structure.stock.filter((id) => spareFor(spellById(id).learnCost) && !buySpellProblem(there, leader.id, id)).sort((a, b) => spellById(a).learnCost - spellById(b).learnCost)[0];
+      return spell ? { type: "buySpell", leaderId: leader.id, spell } : null;
+    }
+  }
+}
+
+/** A warband standing on a structure trades there while it has something worth buying. */
+const trade: Planner = (ai) => {
+  for (const leader of ai.mine) {
+    const structure = ai.world.structures.find((s) => sameHex(s.hex, leader.hex));
+    const action = structure ? tradeAt(ai, leader, structure) : null;
+    if (action) return action;
+  }
+  return null;
+};
+
 const castSpells: Planner = ({ world }) => chooseCast(world);
 
 const siege: Planner = ({ world, target, memo }) => {
@@ -404,7 +444,8 @@ const blitz: Planner = ({ world, memo, wins }) => blitzOpener(world, memo, wins)
  * Capitol would win, otherwise the nearest target it can take without being caught; failing all that, staging
  * within reach of the enemy Capitol, then exploring.
  */
-const marches: Planner = ({ world, side, capitol, mine, wins, memo, target, cost, gold }) => {
+const marches: Planner = (ai) => {
+  const { world, side, capitol, mine, wins, memo, target, cost, gold } = ai;
   const rally = target !== undefined && siegeViable(world, target.hex, memo);
   const staging: { leader: Leader; to: Hex }[] = [];
   for (const leader of mine) {
@@ -415,7 +456,17 @@ const marches: Planner = ({ world, side, capitol, mine, wins, memo, target, cost
     // Wounded, leaderless until revived, or short of units with the gold to fill them: home to the Capitol.
     const missing = leadershipOf(leader) - leader.squad.length;
     const refill = missing >= 1 && gold >= cost * missing;
-    const hurt = strength(leader.squad) < 0.5 * fullStrength(leader.squad) || leader.fellOnTurn !== null || refill;
+    const wounded = strength(leader.squad) < 0.5 * fullStrength(leader.squad) || leader.fellOnTurn !== null;
+    // Only short of units: a mercenary camp nearer than home fills the gap as well.
+    if (refill && !wounded) {
+      const home = capitol ? planMove(world, leader.id, capitol.hex)?.path.cost ?? Infinity : Infinity;
+      const camp = world.structures
+        .filter((s) => s.kind === "mercenaries" && !sameHex(s.hex, leader.hex) && tradeAt(ai, leader, s) !== null)
+        .map((s) => ({ hex: s.hex, plan: planMove(world, leader.id, s.hex) }))
+        .filter((c) => c.plan !== null && c.plan.steps > 0 && c.plan.path.cost < home)[0];
+      if (camp) return { type: "move", leaderId: leader.id, to: camp.hex };
+    }
+    const hurt = wounded || refill;
     if (hurt && capitol && !atHome && !leaderAt(world, capitol.hex)) {
       const plan = planMove(world, leader.id, capitol.hex);
       if (plan && plan.steps > 0) return { type: "move", leaderId: leader.id, to: capitol.hex };
@@ -432,6 +483,8 @@ const marches: Planner = ({ world, side, capitol, mine, wins, memo, target, cost
       ...world.leaders.filter((l) => l.player !== side).map((l) => l.hex),
       ...world.cities.filter((c) => c.owner !== side).map((c) => c.hex),
       ...world.lairs.filter((l) => l.guards.length > 0).map((l) => l.hex),
+      // Structures with something worth buying (remembered stock).
+      ...world.structures.filter((s) => !sameHex(s.hex, leader.hex) && tradeAt(ai, leader, s) !== null).map((s) => s.hex),
     ];
     const options = goals
       .map((hex) => ({ hex, plan: planMove(world, leader.id, hex) }))
@@ -480,6 +533,7 @@ const PLANNERS: readonly Planner[] = [
   walls,
   invest,
   newWarband,
+  trade,
   castSpells,
   siege,
   blitz,

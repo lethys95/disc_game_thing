@@ -1,6 +1,6 @@
 import { hexDistance, hexKey, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
-import { spellById } from "#rules/spells";
+import { manaColorOf, spellById } from "#rules/spells";
 import type { SpellDef } from "#rules/spells";
 import { isLeaderOf } from "#rules/world/record";
 import { alive, capitolOf, playerOf } from "#rules/world/state";
@@ -13,6 +13,7 @@ import { bury, clearLair, nearestWarband, settleWarbands } from "#rules/world/fa
 export function learnSpellProblem(world: World, id: string): string | null {
   const player = playerOf(world, world.activePlayer);
   const spell = spellById(id);
+  if (spell.faction === "neutral") return "sold by mage merchants";
   if (spell.faction !== player.faction) return "another faction's spell";
   if (player.spells.includes(id)) return "already learned";
   if (!capitolOf(world, world.activePlayer)) return "no Capitol";
@@ -52,7 +53,7 @@ export function castProblem(world: World, id: string, at: Hex): string | null {
   const spell = spellById(id);
   if (!player.spells.includes(id)) return "not learned";
   if (player.cast.includes(id)) return "already cast this turn";
-  if (player.mana[spell.mana] < spell.cost) return "not enough mana";
+  if (player.mana[manaColorOf(spell, player.faction)] < spell.cost) return "not enough mana";
   if (!sightOf(world, side).has(hexKey(at))) return "out of sight";
   if (!fits(world, side, spell, at)) return "not a valid target";
   return null;
@@ -87,7 +88,7 @@ export function castSpell(world: World, id: string, at: Hex, events: WorldEvent[
   const side = world.activePlayer;
   const player = playerOf(world, side);
   const spell = spellById(id);
-  player.mana[spell.mana] -= spell.cost;
+  player.mana[manaColorOf(spell, player.faction)] -= spell.cost;
   player.cast.push(id);
   const effect = spell.effect;
   if (effect.kind === "damage") {

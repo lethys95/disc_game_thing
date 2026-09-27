@@ -9,6 +9,7 @@ import { equipProblem, freeRevival, movementOf, rankOf } from "#rules/world/lead
 import { destination, planMove } from "#rules/world/movement";
 import { knownWorld, see, updateVision } from "#rules/world/vision";
 import { castProblem, castSpell, learnSpellProblem } from "#rules/world/spells";
+import { buyItem, buySpell, hire, sellItem } from "#rules/world/structures";
 import { spellById } from "#rules/spells";
 import type { Hex } from "#rules/hex";
 import { cityOfSquad, squadAt, transfer, transferProblem } from "#rules/world/squads";
@@ -196,6 +197,22 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       playerOf(draft, side).upgrades.push(upgrade.id);
       events.push({ type: "upgraded", player: side, upgrade: upgrade.id });
       break;
+    }
+    case "hire":
+      hire(draft, action.leaderId, action.index, action.tile, events);
+      break;
+    case "buyItem":
+      buyItem(draft, action.leaderId, action.item, events);
+      break;
+    case "sellItem":
+      sellItem(draft, action.leaderId, action.item, events);
+      break;
+    case "buySpell":
+      buySpell(draft, action.leaderId, action.spell, events);
+      break;
+    default: {
+      const unhandled: never = action;
+      throw new Error(`unknown order: ${JSON.stringify(unhandled)}`);
     }
   }
   updateVision(draft);

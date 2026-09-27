@@ -43,7 +43,7 @@ function fixture(): World {
   w = withLeader(w, "leader0", { hex: beside(w, camp.hex), worn: ["iron_helm", "hatchet"], bag: ["ankh"], enchantments: [blessing], skills: { movement: 1 } });
   w = {
     ...w,
-    players: w.players.map((p) => ({ ...p, graveyard: [fallen], upgrades: ["congregant_damage"], research: ["city_resurrection"], spells: ["bless_warband"], cast: ["bless_warband"], commitment: { congregant: "zealot" } })),
+    players: w.players.map((p) => ({ ...p, graveyard: [fallen], upgrades: ["congregant_damage"], research: ["city_resurrection"], spells: ["bless_warband"], cast: ["bless_warband"], commitment: { congregant: "zealot" }, memory: { ...p.memory, structures: structuredClone(w.structures) } })),
     cities: w.cities.map((c) => ({ ...c, enchantments: [blessing] })),
     lairs: w.lairs.map((l) => (l.kind === "dungeon" ? { ...l, looted: true } : l.kind === "camp" && l.id !== camp.id ? { ...l, regrowsOn: 9 } : l)),
   };
