@@ -111,6 +111,7 @@ export class App {
         this.render();
       },
       onAuto: () => this.toggleAuto(),
+      onResolve: () => void this.resolveNow(),
       onFocus: (unitId) => {
         this.focus = unitId;
         this.render();
@@ -184,6 +185,24 @@ export class App {
     const id = battle?.current?.unitId;
     const unit = id ? battle?.units[id] : undefined;
     return !this.busy && !this.auto && unit !== undefined && unit.side === this.playerSide;
+  }
+
+  /** The rest of the battle played at once by the AI on both sides, in the worker; only the result is shown. */
+  private async resolveNow(): Promise<void> {
+    const battle = this.battle;
+    if (!battle || battle.outcome || this.playerSide === null) return;
+    this.generation += 1;
+    window.clearTimeout(this.timer);
+    const generation = this.generation;
+    this.busy = true;
+    this.render();
+    const done = await this.ai.resolve(battle);
+    if (generation !== this.generation) return;
+    this.busy = false;
+    this.battle = done;
+    if (done.outcome) this.hud.appendLog([{ type: "battleEnd", outcome: done.outcome }], done, this.playerSide);
+    this.scene.sync(done);
+    this.render();
   }
 
   toggleAuto(): void {
