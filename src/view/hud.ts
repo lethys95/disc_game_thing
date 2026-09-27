@@ -1,6 +1,6 @@
 import { BEHAVIORS, describeAbility, paramsOf } from "#rules/abilities/index";
 import { effectDef } from "#rules/effects";
-import { abilityRef, actionsPerRound, effectiveStats, upcomingSlots } from "#rules/battle/engine";
+import { abilityRef, actionsPerRound, effectiveStats, unitAbilities, upcomingSlots } from "#rules/battle/engine";
 import type { Battle, BattleEvent, BattleUnit, EffectInstance, Enhancement, LegalAbility, Side } from "#rules/battle/types";
 import { UNITS } from "#rules/units/index";
 import { art } from "#view/art";
@@ -183,15 +183,15 @@ export class Hud {
     }
 
     const abilities = element("ul", "abilities");
-    for (const slot of unit.abilities) {
-      const behavior = BEHAVIORS[slot.ref.id];
+    for (const ref of unitAbilities(battle, unit.id)) {
+      const behavior = BEHAVIORS[ref.id];
       if (!behavior || (behavior.kind === "active" && behavior.tags.includes("basic"))) continue;
       const item = element("li", behavior.kind);
-      item.appendChild(art({ kind: "ability", id: slot.ref.id }, "small"));
-      item.appendChild(element("span", "name", slot.ref.name ?? behavior.name));
-      const charges = paramsOf(slot.ref)["charges"];
-      if (charges !== undefined) item.appendChild(element("span", "charges", ` ${charges - slot.chargesUsed}/${charges}`));
-      item.appendChild(element("div", "text", describeAbility(slot.ref)));
+      item.appendChild(art({ kind: "ability", id: ref.id }, "small"));
+      item.appendChild(element("span", "name", ref.name ?? behavior.name));
+      const charges = paramsOf(ref)["charges"];
+      if (charges !== undefined) item.appendChild(element("span", "charges", ` ${charges - (unit.chargesUsed[ref.id] ?? 0)}/${charges}`));
+      item.appendChild(element("div", "text", describeAbility(ref)));
       abilities.appendChild(item);
     }
     this.card.appendChild(abilities);
@@ -217,9 +217,9 @@ export class Hud {
       if (option.spellCost > 0) button.appendChild(element("span", "tag spell", replicate ? `+${perCopy} ⚡ per copy` : `${option.spellCost} ⚡`));
       const key = option.enhancement.kind === "none" ? this.settings.keyFor(option.abilityId) : undefined;
       if (key) button.appendChild(element("span", "key", key.toUpperCase()));
-      const ref = abilityRef(unit, option.abilityId);
+      const ref = abilityRef(battle, unit.id, option.abilityId);
       const charges = paramsOf(ref)["charges"];
-      const used = unit.abilities.find((s) => s.ref.id === option.abilityId)?.chargesUsed ?? 0;
+      const used = unit.chargesUsed[option.abilityId] ?? 0;
       if (charges !== undefined) button.appendChild(element("span", "tag", `${charges - used}/${charges}`));
       button.title = `${describeAbility(ref)}${key ? ` (${key.toUpperCase()})` : ""}`;
       button.addEventListener("click", () => this.handlers.onAbility(optionKey(option)));

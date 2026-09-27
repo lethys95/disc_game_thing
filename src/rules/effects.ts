@@ -322,26 +322,16 @@ const effects: readonly EffectDef[] = [
     },
   },
   {
-    // Carried from a Cathedral's city: the unit has Holy Water.
-    id: "holy_water",
+    // An ability carried from elsewhere (an item's Hatchet, a Cathedral's holy water), with its own params: one
+    // effect for every ability-granting item and node. Several can sit on one unit.
+    id: "carries",
     quiet: true,
-    name: "Holy water",
-    describe: () => "Carries holy water: once per combat, heal an ally 30.",
-    stacking: { mode: "unique" },
+    name: "Carries",
+    describe: () => "Carries an extra ability, listed with the unit's own.",
+    stacking: { mode: "each" },
     lifetime: "battle",
     visibility: "public",
-    hooks: { grants: (_ctx, self, subjectId) => (subjectId === self.unitId ? ["holy_water"] : []) },
-  },
-  {
-    // A worn Hatchet: the leader can throw it.
-    id: "hatchet",
-    quiet: true,
-    name: "Hatchet",
-    describe: () => "Carries a hatchet: once per combat, throw it for 30.",
-    stacking: { mode: "unique" },
-    lifetime: "battle",
-    visibility: "public",
-    hooks: { grants: (_ctx, self, subjectId) => (subjectId === self.unitId ? ["throw_hatchet"] : []) },
+    hooks: { grants: (_ctx, self, subjectId) => (subjectId === self.unitId && self.effect?.ability ? [self.effect.ability] : []) },
   },
   {
     // A worn Outlaw's pocketwatch (user, 2026-09-27): every attack hits harder, and harder still against a shield.

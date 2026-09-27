@@ -59,6 +59,8 @@ export interface EffectInstance {
   stacks: number;
   /** Magnitude: bleed per turn, a pool's remaining shield, a bonus. */
   amount: number;
+  /** An ability it grants its bearer, with that ability's own params (an item's, a node's). */
+  readonly ability?: AbilityRef;
 }
 
 /** What callers pass to apply an effect; omitted numbers default to one stack and zero amount. */
@@ -67,11 +69,7 @@ export interface EffectSeed {
   readonly source?: string | null;
   readonly stacks?: number;
   readonly amount?: number;
-}
-
-export interface AbilitySlot {
-  readonly ref: AbilityRef;
-  chargesUsed: number;
+  readonly ability?: AbilityRef;
 }
 
 export interface BattleUnit {
@@ -84,7 +82,10 @@ export interface BattleUnit {
   shield: number;
   readonly base: Readonly<Stats>;
   readonly damageType: DamageType;
-  abilities: AbilitySlot[];
+  /** Its own abilities (granted ones come from traits: `Ctx.abilityRef`). */
+  readonly abilities: readonly AbilityRef[];
+  /** Uses spent this battle of each ability with `charges`, own or granted. */
+  chargesUsed: Record<string, number>;
   effects: EffectInstance[];
   alive: boolean;
   /** Left the battle alive (Retreat): off the field like the dead, but it keeps its health and isn't a kill. */
@@ -221,7 +222,7 @@ export interface Hooks {
   /** Adjusts `subjectId`'s stats. Asked of every trait on the battlefield, so auras can reach others. */
   stats?(ctx: Ctx, self: TraitSelf, subjectId: string, stats: Stats): void;
   /** Abilities granted to `subjectId`. Asked of every trait. */
-  grants?(ctx: Ctx, self: TraitSelf, subjectId: string): readonly string[];
+  grants?(ctx: Ctx, self: TraitSelf, subjectId: string): readonly AbilityRef[];
   /** Removes ability ids `subjectId` may not use. Asked of every trait. */
   restrict?(ctx: Ctx, self: TraitSelf, subjectId: string, allowed: Set<string>): void;
   /** The attacker's traits add to or change an outgoing hit. */
@@ -257,7 +258,8 @@ export interface Hooks {
   aiValue?(ctx: Ctx, self: TraitSelf): number;
 }
 
-export type Stacking = { readonly mode: "unique" } | { readonly mode: "merge"; readonly cap?: number } | { readonly mode: "perSource" };
+/** `each`: every application is its own instance (a unit can carry several granted abilities). */
+export type Stacking = { readonly mode: "unique" } | { readonly mode: "merge"; readonly cap?: number } | { readonly mode: "perSource" } | { readonly mode: "each" };
 
 /**
  * When an effect ends: `battle` lasts the fight; `untilOwnTurn` ends as its bearer's next turn starts;
@@ -342,6 +344,8 @@ export interface Ctx {
   consumeCharge(unitId: string, abilityId: string): boolean;
   /** Ability ids the unit has, including ones granted by traits. */
   abilityIds(unitId: string): string[];
+  /** The unit's own ref for an ability, or the granted one (with its params), or a bare `{ id }`. */
+  abilityRef(unitId: string, abilityId: string): AbilityRef;
   /** The traits on a unit (`battle/traits.ts`), cached until an effect comes or goes or a unit dies. */
   traits(unitId: string): readonly Trait[];
   /** Every trait on the battlefield, cached likewise. */

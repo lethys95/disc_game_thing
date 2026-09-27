@@ -195,7 +195,7 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
     describe: () =>
       "Every unit on the battlefield suffers Fanaticism and Hysteria, and nobody can defend.",
     hooks: {
-      grants: () => ["fanaticism", "hysteria"],
+      grants: () => [{ id: "fanaticism" }, { id: "hysteria" }],
       restrict: (_ctx, _self, _subjectId, allowed) => {
         allowed.delete("defend");
       },

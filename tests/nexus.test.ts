@@ -24,7 +24,7 @@ describe("Justiciar", () => {
     battle = act(battle, "defend").battle;
     const step = act(battle, "lay_on_hands");
     expect(step.events).toContainEqual({ type: "countered", unitId: "1.0.1", abilityId: "lay_on_hands" });
-    expect(unit(step.battle, "1.0.1").abilities.find((a) => a.ref.id === "lay_on_hands")?.chargesUsed).toBe(1);
+    expect(unit(step.battle, "1.0.1").chargesUsed["lay_on_hands"]).toBe(1);
     expect(legalActions(step.battle).map((a) => a.abilityId)).not.toContain("counter");
   });
 });

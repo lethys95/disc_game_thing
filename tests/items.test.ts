@@ -98,7 +98,7 @@ describe("the user's items (2026-09-27)", () => {
     let w = withGold({ ...world, cities: world.cities.map((c) => (c.id === cathedral.id ? { ...c, owner: 0, garrison: [] } : c)) }, [1000, 1000]);
     w = applyWorldAction(w, { type: "recruit", defId: "congregant", into: { kind: "garrison", cityId: cathedral.id } }).world;
     const recruit = w.cities.find((c) => c.id === cathedral.id)?.garrison[0];
-    expect(recruit?.marks.map((m) => m.effect.def)).toEqual(["holy_water"]);
+    expect(recruit?.marks.map((m) => m.effect.ability?.id)).toEqual(["holy_water"]);
     const battle = until(start([{ ...placementOf(recruit!, undefined), hp: 40 }], [p("congregant", 2, 2)]), "0.0.0");
     expect(legalActions(battle).map((a) => a.abilityId)).toContain("holy_water");
   });
@@ -117,5 +117,20 @@ describe("deaths on the map, whoever caused them (world/fate.ts)", () => {
     const step = applyWorldAction(next, { type: "castSpell", spell: "lightning_strike", at: target });
     expect(step.world.leaders.some((l) => l.id === "leader1")).toBe(false);
     expect(leaderById(step.world, "leader0").bag).toEqual(["iron_helm"]);
+  });
+});
+
+describe("granted abilities", () => {
+  test("a unit can carry several (a Hatchet and holy water), each with its own charge", () => {
+    const leader = { ...leaderById(fresh(), "leader0"), worn: ["hatchet"] };
+    const member = { ...leader.squad[0]!, marks: [{ effect: { def: "carries", ability: { id: "holy_water" } }, source: { kind: "node" as const, node: "cathedral" as const, cityId: "city4" } }] };
+    const placement = { ...placementOf(member, { ...leader, squad: [member] }), hp: 40 };
+    let battle = until(start([placement], [p("congregant", 2, 2)]), "0.0.0");
+    const ids = () => legalActions(battle).map((a) => a.abilityId);
+    expect(ids()).toEqual(expect.arrayContaining(["throw_hatchet", "holy_water"]));
+    battle = act(battle, "holy_water", "0.0.0").battle;
+    battle = until(battle, "0.0.0");
+    expect(ids()).toContain("throw_hatchet");
+    expect(ids()).not.toContain("holy_water");
   });
 });

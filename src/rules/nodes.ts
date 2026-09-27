@@ -24,7 +24,7 @@ export const NODES: Readonly<Record<NodeKind, NodeDef>> = {
   mana: { name: "Mana node", income: () => 0, mana: (level) => MANA_NODE_INCOME * level, recruitEffects: () => [] },
   // User (2026-09-27): units hired in the Cathedral's city carry holy water (heal 30, once per combat). Levels don't
   // change it yet (provisional).
-  cathedral: { name: "Cathedral", income: () => 0, mana: () => 0, recruitEffects: () => [{ def: "holy_water" }] },
+  cathedral: { name: "Cathedral", income: () => 0, mana: () => 0, recruitEffects: () => [{ def: "carries", ability: { id: "holy_water" } }] },
 };
 
 /** Where a node is generated; the world gives it an id and a level. */

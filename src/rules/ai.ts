@@ -81,7 +81,7 @@ function evaluate(battle: Battle, side: Side): number {
   for (const unit of Object.values(battle.units)) {
     const sign = unit.side === side ? 1 : -1;
     const spentSpells = (UNITS[unit.defId]?.spellCharges ?? 0) - unit.spellCharges;
-    score -= sign * AI_CHARGE_VALUE * (unit.abilities.reduce((sum, a) => sum + a.chargesUsed, 0) + spentSpells);
+    score -= sign * AI_CHARGE_VALUE * (Object.values(unit.chargesUsed).reduce((sum, n) => sum + n, 0) + spentSpells);
     if (!unit.alive) {
       // A unit that fled is saved, not lost: its health still counts, less its absence from the fight.
       score += unit.fled ? sign * 0.5 * unit.hp : -sign * 100;

@@ -36,7 +36,7 @@ export const ITEMS: readonly ItemDef[] = [
     name: "Hatchet",
     slot: "weapon",
     price: 100,
-    worn: [{ def: "hatchet" }],
+    worn: [{ def: "carries", ability: { id: "throw_hatchet" } }],
     banner: [],
     revivesFree: false,
     describe: "Once per combat, the leader throws it at any enemy for 30.",
