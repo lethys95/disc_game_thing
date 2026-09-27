@@ -17,6 +17,30 @@ export const modelUrl = (chain: readonly string[]): string | null => {
   return null;
 };
 
+/** Ground textures for hex tops, `assets/art/ground/<terrain>-<n>.webp`, loaded once each. */
+const GROUND = import.meta.glob<string>("/assets/art/ground/*.webp", { eager: true, query: "?url", import: "default" });
+export const GROUND_VARIANTS = 3;
+
+export class GroundTextures {
+  private readonly loader = new THREE.TextureLoader();
+  private readonly loaded = new Map<string, THREE.Texture>();
+
+  /** The texture for this terrain and variant (falling back to variant 1), or null if the terrain has none. */
+  get(terrain: string, variant: number): THREE.Texture | null {
+    const url = GROUND[`/assets/art/ground/${terrain}-${variant}.webp`] ?? GROUND[`/assets/art/ground/${terrain}-1.webp`];
+    if (!url) return null;
+    let texture = this.loaded.get(url);
+    if (!texture) {
+      texture = this.loader.load(url);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.anisotropy = 8;
+      texture.userData["shared"] = true;
+      this.loaded.set(url, texture);
+    }
+    return texture;
+  }
+}
+
 /** Model slots: the map's places by kind (a Capitol may have one per faction). */
 export const MODEL_CHAINS = {
   capitol: (faction: string | null) => [...(faction ? [`site/capitol-${faction}`] : []), "site/capitol"],
