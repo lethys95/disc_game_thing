@@ -1,7 +1,7 @@
 import { runBatch } from "#scripts/art/batch";
 
 /**
- * Ground textures for the tops of map hexes (`assets/art/ground/<terrain>-<n>.webp`): seen straight from above,
+ * Ground textures for the tops of map hexes (`assets/ground/<terrain>-<n>.webp`): seen straight from above,
  * evenly lit, filling the frame, so a hex shows its terrain at a glance. `pnpm tsx scripts/art/ground.ts [seeds…]`
  */
 

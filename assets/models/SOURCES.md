@@ -17,7 +17,7 @@ Every model here was generated locally; the recipe regenerates it exactly.
 | `lair/dungeon.glb` | slot `lair/dungeon`, seed 2 | TRELLIS v1 | 5000, 1024 px |
 | `terrain/<kind>-<n>.glb` (trees 1–4, mountains 1–3, hills 1–2, rocks 1–2, bushes 1–2) | `scripts/art/props.ts`, slot `terrain/<kind>-<n>`, seed 1 | TRELLIS v1 | trees, hills 3000; mountains 5000; rocks, bushes 2000; 512 px |
 
-Ground textures (`assets/art/ground/<terrain>-<n>.webp`): `scripts/art/ground.ts`, seeds 1–3, resized to 512 px WebP.
+Ground textures (`assets/ground/<terrain>-<n>.webp`): `scripts/art/ground.ts`, seeds 1–3, resized to 512 px WebP.
 
 The prompts are keyed by slot in `scripts/art/props.ts` (the first two predate that: ids `capitol-jilliath` and `mage`, same text). Cleanup is always `scripts/art/prop_cleanup.py`.
 

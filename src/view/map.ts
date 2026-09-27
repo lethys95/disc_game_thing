@@ -20,7 +20,7 @@ import { discard, discardChildren } from "#view/stage";
 import type { CameraPose, Stage } from "#view/stage";
 import { STRUCTURES } from "#rules/structures";
 import type { StructureKind } from "#rules/structures";
-import { GROUND_VARIANTS, GroundTextures, MODEL_CHAINS, Models } from "#view/models";
+import { GROUND_VARIANTS, GroundTextures, MODEL_CHAINS, Models, TERRAIN_VARIANTS } from "#view/models";
 
 const SIZE = 1;
 /** How long a warband's figure takes to walk one hex. */
@@ -89,9 +89,6 @@ const REACH = new THREE.Color(0x1a1f1c);
 const WALK = new THREE.Color(0xb08a4a);
 const LATER = new THREE.Color(0x4a4230);
 const ATTACK = new THREE.Color(0xd8321f);
-
-/** How many variants each terrain prop has (`terrain/<kind>-<n>.glb`). */
-const TERRAIN_VARIANTS = { tree: 4, mountain: 3, hill: 2, rock: 2, bush: 2 } as const;
 
 /** Deterministic per-hex jitter so decoration varies without randomness. */
 function jitter(hex: Hex, salt: number): number {
