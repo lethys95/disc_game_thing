@@ -32,27 +32,27 @@ export const PRESETS: Readonly<Record<"uncommitted" | "backline" | "preserve" | 
 export const NEXUS_PRESETS: Readonly<Record<"uncommitted" | "scheme" | "overload" | "etherborn" | "backlasher" | "maelstrom", readonly Placement[]>> = {
   uncommitted: [
     at("custodian", 0, 0), at("custodian", 0, 1), at("custodian", 0, 2),
-    at("technician", 1, 0), at("apprentice", 1, 1),
+    at("technician", 2, 0), at("apprentice", 2, 1),
   ],
   scheme: [
     at("cyclops", 0, 0), at("custodian", 0, 1), at("cyclops", 0, 2),
-    at("technician", 1, 0), at("justiciar", 1, 1),
+    at("technician", 2, 0), at("justiciar", 2, 1),
   ],
   overload: [
     at("mutant", 0, 0), at("custodian", 0, 1), at("mutant", 0, 2),
-    at("technician", 1, 0), at("thaumaturge", 1, 1),
+    at("technician", 2, 0), at("thaumaturge", 2, 1),
   ],
   etherborn: [
     at("cyclops", 0, 0), at("custodian", 0, 1), at("cyclops", 0, 2),
-    at("technician", 1, 0), at("etherborn", 1, 1),
+    at("technician", 2, 0), at("etherborn", 2, 1),
   ],
   backlasher: [
     at("cyclops", 0, 0), at("custodian", 0, 1), at("cyclops", 0, 2),
-    at("technician", 1, 0), at("backlasher", 1, 1),
+    at("technician", 2, 0), at("backlasher", 2, 1),
   ],
   maelstrom: [
     at("mutant", 0, 0), at("custodian", 0, 1), at("mutant", 0, 2),
-    at("technician", 1, 0), at("maelstrom", 1, 1),
+    at("technician", 2, 0), at("maelstrom", 2, 1),
   ],
 };
 

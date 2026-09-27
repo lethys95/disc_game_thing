@@ -1,4 +1,4 @@
-import { CAPITOL_MANA, CAMP_MEDIUM_FROM, CAMP_STRONG_FROM, CAPITOL_HEALING, CITY_MAX_TIER, CITY_UPGRADE_COST, NODE_INVEST_COST, NODE_MAX_LEVEL, CAPITOL_INCOME, RESURRECTION_BASE, RESURRECTION_PREMIUM } from "#rules/balance";
+import { CAPITOL_MANA, CAMP_MEDIUM_FROM, CAMP_STRONG_FROM, CAPITOL_HEALING, CITY_HEALING, CITY_MAX_TIER, CITY_UPGRADE_COST, NODE_INVEST_COST, NODE_MAX_LEVEL, CAPITOL_INCOME, RESURRECTION_BASE, RESURRECTION_PREMIUM } from "#rules/balance";
 import type { Tile } from "#rules/battle/types";
 import { chooseProblem, isFork, openForks } from "#rules/forks";
 import { COLS, ROWS, sameTile } from "#rules/battle/grid";
@@ -11,7 +11,7 @@ import { maxHpOf } from "#rules/world/record";
 import { CITY_RESURRECTION_PREMIUM, RESEARCH } from "#rules/research";
 import { UPGRADES, upgradesFor } from "#rules/upgrades";
 import { FACTION_MANA } from "#rules/spells";
-import { playerOf, alive, banditGroup, capitolOf, cityById, cityOfNode, leaderAt, leaderById, leaderUnit, member, nodesHeldBy } from "#rules/world/state";
+import { playerOf, alive, banditGroup, capitolOf, cityById, cityOfNode, leaderAt, leaderById, leaderUnit, member, nodesHeldBy, nodesOf } from "#rules/world/state";
 import type { Enchantment, PlayerId, City, Leader, MapNode, Mark, SquadMember, SquadRef, Strength, World, WorldEvent } from "#rules/world/state";
 import { capacityOf, hexOf, ownerOf, squadAt } from "#rules/world/squads";
 
@@ -160,6 +160,12 @@ export function marksOnBecoming(world: World, side: PlayerId, defId: string): Ma
 }
 
 /** A new unit for `side`: recruited, joining, or otherwise acquired. */
+/** What a unit recruited in `city` carries from the city's nodes (a Blacksmith's edge). */
+export function nodeMarks(world: World, city: City | undefined): Mark[] {
+  if (!city) return [];
+  return nodesOf(world, city).flatMap((n) => NODES[n.kind].recruitEffects(n.level).map((effect): Mark => ({ effect, source: { kind: "node", node: n.kind, cityId: city.id } })));
+}
+
 export function newcomer(world: World, side: PlayerId, defId: string, tile: Tile): SquadMember {
   return { ...member(defId, tile), marks: marksOnBecoming(world, side, defId) };
 }
@@ -213,10 +219,10 @@ export function startTurn(world: World, events: WorldEvent[]): void {
   player.gold += earned;
   player.mana[FACTION_MANA[player.faction]] += manaIncome(world, side);
   player.cast = [];
-  const capitol = capitolOf(world, side);
   for (const { squad, leader } of squadsOf(world, side)) {
-    const resting = capitol !== undefined && (leader === undefined ? squad === capitol.garrison : sameHex(leader.hex, capitol.hex));
-    const share = (resting ? CAPITOL_HEALING : 0) + (leader && leader.fellOnTurn === null ? squadHealingOf(leader) : 0);
+    const home = world.cities.find((c) => c.owner === side && (leader === undefined ? squad === c.garrison : sameHex(leader.hex, c.hex)));
+    const resting = home ? (home.kind === "capitol" ? CAPITOL_HEALING : CITY_HEALING) : 0;
+    const share = resting + (leader && leader.fellOnTurn === null ? squadHealingOf(leader) : 0);
     if (share === 0) continue;
     squad.forEach((m, i) => {
       if (!alive(m)) return;

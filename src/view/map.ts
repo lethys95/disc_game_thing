@@ -12,6 +12,7 @@ import type { Hex } from "#rules/hex";
 import type { Terrain, WorldMap } from "#rules/map";
 import { UNITS } from "#rules/units/index";
 import { spellById } from "#rules/spells";
+import { cityName } from "#view/city";
 import type { City, Leader, World } from "#rules/world/state";
 import { buildFigure } from "#view/figures";
 import type { CameraPose, Stage } from "#view/stage";
@@ -550,9 +551,10 @@ function anvil(iron: THREE.Material, fire: THREE.Material): THREE.Group {
   return g;
 }
 
+/** The city's name, as in the side panel, and whose it is: "City 2 (yours)". */
 function siteName(city: City): string {
-  const owner = city.owner === null ? "Neutral" : city.owner === 0 ? "Your" : "Enemy";
-  return city.kind === "capitol" ? `${owner} Capitol` : `${owner} city`;
+  const owner = city.owner === null ? "neutral" : city.owner === 0 ? "yours" : "enemy";
+  return `${cityName(city)} (${owner})`;
 }
 
 function figureDef(leader: Leader): string {

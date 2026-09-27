@@ -5,7 +5,7 @@ import type { Hex } from "#rules/hex";
 import { findPath, generateMap, stepCost, TERRAIN_COST } from "#rules/map";
 import type { Commitment } from "#rules/forks";
 import { GUARDIAN_ID } from "#rules/units/index";
-import { CAMP_REGROWTH_TURNS, CAMP_STRONG_FROM, CAPITOL_INCOME, MINE_INCOME, STARTING_GOLD } from "#rules/balance";
+import { CAPITOL_HEALING, CAMP_REGROWTH_TURNS, CAMP_STRONG_FROM, CAPITOL_INCOME, MINE_INCOME, STARTING_GOLD } from "#rules/balance";
 import { applyWorldAction } from "#rules/world/actions";
 import { chooseWorldAction } from "#rules/world/ai";
 import { concludeBattle, playersIn } from "#rules/world/battles";
@@ -110,17 +110,18 @@ describe("world", () => {
     expect(leaderById(step.world, "leader0").hex).toEqual(city.hex);
   });
 
-  test("holding a Blacksmith city brings its bonus into your battles, and never to neutrals", () => {
+  test("units recruited in a Blacksmith's city carry its edge for good; recruits elsewhere don't", () => {
     const world = createWorld(1, twoPlayers([army, squad], both("punishment"), ["jilliath", "jilliath"]));
     const smithy = world.cities.find((c) => nodesOf(world, c).some((n) => n.kind === "blacksmith"));
-    const camp = world.lairs.find((l) => l.kind === "camp");
-    if (!smithy || !camp) throw new Error("no blacksmith city or camp");
-    const owned = { ...world, cities: world.cities.map((c) => (c.id === smithy.id ? { ...c, owner: 0 as const } : c)) };
-    const ready = withLeader(owned, "leader0", { hex: walkableNeighbour(owned, camp.hex) });
-    const battle = applyWorldAction(ready, { type: "move", leaderId: "leader0", to: camp.hex }).world.engagement?.battle;
-    const effects = (side: number) => Object.values(battle?.units ?? {}).filter((u) => u.side === side).map((u) => u.effects.map((e) => e.def));
-    expect(effects(0).every((defs) => defs.includes("blacksmith"))).toBe(true);
-    expect(effects(1).some((defs) => defs.includes("blacksmith"))).toBe(false);
+    if (!smithy) throw new Error("no blacksmith city");
+    const owned = { ...world, players: world.players.map((p, i) => (i === 0 ? { ...p, gold: 1000 } : p)), cities: world.cities.map((c) => (c.id === smithy.id ? { ...c, owner: 0 as const, garrison: [] } : c)) };
+    let w = applyWorldAction(owned, { type: "recruit", defId: "congregant", into: { kind: "garrison", cityId: smithy.id } }).world;
+    const forged = w.cities.find((c) => c.id === smithy.id)?.garrison[0];
+    expect(forged?.marks.map((m) => m.effect.def)).toEqual(["blacksmith"]);
+    const capitol = capitolOf(w, 0);
+    if (!capitol) throw new Error("no Capitol");
+    w = applyWorldAction(w, { type: "recruit", defId: "congregant", into: { kind: "garrison", cityId: capitol.id } }).world;
+    expect(capitolOf(w, 0)?.garrison.find((m) => m.defId === "congregant")?.marks).toEqual([]);
   });
 
   test("a fight between a player and neutrals involves only that player", () => {
@@ -200,7 +201,8 @@ describe("world", () => {
     const leader = leaderById(world, "leader0");
     world = withLeader(world, "leader0", { squad: leader.squad.map((m) => ({ ...m, hp: 10 })) });
     world = applyWorldAction(applyWorldAction(world, { type: "endTurn" }).world, { type: "endTurn" }).world;
-    expect(leaderById(world, "leader0").squad.map((m) => m.hp)).toEqual([10 + 38, 10 + 23]);
+    const healed = (max: number) => 10 + Math.ceil(max * CAPITOL_HEALING);
+    expect(leaderById(world, "leader0").squad.map((m) => m.hp)).toEqual([healed(150), healed(90)]);
   });
 
   test("storming the enemy Capitol and killing its Guardian wins the game", () => {

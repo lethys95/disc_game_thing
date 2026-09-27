@@ -314,7 +314,9 @@ export function chooseWorldAction(truth: World): WorldAction {
       })
       .filter(({ plan }) => {
         const stop = plan.steps > 0 ? plan.path.hexes[plan.steps - 1] : leader.hex;
-        return (plan.target !== null && plan.target.kind !== "capture") || !stop || !threatened(world, leader, stop, wins);
+        if ((plan.target !== null && plan.target.kind !== "capture") || !stop || !threatened(world, leader, stop, wins)) return true;
+        // Boxed in (user's playtest): where it stands is no safer, so an empty city is worth taking.
+        return plan.target?.kind === "capture" && threatened(world, leader, leader.hex, wins);
       })
       .sort((a, b) => a.plan.path.cost - b.plan.path.cost);
     const best = options[0];

@@ -5,7 +5,6 @@ import { createBattle } from "#rules/battle/engine";
 import type { Placement } from "#rules/battle/engine";
 import type { Battle, Side } from "#rules/battle/types";
 import { sameTile } from "#rules/battle/grid";
-import { NODES } from "#rules/nodes";
 import { xpValue } from "#rules/progression";
 import { GUARDIAN_ID } from "#rules/units/index";
 import { freeTile, growSquad, newcomer } from "#rules/world/economy";
@@ -14,7 +13,7 @@ import { leadershipOf } from "#rules/world/leaders";
 import { isLeaderOf, placementOf } from "#rules/world/record";
 import type { MoveTarget } from "#rules/world/movement";
 import { updateVision } from "#rules/world/vision";
-import { alive, cityById, lairById, leaderAt, leaderById, leaderUnit, nodesHeldBy, playerOf, unitId } from "#rules/world/state";
+import { alive, cityById, lairById, leaderAt, leaderById, leaderUnit, playerOf, unitId } from "#rules/world/state";
 import type { City, Defender, Enchantment, Engagement, Leader, PlayerId, SquadMember, World, WorldEvent, WorldStep } from "#rules/world/state";
 
 /**
@@ -75,9 +74,7 @@ function engagementBattle(world: World, attacker: Leader, defender: Defender): B
     return walls > 0 ? { ...placement, effects: [...(placement.effects ?? []), { def: "fortified", amount: walls }] } : placement;
   });
   const squads: [Placement[], Placement[]] = [ours, theirs];
-  // Each player brings the battle effects of the nodes it holds; neutrals bring none.
-  const effectsOf = (player: PlayerId | null) => (player === null ? [] : nodesHeldBy(world, player).flatMap((n) => NODES[n.kind].battleEffects(n.level)));
-  return createBattle(squads, { sideEffects: [effectsOf(attacker.player), effectsOf(defending.player)] }).battle;
+  return createBattle(squads).battle;
 }
 
 /** The squad after a battle: survivors keep their wounds, and a fallen leader stays while anyone else stands. */

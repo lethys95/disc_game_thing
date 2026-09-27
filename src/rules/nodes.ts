@@ -3,8 +3,8 @@ import type { EffectSeed } from "#rules/battle/types";
 
 /**
  * Nodes (Warlords 3 style, docs/design/pillars.md "Cities"): map features that belong to the **nearest city** (a
- * Capitol counts), so whoever holds that city holds them. A node kind is data: income per turn and effects its
- * owner brings into every battle, both growing with the node's level (investment, provisional numbers).
+ * Capitol counts), so whoever holds that city holds them. A node kind is data: gold and mana per turn, and what units
+ * recruited in its city carry, all growing with the node's level (investment, provisional numbers).
  */
 export type NodeKind = "gold" | "blacksmith" | "mana";
 
@@ -13,15 +13,15 @@ export interface NodeDef {
   readonly income: (level: number) => number;
   /** Mana per turn, in the holder's faction color. */
   readonly mana: (level: number) => number;
-  readonly battleEffects: (level: number) => readonly EffectSeed[];
+  /** What a unit recruited in the node's city carries for good (a mark). */
+  readonly recruitEffects: (level: number) => readonly EffectSeed[];
 }
 
 export const NODES: Readonly<Record<NodeKind, NodeDef>> = {
-  gold: { name: "Gold mine", income: (level) => MINE_INCOME * level, mana: () => 0, battleEffects: () => [] },
-  // User: "blacksmith node would increase the damage of abilities by 10 or something". Whom it reaches (every
-  // warband of the owner) is provisional (docs/questions.md).
-  blacksmith: { name: "Blacksmith", income: () => 0, mana: () => 0, battleEffects: (level) => [{ def: "blacksmith", amount: BLACKSMITH_BONUS * level }] },
-  mana: { name: "Mana node", income: () => 0, mana: (level) => MANA_NODE_INCOME * level, battleEffects: () => [] },
+  gold: { name: "Gold mine", income: (level) => MINE_INCOME * level, mana: () => 0, recruitEffects: () => [] },
+  // User (2026-09-27): units recruited in the Blacksmith's city get +10 attack. It stays with them, as a mark.
+  blacksmith: { name: "Blacksmith", income: () => 0, mana: () => 0, recruitEffects: (level) => [{ def: "blacksmith", amount: BLACKSMITH_BONUS * level }] },
+  mana: { name: "Mana node", income: () => 0, mana: (level) => MANA_NODE_INCOME * level, recruitEffects: () => [] },
 };
 
 /** Where a node is generated; the world gives it an id and a level. */

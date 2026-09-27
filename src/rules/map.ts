@@ -90,10 +90,11 @@ function startHexes(radius: number, players: number): Hex[] {
 }
 
 /**
- * A map for `players` players; more players get a larger map and more neutral sites (provisional: a neutral city
- * more than there are players; a camp and a dungeon per player).
+ * A map for `players` players; more players get a larger map and more neutral sites (provisional: two neutral cities
+ * more than there are players; a camp and a dungeon per player, and one more of each). The user's playtest
+ * (2026-09-27): at radius 4 the enemy Capitol was two turns away.
  */
-export function generateMap(seed: number, players = 2, radius = players <= 2 ? 4 : 5): WorldMap {
+export function generateMap(seed: number, players = 2, radius = players <= 2 ? 5 : 6): WorldMap {
   const starts = startHexes(radius, players);
   for (let attempt = 0; ; attempt++) {
     const variant = seed + attempt * 104729;
@@ -105,8 +106,8 @@ export function generateMap(seed: number, players = 2, radius = players <= 2 ? 4
     const bare: WorldMap = { radius, tiles, starts, sites: [], lairs: [] };
     const first = starts[0];
     if (!first || starts.some((s) => !sameHex(s, first) && !findPath(bare, first, s, () => false))) continue;
-    const sites = placeSites(bare, variant, players + 1);
-    const lairs = placeLairs(bare, sites, variant, players);
+    const sites = placeSites(bare, variant, players + 2);
+    const lairs = placeLairs(bare, sites, variant, players + 1);
     const map: WorldMap = { ...bare, sites, lairs };
     const spots = [...sites.map((s) => s.hex), ...lairs.map((l) => l.hex)];
     const everyoneReaches = spots.every((hex) => starts.every((start) => sameHex(start, hex) || findPath(map, start, hex, () => false)));

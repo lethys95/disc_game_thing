@@ -1,3 +1,4 @@
+import { NODES } from "#rules/nodes";
 import { BEHAVIORS, describeAbility } from "#rules/abilities/index";
 import { effectDef } from "#rules/effects";
 import type { Commitment } from "#rules/forks";
@@ -23,7 +24,9 @@ export function markText(mark: Mark): string {
       ? `the leader tree (${LEADER_SKILLS[source.skill]?.name ?? source.skill})`
       : source.kind === "levels"
         ? `${source.levels} level${source.levels === 1 ? "" : "s"} past the end of its line`
-        : `the ${unitName(UPGRADES.get(source.upgrade)?.unitType ?? source.upgrade)} upgrade at the Capitol`;
+        : source.kind === "node"
+          ? `the ${NODES[source.node].name} of the city it was recruited in`
+          : `the ${unitName(UPGRADES.get(source.upgrade)?.unitType ?? source.upgrade)} upgrade at the Capitol`;
   return `${text} From ${from}.`;
 }
 
