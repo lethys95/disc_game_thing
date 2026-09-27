@@ -69,9 +69,11 @@ function engagementBattle(world: World, attacker: Leader, defender: Defender): B
   const theirSpells = [...(defending.leader?.enchantments ?? []), ...(defendedCity(world, defender, defending.player)?.enchantments ?? [])];
   // Defenders in a city fight behind its walls: its garrison, or a warband standing in its own city.
   const walls = wallsFor(world, defender, defending.player);
+  const cornered = defendedCity(world, defender, defending.player) !== undefined;
   const theirs = defending.squad.filter(alive).map((m) => {
     const placement = spelled(placementOf(m, defending.leader), theirSpells);
-    return walls > 0 ? { ...placement, effects: [...(placement.effects ?? []), { def: "fortified", amount: walls }] } : placement;
+    const effects = [...(placement.effects ?? []), ...(walls > 0 ? [{ def: "fortified", amount: walls }] : []), ...(cornered ? [{ def: "cornered" }] : [])];
+    return { ...placement, effects };
   });
   const squads: [Placement[], Placement[]] = [ours, theirs];
   return createBattle(squads).battle;
@@ -82,7 +84,8 @@ function remaining(squad: readonly SquadMember[], side: Side, battle: Battle, le
   const after = squad.flatMap((m) => {
     if (!alive(m)) return [m];
     const unit = battle.units[unitId(side, m.tile)];
-    if (unit?.alive) return [{ ...m, hp: unit.hp }];
+    // The fled survive with the health they left with.
+    if (unit?.alive || unit?.fled) return [{ ...m, hp: unit.hp }];
     return isLeaderOf(m, leader) ? [{ ...m, hp: 0 }] : [];
   });
   return after.some(alive) ? after : [];
@@ -90,7 +93,10 @@ function remaining(squad: readonly SquadMember[], side: Side, battle: Battle, le
 
 /** Units killed in this battle: what the winners' XP is made of. */
 function killed(squad: readonly SquadMember[], side: Side, battle: Battle): SquadMember[] {
-  return squad.filter((m) => alive(m) && battle.units[unitId(side, m.tile)]?.alive === false);
+  return squad.filter((m) => {
+    const unit = battle.units[unitId(side, m.tile)];
+    return alive(m) && unit?.alive === false && !unit.fled;
+  });
 }
 
 /** Writes a finished battle back into the world: survivors keep their wounds, the dead leave their squad. */
@@ -220,6 +226,12 @@ function eliminate(world: World, player: PlayerId, events: WorldEvent[]): void {
  * mover is always side 0.
  */
 export function forecast(world: World, leaderId: string, target: MoveTarget): Battle | null {
+  const start = openingBattle(world, leaderId, target);
+  return start ? autoplay(start) : null;
+}
+
+/** The battle a move would start, not yet played (null for a capture). */
+export function openingBattle(world: World, leaderId: string, target: MoveTarget): Battle | null {
   if (target.kind === "capture") return null;
-  return autoplay(engagementBattle(world, leaderById(world, leaderId), defenderOf(target)));
+  return engagementBattle(world, leaderById(world, leaderId), defenderOf(target));
 }

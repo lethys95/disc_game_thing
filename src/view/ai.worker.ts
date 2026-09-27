@@ -1,10 +1,14 @@
 import { autoplay, chooseAction } from "#rules/ai";
 import { chooseWorldAction } from "#rules/world/ai";
+import type { BattleMemo } from "#rules/world/ai";
 import { forecast } from "#rules/world/battles";
 import type { AiRequest, AiResponse } from "#view/ai-protocol";
 
 /** Runs the AI and battle forecasts off the main thread, so thinking never freezes the UI. */
-addEventListener("message", (event: MessageEvent<AiRequest>) => {
+function serve(): void {
+  // Battles the map AI has played out, kept for as long as the worker lives.
+  const memo: BattleMemo = new Map();
+  addEventListener("message", (event: MessageEvent<AiRequest>) => {
   const request = event.data;
   let response: AiResponse;
   switch (request.kind) {
@@ -12,7 +16,7 @@ addEventListener("message", (event: MessageEvent<AiRequest>) => {
       response = { id: request.id, kind: "battle", action: chooseAction(request.battle) };
       break;
     case "world":
-      response = { id: request.id, kind: "world", action: chooseWorldAction(request.world) };
+      response = { id: request.id, kind: "world", action: chooseWorldAction(request.world, memo) };
       break;
     case "resolve":
       response = { id: request.id, kind: "resolve", battle: autoplay(request.battle) };
@@ -25,4 +29,7 @@ addEventListener("message", (event: MessageEvent<AiRequest>) => {
     }
   }
   postMessage(response, {});
-});
+  });
+}
+
+serve();

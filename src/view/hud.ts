@@ -45,6 +45,8 @@ export interface HudHandlers {
   /** An ability button is hovered (null: no longer): preview it on every target it can reach. */
   onAbilityHover(key: string | null): void;
   onAuto(): void;
+  /** Play the rest of the battle at once, without animations (D2's auto-resolve). */
+  onResolve(): void;
 }
 
 export interface BannerButton {
@@ -73,22 +75,25 @@ export class Hud {
   private readonly log = byId("log");
   private readonly banner = byId("banner");
   private readonly auto = byId("auto");
+  private readonly resolve = byId("resolve");
 
   constructor(
     private readonly settings: Settings,
     private readonly handlers: HudHandlers,
   ) {
     this.auto.addEventListener("click", () => handlers.onAuto());
+    this.resolve.addEventListener("click", () => handlers.onResolve());
   }
 
   renderAuto(available: boolean, on: boolean): void {
     this.auto.hidden = !available;
+    this.resolve.hidden = !available;
     this.auto.textContent = on ? "Take control" : "Auto-battle";
     this.auto.classList.toggle("selected", on);
   }
 
   setVisible(visible: boolean): void {
-    for (const el of [this.turns, this.log, this.hint, this.actions, this.auto]) el.hidden = !visible;
+    for (const el of [this.turns, this.log, this.hint, this.actions, this.auto, this.resolve]) el.hidden = !visible;
     if (!visible) {
       this.card.hidden = true;
       this.banner.hidden = true;
@@ -319,10 +324,13 @@ function describe(event: BattleEvent, name: (id: string) => string, playerSide: 
       return `${name(event.unitId)} is dragged to the front`;
     case "countered":
       return `${name(event.unitId)}'s action is countered!`;
+    case "fled":
+      return `${name(event.unitId)} flees the battle.`;
     case "skipped":
-      return event.reason === "stunned" ? `${name(event.unitId)} is stunned` : `${name(event.unitId)} cannot act`;
+      return event.reason === "lostTurn" ? `${name(event.unitId)} loses its turn` : `${name(event.unitId)} cannot act`;
     case "battleEnd":
       if (event.outcome.winner === null) return "None survive.";
+      if (event.outcome.withdrew) return `Neither side can finish the other: the attackers withdraw. ${playerSide === null ? "The defenders hold the field." : playerSide === 1 ? "Victory." : "Defeat."}`;
       return playerSide === null ? `Side ${event.outcome.winner + 1} prevails.` : event.outcome.winner === playerSide ? "Victory." : "Defeat.";
     case "turnStart":
       return null;

@@ -87,6 +87,8 @@ export interface BattleUnit {
   abilities: AbilitySlot[];
   effects: EffectInstance[];
   alive: boolean;
+  /** Left the battle alive (Retreat): off the field like the dead, but it keeps its health and isn't a kill. */
+  fled: boolean;
   /** Spell charges left this battle. */
   spellCharges: number;
   /** Leads its squad on the map. No combat effect (canon: elevation grants no stat boost); shown to the player. */
@@ -115,7 +117,8 @@ export interface Battle {
   outcome: Outcome | null;
 }
 
-export type Outcome = { winner: Side } | { winner: null; reason: "mutualDestruction" };
+/** `withdrew`: the round limit passed and the attacker (side 0) left the field to the defender. */
+export type Outcome = { winner: Side; withdrew?: true } | { winner: null; reason: "mutualDestruction" };
 
 /** A way to use an ability: the tile the player clicks, and the units it will affect. */
 export interface TargetChoice {
@@ -167,7 +170,8 @@ export type BattleEvent =
   | { type: "effect"; unitId: string; effect: string; source: string | null }
   | { type: "effectEnded"; unitId: string; effect: string; source: string | null }
   | { type: "move"; unitId: string; from: Tile; to: Tile }
-  | { type: "skipped"; unitId: string; reason: "stunned" | "noActions" }
+  | { type: "skipped"; unitId: string; reason: "lostTurn" | "noActions" }
+  | { type: "fled"; unitId: string }
   | { type: "countered"; unitId: string; abilityId: string }
   | { type: "battleEnd"; outcome: Outcome };
 
@@ -176,7 +180,7 @@ export type BattleEvent =
  * `attack` is the unit's attack (what Must Attack allows and Hysteria repeats); `basic` marks the universal
  * verbs; `damage` abilities are what "+X ability damage" modifiers touch.
  */
-export type Tag = "attack" | "basic" | "melee" | "ranged" | "spell" | "damage" | "heal" | "area";
+export type Tag = "attack" | "basic" | "melee" | "ranged" | "spell" | "damage" | "heal" | "area" | "flee";
 
 /** One hit on one unit, on its way through the damage pipeline (architecture.md §3). */
 export interface Packet {
@@ -202,6 +206,13 @@ export interface TraitSelf {
   readonly effect: EffectInstance | null;
 }
 
+/** A hook bundle together with whom it runs for. Passive abilities and effects are both traits. */
+export interface Trait {
+  readonly hooks: Hooks;
+  readonly self: TraitSelf;
+  readonly absorbPriority: number;
+}
+
 /**
  * The hooks a trait may implement. The engine asks every relevant trait at fixed points and never names a
  * specific mechanic. Adding a mechanic means writing hooks, not editing the engine.
@@ -223,8 +234,8 @@ export interface Hooks {
   absorb?(ctx: Ctx, self: TraitSelf, packet: Packet): void;
   /** The target's traits reduce what got past the pools (Defend). */
   mitigate?(ctx: Ctx, self: TraitSelf, packet: Packet): void;
-  /** At the start of this unit's turn; "skip" loses the turn. */
-  turnStart?(ctx: Ctx, self: TraitSelf): "skip" | null;
+  /** At the start of this unit's turn; "skip" loses the turn, "leave" takes the unit off the field alive (Retreat). */
+  turnStart?(ctx: Ctx, self: TraitSelf): "skip" | "leave" | null;
   /** Before this unit's ability resolves; "cancel" makes it fizzle (the action is still spent). */
   beforeAbility?(ctx: Ctx, self: TraitSelf, abilityId: string): "cancel" | null;
   /** After this unit's hit lands on one target. */
@@ -331,6 +342,10 @@ export interface Ctx {
   consumeCharge(unitId: string, abilityId: string): boolean;
   /** Ability ids the unit has, including ones granted by traits. */
   abilityIds(unitId: string): string[];
+  /** The traits on a unit (`battle/traits.ts`), cached until an effect comes or goes or a unit dies. */
+  traits(unitId: string): readonly Trait[];
+  /** Every trait on the battlefield, cached likewise. */
+  allTraits(): readonly Trait[];
   hasTag(abilityId: string, tag: Tag): boolean;
   move(unitId: string, to: Tile): void;
   emit(event: BattleEvent): void;

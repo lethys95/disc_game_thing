@@ -1,7 +1,7 @@
 import { behavior, paramsOf } from "#rules/abilities/index";
-import { INITIATIVE_PER_ACTION } from "#rules/balance";
+import { BATTLE_ROUND_LIMIT, INITIATIVE_PER_ACTION } from "#rules/balance";
 import { hit, lose } from "#rules/battle/damage";
-import { allTraits, traitsOn } from "#rules/battle/traits";
+import { allTraits, buildTraits, traitsOn } from "#rules/battle/traits";
 import type {
   AbilityRef,
   Action,
@@ -20,6 +20,7 @@ import type {
   Stats,
   TargetChoice,
   Tile,
+  Trait,
   TraitSelf,
 } from "#rules/battle/types";
 import { PLAIN } from "#rules/battle/types";
@@ -78,6 +79,7 @@ export function createBattle(sides: readonly [readonly Placement[], readonly Pla
         abilities: def.abilities.map((ref) => ({ ref, chargesUsed: 0 })),
         effects: [...(effects ?? []), ...context.sideEffects[side]].map(instance),
         alive: true,
+        fled: false,
         spellCharges: def.spellCharges ?? 0,
         leader: leader ?? false,
       };
@@ -112,10 +114,15 @@ export function ownStats(placement: Placement): Stats {
   return effectiveStats(battle, `0.${placement.tile.row}.${placement.tile.col}`);
 }
 
-/** What a unit's traits say they're worth to its side (the AI's valuation of marks, mutations, pools). */
-export function traitValue(battle: Battle, unitId: string): number {
+/**
+ * What each unit's traits say they're worth to its side (the AI's valuation of marks, mutations, pools), for every
+ * unit at once: one context, so the trait lists are built once per position.
+ */
+export function traitValues(battle: Battle): Record<string, number> {
   const ctx = makeCtx(battle, []);
-  return traitsOn(ctx, unitId).reduce((sum, t) => sum + (t.hooks.aiValue?.(ctx, t.self) ?? 0), 0);
+  const values: Record<string, number> = {};
+  for (const unit of ctx.living()) values[unit.id] = traitsOn(ctx, unit.id).reduce((sum, t) => sum + (t.hooks.aiValue?.(ctx, t.self) ?? 0), 0);
+  return values;
 }
 
 export function legalActions(battle: Battle): LegalAbility[] {
@@ -138,7 +145,7 @@ function active(abilityId: string): ActiveBehavior {
 }
 
 export function applyAction(battle: Battle, action: Action): Step {
-  const draft = structuredClone(battle);
+  const draft = cloneBattle(battle);
   const events: BattleEvent[] = [];
   const ctx = makeCtx(draft, events);
   const slot = draft.current;
@@ -182,6 +189,27 @@ export function applyAction(battle: Battle, action: Action): Step {
   }
   advance(ctx);
   return { battle: draft, events };
+}
+
+/**
+ * A copy to mutate: everything an action can change is copied, and what it only reads (base stats, ability refs) is
+ * shared. structuredClone did the same job at a quarter of all AI time: the AI copies the battle for every option it
+ * tries.
+ */
+function cloneBattle(battle: Battle): Battle {
+  const units: Record<string, BattleUnit> = {};
+  for (const [id, u] of Object.entries(battle.units)) {
+    units[id] = { ...u, abilities: u.abilities.map((a) => ({ ...a })), effects: u.effects.map((e) => ({ ...e })) };
+  }
+  const slot = battle.current;
+  return {
+    ...battle,
+    units,
+    actionsThisRound: { ...battle.actionsThisRound },
+    queue: [...battle.queue],
+    waitedThisPass: [...battle.waitedThisPass],
+    current: slot ? { ...slot, freeUsed: [...slot.freeUsed], bonusAttacks: [...slot.bonusAttacks] } : null,
+  };
 }
 
 function slotIsOver(ctx: Ctx, slot: Slot): boolean {
@@ -274,15 +302,23 @@ function advance(ctx: Ctx): void {
     expire(ctx, "untilSourceTurn", (_u, e) => e.source === next);
 
     let skip = false;
-    for (const t of traitsOn(ctx, next)) {
+    let leave = false;
+    for (const t of [...traitsOn(ctx, next)]) {
       if (!unit.alive) break;
-      if (t.hooks.turnStart?.(ctx, t.self) === "skip") skip = true;
+      const result = t.hooks.turnStart?.(ctx, t.self);
+      if (result === "skip") skip = true;
+      if (result === "leave") leave = true;
+    }
+    if (leave && unit.alive) {
+      unit.alive = false;
+      unit.fled = true;
+      ctx.emit({ type: "fled", unitId: next });
     }
     checkOutcome(ctx);
     expire(ctx, "untilOwnTurn", (u) => u.id === next);
     if (!unit.alive || battle.outcome) continue;
     if (skip) {
-      ctx.emit({ type: "skipped", unitId: next, reason: "stunned" });
+      ctx.emit({ type: "skipped", unitId: next, reason: "lostTurn" });
       continue;
     }
     battle.current = { unitId: next, freeUsed: [], mainTaken: false, bonusAttacks: [], hysteriaTriggers: 0, penaltyMultiplier: 1 };
@@ -295,6 +331,13 @@ function advance(ctx: Ctx): void {
 
 function startRound(ctx: Ctx): void {
   const battle = ctx.battle;
+  if (battle.round >= BATTLE_ROUND_LIMIT) {
+    battle.outcome = { winner: 1, withdrew: true };
+    battle.current = null;
+    battle.queue = [];
+    ctx.emit({ type: "battleEnd", outcome: battle.outcome });
+    return;
+  }
   battle.round += 1;
   battle.pass = 0;
   battle.actionsThisRound = {};
@@ -366,8 +409,26 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
   const living = (side?: Side) =>
     Object.values(battle.units).filter((u) => u.alive && (side === undefined || u.side === side));
 
+  /**
+   * Trait lists and ability ids only change when an effect comes or goes or a unit dies, but hooks ask for them
+   * constantly (every stats query walks every trait on the field). They're cached while every unit keeps its alive
+   * flag and the very same effects array at the same length: removing an effect replaces the array, adding one
+   * lengthens it, and stacking changes an effect in place, which its trait already sees.
+   */
+  const units = Object.values(battle.units);
+  let cached: { alive: boolean[]; effects: EffectInstance[][]; lengths: number[]; traits: Map<string, readonly Trait[]>; ids: Map<string, string[]>; all: readonly Trait[] | null } | null = null;
+  const memo = () => {
+    const valid = cached !== null && units.every((u, i) => u.alive === cached?.alive[i] && u.effects === cached.effects[i] && u.effects.length === cached.lengths[i]);
+    if (!valid || !cached) {
+      cached = { alive: units.map((u) => u.alive), effects: units.map((u) => u.effects), lengths: units.map((u) => u.effects.length), traits: new Map(), ids: new Map(), all: null };
+    }
+    return cached;
+  };
+
   // Grants are read from units' own passives and effects only, so a granted ability can't grant further ones.
   const abilityIds = (id: string): string[] => {
+    const known = memo().ids.get(id);
+    if (known) return known;
     const ids = unit(id).abilities.map((s) => s.ref.id);
     for (const owner of living()) {
       for (const slot of owner.abilities) {
@@ -379,7 +440,9 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
         if (grants) ids.push(...grants(ctx, { unitId: owner.id, params: {}, effect }, id));
       }
     }
-    return [...new Set(ids)];
+    const found = [...new Set(ids)];
+    memo().ids.set(id, found);
+    return found;
   };
 
   const stats = (id: string): Stats => {
@@ -461,6 +524,19 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
       return true;
     },
     abilityIds,
+    traits: (unitId) => {
+      const store = memo().traits;
+      const known = store.get(unitId);
+      if (known) return known;
+      const built = buildTraits(ctx, unitId);
+      store.set(unitId, built);
+      return built;
+    },
+    allTraits: () => {
+      const store = memo();
+      store.all ??= living().flatMap((u) => ctx.traits(u.id));
+      return store.all;
+    },
     hasTag: (abilityId, tag) => {
       const b = behavior(abilityId);
       return b.kind === "active" && b.tags.includes(tag);

@@ -76,6 +76,16 @@ export const core: Readonly<Record<string, Behavior>> = {
     choices: (ctx, self) => [single(ctx.unit(self.unitId), "main")],
     resolve: (ctx, self) => ctx.addEffect(self.unitId, { def: "defending" }),
   },
+  retreat: {
+    kind: "active",
+    name: "Retreat",
+    describe: () =>
+      "Turn your back and flee: this unit loses its next turn, then leaves the battle alive at the start of the one after. It keeps its health; the enemy gains no XP for it.",
+    tags: ["basic", "flee"],
+    hotkey: "r",
+    choices: (ctx, self) => [single(ctx.unit(self.unitId), "main")],
+    resolve: (ctx, self) => ctx.addEffect(self.unitId, { def: "retreating", source: self.unitId }),
+  },
   wait: {
     kind: "active",
     name: "Wait",

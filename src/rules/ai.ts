@@ -1,5 +1,5 @@
 import { AI_CHARGE_VALUE } from "#rules/balance";
-import { applyAction, legalActions, traitValue } from "#rules/battle/engine";
+import { applyAction, legalActions, traitValues } from "#rules/battle/engine";
 import { UNITS } from "#rules/units/index";
 import type { Action, Battle, Side } from "#rules/battle/types";
 
@@ -54,16 +54,18 @@ function bestAction(battle: Battle, depth: number): { action: Action; score: num
 function evaluate(battle: Battle, side: Side): number {
   if (battle.outcome) return battle.outcome.winner === side ? 1e6 : battle.outcome.winner === null ? 0 : -1e6;
   let score = 0;
+  const traits = traitValues(battle);
   for (const unit of Object.values(battle.units)) {
     const sign = unit.side === side ? 1 : -1;
     const spentSpells = (UNITS[unit.defId]?.spellCharges ?? 0) - unit.spellCharges;
     score -= sign * AI_CHARGE_VALUE * (unit.abilities.reduce((sum, a) => sum + a.chargesUsed, 0) + spentSpells);
     if (!unit.alive) {
-      score -= sign * 100;
+      // A unit that fled is saved, not lost: its health still counts, less its absence from the fight.
+      score += unit.fled ? sign * 0.5 * unit.hp : -sign * 100;
       continue;
     }
     // Shields are worth less than health: they return after battle, and lent ones perish.
-    score += sign * (unit.hp + 0.5 * unit.shield + traitValue(battle, unit.id));
+    score += sign * (unit.hp + 0.5 * unit.shield + (traits[unit.id] ?? 0));
   }
   return score;
 }

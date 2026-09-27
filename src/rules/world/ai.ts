@@ -10,8 +10,9 @@ import { nextForm } from "#rules/progression";
 import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
 import { upgradesOf } from "#rules/upgrades";
 import { autoplay } from "#rules/ai";
+import type { Battle } from "#rules/battle/types";
 import { applyWorldAction } from "#rules/world/actions";
-import { concludeBattle, forecast } from "#rules/world/battles";
+import { concludeBattle, openingBattle } from "#rules/world/battles";
 import { chooseBranchProblem, elevateProblem, income, learnSkillProblem, recruitProblem, resurrectionCost, resurrectProblem, reviveProblem, squadsOf, upgradeProblem, cityUpgradeCost, upgradeCityProblem, investNodeProblem, nodeInvestCost } from "#rules/world/economy";
 import { leadershipOf, movementOf } from "#rules/world/leaders";
 import { destination, planMove } from "#rules/world/movement";
@@ -22,24 +23,33 @@ import { RESURRECTION_BASE } from "#rules/balance";
 
 /** The map AI. */
 
-/** Would an enemy leader be able to reach `hex` next turn and win the fight there? */
 /**
- * Whether the attacker would win a fight, memoised for one decision: a forecast depends only on the two squads,
- * and the threat checks ask about the same pairs over and over.
+ * Battles already played out, by their opening state: a battle is deterministic, so the same two squads always end
+ * the same way. The caller keeps it across decisions (a game's worth); the AI would otherwise replay the same
+ * forecasts thousands of times, and those were nearly all of its time.
  */
+export type BattleMemo = Map<string, Battle>;
+
+/** Past this many battles the memo starts over, so a long game can't grow it without bound. */
+const MEMO_LIMIT = 20000;
+
+function played(memo: BattleMemo, start: Battle): Battle {
+  const key = JSON.stringify(start);
+  const known = memo.get(key);
+  if (known) return known;
+  if (memo.size >= MEMO_LIMIT) memo.clear();
+  const done = autoplay(start);
+  memo.set(key, done);
+  return done;
+}
+
+/** Whether the attacker would win a fight. The mover is always the attacker, side 0 of its battle. */
 type Wins = (world: World, attackerId: string, target: MoveTarget) => boolean;
 
-function winsCache(): Wins {
-  const known = new Map<string, boolean>();
+function winsCache(memo: BattleMemo): Wins {
   return (world, attackerId, target) => {
-    const key = `${attackerId}>${JSON.stringify(target)}`;
-    let result = known.get(key);
-    if (result === undefined) {
-      // The mover is always the attacker, side 0 of its battle.
-      result = forecast(world, attackerId, target)?.outcome?.winner === 0;
-      known.set(key, result);
-    }
-    return result;
+    const start = openingBattle(world, attackerId, target);
+    return start !== null && played(memo, start).outcome?.winner === 0;
   };
 }
 
@@ -60,7 +70,7 @@ function threatened(world: World, leader: Leader, hex: Hex, wins: Wins): boolean
  * Guardian down, or null. A lone assault that fails makes the garrison stronger (it earns XP), so the AI commits
  * only to chains that win.
  */
-function siegeOpener(world: World, capitolHex: Hex): string | null {
+function siegeOpener(world: World, capitolHex: Hex, memo: BattleMemo): string | null {
   const side = world.activePlayer;
   const ready = world.leaders.filter((l) => l.player === side && l.fellOnTurn === null && planMove(world, l.id, capitolHex)?.target);
   if (ready.length === 0) return null;
@@ -70,7 +80,7 @@ function siegeOpener(world: World, capitolHex: Hex): string | null {
     for (const leader of order) {
       if (w.outcome || !w.leaders.some((l) => l.id === leader.id) || !planMove(w, leader.id, capitolHex)?.target) continue;
       const step = applyWorldAction(w, { type: "move", leaderId: leader.id, to: capitolHex }).world;
-      w = step.engagement ? concludeBattle(step, autoplay(step.engagement.battle)).world : step;
+      w = step.engagement ? concludeBattle(step, played(memo, step.engagement.battle)).world : step;
     }
     const first = order[0];
     if (w.outcome?.winner === side && first) return first.id;
@@ -84,7 +94,7 @@ const healthy = (leader: Leader) => leader.fellOnTurn === null && strength(leade
  * The rally check: would a siege win if every healthy warband stood next to the enemy Capitol now? If so, they stop
  * chasing other targets and close in, so the siege check can open the assault once enough are in reach.
  */
-function siegeViable(world: World, capitolHex: Hex): boolean {
+function siegeViable(world: World, capitolHex: Hex, memo: BattleMemo): boolean {
   const side = world.activePlayer;
   const free = neighbors(capitolHex).filter(
     (h) => stepCost(world.map, h) !== null && !world.cities.some((c) => sameHex(c.hex, h)) && !world.leaders.some((l) => sameHex(l.hex, h)) && !lairAt(world, h),
@@ -96,7 +106,7 @@ function siegeViable(world: World, capitolHex: Hex): boolean {
     if (!spot) break;
     placed = { ...placed, leaders: placed.leaders.map((l) => (l.id === leader.id ? { ...l, hex: spot, movement: Math.max(l.movement, movementOf(l)) } : l)) };
   }
-  return siegeOpener(placed, capitolHex) !== null;
+  return siegeOpener(placed, capitolHex, memo) !== null;
 }
 
 /** Least a damage spell's score (HP taken off enemy squads, kills counted double) must reach to be worth casting. */
@@ -179,10 +189,10 @@ const fullStrength = (squad: readonly SquadMember[]) => squad.reduce((sum, m) =>
  * won't stop where an enemy could reach it next turn and win. Badly wounded leaders go home to heal. It plans from
  * what it knows (fog of war), and explores when it knows of nothing to do.
  */
-export function chooseWorldAction(truth: World): WorldAction {
+export function chooseWorldAction(truth: World, memo: BattleMemo = new Map()): WorldAction {
   const side = truth.activePlayer;
   const world = knownWorld(truth, side);
-  const wins = winsCache();
+  const wins = winsCache(memo);
   const capitol = capitolOf(world, side);
   const mine = world.leaders.filter((l) => l.player === side);
   const roots = FACTION_ROOTS[playerOf(world, side).faction];
@@ -272,11 +282,11 @@ export function chooseWorldAction(truth: World): WorldAction {
     .filter((c) => c.kind === "capitol" && c.owner !== side && c.owner !== null)
     .sort((a, b) => (base ? hexDistance(base, a.hex) - hexDistance(base, b.hex) : 0))[0];
   if (target) {
-    const opener = siegeOpener(world, target.hex);
+    const opener = siegeOpener(world, target.hex, memo);
     if (opener) return { type: "move", leaderId: opener, to: target.hex };
   }
 
-  const rally = target !== undefined && siegeViable(world, target.hex);
+  const rally = target !== undefined && siegeViable(world, target.hex, memo);
   const staging: { leader: Leader; to: Hex }[] = [];
   for (const leader of mine) {
     if (leader.movement <= 0) continue;

@@ -161,7 +161,7 @@ describe("Jilliath abilities", () => {
     battle = act(battle, "hook", "1.2.1").battle;
     expect(battle.units["1.2.1"]?.tile).toEqual({ row: 0, col: 1 });
     const step = act(battle, "defend");
-    expect(step.events).toContainEqual({ type: "skipped", unitId: "1.2.1", reason: "stunned" });
+    expect(step.events).toContainEqual({ type: "skipped", unitId: "1.2.1", reason: "lostTurn" });
   });
 
   test("Hysteria: a kill grants a free extra attack at double self-damage", () => {

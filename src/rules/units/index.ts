@@ -3,7 +3,14 @@ import { JILLIATH_UNITS } from "#rules/units/jilliath";
 import { NEUTRAL_UNITS } from "#rules/units/neutral";
 import { NEXUS_UNITS } from "#rules/units/nexus";
 
-export const UNITS: Readonly<Record<string, UnitDef>> = { ...JILLIATH_UNITS, ...NEXUS_UNITS, ...NEUTRAL_UNITS };
+/**
+ * Every faction unit can retreat (the user's design: surrender is a default action, and a unit that must not flee
+ * simply lacks it). Neutrals and the Guardian don't.
+ */
+const canRetreat = (units: Readonly<Record<string, UnitDef>>): Record<string, UnitDef> =>
+  Object.fromEntries(Object.entries(units).map(([id, def]) => [id, { ...def, abilities: [...def.abilities, { id: "retreat" }] }]));
+
+export const UNITS: Readonly<Record<string, UnitDef>> = { ...canRetreat(JILLIATH_UNITS), ...canRetreat(NEXUS_UNITS), ...NEUTRAL_UNITS };
 
 export const GUARDIAN_ID = "capitol_guardian";
 

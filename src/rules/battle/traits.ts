@@ -1,19 +1,13 @@
 import { behavior, paramsOf } from "#rules/abilities/index";
-import type { Ctx, Hooks, TraitSelf } from "#rules/battle/types";
+import type { Ctx, Trait } from "#rules/battle/types";
 import { effectDef } from "#rules/effects";
-
-/** A hook bundle together with whom it runs for. Passive abilities and effects are both traits. */
-export interface Trait {
-  readonly hooks: Hooks;
-  readonly self: TraitSelf;
-  readonly absorbPriority: number;
-}
 
 /**
  * The traits on one unit: its effects first, then its passive abilities (own and granted). Effects come first so
  * that, for example, an existing reprieve prevents a death before a once-per-combat ability spends its charge.
+ * The context caches them (`Ctx.traits`); this builds them.
  */
-export function traitsOn(ctx: Ctx, unitId: string): Trait[] {
+export function buildTraits(ctx: Ctx, unitId: string): Trait[] {
   const unit = ctx.unit(unitId);
   const traits: Trait[] = unit.effects.map((effect) => {
     const def = effectDef(effect.def);
@@ -28,7 +22,7 @@ export function traitsOn(ctx: Ctx, unitId: string): Trait[] {
   return traits;
 }
 
+export const traitsOn = (ctx: Ctx, unitId: string): readonly Trait[] => ctx.traits(unitId);
+
 /** Every trait on the battlefield: what stats, grants and restrictions ask, so auras can reach other units. */
-export function allTraits(ctx: Ctx): Trait[] {
-  return ctx.living().flatMap((u) => traitsOn(ctx, u.id));
-}
+export const allTraits = (ctx: Ctx): readonly Trait[] => ctx.allTraits();
