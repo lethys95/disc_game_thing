@@ -26,11 +26,12 @@ export function hexPosition(hex: Hex): THREE.Vector3 {
 }
 
 const TERRAIN_LOOK: Readonly<Record<Terrain, { color: number; height: number }>> = {
-  plain: { color: 0x3d3a2e, height: 0.22 },
-  forest: { color: 0x27301f, height: 0.24 },
-  hills: { color: 0x4a4133, height: 0.42 },
-  mountain: { color: 0x2e2b29, height: 0.5 },
-  water: { color: 0x14202a, height: 0.1 },
+  // Cool stone, moss and slate rather than one brown (user, #43); the factions' colors stay the only loud ones.
+  plain: { color: 0x3b4236, height: 0.22 },
+  forest: { color: 0x1f3326, height: 0.24 },
+  hills: { color: 0x4b4b44, height: 0.42 },
+  mountain: { color: 0x383b43, height: 0.5 },
+  water: { color: 0x14283c, height: 0.1 },
 };
 
 export interface MapHighlights {
@@ -73,9 +74,9 @@ interface LeaderFigure {
 }
 
 const NONE = new THREE.Color(0x000000);
-const REACH = new THREE.Color(0x3a2a16);
+const REACH = new THREE.Color(0x1a1f1c);
 const WALK = new THREE.Color(0xb08a4a);
-const LATER = new THREE.Color(0x4a3a24);
+const LATER = new THREE.Color(0x4a4230);
 const ATTACK = new THREE.Color(0xd8321f);
 
 /** Deterministic per-hex jitter so decoration varies without randomness. */
@@ -119,8 +120,8 @@ export class MapView {
     const dusk = new THREE.Color(0x0b0a0c);
     this.scene.background = dusk;
     this.scene.fog = new THREE.FogExp2(dusk, 0.028);
-    this.scene.add(new THREE.HemisphereLight(0x8a90b0, 0x2a1c16, 0.9));
-    const keyLight = new THREE.DirectionalLight(0xffd6a8, 3);
+    this.scene.add(new THREE.HemisphereLight(0x8a98b8, 0x1c1c22, 0.95));
+    const keyLight = new THREE.DirectionalLight(0xffe4c8, 3);
     keyLight.position.set(-6, 12, 8);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.set(2048, 2048);
@@ -162,8 +163,8 @@ export class MapView {
     this.hexes.clear();
     const prism = new THREE.CylinderGeometry(SIZE * 0.95, SIZE * 0.97, 1, 6);
     const trunk = new THREE.MeshStandardMaterial({ color: 0x1a1512, roughness: 1 });
-    const canopy = new THREE.MeshStandardMaterial({ color: 0x1c2418, roughness: 0.95 });
-    const rock = new THREE.MeshStandardMaterial({ color: 0x3a3634, roughness: 0.9, flatShading: true });
+    const canopy = new THREE.MeshStandardMaterial({ color: 0x1a2c1e, roughness: 0.95 });
+    const rock = new THREE.MeshStandardMaterial({ color: 0x3c3f47, roughness: 0.9, flatShading: true });
     for (const tile of Object.values(map.tiles)) {
       const look = TERRAIN_LOOK[tile.terrain];
       const material = new THREE.MeshStandardMaterial({
