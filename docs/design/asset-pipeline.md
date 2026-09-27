@@ -43,6 +43,9 @@ Units as painterly animated sprites on billboards; the map, arena, lighting and 
 - **Territory-restricted** (excludes EU, UK, South Korea): Hunyuan3D 2.1 and **HY-Motion 1.0**. **The user is in Denmark (EU), so both are out.** Motion comes from CC0/CC BY libraries and hand-keyed poses.
 - **Unclear**: Pixal3D (one report says MIT, the other found none stated), AniGen (MIT, but the bundled CUBVH code is non-commercial), LTX-2 commercial terms, Make-It-Animatable.
 
+## Lead: Image to 3D Lab (user, 2026-09-27)
+A local browser UI (github.com/Bingeljell/image-to-3dlab, Apache-2.0) wrapping Pixal3D, TRELLIS.2, Hunyuan3D and Stable Fast 3D, plus Blender scripts (mesh cleanup, UV unwrap and rebake, normal/AO bakes, turntables, a Rigify workflow for quadrupeds). Its documented Linux/NVIDIA backends are only Pixal3D and Stable Fast 3D. Against our license list: Hunyuan3D (and its PBR repaint) is out in Denmark; Pixal3D's license is unclear; Stable Fast 3D is under Stability's community license (check the terms before shipping). The Apache-2.0 Blender scripts are useful regardless. Best first fit: static props (cities, structures, dungeon entrances, nodes) and map statues, which need no animation. The quadruped rigging may suit Grove creatures and tribes later.
+
 ## Community
 - r/TopologyAI (https://www.reddit.com/r/TopologyAI), from the user, for AI retopology discussion. Reddit blocks the research fetcher, so read it through search snippets or ask the user.
 
