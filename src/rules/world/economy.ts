@@ -10,7 +10,7 @@ import { freeRevival, learnProblem, movementOf, squadHealingOf } from "#rules/wo
 import { maxHpOf } from "#rules/world/record";
 import { CITY_RESURRECTION_PREMIUM, RESEARCH } from "#rules/research";
 import { UPGRADES, upgradesFor } from "#rules/upgrades";
-import { FACTION_MANA } from "#rules/spells";
+import { FACTIONS } from "#rules/factions";
 import { playerOf, alive, banditGroup, capitolOf, cityById, cityOfNode, leaderAt, leaderById, leaderUnit, member, nodesHeldBy, nodesOf } from "#rules/world/state";
 import type { Enchantment, PlayerId, City, Leader, MapNode, Mark, SquadMember, SquadRef, Strength, World, WorldEvent } from "#rules/world/state";
 import { capacityOf, hexOf, ownerOf, squadAt } from "#rules/world/squads";
@@ -224,7 +224,7 @@ export function startTurn(world: World, events: WorldEvent[]): void {
   const earned = income(world, side);
   const player = playerOf(world, side);
   player.gold += earned;
-  player.mana[FACTION_MANA[player.faction]] += manaIncome(world, side);
+  player.mana[FACTIONS[player.faction].mana] += manaIncome(world, side);
   player.cast = [];
   for (const { squad, leader } of squadsOf(world, side)) {
     const home = world.cities.find((c) => c.owner === side && (leader === undefined ? squad === c.garrison : sameHex(leader.hex, c.hex)));
@@ -267,7 +267,7 @@ export function startRound(world: World, events: WorldEvent[]): void {
   for (const city of world.cities) city.enchantments = city.enchantments.filter(lasting);
   const strength: Strength = world.turn >= CAMP_STRONG_FROM ? "strong" : world.turn >= CAMP_MEDIUM_FROM ? "medium" : "weak";
   for (const lair of world.lairs) {
-    if (lair.regrowsOn === null || lair.regrowsOn > world.turn || leaderAt(world, lair.hex)) continue;
+    if (lair.kind !== "camp" || lair.regrowsOn === null || lair.regrowsOn > world.turn || leaderAt(world, lair.hex)) continue;
     lair.guards = banditGroup(strength);
     lair.regrowsOn = null;
     events.push({ type: "regrew", lairId: lair.id });

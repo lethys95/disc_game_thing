@@ -16,7 +16,7 @@ import { capitolOf, leaderAt, playerOf } from "#rules/world/state";
 import type { Leader, PlayerId, World, WorldAction } from "#rules/world/state";
 import { knownWorld, visionOf } from "#rules/world/vision";
 import { castProblem, spellTargets } from "#rules/world/spells";
-import { FACTION_MANA } from "#rules/spells";
+import { FACTIONS } from "#rules/factions";
 import { hexKey } from "#rules/hex";
 import type { AiClient } from "#view/ai-client";
 import type { App } from "#view/app";
@@ -421,7 +421,7 @@ export class Campaign {
 
     this.turn.replaceChildren();
     if (!world.outcome) {
-      const color = FACTION_MANA[playerOf(world, this.viewer).faction];
+      const color = FACTIONS[playerOf(world, this.viewer).faction].mana;
       this.turn.append(
         `Turn ${world.turn} · ${world.activePlayer === this.viewer ? "your move" : "the enemy moves"} · `,
         gold(playerOf(world, this.viewer).gold),

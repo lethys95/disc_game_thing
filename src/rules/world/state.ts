@@ -6,7 +6,7 @@ import { hexDistance, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import type { WorldMap } from "#rules/map";
 import type { NodeKind } from "#rules/nodes";
-import type { ManaColor } from "#rules/spells";
+import type { ManaColor } from "#rules/factions";
 import { UNITS } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
 
@@ -148,17 +148,28 @@ export interface Reward {
   readonly item: string | null;
 }
 
-/** A neutral group on the map: a camp, or the guards of a dungeon and its reward. */
-export interface Lair {
+interface LairBase {
   readonly id: string;
-  readonly kind: "camp" | "dungeon";
   readonly hex: Hex;
   guards: SquadMember[];
-  readonly reward: Reward | null;
-  looted: boolean;
-  /** A cleared camp's turn to regrow (provisional, questions.md #19); null while guarded, and for dungeons. */
+}
+
+/** A bandit camp: cleared, it regrows. */
+export interface Camp extends LairBase {
+  readonly kind: "camp";
+  /** The turn a cleared camp regrows (provisional, questions.md #19); null while guarded. */
   regrowsOn: number | null;
 }
+
+/** A dungeon: guards and a one-time reward. */
+export interface Dungeon extends LairBase {
+  readonly kind: "dungeon";
+  readonly reward: Reward;
+  looted: boolean;
+}
+
+/** A neutral group on the map. */
+export type Lair = Camp | Dungeon;
 
 export type Defender = { kind: "leader"; leaderId: string } | { kind: "garrison"; cityId: string } | { kind: "lair"; lairId: string };
 

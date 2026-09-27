@@ -10,7 +10,7 @@ import { Campaign } from "#view/campaign";
 import { MapView } from "#view/map";
 import { BattleScene } from "#view/scene";
 import { Setup } from "#view/setup";
-import { BANDIT_GROUP, NEXUS_PRESETS, PRESETS } from "#view/squads";
+import { BANDIT_GROUP, NEXUS_PRESETS, PRESETS } from "#rules/units/presets";
 import { ANIMATION_SPEEDS, Settings } from "#view/settings";
 import { Sound } from "#view/sound";
 import { Stage } from "#view/stage";

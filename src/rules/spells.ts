@@ -1,5 +1,6 @@
 import type { EffectSeed } from "#rules/battle/types";
 import type { Playable } from "#rules/units/index";
+import type { ManaColor } from "#rules/factions";
 
 /**
  * Overworld spells (pillars.md, "Spells": cast on the map, HoMM3-ish, paid in typed mana, not combat abilities;
@@ -8,9 +9,6 @@ import type { Playable } from "#rules/units/index";
  * mostly nukes) until the user designs the real ones (questions.md). Names are plain descriptions, not lore.
  */
 
-/** Each faction's mana color (factions/*.md). */
-export type ManaColor = "red" | "teal";
-export const FACTION_MANA: Readonly<Record<Playable, ManaColor>> = { jilliath: "red", nexus: "teal" };
 export const MANA_NAMES: Readonly<Record<ManaColor, string>> = { red: "red mana", teal: "teal mana" };
 
 /** What a spell can be aimed at: someone else's group (a warband, or neutrals in a lair), one of yours, a city, or an area. */

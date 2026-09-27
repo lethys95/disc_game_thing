@@ -33,7 +33,7 @@ export function clearLair(world: World, lair: Lair, player: PlayerId, taker: Lea
     return;
   }
   const reward = lair.reward;
-  if (!reward || lair.looted) return;
+  if (lair.looted) return;
   lair.looted = true;
   playerOf(world, player).gold += reward.gold;
   const joins = reward.joins;

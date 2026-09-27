@@ -3,9 +3,6 @@ import type { Placement } from "#rules/battle/engine";
 import { allowedUnits, commitmentOf, openForks } from "#rules/forks";
 import type { Commitment } from "#rules/forks";
 import { COLS } from "#rules/battle/grid";
-import { neighbors, sameHex } from "#rules/hex";
-import type { Hex } from "#rules/hex";
-import { stepCost } from "#rules/map";
 import { grow, xpToLevel, xpValue } from "#rules/progression";
 import { LEVEL_BONUS_PERCENT, RESURRECTION_BASE } from "#rules/balance";
 import { GUARDIAN_ID } from "#rules/units/index";
@@ -15,8 +12,8 @@ import { concludeBattle } from "#rules/world/battles";
 import { createWorld } from "#rules/world/create";
 import { growSquad, resurrectionCost, waitingForks } from "#rules/world/economy";
 import { playerOf, capitolOf, leaderById } from "#rules/world/state";
-import type { Leader, World, WorldEvent } from "#rules/world/state";
-import { withGold, twoPlayers } from "#tests/helpers";
+import type { World, WorldEvent } from "#rules/world/state";
+import { withGold, twoPlayers, withLeader, beside } from "#tests/helpers";
 import { describe, expect, test } from "vitest";
 
 const uncommitted: Commitment = {};
@@ -30,20 +27,12 @@ const punishers: Placement[] = [
   { defId: "torturer", tile: { row: 0, col: 2 } },
 ];
 
-function withLeader(world: World, id: string, change: Partial<Leader>): World {
-  return { ...world, leaders: world.leaders.map((l) => (l.id === id ? { ...l, ...change } : l)) };
-}
 
-function besideHex(world: World, hex: Hex): Hex {
-  const found = neighbors(hex).find((n) => stepCost(world.map, n) !== null && !world.cities.some((c) => sameHex(c.hex, n)));
-  if (!found) throw new Error("no free neighbour");
-  return found;
-}
 
 /** Leader 1 walks into leader 0, and the fight is played out by the AI. */
 function fight(world: World): ReturnType<typeof concludeBattle> {
   const target = leaderById(world, "leader0").hex;
-  let next = withLeader(world, "leader1", { hex: besideHex(world, target) });
+  let next = withLeader(world, "leader1", { hex: beside(world, target) });
   next = applyWorldAction({ ...next, activePlayer: 1 }, { type: "move", leaderId: "leader1", to: target }).world;
   const battle = next.engagement?.battle;
   if (!battle) throw new Error("no battle");

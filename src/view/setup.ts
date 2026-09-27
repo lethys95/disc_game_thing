@@ -5,14 +5,15 @@ import { allowedUnits, commitmentOf, squadProblems } from "#rules/forks";
 import type { Commitment, SquadProblem } from "#rules/forks";
 import { COLS, ROWS, sameTile } from "#rules/battle/grid";
 import type { Side, Tile } from "#rules/battle/types";
-import { FACTION_NAMES, UNITS } from "#rules/units/index";
+import { UNITS } from "#rules/units/index";
+import { FACTIONS } from "#rules/factions";
 import type { Playable } from "#rules/units/index";
 import { defaultColors, fallbackColor, freeColor, PLAYER_COLORS } from "#rules/world/colors";
 import type { PlayerColor } from "#rules/world/colors";
 import type { PlayerSetup } from "#rules/world/create";
 import { art } from "#view/art";
 import { colorPair, COLOR_HEX, COLOR_NAMES } from "#view/colors";
-import { FORMATIONS, PRESETS } from "#view/squads";
+import { FORMATIONS, PRESETS } from "#rules/units/presets";
 import { element } from "#view/dom";
 
 export type Squads = readonly [readonly Placement[], readonly Placement[]];
@@ -203,7 +204,7 @@ export class Setup {
       dot.style.background = COLOR_HEX[colors[i] ?? "white"];
       row.appendChild(dot);
       for (const faction of ["jilliath", "nexus"] as const) {
-        const button = element("button", `doctrine faction small${extra.faction === faction ? " selected" : ""}`, FACTION_NAMES[faction]);
+        const button = element("button", `doctrine faction small${extra.faction === faction ? " selected" : ""}`, FACTIONS[faction].name);
         button.addEventListener("click", () => {
           this.extras[i] = { faction, formation: FORMATIONS[faction][0]?.name ?? "" };
           this.render();
@@ -251,7 +252,7 @@ export class Setup {
     panel.appendChild(element("div", "title", side === 0 ? "Your squad" : "Enemy squad"));
     const factions = element("div", "factions");
     for (const faction of ["jilliath", "nexus"] as const) {
-      const button = element("button", `doctrine faction${this.factions[side] === faction ? " selected" : ""}`, FACTION_NAMES[faction]);
+      const button = element("button", `doctrine faction${this.factions[side] === faction ? " selected" : ""}`, FACTIONS[faction].name);
       button.addEventListener("click", (e) => {
         e.stopPropagation();
         this.setFaction(side, faction);

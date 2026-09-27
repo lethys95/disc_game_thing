@@ -1,6 +1,6 @@
 import { readSave } from "#rules/save";
 import type { Save } from "#rules/save";
-import { FACTION_NAMES } from "#rules/units/index";
+import { FACTIONS } from "#rules/factions";
 import { BEHAVIORS } from "#rules/abilities/index";
 import { element } from "#view/dom";
 import { ANIMATION_SPEEDS, assignable, CAMERA_RANGE, DEFAULT_SETTINGS, remappable, SPEED_ORDER, withHotkey } from "#view/settings";
@@ -19,7 +19,7 @@ export interface MenuOptions {
 
 const describe = (save: Save) => {
   const when = new Date(save.savedAt).toLocaleString();
-  return `Turn ${save.world.turn} · ${save.world.players.map((p) => FACTION_NAMES[p.faction]).join(" vs ")} · seed ${save.seed} · ${when}`;
+  return `Turn ${save.world.turn} · ${save.world.players.map((p) => FACTIONS[p.faction].name).join(" vs ")} · seed ${save.seed} · ${when}`;
 };
 
 /** The game menu: save, load, export and import saves, start over; and the settings. */

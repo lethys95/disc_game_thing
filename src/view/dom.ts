@@ -1,4 +1,4 @@
-import type { ManaColor } from "#rules/spells";
+import type { ManaColor } from "#rules/factions";
 /** Small DOM helpers shared by the HTML panels. */
 
 export function element<K extends keyof HTMLElementTagNameMap>(tag: K, className: string, text?: string): HTMLElementTagNameMap[K] {

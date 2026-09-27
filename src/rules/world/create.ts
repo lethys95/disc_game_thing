@@ -7,6 +7,7 @@ import type { Playable } from "#rules/units/index";
 import { hexDistance } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { startTurn } from "#rules/world/economy";
+import { noMana } from "#rules/factions";
 import { updateVision } from "#rules/world/vision";
 import type { PlayerColor } from "#rules/world/colors";
 import { banditGroup, DUNGEON_REWARDS, member, strengthAt } from "#rules/world/state";
@@ -45,8 +46,7 @@ export function createWorld(seed: number, setups: readonly PlayerSetup[]): World
     };
   });
   const cities = map.sites.map((site): City => {
-    // Capitols are generated in player order, one per start.
-    const owner = site.kind === "capitol" ? Number(site.id.replace("capitol", "")) : null;
+    const owner = site.kind === "capitol" ? site.start : null;
     return {
       id: site.id,
       kind: site.kind,
@@ -59,15 +59,13 @@ export function createWorld(seed: number, setups: readonly PlayerSetup[]): World
   });
   // Rewards cycle over the dungeons in order (camps have none).
   const dungeons = map.lairs.filter((l) => l.kind === "dungeon");
-  const lairs = map.lairs.map((site): Lair => ({
-    id: site.id,
-    kind: site.kind,
-    hex: site.hex,
-    guards: banditGroup(strengthAt(map, site.hex, site.kind === "dungeon" ? "medium" : "weak")),
-    reward: site.kind === "dungeon" ? (DUNGEON_REWARDS[dungeons.indexOf(site) % DUNGEON_REWARDS.length] ?? null) : null,
-    looted: false,
-    regrowsOn: null,
-  }));
+  const lairs = map.lairs.map((site): Lair => {
+    const base = { id: site.id, hex: site.hex };
+    if (site.kind === "camp") return { ...base, kind: "camp", guards: banditGroup(strengthAt(map, site.hex, "weak")), regrowsOn: null };
+    const reward = DUNGEON_REWARDS[dungeons.indexOf(site) % DUNGEON_REWARDS.length];
+    if (!reward) throw new Error("no dungeon rewards");
+    return { ...base, kind: "dungeon", guards: banditGroup(strengthAt(map, site.hex, "medium")), reward, looted: false };
+  });
   const players = setups.map(
     (setup): Player => ({
       faction: setup.faction,
@@ -78,7 +76,7 @@ export function createWorld(seed: number, setups: readonly PlayerSetup[]): World
       upgrades: [],
       research: [],
       eliminated: false,
-      mana: { red: 0, teal: 0 },
+      mana: noMana(),
       spells: [],
       cast: [],
       explored: [],

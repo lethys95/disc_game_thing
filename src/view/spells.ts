@@ -1,4 +1,5 @@
-import { FACTION_MANA, spellById, spellsOf } from "#rules/spells";
+import { spellById, spellsOf } from "#rules/spells";
+import { FACTIONS } from "#rules/factions";
 import { learnSpellProblem } from "#rules/world/spells";
 import { playerOf } from "#rules/world/state";
 import type { PlayerId, World, WorldAction } from "#rules/world/state";
@@ -48,7 +49,8 @@ export function spellBar(world: World, side: PlayerId, mayAct: boolean, casting:
   if (player.spells.length === 0) return null;
   const bar = element("div", "spell-bar");
   const title = element("div", "title", "Spells ");
-  title.appendChild(mana(player.mana[FACTION_MANA[player.faction]], FACTION_MANA[player.faction]));
+  const color = FACTIONS[player.faction].mana;
+  title.appendChild(mana(player.mana[color], color));
   bar.appendChild(title);
   for (const id of player.spells) {
     const spell = spellById(id);

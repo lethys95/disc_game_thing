@@ -8,7 +8,8 @@ import { concludeBattle, playersIn } from "#rules/world/battles";
 import { createWorld } from "#rules/world/create";
 import type { PlayerSetup } from "#rules/world/create";
 import { capitolOf, leaderById, nodesOf, playerOf } from "#rules/world/state";
-import type { Leader, World } from "#rules/world/state";
+import type { World } from "#rules/world/state";
+import { withLeader } from "#tests/helpers";
 import { describe, expect, test } from "vitest";
 
 /** More than two players on the map (user, 2026-09-26); every battle still has exactly two sides. */
@@ -17,9 +18,6 @@ const squad: Placement[] = COLS.map((col) => ({ defId: "congregant", tile: { row
 const player = (color: PlayerSetup["color"]): PlayerSetup => ({ squad, faction: "jilliath", commitment: {}, color });
 const three = (): World => createWorld(1, [player("red"), player("blue"), player("gold")]);
 
-function withLeader(world: World, id: string, change: Partial<Leader>): World {
-  return { ...world, leaders: world.leaders.map((l) => (l.id === id ? { ...l, ...change } : l)) };
-}
 
 /** Leader `from` walks into whatever stands on `to`, from a free neighbouring hex. */
 function attack(world: World, from: string, to: { q: number; r: number }): World {

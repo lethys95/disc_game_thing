@@ -47,7 +47,7 @@ export function hintText({ known, player, leader, hovered, plan, forecast }: Hin
   }
   if (target?.kind === "lair") {
     const lair = lairById(known, target.lairId);
-    const reward = lair.reward ? ` Reward: ${lair.reward.gold} gold${lair.reward.joins ? ` and a ${unitName(lair.reward.joins)} joins you` : ""}.` : "";
+    const reward = lair.kind === "dungeon" ? ` Reward: ${lair.reward.gold} gold${lair.reward.joins ? ` and a ${unitName(lair.reward.joins)} joins you` : ""}.` : "";
     return `Click to attack the ${lair.kind === "camp" ? "bandit camp" : "dungeon's guards"}.${reward} ${forecast(leader, target)}`;
   }
   if (plan.steps === 0) return "Not enough movement left to go further. End your turn.";

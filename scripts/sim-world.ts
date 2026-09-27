@@ -10,7 +10,7 @@ import type { WorldAction } from "#rules/world/state";
 import { commitmentOf } from "#rules/forks";
 import { UNITS } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
-import { NEXUS_PRESETS, PRESETS } from "#view/squads";
+import { NEXUS_PRESETS, PRESETS } from "#rules/units/presets";
 
 /**
  * Whole games with the map AI on every side: `PLAYERS=punishment,nexus:overload pnpm sim:world [seeds...]`.

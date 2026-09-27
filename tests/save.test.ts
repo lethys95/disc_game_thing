@@ -49,6 +49,12 @@ describe("saves", () => {
     expect(readSave(text.replace(`"seed":3`, `"seed":"3"`))).toEqual({ ok: false, problem: "damaged save file" });
   });
 
+  test("a save naming content this game lacks (a unit renamed since) is refused, naming it", () => {
+    const text = writeSave(toSave(world(), 3, at));
+    const guardian = /"defId":"([a-z_0-9]+)"/.exec(text)?.[1] ?? "";
+    expect(readSave(text.replaceAll(`"defId":"${guardian}"`, `"defId":"renamed"`))).toEqual({ ok: false, problem: "made by another version of the game (it has a unit renamed this game doesn't)" });
+  });
+
   test("the saved shape is pinned to the save version: when this fails, bump SAVE_VERSION and update the snapshot", () => {
     const w = play(world(), 12);
     expect({ version: SAVE_VERSION, shape: [...new Set(shape(w))].sort() }).toMatchSnapshot();

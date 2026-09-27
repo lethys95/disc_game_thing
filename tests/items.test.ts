@@ -9,10 +9,10 @@ import { reviveCost } from "#rules/world/economy";
 import { equipProblem } from "#rules/world/leaders";
 import { placementOf } from "#rules/world/record";
 import { leaderById, playerOf } from "#rules/world/state";
-import type { Leader, World } from "#rules/world/state";
+import type { World } from "#rules/world/state";
 import { autoplay } from "#rules/ai";
 import { updateVision } from "#rules/world/vision";
-import { act, p, start, twoPlayers, unit, until, withGold } from "#tests/helpers";
+import { act, p, start, twoPlayers, unit, until, withGold, withLeader } from "#tests/helpers";
 import { legalActions } from "#rules/battle/engine";
 import { describe, expect, test } from "vitest";
 
@@ -21,9 +21,6 @@ import { describe, expect, test } from "vitest";
 const congregants: Placement[] = COLS.map((col) => ({ defId: "congregant", tile: { row: 0, col } }));
 const fresh = (): World => createWorld(1, twoPlayers([congregants, congregants], [{}, {}], ["jilliath", "jilliath"]));
 
-function withLeader(world: World, id: string, change: Partial<Leader>): World {
-  return { ...world, leaders: world.leaders.map((l) => (l.id === id ? { ...l, ...change } : l)) };
-}
 
 describe("equipment", () => {
   test("worn items reach the leader's own unit; a banner reaches the whole warband; slots fill up", () => {
