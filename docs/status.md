@@ -21,13 +21,14 @@ Rules: `src/rules/` (93 tests). View: `src/view/`. Tools: the `verify` skill; `A
 ## Next
 **M30: fast sims, retreat, resolve, a better map AI** (2026-09-27). Sims are ~8× faster (profiled: battle copying, trait lists, a battle memo, esbuild bundles) and `pnpm sim:many` runs games in parallel (96 games in about 3 minutes); run it in the background while developing. Battles: Retreat (R; the user's surrender design), Resolve now, a 30-round limit (attacker withdraws, provisional #52). Map AI: fills its Capitol garrison, blitzes strong enemy warbands with chains. Save version 13.
 1. **Waiting on the user:** a playtest of the lot; the mage's name; #40–52; colors (#43).
-2. Next (Claude's plan): the battle AI retreating from lost fights; the brown palette (#43); music and ambience.
+2. Next (Claude's plan): music and ambience; per-ability sounds; the momentum question after the user's next playtest.
 3. Open design: Nexus tiers 4–5 (#35), Jilliath lines past tier 1, fourth archetype (#37), real spells (#51), leader experience (#33).
 
 ## Waiting on the user
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.
 
 ## Recently done
+- 2026-09-27: map palette first pass (#43); the battle AI retreats veterans from lost fights.
 - 2026-09-27: M31 sound effects: 15 slots from the Sonniss library, cues for battle and map, volume settings (`design/audio-pipeline.md`, `assets/audio/SOURCES.md`).
 - 2026-09-27: M30 fast sims, retreat, resolve, Capitol-guarding and blitzing AI.
 - 2026-09-27: M29 playtest fixes (15 of 17).
