@@ -78,6 +78,9 @@ export function worldCues(events: readonly WorldEvent[], player: PlayerId, mover
       case "spellLearned":
       case "cityUpgraded":
       case "nodeInvested":
+      case "hired":
+      case "bought":
+      case "sold":
         if (mover === player) cues.push(fixed("ui/coins"));
         break;
       case "spellCast":

@@ -103,6 +103,8 @@ if (params.has("map")) {
   if (params.has("reveal")) campaign.revealAll();
   if (params.has("capitol")) campaign.openCapitol();
   if (params.has("leader")) campaign.openLeader();
+  const structure = params.get("structure");
+  if (structure) campaign.openStructure(structure);
 } else if (params.has("steps") || params.has("auto") || params.has("fight")) {
   setup.hide();
   const fight = params.get("fight") ?? "";

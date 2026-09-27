@@ -37,6 +37,8 @@ import type { Sound } from "#view/sound";
 import { worldCues } from "#view/sound-cues";
 import { plainKey } from "#view/input";
 import type { KeyLayer } from "#view/input";
+import { StructureScreen } from "#view/structure";
+import { structureAt } from "#rules/world/structures";
 
 const AI_STEP_MS = 350;
 
@@ -81,6 +83,10 @@ export class Campaign implements KeyLayer {
       this.leaderOpen = leaderId;
       this.render();
     },
+    visit: (leaderId) => {
+      this.visiting = leaderId;
+      this.render();
+    },
     openPlace: (place) => {
       this.place = place;
       this.render();
@@ -100,6 +106,15 @@ export class Campaign implements KeyLayer {
     act: (action) => void this.act(action),
     close: () => {
       this.leaderOpen = null;
+      this.render();
+    },
+  });
+  /** The warband whose visit to the structure it stands on is open. */
+  private visiting: string | null = null;
+  private readonly structureScreen = new StructureScreen(byId("structurescreen"), {
+    act: (action) => void this.act(action),
+    close: () => {
+      this.visiting = null;
       this.render();
     },
   });
@@ -150,6 +165,7 @@ export class Campaign implements KeyLayer {
   key(e: KeyboardEvent): boolean {
     if (this.cityScreen.open()) return this.cityScreen.key(e);
     if (this.leaderScreen.open()) return this.leaderScreen.key(e);
+    if (this.structureScreen.open()) return this.structureScreen.key(e);
     if (e.key === "Escape" && this.casting) {
       this.casting = null;
       this.render();
@@ -235,6 +251,18 @@ export class Campaign implements KeyLayer {
     this.render();
   }
 
+  /** Screenshots and playtests: the first warband stands on a structure of this kind, visiting it. */
+  openStructure(kind: string): void {
+    const world = this.world;
+    const leader = this.myLeaders()[0];
+    const structure = world?.structures.find((s) => s.kind === kind);
+    if (!world || !leader || !structure) return;
+    this.world = { ...world, leaders: world.leaders.map((l) => (l.id === leader.id ? { ...l, hex: structure.hex } : l)) };
+    this.visiting = leader.id;
+    this.syncView(this.world);
+    this.render();
+  }
+
   openLeader(): void {
     this.leaderOpen = this.myLeaders()[0]?.id ?? null;
     this.render();
@@ -253,6 +281,8 @@ export class Campaign implements KeyLayer {
     this.cityScreen.hide();
     this.leaderOpen = null;
     this.leaderScreen.hide();
+    this.visiting = null;
+    this.structureScreen.hide();
     this.world = null;
     this.busy = false;
     this.hud.hidden = true;
@@ -280,6 +310,7 @@ export class Campaign implements KeyLayer {
     this.view.syncLeaders(known);
     this.view.syncSites(known);
     this.view.syncLairs(known);
+    this.view.syncStructures(known);
   }
 
   /** The world as the player at this screen knows it: what hovering, planning and forecasts may use. */
@@ -365,6 +396,11 @@ export class Campaign implements KeyLayer {
     }
     if (generation !== this.generation) return;
     this.world = step.world;
+    // A march that ends on a structure opens it, as D2's shops do.
+    if (action.type === "move" && world.activePlayer === this.viewer) {
+      const mover = step.world.leaders.find((l) => l.id === action.leaderId);
+      if (mover && structureAt(step.world, mover) && !step.world.engagement) this.visiting = mover.id;
+    }
     if (step.events.some((e) => e.type === "turnStarted" && e.player === this.viewer)) this.autosave();
     this.syncView(step.world);
     this.busy = false;
@@ -451,6 +487,7 @@ export class Campaign implements KeyLayer {
         ? ""
         : "The enemy is moving…";
     this.renderLeaderScreen(world);
+    this.renderStructureScreen(world);
     this.forkPrompt.render(world, this.viewer, this.myTurn());
     this.stage.renderer.domElement.style.cursor = aimed || (plan && (plan.steps > 0 || plan.target)) ? "pointer" : "default";
   }
@@ -459,6 +496,16 @@ export class Campaign implements KeyLayer {
     const leader = world.leaders.find((l) => l.id === this.leaderOpen && l.player === this.viewer);
     if (leader) this.leaderScreen.show(world, leader, `${leaderName(leader)}, leader`, this.myTurn());
     else this.leaderScreen.hide();
+  }
+
+  private renderStructureScreen(world: World): void {
+    const leader = world.leaders.find((l) => l.id === this.visiting && l.player === this.viewer);
+    const structure = leader ? structureAt(world, leader) : undefined;
+    if (leader && structure) this.structureScreen.show(world, leader, structure, this.myTurn());
+    else {
+      this.visiting = null;
+      this.structureScreen.hide();
+    }
   }
 
   private renderCityScreen(world: World): void {

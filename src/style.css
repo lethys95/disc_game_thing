@@ -421,3 +421,5 @@ button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }
 .equipment { margin-top: 12px; display: flex; flex-direction: column; gap: 4px; }
 .equipment .slot-row { display: flex; align-items: center; gap: 8px; }
 .equipment .slot-name { width: 84px; color: var(--muted); font-size: 12px; }
+.offer-row { display: flex; align-items: flex-start; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--rule); }
+.offer-row > :first-child { flex: 1; }

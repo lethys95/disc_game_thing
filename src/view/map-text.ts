@@ -1,4 +1,4 @@
-import { hexKey } from "#rules/hex";
+import { hexKey, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { tileAt, TERRAIN_COST } from "#rules/map";
 import type { MovePlan, MoveTarget } from "#rules/world/movement";
@@ -9,6 +9,7 @@ import { castProblem, spellVictims } from "#rules/world/spells";
 import { spellById } from "#rules/spells";
 import { itemById } from "#rules/items";
 import { unitName } from "#view/members";
+import { STRUCTURES } from "#rules/structures";
 
 /** What the map's hint line says: the hover, the march, the news. Pure text over what the player knows. */
 
@@ -53,6 +54,8 @@ export function hintText({ known, player, leader, hovered, plan, forecast }: Hin
   if (plan.steps === 0) return "Not enough movement left to go further. End your turn.";
   const total = plan.path.hexes.length;
   const walks = plan.steps === total ? `March there (${plan.path.cost} movement)` : `March ${plan.steps} of ${total} hexes this turn`;
+  const structure = hovered ? known.structures.find((s) => sameHex(s.hex, hovered)) : undefined;
+  if (structure) return `${walks}: the ${STRUCTURES[structure.kind].name.toLowerCase()}. ${STRUCTURES[structure.kind].describe}`;
   return `${walks}. Hovering ${terrain}.`;
 }
 

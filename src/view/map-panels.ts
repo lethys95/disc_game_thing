@@ -6,7 +6,9 @@ import { playerOf } from "#rules/world/state";
 import type { Leader, PlayerId, World } from "#rules/world/state";
 import { cityName } from "#view/city";
 import type { Place } from "#view/city";
-import { byId, element, movementPips } from "#view/dom";
+import { button, byId, element, movementPips } from "#view/dom";
+import { STRUCTURES } from "#rules/structures";
+import { structureAt } from "#rules/world/structures";
 import { leaderName } from "#view/map-text";
 import { memberRow } from "#view/members";
 import { raisesDeadAt } from "#rules/world/economy";
@@ -15,6 +17,8 @@ import { spellBar } from "#view/spells";
 export interface MapPanelActions {
   readonly select: (leaderId: string) => void;
   readonly openLeader: (leaderId: string) => void;
+  /** Open the structure this warband stands on. */
+  readonly visit: (leaderId: string) => void;
   readonly openPlace: (place: Place) => void;
   readonly newGame: () => void;
   /** Pick a spell to aim (null: stop aiming). */
@@ -56,6 +60,8 @@ export class MapPanels {
       const tree = element("button", `action small${points > 0 ? " ready" : ""}`, `Leader tree${points > 0 ? ` · ${points} point${points === 1 ? "" : "s"} to spend` : ""}`);
       tree.addEventListener("click", () => this.actions.openLeader(leader.id));
       this.squad.appendChild(tree);
+      const structure = structureAt(world, leader);
+      if (structure) this.squad.appendChild(button("action small", `Visit the ${STRUCTURES[structure.kind].name.toLowerCase()}`, () => this.actions.visit(leader.id)));
       // Warbands next to each other can trade units (pillars.md, "Warbands meeting").
       for (const other of mine.filter((l) => l.id !== leader.id && hexDistance(l.hex, leader.hex) === 1)) {
         const meet = element("button", "action small", `Meet ${leaderName(other)}'s warband`);
