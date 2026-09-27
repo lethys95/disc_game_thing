@@ -5,7 +5,7 @@ import type { Action, Battle, BattleEvent, BattleUnit, Enhancement, LegalAbility
 import { PLAIN } from "#rules/battle/types";
 import type { PlayerColor } from "#rules/world/colors";
 import { applySideColors, colorPair } from "#view/colors";
-import { actionButtons, enhancementLabel, Hud, optionKey, unitLabel } from "#view/hud";
+import { actionButtons, enhancementLabel, Hud, optionKey, unitLabel, withOverload } from "#view/hud";
 import { asKnown, masked } from "#view/secrecy";
 import type { BannerButton } from "#view/hud";
 import type { BattleScene, PreviewMark, TileRef } from "#view/scene";
@@ -70,6 +70,8 @@ export class App {
   /** A unit whose card stays up (clicked), so the mouse can travel to the card to read its effects. */
   private pinned: string | null = null;
   private preview: Preview | null = null;
+  /** Spells whose overload toggle is on, for the acting unit's turn. */
+  private readonly overloaded = new Set<string>();
   /** The ability button under the pointer, if any. */
   private abilityHover: string | null = null;
   /** Every target's preview for one ability, cached per battle state and ability. */
@@ -91,6 +93,18 @@ export class App {
   ) {
     this.hud = new Hud(settings, {
       onAbility: (id) => this.chooseAbility(id),
+      onOverload: (abilityId) => {
+        const on = !this.overloaded.has(abilityId);
+        if (on) this.overloaded.add(abilityId);
+        else this.overloaded.delete(abilityId);
+        // A spell being aimed switches to its other form at once.
+        const selected = this.selectedOption();
+        if (selected?.abilityId === abilityId) {
+          const plain = this.playerOptions().find((o) => o.abilityId === abilityId && o.enhancement.kind === "none");
+          if (plain) this.select(optionKey(withOverload(this.playerOptions(), plain, on)), true);
+        }
+        this.render();
+      },
       onAbilityHover: (key) => {
         if (this.abilityHover === key) return;
         this.abilityHover = key;
@@ -184,6 +198,7 @@ export class App {
   }
 
   private selectDefault(): void {
+    this.overloaded.clear();
     // The unit's basic attack if it has one, else any attack (casters): never a hard-coded ability id.
     const options = this.playerOptions().filter((o) => o.tags.includes("attack") && o.enhancement.kind === "none");
     const attack = options.find((o) => o.tags.includes("basic")) ?? options[0];
@@ -216,7 +231,8 @@ export class App {
 
   /** An ability whose definition claims this key, among the ones the player may use now. */
   private hotkey(key: string): void {
-    const slot = /^[1-9]$/.test(key) && this.settings.data.slotKeys ? actionButtons(this.playerOptions())[Number(key) - 1] : undefined;
+    const button = /^[1-9]$/.test(key) && this.settings.data.slotKeys ? actionButtons(this.playerOptions())[Number(key) - 1] : undefined;
+    const slot = button ? withOverload(this.playerOptions(), button, this.overloaded.has(button.abilityId)) : undefined;
     const option = slot ?? this.playerOptions().find((o) => o.enhancement.kind === "none" && this.settings.keyFor(o.abilityId) === key);
     if (option) this.chooseAbility(optionKey(option));
   }
@@ -418,7 +434,7 @@ export class App {
     const pinned = this.pinned && battle.units[this.pinned]?.alive ? this.pinned : null;
     this.hud.renderTurns(battle, playerSide);
     this.hud.renderCard(battle, inspected?.id ?? pinned ?? currentId, playerSide, pinned !== null && !inspected);
-    this.hud.renderActions(battle, this.playerOptions(), this.selected, this.playersTurn());
+    this.hud.renderActions(battle, this.playerOptions(), this.selected, this.playersTurn(), this.overloaded);
     this.hud.renderAuto(this.playerSide !== null && !battle.outcome, this.auto);
     this.hud.showOutcome(battle, playerSide, this.bannerButtons(battle));
     this.hud.setHint(preview?.summary ? `${option?.name}: ${preview.summary}` : this.hint(option));

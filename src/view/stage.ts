@@ -49,7 +49,10 @@ export class Stage {
     host.appendChild(this.labels.domElement);
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    this.controls.enablePan = false;
+    // Middle-drag pans over the ground; right-click stays free for peeks and cancelling.
+    this.controls.enablePan = true;
+    this.controls.screenSpacePanning = false;
+    this.controls.mouseButtons = { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.PAN, RIGHT: null };
     this.controls.enableDamping = true;
     this.controls.minPolarAngle = 0.35;
     this.controls.maxPolarAngle = 1.25;
@@ -90,6 +93,22 @@ export class Stage {
     this.speedScale = speedScale;
     this.controls.rotateSpeed = rotate;
     this.controls.zoomSpeed = zoom;
+  }
+
+  /**
+   * Slides the camera and what it looks at over the ground: `forward` along the view, `right` across it, in world
+   * units; the target stays within `limit` of the origin.
+   */
+  pan(right: number, forward: number, limit: number): void {
+    const ahead = new THREE.Vector3().subVectors(this.controls.target, this.camera.position).setY(0).normalize();
+    const side = new THREE.Vector3().crossVectors(ahead, new THREE.Vector3(0, 1, 0));
+    const move = ahead.multiplyScalar(forward).add(side.multiplyScalar(right));
+    const target = this.controls.target.clone().add(move);
+    const flat = new THREE.Vector2(target.x, target.z);
+    if (flat.length() > limit) move.sub(new THREE.Vector3(target.x, 0, target.z).setLength(flat.length() - limit));
+    this.controls.target.add(move);
+    this.camera.position.add(move);
+    this.controls.update();
   }
 
   tween(duration: number, update: (t: number) => void): Promise<void> {

@@ -67,23 +67,23 @@ Up to six players on a map from the setup screen; you against several AIs.
 ## M25 — Spells and mana ✅ (2026-09-26)
 The canon overworld spell system with placeholder spells (#51): typed mana, learning at the Capitol, casting on the map.
 
-## M29 — The user's playtest of 2026-09-27 (in progress)
-1. [ ] Resurrection in cities: it may work, but nothing on screen says so (graveyard and labels in cities after the research).
-2. [ ] City grids: hold right-click on a unit for its details (stats, armor included).
-3. [ ] Squad grids laid out like the battle: front on the right, back on the left.
-4. [ ] Overload as a toggle on the spell's button, not a second button.
-5. [ ] Ability icons fill their buttons in battle.
-6. [ ] Homing Lightning is never worth it next to Burst: rebalance.
-7. [ ] The AI put Technicians in the front row with room in the back.
-8. [ ] Cities and the Capitol heal garrisons and visiting warbands, more than now (resurrected units stay at 1 HP otherwise).
+## M29 — The user's playtest of 2026-09-27 (done except 9, 17)
+1. [x] Resurrection in cities: it may work, but nothing on screen says so (graveyard and labels in cities after the research).
+2. [x] City grids: hold right-click on a unit for its details (stats, armor included).
+3. [x] Squad grids laid out like the battle: front on the right, back on the left.
+4. [x] Overload as a toggle on the spell's button, not a second button.
+5. [x] Ability icons fill their buttons in battle.
+6. [x] Homing Lightning is never worth it next to Burst: rebalance.
+7. [x] The AI put Technicians in the front row with room in the back.
+8. [x] Cities and the Capitol heal garrisons and visiting warbands, more than now (resurrected units stay at 1 HP otherwise).
 9. [ ] Momentum snowballs: an early lead decides the game. (Discuss; partly the AI, partly design.)
-10. [ ] Maps too small: the enemy Capitol is two turns away ("spawn camping").
-11. [ ] Camera: pan without moving a warband; orbit around the map's middle.
-12. [ ] Blacksmith: +10 attack for units recruited in its city (not every battle).
-13. [ ] City names on the map match the panel ("City 2", not "Your city").
-14. [ ] Mana nodes are labelled as ability damage; they give mana.
-15. [ ] Spells cost at least 3× more mana.
-16. [ ] The AI sat next to an empty city it could take, boxed in, instead of taking it.
+10. [x] Maps too small: the enemy Capitol is two turns away ("spawn camping").
+11. [x] Camera: pan without moving a warband; orbit around the map's middle.
+12. [x] Blacksmith: +10 attack for units recruited in its city (not every battle).
+13. [x] City names on the map match the panel ("City 2", not "Your city").
+14. [x] Mana nodes are labelled as ability damage; they give mana.
+15. [x] Spells cost at least 3× more mana.
+16. [x] The AI sat next to an empty city it could take, boxed in, instead of taking it.
 17. [ ] Colors still very brown (#43; visual, later).
 
 ## Then

@@ -120,6 +120,18 @@ export class Campaign {
         this.render();
       } else this.peekAt(e.clientX, e.clientY);
     });
+    // Arrow keys and WASD pan the map camera (user, 2026-09-27: panning shouldn't need a warband to move).
+    const PAN: Readonly<Record<string, readonly [number, number]>> = {
+      ArrowUp: [0, 1], w: [0, 1], ArrowDown: [0, -1], s: [0, -1], ArrowLeft: [-1, 0], a: [-1, 0], ArrowRight: [1, 0], d: [1, 0],
+    };
+    window.addEventListener("keydown", (e) => {
+      const step = PAN[e.key.length === 1 ? e.key.toLowerCase() : e.key];
+      const typing = e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement;
+      if (step && this.world && !this.hud.hidden && !typing && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        e.preventDefault();
+        this.view.pan(step[0] * 0.8, step[1] * 0.8);
+      }
+    });
     window.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && this.casting) {
         this.casting = null;

@@ -18,17 +18,18 @@ const grids = page.locator("#capitol .squad-grid");
 const titles = () => grids.locator(".section").allTextContents();
 /** "Garrison · 2/4" → 2. */
 const count = (title: string | undefined) => Number(/· (\d+)\//.exec(title ?? "")?.[1] ?? -1);
-const cell = (grid: number, index: number) => grids.nth(grid).locator(".cell").nth(index);
+/** Cells run column by column, each column back → middle → front (the battle's layout). */
+const cell = (grid: number, row: number, col: number) => grids.nth(grid).locator(".cell").nth(col * 3 + (2 - row));
 console.log(`before: ${(await titles()).join(" | ")}`);
-// Visiting warband, front row middle (index 1) → garrison, back row right (index 8).
-await cell(1, 1).dragTo(cell(0, 8));
+// Visiting warband, front row middle → garrison, back row right.
+await cell(1, 0, 1).dragTo(cell(0, 2, 2));
 await page.waitForTimeout(300);
 const afterDrag = await titles();
 console.log(`after drag: ${afterDrag.join(" | ")}`);
 if (count(afterDrag[0]) !== 2) errors.push("the dragged unit didn't reach the garrison");
 
 const purseBefore = Number((await page.textContent("#capitol .purse"))?.trim());
-await cell(0, 6).click();
+await cell(0, 2, 0).click();
 await page.locator(".grid-menu button", { hasText: "Recruit Congregant" }).click();
 await page.waitForTimeout(300);
 const afterRecruit = await titles();
@@ -36,6 +37,17 @@ const purse = await page.textContent("#capitol .purse");
 console.log(`after recruit: ${afterRecruit.join(" | ")} · gold ${purse}`);
 if (count(afterRecruit[0]) !== 3) errors.push("the recruit didn't arrive");
 if (Number(purse?.trim()) !== purseBefore - 40) errors.push(`recruiting should cost 40 gold: ${purseBefore} → ${purse}`);
+// Hold right-click on a unit: its card, armor included.
+const box = await cell(1, 0, 0).boundingBox();
+if (box) {
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down({ button: "right" });
+  const card = await page.locator("#peek").textContent();
+  console.log(`peek: ${card?.slice(0, 80)}`);
+  if (!card?.includes("armor")) errors.push("holding right-click on a unit shows no card with its armor");
+  await page.screenshot({ path: "shots/playtest-city-peek.png" });
+  await page.mouse.up({ button: "right" });
+}
 await page.screenshot({ path: "shots/playtest-city.png" });
 await browser.close();
 await server.close();

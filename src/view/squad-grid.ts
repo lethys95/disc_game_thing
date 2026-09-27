@@ -4,7 +4,8 @@ import type { Leader, SquadMember, SquadRef } from "#rules/world/state";
 import { isLeaderOf, maxHpOf } from "#rules/world/record";
 import { art } from "#view/art";
 import { element } from "#view/dom";
-import { memberRow, unitName } from "#view/members";
+import { memberCard, memberRow, unitName } from "#view/members";
+import { showPeek } from "#view/peek";
 
 /** One squad shown as its 3×3 grid (front row first). */
 export interface GridSquad {
@@ -35,6 +36,8 @@ export interface GridOptions {
 }
 
 const ROW_NAMES = ["Front", "Middle", "Back"] as const;
+/** Laid out as the battle shows your side (user, 2026-09-27): the back row on the left, the front on the right. */
+const DISPLAY_ROWS = [...ROWS].reverse();
 
 /** Drag payloads carry the source squad and tile; kept as JSON in the drag's data. */
 interface Dragged {
@@ -90,9 +93,9 @@ export function squadGrid(side: GridSquad, options: GridOptions): HTMLElement {
   const panel = element("div", "squad-grid");
   panel.appendChild(element("div", "section", `${side.title} · ${side.squad.length}/${side.capacity}`));
   const grid = element("div", "grid");
-  for (const row of ROWS) {
-    grid.appendChild(element("div", "row-label", ROW_NAMES[row]));
-    for (const col of COLS) {
+  for (const row of DISPLAY_ROWS) grid.appendChild(element("div", "row-label", ROW_NAMES[row]));
+  for (const col of COLS) {
+    for (const row of DISPLAY_ROWS) {
       const tile: Tile = { row, col };
       const member = side.squad.find((m) => sameTile(m.tile, tile));
       const isSelected = options.selected !== null && sameRef(options.selected.ref, side.ref) && sameTile(options.selected.tile, tile);
@@ -112,6 +115,13 @@ export function squadGrid(side: GridSquad, options: GridOptions): HTMLElement {
           if (e.dataTransfer) e.dataTransfer.effectAllowed = "move";
         });
         cell.addEventListener("click", () => options.select(isSelected ? null : { ref: side.ref, tile }));
+        // Hold right-click for the unit's card: its numbers now, armor included (released on pointerup).
+        cell.addEventListener("contextmenu", (e) => e.preventDefault());
+        cell.addEventListener("pointerdown", (e) => {
+          if (e.button !== 2) return;
+          const peek = document.getElementById("peek");
+          if (peek) showPeek(peek, [memberCard(member, side.leader)], e.clientX, e.clientY, 340, 360);
+        });
       } else {
         cell.appendChild(element("div", "empty", options.mayAct ? "+" : ""));
         cell.addEventListener("click", () => {
