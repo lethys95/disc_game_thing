@@ -100,50 +100,58 @@ export class CityScreen implements KeyLayer {
     const layout = element("div", "city-layout");
     const content = element("div", "city-content");
     layout.appendChild(content);
-    if (city) layout.appendChild(this.rail(city, tab));
+    if (city) layout.appendChild(this.rail(world, side, city, tab));
     this.root.appendChild(layout);
 
-    if (tab === "home" && city) content.appendChild(this.home(world, side, city));
+    if (tab === "home" && city) content.appendChild(this.home(world, city));
     else if (tab === "research") content.appendChild(this.research.render(world, side, mayAct));
     else if (tab === "spells") content.appendChild(spellsTab(world, side, mayAct, this.options.act));
     else content.appendChild(this.garrison(world, side, place, city, mayAct));
   }
 
-  private rail(city: City, current: CityTab): HTMLElement {
+  /**
+   * The right-hand column (the user's reference: Disciples II's city panel): the tabs as medallions, and what matters
+   * about the city at a glance on marble plaques below them, whatever the tab.
+   */
+  private rail(world: World, side: PlayerId, city: City, current: CityTab): HTMLElement {
     const rail = element("div", "tab-rail panel");
+    const tabs = element("div", "rail-tabs");
     for (const [id, tab] of Object.entries(TABS)) {
       if (!isCityTab(id) || (tab.capitolOnly && city.kind !== "capitol")) continue;
       const tile = button(`rail-tab${id === current ? " selected" : ""}`, [element("span", "glyph", tab.glyph), element("span", "label", tab.label)], () => {
         this.tab = id;
         this.rerender();
       });
-      rail.appendChild(tile);
+      tabs.appendChild(tile);
     }
+    rail.appendChild(tabs);
+    const defenders = city.garrison.filter((m) => m.defId !== GUARDIAN_ID).length;
+    const visitor = world.leaders.find((l) => l.player === side && sameHex(l.hex, city.hex));
+    const facts = [
+      `Tier ${city.tier}`,
+      `Heals ${Math.round(CITY_HEALING_PER_TIER * city.tier * 100)}% a turn`,
+      `Defenders +${CITY_ARMOR_PER_TIER * (city.tier - 1)} armor`,
+      `${defenders} in the garrison${city.kind === "capitol" ? " + Guardian" : ""}`,
+      visitor ? `${unitName(leaderUnit(visitor)?.defId ?? "")}'s warband here` : "No warband visiting",
+      ...nodesOf(world, city).map((n) => `${NODES[n.kind].name} ${n.level}`),
+    ];
+    const plaques = element("div", "rail-facts");
+    for (const fact of facts) plaques.appendChild(element("div", "fact", fact));
+    rail.appendChild(plaques);
     return rail;
   }
 
   /**
    * The city itself, in a frame: a painting of it from the inside (`assets/city/`), drifting slowly, standing in for
-   * the montage the user wants (`docs/design/capitol-screen.md`), with what matters at a glance over it.
+   * the montage the user wants (`docs/design/capitol-screen.md`).
    */
-  private home(world: World, side: PlayerId, city: City): HTMLElement {
+  private home(world: World, city: City): HTMLElement {
     const view = element("div", "city-view panel");
     const owner = city.owner === null ? null : playerOf(world, city.owner).faction;
     const painting = cityViewUrl(city.kind === "capitol" ? MODEL_CHAINS.capitol(owner) : MODEL_CHAINS.city());
     const scene = element("div", "city-scene");
     if (painting) scene.style.backgroundImage = `url("${painting}")`;
     view.appendChild(scene);
-    const card = element("div", "home-card");
-    const defenders = city.garrison.filter((m) => m.defId !== GUARDIAN_ID).length;
-    const visitor = world.leaders.find((l) => l.player === side && sameHex(l.hex, city.hex));
-    const facts = [
-      `Tier ${city.tier} · heals ${Math.round(CITY_HEALING_PER_TIER * city.tier * 100)}% a turn · defenders +${CITY_ARMOR_PER_TIER * (city.tier - 1)} armor`,
-      `${defenders} in the garrison${city.kind === "capitol" ? ", with the Guardian" : ""}`,
-      visitor ? `${unitName(leaderUnit(visitor)?.defId ?? "")}'s warband is visiting` : "No warband visiting",
-      ...nodesOf(world, city).map((n) => `${NODES[n.kind].name}, level ${n.level}`),
-    ];
-    for (const fact of facts) card.appendChild(element("div", "note", fact));
-    view.appendChild(card);
     return view;
   }
 

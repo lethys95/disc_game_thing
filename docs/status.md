@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines._
 
-**Updated:** 2026-09-27 (M46 merged)
+**Updated:** 2026-09-27 (M47 merged)
 
 ## Where we are
 A playable map game for 2–6 players (hotseat viewer vs AIs): two factions (**Jilliath**, **Ral-Vitahl**) with tier-1 melee/support/mage and Nexus mages to tier 3; bandit camps, dungeons with rewards, neutral cities; gold, mana and spells; nodes (gold, Blacksmith, mana, Cathedral); items on leaders; fog of war; retreat and a battle round limit; sound slots with placeholder SFX and music. The AI plays both the map (a list of planners in `world/ai.ts`) and battles, in a web worker.
@@ -10,7 +10,7 @@ A playable map game for 2–6 players (hotseat viewer vs AIs): two factions (**J
 Architecture: `design/architecture.md`; recipes and gotchas: `engineering.md`. `pnpm verify` before calling anything done. Sims: `pnpm sim:many --seeds 1-16 "p1,p2"` (smoke tests only until factions have their lines).
 
 ## Now
-**M46 city view** (merged into main): the city screen opens on a framed painting of the city from the inside (per faction; `assets/city/`), drifting slowly, a placeholder for the montage the user sketched (`design/capitol-screen.md`); tabs in a framed column. M45's UI kit (frame, plaque, buttons, medallions, gargoyle) is on the city screen only, waiting for the user's verdict before it spreads.
+**M47** fills the city screen's gaps: carved stone behind it, a carved iron header, a full iron column with medallion tabs and the city's facts on marble plaques. **M46 city view** (merged into main): the city screen opens on a framed painting of the city from the inside (per faction; `assets/city/`), drifting slowly, a placeholder for the montage the user sketched (`design/capitol-screen.md`); tabs in a framed column. M45's UI kit (frame, plaque, buttons, medallions, gargoyle) is on the city screen only, waiting for the user's verdict before it spreads.
 
 ## Next
 1. Waiting on the user: `questions.md` (unit designs first: Jilliath's tier-2 support and mage, then Grove/Wastes tier 1, then tribes).

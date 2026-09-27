@@ -9,6 +9,8 @@ Generated with `scripts/art/ui.ts` (Krea-2 Turbo via ComfyUI) and cut out with `
 | `button.webp` | `button`, 2 | |
 | `medallion.webp` | `medallion`, 4 | |
 | `gargoyle.webp` | `gargoyle`, 1 | |
+| `backdrop.webp` | `backdrop`, 1 | central 80% cropped, 512 px, tiled |
+| `plate.webp` | `plate`, 2 | central 40% cropped (inside its filigree), 384 px, tiled |
 
 Pilot on the city screen (M45), after the user's reference `docs/design/references/disciples2-city.png`.
 

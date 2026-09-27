@@ -34,6 +34,17 @@ const PIECES = [
     look: "A small gothic gargoyle statue of dark weathered stone, crouched with folded bat wings and claws gripping a ledge, facing forward, the whole statue in frame.",
     size: [1024, 1024],
   },
+  // Surfaces that fill a screen's gaps (the user, 2026-09-27: "a lot of blind spots that aren't filled").
+  {
+    id: "backdrop",
+    look: "A seamless texture of a dark carved stone wall seen straight on: large weathered blocks with faint gothic relief carvings and deep mortar lines, almost black, subtle and low contrast, even lighting, filling the whole frame.",
+    size: [1024, 1024],
+  },
+  {
+    id: "plate",
+    look: "A seamless texture of a dark iron panel seen straight on: hammered black metal with faint engraved filigree and a few small rivets, subtle and low contrast, even lighting, filling the whole frame.",
+    size: [1024, 1024],
+  },
 ];
 
 const args = process.argv.slice(2);
