@@ -11,9 +11,10 @@ import { commitmentOf } from "#rules/forks";
 import { UNITS } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
 import { NEXUS_PRESETS, PRESETS } from "#rules/units/presets";
+import { defaultMapSize, isMapSize } from "#rules/map";
 
 /**
- * Whole games with the map AI on every side: `PLAYERS=punishment,nexus:overload pnpm sim:world [seeds...]`.
+ * Whole games with the map AI on every side: `PLAYERS=punishment,nexus:overload [SIZE=large] pnpm sim:world [seeds...]`.
  * Each player is a Jilliath preset key or `nexus[:preset]`; two or more players; default two `uncommitted` Jilliath.
  */
 const parse = (spec: string): { faction: Playable; key: string } => {
@@ -27,6 +28,7 @@ const squadOf = (s: { faction: Playable; key: string }) =>
 
 const seeds = process.argv.slice(2).map(Number);
 const verbose = process.env["VERBOSE"] === "1";
+const SIZE = process.env["SIZE"] ?? "";
 const specs = (process.env["PLAYERS"] ?? "uncommitted,uncommitted").split(",").map(parse);
 const colors = defaultColors(specs.map((s) => s.faction));
 const setups: PlayerSetup[] = specs.map((s, i) => ({
@@ -36,7 +38,7 @@ const setups: PlayerSetup[] = specs.map((s, i) => ({
   color: colors[i] ?? "white",
 }));
 for (const seed of seeds.length > 0 ? seeds : [1, 2, 3, 4, 5]) {
-  let world = createWorld(seed, setups);
+  let world = createWorld(seed, setups, isMapSize(SIZE) ? SIZE : defaultMapSize(setups.length));
   const memo: BattleMemo = new Map();
   const tally: Record<string, number> = {};
   const timeline: string[] = [];

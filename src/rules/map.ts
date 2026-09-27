@@ -94,12 +94,33 @@ function startHexes(radius: number, players: number): Hex[] {
   return Array.from({ length: players }, (_, i) => corners[(2 + Math.floor((i * corners.length) / players)) % corners.length] ?? { q: 0, r: 0 });
 }
 
+/** Map sizes to choose at setup (user, 2026-09-27: "we should support more sizes"); radii provisional. */
+export type MapSize = "small" | "medium" | "large" | "huge";
+
+export const MAP_SIZES: Readonly<Record<MapSize, { readonly name: string; readonly radius: number }>> = {
+  small: { name: "Small", radius: 5 },
+  medium: { name: "Medium", radius: 6 },
+  large: { name: "Large", radius: 7 },
+  huge: { name: "Huge", radius: 8 },
+};
+
+export const isMapSize = (key: string): key is MapSize => key in MAP_SIZES;
+
+/** The size a game gets unless the player picks one: bigger for more players. */
+export const defaultMapSize = (players: number): MapSize => (players <= 2 ? "small" : players <= 4 ? "medium" : "large");
+
+const hexCount = (radius: number) => 3 * radius * (radius + 1) + 1;
+
 /**
- * A map for `players` players; more players get a larger map and more neutral sites (provisional: two neutral cities
- * more than there are players; a camp and a dungeon per player, and one more of each). The user's playtest
- * (2026-09-27): at radius 4 the enemy Capitol was two turns away.
+ * A map for `players` players. On the default size for that many players (provisional): two neutral cities more
+ * than there are players, a camp and a dungeon per player and one more of each; other sizes scale those counts with
+ * their area. The user's playtest (2026-09-27): at radius 4 the enemy Capitol was two turns away.
  */
-export function generateMap(seed: number, players = 2, radius = players <= 2 ? 5 : 6): WorldMap {
+export function generateMap(seed: number, players = 2, size: MapSize = defaultMapSize(players)): WorldMap {
+  const radius = MAP_SIZES[size].radius;
+  const area = hexCount(radius) / hexCount(MAP_SIZES[defaultMapSize(players)].radius);
+  const neutralCities = Math.max(players, Math.round((players + 2) * area));
+  const lairsEach = Math.max(1, Math.round((players + 1) * area));
   const starts = startHexes(radius, players);
   for (let attempt = 0; ; attempt++) {
     const variant = seed + attempt * 104729;
@@ -111,8 +132,8 @@ export function generateMap(seed: number, players = 2, radius = players <= 2 ? 5
     const bare: WorldMap = { radius, tiles, starts, sites: [], lairs: [], structures: [] };
     const first = starts[0];
     if (!first || starts.some((s) => !sameHex(s, first) && !findPath(bare, first, s, () => false))) continue;
-    const sites = placeSites(bare, variant, players + 2);
-    const lairs = placeLairs(bare, sites, variant, players + 1);
+    const sites = placeSites(bare, variant, neutralCities);
+    const lairs = placeLairs(bare, sites, variant, lairsEach);
     const structures = placeStructures(bare, sites, lairs, variant);
     if (STRUCTURE_KINDS.some((kind) => !structures.some((s) => s.kind === kind))) continue;
     const map: WorldMap = { ...bare, sites, lairs, structures };

@@ -17,6 +17,7 @@ import { Sound } from "#view/sound";
 import { Stage } from "#view/stage";
 import { defaultColors } from "#rules/world/colors";
 import type { Playable } from "#rules/units/index";
+import { isMapSize } from "#rules/map";
 
 const params = new URLSearchParams(window.location.search);
 
@@ -69,10 +70,10 @@ const setup = new Setup(byId("setup"), {
     setup.hide();
     app.start(squads, playerSide, colors);
   },
-  onMarch: (players) => {
+  onMarch: (players, size) => {
     setup.hide();
     const seed = Number(params.get("seed") ?? Math.floor(Date.now() % 100000));
-    campaign.start(players, seed);
+    campaign.start(players, seed, size);
   },
   onLoad: () => menu.show(),
 });
@@ -94,9 +95,12 @@ if (params.has("map")) {
   const count = Math.min(6, Math.max(2, Number(params.get("players") ?? 2)));
   const factions = Array.from({ length: count }, (_, i): Playable => (i === 0 ? "jilliath" : i === 1 ? (nexus ? "nexus" : "jilliath") : i % 2 === 0 ? "nexus" : "jilliath"));
   const colors = defaultColors(factions);
+  const sizeParam = params.get("size") ?? "";
   campaign.start(
     factions.map((faction, i) => ({ squad: faction === "nexus" ? NEXUS_PRESETS.uncommitted : PRESETS.uncommitted, faction, commitment: {}, color: colors[i] ?? "white" })),
     Number(params.get("seed") ?? 1),
+    // `size=large`: a map size other than the default for the number of players.
+    isMapSize(sizeParam) ? sizeParam : undefined,
   );
   if (params.has("xp")) campaign.startingXp(Number(params.get("xp")));
   if (params.has("mana")) campaign.startingMana(Number(params.get("mana")));

@@ -97,6 +97,9 @@ The user asked for a review of the code for technical debt; four reviewers (batt
 ## M39 — Structures, second pass (user's answers to #54; done)
 Unlimited mercenaries; merchant staples (potions) and changing wares; structure counts by map size.
 
+## M40 — Map sizes (user; done)
+Small to Huge at setup, defaulting by player count; neutral counts scale with area.
+
 ## Then
 - Faction content as the user designs it (Nexus trees first; Grove and Wastes later). The user owns unit designs and looks.
 - A spell tree in the Capitol, and the real spells (#51).
