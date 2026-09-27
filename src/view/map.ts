@@ -16,6 +16,7 @@ import { spellById } from "#rules/spells";
 import { cityName } from "#view/city";
 import type { City, Leader, World } from "#rules/world/state";
 import { buildFigure } from "#view/figures";
+import { discard, discardChildren } from "#view/stage";
 import type { CameraPose, Stage } from "#view/stage";
 
 const SIZE = 1;
@@ -164,7 +165,7 @@ export class MapView {
 
   build(map: WorldMap): void {
     this.radius = map.radius;
-    this.terrain.clear();
+    discardChildren(this.terrain);
     this.hexes.clear();
     const prism = new THREE.CylinderGeometry(SIZE * 0.95, SIZE * 0.97, 1, 6);
     const trunk = new THREE.MeshStandardMaterial({ color: 0x1a1512, roughness: 1 });
@@ -227,9 +228,7 @@ export class MapView {
 
   /** Builds the cities and their gold mines; call after `build`. Ownership colours follow in `syncSites`. */
   buildSites(world: World): void {
-    for (const site of this.sites.values()) site.label.remove();
-    for (const lair of this.lairs.values()) lair.label.remove();
-    this.siteLayer.clear();
+    discardChildren(this.siteLayer);
     this.sites.clear();
     this.lairs.clear();
     const stone = new THREE.MeshStandardMaterial({ color: 0x3b3733, roughness: 0.9 });
@@ -325,8 +324,7 @@ export class MapView {
     const present = new Set(world.lairs.map((l) => l.id));
     for (const [id, model] of this.lairs) {
       if (present.has(id)) continue;
-      this.siteLayer.remove(model.group);
-      model.label.remove();
+      discard(model.group);
       this.lairs.delete(id);
     }
     for (const lair of world.lairs) {
@@ -417,16 +415,14 @@ export class MapView {
     const present = new Set(world.leaders.map((l) => l.id));
     for (const [id, figure] of this.leaders) {
       if (present.has(id)) continue;
-      this.scene.remove(figure.group);
-      figure.label.remove();
+      discard(figure.group);
       this.leaders.delete(id);
     }
     for (const leader of world.leaders) {
       const defId = figureDef(leader);
       let figure = this.leaders.get(leader.id);
       if (figure && figure.defId !== defId) {
-        this.scene.remove(figure.group);
-        figure.label.remove();
+        discard(figure.group);
         figure = undefined;
       }
       figure ??= this.addLeader(leader, defId);

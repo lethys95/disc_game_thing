@@ -9,6 +9,7 @@ import type { PlayerColor } from "#rules/world/colors";
 import { threeColor } from "#view/colors";
 import { buildFigure } from "#view/figures";
 import { buildStandee } from "#view/standee";
+import { discard } from "#view/stage";
 import type { CameraPose, Stage } from "#view/stage";
 import { effectDef } from "#rules/effects";
 import { UNITS } from "#rules/units/index";
@@ -290,12 +291,7 @@ export class BattleScene {
 
   /** Removes every figure, for a fresh battle or a new formation preview. */
   reset(): void {
-    for (const figure of this.figures.values()) {
-      this.scene.remove(figure.group);
-      figure.group.traverse((child) => {
-        if (child instanceof CSS2DObject) child.element.remove();
-      });
-    }
+    for (const figure of this.figures.values()) discard(figure.group);
     this.figures.clear();
     this.setHighlights({ current: null, candidates: [], affected: [] });
   }

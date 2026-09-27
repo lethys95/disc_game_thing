@@ -158,3 +158,26 @@ export class Stage {
     this.labels.render(this.active, this.camera);
   }
 }
+
+/**
+ * Takes `object` out of the scene and frees what it holds on the GPU (geometries, materials, their textures) and its
+ * floating labels. Three.js never frees them by itself; a fresh map or battle would otherwise leak the old one's.
+ */
+export function discard(object: THREE.Object3D): void {
+  object.removeFromParent();
+  object.traverse((child) => {
+    if (child instanceof CSS2DObject) child.element.remove();
+    if (!(child instanceof THREE.Mesh)) return;
+    child.geometry.dispose();
+    const materials: THREE.Material[] = Array.isArray(child.material) ? child.material : [child.material];
+    for (const material of materials) {
+      if (material instanceof THREE.MeshStandardMaterial) material.map?.dispose();
+      material.dispose();
+    }
+  });
+}
+
+/** `discard` for everything under `parent`, keeping `parent` itself. */
+export function discardChildren(parent: THREE.Object3D): void {
+  for (const child of [...parent.children]) discard(child);
+}
