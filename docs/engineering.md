@@ -75,6 +75,7 @@ The step-by-step recipes (units, abilities, effects, nodes, forks, recording the
 - **Changing the World's shape? Bump `SAVE_VERSION`** (`src/rules/save.ts`) and update the snapshot (`pnpm vitest -u tests/save.test.ts`); the shape test fails until you do. Old saves are then refused, never migrated.
 
 ## Gotchas
+- **Chain commits after verify with `&&`, never `;`.** A `;` once merged a failing test into main.
 - **CSS2DRenderer positions labels through `transform`.** A CSS animation on `transform` silently overrides it (every float drew at the top-left). Animate an inner element.
 - **`[hidden]` loses to author `display:` rules.** A global `[hidden] { display: none !important }` is in `style.css`; keep it.
 - CSS2DRenderer only updates labels in the scene it renders; `Stage.show` hides the outgoing scene's labels.
