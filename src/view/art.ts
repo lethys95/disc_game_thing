@@ -1,4 +1,4 @@
-import { fallbackKeys, ORNAMENTS, slotInfo } from "#view/art-slots";
+import { fallbackKeys, slotInfo } from "#view/art-slots";
 import type { Slot } from "#view/art-slots";
 import { element } from "#view/dom";
 
@@ -37,14 +37,6 @@ export function art(slot: Slot, className: string): HTMLElement {
     return image;
   }
   return element("span", `art placeholder ${slot.kind} faction-${info.faction} ${className}`, initials(info.name));
-}
-
-/** Ornaments reach the stylesheet as custom properties (`--ornament-frame-corner`); CSS decides where they go. */
-export function applyOrnaments(root: HTMLElement): void {
-  for (const id of ORNAMENTS) {
-    const url = artUrl({ kind: "ornament", id });
-    if (url) root.style.setProperty(`--ornament-${id}`, `url("${url}")`);
-  }
 }
 
 /** The UI kit (`assets/ui/<name>.webp`: frames, plaques, buttons), found at build time. */

@@ -54,13 +54,5 @@
     "prompt": "A single emblem for a game ability icon: a battered, dented shield raised in defense. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
     "model": "krea2_turbo_fp8_scaled.safetensors",
     "from": "art/candidates/anchors/icon_defend-1000.png"
-  },
-  "ornament/frame-corner": {
-    "file": "ornament_corner-1001.png",
-    "id": "ornament_corner",
-    "seed": 1001,
-    "prompt": "An ornate gothic corner piece of tarnished iron filigree and bone, shaped like the corner of a picture frame, isolated on a plain black background, flat front view, symmetrical, for use as a game interface decoration. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of deep blood red where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
-    "model": "krea2_turbo_fp8_scaled.safetensors",
-    "from": "art/candidates/anchors/ornament_corner-1001.png"
   }
 }

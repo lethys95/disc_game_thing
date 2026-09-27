@@ -17,7 +17,7 @@ import { promptFor } from "#scripts/art/prompts";
 const ART = "assets/art";
 const PROVENANCE = `${ART}/provenance.json`;
 /** Width in pixels of a slot's file in the game; height follows the image. */
-const WIDTH: Readonly<Record<SlotKind, number>> = { portrait: 384, ability: 256, effect: 256, ornament: 512 };
+const WIDTH: Readonly<Record<SlotKind, number>> = { portrait: 384, ability: 256, effect: 256 };
 
 const has = (key: string) => existsSync(`${ART}/${key}.webp`);
 
@@ -27,7 +27,7 @@ function report(): void {
     const via = fallbackKeys(slot).find(has);
     return { slot, key, state: has(key) ? "art" : via ? `falls back to ${via}` : "placeholder" };
   });
-  const kinds: SlotKind[] = ["portrait", "ability", "effect", "ornament"];
+  const kinds: SlotKind[] = ["portrait", "ability", "effect"];
   const lines = kinds.map((kind) => {
     const mine = rows.filter((r) => r.slot.kind === kind);
     const done = mine.filter((r) => r.state === "art").length;
@@ -49,7 +49,7 @@ async function accept(file: string, key: string): Promise<void> {
   const family = key.split("/")[1]?.startsWith("_");
   if (!slot && !family) throw new Error(`unknown slot "${key}"; see pnpm art report`);
   const kind = key.split("/")[0];
-  const width = kind === "portrait" || kind === "ability" || kind === "effect" || kind === "ornament" ? WIDTH[kind] : 256;
+  const width = kind === "portrait" || kind === "ability" || kind === "effect" ? WIDTH[kind] : 256;
   const target = `${ART}/${key}.webp`;
   await mkdir(dirname(target), { recursive: true });
   await sharp(file).resize({ width }).webp({ quality: 86 }).toFile(target);

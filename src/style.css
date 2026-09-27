@@ -288,14 +288,6 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 .palette .recruit { flex-wrap: wrap; }
 .palette .recruit .head { flex: 1; }
 .palette .recruit .stats, .palette .recruit .abilities { flex-basis: 100%; }
-/* The frame-corner ornament on two corners of every panel, mirrored; its black ground drops out. */
-.panel { position: relative; }
-.panel::before, .panel::after {
-  content: ""; position: absolute; width: 44px; height: 44px; pointer-events: none;
-  background: var(--ornament-frame-corner, none) no-repeat center / contain; mix-blend-mode: lighten; opacity: 0.85;
-}
-.panel::before { top: -6px; left: -6px; }
-.panel::after { bottom: -6px; right: -6px; transform: rotate(180deg); }
 
 #menu {
   position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(560px, 92vw); max-height: 86vh; overflow-y: auto;
@@ -449,21 +441,16 @@ button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }
 .screen .tree.down .node { justify-self: center; width: min(100%, 230px); box-sizing: border-box; }
 
 /* UI kit pilot on the city screen (user's reference: design/references/disciples2-city.png; pieces in assets/ui/). */
-#capitol .panel {
-  border: 30px solid transparent; border-image: var(--ui-frame) 18% / 30px round;
-  background: rgba(14, 12, 12, 0.94) padding-box;
-}
-#capitol .panel::before, #capitol .panel::after { display: none; }
-#capitol .capitol-header .title {
+.screen .capitol-header .title {
   border: 12px solid transparent; border-image: var(--ui-plaque) 30% 11% fill / 12px 34px;
   padding: 0 30px; color: #2b2622; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35); font-size: 30px;
 }
-#capitol button.action, #capitol button.small {
+button.action:not(.ability), button.small, button.doctrine, button.warband {
   border: 9px solid transparent; border-image: var(--ui-button) 28% 8% fill / 9px 18px;
   background: none; color: var(--gold-light); padding: 2px 10px; box-shadow: none;
 }
-#capitol button.action:hover:not(:disabled), #capitol button.small:hover:not(:disabled) { filter: brightness(1.3); }
-#capitol button:disabled { filter: grayscale(1) brightness(0.65); }
+button.action:not(.ability):hover:not(:disabled), button.small:hover:not(:disabled), button.doctrine:hover, button.warband:hover { filter: brightness(1.3); }
+button.action:not(.ability):disabled, button.small:disabled { filter: grayscale(1) brightness(0.65); opacity: 1; }
 #capitol .tab-rail { width: 84px; align-items: center; gap: 2px; }
 #capitol .tab-rail::before { display: block; position: static; content: ""; width: 80px; height: 96px; mix-blend-mode: normal; opacity: 1; transform: none; background: var(--ui-gargoyle, none) center bottom / contain no-repeat; }
 #capitol .rail-tab {
@@ -475,7 +462,7 @@ button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }
 #capitol .rail-tab:hover { filter: brightness(1.25); }
 #capitol .rail-tab.selected { background-color: transparent; filter: drop-shadow(0 0 10px rgba(217, 179, 106, 0.55)); }
 #capitol .rail-tab.selected .glyph, #capitol .rail-tab.selected .label { color: var(--gold-light); }
-#capitol button.selected { filter: brightness(1.35) drop-shadow(0 0 6px rgba(217, 179, 106, 0.6)); color: var(--gold); }
+button.action.selected:not(.ability), button.small.selected, button.doctrine.selected, button.warband.selected { filter: brightness(1.35) drop-shadow(0 0 6px rgba(217, 179, 106, 0.6)); color: var(--gold); }
 
 /* The city view: a painting of the city in a frame (a placeholder for the montage, design/capitol-screen.md). */
 .city-view { position: relative; flex: 1; min-height: 0; overflow: hidden; padding: 0; }
@@ -485,18 +472,17 @@ button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }
 }
 @keyframes city-drift { from { transform: scale(1.06) translate(-1.5%, 0.5%); } to { transform: scale(1.14) translate(1.5%, -1%); } }
 #capitol .tab-rail.panel { border-width: 10px; border-image-width: 14px; padding: 4px 0; width: 84px; justify-content: flex-start; }
-#capitol.screen { background: #080707; }
 
 /* The city screen fills every gap (the user: "a lot of blind spots"): carved stone behind everything, a carved
    header bar, and a full iron column on the right with the tabs and the city's facts on marble plaques. */
-#capitol.screen { background: #0a0909 var(--ui-backdrop, none) repeat; background-size: 256px; }
-#capitol .capitol-header {
+.screen, #setup { background: #0a0909 var(--ui-backdrop, none) repeat; background-size: 256px; }
+.screen .capitol-header {
   margin: -18px -24px 0; padding: 10px 24px; background: rgba(8, 7, 7, 0.55) var(--ui-plate, none) repeat; background-size: 192px;
   border-bottom: 22px solid transparent; border-image: var(--ui-frame) 18% 0 0 0 / 22px 0 0 0 stretch;
 }
-#capitol .capitol-header .gold { background: rgba(0, 0, 0, 0.45); padding: 2px 12px; border: 1px solid var(--line); flex: none; }
-#capitol .capitol-header .title { margin-right: 12px; }
-#capitol .capitol-header > :last-child { margin-left: auto; }
+.screen .capitol-header .gold { background: rgba(0, 0, 0, 0.45); padding: 2px 12px; border: 1px solid var(--line); flex: none; }
+.screen .capitol-header .title { margin-right: 12px; }
+.screen .capitol-header > :last-child { margin-left: auto; }
 #capitol .tab-rail.panel {
   width: 188px; border-width: 18px; border-image-width: 24px; padding: 4px 6px 10px;
   background: #0d0c0c var(--ui-plate, none) repeat padding-box; background-size: 160px;
@@ -511,3 +497,27 @@ button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }
 
 #capitol .squad-grid .grid { grid-template-columns: repeat(3, 92px); }
 #capitol .squad-grid .cell { height: 84px; }
+
+/* The UI kit everywhere (M48): every panel in the carved frame (thinner on the small HUD panels than on screens),
+   the map's turn line on an iron bar, banners framed. */
+.panel {
+  border: 16px solid transparent; border-image: var(--ui-frame) 18% / 18px round;
+  background: rgba(13, 11, 11, 0.94) padding-box; box-shadow: none; border-radius: 0;
+}
+.screen .panel { border-width: 26px; border-image-width: 28px; }
+#capitol .tab-rail.panel { border-width: 18px; border-image-width: 24px; }
+#actions button.ability { border: 8px solid transparent; border-image: var(--ui-frame) 18% / 10px round; background: #141110 padding-box; }
+#mapturn {
+  padding: 4px 22px; background: rgba(8, 7, 7, 0.6) var(--ui-plate, none) repeat padding-box; background-size: 160px;
+  border: 12px solid transparent; border-image: var(--ui-frame) 18% / 14px round; top: 6px;
+}
+#banner, #mapbanner { border: 20px solid transparent; border-image: var(--ui-frame) 18% / 24px round; background: rgba(13, 11, 11, 0.95) padding-box; }
+
+#setup { overflow-y: auto; }
+#setup .panel { border-width: 12px; border-image-width: 14px; }
+#setup { padding: 8px 18px; gap: 6px; }
+#setup .setup-header .title { font-size: 30px; line-height: 1.1; }
+#setup button.action.fight { font-size: 19px; padding: 0 30px; }
+#setup .setup-extras { gap: 4px; }
+#setup .setup-extras > .note { margin: 0; }
+#setup button.doctrine { border-width: 6px; border-image-width: 6px 14px; padding: 0 10px; }
