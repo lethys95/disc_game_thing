@@ -2,6 +2,9 @@ import { LEADER_MOVEMENT, STARTING_GOLD } from "#rules/balance";
 import type { Placement } from "#rules/battle/engine";
 import type { Commitment } from "#rules/forks";
 import { generateMap } from "#rules/map";
+import type { StructureSite } from "#rules/map";
+import { spellsOf } from "#rules/spells";
+import { MERCENARY_STOCKS, MERCHANT_STOCK } from "#rules/structures";
 import { GUARDIAN_ID } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
 import { hexDistance } from "#rules/hex";
@@ -10,8 +13,8 @@ import { startTurn } from "#rules/world/economy";
 import { noMana } from "#rules/factions";
 import { updateVision } from "#rules/world/vision";
 import type { PlayerColor } from "#rules/world/colors";
-import { banditGroup, DUNGEON_REWARDS, member, strengthAt } from "#rules/world/state";
-import type { City, Lair, Leader, Player, World } from "#rules/world/state";
+import { banditGroup, DUNGEON_REWARDS, emptyMemory, member, strengthAt } from "#rules/world/state";
+import type { City, Lair, Leader, Player, Structure, World } from "#rules/world/state";
 
 /** Setting up a new game on a generated map. */
 
@@ -80,7 +83,7 @@ export function createWorld(seed: number, setups: readonly PlayerSetup[]): World
       spells: [],
       cast: [],
       explored: [],
-      memory: { cities: [], lairs: [], nodes: [] },
+      memory: emptyMemory(),
     }),
   );
   const world: World = {
@@ -89,6 +92,7 @@ export function createWorld(seed: number, setups: readonly PlayerSetup[]): World
     cities,
     nodes: map.sites.flatMap((site) => site.nodes).map((n, index) => ({ id: `node${index}`, kind: n.kind, hex: n.hex, cityId: nearestCity(cities, n.hex).id, level: 1 })),
     lairs,
+    structures: map.structures.map((site): Structure => structureAt(site, map.structures)),
     players,
     turn: 1,
     activePlayer: 0,
@@ -99,6 +103,21 @@ export function createWorld(seed: number, setups: readonly PlayerSetup[]): World
   startTurn(world, []);
   updateVision(world);
   return world;
+}
+
+/** A structure with its starting stock: mercenary camps take the stock lists in turn. */
+function structureAt(site: StructureSite, all: readonly StructureSite[]): Structure {
+  const base = { id: site.id, hex: site.hex };
+  switch (site.kind) {
+    case "mercenaries": {
+      const camps = all.filter((s) => s.kind === "mercenaries");
+      return { ...base, kind: "mercenaries", stock: [...(MERCENARY_STOCKS[camps.indexOf(site) % MERCENARY_STOCKS.length] ?? [])] };
+    }
+    case "merchant":
+      return { ...base, kind: "merchant", stock: [...MERCHANT_STOCK] };
+    case "mage":
+      return { ...base, kind: "mage", stock: spellsOf("neutral").map((s) => s.id) };
+  }
 }
 
 /**

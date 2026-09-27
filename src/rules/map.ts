@@ -1,6 +1,8 @@
 import { hexagon, hexDistance, hexKey, neighbors, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import type { NodeKind, NodeSite } from "#rules/nodes";
+import { STRUCTURE_KINDS } from "#rules/structures";
+import type { StructureKind } from "#rules/structures";
 
 /** Provisional terrain (docs/design/pillars.md leaves terrain to the map model): costs are placeholders. */
 export type Terrain = "plain" | "forest" | "hills" | "mountain" | "water";
@@ -18,8 +20,10 @@ export interface MapTile {
   readonly terrain: Terrain;
 }
 
-/** A city on the map. Nodes belong to their city (Warlords 3 style): whoever holds the city holds them. */
-/** A city's spot; a Capitol also names the start (player) it belongs to. */
+/**
+ * A city's spot; a Capitol also names the start (player) it belongs to. Nodes belong to their city (Warlords 3
+ * style): whoever holds the city holds them.
+ */
 export type Site = {
   readonly id: string;
   readonly hex: Hex;
@@ -33,6 +37,13 @@ export interface LairSite {
   readonly hex: Hex;
 }
 
+/** A structure's spot (`rules/structures.ts`). */
+export interface StructureSite {
+  readonly id: string;
+  readonly kind: StructureKind;
+  readonly hex: Hex;
+}
+
 export interface WorldMap {
   readonly radius: number;
   readonly tiles: Readonly<Record<string, MapTile>>;
@@ -40,6 +51,7 @@ export interface WorldMap {
   readonly starts: readonly Hex[];
   readonly sites: readonly Site[];
   readonly lairs: readonly LairSite[];
+  readonly structures: readonly StructureSite[];
 }
 
 
@@ -103,13 +115,15 @@ export function generateMap(seed: number, players = 2, radius = players <= 2 ? 5
       const clear = starts.some((s) => hexDistance(s, hex) <= 1);
       tiles[hexKey(hex)] = { hex, terrain: clear ? "plain" : terrainFor(variant, hex, radius) };
     }
-    const bare: WorldMap = { radius, tiles, starts, sites: [], lairs: [] };
+    const bare: WorldMap = { radius, tiles, starts, sites: [], lairs: [], structures: [] };
     const first = starts[0];
     if (!first || starts.some((s) => !sameHex(s, first) && !findPath(bare, first, s, () => false))) continue;
     const sites = placeSites(bare, variant, players + 2);
     const lairs = placeLairs(bare, sites, variant, players + 1);
-    const map: WorldMap = { ...bare, sites, lairs };
-    const spots = [...sites.map((s) => s.hex), ...lairs.map((l) => l.hex)];
+    const structures = placeStructures(bare, sites, lairs, variant);
+    if (structures.length < STRUCTURE_KINDS.length) continue;
+    const map: WorldMap = { ...bare, sites, lairs, structures };
+    const spots = [...sites.map((s) => s.hex), ...lairs.map((l) => l.hex), ...structures.map((s) => s.hex)];
     const everyoneReaches = spots.every((hex) => starts.every((start) => sameHex(start, hex) || findPath(map, start, hex, () => false)));
     if (everyoneReaches) return map;
   }
@@ -147,8 +161,7 @@ function placeSites(map: WorldMap, seed: number, neutralCities: number): Site[] 
   return sites;
 }
 
-/** Camps and dungeons on free walkable hexes, away from the Capitols and from each other. */
-/** `each`: how many camps and how many dungeons. */
+/** `each` camps and `each` dungeons on free walkable hexes, away from the Capitols and from each other. */
 function placeLairs(map: WorldMap, sites: readonly Site[], seed: number, each: number): LairSite[] {
   const lairs: LairSite[] = [];
   const used = (hex: Hex) =>
@@ -166,6 +179,31 @@ function placeLairs(map: WorldMap, sites: readonly Site[], seed: number, each: n
     else break;
   }
   return lairs;
+}
+
+/**
+ * One structure of each kind (provisional, #54) on free walkable hexes on contested ground: its nearest two
+ * Capitols are within a hex of the same distance, so no player has the shops to itself.
+ */
+function placeStructures(map: WorldMap, sites: readonly Site[], lairs: readonly LairSite[], seed: number): StructureSite[] {
+  const structures: StructureSite[] = [];
+  const used = (hex: Hex) =>
+    sites.some((s) => hexDistance(s.hex, hex) < 2 || s.nodes.some((n) => sameHex(n.hex, hex))) ||
+    lairs.some((l) => hexDistance(l.hex, hex) < 2) ||
+    structures.some((s) => hexDistance(s.hex, hex) < 2);
+  const fair = (hex: Hex) => {
+    const [nearest, next] = map.starts.map((s) => hexDistance(s, hex)).sort((a, b) => a - b);
+    return nearest !== undefined && next !== undefined && nearest >= 3 && next - nearest <= 1;
+  };
+  const candidates = Object.values(map.tiles)
+    .map((t) => t.hex)
+    .filter((hex) => stepCost(map, hex) !== null && fair(hex))
+    .sort((a, b) => noise(seed + 67, a.q, a.r) - noise(seed + 67, b.q, b.r));
+  for (const kind of STRUCTURE_KINDS) {
+    const hex = candidates.find((h) => !used(h));
+    if (hex) structures.push({ id: kind, kind, hex });
+  }
+  return structures;
 }
 
 export interface Path {

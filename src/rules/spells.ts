@@ -1,5 +1,6 @@
 import type { EffectSeed } from "#rules/battle/types";
 import type { Playable } from "#rules/units/index";
+import { FACTIONS } from "#rules/factions";
 import type { ManaColor } from "#rules/factions";
 
 /**
@@ -24,11 +25,13 @@ export type SpellEffect =
 export interface SpellDef {
   readonly id: string;
   readonly name: string;
-  readonly faction: Playable;
-  readonly mana: ManaColor;
+  /** A faction's spells are learned at its Capitol; neutral ones are bought from a mage merchant. */
+  readonly faction: Playable | "neutral";
+  /** "own": cast with the caster's own faction color (neutral spells). */
+  readonly mana: ManaColor | "own";
   /** Mana per cast. */
   readonly cost: number;
-  /** Gold to learn it at the Capitol (a spell tree comes later, pillars.md). */
+  /** Gold to learn it, at the Capitol or a mage merchant (a spell tree comes later, pillars.md). */
   readonly learnCost: number;
   readonly target: SpellTarget;
   /** For area spells: how far around the chosen hex it reaches. */
@@ -86,6 +89,31 @@ export const SPELLS: readonly SpellDef[] = [
     effect: { kind: "damage", amount: 15 },
     describe: "A hex in sight and its neighbours: every unit of every enemy warband and neutral group there loses 15 HP.",
   },
+  // Sold by mage merchants (user, 2026-09-27); plain placeholders (#54).
+  {
+    id: "firebolt",
+    name: "Firebolt",
+    faction: "neutral",
+    mana: "own",
+    cost: 40,
+    learnCost: 200,
+    target: "enemyGroup",
+    radius: 0,
+    effect: { kind: "damage", amount: 20 },
+    describe: "An enemy warband or neutral group in sight: each of its units loses 20 HP.",
+  },
+  {
+    id: "harden_warband",
+    name: "Harden warband",
+    faction: "neutral",
+    mana: "own",
+    cost: 40,
+    learnCost: 200,
+    target: "ownWarband",
+    radius: 0,
+    effect: { kind: "enchant", effect: { def: "extra_armor", amount: 5 }, turns: 2 },
+    describe: "One of your warbands: its units have 5 more armor in battles for 2 turns.",
+  },
 ];
 
 export function spellById(id: string): SpellDef {
@@ -94,4 +122,7 @@ export function spellById(id: string): SpellDef {
   return spell;
 }
 
-export const spellsOf = (faction: Playable): SpellDef[] => SPELLS.filter((s) => s.faction === faction);
+export const spellsOf = (faction: Playable | "neutral"): SpellDef[] => SPELLS.filter((s) => s.faction === faction);
+
+/** The mana color a player of `faction` pays this spell in. */
+export const manaColorOf = (spell: SpellDef, faction: Playable): ManaColor => (spell.mana === "own" ? FACTIONS[faction].mana : spell.mana);

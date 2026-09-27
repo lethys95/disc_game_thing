@@ -228,7 +228,7 @@ export class Campaign implements KeyLayer {
     if (!world) return;
     const explored = Object.keys(world.map.tiles);
     // Places out of sight show as remembered: remember them as they are now.
-    const memory = structuredClone({ cities: world.cities, lairs: world.lairs, nodes: world.nodes });
+    const memory = structuredClone({ cities: world.cities, lairs: world.lairs, nodes: world.nodes, structures: world.structures });
     const next = { ...world, players: world.players.map((p, id) => (id === this.viewer ? { ...p, explored, memory } : p)) };
     this.world = next;
     this.syncView(next);

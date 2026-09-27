@@ -10,7 +10,7 @@ A playable map game for 2–6 players (hotseat viewer vs AIs): two factions (**J
 Architecture: `design/architecture.md`; recipes and gotchas: `engineering.md`. `pnpm verify` before calling anything done. Sims: `pnpm sim:many --seeds 1-16 "p1,p2"` (smoke tests only until factions have their lines).
 
 ## Now
-**M37 done** (merged, tag `m37-cleanup`): a four-part code review and its fixes; what's left is listed with reasons in `engineering.md` ("Debt"). Verify takes 28 s (one playtest harness). Save version 17.
+**M37 done** (merged into main, tag `m37-review`): a four-part code review and its fixes; what's left is listed with reasons in `engineering.md` ("Debt"). Verify takes 28 s (one playtest harness). Save version 17.
 **M38 map structures** starting (branch `m38-structures`).
 
 ## Next

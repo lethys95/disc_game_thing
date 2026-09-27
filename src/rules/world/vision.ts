@@ -2,7 +2,7 @@ import { CAPITOL_SIGHT, CITY_SIGHT, WARBAND_SIGHT } from "#rules/balance";
 import { hexDistance, hexKey } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import type { MapTile, WorldMap } from "#rules/map";
-import { playerOf } from "#rules/world/state";
+import { emptyMemory, playerOf } from "#rules/world/state";
 import { noMana } from "#rules/factions";
 import type { Player, PlayerId, World } from "#rules/world/state";
 
@@ -50,6 +50,7 @@ export function see(world: World, player: PlayerId): void {
     cities: remember(me.memory.cities, world.cities.filter((c) => inSight(c.hex) || lost.has(c.id))),
     lairs: remember(me.memory.lairs, world.lairs.filter((l) => inSight(l.hex))),
     nodes: remember(me.memory.nodes, world.nodes.filter((n) => inSight(n.hex))),
+    structures: remember(me.memory.structures, world.structures.filter((s) => inSight(s.hex))),
   };
 }
 
@@ -85,6 +86,7 @@ export function knownWorld(world: World, player: PlayerId): World {
     cities: world.cities.flatMap((c) => (c.owner === player ? [c] : recall([c], me.memory.cities))),
     lairs: recall(world.lairs, me.memory.lairs),
     nodes: recall(world.nodes, me.memory.nodes),
+    structures: recall(world.structures, me.memory.structures),
   };
 }
 
@@ -100,7 +102,7 @@ function hidden(p: Player): Player {
     spells: [],
     cast: [],
     explored: [],
-    memory: { cities: [], lairs: [], nodes: [] },
+    memory: emptyMemory(),
   };
 }
 
