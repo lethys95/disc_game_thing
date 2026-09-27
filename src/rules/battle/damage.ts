@@ -7,21 +7,21 @@ import type { Ctx, HitSpec, Packet } from "#rules/battle/types";
  * power → outgoing → conversion → incoming → armor → pools → mitigation → HP → reactions.
  */
 export function hit(ctx: Ctx, sourceId: string, targetIds: readonly string[], spec: HitSpec): void {
-  const own = traitsOn(ctx, sourceId);
-  let dealt = 0;
-  let kills = 0;
+  const tally = ctx.tally.get(sourceId) ?? { dealt: 0, kills: 0 };
+  ctx.tally.set(sourceId, tally);
   for (const targetId of targetIds) {
     if (!ctx.unit(targetId).alive) continue;
+    // Read again for each target: a one-shot mark that fired on the first target is gone for the next.
+    const own = traitsOn(ctx, sourceId);
     const packet: Packet = { source: sourceId, target: targetId, amount: spec.power, type: spec.type, tags: spec.tags, bleed: 0 };
     for (const t of own) t.hooks.outgoing?.(ctx, t.self, packet);
     for (const t of own) t.hooks.convert?.(ctx, t.self, packet);
     const taken = receive(ctx, packet);
     if (packet.bleed > 0) ctx.addEffect(targetId, { def: "bleeding", source: sourceId, amount: packet.bleed });
-    dealt += taken;
-    if (!ctx.unit(targetId).alive) kills += 1;
+    tally.dealt += taken;
+    if (!ctx.unit(targetId).alive) tally.kills += 1;
     for (const t of own) t.hooks.afterHit?.(ctx, t.self, targetId, taken);
   }
-  for (const t of own) if (ctx.unit(sourceId).alive) t.hooks.afterAttack?.(ctx, t.self, dealt, kills);
 }
 
 /** The target's side of the pipeline. Returns what the hit took: pools soaked plus HP removed. */

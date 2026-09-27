@@ -240,7 +240,7 @@ export interface Hooks {
   beforeAbility?(ctx: Ctx, self: TraitSelf, abilityId: string): "cancel" | null;
   /** After this unit's hit lands on one target. */
   afterHit?(ctx: Ctx, self: TraitSelf, targetId: string, dealt: number): void;
-  /** After this unit's whole attack resolves, if it's still alive. */
+  /** After this unit's whole action resolves (every target, every copy), if it's still alive and it hit anything. */
   afterAttack?(ctx: Ctx, self: TraitSelf, dealt: number, kills: number): void;
   /** When this unit would die; true keeps it at 1 HP. */
   preventDeath?(ctx: Ctx, self: TraitSelf): boolean;
@@ -349,4 +349,6 @@ export interface Ctx {
   hasTag(abilityId: string, tag: Tag): boolean;
   move(unitId: string, to: Tile): void;
   emit(event: BattleEvent): void;
+  /** What each unit's hits dealt and killed during this action: `afterAttack` gets its unit's totals, once. */
+  readonly tally: Map<string, { dealt: number; kills: number }>;
 }
