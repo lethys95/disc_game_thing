@@ -220,6 +220,12 @@ function eliminate(world: World, player: PlayerId, events: WorldEvent[]): void {
  * mover is always side 0.
  */
 export function forecast(world: World, leaderId: string, target: MoveTarget): Battle | null {
+  const start = openingBattle(world, leaderId, target);
+  return start ? autoplay(start) : null;
+}
+
+/** The battle a move would start, not yet played (null for a capture). */
+export function openingBattle(world: World, leaderId: string, target: MoveTarget): Battle | null {
   if (target.kind === "capture") return null;
-  return autoplay(engagementBattle(world, leaderById(world, leaderId), defenderOf(target)));
+  return engagementBattle(world, leaderById(world, leaderId), defenderOf(target));
 }

@@ -1,6 +1,7 @@
 import { autoplay } from "#rules/ai";
 import { applyWorldAction } from "#rules/world/actions";
 import { chooseWorldAction } from "#rules/world/ai";
+import type { BattleMemo } from "#rules/world/ai";
 import { concludeBattle } from "#rules/world/battles";
 import { createWorld } from "#rules/world/create";
 import type { PlayerSetup } from "#rules/world/create";
@@ -36,6 +37,7 @@ const setups: PlayerSetup[] = specs.map((s, i) => ({
 }));
 for (const seed of seeds.length > 0 ? seeds : [1, 2, 3, 4, 5]) {
   let world = createWorld(seed, setups);
+  const memo: BattleMemo = new Map();
   const tally: Record<string, number> = {};
   const timeline: string[] = [];
   let battles = 0;
@@ -54,7 +56,7 @@ for (const seed of seeds.length > 0 ? seeds : [1, 2, 3, 4, 5]) {
       world = concludeBattle(world, done).world;
       continue;
     }
-    const action = chooseWorldAction(world);
+    const action = chooseWorldAction(world, memo);
     count(action);
     world = applyWorldAction(world, action).world;
   }

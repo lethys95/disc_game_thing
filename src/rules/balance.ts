@@ -6,6 +6,13 @@
 /** Initiative per action in a round (actions = floor(initiative / this), at least 1). */
 export const INITIATIVE_PER_ACTION = 15;
 
+/**
+ * A battle that reaches this many rounds is over: the attacker (side 0) withdraws and the defender holds the field;
+ * the attacker's survivors leave alive. Provisional (questions.md #52): healing and shield restores can otherwise
+ * outlast the damage forever.
+ */
+export const BATTLE_ROUND_LIMIT = 30;
+
 /** Punishment's stack cap (user: "balance it"; the value is provisional). */
 export const PUNISHMENT_MAX_STACKS = 3;
 

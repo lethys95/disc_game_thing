@@ -117,3 +117,6 @@ Jilliath had only its melee line, so cross-faction win counts compared a melee-o
 
 **2026-09-26 — Balance by tuning units, never Leadership (user).**
 Every faction keeps the same starting Leadership; unequal armies are evened out by unit numbers alone (not by price either: a warband's size is capped by Leadership, so a dearer unit is simply a stronger slot). `pnpm sim:t1` plays the tier-1 squads of both factions against each other, both seatings; the first pass cut the Custodian's shield and the Apprentice's Burst (#52).
+
+**2026-09-27 — Sims must be fast (user: "a symptom of these sims needing work").**
+The sims have no animation; their time was the AI replaying the same battles. Profiled and fixed: a hand-written battle copy (structuredClone was a quarter of all time), per-action caches of trait lists (Congregation's bonus made every stats query walk the field twice over), battles played out once per game through a memo the caller keeps, and the sims bundled with esbuild. Three games went from 80 s to 10 s with identical results. `pnpm sim:many` runs games in parallel. A battle round limit (30, provisional) came with it: stalemates crashed the forecasts.

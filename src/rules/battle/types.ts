@@ -115,7 +115,8 @@ export interface Battle {
   outcome: Outcome | null;
 }
 
-export type Outcome = { winner: Side } | { winner: null; reason: "mutualDestruction" };
+/** `withdrew`: the round limit passed and the attacker (side 0) left the field to the defender. */
+export type Outcome = { winner: Side; withdrew?: true } | { winner: null; reason: "mutualDestruction" };
 
 /** A way to use an ability: the tile the player clicks, and the units it will affect. */
 export interface TargetChoice {
@@ -200,6 +201,13 @@ export interface TraitSelf {
   readonly unitId: string;
   readonly params: Params;
   readonly effect: EffectInstance | null;
+}
+
+/** A hook bundle together with whom it runs for. Passive abilities and effects are both traits. */
+export interface Trait {
+  readonly hooks: Hooks;
+  readonly self: TraitSelf;
+  readonly absorbPriority: number;
 }
 
 /**
@@ -331,6 +339,10 @@ export interface Ctx {
   consumeCharge(unitId: string, abilityId: string): boolean;
   /** Ability ids the unit has, including ones granted by traits. */
   abilityIds(unitId: string): string[];
+  /** The traits on a unit (`battle/traits.ts`), cached until an effect comes or goes or a unit dies. */
+  traits(unitId: string): readonly Trait[];
+  /** Every trait on the battlefield, cached likewise. */
+  allTraits(): readonly Trait[];
   hasTag(abilityId: string, tag: Tag): boolean;
   move(unitId: string, to: Tile): void;
   emit(event: BattleEvent): void;

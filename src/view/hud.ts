@@ -323,6 +323,7 @@ function describe(event: BattleEvent, name: (id: string) => string, playerSide: 
       return event.reason === "stunned" ? `${name(event.unitId)} is stunned` : `${name(event.unitId)} cannot act`;
     case "battleEnd":
       if (event.outcome.winner === null) return "None survive.";
+      if (event.outcome.withdrew) return `Neither side can finish the other: the attackers withdraw. ${playerSide === null ? "The defenders hold the field." : playerSide === 1 ? "Victory." : "Defeat."}`;
       return playerSide === null ? `Side ${event.outcome.winner + 1} prevails.` : event.outcome.winner === playerSide ? "Victory." : "Defeat.";
     case "turnStart":
       return null;
