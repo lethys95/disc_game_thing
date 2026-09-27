@@ -7,7 +7,7 @@ import { playerOf, cityById, leaderById, leaderUnit, nodesOf } from "#rules/worl
 import { NODES } from "#rules/nodes";
 import { CITY_RESURRECTION_PREMIUM } from "#rules/research";
 import type { City, PlayerId, SquadMember, SquadRef, World, WorldAction } from "#rules/world/state";
-import { element, gold } from "#view/dom";
+import { button, element, gold, orderButton } from "#view/dom";
 import { unitName } from "#view/members";
 import { ResearchPanel } from "#view/research";
 import { squadGrid } from "#view/squad-grid";
@@ -65,18 +65,16 @@ export class CityScreen {
     if (city?.kind === "capitol") {
       const tabs = element("div", "tabs");
       for (const [id, label] of [["city", "City"], ["research", "Research"], ["spells", "Spells"]] as const) {
-        const button = element("button", `action${this.tab === id ? " selected" : ""}`, label);
-        button.addEventListener("click", () => {
-          this.tab = id;
-          this.rerender();
-        });
-        tabs.appendChild(button);
+        tabs.appendChild(
+          button(`action${this.tab === id ? " selected" : ""}`, label, () => {
+            this.tab = id;
+            this.rerender();
+          }),
+        );
       }
       header.appendChild(tabs);
     }
-    const back = element("button", "action", "Back to the map");
-    back.addEventListener("click", () => this.options.close());
-    header.appendChild(back);
+    header.appendChild(button("action", "Back to the map", () => this.options.close()));
     this.root.appendChild(header);
 
     if (this.tab === "research" && city?.kind === "capitol") {
@@ -172,12 +170,14 @@ export class CityScreen {
       item.append(element("div", "", `${def.name} · level ${node.level}`), element("div", "note", yields));
       if (node.level < NODE_MAX_LEVEL) {
         const problem = investNodeProblem(world, node.id);
-        const invest = element("button", "small");
-        invest.append(`Invest · `, gold(nodeInvestCost(node)));
-        invest.disabled = !mayAct || problem !== null;
-        invest.title = problem ?? `Level ${node.level + 1}: ${NODES[node.kind].describe(node.level + 1)}.`;
-        invest.addEventListener("click", () => this.options.act({ type: "investNode", nodeId: node.id }));
-        item.appendChild(invest);
+        item.appendChild(
+          orderButton("small", ["Invest · ", gold(nodeInvestCost(node))], {
+            mayAct,
+            problem,
+            explain: `Level ${node.level + 1}: ${NODES[node.kind].describe(node.level + 1)}.`,
+            give: () => this.options.act({ type: "investNode", nodeId: node.id }),
+          }),
+        );
       }
       row.appendChild(item);
     }
@@ -192,12 +192,14 @@ export class CityScreen {
     if (city.tier < CITY_MAX_TIER) {
       const next = city.tier + 1;
       const problem = upgradeCityProblem(world, city.id);
-      const upgrade = element("button", "action small");
-      upgrade.append(`Upgrade to tier ${next} · `, gold(cityUpgradeCost(city)));
-      upgrade.disabled = !mayAct || problem !== null;
-      upgrade.title = problem ?? `Tier ${next}: ${CITY_SLOTS[next] ?? 0} garrison slots; the garrison and a warband defending here get +${CITY_ARMOR_PER_TIER * (next - 1)} armor.`;
-      upgrade.addEventListener("click", () => this.options.act({ type: "upgradeCity", cityId: city.id }));
-      row.appendChild(upgrade);
+      row.appendChild(
+        orderButton("action small", [`Upgrade to tier ${next} · `, gold(cityUpgradeCost(city))], {
+          mayAct,
+          problem,
+          explain: `Tier ${next}: ${CITY_SLOTS[next] ?? 0} garrison slots; the garrison and a warband defending here get +${CITY_ARMOR_PER_TIER * (next - 1)} armor.`,
+          give: () => this.options.act({ type: "upgradeCity", cityId: city.id }),
+        }),
+      );
     } else row.appendChild(element("div", "note", "Fully upgraded."));
     return row;
   }
@@ -213,11 +215,14 @@ export class CityScreen {
       const problem = reviveProblem(world, leader.id);
       const row = element("div", "fallen");
       row.appendChild(element("span", "name", `♛ ${unitName(own?.defId ?? "")}, a warband's leader · ${reviveCost(world, leader) ?? 0} gold`));
-      const revive = element("button", "small", "Revive");
-      revive.disabled = !mayAct || problem !== null;
-      revive.title = problem ?? "Returns at 1 HP and leads its warband again. The price drops each turn you wait.";
-      revive.addEventListener("click", () => this.options.act({ type: "revive", leaderId: leader.id }));
-      row.appendChild(revive);
+      row.appendChild(
+        orderButton("small", "Revive", {
+          mayAct,
+          problem,
+          explain: "Returns at 1 HP and leads its warband again. The price drops each turn you wait.",
+          give: () => this.options.act({ type: "revive", leaderId: leader.id }),
+        }),
+      );
       column.appendChild(row);
     }
     playerOf(world, side).graveyard.forEach((fallen, index) => {
