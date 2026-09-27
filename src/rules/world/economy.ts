@@ -119,7 +119,12 @@ export function resurrectProblem(world: World, index: number, into: SquadRef, ti
   if (cost === null) return "nobody there";
   if (playerOf(world, side).gold < cost) return "not enough gold";
   const anywhere = playerOf(world, side).research.includes("city_resurrection");
-  return placeProblem(world, into, tile, (c) => c.owner === side && (c.kind === "capitol" || anywhere), anywhere ? "only in a city you hold" : "only at the Capitol, until researched for cities");
+  return placeProblem(world, into, tile, (c) => raisesDeadAt(world, side, c), anywhere ? "only in a city you hold" : "only at the Capitol, until researched for cities");
+}
+
+/** Whether `player` can raise its dead in `city`: at its Capitol, or in any city it holds once researched. */
+export function raisesDeadAt(world: World, player: PlayerId, city: City): boolean {
+  return city.owner === player && (city.kind === "capitol" || playerOf(world, player).research.includes("city_resurrection"));
 }
 
 /** The city a squad is in: a garrison's own, or the one a warband stands in. */

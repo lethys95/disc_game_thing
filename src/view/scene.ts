@@ -1,3 +1,4 @@
+import { BEHAVIORS } from "#rules/abilities/index";
 import * as THREE from "three";
 import { CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
 import { effectiveStats } from "#rules/battle/engine";
@@ -416,7 +417,10 @@ export class BattleScene {
     if (!figure) return;
     const home = figure.group.position.clone();
     const targetFigure = targets[0] ? this.figures.get(targets[0]) : undefined;
-    const lunges = targetFigure && targets[0] !== unitId && abilityId !== "hook";
+    // Melee lunges at its target; spells, pulls and the like don't (by tag, never by ability).
+    const behavior = BEHAVIORS[abilityId];
+    const melee = behavior?.kind === "active" && behavior.tags.includes("melee");
+    const lunges = targetFigure && targets[0] !== unitId && melee;
     if (lunges) {
       const toward = targetFigure.group.position.clone().sub(home).setY(0).normalize().multiplyScalar(0.9);
       await this.stage.tween(170, (t) => figure.group.position.copy(home).addScaledVector(toward, t * t));

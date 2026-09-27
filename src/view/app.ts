@@ -288,7 +288,10 @@ export class App {
 
   private hover(x: number, y: number): void {
     if (!this.battle) return;
-    this.hovered = this.scene.pick(x, y, this.battle);
+    const tile = this.scene.pick(x, y, this.battle);
+    const same = tile === this.hovered || (tile && this.hovered && tile.side === this.hovered.side && sameTile(tile.tile, this.hovered.tile));
+    if (same) return;
+    this.hovered = tile;
     this.render();
   }
 

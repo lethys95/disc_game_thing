@@ -314,14 +314,14 @@ function describe(event: BattleEvent, name: (id: string) => string, playerSide: 
       return `${name(event.unitId)} refuses to fall`;
     case "effect": {
       const def = effectDef(event.effect);
-      return def.quiet || def.id === "defending" ? null : `${name(event.unitId)}: ${def.name.toLowerCase()}`;
+      return def.quiet ? null : `${name(event.unitId)}: ${def.name.toLowerCase()}`;
     }
     case "effectEnded":
       return null;
     case "absorbed":
       return `${name(event.unitId)}'s ${effectDef(event.by).name.toLowerCase()} absorbs ${event.amount}`;
     case "move":
-      return `${name(event.unitId)} is dragged to the front`;
+      return `${name(event.unitId)} is moved`;
     case "countered":
       return `${name(event.unitId)}'s action is countered!`;
     case "fled":
@@ -330,7 +330,7 @@ function describe(event: BattleEvent, name: (id: string) => string, playerSide: 
       return event.reason === "lostTurn" ? `${name(event.unitId)} loses its turn` : `${name(event.unitId)} cannot act`;
     case "battleEnd":
       if (event.outcome.winner === null) return "None survive.";
-      if (event.outcome.withdrew) return `Neither side can finish the other: the attackers withdraw. ${playerSide === null ? "The defenders hold the field." : playerSide === 1 ? "Victory." : "Defeat."}`;
+      if (event.outcome.withdrew) return `Neither side can finish the other: the attackers withdraw. ${playerSide === null ? "The defenders hold the field." : event.outcome.winner === playerSide ? "Victory." : "Defeat."}`;
       return playerSide === null ? `Side ${event.outcome.winner + 1} prevails.` : event.outcome.winner === playerSide ? "Victory." : "Defeat.";
     case "turnStart":
       return null;

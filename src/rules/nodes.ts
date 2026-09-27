@@ -15,16 +15,30 @@ export interface NodeDef {
   readonly mana: (level: number) => number;
   /** What a unit recruited in the node's city carries for good (a mark). */
   readonly recruitEffects: (level: number) => readonly EffectSeed[];
+  /** What it gives at a level, in words. */
+  readonly describe: (level: number) => string;
 }
 
 export const NODES: Readonly<Record<NodeKind, NodeDef>> = {
-  gold: { name: "Gold mine", income: (level) => MINE_INCOME * level, mana: () => 0, recruitEffects: () => [] },
+  gold: { name: "Gold mine", income: (level) => MINE_INCOME * level, mana: () => 0, recruitEffects: () => [], describe: (level) => `+${MINE_INCOME * level} gold per turn` },
   // User (2026-09-27): units recruited in the Blacksmith's city get +10 attack. It stays with them, as a mark.
-  blacksmith: { name: "Blacksmith", income: () => 0, mana: () => 0, recruitEffects: (level) => [{ def: "blacksmith", amount: BLACKSMITH_BONUS * level }] },
-  mana: { name: "Mana node", income: () => 0, mana: (level) => MANA_NODE_INCOME * level, recruitEffects: () => [] },
+  blacksmith: {
+    name: "Blacksmith",
+    income: () => 0,
+    mana: () => 0,
+    recruitEffects: (level) => [{ def: "blacksmith", amount: BLACKSMITH_BONUS * level }],
+    describe: (level) => `units recruited here deal +${BLACKSMITH_BONUS * level} damage, for good`,
+  },
+  mana: { name: "Mana node", income: () => 0, mana: (level) => MANA_NODE_INCOME * level, recruitEffects: () => [], describe: (level) => `+${MANA_NODE_INCOME * level} mana per turn` },
   // User (2026-09-27): units hired in the Cathedral's city carry holy water (heal 30, once per combat). Levels don't
   // change it yet (provisional).
-  cathedral: { name: "Cathedral", income: () => 0, mana: () => 0, recruitEffects: () => [{ def: "carries", ability: { id: "holy_water" } }] },
+  cathedral: {
+    name: "Cathedral",
+    income: () => 0,
+    mana: () => 0,
+    recruitEffects: () => [{ def: "carries", ability: { id: "holy_water" } }],
+    describe: () => "units recruited here carry holy water (heal 30, once per combat)",
+  },
 };
 
 /** Where a node is generated; the world gives it an id and a level. */

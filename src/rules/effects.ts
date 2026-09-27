@@ -13,6 +13,8 @@ export const MUTATED_PER_STACK = 10;
 const effects: readonly EffectDef[] = [
   {
     id: "defending",
+    // Defend already shows as the unit's action; the log needn't say it twice.
+    quiet: true,
     name: "Defending",
     describe: () => "Damage that gets past its shield is halved until this unit's next turn.",
     stacking: { mode: "unique" },

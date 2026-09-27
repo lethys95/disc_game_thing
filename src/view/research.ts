@@ -1,12 +1,11 @@
 import { playerOf } from "#rules/world/state";
-import type { Side } from "#rules/battle/types";
 import { allowedUnits, isFork } from "#rules/forks";
 import { ARCHETYPES, EVOLUTIONS, FACTION_ROOTS, LINE_ARCHETYPE, UNITS } from "#rules/units/index";
 import type { Archetype } from "#rules/units/index";
 import { upgradesFor } from "#rules/upgrades";
 import { RESEARCH } from "#rules/research";
 import { chooseBranchProblem, researchProblem, squadsOf, upgradeProblem } from "#rules/world/economy";
-import type { World, WorldAction } from "#rules/world/state";
+import type { PlayerId, World, WorldAction } from "#rules/world/state";
 import { art } from "#view/art";
 import { element, gold } from "#view/dom";
 import { unitName } from "#view/members";
@@ -31,7 +30,7 @@ export class ResearchPanel {
     private readonly rerender: () => void,
   ) {}
 
-  render(world: World, side: Side, mayAct: boolean): HTMLElement {
+  render(world: World, side: PlayerId, mayAct: boolean): HTMLElement {
     const column = element("div", "capitol-trees panel");
     column.appendChild(element("div", "section", "Capitol research"));
     for (const research of RESEARCH) {
@@ -90,7 +89,7 @@ export class ResearchPanel {
     return column;
   }
 
-  private node(world: World, side: Side, defId: string, parent: string | undefined, open: boolean, count: number, mayAct: boolean): HTMLElement {
+  private node(world: World, side: PlayerId, defId: string, parent: string | undefined, open: boolean, count: number, mayAct: boolean): HTMLElement {
     const def = UNITS[defId];
     const node = element("div", `node${open ? "" : " closed"}`);
     const head = element("div", "head");

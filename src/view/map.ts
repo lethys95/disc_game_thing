@@ -10,6 +10,7 @@ import { CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
 import { hexKey } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import type { Terrain, WorldMap } from "#rules/map";
+import type { NodeKind } from "#rules/nodes";
 import { UNITS } from "#rules/units/index";
 import { spellById } from "#rules/spells";
 import { cityName } from "#view/city";
@@ -111,6 +112,8 @@ export class MapView {
   private readonly leaders = new Map<string, LeaderFigure>();
   private readonly sites = new Map<string, SiteModel>();
   private vision: Vision | null = null;
+  /** The player at this screen: its warbands face you and show their movement; its cities are "yours". */
+  viewer: PlayerId = 0;
   private radius = 4;
   /** Each node's link to its city, recolored when the city changes hands. */
   private readonly links = new Map<string, { mesh: THREE.Mesh; material: THREE.MeshStandardMaterial; city: string }>();
@@ -287,7 +290,14 @@ export class MapView {
     this.links.clear();
     this.nodeModels.clear();
     for (const node of world.nodes) {
-      const model = node.kind === "blacksmith" ? anvil(dark, forge) : node.kind === "mana" ? crystals(node.hex, crystal) : node.kind === "cathedral" ? chapel(stone, dark, candle) : orePile(node.hex, ore, dark);
+      // One model per node kind: a new kind doesn't compile until it has one.
+      const models: Readonly<Record<NodeKind, () => THREE.Group>> = {
+        gold: () => orePile(node.hex, ore, dark),
+        blacksmith: () => anvil(dark, forge),
+        mana: () => crystals(node.hex, crystal),
+        cathedral: () => chapel(stone, dark, candle),
+      };
+      const model = models[node.kind]();
       model.position.copy(this.standingPoint(node.hex));
       model.userData = { hex: node.hex };
       model.traverse((o) => {
@@ -388,7 +398,7 @@ export class MapView {
       site.banner.color.copy(owner === null ? NEUTRAL_BANNER : this.colorOf(owner));
       site.banner.emissive.copy(owner === null ? NONE : this.colorOf(owner));
       site.banner.emissiveIntensity = owner === null ? 0 : 0.8;
-      site.label.textContent = `${siteName(city)}${city.enchantments.length > 0 ? " ✦" : ""}`;
+      site.label.textContent = `${siteName(city, this.viewer)}${city.enchantments.length > 0 ? " ✦" : ""}`;
       site.label.title = city.enchantments.map((e) => spellById(e.spell).name).join(", ");
       site.label.className = `site-label ${owner === null ? "neutral" : "owned"}`;
       site.label.style.color = owner === null ? "" : `#${this.colorOf(owner).getHexString()}`;
@@ -424,7 +434,7 @@ export class MapView {
       figure.group.userData = { hex: leader.hex };
       const alive = leader.squad.length;
       // Your own warbands also show the movement they have left.
-      const move = leader.player === 0 ? ` · ${movementPips(leader.movement, movementOf(leader))}` : "";
+      const move = leader.player === this.viewer ? ` · ${movementPips(leader.movement, movementOf(leader))}` : "";
       // ✦: under a spell (its names on hover).
       const spelled = leader.enchantments.length > 0 ? " ✦" : "";
       figure.label.textContent = `${UNITS[defId]?.name ?? defId} · ${alive} unit${alive === 1 ? "" : "s"}${move}${spelled}`;
@@ -436,9 +446,9 @@ export class MapView {
     const group = new THREE.Group();
     const owner = this.colorOf(leader.player);
     // Statues: light for the player at this screen, dark for everyone else.
-    const figure = buildFigure(defId, leader.player === 0 ? 0 : 1, owner);
+    const figure = buildFigure(defId, leader.player === this.viewer ? 0 : 1, owner);
     figure.scale.multiplyScalar(0.62);
-    figure.rotation.y = leader.player === 0 ? -Math.PI / 4 : (Math.PI * 3) / 4;
+    figure.rotation.y = leader.player === this.viewer ? -Math.PI / 4 : (Math.PI * 3) / 4;
     group.add(figure);
     const ring = new THREE.Mesh(
       new THREE.TorusGeometry(0.5, 0.05, 6, 24),
@@ -596,8 +606,8 @@ function anvil(iron: THREE.Material, fire: THREE.Material): THREE.Group {
 }
 
 /** The city's name, as in the side panel, and whose it is: "City 2 (yours)". */
-function siteName(city: City): string {
-  const owner = city.owner === null ? "neutral" : city.owner === 0 ? "yours" : "enemy";
+function siteName(city: City, viewer: PlayerId): string {
+  const owner = city.owner === null ? "neutral" : city.owner === viewer ? "yours" : "enemy";
   return `${cityName(city)} (${owner})`;
 }
 
