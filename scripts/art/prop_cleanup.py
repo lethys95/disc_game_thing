@@ -80,9 +80,15 @@ def weld(obj: bpy.types.Object) -> None:
     bpy.ops.object.mode_set(mode="OBJECT")
 
 
+DECIMATE_PASSES = 5
+"""One collapse pass often stops short on generated meshes (seams, loose islands); repeat until within budget."""
+
+
 def decimate(obj: bpy.types.Object, max_triangles: int) -> None:
-    triangles = triangle_count(obj)
-    if triangles > max_triangles:
+    for _ in range(DECIMATE_PASSES):
+        triangles = triangle_count(obj)
+        if triangles <= max_triangles * 1.05:
+            return
         modifier = obj.modifiers.new("decimate", "DECIMATE")
         modifier.ratio = max_triangles / triangles
         bpy.ops.object.modifier_apply(modifier=modifier.name)
