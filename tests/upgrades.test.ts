@@ -7,8 +7,8 @@ import { engage } from "#rules/world/battles";
 import { createWorld } from "#rules/world/create";
 import { growSquad, upgradeProblem } from "#rules/world/economy";
 import { playerOf, capitolOf, leaderById } from "#rules/world/state";
-import type { Leader, Mark, World } from "#rules/world/state";
-import { withGraveyard, withGold, twoPlayers } from "#tests/helpers";
+import type { Mark, World } from "#rules/world/state";
+import { withGraveyard, withGold, twoPlayers, withLeader } from "#tests/helpers";
 import { describe, expect, test } from "vitest";
 
 /** The timing rule (docs/design/pillars.md): an upgrade reaches units that become its type after the purchase. */
@@ -30,9 +30,6 @@ function evolve(world: World, index: number): World {
   return draft;
 }
 
-function withLeader(world: World, change: Partial<Leader>): World {
-  return { ...world, leaders: world.leaders.map((l) => (l.id === "leader0" ? { ...l, ...change } : l)) };
-}
 
 const upgradesOn = (world: World) => leaderById(world, "leader0").squad.map((m) => m.marks.map((mark: Mark) => (mark.source.kind === "upgrade" ? mark.source.upgrade : "")));
 
@@ -63,7 +60,7 @@ describe("unit-type upgrades", () => {
     const world = recruit(buy(rich(), "congregant_damage"));
     const fallen = leaderById(world, "leader0").squad[2];
     if (!fallen) throw new Error("no recruit");
-    const dead = withGraveyard(withLeader(world, { squad: leaderById(world, "leader0").squad.slice(0, 2) }), 0, [
+    const dead = withGraveyard(withLeader(world, "leader0", { squad: leaderById(world, "leader0").squad.slice(0, 2) }), 0, [
       { defId: "congregant", fellOnTurn: world.turn, marks: fallen.marks, level: 0 },
     ]);
     const back = applyWorldAction(dead, { type: "resurrect", index: 0, into: { kind: "warband", leaderId: "leader0" } }).world;

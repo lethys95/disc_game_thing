@@ -38,7 +38,7 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
     defaults: { missing: 30 },
     choices: rangedChoices,
     resolve: (ctx, self, choice) => {
-      const spec = ctx.hitSpec(self, ["attack", "ranged", "spell", "damage"]);
+      const spec = ctx.hitSpec(self);
       for (const id of choice.affected) {
         const missing = ctx.stats(id).maxHp - ctx.unit(id).hp;
         ctx.hit(self.unitId, [id], { ...spec, power: spec.power + Math.floor((missing * (self.params["missing"] ?? 0)) / 100) });
@@ -62,7 +62,7 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
       const line = units.filter((u) => u.side === enemy && u.tile.row === row);
       return line.map((anchor) => at(anchor, line.map((u) => u.id), "main"));
     },
-    resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self, ["attack", "melee", "damage", "area"])),
+    resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self)),
   },
 
   congregation: {
@@ -195,7 +195,7 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
     describe: () =>
       "Every unit on the battlefield suffers Fanaticism and Hysteria, and nobody can defend.",
     hooks: {
-      grants: () => ["fanaticism", "hysteria"],
+      grants: () => [{ id: "fanaticism" }, { id: "hysteria" }],
       restrict: (_ctx, _self, _subjectId, allowed) => {
         allowed.delete("defend");
       },

@@ -29,15 +29,15 @@ A **trait** is a bundle of hooks. Passive abilities are traits. Effects (buffs, 
 | Hook | Asked of | Used by |
 |---|---|---|
 | `stats(subject, stats)` | every trait on the battlefield (auras see other units) | Congregation, Devotion Aura, Punished, Mutated, context bonuses |
-| `grants(subject)` / `restrict(subject, allowed)` | every trait | Fanaticism Aura, Must Attack |
-| `outgoing(packet)` | the attacker's traits | Marauder (+10 vs armor), Blacksmith (+10), Domination (split into bleed), Absorb on an enemy |
+| `grants(subject)` → ability refs with params / `restrict(subject, allowed)` | every trait | Fanaticism Aura, Must Attack, items and nodes that carry an ability (Hatchet, Holy Water) |
+| `outgoing(packet)` | the attacker's traits | Marauder (+10 vs armor), Blacksmith (+10), Absorb on an enemy |
+| `convert(packet)` | the attacker's traits, after `outgoing` | Domination (split into bleed) |
 | `incoming(packet)` | the target's traits | immunities, resistances, Negate (hit → healing), Absorb on an ally |
 | `absorb(packet)` → amount | the target's traits, in priority order | fire shield (fire only), shield pool (anything) |
 | `mitigate(packet)` | the target's traits | Defend (halve) |
-| `turnStart(unit)` → `skip`? | traits on the unit whose turn starts | Stun, bleed tick |
-| `anyTurnStart(actor)` | all traits | lent shields expiring when their lender acts |
+| `turnStart(unit)` → `skip` / `leave`? | traits on the unit whose turn starts | Stun, bleed tick, Retreat |
 | `beforeAbility(action)` → `cancel`? | the actor's traits | Counter |
-| `afterHit`, `afterAttack`, `onKill` | the attacker's traits | Punishment, Zeal, Fanaticism, Hysteria |
+| `afterHit` (per target), `afterAttack(dealt, kills)` (once per action) | the attacker's traits | Punishment, Zeal, Fanaticism, Hysteria, Condemn |
 | `preventDeath` | the dying unit's traits | Guardian Spirit, its reprieve |
 | `healing(heal)` | the recipient's traits, before healing or a shield restoration lands | Negate (healing → damage) |
 | `castsFree()` | the actor's traits | Combustion (charged spells become free actions) |
@@ -48,9 +48,10 @@ Adding a mechanic means writing a trait. The engine and the AI don't change.
 
 ### 2. Effects: definitions and instances
 An **effect definition** (registered by id, like abilities) holds the hooks plus metadata:
-- `stacking`: `unique` (re-applying refreshes it), `stack` (up to an optional cap), or `independent` (one instance per source; loans).
-- `lifetime`: `battle`, `untilOwnTurn` (ends when the bearer's next turn starts), `untilRoundEnd`, `untilSourceTurn` (ends when the source's next turn starts), or `permanent` (world-level; survives battles).
+- `stacking`: `unique` (re-applying refreshes it), `merge` (stacks up to an optional cap), `perSource` (one instance per source; loans), or `each` (every application its own instance; granted abilities).
+- `lifetime`: `battle`, `untilOwnTurn` (ends when the bearer's next turn starts), `untilRoundEnd`, `untilSourceTurn` (ends when the source's next turn starts), or `untilTurnEnd` (ends with the bearer's current turn). World-level effects (marks, enchantments) are re-applied at each battle's start instead of surviving it.
 - `visibility`: `public`, or `secret`: only the side of the unit that applied it sees it (Counter's mark, Negate). The view reads this flag; nothing checks effect names.
+- `quiet`: bookkeeping the view doesn't announce.
 - `onExpire`: cleanup, e.g. a lent shield takes back what's left of the loan.
 
 Every definition also carries `describe`: its rules text, computed from its own numbers, so the words can't drift from the rule.
@@ -67,7 +68,7 @@ An **effect instance** on a unit is plain data: `{ def, source, stacks, amount }
 6. **Absorb**: pools in priority order; a typed pool only takes matching damage (fire shield → shield pool).
 7. **Mitigate**: what got through the pools (Defend halves it; the user's rule that shields don't benefit from Defend).
 8. **Apply** to HP, then `preventDeath` if it would kill.
-9. **Reactions**: `afterHit`, `onKill`, then `afterAttack` once for the whole ability.
+9. **Reactions**: `afterHit` per target, then `afterAttack` once for the whole action (every target, every copy). The attacker's traits are re-read per target, so a one-shot effect fires once.
 
 Direct losses (bleed, self-sacrifice) skip steps 2–7 by design: they're costs, not hits.
 
@@ -90,6 +91,8 @@ src/rules/battle/   engine (turn flow, actions), damage pipeline, traits (hooks,
 src/rules/abilities/ core, jilliath, nexus, neutral (behaviors + passive traits)
 src/rules/effects.ts effect definitions
 src/rules/units/    catalogue by faction
-src/rules/world/    state, movement, economy, battles-to-world, map AI
+src/rules/units/presets.ts preset squads (setup, sims, tests)
+src/rules/world/    state, movement, economy, battles-to-world, fate (map deaths), vision (fog), spells, map AI
+src/rules/factions.ts, spells.ts, items.ts, nodes.ts, research.ts   content as data
 src/rules/balance.ts provisional numbers that aren't per-unit or per-ability params
 ```

@@ -3,7 +3,8 @@ import { hexDistance, hexKey } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import type { MapTile, WorldMap } from "#rules/map";
 import { playerOf } from "#rules/world/state";
-import type { PlayerId, World } from "#rules/world/state";
+import { noMana } from "#rules/factions";
+import type { Player, PlayerId, World } from "#rules/world/state";
 
 /**
  * Fog of war (pillars.md): unexplored hexes are hidden; explored ones out of sight show what was there when last
@@ -77,11 +78,29 @@ export function knownWorld(world: World, player: PlayerId): World {
     truth.flatMap((t) => (visible.has(hexKey(t.hex)) ? [t] : memory.filter((m) => m.id === t.id)));
   return {
     ...world,
+    // Other players show only what anyone could see: faction, color, whether they're still in the game.
+    players: world.players.map((p, id) => (id === player ? p : hidden(p))),
     map: blindMap(world.map, explored),
     leaders: world.leaders.filter((l) => l.player === player || visible.has(hexKey(l.hex))),
     cities: world.cities.flatMap((c) => (c.owner === player ? [c] : recall([c], me.memory.cities))),
     lairs: recall(world.lairs, me.memory.lairs),
     nodes: recall(world.nodes, me.memory.nodes),
+  };
+}
+
+function hidden(p: Player): Player {
+  return {
+    ...p,
+    gold: 0,
+    mana: noMana(),
+    commitment: {},
+    graveyard: [],
+    upgrades: [],
+    research: [],
+    spells: [],
+    cast: [],
+    explored: [],
+    memory: { cities: [], lairs: [], nodes: [] },
   };
 }
 

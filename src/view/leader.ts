@@ -4,8 +4,9 @@ import { itemById, SLOT_CAPACITY, SLOT_NAMES } from "#rules/items";
 import type { EquipmentSlot } from "#rules/items";
 import { learnSkillProblem } from "#rules/world/economy";
 import type { Leader, World, WorldAction } from "#rules/world/state";
-import { element } from "#view/dom";
+import { button, element, orderButton } from "#view/dom";
 import { memberRow } from "#view/members";
+import type { KeyLayer } from "#view/input";
 
 export interface LeaderScreenOptions {
   readonly act: (action: WorldAction) => void;
@@ -21,14 +22,11 @@ function depth(skill: string): number {
 }
 
 /** A warband leader's own menu: its unit, its equipment, and the leader tree laid out by prerequisites. */
-export class LeaderScreen {
+export class LeaderScreen implements KeyLayer {
   constructor(
     private readonly root: HTMLElement,
     private readonly options: LeaderScreenOptions,
   ) {
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && !this.root.hidden) options.close();
-    });
   }
 
   /** The equipment slots (the user's 2024 layout) with what's worn, and the bag: click to put on or take off. */
@@ -43,11 +41,9 @@ export class LeaderScreen {
         row.appendChild(element("span", "slot-name", SLOT_NAMES[slot]));
         if (id) {
           const item = itemById(id);
-          const off = element("button", "small", `${item.name} · take off`);
-          off.title = item.describe;
-          off.disabled = !mayAct;
-          off.addEventListener("click", () => this.options.act({ type: "unequip", leaderId: leader.id, item: id }));
-          row.appendChild(off);
+          row.appendChild(
+            orderButton("small", `${item.name} · take off`, { mayAct, problem: null, explain: item.describe, give: () => this.options.act({ type: "unequip", leaderId: leader.id, item: id }) }),
+          );
         } else row.appendChild(element("span", "note", "empty"));
         box.appendChild(row);
       }
@@ -60,15 +56,22 @@ export class LeaderScreen {
       row.appendChild(element("span", "note", item.describe));
       if (item.slot) {
         const problem = equipProblem(leader, id);
-        const on = element("button", "small", `${item.name} · put on`);
-        on.disabled = !mayAct || problem !== null;
-        on.title = problem ?? item.describe;
-        on.addEventListener("click", () => this.options.act({ type: "equip", leaderId: leader.id, item: id }));
-        row.prepend(on);
+        row.prepend(orderButton("small", `${item.name} · put on`, { mayAct, problem, explain: item.describe, give: () => this.options.act({ type: "equip", leaderId: leader.id, item: id }) }));
       } else row.prepend(element("span", "name", item.name));
       box.appendChild(row);
     });
     return box;
+  }
+
+  open(): boolean {
+    return !this.root.hidden;
+  }
+
+  /** Escape closes the screen. */
+  key(e: KeyboardEvent): boolean {
+    if (e.key !== "Escape") return false;
+    this.options.close();
+    return true;
   }
 
   hide(): void {
@@ -81,9 +84,7 @@ export class LeaderScreen {
     const points = unspentPoints(leader);
     const header = element("div", "capitol-header");
     header.append(element("div", "title", name), element("div", "gold", `${leader.experience} XP as leader · ${points} point${points === 1 ? "" : "s"} to spend`));
-    const back = element("button", "action", "Back to the map");
-    back.addEventListener("click", () => this.options.close());
-    header.appendChild(back);
+    header.appendChild(button("action", "Back to the map", () => this.options.close()));
 
     const tree = element("div", "capitol-trees panel");
     tree.appendChild(element("div", "section", "Leader tree"));
@@ -103,11 +104,7 @@ export class LeaderScreen {
       if (skill.requires.length > 0) node.appendChild(element("div", "stats", `Needs ${skill.requires.map((r) => LEADER_SKILLS[r]?.name ?? r).join(", ")}`));
       const problem = learnSkillProblem(world, leader.id, id);
       if (rank < skill.maxRank) {
-        const learn = element("button", "small", "Learn (1 point)");
-        learn.disabled = !mayAct || problem !== null;
-        learn.title = problem ?? "";
-        learn.addEventListener("click", () => this.options.act({ type: "learn", leaderId: leader.id, skill: id }));
-        node.appendChild(learn);
+        node.appendChild(orderButton("small", "Learn (1 point)", { mayAct, problem, explain: "", give: () => this.options.act({ type: "learn", leaderId: leader.id, skill: id }) }));
       }
       grid.appendChild(node);
     }

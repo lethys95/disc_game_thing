@@ -1,10 +1,40 @@
 import { PUNISHMENT_MAX_STACKS } from "#rules/balance";
-import type { EffectDef } from "#rules/battle/types";
+import type { EffectDef, EffectInstance, Stacking, Stats } from "#rules/battle/types";
 
 /** Punishment's per-stack penalty to damage and initiative. */
 export const PUNISHED_PER_STACK = 10;
 /** Mutate's per-stack damage bonus. */
 export const MUTATED_PER_STACK = 10;
+
+/**
+ * An effect that adds its `amount` (or with `sign` -1, takes it away) to one stat of its bearer for the battle: the
+ * shape of most world-made bonuses (items, upgrades, walls, spells).
+ */
+function flatStat(def: {
+  readonly id: string;
+  readonly name: string;
+  readonly stat: keyof Stats;
+  readonly sign?: 1 | -1;
+  readonly stacking: Stacking;
+  readonly quiet?: boolean;
+  describe(effect: EffectInstance): string;
+}): EffectDef {
+  const sign = def.sign ?? 1;
+  return {
+    id: def.id,
+    name: def.name,
+    describe: def.describe,
+    stacking: def.stacking,
+    lifetime: "battle",
+    visibility: "public",
+    ...(def.quiet ? { quiet: true } : {}),
+    hooks: {
+      stats: (_ctx, self, subjectId, stats) => {
+        if (subjectId === self.unitId) stats[def.stat] += sign * (self.effect?.amount ?? 0);
+      },
+    },
+  };
+}
 
 /**
  * Effect definitions. An effect on a unit is plain data (`EffectInstance`); what it does lives here as hooks.
@@ -13,6 +43,8 @@ export const MUTATED_PER_STACK = 10;
 const effects: readonly EffectDef[] = [
   {
     id: "defending",
+    // Defend already shows as the unit's action; the log needn't say it twice.
+    quiet: true,
     name: "Defending",
     describe: () => "Damage that gets past its shield is halved until this unit's next turn.",
     stacking: { mode: "unique" },
@@ -257,21 +289,8 @@ const effects: readonly EffectDef[] = [
       },
     },
   },
-  {
-    // A bought unit-type upgrade (placeholder content until the user designs unique ones).
-    id: "extra_damage",
-    quiet: true,
-    name: "Extra damage",
-    describe: (e) => `+${e.amount} damage.`,
-    stacking: { mode: "merge" },
-    lifetime: "battle",
-    visibility: "public",
-    hooks: {
-      stats: (_ctx, self, subjectId, stats) => {
-        if (subjectId === self.unitId) stats.damage += self.effect?.amount ?? 0;
-      },
-    },
-  },
+  // A bought unit-type upgrade (placeholder content until the user designs unique ones).
+  flatStat({ id: "extra_damage", quiet: true, name: "Extra damage", stat: "damage", stacking: { mode: "merge" }, describe: (e) => `+${e.amount} damage.` }),
   {
     // Retreat (the user's surrender design from an earlier attempt): the unit turns its back and loses its next
     // turn, then leaves the battle alive at the start of the one after. `amount` counts the turns it has spent so.
@@ -307,41 +326,19 @@ const effects: readonly EffectDef[] = [
       },
     },
   },
+  // A spell on a city (provisional Break walls): its defenders fight with less armor.
+  flatStat({ id: "sundered", name: "Sundered", stat: "armor", sign: -1, stacking: { mode: "unique" }, describe: (e) => `−${e.amount} armor: its city's walls are broken.` }),
   {
-    // A spell on a city (provisional Break walls): its defenders fight with less armor.
-    id: "sundered",
-    name: "Sundered",
-    describe: (e) => `−${e.amount} armor: its city's walls are broken.`,
-    stacking: { mode: "unique" },
-    lifetime: "battle",
-    visibility: "public",
-    hooks: {
-      stats: (_ctx, self, subjectId, stats) => {
-        if (subjectId === self.unitId) stats.armor -= self.effect?.amount ?? 0;
-      },
-    },
-  },
-  {
-    // Carried from a Cathedral's city: the unit has Holy Water.
-    id: "holy_water",
+    // An ability carried from elsewhere (an item's Hatchet, a Cathedral's holy water), with its own params: one
+    // effect for every ability-granting item and node. Several can sit on one unit.
+    id: "carries",
     quiet: true,
-    name: "Holy water",
-    describe: () => "Carries holy water: once per combat, heal an ally 30.",
-    stacking: { mode: "unique" },
+    name: "Carries",
+    describe: () => "Carries an extra ability, listed with the unit's own.",
+    stacking: { mode: "each" },
     lifetime: "battle",
     visibility: "public",
-    hooks: { grants: (_ctx, self, subjectId) => (subjectId === self.unitId ? ["holy_water"] : []) },
-  },
-  {
-    // A worn Hatchet: the leader can throw it.
-    id: "hatchet",
-    quiet: true,
-    name: "Hatchet",
-    describe: () => "Carries a hatchet: once per combat, throw it for 30.",
-    stacking: { mode: "unique" },
-    lifetime: "battle",
-    visibility: "public",
-    hooks: { grants: (_ctx, self, subjectId) => (subjectId === self.unitId ? ["throw_hatchet"] : []) },
+    hooks: { grants: (_ctx, self, subjectId) => (subjectId === self.unitId && self.effect?.ability ? [self.effect.ability] : []) },
   },
   {
     // A worn Outlaw's pocketwatch (user, 2026-09-27): every attack hits harder, and harder still against a shield.
@@ -360,51 +357,12 @@ const effects: readonly EffectDef[] = [
       },
     },
   },
-  {
-    // Worn items (headgear, armor): extra armor.
-    id: "extra_armor",
-    quiet: true,
-    name: "Extra armor",
-    describe: (e) => `+${e.amount} armor.`,
-    stacking: { mode: "merge" },
-    lifetime: "battle",
-    visibility: "public",
-    hooks: {
-      stats: (_ctx, self, subjectId, stats) => {
-        if (subjectId === self.unitId) stats.armor += self.effect?.amount ?? 0;
-      },
-    },
-  },
-  {
-    // Worn items (charms): extra initiative.
-    id: "extra_initiative",
-    quiet: true,
-    name: "Extra initiative",
-    describe: (e) => `+${e.amount} initiative.`,
-    stacking: { mode: "merge" },
-    lifetime: "battle",
-    visibility: "public",
-    hooks: {
-      stats: (_ctx, self, subjectId, stats) => {
-        if (subjectId === self.unitId) stats.initiative += self.effect?.amount ?? 0;
-      },
-    },
-  },
-  {
-    // A city's walls: its garrison, and a warband defending in its own city, stand behind them (city tiers).
-    id: "fortified",
-    quiet: true,
-    name: "Fortified",
-    describe: (e) => `+${e.amount} armor, defending a city.`,
-    stacking: { mode: "unique" },
-    lifetime: "battle",
-    visibility: "public",
-    hooks: {
-      stats: (_ctx, self, subjectId, stats) => {
-        if (subjectId === self.unitId) stats.armor += self.effect?.amount ?? 0;
-      },
-    },
-  },
+  // Worn items (headgear, armor): extra armor.
+  flatStat({ id: "extra_armor", quiet: true, name: "Extra armor", stat: "armor", stacking: { mode: "merge" }, describe: (e) => `+${e.amount} armor.` }),
+  // Worn items (charms): extra initiative.
+  flatStat({ id: "extra_initiative", quiet: true, name: "Extra initiative", stat: "initiative", stacking: { mode: "merge" }, describe: (e) => `+${e.amount} initiative.` }),
+  // A city's walls: its garrison, and a warband defending in its own city, stand behind them (city tiers).
+  flatStat({ id: "fortified", quiet: true, name: "Fortified", stat: "armor", stacking: { mode: "unique" }, describe: (e) => `+${e.amount} armor, defending a city.` }),
   {
     // Levels past the end of a line (pillars.md): a share of the base stat, so higher tiers gain more per level.
     id: "veteran",

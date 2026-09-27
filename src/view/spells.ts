@@ -1,8 +1,9 @@
-import { FACTION_MANA, spellById, spellsOf } from "#rules/spells";
+import { spellById, spellsOf } from "#rules/spells";
+import { FACTIONS } from "#rules/factions";
 import { learnSpellProblem } from "#rules/world/spells";
 import { playerOf } from "#rules/world/state";
 import type { PlayerId, World, WorldAction } from "#rules/world/state";
-import { element, gold, mana } from "#view/dom";
+import { element, gold, mana, orderButton } from "#view/dom";
 
 /** Spells in the view: the Capitol's Spells tab (learning) and the map's spell bar (casting). */
 
@@ -21,12 +22,7 @@ export function spellsTab(world: World, side: PlayerId, mayAct: boolean, act: (a
     if (player.spells.includes(spell.id)) row.appendChild(element("div", "note", "Learned"));
     else {
       const problem = learnSpellProblem(world, spell.id);
-      const learn = element("button", "small");
-      learn.append("Learn · ", gold(spell.learnCost));
-      learn.disabled = !mayAct || problem !== null;
-      learn.title = problem ?? "";
-      learn.addEventListener("click", () => act({ type: "learnSpell", spell: spell.id }));
-      row.appendChild(learn);
+      row.appendChild(orderButton("small", ["Learn · ", gold(spell.learnCost)], { mayAct, problem, explain: "", give: () => act({ type: "learnSpell", spell: spell.id }) }));
     }
     panel.appendChild(row);
   }
@@ -48,17 +44,13 @@ export function spellBar(world: World, side: PlayerId, mayAct: boolean, casting:
   if (player.spells.length === 0) return null;
   const bar = element("div", "spell-bar");
   const title = element("div", "title", "Spells ");
-  title.appendChild(mana(player.mana[FACTION_MANA[player.faction]], FACTION_MANA[player.faction]));
+  const color = FACTIONS[player.faction].mana;
+  title.appendChild(mana(player.mana[color], color));
   bar.appendChild(title);
   for (const id of player.spells) {
     const spell = spellById(id);
     const problem = readyProblem(world, side, id);
-    const button = element("button", `small${casting === id ? " selected" : ""}`);
-    button.append(`${spell.name} · `, mana(spell.cost, spell.mana));
-    button.disabled = !mayAct || problem !== null;
-    button.title = problem ?? spell.describe;
-    button.addEventListener("click", () => pick(casting === id ? null : id));
-    bar.appendChild(button);
+    bar.appendChild(orderButton(`small${casting === id ? " selected" : ""}`, [`${spell.name} · `, mana(spell.cost, spell.mana)], { mayAct, problem, explain: spell.describe, give: () => pick(casting === id ? null : id) }));
   }
   return bar;
 }

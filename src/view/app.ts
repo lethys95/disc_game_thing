@@ -16,6 +16,8 @@ import type { Settings } from "#view/settings";
 import type { Sound } from "#view/sound";
 import { battleCues } from "#view/sound-cues";
 import type { Stage } from "#view/stage";
+import { plainKey } from "#view/input";
+import type { KeyLayer } from "#view/input";
 
 export interface AppOptions {
   readonly onSetup: () => void;
@@ -57,7 +59,7 @@ function ownEvents(events: readonly BattleEvent[]): readonly BattleEvent[] {
   return end < 0 ? events : events.slice(0, end);
 }
 
-export class App {
+export class App implements KeyLayer {
   private battle: Battle | null = null;
   private playerSide: Side | null = 0;
   private finish: Finish = { kind: "skirmish", squads: [[], []], colors: colorPair(["jilliath", "jilliath"]) };
@@ -129,10 +131,19 @@ export class App {
       e.preventDefault();
       this.cancel();
     });
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") this.cancel();
-      else if (!e.repeat && !e.ctrlKey && !e.metaKey && !e.altKey) this.hotkey(e.key.toLowerCase());
-    });
+  }
+
+  /** On screen while a battle is. */
+  open(): boolean {
+    return this.battle !== null;
+  }
+
+  key(e: KeyboardEvent): boolean {
+    if (e.key === "Escape") {
+      this.cancel();
+      return true;
+    }
+    return !e.repeat && plainKey(e) && this.hotkey(e.key.toLowerCase());
   }
 
   /** A standalone battle between two squads. */
@@ -188,7 +199,8 @@ export class App {
     this.hud.setVisible(false);
   }
 
-  private playersTurn(): boolean {
+  /** Whether the battle waits for the player's action. */
+  playersTurn(): boolean {
     const battle = this.battle;
     const id = battle?.current?.unitId;
     const unit = id ? battle?.units[id] : undefined;
@@ -261,11 +273,12 @@ export class App {
   }
 
   /** An ability whose definition claims this key, among the ones the player may use now. */
-  private hotkey(key: string): void {
+  private hotkey(key: string): boolean {
     const button = /^[1-9]$/.test(key) && this.settings.data.slotKeys ? actionButtons(this.playerOptions())[Number(key) - 1] : undefined;
     const slot = button ? withOverload(this.playerOptions(), button, this.overloaded.has(button.abilityId)) : undefined;
     const option = slot ?? this.playerOptions().find((o) => o.enhancement.kind === "none" && this.settings.keyFor(o.abilityId) === key);
     if (option) this.chooseAbility(optionKey(option));
+    return option !== undefined;
   }
 
   private chooseAbility(key: string): void {
@@ -288,7 +301,10 @@ export class App {
 
   private hover(x: number, y: number): void {
     if (!this.battle) return;
-    this.hovered = this.scene.pick(x, y, this.battle);
+    const tile = this.scene.pick(x, y, this.battle);
+    const same = tile === this.hovered || (tile && this.hovered && tile.side === this.hovered.side && sameTile(tile.tile, this.hovered.tile));
+    if (same) return;
+    this.hovered = tile;
     this.render();
   }
 

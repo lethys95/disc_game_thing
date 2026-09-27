@@ -1,3 +1,7 @@
+import { ITEMS } from "#rules/items";
+import { RESEARCH } from "#rules/research";
+import { SPELLS } from "#rules/spells";
+import { UNITS } from "#rules/units/index";
 import type { World } from "#rules/world/state";
 
 /**
@@ -5,7 +9,7 @@ import type { World } from "#rules/world/state";
  * from another version is refused (docs/decisions.md). Bump SAVE_VERSION whenever the World's shape changes;
  * `tests/save.test.ts` fails until you do.
  */
-export const SAVE_VERSION = 15;
+export const SAVE_VERSION = 17;
 
 export interface Save {
   readonly format: "disc-save";
@@ -23,7 +27,31 @@ export function toSave(world: World, seed: number, savedAt: Date): Save {
 
 const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null;
 
-/** The header is checked; the world is trusted, since only this game writes saves of this version. */
+/**
+ * The first id in the world that this game's content lacks: a unit, item, spell or research renamed or removed
+ * since the save was written, without the shape changing. Null when all are known.
+ */
+export function unknownContent(world: World): string | null {
+  const squads = [
+    ...world.leaders.map((l) => l.squad),
+    ...world.cities.map((c) => c.garrison),
+    ...world.lairs.map((l) => l.guards),
+    ...world.players.flatMap((p) => [...p.memory.cities.map((c) => c.garrison), ...p.memory.lairs.map((l) => l.guards)]),
+  ];
+  const units = [...squads.flat(), ...world.players.flatMap((p) => p.graveyard)].map((m) => m.defId);
+  const items = world.leaders.flatMap((l) => [...l.worn, ...l.bag]);
+  const spells = world.players.flatMap((p) => p.spells);
+  const research = world.players.flatMap((p) => p.research);
+  const missing = [
+    ...units.filter((id) => !UNITS[id]).map((id) => `unit ${id}`),
+    ...items.filter((id) => !ITEMS.some((i) => i.id === id)).map((id) => `item ${id}`),
+    ...spells.filter((id) => !SPELLS.some((s) => s.id === id)).map((id) => `spell ${id}`),
+    ...research.filter((id) => !RESEARCH.some((r) => r.id === id)).map((id) => `research ${id}`),
+  ];
+  return missing[0] ?? null;
+}
+
+/** The header is checked; the world's shape is trusted, since only this game writes saves of this version. */
 function isSave(value: unknown): value is Save {
   return (
     isRecord(value) &&
@@ -46,7 +74,9 @@ export function readSave(text: string): ReadResult {
   }
   if (!isRecord(parsed) || parsed["format"] !== "disc-save") return { ok: false, problem: "not a save file" };
   if (parsed["version"] !== SAVE_VERSION) return { ok: false, problem: `made by another version of the game (save version ${String(parsed["version"])}, this game reads ${SAVE_VERSION})` };
-  return isSave(parsed) ? { ok: true, save: parsed } : { ok: false, problem: "damaged save file" };
+  if (!isSave(parsed)) return { ok: false, problem: "damaged save file" };
+  const unknown = unknownContent(parsed.world);
+  return unknown ? { ok: false, problem: `made by another version of the game (it has a ${unknown} this game doesn't)` } : { ok: true, save: parsed };
 }
 
 export const writeSave = (save: Save): string => JSON.stringify(save);

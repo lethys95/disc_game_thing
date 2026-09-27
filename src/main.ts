@@ -2,6 +2,7 @@ import { createBattle } from "#rules/battle/engine";
 import { AiClient } from "#view/ai-client";
 import { applySideColors, colorPair } from "#view/colors";
 import { GameMenu } from "#view/menu";
+import { routeKeys } from "#view/input";
 import { AUTOSAVE_ID, LocalSaveStore } from "#view/saves";
 import { applyOrnaments } from "#view/art";
 import { App } from "#view/app";
@@ -10,7 +11,7 @@ import { Campaign } from "#view/campaign";
 import { MapView } from "#view/map";
 import { BattleScene } from "#view/scene";
 import { Setup } from "#view/setup";
-import { BANDIT_GROUP, NEXUS_PRESETS, PRESETS } from "#view/squads";
+import { BANDIT_GROUP, NEXUS_PRESETS, PRESETS } from "#rules/units/presets";
 import { ANIMATION_SPEEDS, Settings } from "#view/settings";
 import { Sound } from "#view/sound";
 import { Stage } from "#view/stage";
@@ -55,6 +56,7 @@ const menu: GameMenu = new GameMenu(byId("menu"), {
   },
   newGame: () => showSetup(),
 });
+routeKeys([menu, app, campaign]);
 const setup = new Setup(byId("setup"), {
   onChange: (squads, colors) => {
     battleScene.show();
@@ -119,6 +121,8 @@ if (params.has("debug")) {
       leaderHex: (side: 0 | 1) => campaign.hexOfLeader(side),
       capitolHex: (side: 0 | 1) => campaign.capitolHex(side),
       log: () => [...document.querySelectorAll("#log .entry")].map((e) => e.textContent),
+      /** What waits for the player's input now, so playtests wait on state rather than on time. */
+      awaiting: (): "battle" | "map" | null => (app.playersTurn() ? "battle" : campaign.myTurn() ? "map" : null),
     },
   });
 }

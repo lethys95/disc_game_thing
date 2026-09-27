@@ -1,3 +1,4 @@
+import { BEHAVIORS } from "#rules/abilities/index";
 import * as THREE from "three";
 import { CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
 import { effectiveStats } from "#rules/battle/engine";
@@ -8,6 +9,7 @@ import type { PlayerColor } from "#rules/world/colors";
 import { threeColor } from "#view/colors";
 import { buildFigure } from "#view/figures";
 import { buildStandee } from "#view/standee";
+import { discard } from "#view/stage";
 import type { CameraPose, Stage } from "#view/stage";
 import { effectDef } from "#rules/effects";
 import { UNITS } from "#rules/units/index";
@@ -289,12 +291,7 @@ export class BattleScene {
 
   /** Removes every figure, for a fresh battle or a new formation preview. */
   reset(): void {
-    for (const figure of this.figures.values()) {
-      this.scene.remove(figure.group);
-      figure.group.traverse((child) => {
-        if (child instanceof CSS2DObject) child.element.remove();
-      });
-    }
+    for (const figure of this.figures.values()) discard(figure.group);
     this.figures.clear();
     this.setHighlights({ current: null, candidates: [], affected: [] });
   }
@@ -416,7 +413,10 @@ export class BattleScene {
     if (!figure) return;
     const home = figure.group.position.clone();
     const targetFigure = targets[0] ? this.figures.get(targets[0]) : undefined;
-    const lunges = targetFigure && targets[0] !== unitId && abilityId !== "hook";
+    // Melee lunges at its target; spells, pulls and the like don't (by tag, never by ability).
+    const behavior = BEHAVIORS[abilityId];
+    const melee = behavior?.kind === "active" && behavior.tags.includes("melee");
+    const lunges = targetFigure && targets[0] !== unitId && melee;
     if (lunges) {
       const toward = targetFigure.group.position.clone().sub(home).setY(0).normalize().multiplyScalar(0.9);
       await this.stage.tween(170, (t) => figure.group.position.copy(home).addScaledVector(toward, t * t));

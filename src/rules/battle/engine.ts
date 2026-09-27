@@ -21,7 +21,7 @@ import type {
   TargetChoice,
   Tile,
   Trait,
-  TraitSelf,
+  ActiveSelf,
 } from "#rules/battle/types";
 import { PLAIN } from "#rules/battle/types";
 import { effectDef } from "#rules/effects";
@@ -54,7 +54,7 @@ export function actionsPerRound(initiative: number): number {
 }
 
 function instance(seed: EffectSeed): EffectInstance {
-  return { def: seed.def, source: seed.source ?? null, stacks: seed.stacks ?? 1, amount: seed.amount ?? 0 };
+  return { def: seed.def, source: seed.source ?? null, stacks: seed.stacks ?? 1, amount: seed.amount ?? 0, ...(seed.ability ? { ability: seed.ability } : {}) };
 }
 
 export function createBattle(sides: readonly [readonly Placement[], readonly Placement[]], context: BattleContext = NO_CONTEXT): Step {
@@ -76,7 +76,8 @@ export function createBattle(sides: readonly [readonly Placement[], readonly Pla
         shield: def.stats.shield,
         base: def.stats,
         damageType: def.damageType,
-        abilities: def.abilities.map((ref) => ({ ref, chargesUsed: 0 })),
+        abilities: def.abilities,
+        chargesUsed: {},
         effects: [...(effects ?? []), ...context.sideEffects[side]].map(instance),
         alive: true,
         fled: false,
@@ -135,13 +136,19 @@ export function legalActions(battle: Battle): LegalAbility[] {
   return legal(makeCtx(battle, []));
 }
 
-/** What an ability of this unit is, for the view: its display name and effective params. */
-export function abilityRef(unit: BattleUnit, abilityId: string): AbilityRef {
-  return unit.abilities.find((s) => s.ref.id === abilityId)?.ref ?? { id: abilityId };
+/** Every ability a unit has now, its own and granted ones, as refs (for the unit card). */
+export function unitAbilities(battle: Battle, unitId: string): AbilityRef[] {
+  const ctx = makeCtx(battle, []);
+  return ctx.abilityIds(unitId).map((id) => ctx.abilityRef(unitId, id));
 }
 
-function activeSelf(ctx: Ctx, unitId: string, abilityId: string): TraitSelf {
-  return { unitId, params: paramsOf(abilityRef(ctx.unit(unitId), abilityId)), effect: null };
+/** What an ability of this unit is, for the view: its display name and effective params (granted ones too). */
+export function abilityRef(battle: Battle, unitId: string, abilityId: string): AbilityRef {
+  return makeCtx(battle, []).abilityRef(unitId, abilityId);
+}
+
+function activeSelf(ctx: Ctx, unitId: string, abilityId: string): ActiveSelf {
+  return { unitId, params: paramsOf(ctx.abilityRef(unitId, abilityId)), effect: null, tags: active(abilityId).tags };
 }
 
 function active(abilityId: string): ActiveBehavior {
@@ -179,6 +186,9 @@ export function applyAction(battle: Battle, action: Action): Step {
     !found.reschedules && [...traitsOn(ctx, unitId)].some((t) => t.hooks.beforeAbility?.(ctx, t.self, action.abilityId) === "cancel");
   if (cancelled) ctx.emit({ type: "countered", unitId, abilityId: action.abilityId });
   else for (const cast of casts) found.resolve(ctx, self, cast);
+  // Once per action, whatever it hit: only the actor's own hits count (a Backlash landing now is another unit's).
+  const own = ctx.tally.get(unitId);
+  if (own && ctx.unit(unitId).alive) for (const t of [...traitsOn(ctx, unitId)]) t.hooks.afterAttack?.(ctx, t.self, own.dealt, own.kills);
   slot.penaltyMultiplier = 1;
 
   if (bonus === undefined && choice.cost === "free") slot.freeUsed.push(action.abilityId);
@@ -205,7 +215,7 @@ export function applyAction(battle: Battle, action: Action): Step {
 function cloneBattle(battle: Battle): Battle {
   const units: Record<string, BattleUnit> = {};
   for (const [id, u] of Object.entries(battle.units)) {
-    units[id] = { ...u, abilities: u.abilities.map((a) => ({ ...a })), effects: u.effects.map((e) => ({ ...e })) };
+    units[id] = { ...u, chargesUsed: { ...u.chargesUsed }, effects: u.effects.map((e) => ({ ...e })) };
   }
   const slot = battle.current;
   return {
@@ -229,11 +239,10 @@ function hasMainAction(options: readonly LegalAbility[]): boolean {
   return options.some((a) => a.choices.some((c) => c.cost === "main"));
 }
 
-/** Uses left of an ability with `charges`. A granted ability (an item's, a node's) has no slot until first used. */
+/** Uses left of an ability with `charges`, own or granted. */
 function chargesLeft(ctx: Ctx, unitId: string, abilityId: string): number {
-  const slot = ctx.unit(unitId).abilities.find((s) => s.ref.id === abilityId);
-  const max = paramsOf(slot?.ref ?? { id: abilityId })["charges"];
-  return max === undefined ? Infinity : max - (slot?.chargesUsed ?? 0);
+  const max = paramsOf(ctx.abilityRef(unitId, abilityId))["charges"];
+  return max === undefined ? Infinity : max - (ctx.unit(unitId).chargesUsed[abilityId] ?? 0);
 }
 
 function legal(ctx: Ctx): LegalAbility[] {
@@ -259,7 +268,7 @@ function legal(ctx: Ctx): LegalAbility[] {
     const free = base > 0 && traitsOn(ctx, unitId).some((t) => t.hooks.castsFree?.(ctx, t.self) === true);
     const usable = (choices: readonly TargetChoice[]) =>
       choices.map((c) => (bonusMode || free ? { ...c, cost: "free" as const } : c)).filter((c) => bonusMode || c.cost === "main" || !slot.freeUsed.includes(id));
-    const name = abilityRef(unit, id).name ?? b.name;
+    const name = ctx.abilityRef(unitId, id).name ?? b.name;
     const affordable = (cost: number) => cost <= unit.spellCharges;
     const add = (choices: readonly TargetChoice[], enhancement: Enhancement, spellCost: number) => {
       if (choices.length > 0 && affordable(spellCost)) result.push({ abilityId: id, name, tags: b.tags, choices, enhancement, spellCost });
@@ -422,34 +431,42 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
    * lengthens it, and stacking changes an effect in place, which its trait already sees.
    */
   const units = Object.values(battle.units);
-  let cached: { alive: boolean[]; effects: EffectInstance[][]; lengths: number[]; traits: Map<string, readonly Trait[]>; ids: Map<string, string[]>; all: readonly Trait[] | null } | null = null;
+  let cached: { alive: boolean[]; effects: EffectInstance[][]; lengths: number[]; traits: Map<string, readonly Trait[]>; ids: Map<string, string[]>; grants: Map<string, AbilityRef[]>; all: readonly Trait[] | null } | null = null;
   const memo = () => {
     const valid = cached !== null && units.every((u, i) => u.alive === cached?.alive[i] && u.effects === cached.effects[i] && u.effects.length === cached.lengths[i]);
     if (!valid || !cached) {
-      cached = { alive: units.map((u) => u.alive), effects: units.map((u) => u.effects), lengths: units.map((u) => u.effects.length), traits: new Map(), ids: new Map(), all: null };
+      cached = { alive: units.map((u) => u.alive), effects: units.map((u) => u.effects), lengths: units.map((u) => u.effects.length), traits: new Map(), ids: new Map(), grants: new Map(), all: null };
     }
     return cached;
   };
 
   // Grants are read from units' own passives and effects only, so a granted ability can't grant further ones.
-  const abilityIds = (id: string): string[] => {
-    const known = memo().ids.get(id);
+  const grantedTo = (id: string): AbilityRef[] => {
+    const known = memo().grants.get(id);
     if (known) return known;
-    const ids = unit(id).abilities.map((s) => s.ref.id);
+    const refs: AbilityRef[] = [];
     for (const owner of living()) {
-      for (const slot of owner.abilities) {
-        const b = behavior(slot.ref.id);
-        if (b.kind === "passive" && b.hooks.grants) ids.push(...b.hooks.grants(ctx, { unitId: owner.id, params: paramsOf(slot.ref), effect: null }, id));
+      for (const ref of owner.abilities) {
+        const b = behavior(ref.id);
+        if (b.kind === "passive" && b.hooks.grants) refs.push(...b.hooks.grants(ctx, { unitId: owner.id, params: paramsOf(ref), effect: null }, id));
       }
       for (const effect of owner.effects) {
         const grants = effectDef(effect.def).hooks.grants;
-        if (grants) ids.push(...grants(ctx, { unitId: owner.id, params: {}, effect }, id));
+        if (grants) refs.push(...grants(ctx, { unitId: owner.id, params: {}, effect }, id));
       }
     }
-    const found = [...new Set(ids)];
+    memo().grants.set(id, refs);
+    return refs;
+  };
+  const abilityIds = (id: string): string[] => {
+    const known = memo().ids.get(id);
+    if (known) return known;
+    const found = [...new Set([...unit(id).abilities.map((r) => r.id), ...grantedTo(id).map((r) => r.id)])];
     memo().ids.set(id, found);
     return found;
   };
+  const abilityRef = (unitId: string, abilityId: string): AbilityRef =>
+    unit(unitId).abilities.find((r) => r.id === abilityId) ?? grantedTo(unitId).find((r) => r.id === abilityId) ?? { id: abilityId };
 
   const stats = (id: string): Stats => {
     const result = { ...unit(id).base };
@@ -467,7 +484,9 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
     const fresh = instance(seed);
     const stacking = def.stacking;
     const existing =
-      stacking.mode === "perSource"
+      stacking.mode === "each"
+        ? undefined
+        : stacking.mode === "perSource"
         ? target.effects.find((e) => e.def === seed.def && e.source === fresh.source)
         : target.effects.find((e) => e.def === seed.def);
     if (!existing) {
@@ -487,10 +506,10 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
     stats,
     living,
     hit: (sourceId, targetIds, spec) => hit(ctx, sourceId, targetIds, spec),
-    hitSpec: (self, tags, type) => ({
+    hitSpec: (self, type) => ({
       power: self.params["power"] ?? stats(self.unitId).damage,
       type: type ?? unit(self.unitId).damageType,
-      tags,
+      tags: self.tags,
     }),
     lose: (targetId, amount, sourceId) => lose(ctx, targetId, amount, sourceId),
     heal: (targetId, offered) => {
@@ -526,13 +545,11 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
     consumeCharge: (unitId, abilityId) => {
       if (chargesLeft(ctx, unitId, abilityId) <= 0) return false;
       const owner = unit(unitId);
-      const slot = owner.abilities.find((s) => s.ref.id === abilityId);
-      // A granted ability gets a slot on first use, to count its charges.
-      if (slot) slot.chargesUsed += 1;
-      else owner.abilities.push({ ref: { id: abilityId }, chargesUsed: 1 });
+      owner.chargesUsed[abilityId] = (owner.chargesUsed[abilityId] ?? 0) + 1;
       return true;
     },
     abilityIds,
+    abilityRef,
     traits: (unitId) => {
       const store = memo().traits;
       const known = store.get(unitId);
@@ -559,6 +576,7 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
     emit: (event) => {
       events.push(event);
     },
+    tally: new Map(),
   };
   return ctx;
 }

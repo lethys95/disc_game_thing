@@ -1,10 +1,34 @@
-import type { ManaColor } from "#rules/spells";
+import type { ManaColor } from "#rules/factions";
 /** Small DOM helpers shared by the HTML panels. */
 
 export function element<K extends keyof HTMLElementTagNameMap>(tag: K, className: string, text?: string): HTMLElementTagNameMap[K] {
   const el = document.createElement(tag);
   el.className = className;
   if (text !== undefined) el.textContent = text;
+  return el;
+}
+
+/** A button that does something when clicked. */
+export function button(className: string, label: string | readonly (string | Node)[], onClick: () => void): HTMLButtonElement {
+  const el = element("button", className);
+  if (typeof label === "string") el.textContent = label;
+  else el.append(...label);
+  el.addEventListener("click", onClick);
+  return el;
+}
+
+/**
+ * A button that gives an order: disabled while the player may not act, or while the rules name a `problem`, which
+ * is then its tooltip (otherwise `explain` is).
+ */
+export function orderButton(
+  className: string,
+  label: string | readonly (string | Node)[],
+  order: { readonly mayAct: boolean; readonly problem: string | null; readonly explain: string; readonly give: () => void },
+): HTMLButtonElement {
+  const el = button(className, label, order.give);
+  el.disabled = !order.mayAct || order.problem !== null;
+  el.title = order.problem ?? order.explain;
   return el;
 }
 

@@ -135,3 +135,7 @@ On the map you hear your own faction's theme; in a battle, the attacker's factio
 
 **2026-09-27 — Items: the 2024 slots, effects as marks.**
 Leaders carry items in the user's 2024 slots (headgear, body armor, two utility, a banner) and a bag. An item is data (`rules/items.ts`): effects the leader's own unit brings into battle, effects every warband unit brings (banners), and whether it pays for a revival (the Ankh, canon). Worn effects enter battle through the unit's track record (a mark with an item source), so the engine needs nothing new. Only the Ankh is canon; the rest are placeholders (#53).
+
+**2026-09-27 — M37: a review, then a cleanup before new systems (user: "read and rate your old code, rewrite what isn't future-proof").**
+Four reviews found six bugs (spell deaths written twice, `knownWorld` leaking other players' state, one-shot marks firing per target, granted abilities outliving their grant, the city screen showing the AI's recruits, and a node-mark question that turned out not to be a bug) and a list of debt. Fixed or restructured before M38 because the new structures build on them: map deaths, the map AI (planners), actions' city lookup, the view's buttons and keys, GPU disposal, playtests (one harness, waiting on state: verify 28 s). Left open on purpose, with reasons, in `engineering.md` ("Debt").
+

@@ -68,10 +68,12 @@ The step-by-step recipes (units, abilities, effects, nodes, forks, recording the
 - **Fog of war: plan from `knownWorld(world, player)`** (`world/vision.ts`), never from the world, whenever a player's view matters: the map AI (`chooseWorldAction` does it first thing), hover previews, forecasts, peeks, and what the map draws (`visionOf` for the fog). Only the rules and the player's own screens (cities, warbands) read the world directly. Anything that changes the world ends with `updateVision`; `move` is planned on the known world and can stop early.
 - Nothing outside `abilities/` and `effects.ts` names an ability or effect id. The engine, AI and view use tags, flags (`reschedules`, `secretTarget`, `visibility`, `quiet`) and hooks.
 - Anything the design doesn't specify is marked provisional where it's defined and listed in `docs/questions.md`.
+- **`src/rules/` imports only `#rules/*`**, and nothing in it is random or reads the clock (`tests/boundaries.test.ts`). Preset squads live in `rules/units/presets.ts`; a faction's name, mana color and default color in `rules/factions.ts`.
+- **View building blocks:** `orderButton` (`view/dom.ts`) for any button that gives an order (disabled with the rules' problem as its tooltip); a screen that takes keys is a `KeyLayer` (`view/input.ts`), and `routeKeys` in `main.ts` gives each key to the topmost open one; three.js objects leave the scene through `discard` (`view/stage.ts`), which frees their GPU resources and labels. Colors come from the tokens at the top of `style.css`.
 - **Sims are bundled** (`scripts/bundle-sims.sh`, esbuild into `.sim/`) and run as plain node. `pnpm sim:many --seeds 1-16 "a,b" "c,d"` plays whole AI games in parallel, one process per game (about 100 s for 48 games on this machine); run it in the background, or in a worktree, while developing. Profile with `node --cpu-prof .sim/sim-world.mjs <seed>`.
 - **AI speed:** the map AI replays battles through a `BattleMemo` the caller keeps (the worker, the sims); the battle context caches trait lists; the engine copies battles by hand (`cloneBattle`), not with structuredClone. A seed that took 65 s takes about 7.
 - `pnpm sim:t1` plays tier-1 squads of Jilliath and Nexus against each other (battle only); the balance check while factions grow.
-- `pnpm verify` before calling anything done: types, tests, a screenshot, and the click-through playtests (battle, map, save/load).
+- `pnpm verify` before calling anything done: types, tests, a screenshot, and the click-through playtests (`scripts/playtests/`, one harness).
 - **Changing the World's shape? Bump `SAVE_VERSION`** (`src/rules/save.ts`) and update the snapshot (`pnpm vitest -u tests/save.test.ts`); the shape test fails until you do. Old saves are then refused, never migrated.
 
 ## Gotchas
@@ -87,18 +89,14 @@ The step-by-step recipes (units, abilities, effects, nodes, forks, recording the
 - A local variable named like a module helper shadows it: tsc says "not callable".
 - pnpm needs build scripts approved (`pnpm approve-builds <pkg>`); esbuild is approved. TypeScript is v7; the config is strict and rejects unused locals and parameters.
 
-## Debt: status after the consolidation (2026-09-25)
-Resolved:
-- Effects scattered through the engine → effect definitions with hooks, lifetimes and stacking.
-- No ability params → `{ id, params, name }` with behavior defaults.
-- Hard-coded ids outside abilities → tags and flags (this also fixed casters and archers having no default attack).
-- `world.ts` monolith → seven modules.
-- AI special cases → generic valuation plus traits' `aiValue`.
-- AI on the main thread → a worker, with per-decision forecast memoisation.
-- Duplicated DOM helpers; playtests outside the check → `pnpm verify`.
-- Balance numbers scattered → `balance.ts`, plus params and unit stats.
+## Debt: status after the M37 review (2026-09-27)
+Four reviews (battle, world, view, tooling) led to M37. Resolved there: map deaths in one place (`world/fate.ts`); `knownWorld` redacts other players; hits re-read traits per target and `afterAttack` runs once per action; granted abilities carry params; the viewer is a `PlayerId`; hover redraws only on change; the map AI is a list of planners; one faction record; `Camp | Dungeon`; saves check content ids; `flatStat`; tags from the resolving ability; one key router; `orderButton`; CSS tokens; `discard`; one playtest harness; a save-shape fixture; a rules purity test.
 
-Still open:
-- **The AI is one ply deep.** It plays greedily. A better AI (look-ahead, or rollouts with the forecast machinery) is its own milestone.
-- **`App` and `Campaign` are still big controllers** mixing input, state and rendering. The Capitol screen went into its own class (`view/capitol.ts`); keep new screens out of `Campaign` the same way.
-- **Stats are recomputed often** (`stats()` walks every trait on the battlefield). It's fast enough at 18 units; memoise per action if battles grow.
+Still open, on purpose until something needs them:
+- **Actions validate, then re-derive** (`*Problem`, then the apply case finds the same things again). A validate-to-plan shape is cleaner, but the `*Problem` functions are the single source of legality the view and AI rely on; revisit if the two drift.
+- **The actor is `world.activePlayer`.** Passing it explicitly matters for hotseat or network play (or an MCP player); not before.
+- **`Player` mixes game state and knowledge** (`explored`, `memory`). `knownWorld` redacts correctly; split it when multiplayer needs per-player state sent separately.
+- **Tests pin many balance numbers by hand.** New tests should read `UNITS` and `balance.ts`, as the Nexus tests do.
+- **Debug routes live on `Campaign`** (`startingXp`, `startingMana`, `revealAll`, `openCapitol`): small, and the screenshot routes need them.
+- **The AI is greedy** (battle: one ply plus free follow-ups; map: ordered planners). A look-ahead AI is its own milestone.
+- **`App` and `Campaign` are still big controllers.** Keep new screens in their own classes (`view/city.ts`, `view/leader.ts`) the same way.

@@ -11,7 +11,7 @@ import { CITY_ARMOR_PER_TIER, CITY_SLOTS, CITY_UPGRADE_COST, MINE_INCOME } from 
 import { capacityOf, transferProblem } from "#rules/world/squads";
 import { playerOf, capitolOf, cityOfNode, leaderById, nodesOf } from "#rules/world/state";
 import type { Leader, SquadRef, World } from "#rules/world/state";
-import { withGraveyard, startOf, withGold, twoPlayers } from "#tests/helpers";
+import { withGraveyard, startOf, withGold, twoPlayers, withLeader } from "#tests/helpers";
 import { describe, expect, test } from "vitest";
 
 /** Units trade between squads that meet (pillars.md, "Cities" and "Warbands meeting"). */
@@ -22,9 +22,6 @@ const world = (): World => withGold(createWorld(1, twoPlayers([three, three], [{
 const band: SquadRef = { kind: "warband", leaderId: "leader0" };
 const garrison: SquadRef = { kind: "garrison", cityId: "capitol0" };
 
-function withLeader(w: World, id: string, change: Partial<Leader>): World {
-  return { ...w, leaders: w.leaders.map((l) => (l.id === id ? { ...l, ...change } : l)) };
-}
 
 const move = (w: World, from: SquadRef, fromCol: 0 | 1 | 2, to: SquadRef, toCol: 0 | 1 | 2, fromRow: 0 | 1 | 2 = 0, toRow: 0 | 1 | 2 = 0) =>
   applyWorldAction(w, { type: "transfer", from, fromTile: { row: fromRow, col: fromCol }, to, toTile: { row: toRow, col: toCol } }).world;

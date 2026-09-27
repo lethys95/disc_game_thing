@@ -25,10 +25,10 @@ A deterministic, Disciples II–inspired turn-based strategy game: squads on 3x3
 ## Commands
 ```bash
 pnpm dev --host   # vite dev server; the user connects over Tailscale
-pnpm verify       # everything: tsc + vitest + screenshot + both playtests
+pnpm verify       # everything: tsc + vitest + screenshot + all playtests
 pnpm check        # tsc + vitest
 pnpm shot [out.png] [route]      # headless render (routes/params: see the verify skill)
-pnpm playtest / playtest:map     # scripted clicks through a battle / a march
+pnpm playtest [name…]            # scripted clicks: battle, map, save, city, settings, setup, spells
 pnpm sim          # AI-vs-AI matrix of the preset squads (balance)
 ```
 Package manager is pnpm; build scripts need approval (`pnpm approve-builds <pkg>`).

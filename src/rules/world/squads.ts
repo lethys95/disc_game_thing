@@ -5,8 +5,8 @@ import { hexDistance, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { GUARDIAN_ID } from "#rules/units/index";
 import { leadershipOf } from "#rules/world/leaders";
-import { cityById, leaderById } from "#rules/world/state";
-import type { PlayerId, SquadMember, SquadRef, World } from "#rules/world/state";
+import { cityAt, cityById, leaderById } from "#rules/world/state";
+import type { City, PlayerId, SquadMember, SquadRef, World } from "#rules/world/state";
 
 /**
  * Squads on the map as places units can be put: a city's garrison or a warband. Units move between squads that
@@ -31,6 +31,11 @@ export function ownerOf(world: World, ref: SquadRef): PlayerId | null {
 
 export function hexOf(world: World, ref: SquadRef): Hex {
   return ref.kind === "garrison" ? cityById(world, ref.cityId).hex : leaderById(world, ref.leaderId).hex;
+}
+
+/** The city a squad is in: a garrison's own, or the one a warband stands in. */
+export function cityOfSquad(world: World, ref: SquadRef): City | undefined {
+  return ref.kind === "garrison" ? cityById(world, ref.cityId) : cityAt(world, hexOf(world, ref));
 }
 
 export const sameSquad = (a: SquadRef, b: SquadRef): boolean =>

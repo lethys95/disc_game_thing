@@ -1,14 +1,13 @@
 import { playerOf } from "#rules/world/state";
-import type { Side } from "#rules/battle/types";
 import { allowedUnits, isFork } from "#rules/forks";
 import { ARCHETYPES, EVOLUTIONS, FACTION_ROOTS, LINE_ARCHETYPE, UNITS } from "#rules/units/index";
 import type { Archetype } from "#rules/units/index";
 import { upgradesFor } from "#rules/upgrades";
 import { RESEARCH } from "#rules/research";
 import { chooseBranchProblem, researchProblem, squadsOf, upgradeProblem } from "#rules/world/economy";
-import type { World, WorldAction } from "#rules/world/state";
+import type { PlayerId, World, WorldAction } from "#rules/world/state";
 import { art } from "#view/art";
-import { element, gold } from "#view/dom";
+import { element, gold, orderButton } from "#view/dom";
 import { unitName } from "#view/members";
 
 const ARCHETYPE_NAMES: Readonly<Record<Archetype, string>> = { melee: "Melee", ranged: "Ranged", support: "Support", mage: "Mage" };
@@ -31,7 +30,7 @@ export class ResearchPanel {
     private readonly rerender: () => void,
   ) {}
 
-  render(world: World, side: Side, mayAct: boolean): HTMLElement {
+  render(world: World, side: PlayerId, mayAct: boolean): HTMLElement {
     const column = element("div", "capitol-trees panel");
     column.appendChild(element("div", "section", "Capitol research"));
     for (const research of RESEARCH) {
@@ -40,12 +39,7 @@ export class ResearchPanel {
       if (playerOf(world, side).research.includes(research.id)) row.appendChild(element("div", "done", "✓ Done"));
       else {
         const problem = researchProblem(world, research.id);
-        const buy = element("button", "small");
-        buy.append("Research · ", gold(research.cost));
-        buy.disabled = !mayAct || problem !== null;
-        buy.title = problem ?? "";
-        buy.addEventListener("click", () => this.act({ type: "research", research: research.id }));
-        row.appendChild(buy);
+        row.appendChild(orderButton("small", ["Research · ", gold(research.cost)], { mayAct, problem, explain: "", give: () => this.act({ type: "research", research: research.id }) }));
       }
       column.appendChild(row);
     }
@@ -90,7 +84,7 @@ export class ResearchPanel {
     return column;
   }
 
-  private node(world: World, side: Side, defId: string, parent: string | undefined, open: boolean, count: number, mayAct: boolean): HTMLElement {
+  private node(world: World, side: PlayerId, defId: string, parent: string | undefined, open: boolean, count: number, mayAct: boolean): HTMLElement {
     const def = UNITS[defId];
     const node = element("div", `node${open ? "" : " closed"}`);
     const head = element("div", "head");
@@ -105,11 +99,14 @@ export class ResearchPanel {
       else if (chosen !== undefined) node.appendChild(element("div", "branch", `Closed: ${label}`));
       else {
         const problem = chooseBranchProblem(world, parent, defId);
-        const choose = element("button", "small", `Choose: ${label}`);
-        choose.disabled = !mayAct || problem !== null;
-        choose.title = problem ?? `Free. Permanent: every ${unitName(parent)} in your army will become a ${unitName(defId)}.`;
-        choose.addEventListener("click", () => this.act({ type: "choose", fork: parent, to: defId }));
-        node.appendChild(choose);
+        node.appendChild(
+          orderButton("small", `Choose: ${label}`, {
+            mayAct,
+            problem,
+            explain: `Free. Permanent: every ${unitName(parent)} in your army will become a ${unitName(defId)}.`,
+            give: () => this.act({ type: "choose", fork: parent, to: defId }),
+          }),
+        );
       }
     }
     for (const upgrade of upgradesFor(defId)) {
@@ -118,11 +115,14 @@ export class ResearchPanel {
         continue;
       }
       const problem = upgradeProblem(world, upgrade.id);
-      const buy = element("button", "small upgrade", `Upgrade: ${upgrade.label} · ${upgrade.price} gold`);
-      buy.disabled = !mayAct || !open || problem !== null;
-      buy.title = problem ?? `Every unit that becomes a ${unitName(defId)} from now on gets this. Units you already have don't.`;
-      buy.addEventListener("click", () => this.act({ type: "upgrade", upgrade: upgrade.id }));
-      node.appendChild(buy);
+      node.appendChild(
+        orderButton("small upgrade", `Upgrade: ${upgrade.label} · ${upgrade.price} gold`, {
+          mayAct: mayAct && open,
+          problem,
+          explain: `Every unit that becomes a ${unitName(defId)} from now on gets this. Units you already have don't.`,
+          give: () => this.act({ type: "upgrade", upgrade: upgrade.id }),
+        }),
+      );
     }
     return node;
   }

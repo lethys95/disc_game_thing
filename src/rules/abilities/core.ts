@@ -55,7 +55,7 @@ export const core: Readonly<Record<string, Behavior>> = {
       "Strike an enemy in the front line, at most one column away.",
     tags: ["attack", "basic", "melee", "damage"],
     choices: (ctx, self) => meleeTargets(ctx.living(), ctx.unit(self.unitId)).map((t) => single(t, "main")),
-    resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self, ["attack", "melee", "damage"])),
+    resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self)),
   },
   shoot: {
     kind: "active",
@@ -64,7 +64,7 @@ export const core: Readonly<Record<string, Behavior>> = {
       "Ranged: hit any enemy.",
     tags: ["attack", "basic", "ranged", "damage"],
     choices: rangedChoices,
-    resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self, ["attack", "ranged", "damage"])),
+    resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self)),
   },
   defend: {
     kind: "active",
@@ -100,7 +100,7 @@ export const core: Readonly<Record<string, Behavior>> = {
     tags: ["attack", "ranged", "damage"],
     defaults: { charges: 1, power: 30 },
     choices: rangedChoices,
-    resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self, ["attack", "ranged", "damage"])),
+    resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self)),
   },
   retreat: {
     kind: "active",

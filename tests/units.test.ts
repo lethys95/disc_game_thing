@@ -65,7 +65,7 @@ describe("bandits", () => {
     expect(legalActions(battle).find((a) => a.abilityId === "stun_front")?.choices.map((c) => c.affected[0])).toEqual(["1.0.1"]);
     const step = act(battle, "stun_front");
     expect(step.battle.units["1.0.1"]?.effects).toContainEqual(expect.objectContaining({ def: "stunned" }));
-    expect(step.battle.units["0.0.1"]?.abilities.find((a) => a.ref.id === "stun_front")?.chargesUsed).toBe(1);
+    expect(step.battle.units["0.0.1"]?.chargesUsed["stun_front"]).toBe(1);
   });
 
   test("the Marauder hits armored targets 10 harder", () => {

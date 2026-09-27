@@ -73,3 +73,13 @@ describe("Maelstrom", () => {
     expect(unit(battle, "0.1.1").effects.some((e) => e.def === "combusting")).toBe(false);
   });
 });
+
+describe("one-shot marks and area spells", () => {
+  test("an Absorb mark on a caster weakens only the first target of its Burst, and heals the Etherborn once", () => {
+    const marked = { ...p("apprentice", 2, 1), effects: [{ def: "absorbing_hit", source: "1.2.2", amount: 15 }] };
+    let battle = start([marked], [p("congregant", 0, 0), p("congregant", 0, 1), p("congregant", 1, 0), { ...p("etherborn", 2, 2), hp: 50 }]);
+    battle = until(battle, "0.2.1");
+    battle = act(battle, "plus_burst", "1.0.0").battle;
+    expect(unit(battle, "1.2.2").hp).toBe(65);
+  });
+});

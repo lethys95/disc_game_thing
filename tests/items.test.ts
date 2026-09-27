@@ -9,9 +9,10 @@ import { reviveCost } from "#rules/world/economy";
 import { equipProblem } from "#rules/world/leaders";
 import { placementOf } from "#rules/world/record";
 import { leaderById, playerOf } from "#rules/world/state";
-import type { Leader, World } from "#rules/world/state";
+import type { World } from "#rules/world/state";
 import { autoplay } from "#rules/ai";
-import { act, p, start, twoPlayers, unit, until, withGold } from "#tests/helpers";
+import { updateVision } from "#rules/world/vision";
+import { act, p, start, twoPlayers, unit, until, withGold, withLeader } from "#tests/helpers";
 import { legalActions } from "#rules/battle/engine";
 import { describe, expect, test } from "vitest";
 
@@ -20,9 +21,6 @@ import { describe, expect, test } from "vitest";
 const congregants: Placement[] = COLS.map((col) => ({ defId: "congregant", tile: { row: 0, col } }));
 const fresh = (): World => createWorld(1, twoPlayers([congregants, congregants], [{}, {}], ["jilliath", "jilliath"]));
 
-function withLeader(world: World, id: string, change: Partial<Leader>): World {
-  return { ...world, leaders: world.leaders.map((l) => (l.id === id ? { ...l, ...change } : l)) };
-}
 
 describe("equipment", () => {
   test("worn items reach the leader's own unit; a banner reaches the whole warband; slots fill up", () => {
@@ -97,8 +95,39 @@ describe("the user's items (2026-09-27)", () => {
     let w = withGold({ ...world, cities: world.cities.map((c) => (c.id === cathedral.id ? { ...c, owner: 0, garrison: [] } : c)) }, [1000, 1000]);
     w = applyWorldAction(w, { type: "recruit", defId: "congregant", into: { kind: "garrison", cityId: cathedral.id } }).world;
     const recruit = w.cities.find((c) => c.id === cathedral.id)?.garrison[0];
-    expect(recruit?.marks.map((m) => m.effect.def)).toEqual(["holy_water"]);
+    expect(recruit?.marks.map((m) => m.effect.ability?.id)).toEqual(["holy_water"]);
     const battle = until(start([{ ...placementOf(recruit!, undefined), hp: 40 }], [p("congregant", 2, 2)]), "0.0.0");
     expect(legalActions(battle).map((a) => a.abilityId)).toContain("holy_water");
+  });
+});
+
+describe("deaths on the map, whoever caused them (world/fate.ts)", () => {
+  test("a warband a spell wipes out leaves its items to the caster's nearest warband", () => {
+    let w = createWorld(1, twoPlayers([congregants, [{ defId: "congregant", tile: { row: 0, col: 1 } }]], [{}, {}], ["nexus", "jilliath"]));
+    const target = leaderById(w, "leader1").hex;
+    const beside = neighbors(target).find((h) => stepCost(w.map, h) !== null && !w.cities.some((c) => sameHex(c.hex, h)) && !w.lairs.some((l) => sameHex(l.hex, h)));
+    if (!beside) throw new Error("no free hex");
+    w = withLeader(withLeader(w, "leader0", { hex: beside }), "leader1", { worn: ["iron_helm"], squad: [{ ...leaderById(w, "leader1").squad[0]!, hp: 5 }] });
+    w = { ...w, players: w.players.map((pl, i) => (i === 0 ? { ...pl, mana: { red: 0, teal: 100 }, spells: ["lightning_strike"] } : pl)) };
+    const next = structuredClone(w);
+    updateVision(next);
+    const step = applyWorldAction(next, { type: "castSpell", spell: "lightning_strike", at: target });
+    expect(step.world.leaders.some((l) => l.id === "leader1")).toBe(false);
+    expect(leaderById(step.world, "leader0").bag).toEqual(["iron_helm"]);
+  });
+});
+
+describe("granted abilities", () => {
+  test("a unit can carry several (a Hatchet and holy water), each with its own charge", () => {
+    const leader = { ...leaderById(fresh(), "leader0"), worn: ["hatchet"] };
+    const member = { ...leader.squad[0]!, marks: [{ effect: { def: "carries", ability: { id: "holy_water" } }, source: { kind: "node" as const, node: "cathedral" as const, cityId: "city4" } }] };
+    const placement = { ...placementOf(member, { ...leader, squad: [member] }), hp: 40 };
+    let battle = until(start([placement], [p("congregant", 2, 2)]), "0.0.0");
+    const ids = () => legalActions(battle).map((a) => a.abilityId);
+    expect(ids()).toEqual(expect.arrayContaining(["throw_hatchet", "holy_water"]));
+    battle = act(battle, "holy_water", "0.0.0").battle;
+    battle = until(battle, "0.0.0");
+    expect(ids()).toContain("throw_hatchet");
+    expect(ids()).not.toContain("holy_water");
   });
 });

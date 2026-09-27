@@ -11,8 +11,7 @@ Tests prove the rules; only a rendered frame proves the view. Always look at the
 0. `pnpm verify` runs 1–4 in one go. Use it before calling anything done.
 1. `pnpm check`: typecheck + unit tests. Must be green first.
 2. `pnpm shot <out.png> "<route>"`: headless render. Exits non-zero on any console error or page error.
-3. `pnpm playtest`: clicks through four real player turns in a battle (`shots/playtest-*.png`).
-4. `pnpm playtest:map [seed]`: marches on the map, auto-battles the fight, returns (`shots/map-*.png`).
+3. `pnpm playtest [name…]`: every click-through playtest (battle, map, save, city, settings, setup, spells) against one server and browser, each in a fresh context; name some to run only those (`shots/playtest-*.png`, `shots/map-*.png`, `shots/failed-<name>.png` on a failure).
 5. `pnpm sim`: AI-vs-AI matchup matrix of the presets, for balance changes.
 6. `PLAYERS=<preset|nexus[:scheme|overload]>,… pnpm sim:world [seeds…]` (two or more players): whole AI-vs-AI games (winner, turns, battles, gold); a "cold war" means neither side could win a fight its forecast allows.
 
@@ -32,5 +31,5 @@ Tests prove the rules; only a rendered frame proves the view. Always look at the
 ## Gotchas
 - Click figures at chest height (`tileScreen` does this). A tile's center is often hidden behind a nearer figure from this camera.
 - Screenshots catch transient frames. If something looks wrong, check whether it's mid-animation before chasing it (and vice versa: the stray "−23" was a real bug).
-- New playtest scripts: copy `scripts/playtest.ts` (it starts vite itself; no dev server needed).
+- New playtests: a module in `scripts/playtests/` exporting a `Playtest`, listed in `scripts/playtest.ts`. Wait on state (`t.awaiting("battle" | "map")`, a log entry, a selector), never on time; `page.evaluate` callbacks must not declare named inner functions (esbuild injects `__name`, which the page lacks).
 - The user reaches the box over Tailscale: `pnpm dev --host`, then `http://<tailscale name>:5173`.

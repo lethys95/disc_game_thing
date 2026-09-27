@@ -1,7 +1,7 @@
 import { chooseAction } from "#rules/ai";
 import { applyAction, createBattle } from "#rules/battle/engine";
 import type { Placement } from "#rules/battle/engine";
-import { PRESETS } from "#view/squads";
+import { PRESETS } from "#rules/units/presets";
 
 /** AI-vs-AI matrix of every preset against every preset (both seatings), for balance work. */
 const MAX_STEPS = 3000;

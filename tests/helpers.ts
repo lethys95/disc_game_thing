@@ -5,7 +5,10 @@ import type { Commitment } from "#rules/forks";
 import type { Playable } from "#rules/units/index";
 import { defaultColors } from "#rules/world/colors";
 import type { PlayerSetup } from "#rules/world/create";
-import type { World } from "#rules/world/state";
+import type { Leader, World } from "#rules/world/state";
+import { updateVision } from "#rules/world/vision";
+import { stepCost } from "#rules/map";
+import { neighbors, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 
 /** Shared battle-test helpers. */
@@ -74,4 +77,20 @@ export function startOf(world: World, player: number): Hex {
 /** The world with one player's graveyard replaced. */
 export function withGraveyard(world: World, player: number, graveyard: World["players"][number]["graveyard"]): World {
   return { ...world, players: world.players.map((p, i) => (i === player ? { ...p, graveyard } : p)) };
+}
+
+/** The world with one leader changed, and every player's sight brought up to date as play would. */
+export function withLeader(world: World, id: string, change: Partial<Leader>): World {
+  const next = structuredClone({ ...world, leaders: world.leaders.map((l) => (l.id === id ? { ...l, ...change } : l)) });
+  updateVision(next);
+  return next;
+}
+
+/** A walkable hex next to `hex` with nothing on it (no city, lair or warband). */
+export function beside(world: World, hex: Hex): Hex {
+  const free = neighbors(hex).find(
+    (n) => stepCost(world.map, n) !== null && !world.cities.some((c) => sameHex(c.hex, n)) && !world.lairs.some((l) => sameHex(l.hex, n)) && !world.leaders.some((l) => sameHex(l.hex, n)),
+  );
+  if (!free) throw new Error("no free hex");
+  return free;
 }

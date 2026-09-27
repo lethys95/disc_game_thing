@@ -8,9 +8,9 @@ import { applyWorldAction } from "#rules/world/actions";
 import { chooseWorldAction } from "#rules/world/ai";
 import { createWorld } from "#rules/world/create";
 import { capitolOf, leaderById, playerOf } from "#rules/world/state";
-import type { Leader, World } from "#rules/world/state";
+import type { World } from "#rules/world/state";
 import { knownWorld, sightOf, updateVision } from "#rules/world/vision";
-import { startOf, twoPlayers } from "#tests/helpers";
+import { startOf, twoPlayers, withLeader } from "#tests/helpers";
 import { newsText } from "#view/map-text";
 import { describe, expect, test } from "vitest";
 
@@ -20,11 +20,6 @@ const squad: Placement[] = COLS.map((col) => ({ defId: "congregant", tile: { row
 const world = (): World => createWorld(1, twoPlayers([squad, squad], [{}, {}], ["jilliath", "jilliath"]));
 
 /** The world with a leader changed, and everyone's sight brought up to date. */
-function withLeader(w: World, id: string, change: Partial<Leader>): World {
-  const next = structuredClone({ ...w, leaders: w.leaders.map((l) => (l.id === id ? { ...l, ...change } : l)) });
-  updateVision(next);
-  return next;
-}
 
 const free = (w: World, hex: Hex) => stepCost(w.map, hex) !== null && !w.cities.some((c) => sameHex(c.hex, hex)) && !w.lairs.some((l) => sameHex(l.hex, hex)) && !w.leaders.some((l) => sameHex(l.hex, hex));
 
@@ -113,5 +108,15 @@ describe("fog of war", () => {
     expect(newsText([{ type: "captured", cityId: far.id, player: 1 }], w, 0)).toBe("");
     expect(newsText([{ type: "captured", cityId: far.id, player: 0 }], w, 0)).toBe("You take the city.");
     if (near) expect(newsText([{ type: "captured", cityId: near.id, player: 1 }], w, 0)).toBe("The enemy takes the city.");
+  });
+});
+
+describe("what a player knows of the others", () => {
+  test("only their faction, color and whether they're out; never their gold, spells or research", () => {
+    const w = createWorld(1, twoPlayers([squad, squad], [{}, {}], ["jilliath", "jilliath"]));
+    const rich = { ...w, players: w.players.map((pl, i) => (i === 1 ? { ...pl, gold: 999, research: ["city_resurrection"], spells: ["bless_warband"] } : pl)) };
+    const seen = playerOf(knownWorld(rich, 0), 1);
+    expect([seen.gold, seen.research, seen.spells, seen.faction]).toEqual([0, [], [], "jilliath"]);
+    expect(playerOf(knownWorld(rich, 1), 1).gold).toBe(999);
   });
 });

@@ -11,17 +11,14 @@ import { stepCost } from "#rules/map";
 import { LEADER_SKILLS, leadershipOf, unspentPoints } from "#rules/world/leaders";
 import { maxHpOf, recordOf } from "#rules/world/record";
 import { playerOf, leaderById } from "#rules/world/state";
-import type { Leader, World } from "#rules/world/state";
-import { withGold, startOf, twoPlayers } from "#tests/helpers";
+import type { World } from "#rules/world/state";
+import { withGold, startOf, twoPlayers, withLeader } from "#tests/helpers";
 import { describe, expect, test } from "vitest";
 
 const congregants: Placement[] = COLS.map((col) => ({ defId: "congregant", tile: { row: 0, col } }));
 
 const fresh = (): World => createWorld(1, twoPlayers([congregants, congregants], [{}, {}], ["jilliath", "jilliath"]));
 
-function withLeader(world: World, id: string, change: Partial<Leader>): World {
-  return { ...world, leaders: world.leaders.map((l) => (l.id === id ? { ...l, ...change } : l)) };
-}
 
 const learn = (world: World, skill: string) => applyWorldAction(world, { type: "learn", leaderId: "leader0", skill }).world;
 

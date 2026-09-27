@@ -2,16 +2,12 @@ import { spellById } from "#rules/spells";
 import type { Placement } from "#rules/battle/engine";
 import { COLS } from "#rules/battle/grid";
 import { CAPITOL_MANA } from "#rules/balance";
-import { neighbors, sameHex } from "#rules/hex";
-import type { Hex } from "#rules/hex";
-import { stepCost } from "#rules/map";
 import { applyWorldAction } from "#rules/world/actions";
 import { createWorld } from "#rules/world/create";
 import { castProblem } from "#rules/world/spells";
 import { capitolOf, leaderById, playerOf } from "#rules/world/state";
-import type { Leader, World } from "#rules/world/state";
-import { updateVision } from "#rules/world/vision";
-import { twoPlayers } from "#tests/helpers";
+import type { World } from "#rules/world/state";
+import { twoPlayers, withLeader, beside } from "#tests/helpers";
 import { describe, expect, test } from "vitest";
 
 /** Overworld spells (pillars.md, "Spells"); the spells themselves are provisional placeholders. */
@@ -24,18 +20,7 @@ function world(faction: "jilliath" | "nexus", spells: string[]): World {
   return { ...w, players: w.players.map((p, i) => (i === 0 ? { ...p, gold: 1000, mana: { red: 100, teal: 100 }, spells } : p)) };
 }
 
-function withLeader(w: World, id: string, change: Partial<Leader>): World {
-  const next = structuredClone({ ...w, leaders: w.leaders.map((l) => (l.id === id ? { ...l, ...change } : l)) });
-  updateVision(next);
-  return next;
-}
 
-/** A free hex next to `hex`. */
-function beside(w: World, hex: Hex): Hex {
-  const free = neighbors(hex).find((h) => stepCost(w.map, h) !== null && !w.cities.some((c) => sameHex(c.hex, h)) && !w.leaders.some((l) => sameHex(l.hex, h)) && !w.lairs.some((l) => sameHex(l.hex, h)));
-  if (!free) throw new Error("no free hex");
-  return free;
-}
 
 describe("mana and learning", () => {
   test("a Capitol yields its owner's color each turn", () => {

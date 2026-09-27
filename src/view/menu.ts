@@ -1,12 +1,13 @@
 import { readSave } from "#rules/save";
 import type { Save } from "#rules/save";
-import { FACTION_NAMES } from "#rules/units/index";
+import { FACTIONS } from "#rules/factions";
 import { BEHAVIORS } from "#rules/abilities/index";
 import { element } from "#view/dom";
 import { ANIMATION_SPEEDS, assignable, CAMERA_RANGE, DEFAULT_SETTINGS, remappable, SPEED_ORDER, withHotkey } from "#view/settings";
 import type { Settings } from "#view/settings";
 import { AUTOSAVE_ID, exportSave } from "#view/saves";
 import type { SaveStore } from "#view/saves";
+import type { KeyLayer } from "#view/input";
 
 export interface MenuOptions {
   readonly store: SaveStore;
@@ -19,11 +20,11 @@ export interface MenuOptions {
 
 const describe = (save: Save) => {
   const when = new Date(save.savedAt).toLocaleString();
-  return `Turn ${save.world.turn} · ${save.world.players.map((p) => FACTION_NAMES[p.faction]).join(" vs ")} · seed ${save.seed} · ${when}`;
+  return `Turn ${save.world.turn} · ${save.world.players.map((p) => FACTIONS[p.faction].name).join(" vs ")} · seed ${save.seed} · ${when}`;
 };
 
 /** The game menu: save, load, export and import saves, start over; and the settings. */
-export class GameMenu {
+export class GameMenu implements KeyLayer {
   private message = "";
   private page: "game" | "settings" = "game";
   /** The ability whose new key the menu is waiting for. */
@@ -32,22 +33,18 @@ export class GameMenu {
   constructor(
     private readonly root: HTMLElement,
     private readonly options: MenuOptions,
-  ) {
-    // Capture phase: while the menu waits for a key, nothing else (a battle's hotkeys) may see it.
-    window.addEventListener(
-      "keydown",
-      (e) => {
-        if (this.root.hidden) return;
-        if (this.capturing !== null) {
-          e.preventDefault();
-          e.stopImmediatePropagation();
-          this.captured(e.key);
-          return;
-        }
-        if (e.key === "Escape") this.hide();
-      },
-      { capture: true },
-    );
+  ) {}
+
+  open(): boolean {
+    return !this.root.hidden;
+  }
+
+  /** While it waits for a new hotkey, it takes any key. */
+  key(e: KeyboardEvent): boolean {
+    if (this.capturing !== null) this.captured(e.key);
+    else if (e.key === "Escape") this.hide();
+    else return false;
+    return true;
   }
 
   show(): void {

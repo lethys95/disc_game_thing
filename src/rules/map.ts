@@ -19,12 +19,12 @@ export interface MapTile {
 }
 
 /** A city on the map. Nodes belong to their city (Warlords 3 style): whoever holds the city holds them. */
-export interface Site {
+/** A city's spot; a Capitol also names the start (player) it belongs to. */
+export type Site = {
   readonly id: string;
-  readonly kind: "capitol" | "city";
   readonly hex: Hex;
   readonly nodes: readonly NodeSite[];
-}
+} & ({ readonly kind: "capitol"; readonly start: number } | { readonly kind: "city" });
 
 /** A neutral group's spot: a camp (just the group) or a dungeon (a group guarding a one-time reward). */
 export interface LairSite {
@@ -125,7 +125,7 @@ function placeSites(map: WorldMap, seed: number, neutralCities: number): Site[] 
       .sort((a, b) => noise(seed + 41 + side, a.q, a.r) - noise(seed + 41 + side, b.q, b.r))[0];
     return spot ? [{ kind: "gold", hex: spot }] : [];
   };
-  const sites: Site[] = map.starts.map((hex, side) => ({ id: `capitol${side}`, kind: "capitol", hex, nodes: capitolMine(hex, side) }));
+  const sites: Site[] = map.starts.map((hex, side) => ({ id: `capitol${side}`, kind: "capitol", start: side, hex, nodes: capitolMine(hex, side) }));
   const taken = (hex: Hex) => sites.some((s) => sameHex(s.hex, hex) || s.nodes.some((n) => sameHex(n.hex, hex)));
   const candidates = Object.values(map.tiles)
     .map((t) => t.hex)
