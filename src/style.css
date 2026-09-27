@@ -484,9 +484,30 @@ button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }
   animation: city-drift 40s ease-in-out infinite alternate;
 }
 @keyframes city-drift { from { transform: scale(1.06) translate(-1.5%, 0.5%); } to { transform: scale(1.14) translate(1.5%, -1%); } }
-.home-card {
-  position: absolute; left: 16px; bottom: 16px; padding: 10px 14px; max-width: 420px;
-  background: rgba(10, 9, 9, 0.8); border: 1px solid var(--line);
-}
 #capitol .tab-rail.panel { border-width: 10px; border-image-width: 14px; padding: 4px 0; width: 84px; justify-content: flex-start; }
 #capitol.screen { background: #080707; }
+
+/* The city screen fills every gap (the user: "a lot of blind spots"): carved stone behind everything, a carved
+   header bar, and a full iron column on the right with the tabs and the city's facts on marble plaques. */
+#capitol.screen { background: #0a0909 var(--ui-backdrop, none) repeat; background-size: 256px; }
+#capitol .capitol-header {
+  margin: -18px -24px 0; padding: 10px 24px; background: rgba(8, 7, 7, 0.55) var(--ui-plate, none) repeat; background-size: 192px;
+  border-bottom: 22px solid transparent; border-image: var(--ui-frame) 18% 0 0 0 / 22px 0 0 0 stretch;
+}
+#capitol .capitol-header .gold { background: rgba(0, 0, 0, 0.45); padding: 2px 12px; border: 1px solid var(--line); flex: none; }
+#capitol .capitol-header .title { margin-right: 12px; }
+#capitol .capitol-header > :last-child { margin-left: auto; }
+#capitol .tab-rail.panel {
+  width: 188px; border-width: 18px; border-image-width: 24px; padding: 4px 6px 10px;
+  background: #0d0c0c var(--ui-plate, none) repeat padding-box; background-size: 160px;
+}
+#capitol .rail-tabs { display: grid; grid-template-columns: 1fr 1fr; justify-items: center; gap: 2px 0; }
+#capitol .rail-facts { display: flex; flex-direction: column; gap: 5px; margin-top: auto; width: 100%; }
+#capitol .rail-facts .fact {
+  border: 7px solid transparent; border-image: var(--ui-plaque) 30% 11% fill / 7px 16px;
+  padding: 1px 10px; color: #2b2622; font: 600 11px var(--text); text-align: center; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+#capitol .city-body { grid-template-columns: 1fr 240px; }
+
+#capitol .squad-grid .grid { grid-template-columns: repeat(3, 92px); }
+#capitol .squad-grid .cell { height: 84px; }
