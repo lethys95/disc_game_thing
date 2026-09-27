@@ -19,15 +19,16 @@ Git: tags `m2-playable` … `m7-foundation` mark tested states. Work happens on 
 Rules: `src/rules/` (93 tests). View: `src/view/`. Tools: the `verify` skill; `A=<preset|nexus> B=… pnpm sim:world`.
 
 ## Next
-**M29: the user's playtest of 2026-09-27** (checklist in `roadmap.md`): all fixed but momentum (#9, to discuss) and the brown palette (#43). Highlights: every held city heals (Capitol 40%, cities 25%); the Blacksmith marks recruits of its city; spells cost 3×; Homing Lightning 80; maps a ring larger; squad grids back-left/front-right with hold-right-click unit cards; ability buttons are icon tiles with an overload toggle; the map camera pans (middle-drag, arrows/WASD). Save version 12.
-1. **Waiting on the user:** momentum ideas (below in the reply of 2026-09-27); a mage name; #40–52; colors (#43).
-2. Candidates next: momentum; sound slots and playback with the Sonniss material.
+**M30: fast sims, retreat, resolve, a better map AI** (2026-09-27). Sims are ~8× faster (profiled: battle copying, trait lists, a battle memo, esbuild bundles) and `pnpm sim:many` runs games in parallel (96 games in about 3 minutes); run it in the background while developing. Battles: Retreat (R; the user's surrender design), Resolve now, a 30-round limit (attacker withdraws, provisional #52). Map AI: fills its Capitol garrison, blitzes strong enemy warbands with chains. Save version 13.
+1. **Waiting on the user:** a playtest of the lot; the mage's name; #40–52; colors (#43).
+2. Next (Claude's plan): sound (slots and playback with the Sonniss material); the battle AI retreating from lost fights; the brown palette (#43).
 3. Open design: Nexus tiers 4–5 (#35), Jilliath lines past tier 1, fourth archetype (#37), real spells (#51), leader experience (#33).
 
 ## Waiting on the user
 See `questions.md`. Nothing blocks M1; provisional rules are listed in `design/combat.md`.
 
 ## Recently done
+- 2026-09-27: M30 fast sims, retreat, resolve, Capitol-guarding and blitzing AI.
 - 2026-09-27: M29 playtest fixes (15 of 17).
 - 2026-09-26: M27 tier-1 balance pass (`pnpm sim:t1`): Custodian shield 65, Apprentice Burst 35; a heal-vs-shield stalemate found (#52).
 - 2026-09-26: M26 Jilliath tier-1 Cleric and mage; ability hover previews.
