@@ -106,6 +106,13 @@ Home view, right-side tab rail, garrison, top-down research trees, spells.
 ## M42 — 3D props spike (done)
 Map model slots; generated Capitol and mage tower; the pipeline works for static props.
 
+## M43 — Dress the map (done)
+Generated buildings, terrain props, ground textures and a sky.
+
+## Next up
+- The battlefield, dressed from the terrain where the fight happens (reusing the map's props).
+- A UI kit pilot on the Capitol screen.
+
 ## Then
 - Faction content as the user designs it (Nexus trees first; Grove and Wastes later). The user owns unit designs and looks.
 - A spell tree in the Capitol, and the real spells (#51).

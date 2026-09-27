@@ -20,13 +20,15 @@ import { discard, discardChildren } from "#view/stage";
 import type { CameraPose, Stage } from "#view/stage";
 import { STRUCTURES } from "#rules/structures";
 import type { StructureKind } from "#rules/structures";
-import { GROUND_VARIANTS, GroundTextures, MODEL_CHAINS, Models, TERRAIN_VARIANTS } from "#view/models";
+import { GROUND_VARIANTS, GroundTextures, MODEL_CHAINS, Models, skyTexture, TERRAIN_VARIANTS } from "#view/models";
 
 const SIZE = 1;
 /** How long a warband's figure takes to walk one hex. */
 export const HEX_STEP_MS = 190;
 /** Where the map camera sits relative to what it looks at. */
 const CAMERA_OFFSET = new THREE.Vector3(-3, 11, 11.2);
+/** The haze where the map sky's mountains meet the land (`assets/sky/map.webp`). */
+const HORIZON_MIST = 0x5a70a0;
 /** How far the camera stands from a city in its home view. */
 const CLOSE_UP_DISTANCE = 4.2;
 
@@ -185,9 +187,10 @@ export class MapView {
   private readonly ground = new GroundTextures();
 
   constructor(private readonly stage: Stage) {
-    const dusk = new THREE.Color(0x0b0a0c);
-    this.scene.background = dusk;
-    this.scene.fog = new THREE.FogExp2(dusk, 0.028);
+    const sky = skyTexture("map");
+    this.scene.background = sky ?? new THREE.Color(0x0b0a0c);
+    // The land beyond the map fades into the sky's misty horizon (sampled from the panorama), so the two meet.
+    this.scene.fog = sky ? new THREE.Fog(HORIZON_MIST, 24, 55) : new THREE.FogExp2(0x0b0a0c, 0.028);
     this.scene.add(new THREE.HemisphereLight(0x8a98b8, 0x1c1c22, 0.95));
     const keyLight = new THREE.DirectionalLight(0xffe4c8, 3);
     keyLight.position.set(-6, 12, 8);
@@ -200,7 +203,7 @@ export class MapView {
     const rim = new THREE.DirectionalLight(0x7f9cff, 1.2);
     rim.position.set(8, 5, -10);
     this.scene.add(rim);
-    const ground = new THREE.Mesh(new THREE.CircleGeometry(60, 48), new THREE.MeshStandardMaterial({ color: 0x0f0e0d, roughness: 1 }));
+    const ground = new THREE.Mesh(new THREE.CircleGeometry(400, 64), new THREE.MeshStandardMaterial({ color: sky ? 0x1c2230 : 0x0f0e0d, roughness: 1 }));
     ground.rotation.x = -Math.PI / 2;
     ground.receiveShadow = true;
     this.scene.add(ground);

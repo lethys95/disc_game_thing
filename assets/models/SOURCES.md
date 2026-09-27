@@ -19,6 +19,8 @@ Every model here was generated locally; the recipe regenerates it exactly.
 
 Ground textures (`assets/ground/<terrain>-<n>.webp`): `scripts/art/ground.ts`, seeds 1–3, resized to 512 px WebP.
 
+Sky (`assets/sky/map.webp`): `scripts/art/sky.ts`, seed 1, shifted up by 24% of its height so the painted misty mountains sit on the horizon, the gap below filled with the horizon mist (`HORIZON_MIST` in `src/view/map.ts`).
+
 The prompts are keyed by slot in `scripts/art/props.ts` (the first two predate that: ids `capitol-jilliath` and `mage`, same text). Cleanup is always `scripts/art/prop_cleanup.py`.
 
 Placeholders for the M42 spike (2026-09-27): the art direction isn't settled (`docs/design/art.md`).

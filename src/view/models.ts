@@ -41,6 +41,18 @@ export class GroundTextures {
   }
 }
 
+const SKIES = import.meta.glob<string>("/assets/sky/*.webp", { eager: true, query: "?url", import: "default" });
+
+/** A panorama wrapped around a scene as its background (`assets/sky/<name>.webp`), or null if there's none. */
+export function skyTexture(name: string): THREE.Texture | null {
+  const url = SKIES[`/assets/sky/${name}.webp`];
+  if (!url) return null;
+  const texture = new THREE.TextureLoader().load(url);
+  texture.mapping = THREE.EquirectangularReflectionMapping;
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+}
+
 /** How many variants each terrain prop has (`terrain/<kind>-<n>.glb`). */
 export const TERRAIN_VARIANTS = { tree: 4, mountain: 3, hill: 2, rock: 2, bush: 2 } as const;
 
