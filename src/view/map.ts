@@ -20,15 +20,13 @@ import { discard, discardChildren } from "#view/stage";
 import type { CameraPose, Stage } from "#view/stage";
 import { STRUCTURES } from "#rules/structures";
 import type { StructureKind } from "#rules/structures";
-import { GROUND_VARIANTS, GroundTextures, MODEL_CHAINS, Models, skyTexture, TERRAIN_VARIANTS } from "#view/models";
+import { GROUND_VARIANTS, GroundTextures, HORIZON_MIST, MODEL_CHAINS, Models, skyTexture, TERRAIN_VARIANTS } from "#view/models";
 
 const SIZE = 1;
 /** How long a warband's figure takes to walk one hex. */
 export const HEX_STEP_MS = 190;
 /** Where the map camera sits relative to what it looks at. */
 const CAMERA_OFFSET = new THREE.Vector3(-3, 11, 11.2);
-/** The haze where the map sky's mountains meet the land (`assets/sky/map.webp`). */
-const HORIZON_MIST = 0x5a70a0;
 /** How far the camera stands from a city in its home view. */
 const CLOSE_UP_DISTANCE = 4.2;
 

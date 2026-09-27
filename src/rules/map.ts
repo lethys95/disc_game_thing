@@ -8,6 +8,8 @@ import type { StructureKind } from "#rules/structures";
 /** Provisional terrain (docs/design/pillars.md leaves terrain to the map model): costs are placeholders. */
 export type Terrain = "plain" | "forest" | "hills" | "mountain" | "water";
 
+export const isTerrain = (key: string): key is Terrain => key in TERRAIN_COST;
+
 export const TERRAIN_COST: Readonly<Record<Terrain, number | null>> = {
   plain: 1,
   forest: 2,

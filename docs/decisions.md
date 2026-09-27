@@ -163,3 +163,6 @@ The user wants to see the city when entering it (HoMM5, AoE3's home city). Until
 **2026-09-27 — Map models load from slots (M42).**
 Like art and sound: `assets/models/<kind>/<id>.glb` found at build time, fallback chains (a Capitol per faction, then any Capitol), and the hand-built shapes stay as the placeholders where no file exists. Loaded models are shared between places, so `discard` leaves their GPU resources alone. The spike showed static props from concept images are good enough to pursue (`design/asset-pipeline.md`).
 
+**2026-09-27 — Battles are fought where they happen (M44).**
+The arena takes the terrain of the hex fought over (its ground texture, a ring of its props behind and beside the lines) and what stands there as a backdrop (a city's or Capitol's walls, a dungeon's mouth), under the map's sky. The backdrop comes from the hex, not the defender's kind, so a warband defending its own city fights before its walls. Skirmishes from the setup screen are on open plains. Prop counts and sizes are a provisional look.
+

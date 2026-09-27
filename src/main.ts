@@ -18,6 +18,9 @@ import { Stage } from "#view/stage";
 import { defaultColors } from "#rules/world/colors";
 import type { Playable } from "#rules/units/index";
 import { isMapSize } from "#rules/map";
+import type { BattleSetting } from "#view/battle-setting";
+import { MODEL_CHAINS } from "#view/models";
+import { isTerrain } from "#rules/map";
 
 const params = new URLSearchParams(window.location.search);
 
@@ -114,7 +117,14 @@ if (params.has("map")) {
   const fight = params.get("fight") ?? "";
   const nexusKey = fight.startsWith("nexus:") ? fight.slice(6) : "uncommitted";
   const enemy = fight.startsWith("nexus") ? (nexusKey === "scheme" || nexusKey === "overload" ? NEXUS_PRESETS[nexusKey] : NEXUS_PRESETS.uncommitted) : fight === "bandits" ? BANDIT_GROUP : presets[1];
-  app.start([presets[0], enemy], params.get("auto") === "1" ? null : params.get("side") === "1" ? 1 : 0, colorPair(["jilliath", fight.startsWith("nexus") ? "nexus" : "jilliath"]), Number(params.get("steps") ?? 0));
+  // `terrain=forest`, `backdrop=capitol|city|dungeon`: fight somewhere other than open plains (screenshots).
+  const terrain = params.get("terrain") ?? "plain";
+  const backdrop = params.get("backdrop");
+  const setting: BattleSetting = {
+    terrain: isTerrain(terrain) ? terrain : "plain",
+    backdrop: backdrop === "capitol" ? MODEL_CHAINS.capitol("jilliath") : backdrop === "city" ? MODEL_CHAINS.city() : backdrop === "dungeon" ? MODEL_CHAINS.dungeon() : null,
+  };
+  app.start([presets[0], enemy], params.get("auto") === "1" ? null : params.get("side") === "1" ? 1 : 0, colorPair(["jilliath", fight.startsWith("nexus") ? "nexus" : "jilliath"]), Number(params.get("steps") ?? 0), setting);
 } else {
   showSetup();
 }
