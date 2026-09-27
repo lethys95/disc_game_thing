@@ -13,9 +13,18 @@ export const SOUNDS = [
 ] as const;
 export type SoundKey = (typeof SOUNDS)[number];
 
-/** Music: one looping track at a time, crossfaded (`assets/audio/music/<track>.ogg`). */
-export const MUSIC = ["map", "battle"] as const;
-export type Track = (typeof MUSIC)[number];
+/**
+ * Music, one looping track at a time, crossfaded: `assets/audio/music/<faction>/map.ogg` and `battle-<n>.ogg`
+ * (user, 2026-09-27: on the map your faction's theme; in battle the attacker's faction, rotating through its tracks).
+ */
+export type Track = string;
+
+/** The music files there are, as track keys (`jilliath/battle-2`). */
+export const musicTracks = (): string[] =>
+  Object.keys(FILES).flatMap((path) => {
+    const match = /^\/assets\/audio\/music\/(.+)\.ogg$/.exec(path);
+    return match?.[1] ? [match[1]] : [];
+  });
 
 const CROSSFADE_S = 1.5;
 
@@ -36,6 +45,8 @@ export class Sound {
   private readonly buffers = new Map<SoundKey, Promise<AudioBuffer | null>>();
   private readonly lastPlayed = new Map<SoundKey, number>();
   private volumes = { master: 1, effects: 1, music: 1 };
+  /** Where each faction's battle tracklist is up to. */
+  private readonly rotation = new Map<string, number>();
 
   /** Browsers only let audio start after the player interacts; the first click or key opens it. */
   constructor() {
@@ -53,6 +64,22 @@ export class Sound {
     if (this.master) this.master.gain.value = this.volumes.master;
     if (this.effects) this.effects.gain.value = this.volumes.effects;
     if (this.musicBus) this.musicBus.gain.value = this.volumes.music;
+  }
+
+  /** A faction's map theme; any faction's if it has none yet. */
+  mapMusic(faction: string): void {
+    const tracks = musicTracks().filter((t) => t.endsWith("/map"));
+    this.music(tracks.find((t) => t === `${faction}/map`) ?? tracks[0] ?? null);
+  }
+
+  /** The attacker's battle music: the next track of its faction's list (any faction's if it has none yet). */
+  battleMusic(faction: string): void {
+    const all = musicTracks().filter((t) => /\/battle-\d+$/.test(t)).sort();
+    const own = all.filter((t) => t.startsWith(`${faction}/`));
+    const list = own.length > 0 ? own : all;
+    const next = this.rotation.get(faction) ?? 0;
+    this.rotation.set(faction, next + 1);
+    this.music(list[next % Math.max(1, list.length)] ?? null);
   }
 
   /** Crossfades to `track`, looping (null: fade out). Asked before audio opens, it starts when it does. */

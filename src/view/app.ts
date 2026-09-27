@@ -1,4 +1,5 @@
 import { chooseAction } from "#rules/ai";
+import { UNITS } from "#rules/units/index";
 import { applyAction, createBattle, legalActions } from "#rules/battle/engine";
 import { sameTile } from "#rules/battle/grid";
 import type { Action, Battle, BattleEvent, BattleUnit, Enhancement, LegalAbility, Side, TargetChoice } from "#rules/battle/types";
@@ -153,7 +154,9 @@ export class App {
     this.playerSide = playerSide;
     this.finish = finish;
     this.auto = false;
-    this.sound.music("battle");
+    // The attacker (side 0) sets the music: its faction's battle tracks, in turn.
+    const attacker = Object.values(start.units).find((u) => u.side === 0);
+    this.sound.battleMusic(UNITS[attacker?.defId ?? ""]?.faction ?? "neutral");
     let battle = start;
     this.scene.show();
     this.hud.setVisible(true);

@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
-import { MUSIC, SOUNDS } from "#view/sound";
+import { musicTracks, SOUNDS } from "#view/sound";
 import { battleCues, worldCues } from "#view/sound-cues";
 import { describe, expect, test } from "vitest";
 
@@ -28,7 +28,16 @@ describe("sound files", () => {
     const sources = readFileSync("assets/audio/SOURCES.md", "utf8");
     const listed = [...sources.matchAll(/^\| `([^`]+)`/gm)].map((m) => m[1] ?? "");
     for (const key of listed) expect(existsSync(`assets/audio/${key}.ogg`)).toBe(true);
-    const slots: readonly string[] = [...SOUNDS, ...MUSIC.map((t) => `music/${t}`)];
-    for (const key of listed) expect(slots).toContain(key);
+    for (const key of listed.filter((k) => !k.startsWith("music/"))) expect(SOUNDS).toContain(key);
+  });
+});
+
+describe("music", () => {
+  test("each playable faction has a map theme and at least one battle track", () => {
+    const tracks = musicTracks();
+    for (const faction of ["jilliath", "nexus"]) {
+      expect(tracks).toContain(`${faction}/map`);
+      expect(tracks.some((t) => t.startsWith(`${faction}/battle-`))).toBe(true);
+    }
   });
 });

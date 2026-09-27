@@ -26,21 +26,40 @@ class Track:
     duration: float
 
 
-# Dark fantasy (docs/design/art.md: candlelight, storm-light, furnace-light). Instrumental; no artist names.
+# Dark fantasy (docs/design/art.md: candlelight, storm-light, furnace-light). Instrumental; no artist names. The first
+# takes came out "very upbeat and weird" (user, 2026-09-27): slower tempi, an explicit negative prompt, and the
+# caption kept as written (ACE-Step's language model otherwise rewrites it). Faction directions follow the canon
+# (factions/*.md) and are provisional.
+NEGATIVE = "upbeat, happy, cheerful, bright, pop, dance, EDM, electronic beat, synth, rock drum kit, vocals with words"
+
 TRACKS: dict[str, Track] = {
-    "map": Track(
-        "Dark fantasy orchestral ambient for a strategy map, slow and brooding, low strings drone, distant wordless choir, "
-        "sparse war drums far away, solo cello motif, somber medieval mood, instrumental, loopable",
-        70,
+    "jilliath/map": Track(
+        "Slow dark medieval sacred music, grim and severe, cathedral organ drone, low male monastic chant without words, "
+        "distant tolling bell, sparse deep drum, mournful, minor key, cinematic, instrumental",
+        60,
         "D minor",
-        90,
-    ),
-    "battle": Track(
-        "Dark fantasy battle music, tense and driving, war drums and taiko, low brass stabs, staccato strings, ominous "
-        "wordless choir, medieval, instrumental, loopable",
         120,
+    ),
+    "jilliath/battle": Track(
+        "Grim holy war music, slow relentless heavy war drums, low male choir chanting without words, cathedral organ, "
+        "dark brass, severe and zealous, minor key, cinematic, instrumental",
+        84,
         "C minor",
-        90,
+        120,
+    ),
+    "nexus/map": Track(
+        "Slow dark arcane ambient, cold and mysterious, eerie sustained strings, glass harmonica, soft ticking clockwork "
+        "percussion, distant rolling thunder, tense and lonely, minor key, cinematic, instrumental",
+        60,
+        "E minor",
+        120,
+    ),
+    "nexus/battle": Track(
+        "Tense dark arcane battle music, taut staccato low strings, metallic anvil and clockwork percussion, crackling "
+        "electric tension, ominous low brass swells, minor key, cinematic, instrumental",
+        96,
+        "F minor",
+        120,
     ),
 }
 
@@ -53,16 +72,28 @@ def main() -> None:
     lm.initialize(checkpoint_dir=os.path.join(ACE_ROOT, "checkpoints"), lm_model_path="acestep-5Hz-lm-1.7B", backend="vllm", device="cuda")
     for name in names:
         track = TRACKS[name]
-        params = GenerationParams(caption=track.caption, lyrics="[Instrumental]", instrumental=True, bpm=track.bpm, keyscale=track.key, duration=track.duration, shift=3.0)
-        config = GenerationConfig(batch_size=2, use_random_seed=False, seeds=[11, 23], audio_format="flac")
+        params = GenerationParams(
+            caption=track.caption,
+            lyrics="[Instrumental]",
+            instrumental=True,
+            bpm=track.bpm,
+            keyscale=track.key,
+            duration=track.duration,
+            shift=3.0,
+            use_cot_caption=False,
+            lm_negative_prompt=NEGATIVE,
+        )
+        config = GenerationConfig(batch_size=3, use_random_seed=False, seeds=[11, 23, 37], audio_format="flac")
         out = os.path.join(OUT_ROOT, name)
         os.makedirs(out, exist_ok=True)
         result = generate_music(dit, lm, params, config, save_dir=out)
         if not result.success:
             print(f"{name}: failed: {result.error}")
             continue
-        for audio in result.audios:
-            print(f"{name}: {audio['path']}")
+        for audio, seed in zip(result.audios, config.seeds or []):
+            named = os.path.join(out, f"{name.replace('/', '-')}-seed{seed}.flac")
+            os.replace(audio["path"], named)
+            print(f"{name}: {named}")
 
 
 if __name__ == "__main__":

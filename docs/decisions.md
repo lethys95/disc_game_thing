@@ -129,3 +129,6 @@ Losing AI Capitols fell holding only their Guardian (user: "less the Guardian be
 
 **2026-09-27 — The battle AI retreats its veterans from lost fights.**
 When its side's strength (health weighted by damage) falls under 15% of the enemy's, a tier-2-or-higher unit that can flee does. Measured over 96 games each: letting every unit flee at 35% doubled game length (median turn 83, 4 cold wars) and halved Jilliath's wins against Nexus (13 → 6); veterans only, at 15%, keeps Jilliath at 13 and games at a median of turn 48 (was 43), 1 cold war.
+
+**2026-09-27 — Music by faction (the user's idea).**
+On the map you hear your own faction's theme; in a battle, the attacker's faction's battle tracks, one after another across battles (Inquisition attacks Nexus: Inquisition music). Tracks are files at `assets/audio/music/<faction>/map.ogg` and `battle-<n>.ogg`; a faction without its own falls back to any. The musical direction per faction follows the canon (Jilliath: sacred and severe; Nexus: arcane and cold, not sci-fi) and is provisional.
