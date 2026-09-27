@@ -2,6 +2,7 @@
 # Finish and inspect generated SFX candidates with ffmpeg.
 #   sfx.sh finish <in.wav> <out.ogg> [target_lufs=-16] [bitrate=64k]
 #   sfx.sh check  <file>...
+#   sfx.sh take   <in.wav> <out.ogg> <seconds> [target_lufs=-16]   (library recordings: the first sound, cut to length)
 set -euo pipefail
 
 usage() {
@@ -68,8 +69,20 @@ REPORT
   done
 }
 
+# Library files hold many takes: keep the first sound, at most <seconds> long, with a 60 ms fade-out, then finish.
+take() {
+  local in=$1 out=$2 seconds=$3 target=${4:--16} tmp
+  tmp=$(mktemp --suffix=.wav)
+  ffmpeg -hide_banner -loglevel error -y -i "$in" \
+    -af "silenceremove=start_periods=1:start_threshold=-45dB:start_silence=0.005,atrim=0:${seconds},afade=t=out:st=$(awk -v s="$seconds" 'BEGIN { printf "%.3f", (s > 0.12 ? s - 0.06 : 0) }'):d=0.06" \
+    -ac 2 "$tmp"
+  finish "$tmp" "$out" "$target"
+  rm -f "$tmp"
+}
+
 case ${1:-} in
   finish) shift; [[ $# -ge 2 ]] || usage; finish "$@" ;;
   check) shift; [[ $# -ge 1 ]] || usage; check "$@" ;;
+  take) shift; [[ $# -ge 3 ]] || usage; take "$@" ;;
   *) usage ;;
 esac

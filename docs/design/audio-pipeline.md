@@ -1,4 +1,4 @@
-# Audio pipeline (research, 2026-09-26; nothing built yet)
+# Audio pipeline (research 2026-09-26; sound effects built 2026-09-27)
 
 The user wants sound and music made locally with open models, like the art. Research by a Claude agent (web and a
 read-only look at this machine); license claims carry their sources; recheck them before shipping anything.
@@ -36,3 +36,11 @@ save, trim, concat, LUFS normalize). ffmpeg with libopus, `loudnorm`, `ebur128`,
    the Settings page; music streamed with crossfades between map and battle.
 4. **The user's ears are the gate**, as the user's eyes are for art. Claude can check duration, loudness and loop
    seams automatically, not whether it sounds good.
+
+## Built (2026-09-27)
+Generated SFX weren't good enough (the user's test); the first pass comes from the Sonniss GDC library instead.
+- **Slots:** `src/view/sound.ts` lists them (`battle/hit`, `ui/coins`, `stinger/victory`…); a file at `assets/audio/<key>.ogg` fills one, a missing file is silent. `assets/audio/SOURCES.md` records each file's source (a test checks every listed slot has its file).
+- **Cues:** `src/view/sound-cues.ts` maps battle and map events to slots by event and tag (a spell's cast and hit, a melee swing and hit, shields, heals, deaths, fleeing, marches, captures, purchases, victory and defeat), never by ability id.
+- **Playback:** WebAudio, opened on the first click or key; master and effects volume in Settings → Sound.
+- **Making one:** `scripts/audio/sfx.sh take <library.wav> assets/audio/<slot>.ogg <seconds> [lufs]` cuts the first sound of a library recording to length, trims, normalizes and encodes Opus. The first pass was picked by filename and checked by the numbers only; the user picks keepers by ear.
+- Not yet: music, ambience beds, per-faction or per-ability sounds (slots can be added the same way).

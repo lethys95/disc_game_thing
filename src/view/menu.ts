@@ -92,6 +92,24 @@ export class GameMenu {
     }
     this.root.append(speeds, element("div", "note", "Also how long the AI pauses between its moves."));
 
+    this.root.appendChild(element("div", "section", "Sound"));
+    for (const [field, label] of [["masterVolume", "Master volume"], ["effectsVolume", "Effects"]] as const) {
+      const row = element("label", "slider-row");
+      const slider = element("input", "slider");
+      slider.type = "range";
+      slider.min = "0";
+      slider.max = "1";
+      slider.step = "0.05";
+      slider.value = String(data[field]);
+      const value = element("span", "value", `${Math.round(data[field] * 100)}%`);
+      slider.addEventListener("input", () => {
+        settings.update({ ...settings.data, [field]: Number(slider.value) });
+        value.textContent = `${Math.round(Number(slider.value) * 100)}%`;
+      });
+      row.append(element("span", "name", label), slider, value);
+      this.root.appendChild(row);
+    }
+
     this.root.appendChild(element("div", "section", "Camera"));
     for (const [field, label] of [["rotate", "Rotation speed"], ["zoom", "Zoom speed"]] as const) {
       const row = element("label", "slider-row");

@@ -1,0 +1,21 @@
+# Sound sources
+
+Provisional first pass (Claude, 2026-09-27), picked by filename and checked by the numbers only: the user judges by ear and replaces freely. All from the Sonniss #GameAudioGDC bundles (royalty-free, no attribution; see docs/design/audio-sources.md). Cut with `scripts/audio/sfx.sh take`.
+
+| Slot | Source file | Length | Loudness |
+|---|---|---|---|
+| `ui/click` | 2016/extracted/Sonniss.com - GDC 2016- Game Audio Bundle Part 2of6/Digital Rain Lab - Signal Frontiers/Navigation_Button_19.wav | 0.35 s max | -22 LUFS |
+| `ui/coins` | 2020/packs/The Sound Pack Tree - Money/262703 - Drop Couple of Gold Coins on Coins 03.wav | 1.2 s max | -19 LUFS |
+| `battle/swing` | 2019/extracted/Sonniss.com - GDC 2019 - Game Audio Bundle Part 5of8/Sonniss.com - GDC 2019 - Game Audio Bundle Part 5of8/Sound Spark LLC – Gore/Melee_Sword_Attack_04.wav | 0.8 s max | -18 LUFS |
+| `battle/hit` | 2020/packs/SmartSoundFX - Medieval/SWORD Hit Metal 02.wav | 0.8 s max | -16 LUFS |
+| `battle/shield` | 2017/extracted/Sonniss.com - GDC 2017 - Game Audio Bundle Part 3of9/Sonniss.com - GDC 2017 - Game Audio Bundle Part 3of9/Double Trouble Audio - Medieval Armor and Impacts/Plate_Impact_Hard_02.wav | 0.8 s max | -18 LUFS |
+| `battle/cast` | 2020/packs/David Dumais Audio - Spells Magic 1/Magic_Spells_CastShort_Push14.wav | 1.2 s max | -17 LUFS |
+| `battle/spell-hit` | 2020/packs/David Dumais Audio - Spells Magic 1/Magic_Spells_Impact_Creation20.wav | 1.2 s max | -16 LUFS |
+| `battle/heal` | 2019/extracted/Sonniss.com - GDC 2019 - Game Audio Bundle Part 1of8/Sonniss.com - GDC 2019 - Game Audio Bundle Part 1of8/Airborne Sound - Crisis Accents/Impact,Sound Design,Hit,Chime,Resonant Hit,Chime Accent,Tinkle,Fast.wav | 1.2 s max | -20 LUFS |
+| `battle/death` | 2016/extracted/Sonniss.com - GDC 2016- Game Audio Bundle Part 5of6/SoundBits -  Screams & Shouts 2 - Humans/Male_Shout-of-Pain_132.wav | 1.0 s max | -18 LUFS |
+| `battle/fled` | 2017/extracted/Sonniss.com - GDC 2017 - Game Audio Bundle Part 8of9/Sonniss.com - GDC 2017 - Game Audio Bundle Part 8of9/Tovusound - Edward – Foleyart Collection Add-On Extended Footsteps/015_Foley_Footsteps_Asphalt_Boot_Walk_Fast_Run_Jog_Close.wav | 1.2 s max | -21 LUFS |
+| `map/march` | 2015/extracted/Sonniss.com - GDC - Game Audio Bundle 2015/Coll Anderson - Battle Crowd/EFX EXT GROUP Marching Puddle Mud 01.wav | 1.6 s max | -22 LUFS |
+| `map/battle` | 2015/extracted/Sonniss.com - GDC - Game Audio Bundle 2015/Coll Anderson - Battle Crowd/EFX EXT GROUP Battle Cry 03 A.wav | 2.2 s max | -18 LUFS |
+| `map/capture` | 2019/extracted/Sonniss.com - GDC 2019 - Game Audio Bundle Part 5of8/Sonniss.com - GDC 2019 - Game Audio Bundle Part 5of8/Rock The Speakerbox - Hero/HERO - DESIGNED - SWORD Unsheathe.wav | 1.5 s max | -18 LUFS |
+| `stinger/victory` | 2015/extracted/Sonniss.com - GDC - Game Audio Bundle 2015/Coll Anderson - Battle Crowd/EFX EXT GROUP Battle Celebration 02 A.wav | 3.5 s max | -18 LUFS |
+| `stinger/defeat` | 2015/extracted/Sonniss.com - GDC - Game Audio Bundle 2015/Coll Anderson - Battle Crowd/EFX EXT GROUP Battle End Agony Moans 02 A.wav | 3.5 s max | -20 LUFS |
