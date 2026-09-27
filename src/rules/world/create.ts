@@ -4,7 +4,7 @@ import type { Commitment } from "#rules/forks";
 import { generateMap } from "#rules/map";
 import type { StructureSite } from "#rules/map";
 import { spellsOf } from "#rules/spells";
-import { MERCENARY_STOCKS, MERCHANT_STOCK } from "#rules/structures";
+import { MERCENARY_STOCKS, MERCHANT_RESTOCK_TURNS, merchantWares } from "#rules/structures";
 import { GUARDIAN_ID } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
 import { hexDistance } from "#rules/hex";
@@ -114,7 +114,7 @@ function structureAt(site: StructureSite, all: readonly StructureSite[]): Struct
       return { ...base, kind: "mercenaries", stock: [...(MERCENARY_STOCKS[camps.indexOf(site) % MERCENARY_STOCKS.length] ?? [])] };
     }
     case "merchant":
-      return { ...base, kind: "merchant", stock: [...MERCHANT_STOCK] };
+      return { ...base, kind: "merchant", wares: merchantWares(site.id, 1), restocksOn: 1 + MERCHANT_RESTOCK_TURNS };
     case "mage":
       return { ...base, kind: "mage", stock: spellsOf("neutral").map((s) => s.id) };
   }

@@ -457,8 +457,7 @@ export class MapView {
         model = { group, label };
         this.structures.set(structure.id, model);
       }
-      const name = STRUCTURES[structure.kind].name;
-      model.label.textContent = structure.kind === "mercenaries" ? `${name} · ${structure.stock.length} to hire` : name;
+      model.label.textContent = STRUCTURES[structure.kind].name;
     }
   }
 

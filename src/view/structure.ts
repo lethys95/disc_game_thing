@@ -1,6 +1,6 @@
 import { itemById } from "#rules/items";
 import { manaColorOf, spellById } from "#rules/spells";
-import { hireCost, resalePrice, STRUCTURES } from "#rules/structures";
+import { hireCost, MERCHANT_STAPLES, resalePrice, STRUCTURES } from "#rules/structures";
 import { leadershipOf } from "#rules/world/leaders";
 import { maxHpOf } from "#rules/world/record";
 import { member, playerOf } from "#rules/world/state";
@@ -70,7 +70,6 @@ export class StructureScreen implements KeyLayer {
   }
 
   private hires(world: World, leader: Leader, camp: MercenaryCamp, mayAct: boolean): HTMLElement[] {
-    if (camp.stock.length === 0) return [element("div", "note", "Nobody is left to hire.")];
     return camp.stock.map((hire, index) => {
       const row = element("div", "offer-row");
       const recruit = { ...member(hire.defId, { row: 0, col: 0 }), level: hire.level };
@@ -88,19 +87,19 @@ export class StructureScreen implements KeyLayer {
   }
 
   private wares(world: World, leader: Leader, merchant: Merchant, mayAct: boolean): HTMLElement[] {
-    const rows: HTMLElement[] = [element("div", "section", "For sale")];
-    if (merchant.stock.length === 0) rows.push(element("div", "note", "Sold out."));
-    for (const id of merchant.stock) {
+    const offer = (id: string) => {
       const item = itemById(id);
-      rows.push(
-        this.row(item.name, item.describe, orderButton("small", ["Buy · ", gold(item.price)], {
-          mayAct,
-          problem: buyItemProblem(world, leader.id, id),
-          explain: "Into the leader's bag; put it on from the leader's screen.",
-          give: () => this.options.act({ type: "buyItem", leaderId: leader.id, item: id }),
-        })),
-      );
-    }
+      return this.row(item.name, item.describe, orderButton("small", ["Buy · ", gold(item.price)], {
+        mayAct,
+        problem: buyItemProblem(world, leader.id, id),
+        explain: item.use ? "Into the leader's bag; use it from the leader's screen." : "Into the leader's bag; put it on from the leader's screen.",
+        give: () => this.options.act({ type: "buyItem", leaderId: leader.id, item: id }),
+      }));
+    };
+    const rows: HTMLElement[] = [element("div", "section", "Always in stock"), ...MERCHANT_STAPLES.map(offer)];
+    rows.push(element("div", "section", "Wares"), element("div", "note", `New wares replace these on turn ${merchant.restocksOn}.`));
+    if (merchant.wares.length === 0) rows.push(element("div", "note", "Sold out until then."));
+    rows.push(...merchant.wares.map(offer));
     rows.push(element("div", "section", "Your bag"));
     if (leader.bag.length === 0) rows.push(element("div", "note", "Nothing carried. Worn items must come off (the leader's screen) before they sell."));
     for (const id of leader.bag) {

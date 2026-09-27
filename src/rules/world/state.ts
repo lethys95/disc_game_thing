@@ -178,16 +178,18 @@ interface StructureBase {
   readonly hex: Hex;
 }
 
-/** Hires out what's left of its stock. */
+/** Hires out its units, as many as are paid for. */
 export interface MercenaryCamp extends StructureBase {
   readonly kind: "mercenaries";
-  stock: Hire[];
+  readonly stock: readonly Hire[];
 }
 
-/** Sells what's left of its stock; what it buys joins the stock. */
+/** Sells the staples always, and its wares until they're gone or replaced; what it buys joins the wares. */
 export interface Merchant extends StructureBase {
   readonly kind: "merchant";
-  stock: string[];
+  wares: string[];
+  /** The turn new wares replace these. */
+  restocksOn: number;
 }
 
 /** Sells spells; each player learns each once, and the stock never runs out. */
@@ -257,13 +259,15 @@ export type WorldAction =
   | { type: "upgradeCity"; cityId: string }
   /** Buy a unit-type upgrade: units that become that type from now on receive it. */
   | { type: "upgrade"; upgrade: string }
-  /** At a mercenary camp the warband stands on: hire the stock's `index`th unit into the warband. */
+  /** At a mercenary camp the warband stands on: hire one of the stock's `index`th kind into the warband. */
   | { type: "hire"; leaderId: string; index: number; tile?: Tile }
   /** At a merchant the warband stands on: buy an item into the leader's bag, or sell one from it. */
   | { type: "buyItem"; leaderId: string; item: string }
   | { type: "sellItem"; leaderId: string; item: string }
   /** At a mage merchant the warband stands on: learn a spell. */
-  | { type: "buySpell"; leaderId: string; spell: string };
+  | { type: "buySpell"; leaderId: string; spell: string }
+  /** Use a consumable from the leader's bag (a potion), wherever the warband is. */
+  | { type: "useItem"; leaderId: string; item: string };
 
 export type WorldEvent =
   | { type: "moved"; leaderId: string; path: readonly Hex[] }
@@ -295,6 +299,8 @@ export type WorldEvent =
   | { type: "hired"; leaderId: string; defId: string }
   | { type: "bought"; leaderId: string; item: string }
   | { type: "sold"; leaderId: string; item: string; gold: number }
+  | { type: "used"; leaderId: string; item: string }
+  | { type: "restocked"; structureId: string }
   | { type: "worldEnd"; winner: PlayerId }
   | { type: "eliminated"; player: PlayerId };
 

@@ -9,7 +9,7 @@ import type { World } from "#rules/world/state";
  * from another version is refused (docs/decisions.md). Bump SAVE_VERSION whenever the World's shape changes;
  * `tests/save.test.ts` fails until you do.
  */
-export const SAVE_VERSION = 18;
+export const SAVE_VERSION = 19;
 
 export interface Save {
   readonly format: "disc-save";
@@ -41,7 +41,7 @@ export function unknownContent(world: World): string | null {
   const structures = [...world.structures, ...world.players.flatMap((p) => p.memory.structures)];
   const hires = structures.flatMap((s) => (s.kind === "mercenaries" ? s.stock.map((h) => h.defId) : []));
   const units = [...squads.flat(), ...world.players.flatMap((p) => p.graveyard)].map((m) => m.defId).concat(hires);
-  const items = [...world.leaders.flatMap((l) => [...l.worn, ...l.bag]), ...structures.flatMap((s) => (s.kind === "merchant" ? s.stock : []))];
+  const items = [...world.leaders.flatMap((l) => [...l.worn, ...l.bag]), ...structures.flatMap((s) => (s.kind === "merchant" ? s.wares : []))];
   const spells = [...world.players.flatMap((p) => p.spells), ...structures.flatMap((s) => (s.kind === "mage" ? s.stock : []))];
   const research = world.players.flatMap((p) => p.research);
   const missing = [

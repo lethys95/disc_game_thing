@@ -7,6 +7,7 @@ import type { Leader, World, WorldAction } from "#rules/world/state";
 import { button, element, orderButton } from "#view/dom";
 import { memberRow } from "#view/members";
 import type { KeyLayer } from "#view/input";
+import { useItemProblem } from "#rules/world/items";
 
 export interface LeaderScreenOptions {
   readonly act: (action: WorldAction) => void;
@@ -30,7 +31,7 @@ export class LeaderScreen implements KeyLayer {
   }
 
   /** The equipment slots (the user's 2024 layout) with what's worn, and the bag: click to put on or take off. */
-  private equipment(leader: Leader, mayAct: boolean): HTMLElement {
+  private equipment(world: World, leader: Leader, mayAct: boolean): HTMLElement {
     const box = element("div", "equipment");
     box.appendChild(element("div", "section", "Equipment"));
     for (const slot of Object.keys(SLOT_CAPACITY).filter(isSlot)) {
@@ -49,7 +50,7 @@ export class LeaderScreen implements KeyLayer {
       }
     }
     box.appendChild(element("div", "section", "Bag"));
-    if (leader.bag.length === 0) box.appendChild(element("div", "note", "Nothing carried. Dungeons and beaten warbands give items."));
+    if (leader.bag.length === 0) box.appendChild(element("div", "note", "Nothing carried. Dungeons, beaten warbands and merchants give items."));
     leader.bag.forEach((id) => {
       const item = itemById(id);
       const row = element("div", "slot-row");
@@ -57,6 +58,9 @@ export class LeaderScreen implements KeyLayer {
       if (item.slot) {
         const problem = equipProblem(leader, id);
         row.prepend(orderButton("small", `${item.name} · put on`, { mayAct, problem, explain: item.describe, give: () => this.options.act({ type: "equip", leaderId: leader.id, item: id }) }));
+      } else if (item.use) {
+        const problem = useItemProblem(world, leader.id, id);
+        row.prepend(orderButton("small", `${item.name} · use`, { mayAct, problem, explain: item.describe, give: () => this.options.act({ type: "useItem", leaderId: leader.id, item: id }) }));
       } else row.prepend(element("span", "name", item.name));
       box.appendChild(row);
     });
@@ -114,7 +118,7 @@ export class LeaderScreen implements KeyLayer {
     side.appendChild(element("div", "section", "Warband"));
     side.appendChild(element("div", "note", `Leadership ${leadershipOf(leader)} · ${movementOf(leader)} movement per turn`));
     for (const m of leader.squad) side.appendChild(memberRow(m, leader, playerOf(world, leader.player).commitment));
-    side.appendChild(this.equipment(leader, mayAct));
+    side.appendChild(this.equipment(world, leader, mayAct));
 
     const body = element("div", "capitol-body");
     body.append(tree, side);
