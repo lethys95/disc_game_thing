@@ -1,5 +1,5 @@
 import { autoplay } from "#rules/ai";
-import { CAMP_REGROWTH_TURNS, CITY_ARMOR_PER_TIER } from "#rules/balance";
+import { CITY_ARMOR_PER_TIER } from "#rules/balance";
 import { sameHex } from "#rules/hex";
 import { createBattle } from "#rules/battle/engine";
 import type { Placement } from "#rules/battle/engine";
@@ -7,13 +7,13 @@ import type { Battle, Side } from "#rules/battle/types";
 import { sameTile } from "#rules/battle/grid";
 import { xpValue } from "#rules/progression";
 import { GUARDIAN_ID } from "#rules/units/index";
-import { freeTile, growSquad, newcomer } from "#rules/world/economy";
+import { growSquad } from "#rules/world/economy";
 import type { Held } from "#rules/world/economy";
-import { leadershipOf } from "#rules/world/leaders";
 import { isLeaderOf, placementOf } from "#rules/world/record";
 import type { MoveTarget } from "#rules/world/movement";
 import { updateVision } from "#rules/world/vision";
-import { alive, cityById, lairById, leaderAt, leaderById, leaderUnit, playerOf, unitId } from "#rules/world/state";
+import { bury, clearLair, settleWarbands } from "#rules/world/fate";
+import { alive, cityById, lairById, leaderAt, leaderById, playerOf, unitId } from "#rules/world/state";
 import type { City, Defender, Enchantment, Engagement, Leader, PlayerId, SquadMember, World, WorldEvent, WorldStep } from "#rules/world/state";
 
 /**
@@ -112,19 +112,10 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
   const attackers = remaining(attacker.squad, ATTACKER, battle, attacker);
   const defenders = remaining(defending.squad, DEFENDER, battle, defending.leader);
 
-  // A player's dead go to their graveyard (not the Guardian, never neutrals, and not a fallen leader who stays).
-  const buried = (before: readonly SquadMember[], after: readonly SquadMember[]) => before.filter((m) => m.defId !== GUARDIAN_ID && !after.some((a) => sameTile(a.tile, m.tile)));
-  const graves: [PlayerId | null, SquadMember[]][] = [
-    [attacker.player, buried(attacker.squad, attackers)],
-    [defending.player, buried(defending.squad, defenders)],
-  ];
-  for (const [player, dead] of graves) {
-    if (player === null) continue;
-    for (const m of dead) {
-      playerOf(draft, player).graveyard.push({ defId: m.defId, fellOnTurn: draft.turn, marks: m.marks, level: m.level });
-      events.push({ type: "fell", player, defId: m.defId });
-    }
-  }
+  // The dead leave their squads (a fallen leader stays, to be revived).
+  const gone = (before: readonly SquadMember[], after: readonly SquadMember[]) => before.filter((m) => !after.some((a) => sameTile(a.tile, m.tile)));
+  bury(draft, attacker.player, gone(attacker.squad, attackers), events);
+  bury(draft, defending.player, gone(defending.squad, defenders), events);
 
   attacker.squad = attackers;
   const defender = engagement.defender;
@@ -133,20 +124,7 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
   } else if (defender.kind === "lair") {
     const lair = lairById(draft, defender.lairId);
     lair.guards = defenders;
-    if (lair.guards.length === 0 && attacker.squad.length > 0) {
-      if (lair.kind === "camp") {
-        lair.regrowsOn = draft.turn + CAMP_REGROWTH_TURNS;
-        events.push({ type: "cleared", lairId: lair.id, player: attacker.player });
-      } else if (lair.reward && !lair.looted) {
-        lair.looted = true;
-        playerOf(draft, attacker.player).gold += lair.reward.gold;
-        const joins = lair.reward.joins;
-        const tile = joins ? freeTile(attacker.squad, joins) : null;
-        if (joins && tile && attacker.squad.length < leadershipOf(attacker)) attacker.squad.push(newcomer(draft, attacker.player, joins, tile));
-        if (lair.reward.item) attacker.bag.push(lair.reward.item);
-        events.push({ type: "looted", lairId: lair.id, player: attacker.player, gold: lair.reward.gold, joins: joins && tile ? joins : null, item: lair.reward.item });
-      }
-    }
+    if (lair.guards.length === 0 && attacker.squad.length > 0) clearLair(draft, lair, attacker.player, attacker, events);
   } else {
     const city = cityById(draft, defender.cityId);
     const guardianBefore = city.garrison.some((m) => m.defId === GUARDIAN_ID);
@@ -177,24 +155,9 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
     }
   }
 
-  // Spoils (provisional, as in D2): a warband wiped out by another warband leaves its items to the victor's leader.
-  const beaten = draft.leaders.filter((l) => l.squad.length === 0 && (l.id === attacker.id || (engagement.defender.kind === "leader" && l.id === engagement.defender.leaderId)));
-  const victor = draft.leaders.find((l) => l.squad.length > 0 && (l.id === attacker.id || (engagement.defender.kind === "leader" && l.id === engagement.defender.leaderId)));
-  for (const loser of beaten) {
-    const items = [...loser.worn, ...loser.bag];
-    if (!victor || items.length === 0) continue;
-    victor.bag.push(...items);
-    events.push({ type: "spoils", leaderId: victor.id, items });
-  }
-  for (const leader of draft.leaders) {
-    if (leader.squad.length === 0) {
-      events.push({ type: "leaderFell", leaderId: leader.id, player: leader.player });
-      continue;
-    }
-    const own = leaderUnit(leader);
-    if (own && !alive(own) && leader.fellOnTurn === null) leader.fellOnTurn = draft.turn;
-  }
-  draft.leaders = draft.leaders.filter((l) => l.squad.length > 0);
+  // A warband wiped out by the other side's warband leaves it its items.
+  const fighters = [attacker.id, ...(engagement.defender.kind === "leader" ? [engagement.defender.leaderId] : [])];
+  settleWarbands(draft, events, (beaten) => (fighters.includes(beaten.id) ? draft.leaders.find((l) => fighters.includes(l.id) && l.id !== beaten.id) : undefined));
   draft.engagement = null;
   updateVision(draft);
   return { world: draft, events };

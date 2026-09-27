@@ -11,6 +11,7 @@ import { placementOf } from "#rules/world/record";
 import { leaderById, playerOf } from "#rules/world/state";
 import type { Leader, World } from "#rules/world/state";
 import { autoplay } from "#rules/ai";
+import { updateVision } from "#rules/world/vision";
 import { act, p, start, twoPlayers, unit, until, withGold } from "#tests/helpers";
 import { legalActions } from "#rules/battle/engine";
 import { describe, expect, test } from "vitest";
@@ -100,5 +101,21 @@ describe("the user's items (2026-09-27)", () => {
     expect(recruit?.marks.map((m) => m.effect.def)).toEqual(["holy_water"]);
     const battle = until(start([{ ...placementOf(recruit!, undefined), hp: 40 }], [p("congregant", 2, 2)]), "0.0.0");
     expect(legalActions(battle).map((a) => a.abilityId)).toContain("holy_water");
+  });
+});
+
+describe("deaths on the map, whoever caused them (world/fate.ts)", () => {
+  test("a warband a spell wipes out leaves its items to the caster's nearest warband", () => {
+    let w = createWorld(1, twoPlayers([congregants, [{ defId: "congregant", tile: { row: 0, col: 1 } }]], [{}, {}], ["nexus", "jilliath"]));
+    const target = leaderById(w, "leader1").hex;
+    const beside = neighbors(target).find((h) => stepCost(w.map, h) !== null && !w.cities.some((c) => sameHex(c.hex, h)) && !w.lairs.some((l) => sameHex(l.hex, h)));
+    if (!beside) throw new Error("no free hex");
+    w = withLeader(withLeader(w, "leader0", { hex: beside }), "leader1", { worn: ["iron_helm"], squad: [{ ...leaderById(w, "leader1").squad[0]!, hp: 5 }] });
+    w = { ...w, players: w.players.map((pl, i) => (i === 0 ? { ...pl, mana: { red: 0, teal: 100 }, spells: ["lightning_strike"] } : pl)) };
+    const next = structuredClone(w);
+    updateVision(next);
+    const step = applyWorldAction(next, { type: "castSpell", spell: "lightning_strike", at: target });
+    expect(step.world.leaders.some((l) => l.id === "leader1")).toBe(false);
+    expect(leaderById(step.world, "leader0").bag).toEqual(["iron_helm"]);
   });
 });

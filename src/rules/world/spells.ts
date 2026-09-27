@@ -2,12 +2,11 @@ import { hexDistance, hexKey, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { spellById } from "#rules/spells";
 import type { SpellDef } from "#rules/spells";
-import { CAMP_REGROWTH_TURNS } from "#rules/balance";
-import { GUARDIAN_ID } from "#rules/units/index";
 import { isLeaderOf } from "#rules/world/record";
-import { alive, capitolOf, leaderUnit, playerOf } from "#rules/world/state";
+import { alive, capitolOf, playerOf } from "#rules/world/state";
 import type { Lair, Leader, PlayerId, SquadMember, World, WorldEvent } from "#rules/world/state";
 import { sightOf } from "#rules/world/vision";
+import { bury, clearLair, nearestWarband, settleWarbands } from "#rules/world/fate";
 
 /** Learning and casting overworld spells (`rules/spells.ts`): who may, on what, and what it does to the world. */
 
@@ -93,7 +92,8 @@ export function castSpell(world: World, id: string, at: Hex, events: WorldEvent[
   const effect = spell.effect;
   if (effect.kind === "damage") {
     for (const group of victimGroups(world, id, at)) strike(world, group, effect.amount, side, events);
-    world.leaders = world.leaders.filter((l) => l.squad.length > 0);
+    // What a spell wipes out leaves its items to the caster's warband nearest to where it struck.
+    settleWarbands(world, events, () => nearestWarband(world, side, at));
     return;
   }
   const enchantment = { spell: id, effect: effect.effect, until: world.turn + effect.turns - 1 };
@@ -104,44 +104,24 @@ export function castSpell(world: World, id: string, at: Hex, events: WorldEvent[
   }
 }
 
-/**
- * Spell damage on the map kills as a battle would: the dead go to their owner's graveyard, a fallen leader stays in
- * its squad at 0 HP while anyone else stands, and a warband with nobody left falls. A lair emptied by a spell counts
- * as cleared by the caster (provisional: a camp starts regrowing, a dungeon's reward is looted; no XP either way).
- */
+/** Spell damage on the map kills as a battle would (`world/fate.ts`); no XP either way. */
 function strike(world: World, group: Group, amount: number, caster: PlayerId, events: WorldEvent[]): void {
   const squad = squadOf(group);
   const leader = group.kind === "warband" ? group.leader : undefined;
+  const dead: SquadMember[] = [];
   const after = squad.flatMap((m): SquadMember[] => {
     if (!alive(m)) return [m];
     const hp = m.hp - amount;
     if (hp > 0) return [{ ...m, hp }];
     if (isLeaderOf(m, leader)) return [{ ...m, hp: 0 }];
-    if (group.kind === "warband" && m.defId !== GUARDIAN_ID) {
-      playerOf(world, group.owner).graveyard.push({ defId: m.defId, fellOnTurn: world.turn, marks: m.marks, level: m.level });
-      events.push({ type: "fell", player: group.owner, defId: m.defId });
-    }
+    dead.push(m);
     return [];
   });
   if (group.kind === "lair") {
     group.lair.guards = after;
-    if (after.length > 0) return;
-    if (group.lair.kind === "camp") {
-      group.lair.regrowsOn = world.turn + CAMP_REGROWTH_TURNS;
-      events.push({ type: "cleared", lairId: group.lair.id, player: caster });
-    } else if (group.lair.reward && !group.lair.looted) {
-      group.lair.looted = true;
-      playerOf(world, caster).gold += group.lair.reward.gold;
-      events.push({ type: "looted", lairId: group.lair.id, player: caster, gold: group.lair.reward.gold, joins: null, item: null });
-    }
+    if (after.length === 0) clearLair(world, group.lair, caster, nearestWarband(world, caster, group.lair.hex), events);
     return;
   }
-  const warband = group.leader;
-  warband.squad = after.some(alive) ? after : [];
-  if (warband.squad.length === 0) {
-    events.push({ type: "leaderFell", leaderId: warband.id, player: warband.player });
-    return;
-  }
-  const own = leaderUnit(warband);
-  if (own && !alive(own) && warband.fellOnTurn === null) warband.fellOnTurn = world.turn;
+  bury(world, group.owner, dead, events);
+  group.leader.squad = after.some(alive) ? after : [];
 }
