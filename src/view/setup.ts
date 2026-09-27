@@ -14,7 +14,9 @@ import type { PlayerSetup } from "#rules/world/create";
 import { art } from "#view/art";
 import { colorPair, COLOR_HEX, COLOR_NAMES } from "#view/colors";
 import { FORMATIONS, PRESETS } from "#rules/units/presets";
-import { element } from "#view/dom";
+import { button, element } from "#view/dom";
+import { defaultMapSize, isMapSize, MAP_SIZES } from "#rules/map";
+import type { MapSize } from "#rules/map";
 
 export type Squads = readonly [readonly Placement[], readonly Placement[]];
 
@@ -27,7 +29,7 @@ export interface SetupHandlers {
   onChange(squads: Squads, colors: Colors): void;
   onFight(squads: Squads, playerSide: Side | null, colors: Colors): void;
   /** Onto a map: you (player 0) against the enemy squad (player 1) and any extra AI opponents. */
-  onMarch(players: readonly PlayerSetup[]): void;
+  onMarch(players: readonly PlayerSetup[], size: MapSize): void;
   onLoad(): void;
 }
 
@@ -55,6 +57,8 @@ export class Setup {
   private active: Side = 0;
   private brush: string | null = null;
   private watch = false;
+  /** The map size picked; null: the default for the number of players. */
+  private size: MapSize | null = null;
 
   constructor(
     private readonly root: HTMLElement,
@@ -159,11 +163,15 @@ export class Setup {
     const march = element("button", "action fight", "March");
     march.title = this.extras.length === 0 ? "Take both squads onto a map: your leader against the enemy's" : `Onto a map: you against ${this.extras.length + 1} AI opponents`;
     march.disabled = !ready;
-    march.addEventListener("click", () => this.handlers.onMarch(this.players()));
+    march.addEventListener("click", () => this.handlers.onMarch(this.players(), this.mapSize()));
     const load = element("button", "action", "Load game");
     load.addEventListener("click", () => this.handlers.onLoad());
     footer.append(mode, fight, march, load);
     this.root.appendChild(footer);
+  }
+
+  private mapSize(): MapSize {
+    return this.size ?? defaultMapSize(this.extras.length + 2);
   }
 
   /** Everyone on the map: you, the enemy squad, then the extra opponents, each with a color of its own. */
@@ -236,7 +244,21 @@ export class Setup {
       this.extras.push({ faction: "jilliath", formation: FORMATIONS.jilliath[0]?.name ?? "" });
       this.render();
     });
-    panel.appendChild(add);
+    // Map size (user, 2026-09-27): the default grows with the number of players until one is picked.
+    const sizes = element("div", "extra map-size");
+    sizes.appendChild(element("span", "note", "Map size:"));
+    for (const [size, { name, radius }] of Object.entries(MAP_SIZES)) {
+      if (!isMapSize(size)) continue;
+      const chosen = this.mapSize() === size;
+      const option = button(`doctrine small${chosen ? " selected" : ""}`, name, () => {
+        this.size = size;
+        this.render();
+      });
+      option.title = `${3 * radius * (radius + 1) + 1} hexes${this.size === null && chosen ? " (the default for this many players)" : ""}`;
+      sizes.appendChild(option);
+    }
+    sizes.prepend(add);
+    panel.appendChild(sizes);
     return panel;
   }
 

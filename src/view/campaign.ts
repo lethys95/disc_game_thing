@@ -39,6 +39,8 @@ import { plainKey } from "#view/input";
 import type { KeyLayer } from "#view/input";
 import { StructureScreen } from "#view/structure";
 import { structureAt } from "#rules/world/structures";
+import { defaultMapSize } from "#rules/map";
+import type { MapSize } from "#rules/map";
 
 const AI_STEP_MS = 350;
 
@@ -179,10 +181,10 @@ export class Campaign implements KeyLayer {
   }
 
   /** A new game; player 0 is the human at this screen, the others are played by the AI. */
-  start(setups: readonly PlayerSetup[], seed: number): void {
+  start(setups: readonly PlayerSetup[], seed: number, size?: MapSize): void {
     this.stop();
     this.seed = seed;
-    this.world = createWorld(seed, setups);
+    this.world = createWorld(seed, setups, size ?? defaultMapSize(setups.length));
     this.view.viewer = this.viewer;
     this.view.setColors(setups.map((s) => s.color));
     this.view.build(this.world.map);

@@ -145,3 +145,6 @@ Mercenary camps, merchants and mage merchants are places on the map (`rules/stru
 **2026-09-27 — Structures, second pass (the user's answers to #54).**
 Mercenaries never run out. Merchants sell staples always (potions, the first consumables: used from the leader's bag on the map) and a few wares picked by deterministic noise on the merchant and the turn, replaced every few rounds, so they differ between merchants and over a game; sold items join the wares until the next change. The count scales with the map: one of each kind per 60 hexes; the first of each on contested ground, extras anywhere 3+ hexes from every Capitol. Noise moved to `rules/noise.ts` for the map and the merchants.
 
+**2026-09-27 — Map sizes at setup (M40, user).**
+Four sizes (radius 5–8); the default grows with the number of players (five or six now get Large, not Medium). Neutral counts are defined on the default size for the player count and scale with area on the others, so default maps are the same as before for two to four players. Sims take `SIZE=`, routes `&size=`.
+

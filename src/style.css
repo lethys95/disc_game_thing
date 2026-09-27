@@ -423,3 +423,5 @@ button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }
 .equipment .slot-name { width: 84px; color: var(--muted); font-size: 12px; }
 .offer-row { display: flex; align-items: flex-start; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--rule); }
 .offer-row > :first-child { flex: 1; }
+.setup-extras .map-size { gap: 6px; align-items: center; }
+.setup-extras .map-size .note { margin-left: 14px; }

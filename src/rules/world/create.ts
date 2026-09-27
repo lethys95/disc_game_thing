@@ -1,7 +1,8 @@
 import { LEADER_MOVEMENT, STARTING_GOLD } from "#rules/balance";
 import type { Placement } from "#rules/battle/engine";
 import type { Commitment } from "#rules/forks";
-import { generateMap } from "#rules/map";
+import { defaultMapSize, generateMap } from "#rules/map";
+import type { MapSize } from "#rules/map";
 import type { StructureSite } from "#rules/map";
 import { spellsOf } from "#rules/spells";
 import { MERCENARY_STOCKS, MERCHANT_RESTOCK_TURNS, merchantWares } from "#rules/structures";
@@ -27,8 +28,8 @@ export interface PlayerSetup {
 }
 
 /** A game for two or more players; each starts at its own Capitol, player 0 moves first. */
-export function createWorld(seed: number, setups: readonly PlayerSetup[]): World {
-  const map = generateMap(seed, setups.length);
+export function createWorld(seed: number, setups: readonly PlayerSetup[], size: MapSize = defaultMapSize(setups.length)): World {
+  const map = generateMap(seed, setups.length, size);
   const leaders = setups.map((setup, player): Leader => {
     const first = setup.squad[0];
     const start = map.starts[player];
