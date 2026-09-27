@@ -10,13 +10,16 @@ Mechanic-wise, we're probably going to do a split between disabler and nuke. Our
 
 ### 1a
 
-name:
+name: (placeholder: Grove mage 1)
 
-description:
+description: (Claude, from your intent above) the double-edged nuke at tier 1: *Cycle* (placeholder name, every turn,
+ranged, any unit). On an enemy: medium damage, then it heals back a third of it at the start of its next turn. On an
+ally: a heal, then a small damage over time for part of it. The damage side is the stronger one.
 
 image_gen_description_portrait:
 
-implementation_details:
+implementation_details: (Claude) two new effects ("heal back later", "harm over time"), both with the caster as source;
+fits the existing hooks. Stats: health low · damage medium · armor none · initiative medium.
 
 
 
