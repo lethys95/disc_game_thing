@@ -208,6 +208,24 @@ const GRASS_DENSITY = [60, 16, 34, 0] as const;
 /** No grass right around a place (a city, a camp, a dungeon): its model stands on bare ground. */
 const CLEARING = 0.5;
 
+/**
+ * Water: a deep, clear blue whose surface ripples in the wind (animated noise, its slope turned into the normal),
+ * glossy enough to catch the sky.
+ */
+function waterMaterial(): THREE.MeshStandardNodeMaterial {
+  const material = new THREE.MeshStandardNodeMaterial({ roughness: 0.28, metalness: 0, transparent: true, opacity: 0.92 });
+  const p = positionWorld.xz;
+  const wave = (x: Vec2Node) => mx_fractal_noise_float(vec3(x.mul(1.6), time.mul(0.35)), 3, 2.0, 0.5);
+  const step = 0.02;
+  const here = wave(p);
+  const slopeX = wave(p.add(vec2(step, 0))).sub(here).div(step);
+  const slopeZ = wave(p.add(vec2(0, step))).sub(here).div(step);
+  material.normalNode = transformNormalToView(vec3(slopeX.mul(-0.025), 1, slopeZ.mul(-0.025)).normalize());
+  // Brighter where the ripples rise, as light catches their crests.
+  material.colorNode = mix(vec3(0.02, 0.07, 0.13), vec3(0.05, 0.14, 0.23), smoothstep(-0.3, 0.5, here));
+  return material;
+}
+
 /** A tuft: five blades leaning out from one root, so it reads as a clump from the map's height. */
 function grassTuft(): THREE.BufferGeometry {
   const positions: number[] = [];
@@ -286,6 +304,9 @@ export class Landscape {
       .add(layerNode(layer("hills"), uv).mul(w.z))
       .add(layerNode(layer("mountain"), uv).mul(w.w));
     ground = ground.mul(mix(float(1), float(0.45), attribute<"float">("groundWet", "float")));
+    // A pale, muddy shore where the land dips to the water.
+    const shore = smoothstep(WATER_LEVEL + 0.07, WATER_LEVEL + 0.005, positionWorld.y);
+    ground = mix(ground, vec3(0.36, 0.31, 0.22).mul(ground.dot(vec3(0.3, 0.6, 0.1)).mul(1.6).add(0.4)), shore.mul(0.7));
     // Broad patches of lighter and darker ground break the texture's evenness at the map's scale.
     ground = ground.mul(sin(world.x.mul(0.37).add(sin(world.y.mul(0.29)).mul(2.3))).mul(0.12).add(1));
     const hex = hexOfNode(world);
@@ -313,10 +334,7 @@ export class Landscape {
     land.name = "landscape";
     this.group.add(land);
 
-    const water = new THREE.Mesh(
-      new THREE.CircleGeometry(HEX_SIZE * 1.5 * outer, 96).rotateX(-Math.PI / 2),
-      new THREE.MeshStandardMaterial({ color: 0x1d3a52, roughness: 0.35, metalness: 0.2, transparent: true, opacity: 0.88 }),
-    );
+    const water = new THREE.Mesh(new THREE.CircleGeometry(HEX_SIZE * 1.5 * outer, 96).rotateX(-Math.PI / 2), waterMaterial());
     water.position.y = WATER_LEVEL;
     water.receiveShadow = true;
     this.group.add(water);
