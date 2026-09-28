@@ -27,6 +27,8 @@ src/rules/
 src/view/
   stage.ts           the one renderer/camera/bloom/labels/tween loop
   scene.ts, map.ts   BattleScene, MapView
+  landscape.ts       the map's ground: one continuous mesh, blended terrain textures, grass; grid, fog and highlights drawn
+                     by its shader from a per-hex state texture (so fog/highlight changes never touch geometry)
   app.ts, campaign.ts battle and map controllers (campaign: game flow, input, AI turns, what goes where)
   map-panels.ts      beside the map: your warbands, your cities, the end banner
   map-text.ts        the hint line and news, pure text over the known world (tested)
