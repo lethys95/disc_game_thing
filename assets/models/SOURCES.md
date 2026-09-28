@@ -12,9 +12,10 @@ Every model here was generated locally; the recipe regenerates it exactly.
 | `structure/mercenaries.glb` | seed 3 | TRELLIS.2, 1024_cascade | 20000, 2048 px |
 | `node/{gold,blacksmith,mana,cathedral}.glb` | seeds 1, 2, 1, 2 | TRELLIS.2, 1024_cascade | 16000, 2048 px |
 | `lair/dungeon.glb` | seed 2 | TRELLIS.2, 1024_cascade, `--faces 20000 --texture 2048` | 20000, 2048 px |
-| `terrain/tree-{1,2,3}`, `terrain/hill-{1,2}` | seed 1 | TRELLIS.2, 1024_cascade, `--faces 8000 --texture 1024` | 8000, 1024 px |
+| `terrain/tree-{1,2,3,4}` | seeds 4, 1, 1, 1 (the lighter-green prompts, 2026-09-28) | TRELLIS.2, 1024_cascade, `--faces 8000 --texture 1024` | 8000, 1024 px |
+| `terrain/hill-{1,2}` | seed 1 | TRELLIS.2, 1024_cascade, `--faces 8000 --texture 1024` | 8000, 1024 px |
 | `terrain/bush-{1,2}` | seed 1 | TRELLIS.2, 1024_cascade, `--faces 6000 --texture 1024` | 6000, 1024 px |
-| `terrain/tree-4`, `terrain/mountain-{1,2,3}`, `terrain/rock-{1,2}` | seed 1 | TRELLIS.2, 1024_cascade | trees 8000, mountains 16000, rocks 6000; 1024 px |
+| `terrain/mountain-{1,2,3}`, `terrain/rock-{1,2}` | seed 1 | TRELLIS.2, 1024_cascade | mountains 16000, rocks 6000; 1024 px |
 
 TRELLIS.2 runs are offline and never use a stored login (`run_trellis2.sh`). `1536_cascade` runs out of memory on a 24 GB card (hole filling in the decoder); `1024_cascade` is the most that fits. Where Blender's collapse decimation stalls (seams, loose islands), TRELLIS.2's own `--faces` target does the reduction and rebakes the texture.
 

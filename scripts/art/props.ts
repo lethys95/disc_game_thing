@@ -58,10 +58,10 @@ const PROPS: readonly { readonly slot: string; readonly look: string }[] = [
     look: "A dungeon entrance: a dark cave mouth framed by an ancient carved stone archway set into a mossy rock mound, broken steps leading down into the dark, a skull on a pike.",
   },
   // Terrain (user, 2026-09-27: a forest biome to begin with). Several of each, so no two hexes look copied.
-  { slot: "terrain/tree-1", look: "A single broad oak tree with a thick gnarled trunk, exposed roots and a full rounded dark green crown." },
-  { slot: "terrain/tree-2", look: "A single tall dark green pine tree with layered drooping branches." },
+  { slot: "terrain/tree-1", look: "A single broad oak tree with a thick gnarled trunk, exposed roots and a full rounded crown of fresh, sunlit leafy green, lighter toward the top." },
+  { slot: "terrain/tree-2", look: "A single tall pine tree with layered drooping branches of lively mid green needles, sunlit highlights on the upper sides of the boughs." },
   { slot: "terrain/tree-3", look: "A single slender birch-like tree with a pale trunk and a light, airy crown of green leaves." },
-  { slot: "terrain/tree-4", look: "A small cluster of three young dark green fir trees of different heights growing together." },
+  { slot: "terrain/tree-4", look: "A small cluster of three young fir trees of different heights growing together, bright fresh green with lighter new growth at the tips." },
   { slot: "terrain/mountain-1", look: "A single steep rocky mountain peak of jagged grey stone with snow on its summit and scree at its base." },
   { slot: "terrain/mountain-2", look: "A craggy mountain of layered dark grey rock with two sharp summits and a dusting of snow." },
   { slot: "terrain/mountain-3", look: "A broad, weathered granite mountain with cliffs, ledges and a flat snowy top." },

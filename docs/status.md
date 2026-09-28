@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines._
 
-**Updated:** 2026-09-28 (M54 cave bake-off)
+**Updated:** 2026-09-28 (M55 lighter trees)
 
 ## Where we are
 A playable map game for 2–6 players (hotseat viewer vs AIs): two factions (**Jilliath**, **Ral-Vitahl**) with tier-1 melee/support/mage and Nexus mages to tier 3; bandit camps, dungeons with rewards, neutral cities; gold, mana and spells; nodes (gold, Blacksmith, mana, Cathedral); items on leaders; fog of war; retreat and a battle round limit; sound slots with placeholder SFX and music. The AI plays both the map (a list of planners in `world/ai.ts`) and battles, in a web worker.
@@ -10,7 +10,7 @@ A playable map game for 2–6 players (hotseat viewer vs AIs): two factions (**J
 Architecture: `design/architecture.md`; recipes and gotchas: `engineering.md`. `pnpm verify` before calling anything done. Sims: `pnpm sim:many --seeds 1-16 "p1,p2"` (smoke tests only until factions have their lines).
 
 ## Now
-**M54 cave bake-off** (branch `m54-cave-bakeoff`): the user's lighting test, a cave lit by a bonfire and moonlight, in three.js (WebGPU: voxel GI, godrays, bloom) and Godot 4.7; `spikes/engine/README.md`. They look alike; Godot is twice as fast on the integrated chip. Claude's recommendation: stay on three.js, move rendering to WebGPU, keep the rules portable. The user judges the pictures (the comparison page, and `/spikes/engine/shots/` on the dev server). M53: the forest-clearing round.
+**M55 lighter trees**: new tree concepts in fresh, sunlit greens (`scripts/art/props.ts`), TRELLIS.2 meshes, the four tree slots replaced; forests read green from the map camera instead of near black. The old concepts are kept in `art/candidates/props/dark-trees-2026-09-27/`. Earlier today: M53–M54 engine bake-offs (stay on three.js, move to WebGPU for lighting; `spikes/engine/README.md`). GPUs: both capped at 350 W by the user's boot service.
 
 ## Next
 1. Waiting on the user: `questions.md` (unit designs first: Jilliath's tier-2 support and mage, then Grove/Wastes tier 1, then tribes).
