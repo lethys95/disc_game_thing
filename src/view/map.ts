@@ -9,7 +9,7 @@ import { movementPips } from "#view/dom";
 import { CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
 import { hexKey } from "#rules/hex";
 import type { Hex } from "#rules/hex";
-import type { Terrain, WorldMap } from "#rules/map";
+import type { WorldMap } from "#rules/map";
 import type { NodeKind } from "#rules/nodes";
 import { UNITS } from "#rules/units/index";
 import { spellById } from "#rules/spells";
@@ -20,7 +20,8 @@ import { discard, discardChildren } from "#view/stage";
 import type { CameraPose, Stage } from "#view/stage";
 import { STRUCTURES } from "#rules/structures";
 import type { StructureKind } from "#rules/structures";
-import { GROUND_VARIANTS, GroundTextures, HORIZON_MIST, MODEL_CHAINS, Models, skyTexture, TERRAIN_VARIANTS } from "#view/models";
+import { hexAt, Landscape } from "#view/landscape";
+import { GroundTextures, HORIZON_MIST, MODEL_CHAINS, Models, skyTexture, TERRAIN_VARIANTS } from "#view/models";
 
 const SIZE = 1;
 /** How long a warband's figure takes to walk one hex. */
@@ -32,15 +33,6 @@ export function hexPosition(hex: Hex): THREE.Vector3 {
   return new THREE.Vector3(SIZE * Math.sqrt(3) * (hex.q + hex.r / 2), 0, SIZE * 1.5 * hex.r);
 }
 
-const TERRAIN_LOOK: Readonly<Record<Terrain, { color: number; height: number }>> = {
-  // Cool stone, moss and slate rather than one brown (user, #43); the factions' colors stay the only loud ones.
-  plain: { color: 0x3b4236, height: 0.22 },
-  forest: { color: 0x1f3326, height: 0.24 },
-  hills: { color: 0x4b4b44, height: 0.42 },
-  mountain: { color: 0x383b43, height: 0.5 },
-  water: { color: 0x14283c, height: 0.1 },
-};
-
 export interface MapHighlights {
   readonly reachable: ReadonlySet<string>;
   readonly path: readonly Hex[];
@@ -50,24 +42,10 @@ export interface MapHighlights {
 }
 
 interface HexTile {
-  readonly mesh: THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial>;
-  /** The textured ground on top (`assets/art/ground/`), if the terrain has a texture. */
-  readonly cap: THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial> | null;
-  /** How much the cap's texture is lifted (`GROUND_BRIGHTNESS`). */
-  readonly capTint: number;
-  readonly top: number;
-  readonly color: THREE.Color;
-  readonly roughness: number;
-  readonly metalness: number;
+  readonly hex: Hex;
   /** Trees, peaks and mounds on the hex, hidden until it's explored. */
   readonly decoration: THREE.Object3D[];
 }
-
-/** Unexplored hexes are all alike; explored ones out of sight are dimmed (fog of war). */
-const UNEXPLORED = new THREE.Color(0x0d0c0e);
-/** Every unexplored hex has the same height, so the fog doesn't give away mountains and water. */
-const UNEXPLORED_HEIGHT = 0.2;
-const REMEMBERED = 0.4;
 
 interface SiteModel {
   readonly group: THREE.Group;
@@ -85,13 +63,13 @@ interface LeaderFigure {
 }
 
 const NONE = new THREE.Color(0x000000);
-const REACH = new THREE.Color(0x1a1f1c);
-const WALK = new THREE.Color(0xb08a4a);
-const LATER = new THREE.Color(0x4a4230);
-const ATTACK = new THREE.Color(0xd8321f);
-
-/** The forest floor texture is painted dark; lift it so a forest reads green rather than black. */
-const GROUND_BRIGHTNESS: Partial<Record<Terrain, number>> = { forest: 1.45 };
+/** Hex highlights, glowing from the ground (`view/landscape.ts`). */
+const HIGHLIGHTS = {
+  reach: new THREE.Color(0x10140c),
+  walk: new THREE.Color(0x9a7840),
+  later: new THREE.Color(0x3c3526),
+  attack: new THREE.Color(0xc02a18),
+} as const;
 
 /** How much of each terrain prop's height sits below the ground (hills most: it hides their ragged rim). */
 const SINK = { tree: 0.03, mountain: 0.06, hill: 0.3, rock: 0.2, bush: 0.12 } as const;
@@ -187,6 +165,7 @@ export class MapView {
   private readonly siteLayer = new THREE.Group();
   private readonly models = new Models();
   private readonly ground = new GroundTextures();
+  private landscape: Landscape | null = null;
 
   constructor(private readonly stage: Stage) {
     // The sky also lights the scene, once it has loaded.
@@ -235,39 +214,18 @@ export class MapView {
     this.radius = map.radius;
     discardChildren(this.terrain);
     this.hexes.clear();
-    const prism = new THREE.CylinderGeometry(SIZE * 0.95, SIZE * 0.97, 1, 6);
-    // Lying flat, its corners where the prism's are (a cylinder's first corner points along +z).
-    const capShape = new THREE.CircleGeometry(SIZE * 0.95, 6, Math.PI / 2).rotateX(-Math.PI / 2);
+    this.landscape?.dispose();
+    this.landscape = new Landscape(map, this.ground, HIGHLIGHTS);
+    const shape = this.landscape.shape;
+    this.terrain.add(this.landscape.group);
     const trunk = new THREE.MeshStandardMaterial({ color: 0x1a1512, roughness: 1 });
     const canopy = new THREE.MeshStandardMaterial({ color: 0x1a2c1e, roughness: 0.95 });
     const rock = new THREE.MeshStandardMaterial({ color: 0x3c3f47, roughness: 0.9, flatShading: true });
+    const turf = new THREE.MeshStandardMaterial({ color: 0x4b4b44, roughness: 0.95 });
     for (const tile of Object.values(map.tiles)) {
-      const look = TERRAIN_LOOK[tile.terrain];
-      const material = new THREE.MeshStandardMaterial({
-        color: look.color,
-        roughness: tile.terrain === "water" ? 0.25 : 0.95,
-        metalness: tile.terrain === "water" ? 0.35 : 0,
-        emissive: NONE.clone(),
-      });
-      const mesh = new THREE.Mesh(prism, material);
       const at = hexPosition(tile.hex);
-      mesh.scale.y = look.height;
-      mesh.position.set(at.x, look.height / 2, at.z);
-      mesh.receiveShadow = true;
-      mesh.userData = { hex: tile.hex };
-      this.terrain.add(mesh);
       const decoration: THREE.Object3D[] = [];
-      // The ground: a textured hexagon over the prism's top, turned in steps of 60° so neighbours differ.
-      const texture = this.ground.get(tile.terrain, 1 + Math.floor(jitter(tile.hex, 60) * GROUND_VARIANTS));
-      const cap = texture ? new THREE.Mesh(capShape, new THREE.MeshStandardMaterial({ map: texture, roughness: 0.95, emissive: NONE.clone() })) : null;
-      if (cap) {
-        cap.position.set(at.x, look.height + 0.003, at.z);
-        cap.rotation.y = Math.floor(jitter(tile.hex, 61) * 6) * (Math.PI / 3);
-        cap.receiveShadow = true;
-        cap.userData = { hex: tile.hex };
-        this.terrain.add(cap);
-      }
-      this.hexes.set(hexKey(tile.hex), { mesh, cap, capTint: GROUND_BRIGHTNESS[tile.terrain] ?? 1, top: look.height, color: material.color.clone(), roughness: material.roughness, metalness: material.metalness, decoration });
+      this.hexes.set(hexKey(tile.hex), { hex: tile.hex, decoration });
 
       // Terrain props: a model slot per kind with several variants (`view/models.ts`), picked per hex by jitter so
       // no two hexes look copied; the hand-built shapes stay where a slot has no model yet.
@@ -275,7 +233,7 @@ export class MapView {
       const prop = (placeholder: THREE.Object3D | null, kind: keyof typeof SINK, variants: number, salt: number, x: number, z: number, height: number, width: number) => {
         const host = new THREE.Group();
         if (placeholder) host.add(placeholder);
-        host.position.set(at.x + x, look.height - height * SINK[kind], at.z + z);
+        host.position.set(at.x + x, shape.heightAt(at.x + x, at.z + z) - height * SINK[kind], at.z + z);
         host.rotation.y = jitter(tile.hex, salt + 50) * Math.PI * 2;
         host.traverse((o) => {
           o.castShadow = true;
@@ -312,7 +270,7 @@ export class MapView {
         prop(peak, "mountain", TERRAIN_VARIANTS.mountain, 4, 0, 0, height + 0.3, 1.8);
       }
       if (tile.terrain === "hills") {
-        const mound = new THREE.Mesh(new THREE.SphereGeometry(0.55, 8, 5, 0, Math.PI * 2, 0, Math.PI / 2), material);
+        const mound = new THREE.Mesh(new THREE.SphereGeometry(0.55, 8, 5, 0, Math.PI * 2, 0, Math.PI / 2), turf);
         mound.scale.y = 0.45;
         prop(mound, "hill", TERRAIN_VARIANTS.hill, 5, 0, 0, 0.34, 1.6);
       }
@@ -606,26 +564,18 @@ export class MapView {
   }
 
   private standingPoint(hex: Hex): THREE.Vector3 {
-    return hexPosition(hex).setY(this.hexes.get(hexKey(hex))?.top ?? 0.2);
+    return this.landscape?.standingPoint(hex) ?? hexPosition(hex).setY(0.2);
   }
 
   /** Fog of war: what the player at this screen has explored and sees now (null: everything). */
   setVision(vision: Vision | null): void {
     this.vision = vision;
+    this.landscape?.setSight((hex) => {
+      const key = hexKey(hex);
+      return !vision || vision.visible.has(key) ? "visible" : vision.explored.has(key) ? "remembered" : "unexplored";
+    });
     for (const [key, tile] of this.hexes) {
       const explored = !vision || vision.explored.has(key);
-      const visible = !vision || vision.visible.has(key);
-      const { mesh, cap } = tile;
-      if (cap) {
-        cap.visible = explored;
-        cap.material.color.setScalar((visible ? 1 : REMEMBERED) * tile.capTint);
-      }
-      mesh.material.color.copy(explored ? tile.color : UNEXPLORED);
-      if (explored && !visible) mesh.material.color.multiplyScalar(REMEMBERED);
-      mesh.material.roughness = explored ? tile.roughness : 1;
-      mesh.material.metalness = explored ? tile.metalness : 0;
-      mesh.scale.y = explored ? tile.top : UNEXPLORED_HEIGHT;
-      mesh.position.y = mesh.scale.y / 2;
       for (const o of tile.decoration) o.visible = explored;
     }
   }
@@ -639,22 +589,23 @@ export class MapView {
     const walked = new Set(highlights.path.slice(0, highlights.walked).map(hexKey));
     const later = new Set(highlights.path.slice(highlights.walked).map(hexKey));
     const attack = highlights.attack ? hexKey(highlights.attack) : null;
-    for (const [key, { mesh, cap }] of this.hexes) {
-      const color = key === attack ? ATTACK : walked.has(key) ? WALK : later.has(key) ? LATER : highlights.reachable.has(key) ? REACH : NONE;
-      for (const material of cap ? [mesh.material, cap.material] : [mesh.material]) {
-        material.emissive.copy(color);
-        material.emissiveIntensity = color === ATTACK ? 1.2 : color === WALK ? 0.7 : 1;
-      }
-    }
+    this.landscape?.setHighlight((hex) => {
+      const key = hexKey(hex);
+      return key === attack ? "attack" : walked.has(key) ? "walk" : later.has(key) ? "later" : highlights.reachable.has(key) ? "reach" : "none";
+    });
   }
 
   pick(clientX: number, clientY: number): Hex | null {
     const targets: THREE.Object3D[] = [
-      ...[...this.hexes.values()].map((h) => h.mesh),
+      ...(this.landscape ? [this.landscape.group] : []),
       ...[...this.leaders.values()].map((l) => l.group),
       ...this.siteLayer.children,
     ];
     for (const hit of this.stage.intersect(clientX, clientY, targets)) {
+      if (this.landscape && hit.object.parent === this.landscape.group) {
+        const hex = hexAt(hit.point.x, hit.point.z);
+        return this.hexes.has(hexKey(hex)) ? hex : null;
+      }
       let object: THREE.Object3D | null = hit.object;
       while (object) {
         const hex: unknown = object.userData["hex"];

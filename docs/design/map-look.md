@@ -19,3 +19,9 @@
 - Foliage: forests have eight trees and underbrush per hex, on a lighter floor. The tree models read dark from above (deep green textures); M55 regenerated them in fresh, sunlit greens.
 - Low poly: every model is TRELLIS.2 now (M49).
 
+
+## The user's read after M55 (2026-09-28)
+- Blown away by the mountains; the lighter trees look great; grass is needed.
+- The grass tiles' textures need help: "I can tell that something is wrong but I don't know what." Guess: upgraded textures, grass and lighting.
+
+Claude's diagnosis: every hex was its own raised slab (gaps, dark sides, a separately stamped and rotated texture per top), so the map read as a board of tokens, not land. M56 made the ground one continuous landscape with blended terrains, a faint grid and grass (`view/landscape.ts`). Lighting is the next lever (WebGPU, `spikes/engine/README.md`).
