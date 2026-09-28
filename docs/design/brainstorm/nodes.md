@@ -1,5 +1,7 @@
 # Nodes: a brainstorm (Claude's proposals)
 
+> **Picked (user, 2026-09-28):** foundry, leech pits, stables (was kennels), tannery, watchtower, bell tower, ossuary, quarry, siege workshop, menagerie; the ferry became portals (a map structure). With the user's changes, they're canon in `../nodes.md`.
+
 What exists: gold mine, mana node, Blacksmith (the user's: recruits deal +10, for good), Cathedral (the user's: recruits carry Holy Water). A node belongs to the nearest city and levels up with gold.
 
 The Blacksmith and Cathedral found the best pattern this game has: **a recruit mark**. "Where was this unit born" becomes part of the unit's story (the track record). That makes cities different from each other *in the army*, not just in income. Most proposals below extend it. A second pattern is nodes that act on the **map around them**, which makes the map's geography matter.
