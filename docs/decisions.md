@@ -187,3 +187,6 @@ After the bake-offs (three.js stays; its new lighting is WebGPU-only), the stage
 
 **2026-09-28 — Bounce light on the map, not in battles (M58).**
 The map gets screen-space global illumination (SSGI), denoised within each frame so still pictures stay sharp. Temporal filtering (TRAA) softened the map noticeably in a still frame. Battles keep GTAO: bounce light washed out the pale paper standees and haloed them. A scene opts in with `scene.userData[BOUNCE_LIGHT]`. The sun is lower and warmer, and its shadow camera is fitted to the map's size.
+
+**2026-09-28 — Wild land around the map; clouds over the unexplored (M59).**
+The margin past the map's edge is scenery: meadow, forest and mountains, always shown, never picked, nothing tall on the camera's side. With the world lit around it, the unexplored map read as a grey hole, so unexplored land now lies under drifting clouds (animated noise in the ground shader), Civilization style. It still hides terrain, and it still lies flat.

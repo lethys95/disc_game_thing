@@ -1,7 +1,7 @@
 import type { Hex } from "#rules/hex";
 import { hexDistance, hexKey } from "#rules/hex";
 import type { Terrain, WorldMap } from "#rules/map";
-import { abs, attribute, float, floor, instancedBufferAttribute, max, mix, positionLocal, positionWorld, select, sin, smoothstep, step, texture, time, transformNormalToView, uniformArray, vec2, vec3 } from "three/tsl";
+import { abs, attribute, float, floor, instancedBufferAttribute, max, mix, mx_fractal_noise_float, positionLocal, positionWorld, select, sin, smoothstep, step, texture, time, transformNormalToView, uniformArray, vec2, vec3 } from "three/tsl";
 import * as THREE from "three/webgpu";
 import type { GroundTextures } from "#view/models";
 
@@ -15,8 +15,8 @@ import type { GroundTextures } from "#view/models";
 /** Hex size in world units (corner to center), as in `view/map.ts`. */
 export const HEX_SIZE = 1;
 const SQRT3 = Math.sqrt(3);
-/** Land beyond the map's edge, in hexes, so the map sits in a world instead of floating. */
-const MARGIN = 3;
+/** Land beyond the map's edge, in hexes, so the map sits in a world instead of floating (`MapView` dresses it). */
+export const MARGIN = 3;
 /** Distance between the landscape mesh's vertices, in world units. */
 const SPACING = 0.1;
 /** How far the terrain borders wander from the hex edges, and how wide their blend is. */
@@ -30,7 +30,7 @@ const UNDERWATER: (typeof LAYERS)[number] = "hills";
 const BASE_HEIGHT: Readonly<Record<Terrain, number>> = { plain: 0.2, forest: 0.22, hills: 0.36, mountain: 0.46, water: -0.08 };
 /** How bumpy each terrain is (the amplitude of its noise). */
 const RELIEF: Readonly<Record<Terrain, number>> = { plain: 0.03, forest: 0.04, hills: 0.12, mountain: 0.1, water: 0.02 };
-const OUTSIDE: Terrain = "forest";
+const OUTSIDE: Terrain = "plain";
 /** World units one ground texture spans. */
 const GROUND_SCALE = 2.2;
 export const WATER_LEVEL = 0.1;
@@ -247,12 +247,13 @@ export class Landscape {
     this.hexes = Object.values(map.tiles).map((t) => t.hex);
     this.state = new HexStateTexture(map.radius);
     const outer = map.radius + MARGIN;
-    // Every cell, the map's hexes and the land around them alike: the land outside is shown dimmed, like remembered ground.
+    // Every cell, the map's hexes and the land around them alike: the land outside is seen (it's scenery, nothing to
+    // discover there) but has no grid.
     for (let q = -this.state.offset; q <= this.state.offset; q++) {
       for (let r = -this.state.offset; r <= this.state.offset; r++) {
         const hex = { q, r };
         const inMap = this.shape.inMap(hex);
-        this.state.set(hex, 0, inMap ? 255 : 110);
+        this.state.set(hex, 0, 255);
         this.state.set(hex, 2, inMap ? 255 : 0);
       }
     }
@@ -291,11 +292,13 @@ export class Landscape {
     const cell = cellOf(hex);
     const sight = cell.r;
     const inMap = cell.b;
-    // Remembered ground is dimmed; unexplored ground is a plain dark slate, showing nothing of its terrain.
+    // Remembered ground is dimmed.
     ground = ground.mul(select(sight.greaterThan(0.9), float(1), float(0.55)));
-    const slate = vec3(0.045, 0.046, 0.055).mul(sin(world.x.mul(0.8).add(sin(world.y.mul(0.7)).mul(2))).mul(0.15).add(1));
-    ground = select(sight.lessThan(0.1), slate, ground);
-    ground = mix(ground.mul(0.75), ground, inMap);
+    // Unexplored land lies under drifting clouds, showing nothing of what's beneath.
+    const drift = mx_fractal_noise_float(vec3(world.mul(0.35), time.mul(0.04)), 4, 2.0, 0.5);
+    const clouds = mix(vec3(0.15, 0.16, 0.2), vec3(0.52, 0.54, 0.6), smoothstep(-0.35, 0.45, drift));
+    ground = select(sight.lessThan(0.1), clouds, ground);
+    ground = mix(ground.mul(0.9), ground, inMap);
     const edge = hexEdgeNode(world, hex);
     const line = float(1).sub(smoothstep(0.012, 0.035, edge)).mul(inMap).mul(step(0.3, sight));
     this.material.colorNode = mix(ground, ground.mul(0.45), line.mul(0.55));

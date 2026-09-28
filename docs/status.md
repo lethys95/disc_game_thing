@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines._
 
-**Updated:** 2026-09-28 (M58 map lighting)
+**Updated:** 2026-09-28 (M59 wilds and clouds)
 
 ## Where we are
 A playable map game for 2–6 players (hotseat viewer vs AIs): two factions (**Jilliath**, **Ral-Vitahl**) with tier-1 melee/support/mage and Nexus mages to tier 3; bandit camps, dungeons with rewards, neutral cities; gold, mana and spells; nodes (gold, Blacksmith, mana, Cathedral); items on leaders; fog of war; retreat and a battle round limit; sound slots with placeholder SFX and music. The AI plays both the map (a list of planners in `world/ai.ts`) and battles, in a web worker.
@@ -10,7 +10,7 @@ A playable map game for 2–6 players (hotseat viewer vs AIs): two factions (**J
 Architecture: `design/architecture.md`; recipes and gotchas: `engineering.md`. `pnpm verify` before calling anything done. Sims: `pnpm sim:many --seeds 1-16 "p1,p2"` (smoke tests only until factions have their lines).
 
 ## Now
-**M58 map lighting** (branch `m58-lighting`): a low, warm sun with shadows sized to the whole map, a cool sky fill, and screen-space global illumination on the map (light bouncing off the ground onto what stands on it; `Stage.chain`, the scene's `BOUNCE_LIGHT` flag). Battles keep plain ambient occlusion: bounce light washed out their paper standees. Earlier today: M57 WebGPU, M56 landscape, M55 lighter trees, M53–M54 engine bake-offs.
+**M59 wilds and clouds** (branch `m59-wilds`): the land past the map's edge is meadow with forest and mountains (none on the camera's side, where they'd cover the HUD), so the map sits in a world; unexplored land lies under drifting clouds instead of a flat slate. Earlier today: M58 map lighting (bounce light), M57 WebGPU, M56 landscape, M55 lighter trees, M53–M54 engine bake-offs.
 
 ## Next
 1. Waiting on the user: `questions.md` (unit designs first: Jilliath's tier-2 support and mage, then Grove/Wastes tier 1, then tribes).
