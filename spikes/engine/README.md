@@ -37,6 +37,16 @@ What three.js has that Godot doesn't:
 
 As far as Claude knows, Godot's web export uses its lighter Compatibility renderer, so its global illumination wouldn't reach a browser build. Check before relying on it.
 
+## Round 2: a cave with a bonfire (the user's test for lighting)
+The user: "What if we are inside the dungeon which looks like a cave, and I want a bonfire." The same cave in both (`cave.py` builds `shared/cave.glb` in Blender from the game's ground textures): a rock chamber lit only by a flickering bonfire with shadows, moonlight through a hole in the roof, and the two soldiers.
+- three.js: `cave.html` on the **WebGPU renderer**, with voxel bounce light (`VXGINode`, in the three.js release we already have), godrays, bloom and hand-made flame sprites. Headless Chromium runs WebGPU on the integrated Radeon through Vulkan (`shot.ts` limits Vulkan to the RADV driver).
+- Godot: `cave.tscn`, with SDFGI, volumetric fog, glow and `GPUParticles3D` flames.
+- `shot.ts … cave|cave-nogi|cave-measure`, `shot.sh … cave|cave-nogi`.
+
+Result: the two look alike. Godot is warmer and more saturated, three.js more even; both are tuning. Bounce light adds a little in both (the fire's direct light dominates). Frame rate on the integrated Radeon: three.js 12 fps, Godot 25 fps. A trap in both: the log teepee's tip boxed in the fire light until the light was raised above it.
+
+The three.js release (r186) also ships screen-space GI, light-probe grids (WebGL too), in-browser lightmap baking, SSR, TRAA and clustered lighting. Around it: pmndrs/postprocessing, three.quarks (particles), three-gpu-pathtracer.
+
 ## Claude's read
 Nothing here is out of reach in three.js. The gap is global illumination and tooling, not a ceiling. For the map and the battlefield, three.js with care matches Godot. Where Godot would pull ahead is lit interiors, like the city montage, dungeons and torchlit scenes. There, the three.js answers are lightmaps baked in Blender (three.js supports them) or the newer WebGPU renderer's screen-space effects (untested here).
 
@@ -47,4 +57,4 @@ Switching would cost:
 
 It would also end browser play.
 
-Recommendation: stay on three.js. Revisit if the animated-units spike or a lit interior (the city montage) hits the wall above. The user judges the pictures.
+Recommendation (after round 2): stay on three.js and move the game's rendering to the WebGPU renderer, where the new lighting lives. Keep the rules engine-free, so a port stays possible (the user's suggestion). The user judges the pictures.
