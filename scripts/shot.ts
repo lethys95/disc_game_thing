@@ -1,3 +1,4 @@
+import { HEADLESS_GPU_ARGS } from "#scripts/headless";
 import { mkdir } from "node:fs/promises";
 import { chromium } from "playwright";
 import { createServer } from "vite";
@@ -10,7 +11,7 @@ await server.listen();
 const address = server.resolvedUrls?.local[0];
 if (!address) throw new Error("vite did not report a local URL");
 
-const browser = await chromium.launch({ args: ["--use-angle=vulkan", "--enable-gpu", "--ignore-gpu-blocklist"] });
+const browser = await chromium.launch({ args: [...HEADLESS_GPU_ARGS] });
 const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
 const errors: string[] = [];
 page.on("pageerror", (e) => errors.push(e.message));

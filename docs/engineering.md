@@ -77,7 +77,7 @@ The step-by-step recipes (units, abilities, effects, nodes, forks, recording the
 - **Changing the World's shape? Bump `SAVE_VERSION`** (`src/rules/save.ts`) and update the snapshot (`pnpm vitest -u tests/save.test.ts`); the shape test fails until you do. Old saves are then refused, never migrated.
 
 ## Gotchas
-- **When screenshots fail with empty `VALIDATE_STATUS false` shader errors, check the GPU, not the code:** `journalctl -k | grep NVRM`. A driver refusing contexts (`NV_ERR_STATE_IN_USE`) needs a reboot; meanwhile `--use-angle=swiftshader --enable-unsafe-swiftshader` renders in software.
+- **Headless tests render on the CPU's integrated Radeon, not the NVIDIA cards** (`scripts/headless.ts`). Dozens of test browsers a day on the desktop's NVIDIA card left its driver refusing new contexts (`NV_ERR_STATE_IN_USE` in `journalctl -k`), which crashed the user's own browser. Empty `VALIDATE_STATUS false` shader errors mean a GPU problem, not the code. `HEADLESS_SOFTWARE=1` renders on the CPU if the iGPU ever fails.
 - **A CSS `background` shorthand resets `background-image`**: a more specific rule using the shorthand silently blanks images set by less specific ones. Use longhands (`background-size`, …) when layering.
 - **Chain commits after verify with `&&`, never `;`.** A `;` once merged a failing test into main.
 - **CSS2DRenderer positions labels through `transform`.** A CSS animation on `transform` silently overrides it (every float drew at the top-left). Animate an inner element.
