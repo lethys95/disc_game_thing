@@ -46,6 +46,8 @@ export class Stage {
   private readonly raycaster = new THREE.Raycaster();
   /** Animation speed from the settings: multiplies every animation and AI pause. */
   private speedScale = 1;
+  /** The player's setting: bounce light where a scene asks for it (`BOUNCE_LIGHT`). */
+  private bounceLight = true;
   /** Automated play-tests run the game faster still. */
   testScale = 1;
 
@@ -93,6 +95,14 @@ export class Stage {
     this.controls.minDistance = pose.minDistance;
     this.controls.maxDistance = pose.maxDistance;
     this.controls.update();
+  }
+
+  /** The player's setting for bounce light; rebuilds the shown scene's chain when it changes. */
+  setBounceLight(on: boolean): void {
+    if (on === this.bounceLight) return;
+    this.bounceLight = on;
+    this.pipeline.outputNode = this.chain(this.active);
+    this.pipeline.needsUpdate = true;
   }
 
   get timeScale(): number {
@@ -151,7 +161,7 @@ export class Stage {
     const depth = scenePass.getTextureNode("depth");
     const normal = sample((uv) => colorToDirection(scenePass.getTextureNode("normal").sample(uv)));
     let lit;
-    if (scene.userData[BOUNCE_LIGHT] === true) {
+    if (this.bounceLight && scene.userData[BOUNCE_LIGHT] === true) {
       const light = ssgi(color, depth, normal, this.camera);
       light.useTemporalFiltering = false;
       light.sliceCount.value = 3;
