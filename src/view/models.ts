@@ -47,10 +47,10 @@ export const HORIZON_MIST = 0x5a70a0;
 const SKIES = import.meta.glob<string>("/assets/sky/*.webp", { eager: true, query: "?url", import: "default" });
 
 /** A panorama wrapped around a scene as its background (`assets/sky/<name>.webp`), or null if there's none. */
-export function skyTexture(name: string): THREE.Texture | null {
+export function skyTexture(name: string, loaded?: (texture: THREE.Texture) => void): THREE.Texture | null {
   const url = SKIES[`/assets/sky/${name}.webp`];
   if (!url) return null;
-  const texture = new THREE.TextureLoader().load(url);
+  const texture = new THREE.TextureLoader().load(url, loaded);
   texture.mapping = THREE.EquirectangularReflectionMapping;
   texture.colorSpace = THREE.SRGBColorSpace;
   return texture;

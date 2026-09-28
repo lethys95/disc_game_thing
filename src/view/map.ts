@@ -53,6 +53,8 @@ interface HexTile {
   readonly mesh: THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial>;
   /** The textured ground on top (`assets/art/ground/`), if the terrain has a texture. */
   readonly cap: THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial> | null;
+  /** How much the cap's texture is lifted (`GROUND_BRIGHTNESS`). */
+  readonly capTint: number;
   readonly top: number;
   readonly color: THREE.Color;
   readonly roughness: number;
@@ -87,6 +89,12 @@ const REACH = new THREE.Color(0x1a1f1c);
 const WALK = new THREE.Color(0xb08a4a);
 const LATER = new THREE.Color(0x4a4230);
 const ATTACK = new THREE.Color(0xd8321f);
+
+/** The forest floor texture is painted dark; lift it so a forest reads green rather than black. */
+const GROUND_BRIGHTNESS: Partial<Record<Terrain, number>> = { forest: 1.45 };
+
+/** How much of each terrain prop's height sits below the ground (hills most: it hides their ragged rim). */
+const SINK = { tree: 0.03, mountain: 0.06, hill: 0.3, rock: 0.2, bush: 0.12 } as const;
 
 /** Deterministic per-hex jitter so decoration varies without randomness. */
 function jitter(hex: Hex, salt: number): number {
@@ -181,11 +189,12 @@ export class MapView {
   private readonly ground = new GroundTextures();
 
   constructor(private readonly stage: Stage) {
-    const sky = skyTexture("map");
+    // The sky also lights the scene, once it has loaded.
+    const sky = skyTexture("map", (panorama) => stage.lightWith(this.scene, panorama, 0.6));
     this.scene.background = sky ?? new THREE.Color(0x0b0a0c);
     // The land beyond the map fades into the sky's misty horizon (sampled from the panorama), so the two meet.
     this.scene.fog = sky ? new THREE.Fog(HORIZON_MIST, 24, 55) : new THREE.FogExp2(0x0b0a0c, 0.028);
-    this.scene.add(new THREE.HemisphereLight(0x8a98b8, 0x1c1c22, 0.95));
+    this.scene.add(new THREE.HemisphereLight(0x8a98b8, 0x1c1c22, 0.5));
     const keyLight = new THREE.DirectionalLight(0xffe4c8, 3);
     keyLight.position.set(-6, 12, 8);
     keyLight.castShadow = true;
@@ -258,14 +267,15 @@ export class MapView {
         cap.userData = { hex: tile.hex };
         this.terrain.add(cap);
       }
-      this.hexes.set(hexKey(tile.hex), { mesh, cap, top: look.height, color: material.color.clone(), roughness: material.roughness, metalness: material.metalness, decoration });
+      this.hexes.set(hexKey(tile.hex), { mesh, cap, capTint: GROUND_BRIGHTNESS[tile.terrain] ?? 1, top: look.height, color: material.color.clone(), roughness: material.roughness, metalness: material.metalness, decoration });
 
       // Terrain props: a model slot per kind with several variants (`view/models.ts`), picked per hex by jitter so
       // no two hexes look copied; the hand-built shapes stay where a slot has no model yet.
-      const prop = (placeholder: THREE.Object3D | null, kind: string, variants: number, salt: number, x: number, z: number, height: number, width: number) => {
+      // Each sinks a share of its height into the ground, so it grows out of the hex instead of standing on it.
+      const prop = (placeholder: THREE.Object3D | null, kind: keyof typeof SINK, variants: number, salt: number, x: number, z: number, height: number, width: number) => {
         const host = new THREE.Group();
         if (placeholder) host.add(placeholder);
-        host.position.set(at.x + x, look.height, at.z + z);
+        host.position.set(at.x + x, look.height - height * SINK[kind], at.z + z);
         host.rotation.y = jitter(tile.hex, salt + 50) * Math.PI * 2;
         host.traverse((o) => {
           o.castShadow = true;
@@ -276,10 +286,11 @@ export class MapView {
         this.models.dress(host, [`terrain/${kind}-${variant}`, `terrain/${kind}-1`], height, width);
       };
       if (tile.terrain === "forest") {
-        // A ring of five and one in the middle: a forest should read as a forest from the map's height.
-        for (let i = 0; i < 6; i++) {
-          const angle = (i / 5) * Math.PI * 2 + jitter(tile.hex, i) * 1.0;
-          const reach = i === 5 ? 0.08 : 0.38 + jitter(tile.hex, i + 20) * 0.18;
+        // A ring of seven and one in the middle, with underbrush between: a forest should read as a forest from the
+        // map's height.
+        for (let i = 0; i < 8; i++) {
+          const angle = (i / 7) * Math.PI * 2 + jitter(tile.hex, i) * 0.8;
+          const reach = i === 7 ? 0.05 : 0.36 + jitter(tile.hex, i + 20) * 0.22;
           const height = 0.75 + jitter(tile.hex, i + 10) * 0.4;
           const tree = new THREE.Group();
           const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.05, height, 5), trunk);
@@ -288,6 +299,10 @@ export class MapView {
           crown.position.y = height * 0.85;
           tree.add(stem, crown);
           prop(tree, "tree", TERRAIN_VARIANTS.tree, i + 30, Math.cos(angle) * reach, Math.sin(angle) * reach, height, 0.6);
+        }
+        for (let i = 0; i < 3; i++) {
+          const angle = (i / 3) * Math.PI * 2 + 0.6 + jitter(tile.hex, i + 70) * 0.8;
+          prop(null, "bush", TERRAIN_VARIANTS.bush, i + 80, Math.cos(angle) * 0.25, Math.sin(angle) * 0.25, 0.22, 0.32);
         }
       }
       if (tile.terrain === "mountain") {
@@ -299,7 +314,7 @@ export class MapView {
       if (tile.terrain === "hills") {
         const mound = new THREE.Mesh(new THREE.SphereGeometry(0.55, 8, 5, 0, Math.PI * 2, 0, Math.PI / 2), material);
         mound.scale.y = 0.45;
-        prop(mound, "hill", TERRAIN_VARIANTS.hill, 5, 0, 0, 0.3, 1.5);
+        prop(mound, "hill", TERRAIN_VARIANTS.hill, 5, 0, 0, 0.34, 1.6);
       }
       // Plains get the odd bush or rock, off-center so a warband standing there stays clear.
       if (tile.terrain === "plain") {
@@ -603,7 +618,7 @@ export class MapView {
       const { mesh, cap } = tile;
       if (cap) {
         cap.visible = explored;
-        cap.material.color.setScalar(visible ? 1 : REMEMBERED);
+        cap.material.color.setScalar((visible ? 1 : REMEMBERED) * tile.capTint);
       }
       mesh.material.color.copy(explored ? tile.color : UNEXPLORED);
       if (explored && !visible) mesh.material.color.multiplyScalar(REMEMBERED);

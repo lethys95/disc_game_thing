@@ -4,6 +4,7 @@ import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { GTAOPass } from "three/addons/postprocessing/GTAOPass.js";
 import { CSS2DObject, CSS2DRenderer } from "three/addons/renderers/CSS2DRenderer.js";
 
 export interface CameraPose {
@@ -25,6 +26,7 @@ interface Tween {
 const GLIDE_EASE = 8;
 
 export class Stage {
+  private readonly ao: GTAOPass;
   private readonly glideVelocity = new THREE.Vector2();
   private readonly glideTarget = new THREE.Vector2();
   private glideLimit = 0;
@@ -67,6 +69,11 @@ export class Stage {
     this.composer = new EffectComposer(this.renderer);
     this.renderPass = new RenderPass(this.active, this.camera);
     this.composer.addPass(this.renderPass);
+    // Ambient occlusion: soft shadow where things meet (props on the ground, buildings on their hex).
+    this.ao = new GTAOPass(this.active, this.camera, 1, 1);
+    this.ao.updateGtaoMaterial({ radius: 0.6, distanceExponent: 1.5, thickness: 1, scale: 1.2 });
+    this.ao.blendIntensity = 0.85;
+    this.composer.addPass(this.ao);
     this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.55, 0.5, 0.8);
     this.composer.addPass(this.bloom);
     this.composer.addPass(new OutputPass());
@@ -84,6 +91,7 @@ export class Stage {
     });
     this.active = scene;
     this.renderPass.scene = scene;
+    this.ao.scene = scene;
     this.camera.position.copy(pose.position);
     this.controls.target.copy(pose.target);
     this.controls.minDistance = pose.minDistance;
@@ -127,6 +135,14 @@ export class Stage {
     this.glideLimit = limit;
   }
 
+  /** Lights `scene` with a panorama (its sky): soft, colored light from all around, and reflections on rough surfaces. */
+  lightWith(scene: THREE.Scene, panorama: THREE.Texture, intensity: number): void {
+    const pmrem = new THREE.PMREMGenerator(this.renderer);
+    scene.environment = pmrem.fromEquirectangular(panorama).texture;
+    scene.environmentIntensity = intensity;
+    pmrem.dispose();
+  }
+
   tween(duration: number, update: (t: number) => void): Promise<void> {
     return new Promise((resolve) => {
       this.tweens.push({ start: performance.now(), duration: Math.max(1, duration * this.timeScale), update, done: resolve });
@@ -155,6 +171,7 @@ export class Stage {
     this.renderer.setSize(w, h);
     this.labels.setSize(w, h);
     this.composer.setSize(w, h);
+    this.ao.setSize(w, h);
     this.bloom.resolution.set(w, h);
   }
 
