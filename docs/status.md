@@ -12,6 +12,9 @@ Architecture: `design/architecture.md`; recipes and gotchas: `engineering.md`. `
 ## Now
 **M61 bounce-light setting**: Settings → Display can turn off the map's bounce light, the costliest effect (on the integrated Radeon at 1280×720 the map runs 16 fps with it, 32 without; at 1080p, 6 fps with it). On by default: full quality stays the default; the switch is for a weak laptop GPU. Earlier today: M60 water, M59 wilds and clouds, M58 map lighting, M57 WebGPU, M56 landscape, M55 lighter trees, M53–M54 engine bake-offs.
 
+## Performance (user, 2026-09-28, `?fps`)
+Server desktop (RTX 3090 Ti): a solid 60 fps on the map. User's laptop: about 6 fps. Candidates for the laptop: bounce light off (Settings → Display), then instanced trees and grass.
+
 ## Next
 1. Waiting on the user: `questions.md` (unit designs first: Jilliath's tier-2 support and mage, then Grove/Wastes tier 1, then tribes).
 2. Claude's plan: things that don't need designs: the map's look (grass, terrain), AI scouting on big maps, research-tree connectors, tribes' foundation (a neutral faction type the bandits move into).
