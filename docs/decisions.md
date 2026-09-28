@@ -169,3 +169,6 @@ The arena takes the terrain of the hex fought over (its ground texture, a ring o
 **2026-09-27 — The city view is a framed painting until the montage exists (M46, the user's sketch).**
 The map close-up stand-in is gone: the city screen opens on a painting of the city from the inside (per faction's Capitol, and one for neutral cities) in the UI kit's frame, drifting slowly, with the city's summary over it; the tabs sit in a framed column. The montage the user wants (the city's own scene, people walking, like Unreal Gold's intro) replaces the painting later.
 
+
+**2026-09-28 — Choose the engine by a bake-off, before the art push.**
+The user doubts three.js can deliver the lighting, foliage and animation quality wanted, and asked for an evaluation before assets are made in bulk. Unreal is out (editor-bound and binary, slow for Claude to build and test in); Godot 4 is the real alternative (installed). The bake-off builds one scene in both with the same glTF assets. What carries over if we switch: the design, the asset pipeline and every model (glTF), the tests as a specification. The rules (~6.5k lines of TypeScript) would be rewritten in C# or GDScript, which is mechanical; the view (~6.5k lines) would be rebuilt. The cost grows with the view, so the bake-off comes soon.
