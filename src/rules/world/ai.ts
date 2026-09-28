@@ -14,7 +14,7 @@ import { autoplay } from "#rules/ai";
 import type { Battle } from "#rules/battle/types";
 import { applyWorldAction } from "#rules/world/actions";
 import { concludeBattle, openingBattle } from "#rules/world/battles";
-import { chooseBranchProblem, elevateProblem, income, learnSkillProblem, recruitProblem, resurrectionCost, resurrectProblem, reviveProblem, squadsOf, upgradeProblem, cityUpgradeCost, upgradeCityProblem, investNodeProblem, nodeInvestCost } from "#rules/world/economy";
+import { chooseBranchProblem, elevateProblem, income, learnSkillProblem, recruitCost, recruitProblem, resurrectionCost, resurrectProblem, reviveProblem, squadsOf, upgradeProblem, cityUpgradeCost, upgradeCityProblem, investNodeProblem, nodeInvestCost } from "#rules/world/economy";
 import { equipProblem, leadershipOf, movementOf } from "#rules/world/leaders";
 import { itemById } from "#rules/items";
 import { hireCost } from "#rules/structures";
@@ -22,7 +22,7 @@ import { buyItemProblem, buySpellProblem, forSale, hireProblem } from "#rules/wo
 import { useItemProblem } from "#rules/world/items";
 import { destination, planMove } from "#rules/world/movement";
 import type { MovePlan, MoveTarget } from "#rules/world/movement";
-import { playerOf, capitolOf, fullHp, lairAt, leaderAt } from "#rules/world/state";
+import { playerOf, capitolOf, fullHp, lairAt, leaderAt, tribeRecruitsOf } from "#rules/world/state";
 import type { City, Leader, PlayerId, SquadMember, SquadRef, Structure, World, WorldAction } from "#rules/world/state";
 
 /** The map AI. */
@@ -374,6 +374,22 @@ const walls: Planner = ({ world, side, capitol, rich, spareFor }) => {
   return city ? { type: "upgradeCity", cityId: city.id } : null;
 };
 
+/**
+ * A Tribal outpost's recruits take no garrison slot: with spare gold, the strongest one it offers stands guard in a
+ * city of ours that has one.
+ */
+const tribalGuards: Planner = ({ world, side, rich, spareFor }) => {
+  if (!rich) return null;
+  for (const city of world.cities.filter((c) => c.owner === side)) {
+    const garrison: SquadRef = { kind: "garrison", cityId: city.id };
+    const best = tribeRecruitsOf(world, city)
+      .filter((defId) => spareFor(recruitCost(defId) ?? Infinity) && !recruitProblem(world, defId, garrison))
+      .sort((a, b) => (recruitCost(b) ?? 0) - (recruitCost(a) ?? 0))[0];
+    if (best) return { type: "recruit", defId: best, into: garrison };
+  }
+  return null;
+};
+
 /** Nodes that pay gold pay for themselves: invest with spare gold, cheapest first. */
 const invest: Planner = ({ world, capitol, rich, spareFor }) => {
   if (!capitol || !rich) return null;
@@ -541,6 +557,7 @@ const PLANNERS: readonly Planner[] = [
   upgrades,
   learnSpells,
   walls,
+  tribalGuards,
   invest,
   newWarband,
   trade,

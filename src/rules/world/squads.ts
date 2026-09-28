@@ -3,7 +3,7 @@ import type { Tile } from "#rules/battle/types";
 import { sameTile } from "#rules/battle/grid";
 import { hexDistance, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
-import { GUARDIAN_ID } from "#rules/units/index";
+import { GUARDIAN_ID, UNITS } from "#rules/units/index";
 import { leadershipOf } from "#rules/world/leaders";
 import { cityAt, cityById, leaderById } from "#rules/world/state";
 import type { City, PlayerId, SquadMember, SquadRef, World } from "#rules/world/state";
@@ -21,8 +21,9 @@ export function squadAt(world: World, ref: SquadRef): SquadMember[] {
 export function capacityOf(world: World, ref: SquadRef): number {
   if (ref.kind === "warband") return leadershipOf(leaderById(world, ref.leaderId));
   const city = cityById(world, ref.cityId);
-  // The Guardian is the Capitol's heart, not one of its defenders: it takes no slot.
-  return (CITY_SLOTS[city.tier] ?? 0) + city.garrison.filter((m) => m.defId === GUARDIAN_ID).length;
+  // The Guardian is the Capitol's heart, not one of its defenders: it takes no slot. Neutral units in a garrison
+  // aren't bound by the city's limit either (pillars.md, "Cities"): a Tribal outpost's recruits, say.
+  return (CITY_SLOTS[city.tier] ?? 0) + city.garrison.filter((m) => m.defId === GUARDIAN_ID || UNITS[m.defId]?.faction === "neutral").length;
 }
 
 export function ownerOf(world: World, ref: SquadRef): PlayerId | null {

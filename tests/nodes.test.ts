@@ -4,14 +4,15 @@ import type { NodeKind } from "#rules/nodes";
 import { applyWorldAction } from "#rules/world/actions";
 import { engage } from "#rules/world/battles";
 import { createWorld } from "#rules/world/create";
-import { cityUpgradeCost, raisesDeadAt, resurrectionCost } from "#rules/world/economy";
+import { cityUpgradeCost, raisesDeadAt, recruitCost, recruitProblem, resurrectionCost } from "#rules/world/economy";
+import { capacityOf } from "#rules/world/squads";
 import { movementOf } from "#rules/world/leaders";
 import { cityById, leaderById } from "#rules/world/state";
 import type { City, World } from "#rules/world/state";
 import { sightOf } from "#rules/world/vision";
 import type { Placement } from "#rules/battle/engine";
 import { COLS } from "#rules/battle/grid";
-import { act, p, start, twoPlayers, unit, until, withGraveyard, withLeader } from "#tests/helpers";
+import { act, p, start, twoPlayers, unit, until, withGold, withGraveyard, withLeader } from "#tests/helpers";
 import { describe, expect, test } from "vitest";
 
 /** The user's node picks (design/nodes.md, 2026-09-28): the marks their recruits carry. Numbers provisional. */
@@ -133,5 +134,23 @@ describe("city nodes", () => {
     let later = battle;
     while (later.round === 1 && later.outcome === null) later = act(later, "defend").battle;
     expect(later.current?.unitId).toBe("0.0.1");
+  });
+});
+
+describe("Tribal outpost", () => {
+  test("its city recruits bandits, more kinds with each level; they take no garrison slot", () => {
+    const { world, city } = holding("tribal_outpost", 1);
+    const rich = withGold(world, [1000, 1000]);
+    const garrison = { kind: "garrison" as const, cityId: city.id };
+    expect(recruitProblem(rich, "brigand", garrison)).toBeNull();
+    expect(recruitProblem(rich, "marauder", garrison)).toMatch(/Tribal outpost/);
+    expect(recruitProblem(withGold(holding("tribal_outpost", 2).world, [1000, 1000]), "marauder", garrison)).toBeNull();
+    expect(recruitProblem(withGold(holding("gold").world, [1000, 1000]), "brigand", garrison)).toMatch(/Tribal outpost/);
+
+    const slots = capacityOf(rich, garrison);
+    const after = applyWorldAction(rich, { type: "recruit", defId: "brigand", into: garrison }).world;
+    expect(cityById(after, city.id).garrison.map((m) => m.defId)).toEqual(["brigand"]);
+    expect(capacityOf(after, garrison)).toBe(slots + 1);
+    expect(after.players[0]?.gold).toBe(1000 - (recruitCost("brigand") ?? 0));
   });
 });

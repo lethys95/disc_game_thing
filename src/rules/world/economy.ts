@@ -11,10 +11,10 @@ import { maxHpOf } from "#rules/world/record";
 import { CITY_RESURRECTION_PREMIUM, RESEARCH } from "#rules/research";
 import { UPGRADES, upgradesFor } from "#rules/upgrades";
 import { FACTIONS } from "#rules/factions";
-import { playerOf, alive, banditGroup, capitolOf, cityById, cityOfNode, giftsOf, leaderAt, leaderById, leaderUnit, member, nodesHeldBy, nodesOf } from "#rules/world/state";
+import { playerOf, alive, banditGroup, capitolOf, cityById, cityOfNode, giftsOf, leaderAt, leaderById, leaderUnit, member, nodesHeldBy, nodesOf, tribeRecruitsOf } from "#rules/world/state";
 import type { Enchantment, PlayerId, City, Leader, MapNode, Mark, SquadMember, SquadRef, Strength, World, WorldEvent } from "#rules/world/state";
 import { capacityOf, cityOfSquad, ownerOf, squadAt } from "#rules/world/squads";
-import { MERCHANT_RESTOCK_TURNS, merchantWares } from "#rules/structures";
+import { hireCost, MERCHANT_RESTOCK_TURNS, merchantWares } from "#rules/structures";
 
 /** Gold, recruiting, branch choices, resurrection, elevation, and the start of a side's turn. */
 
@@ -39,13 +39,28 @@ function rootOf(defId: string): string {
   return parent ? rootOf(parent) : defId;
 }
 
-/** Why a recruit order can't happen, or null if it can. Any city you hold recruits (pillars.md, "Cities"). */
+/**
+ * What recruiting `defId` costs: its faction's price, or for a tribe unit (a Tribal outpost) what a mercenary camp
+ * asks. Null if it's neither.
+ */
+export function recruitCost(defId: string): number | null {
+  const own = RECRUIT_COST[defId];
+  if (own !== undefined) return own;
+  return UNITS[defId]?.faction === "neutral" ? hireCost({ defId, level: 0 }) : null;
+}
+
+/**
+ * Why a recruit order can't happen, or null if it can. Any city you hold recruits your faction's first tiers
+ * (pillars.md, "Cities"); a city with a Tribal outpost also recruits its tribe.
+ */
 export function recruitProblem(world: World, defId: string, into: SquadRef, tile?: Tile): string | null {
   const side = world.activePlayer;
-  const cost = RECRUIT_COST[defId];
-  if (cost === undefined || !FACTION_ROOTS[playerOf(world, side).faction].includes(defId)) return "not recruitable";
+  const cost = recruitCost(defId);
+  const own = FACTION_ROOTS[playerOf(world, side).faction].includes(defId);
+  if (cost === null) return "not recruitable";
   if (playerOf(world, side).gold < cost) return "not enough gold";
-  return placeProblem(world, into, tile, (city) => city.owner === side, "only in a city you hold");
+  const offers = (city: City) => city.owner === side && (own || tribeRecruitsOf(world, city).includes(defId));
+  return placeProblem(world, into, tile, offers, own ? "only in a city you hold" : "only in a city with a Tribal outpost that offers it");
 }
 
 /**

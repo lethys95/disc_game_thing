@@ -431,11 +431,16 @@ export const cityOfNode = (world: World, node: MapNode): City | undefined => wor
 export const nodesOf = (world: World, city: City): MapNode[] => world.nodes.filter((n) => cityOfNode(world, n)?.id === city.id);
 
 /** A city gift (`nodes.ts` CityGifts) from each of the city's nodes that has it, at the node's level. */
-export function giftsOf(world: World, city: City, gift: Exclude<keyof CityGifts, "defenderEffects">): number[] {
+export function giftsOf(world: World, city: City, gift: Exclude<keyof CityGifts, "defenderEffects" | "tribeRecruits">): number[] {
   return nodesOf(world, city).flatMap((n) => {
     const at = NODES[n.kind].city?.[gift];
     return at ? [at(n.level)] : [];
   });
+}
+
+/** The tribe units a city can recruit (a Tribal outpost), besides its holder's own. */
+export function tribeRecruitsOf(world: World, city: City): string[] {
+  return [...new Set(nodesOf(world, city).flatMap((n) => [...(NODES[n.kind].city?.tribeRecruits?.(n.level) ?? [])]))];
 }
 
 /** Every node whose city this side holds. */

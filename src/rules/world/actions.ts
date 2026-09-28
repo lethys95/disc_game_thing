@@ -1,10 +1,9 @@
 import { choose } from "#rules/forks";
 import { sameTile } from "#rules/battle/grid";
 import { stepCost } from "#rules/map";
-import { RECRUIT_COST } from "#rules/units/index";
 import { LEADER_MOVEMENT } from "#rules/balance";
 import { defenderOf, engage } from "#rules/world/battles";
-import { nodeMarks, chooseBranchProblem, elevateProblem, freeTile, growSquad, learnSkillProblem, newcomer, recruitProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem, squadsOf, startRound, startTurn, upgradeCityProblem, researchProblem, investNodeProblem, nodeInvestCost, upgradeProblem, cityUpgradeCost } from "#rules/world/economy";
+import { nodeMarks, recruitCost, chooseBranchProblem, elevateProblem, freeTile, growSquad, learnSkillProblem, newcomer, recruitProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem, squadsOf, startRound, startTurn, upgradeCityProblem, researchProblem, investNodeProblem, nodeInvestCost, upgradeProblem, cityUpgradeCost } from "#rules/world/economy";
 import { equipProblem, freeRevival, movementOf, rankOf } from "#rules/world/leaders";
 import { destination, planMove } from "#rules/world/movement";
 import { knownWorld, see, updateVision } from "#rules/world/vision";
@@ -57,7 +56,7 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       if (!tile) throw new Error("no room");
       const recruit = newcomer(draft, side, action.defId, tile);
       squad.push({ ...recruit, marks: [...recruit.marks, ...nodeMarks(draft, cityOfSquad(draft, action.into))] });
-      playerOf(draft, side).gold -= RECRUIT_COST[action.defId] ?? 0;
+      playerOf(draft, side).gold -= recruitCost(action.defId) ?? 0;
       events.push({ type: "recruited", defId: action.defId, into: action.into });
       break;
     }

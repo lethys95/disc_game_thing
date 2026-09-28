@@ -1,5 +1,6 @@
 import { BLACKSMITH_BONUS, MANA_NODE_INCOME, MINE_INCOME } from "#rules/balance";
 import type { EffectSeed } from "#rules/battle/types";
+import { UNITS } from "#rules/units/index";
 
 /**
  * Nodes (Warlords 3 style, docs/design/pillars.md "Cities"): map features that belong to the **nearest city** (a
@@ -19,7 +20,8 @@ export type NodeKind =
   | "quarry"
   | "ossuary"
   | "watchtower"
-  | "bell_tower";
+  | "bell_tower"
+  | "tribal_outpost";
 
 export interface NodeDef {
   readonly name: string;
@@ -49,6 +51,8 @@ export interface CityGifts {
   readonly sight?: (level: number) => number;
   /** Its holder hears of an enemy warband ending a march this close to the city (Bell tower). */
   readonly warning?: (level: number) => number;
+  /** Tribe units the city can recruit, besides its holder's own (a Tribal outpost; `tribes.md`). */
+  readonly tribeRecruits?: (level: number) => readonly string[];
   /** Effects the city's defenders bring into a battle there (Bell tower). */
   readonly defenderEffects?: (level: number) => readonly EffectSeed[];
 }
@@ -84,8 +88,20 @@ export const NODES: Readonly<Record<NodeKind, NodeDef>> = {
   // "It sounds very powerful. Careful." (user): no discount until invested.
   ossuary: cityNode("Ossuary", { raisesDead: (level) => 0.1 * (level - 1) }, (level) => `the dead can be raised in this city without the research, at the Capitol's price${level > 1 ? ` less ${10 * (level - 1)}%` : ""}`),
   watchtower: cityNode("Watchtower", { sight: (level) => 2 + level }, (level) => `you see ${2 + level} hexes around it, through the fog`),
+  // "I really love this one" (user): the land's tribe recruits here. Bandits until biomes bring others.
+  tribal_outpost: {
+    name: "Tribal outpost",
+    income: () => 0,
+    mana: () => 0,
+    recruitEffects: () => [],
+    describe: (level) => `the city recruits bandits (${BANDIT_RECRUITS.slice(0, level + 1).map((id) => UNITS[id]?.name ?? id).join(", ")}); they take no garrison slot`,
+    city: { tribeRecruits: (level) => BANDIT_RECRUITS.slice(0, level + 1) },
+  },
   bell_tower: cityNode("Bell tower", { warning: (level) => 1 + level, defenderEffects: () => [{ def: "forewarned" }] }, (level) => `you hear of enemy warbands ending a march within ${1 + level} hexes of the city; its defenders act first in the first round of a battle there`),
 };
+
+/** The bandits a Tribal outpost offers, more with each level (provisional #56). */
+const BANDIT_RECRUITS = ["brigand", "bandit", "marauder", "hedge_mage"] as const;
 
 /** A node whose gifts are to its city, not to recruits. */
 function cityNode(name: string, city: CityGifts, describe: (level: number) => string): NodeDef {

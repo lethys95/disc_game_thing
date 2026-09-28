@@ -418,6 +418,7 @@ export class MapView {
         ossuary: () => chapel(stone, dark, new THREE.MeshStandardMaterial({ color: 0xd8d0c0, roughness: 0.8 })),
         watchtower: () => tower(stone, dark, 0.7),
         bell_tower: () => tower(stone, candle, 0.55),
+        tribal_outpost: () => lodge(new THREE.MeshStandardMaterial({ color: 0x5a4632, roughness: 1 }), new THREE.MeshStandardMaterial({ color: 0x7a2a1e, roughness: 0.9 })),
       };
       const model = models[node.kind]();
       model.position.copy(this.standingPoint(node.hex));
