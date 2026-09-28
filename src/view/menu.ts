@@ -149,6 +149,13 @@ export class GameMenu implements KeyLayer {
     this.root.appendChild(slots);
 
     this.root.appendChild(element("div", "section", "Display"));
+    const bounce = element("label", "check-row");
+    const bounceBox = element("input", "check");
+    bounceBox.type = "checkbox";
+    bounceBox.checked = data.bounceLight;
+    bounceBox.addEventListener("change", () => settings.update({ ...settings.data, bounceLight: bounceBox.checked }));
+    bounce.append(bounceBox, element("span", "", "Bounce light on the map (the costliest effect: turn it off if the map runs slowly)"));
+    this.root.appendChild(bounce);
     const full = element("button", "small", document.fullscreenElement ? "Leave fullscreen" : "Fullscreen");
     full.addEventListener("click", () => void this.toggleFullscreen());
     this.root.appendChild(full);

@@ -28,6 +28,7 @@ applyUiKit(document.documentElement);
 const stage = new Stage(byId("stage"));
 const settings = new Settings();
 settings.follow((s) => stage.setFeel(ANIMATION_SPEEDS[s.speed].scale, s.rotate, s.zoom));
+settings.follow((s) => stage.setBounceLight(s.bounceLight));
 const sound = new Sound();
 settings.follow((s) => sound.setVolumes(s));
 // Every button clicks.
