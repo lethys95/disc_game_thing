@@ -181,3 +181,6 @@ The user's worry: lighting (a bonfire in a cave) will decide whether the game is
 
 **2026-09-28 — The map's ground is one continuous landscape, not hex slabs (M56).**
 The user sensed something wrong with the tiles without naming it. The separate slabs (gaps, sides, a texture stamped per hex) read as tokens. Now one mesh covers the map and a margin beyond it; each point's height and terrain blend come from the hexes around a noise-warped position, so borders wander organically. The grid, fog of war and highlights live in the ground's shader, read from a per-hex state texture, so changing them costs no geometry. Unexplored ground lies flat under a neutral slate, as the slabs did, so the fog gives nothing away. Picking is a ray against the ground, then the hex of the hit point. Grass tufts (not blades: blades are sub-pixel from the map camera) grow by terrain, not on water or around places.
+
+**2026-09-28 — The game renders with WebGPU (M57).**
+After the bake-offs (three.js stays; its new lighting is WebGPU-only), the stage moved to `WebGPURenderer` with a TSL post-processing chain, and the landscape's shaders to TSL node materials. It falls back to WebGL 2 on its own where a browser lacks WebGPU, so no player is locked out. Tests run WebGPU headlessly on the integrated Radeon. The look is unchanged; lighting upgrades build on it.

@@ -79,6 +79,10 @@ The step-by-step recipes (units, abilities, effects, nodes, forks, recording the
 - **Changing the World's shape? Bump `SAVE_VERSION`** (`src/rules/save.ts`) and update the snapshot (`pnpm vitest -u tests/save.test.ts`); the shape test fails until you do. Old saves are then refused, never migrated.
 
 ## Gotchas
+- **The renderer is WebGPU (M57): no `onBeforeCompile`, no `ShaderMaterial`.** Custom shading is TSL on node materials (`positionNode`, `colorNode`, `emissiveNode`; see `view/landscape.ts`); post-processing is a `RenderPipeline` of TSL nodes (`view/stage.ts`). Plain materials (`MeshStandardMaterial`, …) still work: WebGPU converts them. Classes from `three` and `three/webgpu` are the same (shared core), so only files that need WebGPU-only things import `three/webgpu`.
+- **Never flag a texture `needsUpdate` before its image has loaded** under WebGPU: it crashes reading `image.complete` (WebGL shrugged it off).
+- **No MSAA with ambient occlusion:** the AO node can't read a multisampled depth buffer, so the renderer runs without `antialias` and SMAA runs at the end of the chain, after tone mapping (`renderOutput`).
+- **Headless WebGPU** runs on Vulkan limited to the Radeon's RADV driver (`VK_ICD_FILENAMES`, `HEADLESS_ENV`) and needs a secure origin (localhost is one).
 - **Headless tests render on the CPU's integrated Radeon, not the NVIDIA cards** (`scripts/headless.ts`). Dozens of test browsers a day on the desktop's NVIDIA card left its driver refusing new contexts (`NV_ERR_STATE_IN_USE` in `journalctl -k`), which crashed the user's own browser. Empty `VALIDATE_STATUS false` shader errors mean a GPU problem, not the code. `HEADLESS_SOFTWARE=1` renders on the CPU if the iGPU ever fails.
 - **A CSS `background` shorthand resets `background-image`**: a more specific rule using the shorthand silently blanks images set by less specific ones. Use longhands (`background-size`, …) when layering.
 - **Chain commits after verify with `&&`, never `;`.** A `;` once merged a failing test into main.

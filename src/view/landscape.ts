@@ -1,7 +1,8 @@
 import type { Hex } from "#rules/hex";
 import { hexDistance, hexKey } from "#rules/hex";
 import type { Terrain, WorldMap } from "#rules/map";
-import * as THREE from "three";
+import { abs, attribute, float, floor, instancedBufferAttribute, max, mix, positionLocal, positionWorld, select, sin, smoothstep, step, texture, time, transformNormalToView, uniformArray, vec2, vec3 } from "three/tsl";
+import * as THREE from "three/webgpu";
 import type { GroundTextures } from "#view/models";
 
 /**
@@ -30,9 +31,13 @@ const BASE_HEIGHT: Readonly<Record<Terrain, number>> = { plain: 0.2, forest: 0.2
 /** How bumpy each terrain is (the amplitude of its noise). */
 const RELIEF: Readonly<Record<Terrain, number>> = { plain: 0.03, forest: 0.04, hills: 0.12, mountain: 0.1, water: 0.02 };
 const OUTSIDE: Terrain = "forest";
+/** World units one ground texture spans. */
+const GROUND_SCALE = 2.2;
 export const WATER_LEVEL = 0.1;
 /** Every unexplored hex lies flat at this height, so the fog doesn't give away mountains and water. */
 export const UNEXPLORED_HEIGHT = 0.2;
+
+const NONE = new THREE.Color(0);
 
 /** How a hex looks now, packed into the state texture. */
 export type Highlight = "none" | "reach" | "walk" | "later" | "attack";
@@ -164,144 +169,44 @@ class HexStateTexture {
   }
 }
 
-const VERTEX_HEAD = /* glsl */ `
-attribute vec4 groundWeights;
-attribute float groundWet;
-attribute vec2 groundHex;
-uniform sampler2D hexState;
-uniform float hexStateOffset;
-uniform float hexStateWidth;
-uniform float unexploredHeight;
-varying vec4 vGroundWeights;
-varying float vGroundWet;
-varying vec3 vGroundWorld;
-`;
+type Vec2Node = THREE.Node<"vec2">;
 
-const VERTEX_BODY = /* glsl */ `
-#include <begin_vertex>
-vGroundWeights = groundWeights;
-vGroundWet = groundWet;
-vec4 hexCell = texture2D(hexState, (groundHex + hexStateOffset + 0.5) / hexStateWidth);
-// Unexplored ground lies flat, so the fog gives nothing away.
-if (hexCell.r < 0.1) transformed.y = unexploredHeight;
-vGroundWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;
-`;
-
-const FRAGMENT_HEAD = /* glsl */ `
-uniform sampler2D groundPlain;
-uniform sampler2D groundForest;
-uniform sampler2D groundHills;
-uniform sampler2D groundMountain;
-uniform sampler2D hexState;
-uniform float hexStateOffset;
-uniform float hexStateWidth;
-uniform float groundScale;
-uniform vec3 highlightColors[5];
-varying vec4 vGroundWeights;
-varying float vGroundWet;
-varying vec3 vGroundWorld;
-
-vec2 groundHexOf(vec2 p) {
-  float q = (0.57735027 * p.x - p.y / 3.0) / ${HEX_SIZE.toFixed(1)};
-  float r = (0.66666667 * p.y) / ${HEX_SIZE.toFixed(1)};
-  vec3 cube = vec3(q, r, -q - r);
-  vec3 rounded = floor(cube + 0.5);
-  vec3 diff = abs(rounded - cube);
-  if (diff.x > diff.y && diff.x > diff.z) rounded.x = -rounded.y - rounded.z;
-  else if (diff.y > diff.z) rounded.y = -rounded.x - rounded.z;
-  return rounded.xy;
+/** The hex a world point lies in, as a shader expression (see `hexAt`). */
+function hexOfNode(p: Vec2Node): Vec2Node {
+  const q = p.x.mul(SQRT3 / 3).sub(p.y.div(3)).div(HEX_SIZE);
+  const r = p.y.mul(2 / 3).div(HEX_SIZE);
+  const s = q.negate().sub(r);
+  const rq = floor(q.add(0.5));
+  const rr = floor(r.add(0.5));
+  const rs = floor(s.add(0.5));
+  const dq = abs(rq.sub(q));
+  const dr = abs(rr.sub(r));
+  const ds = abs(rs.sub(s));
+  const fixQ = dq.greaterThan(dr).and(dq.greaterThan(ds));
+  const fixR = fixQ.not().and(dr.greaterThan(ds));
+  return vec2(select(fixQ, rr.negate().sub(rs), rq), select(fixR, rq.negate().sub(rs), rr));
 }
 
 /** Distance from p to the edge of its hex (pointy-top), in world units. */
-float groundEdge(vec2 p, vec2 hex) {
-  vec2 center = vec2(1.7320508 * (hex.x + hex.y * 0.5), 1.5 * hex.y) * ${HEX_SIZE.toFixed(1)};
-  vec2 d = abs(p - center);
-  float across = max(d.x, dot(d, vec2(0.5, 0.8660254)));
-  return 0.8660254 * ${HEX_SIZE.toFixed(1)} - across;
+function hexEdgeNode(p: Vec2Node, hex: Vec2Node) {
+  const center = vec2(hex.x.add(hex.y.mul(0.5)).mul(SQRT3), hex.y.mul(1.5)).mul(HEX_SIZE);
+  const d = abs(p.sub(center));
+  return float((SQRT3 / 2) * HEX_SIZE).sub(max(d.x, d.x.mul(0.5).add(d.y.mul(SQRT3 / 2))));
 }
 
 /** A texture sampled at two scales and rotations, mixed by slow noise, so its repeats don't line up. */
-vec3 groundLayer(sampler2D tex, vec2 uv) {
-  vec3 a = texture2D(tex, uv).rgb;
-  vec3 b = texture2D(tex, mat2(0.8, -0.6, 0.6, 0.8) * uv * 0.73 + 0.37).rgb;
-  float m = 0.5 + 0.5 * sin(uv.x * 1.3 + sin(uv.y * 0.9) * 2.0);
-  return mix(a, b, m * 0.6);
+function layerNode(tex: THREE.Texture, uv: Vec2Node) {
+  const a = texture(tex, uv).rgb;
+  const turned = vec2(uv.x.mul(0.8).add(uv.y.mul(0.6)), uv.x.mul(-0.6).add(uv.y.mul(0.8))).mul(0.73).add(0.37);
+  const b = texture(tex, turned).rgb;
+  const m = sin(uv.x.mul(1.3).add(sin(uv.y.mul(0.9)).mul(2))).mul(0.5).add(0.5);
+  return mix(a, b, m.mul(0.6));
 }
-`;
-
-const FRAGMENT_MAP = /* glsl */ `
-vec2 groundUv = vGroundWorld.xz / groundScale;
-vec4 w = vGroundWeights / max(dot(vGroundWeights, vec4(1.0)), 0.001);
-vec3 ground = groundLayer(groundPlain, groundUv) * w.x + groundLayer(groundForest, groundUv) * w.y * 1.35
-  + groundLayer(groundHills, groundUv) * w.z + groundLayer(groundMountain, groundUv) * w.w;
-ground *= mix(1.0, 0.45, vGroundWet);
-// Broad patches of lighter and darker ground break the texture's evenness at the map's scale.
-ground *= 0.88 + 0.24 * (0.5 + 0.5 * sin(vGroundWorld.x * 0.37 + sin(vGroundWorld.z * 0.29) * 2.3));
-vec2 myHex = groundHexOf(vGroundWorld.xz);
-vec4 cell = texture2D(hexState, (myHex + hexStateOffset + 0.5) / hexStateWidth);
-float sight = cell.r;
-float inMap = cell.b;
-// Remembered ground is dimmed; unexplored ground is a plain dark slate, showing nothing of its terrain.
-ground *= sight > 0.9 ? 1.0 : 0.55;
-if (sight < 0.1) ground = vec3(0.045, 0.046, 0.055) * (0.85 + 0.3 * (0.5 + 0.5 * sin(vGroundWorld.x * 0.8 + sin(vGroundWorld.z * 0.7) * 2.0)));
-ground = mix(ground * 0.75, ground, inMap);
-float edge = groundEdge(vGroundWorld.xz, myHex);
-float line = (1.0 - smoothstep(0.012, 0.035, edge)) * inMap * step(0.3, sight);
-ground = mix(ground, ground * 0.45, line * 0.55);
-diffuseColor.rgb = ground;
-`;
-
-const FRAGMENT_EMISSIVE = /* glsl */ `
-#include <emissivemap_fragment>
-{
-  int code = int(cell.g * 255.0 + 0.5);
-  if (code > 0) {
-    vec3 tint = highlightColors[code];
-    // The hex glows faintly, its rim more.
-    float rim = 1.0 - smoothstep(0.02, 0.16, edge);
-    totalEmissiveRadiance += tint * (0.12 + rim * 0.7);
-  }
-}
-`;
 
 /** Grass tufts per square world unit, by the ground they grow on (plain, forest floor, hills, mountain). */
 const GRASS_DENSITY = [60, 16, 34, 0] as const;
 /** No grass right around a place (a city, a camp, a dungeon): its model stands on bare ground. */
 const CLEARING = 0.5;
-
-const GRASS_VERTEX_HEAD = /* glsl */ `
-uniform float grassTime;
-uniform sampler2D hexState;
-uniform float hexStateOffset;
-uniform float hexStateWidth;
-attribute vec2 grassHex;
-varying float vGrassSight;
-`;
-
-const GRASS_VERTEX_BODY = /* glsl */ `
-#include <begin_vertex>
-vec4 grassCell = texture2D(hexState, (grassHex + hexStateOffset + 0.5) / hexStateWidth);
-vGrassSight = grassCell.r;
-vec4 root = modelMatrix * instanceMatrix * vec4(0.0, 0.0, 0.0, 1.0);
-float tip = position.y;
-float gust = sin(grassTime * 1.6 + root.x * 0.9 + root.z * 0.6) * 0.5 + 0.5;
-float flutter = sin(grassTime * 4.1 + root.x * 23.0 + root.z * 17.0);
-float bend = (gust * 0.35 + flutter * 0.08) * tip * tip;
-transformed += inverse(mat3(modelMatrix * instanceMatrix)) * vec3(bend, 0.0, bend * 0.5) * 0.12;
-// Unexplored ground has no grass to give away its terrain.
-if (grassCell.r < 0.1) transformed *= 0.0;
-`;
-
-const GRASS_FRAGMENT = /* glsl */ `
-#include <color_fragment>
-diffuseColor.rgb *= vGrassSight > 0.9 ? 1.0 : 0.55;
-`;
-
-/** Both faces of a blade keep the upward normal; three.js would flip it for the back face and leave it dark. */
-const GRASS_NORMAL = /* glsl */ `
-#include <normal_fragment_begin>
-normal = normalize(vNormal);
-`;
 
 /** A tuft: five blades leaning out from one root, so it reads as a clump from the map's height. */
 function grassTuft(): THREE.BufferGeometry {
@@ -334,7 +239,7 @@ export class Landscape {
   readonly group = new THREE.Group();
   readonly shape: GroundShape;
   private readonly state: HexStateTexture;
-  private readonly material: THREE.MeshStandardMaterial;
+  private readonly material: THREE.MeshStandardNodeMaterial;
   private readonly hexes: readonly Hex[];
 
   constructor(map: WorldMap, grounds: GroundTextures, highlightColors: Readonly<Record<Exclude<Highlight, "none">, THREE.Color>>) {
@@ -353,34 +258,52 @@ export class Landscape {
     }
     this.state.flush();
 
+    const blank = new THREE.DataTexture(new Uint8Array([90, 110, 60, 255]), 1, 1);
+    blank.needsUpdate = true;
     const layer = (terrain: (typeof LAYERS)[number]) => {
-      const texture = grounds.get(terrain, 1);
-      if (texture) {
-        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-        texture.needsUpdate = true;
-      }
-      return { value: texture };
+      const loaded = grounds.get(terrain, 1);
+      if (!loaded) return blank;
+      loaded.wrapS = loaded.wrapT = THREE.RepeatWrapping;
+      // Re-upload only a texture that's already loaded (another screen used it unrepeated); a pending one uploads
+      // with its wrapping when it arrives, and flagging it now would make WebGPU read an image that isn't there.
+      if (loaded.image) loaded.needsUpdate = true;
+      return loaded;
     };
-    this.material = new THREE.MeshStandardMaterial({ roughness: 0.95, metalness: 0 });
-    const uniforms = {
-      groundPlain: layer("plain"),
-      groundForest: layer("forest"),
-      groundHills: layer("hills"),
-      groundMountain: layer("mountain"),
-      hexState: { value: this.state.texture },
-      hexStateOffset: { value: this.state.offset },
-      hexStateWidth: { value: this.state.width },
-      unexploredHeight: { value: UNEXPLORED_HEIGHT },
-      groundScale: { value: 2.2 },
-      highlightColors: { value: [new THREE.Color(0), highlightColors.reach, highlightColors.walk, highlightColors.later, highlightColors.attack] },
-    };
-    this.material.onBeforeCompile = (shader) => {
-      Object.assign(shader.uniforms, uniforms);
-      shader.vertexShader = VERTEX_HEAD + shader.vertexShader.replace("#include <begin_vertex>", VERTEX_BODY);
-      shader.fragmentShader = FRAGMENT_HEAD + shader.fragmentShader
-        .replace("#include <map_fragment>", FRAGMENT_MAP)
-        .replace("#include <emissivemap_fragment>", FRAGMENT_EMISSIVE);
-    };
+    const cellOf = (hex: Vec2Node) => texture(this.state.texture, hex.add(float(this.state.offset + 0.5)).div(float(this.state.width)));
+
+    this.material = new THREE.MeshStandardNodeMaterial({ roughness: 0.95, metalness: 0 });
+    // Unexplored ground lies flat, so the fog gives nothing away.
+    const vertexCell = cellOf(attribute<"vec2">("groundHex", "vec2")).level(float(0));
+    this.material.positionNode = select(vertexCell.r.lessThan(0.1), vec3(positionLocal.x, float(UNEXPLORED_HEIGHT), positionLocal.z), positionLocal);
+
+    const world = positionWorld.xz;
+    const uv = world.div(GROUND_SCALE);
+    const weights = attribute<"vec4">("groundWeights", "vec4");
+    const w = weights.div(max(weights.x.add(weights.y).add(weights.z).add(weights.w), 0.001));
+    let ground = layerNode(layer("plain"), uv).mul(w.x)
+      .add(layerNode(layer("forest"), uv).mul(w.y).mul(1.35))
+      .add(layerNode(layer("hills"), uv).mul(w.z))
+      .add(layerNode(layer("mountain"), uv).mul(w.w));
+    ground = ground.mul(mix(float(1), float(0.45), attribute<"float">("groundWet", "float")));
+    // Broad patches of lighter and darker ground break the texture's evenness at the map's scale.
+    ground = ground.mul(sin(world.x.mul(0.37).add(sin(world.y.mul(0.29)).mul(2.3))).mul(0.12).add(1));
+    const hex = hexOfNode(world);
+    const cell = cellOf(hex);
+    const sight = cell.r;
+    const inMap = cell.b;
+    // Remembered ground is dimmed; unexplored ground is a plain dark slate, showing nothing of its terrain.
+    ground = ground.mul(select(sight.greaterThan(0.9), float(1), float(0.55)));
+    const slate = vec3(0.045, 0.046, 0.055).mul(sin(world.x.mul(0.8).add(sin(world.y.mul(0.7)).mul(2))).mul(0.15).add(1));
+    ground = select(sight.lessThan(0.1), slate, ground);
+    ground = mix(ground.mul(0.75), ground, inMap);
+    const edge = hexEdgeNode(world, hex);
+    const line = float(1).sub(smoothstep(0.012, 0.035, edge)).mul(inMap).mul(step(0.3, sight));
+    this.material.colorNode = mix(ground, ground.mul(0.45), line.mul(0.55));
+    // Highlighted hexes glow faintly, their rims more.
+    const tints = uniformArray<"vec3">([NONE, highlightColors.reach, highlightColors.walk, highlightColors.later, highlightColors.attack].map((c) => new THREE.Vector3(c.r, c.g, c.b)), "vec3");
+    const code = cell.g.mul(255).add(0.5).toInt();
+    const rim = float(1).sub(smoothstep(0.02, 0.16, edge));
+    this.material.emissiveNode = tints.element(code).mul(rim.mul(0.7).add(0.12));
 
     const land = new THREE.Mesh(this.geometry(outer), this.material);
     land.receiveShadow = true;
@@ -396,11 +319,11 @@ export class Landscape {
     this.group.add(water);
 
     const places = [...map.starts, ...map.sites.map((p) => p.hex), ...map.lairs.map((p) => p.hex), ...map.structures.map((p) => p.hex)].map(hexCenter);
-    this.group.add(this.grass(uniforms.hexState, uniforms.hexStateOffset, uniforms.hexStateWidth, places));
+    this.group.add(this.grass(places));
   }
 
   /** Grass tufts, swaying in the wind, where the ground is grassy; none on water or around places. */
-  private grass(hexState: { value: THREE.Texture }, hexStateOffset: { value: number }, hexStateWidth: { value: number }, places: readonly THREE.Vector3[]): THREE.InstancedMesh {
+  private grass(places: readonly THREE.Vector3[]): THREE.InstancedMesh {
     const blades: { x: number; z: number; y: number; height: number; turn: number; shade: number; hex: Hex }[] = [];
     let seed = 1;
     const random = () => {
@@ -427,15 +350,25 @@ export class Landscape {
         }
       }
     }
-    const material = new THREE.MeshStandardMaterial({ vertexColors: true, side: THREE.DoubleSide, roughness: 1 });
-    const time = { value: 0 };
-    material.onBeforeCompile = (shader) => {
-      Object.assign(shader.uniforms, { grassTime: time, hexState, hexStateOffset, hexStateWidth });
-      shader.vertexShader = GRASS_VERTEX_HEAD + shader.vertexShader.replace("#include <begin_vertex>", GRASS_VERTEX_BODY);
-      shader.fragmentShader = "varying float vGrassSight;\n" + shader.fragmentShader.replace("#include <color_fragment>", GRASS_FRAGMENT).replace("#include <normal_fragment_begin>", GRASS_NORMAL);
-    };
     const geometry = grassTuft();
-    geometry.setAttribute("grassHex", new THREE.InstancedBufferAttribute(new Float32Array(blades.flatMap((b) => [b.hex.q, b.hex.r])), 2));
+    const hexes = instancedBufferAttribute<"vec2">(new THREE.InstancedBufferAttribute(new Float32Array(blades.flatMap((b) => [b.hex.q, b.hex.r])), 2), "vec2");
+    // Each tuft's root (x, z), its turn and its scale, for the wind.
+    const roots = instancedBufferAttribute<"vec4">(new THREE.InstancedBufferAttribute(new Float32Array(blades.flatMap((b) => [b.x, b.z, b.turn, b.height * 0.9])), 4), "vec4");
+    const state = texture(this.state.texture, hexes.add(float(this.state.offset + 0.5)).div(float(this.state.width))).level(float(0));
+    const gust = sin(time.mul(1.6).add(roots.x.mul(0.9)).add(roots.y.mul(0.6))).mul(0.5).add(0.5);
+    const flutter = sin(time.mul(4.1).add(roots.x.mul(23)).add(roots.y.mul(17)));
+    const tip = positionLocal.y;
+    const bend = gust.mul(0.35).add(flutter.mul(0.08)).mul(tip).mul(tip).mul(0.12);
+    // The wind blows the same way everywhere: turn its push back into the tuft's own frame.
+    const cos = roots.z.cos();
+    const sinTurn = roots.z.sin();
+    const push = vec3(bend.mul(cos).sub(bend.mul(0.5).mul(sinTurn)), 0, bend.mul(sinTurn).add(bend.mul(0.5).mul(cos))).div(roots.w);
+    const material = new THREE.MeshStandardNodeMaterial({ vertexColors: true, side: THREE.DoubleSide, roughness: 1 });
+    // Unexplored ground has no grass to give away its terrain; remembered grass is dimmed like its ground.
+    material.positionNode = select(state.r.lessThan(0.1), vec3(0), positionLocal.add(push));
+    material.colorNode = vec3(select(state.r.greaterThan(0.9), float(1), float(0.55)));
+    // Both faces of a blade keep the upward normal, or the back faces would render dark.
+    material.normalNode = transformNormalToView(vec3(0, 1, 0));
     const mesh = new THREE.InstancedMesh(geometry, material, blades.length);
     const matrix = new THREE.Matrix4();
     const rotation = new THREE.Quaternion();
@@ -448,9 +381,6 @@ export class Landscape {
     mesh.name = "grass";
     // Hover and clicks find hexes through the ground; testing a hundred thousand blades each time would stall.
     mesh.raycast = () => {};
-    mesh.onBeforeRender = () => {
-      time.value = performance.now() / 1000;
-    };
     return mesh;
   }
 

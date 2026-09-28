@@ -1,11 +1,10 @@
-import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
-import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
-import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
-import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
-import { GTAOPass } from "three/addons/postprocessing/GTAOPass.js";
 import { CSS2DObject, CSS2DRenderer } from "three/addons/renderers/CSS2DRenderer.js";
+import { bloom } from "three/addons/tsl/display/BloomNode.js";
+import { ao } from "three/addons/tsl/display/GTAONode.js";
+import { smaa } from "three/addons/tsl/display/SMAANode.js";
+import { directionToColor, colorToDirection, float, mrt, normalView, output, pass, renderOutput, sample } from "three/tsl";
+import * as THREE from "three/webgpu";
 
 export interface CameraPose {
   readonly position: THREE.Vector3;
@@ -21,23 +20,23 @@ interface Tween {
   readonly done: () => void;
 }
 
-/** One renderer, camera and post-processing chain; the battle and the map take turns being shown. */
+/**
+ * One renderer, camera and post-processing chain; the battle and the map take turns being shown. WebGPU (M57), where
+ * three.js keeps its modern lighting; it falls back to WebGL 2 by itself where a browser has no WebGPU.
+ */
 /** How quickly a glide eases towards its speed, and to a stop (per second, exponential). */
 const GLIDE_EASE = 8;
 
 export class Stage {
-  private readonly ao: GTAOPass;
   private readonly glideVelocity = new THREE.Vector2();
   private readonly glideTarget = new THREE.Vector2();
   private glideLimit = 0;
   private lastFrame = 0;
-  readonly renderer: THREE.WebGLRenderer;
+  readonly renderer: THREE.WebGPURenderer;
   readonly camera = new THREE.PerspectiveCamera(40, 1, 0.1, 200);
   private readonly labels = new CSS2DRenderer();
   private readonly controls: OrbitControls;
-  private readonly composer: EffectComposer;
-  private readonly renderPass: RenderPass;
-  private readonly bloom: UnrealBloomPass;
+  private readonly pipeline: THREE.RenderPipeline;
   private readonly tweens: Tween[] = [];
   private active: THREE.Scene = new THREE.Scene();
   private readonly raycaster = new THREE.Raycaster();
@@ -47,7 +46,8 @@ export class Stage {
   testScale = 1;
 
   constructor(private readonly host: HTMLElement) {
-    this.renderer = new THREE.WebGLRenderer({ antialias: true });
+    // Antialiasing happens at the end of the chain (SMAA): the ambient occlusion can't read a multisampled depth buffer.
+    this.renderer = new THREE.WebGPURenderer({ antialias: false });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -66,17 +66,9 @@ export class Stage {
     this.controls.minPolarAngle = 0.35;
     this.controls.maxPolarAngle = 1.25;
 
-    this.composer = new EffectComposer(this.renderer);
-    this.renderPass = new RenderPass(this.active, this.camera);
-    this.composer.addPass(this.renderPass);
-    // Ambient occlusion: soft shadow where things meet (props on the ground, buildings on their hex).
-    this.ao = new GTAOPass(this.active, this.camera, 1, 1);
-    this.ao.updateGtaoMaterial({ radius: 0.6, distanceExponent: 1.5, thickness: 1, scale: 1.2 });
-    this.ao.blendIntensity = 0.85;
-    this.composer.addPass(this.ao);
-    this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.55, 0.5, 0.8);
-    this.composer.addPass(this.bloom);
-    this.composer.addPass(new OutputPass());
+    this.pipeline = new THREE.RenderPipeline(this.renderer);
+    this.pipeline.outputColorTransform = false;
+    this.pipeline.outputNode = this.chain(this.active);
 
     this.resize();
     window.addEventListener("resize", () => this.resize());
@@ -90,8 +82,8 @@ export class Stage {
       if (object instanceof CSS2DObject) object.element.style.display = "none";
     });
     this.active = scene;
-    this.renderPass.scene = scene;
-    this.ao.scene = scene;
+    this.pipeline.outputNode = this.chain(scene);
+    this.pipeline.needsUpdate = true;
     this.camera.position.copy(pose.position);
     this.controls.target.copy(pose.target);
     this.controls.minDistance = pose.minDistance;
@@ -137,10 +129,27 @@ export class Stage {
 
   /** Lights `scene` with a panorama (its sky): soft, colored light from all around, and reflections on rough surfaces. */
   lightWith(scene: THREE.Scene, panorama: THREE.Texture, intensity: number): void {
-    const pmrem = new THREE.PMREMGenerator(this.renderer);
-    scene.environment = pmrem.fromEquirectangular(panorama).texture;
+    scene.environment = panorama;
     scene.environmentIntensity = intensity;
-    pmrem.dispose();
+  }
+
+  /**
+   * The post-processing for a scene: ambient occlusion (soft shadow where things meet: props on the ground,
+   * buildings on their hex), a little bloom on what glows, then tone mapping and antialiasing.
+   */
+  private chain(scene: THREE.Scene) {
+    const scenePass = pass(scene, this.camera);
+    scenePass.setMRT(mrt({ output, normal: directionToColor(normalView) }));
+    const color = scenePass.getTextureNode("output");
+    const normal = sample((uv) => colorToDirection(scenePass.getTextureNode("normal").sample(uv)));
+    const occlusion = ao(scenePass.getTextureNode("depth"), normal, this.camera);
+    occlusion.resolutionScale = 0.5;
+    occlusion.radius.value = 0.6;
+    occlusion.distanceExponent.value = 1.5;
+    occlusion.thickness.value = 1;
+    occlusion.scale.value = 1.2;
+    const shaded = color.mul(float(1).sub(float(0.85).mul(float(1).sub(occlusion.getTextureNode().r))));
+    return smaa(renderOutput(shaded.add(bloom(shaded, 0.55, 0.5, 0.8))));
   }
 
   tween(duration: number, update: (t: number) => void): Promise<void> {
@@ -170,9 +179,6 @@ export class Stage {
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(w, h);
     this.labels.setSize(w, h);
-    this.composer.setSize(w, h);
-    this.ao.setSize(w, h);
-    this.bloom.resolution.set(w, h);
   }
 
   private frame(time: number): void {
@@ -191,7 +197,7 @@ export class Stage {
       }
     }
     this.controls.update();
-    this.composer.render();
+    this.pipeline.render();
     this.labels.render(this.active, this.camera);
   }
 }
