@@ -36,6 +36,7 @@ document.addEventListener("click", (e) => {
   if (e.target instanceof Element && e.target.closest("button")) sound.play(["ui/click"]);
 });
 if (params.has("fast")) stage.testScale = 0.1;
+if (params.has("fps")) stage.showFrameRate();
 const battleScene = new BattleScene(stage);
 const mapView = new MapView(stage);
 const ai = new AiClient();
