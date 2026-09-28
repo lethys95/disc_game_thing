@@ -20,7 +20,7 @@ import { BOUNCE_LIGHT, discard, discardChildren } from "#view/stage";
 import type { CameraPose, Stage } from "#view/stage";
 import { STRUCTURES } from "#rules/structures";
 import type { StructureKind } from "#rules/structures";
-import { hexAt, Landscape } from "#view/landscape";
+import { hexAt, Landscape, MARGIN } from "#view/landscape";
 import { GroundTextures, HORIZON_MIST, MODEL_CHAINS, Models, skyTexture, TERRAIN_VARIANTS } from "#view/models";
 
 const SIZE = 1;
@@ -73,6 +73,17 @@ const HIGHLIGHTS = {
 
 /** How much of each terrain prop's height sits below the ground (hills most: it hides their ragged rim). */
 const SINK = { tree: 0.03, mountain: 0.06, hill: 0.3, rock: 0.2, bush: 0.12 } as const;
+
+/** The hexes exactly `radius` steps from the middle. */
+function hexRing(radius: number): Hex[] {
+  const out: Hex[] = [];
+  for (let q = -radius; q <= radius; q++) {
+    for (let r = Math.max(-radius, -q - radius); r <= Math.min(radius, -q + radius); r++) {
+      if (Math.max(Math.abs(q), Math.abs(r), Math.abs(q + r)) === radius) out.push({ q, r });
+    }
+  }
+  return out;
+}
 
 /** Deterministic per-hex jitter so decoration varies without randomness. */
 function jitter(hex: Hex, salt: number): number {
@@ -289,6 +300,39 @@ export class MapView {
         const z = 0.3 + jitter(tile.hex, 8) * 0.2;
         if (roll < 0.2) prop(null, "bush", TERRAIN_VARIANTS.bush, 9, x, z, 0.28, 0.4);
         else if (roll < 0.3) prop(null, "rock", TERRAIN_VARIANTS.rock, 10, x, z, 0.3, 0.45);
+      }
+    }
+    this.buildWilds(map, shape);
+  }
+
+  /**
+   * The wild land past the map's edge: forest nearer in, mountains mostly on the outer rings, so the map sits in a
+   * world rather than ending at a line. Scenery only: always shown (it holds nothing to discover), never picked.
+   */
+  private buildWilds(map: WorldMap, shape: Landscape["shape"]): void {
+    const place = (hex: Hex, kind: "tree" | "mountain", variants: number, salt: number, x: number, z: number, height: number, width: number) => {
+      const at = hexPosition(hex);
+      const host = new THREE.Group();
+      host.position.set(at.x + x, shape.heightAt(at.x + x, at.z + z) - height * SINK[kind], at.z + z);
+      host.rotation.y = jitter(hex, salt + 50) * Math.PI * 2;
+      this.terrain.add(host);
+      this.models.dress(host, [`terrain/${kind}-${1 + Math.floor(jitter(hex, salt) * variants)}`, `terrain/${kind}-1`], height, width);
+    };
+    for (let ring = map.radius + 1; ring <= map.radius + MARGIN; ring++) {
+      for (const hex of hexRing(ring)) {
+        const roll = jitter(hex, 90);
+        const outer = ring - map.radius;
+        // The camera looks from the south: nothing tall there, or it would stand in front of the map and the HUD.
+        const near = hexPosition(hex).z > map.radius * 0.6;
+        if (!near && roll < 0.12 + outer * 0.14) {
+          place(hex, "mountain", TERRAIN_VARIANTS.mountain, 91, (jitter(hex, 92) - 0.5) * 0.4, (jitter(hex, 93) - 0.5) * 0.4, 1.5 + jitter(hex, 94) * 1.1 + outer * 0.2, 2.2);
+        } else if (roll < 0.75) {
+          for (let i = 0; i < 3; i++) {
+            const angle = (i / 3) * Math.PI * 2 + jitter(hex, i + 95) * 1.2;
+            const reach = 0.25 + jitter(hex, i + 98) * 0.35;
+            place(hex, "tree", TERRAIN_VARIANTS.tree, i + 100, Math.cos(angle) * reach, Math.sin(angle) * reach, (near ? 0.6 : 0.85) + jitter(hex, i + 103) * 0.45, 0.7);
+          }
+        }
       }
     }
   }
