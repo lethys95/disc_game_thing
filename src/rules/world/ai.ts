@@ -369,8 +369,8 @@ const learnSpells: Planner = ({ world, side, capitol, rich, spareFor }) => {
 const walls: Planner = ({ world, side, capitol, rich, spareFor }) => {
   if (!capitol || !rich) return null;
   const city = world.cities
-    .filter((c) => c.owner === side && !upgradeCityProblem(world, c.id) && spareFor(cityUpgradeCost(c)))
-    .sort((a, b) => Number(b.kind === "capitol") - Number(a.kind === "capitol") || cityUpgradeCost(a) - cityUpgradeCost(b))[0];
+    .filter((c) => c.owner === side && !upgradeCityProblem(world, c.id) && spareFor(cityUpgradeCost(world, c)))
+    .sort((a, b) => Number(b.kind === "capitol") - Number(a.kind === "capitol") || cityUpgradeCost(world, a) - cityUpgradeCost(world, b))[0];
   return city ? { type: "upgradeCity", cityId: city.id } : null;
 };
 

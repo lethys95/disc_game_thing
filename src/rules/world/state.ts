@@ -5,7 +5,8 @@ import type { PlayerColor } from "#rules/world/colors";
 import { hexDistance, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import type { WorldMap } from "#rules/map";
-import type { NodeKind } from "#rules/nodes";
+import { NODES } from "#rules/nodes";
+import type { CityGifts, NodeKind } from "#rules/nodes";
 import type { ManaColor } from "#rules/factions";
 import { UNITS } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
@@ -273,6 +274,8 @@ export type WorldEvent =
   | { type: "moved"; leaderId: string; path: readonly Hex[] }
   | { type: "engaged"; attackerId: string; defender: Defender }
   | { type: "captured"; cityId: string; player: PlayerId }
+  /** A city's bells (a Bell tower): an enemy warband ended a march near it; news for `player`, who holds it. */
+  | { type: "alarm"; cityId: string; leaderId: string; player: PlayerId }
   | { type: "turnStarted"; player: PlayerId; turn: number; income: number }
   | { type: "recruited"; defId: string; into: SquadRef }
   | { type: "transferred"; from: SquadRef; to: SquadRef }
@@ -426,6 +429,14 @@ export function capitolOf(world: World, side: PlayerId): City | undefined {
 export const cityOfNode = (world: World, node: MapNode): City | undefined => world.cities.find((c) => c.id === node.cityId);
 
 export const nodesOf = (world: World, city: City): MapNode[] => world.nodes.filter((n) => cityOfNode(world, n)?.id === city.id);
+
+/** A city gift (`nodes.ts` CityGifts) from each of the city's nodes that has it, at the node's level. */
+export function giftsOf(world: World, city: City, gift: Exclude<keyof CityGifts, "defenderEffects">): number[] {
+  return nodesOf(world, city).flatMap((n) => {
+    const at = NODES[n.kind].city?.[gift];
+    return at ? [at(n.level)] : [];
+  });
+}
 
 /** Every node whose city this side holds. */
 export const nodesHeldBy = (world: World, side: PlayerId): MapNode[] => world.nodes.filter((n) => cityOfNode(world, n)?.owner === side);

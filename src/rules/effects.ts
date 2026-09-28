@@ -379,6 +379,17 @@ const effects: readonly EffectDef[] = [
     mapMovement: 1,
     hooks: {},
   },
+  {
+    // Bell tower: a city's defenders heard them coming, and act first in the first round.
+    id: "forewarned",
+    quiet: true,
+    name: "Forewarned",
+    describe: () => "Acts before the enemy in the first round (the city's bells rang).",
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: { precedes: (ctx) => ctx.battle.round === 1 },
+  },
   // A bought unit-type upgrade (placeholder content until the user designs unique ones).
   flatStat({ id: "extra_damage", quiet: true, name: "Extra damage", stat: "damage", stacking: { mode: "merge" }, describe: (e) => `+${e.amount} damage.` }),
   {

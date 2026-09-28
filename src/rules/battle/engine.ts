@@ -388,7 +388,7 @@ function passOrder(ctx: Ctx, pass: number): string[] {
     .map((u) => ({ u, initiative: ctx.stats(u.id).initiative }))
     .sort((a, b) => a.u.tile.row - b.u.tile.row || a.u.tile.col - b.u.tile.col);
   const speeds = [...new Set(acting.map((a) => a.initiative))].sort((a, b) => b - a);
-  return speeds.flatMap((speed) => {
+  const order = speeds.flatMap((speed) => {
     const tied = acting.filter((a) => a.initiative === speed);
     const first = tied.filter((a) => a.u.side === lead);
     const second = tied.filter((a) => a.u.side !== lead);
@@ -396,6 +396,9 @@ function passOrder(ctx: Ctx, pass: number): string[] {
       .flat()
       .flatMap((a) => (a ? [a.u.id] : []));
   });
+  // Units whose traits say they go first lead the pass, in the order they'd otherwise have.
+  const ahead = (id: string) => traitsOn(ctx, id).some((t) => t.hooks.precedes?.(ctx, t.self) ?? false);
+  return [...order.filter(ahead), ...order.filter((id) => !ahead(id))];
 }
 
 /** Slots still to come this round. Later passes are a forecast: Wait and initiative changes can reorder them. */

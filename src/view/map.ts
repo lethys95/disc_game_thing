@@ -414,6 +414,10 @@ export class MapView {
         stables: () => lodge(stone, new THREE.MeshStandardMaterial({ color: 0x6b4a2a, roughness: 0.9 })),
         tannery: () => lodge(stone, new THREE.MeshStandardMaterial({ color: 0x8a6a44, roughness: 0.9 })),
         siege_workshop: () => lodge(stone, new THREE.MeshStandardMaterial({ color: 0x4a3a2e, roughness: 0.9 })),
+        quarry: () => lodge(stone, stone),
+        ossuary: () => chapel(stone, dark, new THREE.MeshStandardMaterial({ color: 0xd8d0c0, roughness: 0.8 })),
+        watchtower: () => tower(stone, dark, 0.7),
+        bell_tower: () => tower(stone, candle, 0.55),
       };
       const model = models[node.kind]();
       model.position.copy(this.standingPoint(node.hex));
@@ -738,6 +742,17 @@ function chapel(stone: THREE.Material, roof: THREE.Material, light: THREE.Materi
   const window = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.1, 0.01), light);
   window.position.set(0, 0.15, 0.225);
   g.add(nave, top, tower, spire, window);
+  return g;
+}
+
+/** A placeholder tower: a stone shaft under a pointed cap. */
+function tower(wall: THREE.Material, cap: THREE.Material, height: number): THREE.Group {
+  const g = new THREE.Group();
+  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.13, height, 8), wall);
+  shaft.position.y = height / 2;
+  const top = new THREE.Mesh(new THREE.ConeGeometry(0.15, 0.2, 8), cap);
+  top.position.y = height + 0.1;
+  g.add(shaft, top);
   return g;
 }
 

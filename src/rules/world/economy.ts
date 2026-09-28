@@ -11,7 +11,7 @@ import { maxHpOf } from "#rules/world/record";
 import { CITY_RESURRECTION_PREMIUM, RESEARCH } from "#rules/research";
 import { UPGRADES, upgradesFor } from "#rules/upgrades";
 import { FACTIONS } from "#rules/factions";
-import { playerOf, alive, banditGroup, capitolOf, cityById, cityOfNode, leaderAt, leaderById, leaderUnit, member, nodesHeldBy, nodesOf } from "#rules/world/state";
+import { playerOf, alive, banditGroup, capitolOf, cityById, cityOfNode, giftsOf, leaderAt, leaderById, leaderUnit, member, nodesHeldBy, nodesOf } from "#rules/world/state";
 import type { Enchantment, PlayerId, City, Leader, MapNode, Mark, SquadMember, SquadRef, Strength, World, WorldEvent } from "#rules/world/state";
 import { capacityOf, cityOfSquad, ownerOf, squadAt } from "#rules/world/squads";
 import { MERCHANT_RESTOCK_TURNS, merchantWares } from "#rules/structures";
@@ -82,12 +82,17 @@ function raiseCost(world: World, defId: string, fellOnTurn: number): number {
   return base * Math.max(1, RESURRECTION_PREMIUM - (world.turn - fellOnTurn));
 }
 
-/** Outside the Capitol, a premium (research, CITY_RESURRECTION_PREMIUM). */
+/**
+ * Outside the Capitol, a premium (research, CITY_RESURRECTION_PREMIUM); in a city with an Ossuary, the Capitol's
+ * price less its discount instead.
+ */
 export function resurrectionCost(world: World, side: PlayerId, index: number, city?: City): number | null {
   const fallen = playerOf(world, side).graveyard[index];
   if (!fallen) return null;
   const base = raiseCost(world, fallen.defId, fallen.fellOnTurn);
-  return city && city.kind !== "capitol" ? Math.round(base * CITY_RESURRECTION_PREMIUM) : base;
+  if (!city || city.kind === "capitol") return base;
+  const ossuaries = giftsOf(world, city, "raisesDead");
+  return ossuaries.length > 0 ? Math.round(base * (1 - Math.max(...ossuaries))) : Math.round(base * CITY_RESURRECTION_PREMIUM);
 }
 
 /** Reviving a warband's fallen leader costs what resurrecting it would (provisional). */
@@ -123,9 +128,12 @@ export function resurrectProblem(world: World, index: number, into: SquadRef, ti
   return placeProblem(world, into, tile, (c) => raisesDeadAt(world, side, c), refusal);
 }
 
-/** Whether `player` can raise its dead in `city`: at its Capitol, or in any city it holds once researched. */
+/**
+ * Whether `player` can raise its dead in `city`: at its Capitol, in a city it holds with an Ossuary, or in any city it
+ * holds once researched.
+ */
 export function raisesDeadAt(world: World, player: PlayerId, city: City): boolean {
-  return city.owner === player && (city.kind === "capitol" || raisesDeadAnywhere(world, player));
+  return city.owner === player && (city.kind === "capitol" || giftsOf(world, city, "raisesDead").length > 0 || raisesDeadAnywhere(world, player));
 }
 
 const raisesDeadAnywhere = (world: World, player: PlayerId): boolean => playerOf(world, player).research.includes("city_resurrection");
@@ -279,13 +287,15 @@ export function startRound(world: World, events: WorldEvent[]): void {
   }
 }
 
-export const cityUpgradeCost = (city: City): number => CITY_UPGRADE_COST * (city.tier + 1);
+/** The next tier's price, less the city's best upgrade discount (a Quarry). */
+export const cityUpgradeCost = (world: World, city: City): number =>
+  Math.round(CITY_UPGRADE_COST * (city.tier + 1) * (1 - Math.max(0, ...giftsOf(world, city, "upgradeDiscount"))));
 
 export function upgradeCityProblem(world: World, cityId: string): string | null {
   const city = cityById(world, cityId);
   if (city.owner !== world.activePlayer) return "not your city";
   if (city.tier >= CITY_MAX_TIER) return "already at the highest tier";
-  if (playerOf(world, world.activePlayer).gold < cityUpgradeCost(city)) return "not enough gold";
+  if (playerOf(world, world.activePlayer).gold < cityUpgradeCost(world, city)) return "not enough gold";
   return null;
 }
 

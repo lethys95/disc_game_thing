@@ -1,3 +1,4 @@
+import { cityName } from "#view/city";
 import { hexKey, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { tileAt, TERRAIN_COST } from "#rules/map";
@@ -82,6 +83,10 @@ export function newsText(events: readonly WorldEvent[], world: World, player: Pl
   for (const e of events) {
     if (e.type === "captured" && (e.player === player || inSight(world.cities.find((c) => c.id === e.cityId)?.hex)))
       lines.push(`${e.player === player ? "You take" : "The enemy takes"} the city.`);
+    if (e.type === "alarm" && e.player === player) {
+      const city = world.cities.find((c) => c.id === e.cityId);
+      lines.push(`Bells ring in ${city ? cityName(city) : "one of your cities"}: an enemy warband is near.`);
+    }
     if (e.type === "xp" && e.player === player) lines.push(`Your survivors gain ${e.each} XP each.`);
     if (e.type === "evolved" && e.player === player) lines.push(`${unitName(e.from)} becomes ${unitName(e.to)}.`);
     if (e.type === "leveled" && e.player === player) lines.push(`${unitName(e.defId)} reaches level ${e.level}.`);

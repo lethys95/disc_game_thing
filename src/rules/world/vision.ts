@@ -2,7 +2,8 @@ import { CAPITOL_SIGHT, CITY_SIGHT, WARBAND_SIGHT } from "#rules/balance";
 import { hexDistance, hexKey } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import type { MapTile, WorldMap } from "#rules/map";
-import { emptyMemory, playerOf } from "#rules/world/state";
+import { NODES } from "#rules/nodes";
+import { emptyMemory, nodesHeldBy, playerOf } from "#rules/world/state";
 import { noMana } from "#rules/factions";
 import type { Player, PlayerId, World } from "#rules/world/state";
 
@@ -12,11 +13,16 @@ import type { Player, PlayerId, World } from "#rules/world/state";
  * a player knows. The AI plans from `knownWorld`, never from the world itself.
  */
 
-/** The hexes a player sees now: around its warbands and the cities it holds. */
+/** The hexes a player sees now: around its warbands, the cities it holds and their watching nodes. */
 export function sightOf(world: World, player: PlayerId): Set<string> {
   const eyes: [Hex, number][] = [
     ...world.leaders.filter((l) => l.player === player).map((l): [Hex, number] => [l.hex, WARBAND_SIGHT]),
     ...world.cities.filter((c) => c.owner === player).map((c): [Hex, number] => [c.hex, c.kind === "capitol" ? CAPITOL_SIGHT : CITY_SIGHT]),
+    // A node that watches (a Watchtower) sees around itself, for whoever holds its city.
+    ...nodesHeldBy(world, player).flatMap((n): [Hex, number][] => {
+      const range = NODES[n.kind].city?.sight?.(n.level);
+      return range ? [[n.hex, range]] : [];
+    }),
   ];
   const seen = new Set<string>();
   for (const tile of Object.values(world.map.tiles)) {

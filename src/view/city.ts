@@ -263,7 +263,7 @@ export class CityScreen implements KeyLayer {
       const next = city.tier + 1;
       const problem = upgradeCityProblem(world, city.id);
       row.appendChild(
-        orderButton("action small", [`Upgrade to tier ${next} · `, gold(cityUpgradeCost(city))], {
+        orderButton("action small", [`Upgrade to tier ${next} · `, gold(cityUpgradeCost(world, city))], {
           mayAct,
           problem,
           explain: `Tier ${next}: ${CITY_SLOTS[next] ?? 0} garrison slots; the garrison and a warband defending here get +${CITY_ARMOR_PER_TIER * (next - 1)} armor; units resting here heal ${Math.round(CITY_HEALING_PER_TIER * next * 100)}% a turn.`,
