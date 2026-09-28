@@ -75,6 +75,8 @@ function placeProblem(world: World, into: SquadRef, tile: Tile | undefined, qual
   const squad = squadAt(world, into);
   if (squad.length >= capacityOf(world, into)) return into.kind === "warband" ? `squad full (Leadership ${capacityOf(world, into)})` : "garrison full";
   if (tile && squad.some((m) => sameTile(m.tile, tile))) return "that spot is taken";
+  // Slots aside, the grid itself can be full (tribe units in a garrison take no slot, but they do take a tile).
+  if (squad.length >= ROWS.length * COLS.length) return into.kind === "warband" ? "squad full" : "garrison full";
   return null;
 }
 

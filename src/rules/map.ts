@@ -1,7 +1,7 @@
 import { hexagon, hexDistance, hexKey, neighbors, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import type { NodeKind, NodeSite } from "#rules/nodes";
-import { noise } from "#rules/noise";
+import { hashOf, noise } from "#rules/noise";
 import { STRUCTURE_KINDS, structuresPerKind } from "#rules/structures";
 import type { StructureKind } from "#rules/structures";
 
@@ -160,6 +160,7 @@ export function generateMap(seed: number, players = 2, size: MapSize = defaultMa
 /** Capitols on the starts; neutral cities spread over the middle ground, each with one node beside it. */
 function placeSites(map: WorldMap, seed: number, neutralCities: number): Site[] {
   const walkable = (hex: Hex) => stepCost(map, hex) !== null;
+  const specials = [...SPECIAL_NODES].sort((a, b) => noise(seed + 43, hashOf(a), 0) - noise(seed + 43, hashOf(b), 0));
   // Each Capitol has a gold mine of its own (user: Capitols count as cities for nodes).
   const capitolMine = (start: Hex, side: number): NodeSite[] => {
     const spot = neighbors(start)
@@ -177,17 +178,37 @@ function placeSites(map: WorldMap, seed: number, neutralCities: number): Site[] 
     const cities = sites.filter((s) => s.kind === "city").length;
     if (cities >= neutralCities) break;
     if (sites.some((s) => hexDistance(s.hex, hex) < 3)) continue;
-    const mine = neighbors(hex)
+    const spots = neighbors(hex)
       .filter((n) => walkable(n) && !taken(n) && !map.starts.some((s) => sameHex(s, n)))
-      .sort((a, b) => noise(seed + 37, a.q, a.r) - noise(seed + 37, b.q, b.r))[0];
-    if (!mine) continue;
-    // Provisional: the second neutral city has a Blacksmith, the third a mana node, the fourth a Cathedral, the
-    // others a gold mine.
-    const kind: NodeKind = cities === 1 ? "blacksmith" : cities === 2 ? "mana" : cities === 3 ? "cathedral" : "gold";
-    sites.push({ id: `city${cities + 1}`, kind: "city", hex, nodes: [{ kind, hex: mine }] });
+      .sort((a, b) => noise(seed + 37, a.q, a.r) - noise(seed + 37, b.q, b.r));
+    const [first, second] = spots;
+    if (!first) continue;
+    // Provisional (#56): every neutral city has an economic node (the third a mana node, the others a gold mine)
+    // and, where there's room beside it, one of the special kinds, dealt from a shuffled deck so maps differ and
+    // none repeats until all have been dealt.
+    const economy: NodeKind = cities === 2 ? "mana" : "gold";
+    const special = specials[cities % specials.length];
+    const nodes: NodeSite[] = [{ kind: economy, hex: first }, ...(second && special ? [{ kind: special, hex: second }] : [])];
+    sites.push({ id: `city${cities + 1}`, kind: "city", hex, nodes });
   }
   return sites;
 }
+
+/** The node kinds a neutral city can have besides gold and mana. */
+export const SPECIAL_NODES: readonly NodeKind[] = [
+  "blacksmith",
+  "cathedral",
+  "foundry",
+  "leech_pits",
+  "stables",
+  "tannery",
+  "siege_workshop",
+  "quarry",
+  "ossuary",
+  "watchtower",
+  "bell_tower",
+  "tribal_outpost",
+];
 
 /** `each` camps and `each` dungeons on free walkable hexes, away from the Capitols and from each other. */
 function placeLairs(map: WorldMap, sites: readonly Site[], seed: number, each: number): LairSite[] {

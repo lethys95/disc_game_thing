@@ -12,7 +12,7 @@ import type { City, World } from "#rules/world/state";
 import { knownWorld, sightOf } from "#rules/world/vision";
 import { reachable } from "#rules/world/movement";
 import type { Placement } from "#rules/battle/engine";
-import { COLS } from "#rules/battle/grid";
+import { COLS, ROWS } from "#rules/battle/grid";
 import { act, p, start, twoPlayers, unit, until, withGold, withGraveyard, withLeader } from "#tests/helpers";
 import { describe, expect, test } from "vitest";
 
@@ -153,6 +153,11 @@ describe("Tribal outpost", () => {
     expect(cityById(after, city.id).garrison.map((m) => m.defId)).toEqual(["brigand"]);
     expect(capacityOf(after, garrison)).toBe(slots + 1);
     expect(after.players[0]?.gold).toBe(1000 - (recruitCost("brigand") ?? 0));
+
+    // Slots aside, a full grid takes no one more.
+    const tiles = ROWS.flatMap((row) => COLS.map((col) => ({ row, col })));
+    const packed = { ...rich, cities: rich.cities.map((c) => (c.id === city.id ? { ...c, garrison: tiles.map((tile) => ({ defId: "brigand", tile, hp: 60, xp: 0, marks: [], level: 0 })) } : c)) };
+    expect(recruitProblem(packed, "brigand", garrison)).toBe("garrison full");
   });
 });
 
