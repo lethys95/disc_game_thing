@@ -1,4 +1,4 @@
-import { HEADLESS_GPU_ARGS } from "#scripts/headless";
+import { HEADLESS_ENV, HEADLESS_GPU_ARGS } from "#scripts/headless";
 import { mkdir } from "node:fs/promises";
 import { chromium } from "playwright";
 import { createServer } from "vite";
@@ -28,7 +28,7 @@ const server = await createServer({ logLevel: "error", server: { port: 0 } });
 await server.listen();
 const base = server.resolvedUrls?.local[0];
 if (!base) throw new Error("vite did not report a local URL");
-const browser = await chromium.launch({ args: [...HEADLESS_GPU_ARGS] });
+const browser = await chromium.launch({ args: [...HEADLESS_GPU_ARGS], env: HEADLESS_ENV });
 await mkdir("shots", { recursive: true });
 
 const failures: string[] = [];
