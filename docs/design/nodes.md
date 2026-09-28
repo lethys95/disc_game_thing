@@ -24,3 +24,10 @@ The brainstorm's ferry/waystones become **portals, "not unlike HoMM3"**: a map s
 
 ## Not taken (yet)
 Training yard, scriptorium, toll bridge, waystation, mercenary guildhall, aqueduct, the shrine as a node, the level-3 "new clause" idea, per-faction readings of nodes. The user didn't pick them; they stay in the brainstorm.
+
+## Built (M63, 2026-09-28)
+All of the above, with provisional numbers (`provisional.md` #56). Each neutral city has an economic node (gold, or mana on the third) and one special node dealt from a seeded shuffle of the twelve kinds (Blacksmith, Cathedral and the ten picks), so maps differ. How they work in the rules:
+- Recruit marks are effects (`effects.ts`); the Stables mark gives map movement through the general `mapMovement` field.
+- City gifts are data on the node (`nodes.ts` `CityGifts`): upgrade discount, wall armor, raising the dead, sight, warning radius, defender effects, tribe recruits.
+- The Bell tower's defenders act first through a general `precedes` hook.
+- Portals are neighbors in the movement graph (`map.ts` `exits`); a warband standing on one sees its other end.

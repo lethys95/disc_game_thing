@@ -11,6 +11,8 @@ Every model here was generated locally; the recipe regenerates it exactly.
 | `structure/merchant.glb` | seed 1 | TRELLIS.2, 1024_cascade | 20000, 2048 px |
 | `structure/mercenaries.glb` | seed 3 | TRELLIS.2, 1024_cascade | 20000, 2048 px |
 | `node/{gold,blacksmith,mana,cathedral}.glb` | seeds 1, 2, 1, 2 | TRELLIS.2, 1024_cascade | 16000, 2048 px |
+| `node/{foundry,leech_pits,stables,tannery,siege_workshop,quarry,ossuary,watchtower,bell_tower,tribal_outpost}.glb` | seed 1 (M63, the user's node picks) | TRELLIS.2, 1024_cascade, `--faces 16000 --texture 2048` | 16000, 2048 px |
+| `structure/portal.glb` | seed 1 | TRELLIS.2, 1024_cascade, `--faces 20000 --texture 2048` | 20000, 2048 px |
 | `lair/dungeon.glb` | seed 2 | TRELLIS.2, 1024_cascade, `--faces 20000 --texture 2048` | 20000, 2048 px |
 | `terrain/tree-{1,2,3,4}` | seeds 4, 1, 1, 1 (the lighter-green prompts, 2026-09-28) | TRELLIS.2, 1024_cascade, `--faces 8000 --texture 1024` | 8000, 1024 px |
 | `terrain/hill-{1,2}` | seed 1 | TRELLIS.2, 1024_cascade, `--faces 8000 --texture 1024` | 8000, 1024 px |

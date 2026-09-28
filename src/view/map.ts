@@ -438,7 +438,7 @@ export class MapView {
       });
       this.siteLayer.add(model);
       this.nodeModels.set(node.id, model);
-      this.models.dress(model, MODEL_CHAINS.node(node.kind), 0.6, 0.7);
+      this.models.dress(model, MODEL_CHAINS.node(node.kind), 0.8, 0.95);
       // A thin road from the node to its city, in the owner's color: which city it feeds (user, 2026-09-26).
       const city = cityOfNode(world, node);
       if (!city) continue;

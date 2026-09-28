@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines._
 
-**Updated:** 2026-09-28 (M61 bounce-light setting)
+**Updated:** 2026-09-28 (M63 nodes)
 
 ## Where we are
 A playable map game for 2–6 players (hotseat viewer vs AIs): two factions (**Jilliath**, **Ral-Vitahl**) with tier-1 melee/support/mage and Nexus mages to tier 3; bandit camps, dungeons with rewards, neutral cities; gold, mana and spells; nodes (gold, Blacksmith, mana, Cathedral); items on leaders; fog of war; retreat and a battle round limit; sound slots with placeholder SFX and music. The AI plays both the map (a list of planners in `world/ai.ts`) and battles, in a web worker.
@@ -10,7 +10,7 @@ A playable map game for 2–6 players (hotseat viewer vs AIs): two factions (**J
 Architecture: `design/architecture.md`; recipes and gotchas: `engineering.md`. `pnpm verify` before calling anything done. Sims: `pnpm sim:many --seeds 1-16 "p1,p2"` (smoke tests only until factions have their lines).
 
 ## Now
-**M61 bounce-light setting**: Settings → Display can turn off the map's bounce light, the costliest effect (on the integrated Radeon at 1280×720 the map runs 16 fps with it, 32 without; at 1080p, 6 fps with it). On by default: full quality stays the default; the switch is for a weak laptop GPU. Earlier today: M60 water, M59 wilds and clouds, M58 map lighting, M57 WebGPU, M56 landscape, M55 lighter trees, M53–M54 engine bake-offs.
+**M63 nodes** (branch `m63-nodes`): the user's ten node picks and portals, in the rules with tests (`design/nodes.md`): Foundry, Leech pits, Stables, Tannery, Siege workshop (recruit marks); Quarry, Ossuary, Watchtower, Bell tower (city gifts); Tribal outpost (a city recruits bandits); portals (HoMM3-style pairs). Every neutral city has an economic node and a special one. Models for the new kinds and the portal: generated (Krea + TRELLIS.2, `assets/models/SOURCES.md`); node models are shown larger. Earlier today: M55–M62 (trees, landscape, WebGPU, lighting, wilds, water, settings, `?fps`), M53–M54 engine bake-offs.
 
 ## Performance (user, 2026-09-28, `?fps`)
 Server desktop (RTX 3090 Ti): a solid 60 fps on the map. User's laptop: about 6 fps. Candidates for the laptop: bounce light off (Settings → Display), then instanced trees and grass.
