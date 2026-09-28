@@ -57,6 +57,18 @@ const PROPS: readonly { readonly slot: string; readonly look: string }[] = [
     slot: "lair/dungeon",
     look: "A dungeon entrance: a dark cave mouth framed by an ancient carved stone archway set into a mossy rock mound, broken steps leading down into the dark, a skull on a pike.",
   },
+  // The user's node picks (design/nodes.md, 2026-09-28) and the portal.
+  { slot: "node/foundry", look: "A small foundry: a squat stone building with a tall brick chimney breathing smoke, a glowing molten crucible, stacked iron plates and ingots outside." },
+  { slot: "node/leech_pits", look: "Leech pits: a few murky dark pools edged with muddy stone and rotting planks, wooden walkways between them, jars and nets, a crooked lantern post." },
+  { slot: "node/stables", look: "A stable: a long timber barn with a thatched roof and open stalls, a fenced paddock, hay bales and a water trough." },
+  { slot: "node/tannery", look: "A tannery: a small timber workshop with hides stretched on wooden racks to dry, vats of dark liquid, a pile of leather." },
+  { slot: "node/siege_workshop", look: "A siege workshop: an open timber workshop yard with a half-built wooden battering ram and a catapult frame, beams, ropes and tools." },
+  { slot: "node/quarry", look: "A stone quarry: a stepped cut into a grey rock outcrop, cut stone blocks stacked beside it, a wooden crane with a pulley." },
+  { slot: "node/ossuary", look: "An ossuary: a low, solemn stone crypt with a carved arch, niches in its walls lined with skulls and bones, candles burning at the door." },
+  { slot: "node/watchtower", look: "A watchtower: a tall, slender stone tower on a rocky base with a wooden lookout platform and a pointed roof, a banner on top." },
+  { slot: "node/bell_tower", look: "A bell tower: a square stone tower with an open belfry holding a large bronze bell under a small pointed roof." },
+  { slot: "node/tribal_outpost", look: "A tribal outpost: a ring of rough hide tents and a wooden palisade around a fire pit, totems with skulls and feathers, weapons on a rack." },
+  { slot: "structure/portal", look: "An ancient portal: a ring of tall weathered standing stones carved with runes around a swirling pool of glowing violet light." },
   // Terrain (user, 2026-09-27: a forest biome to begin with). Several of each, so no two hexes look copied.
   { slot: "terrain/tree-1", look: "A single broad oak tree with a thick gnarled trunk, exposed roots and a full rounded crown of fresh, sunlit leafy green, lighter toward the top." },
   { slot: "terrain/tree-2", look: "A single tall pine tree with layered drooping branches of lively mid green needles, sunlit highlights on the upper sides of the boughs." },

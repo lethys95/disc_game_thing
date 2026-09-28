@@ -1,3 +1,4 @@
+import { EFFECTS } from "#rules/effects";
 import { LEADER_AURA, LEADER_EXTRA_HEALTH, LEADER_HEALING, LEADER_MOVEMENT, LEADER_XP_PER_POINT, MAX_LEADERSHIP, STARTING_LEADERSHIP } from "#rules/balance";
 import type { EffectSeed } from "#rules/battle/types";
 import { itemById, SLOT_CAPACITY, SLOT_NAMES } from "#rules/items";
@@ -42,7 +43,13 @@ export const rankOf = (leader: Leader, skill: string): number => leader.skills[s
 
 export const leadershipOf = (leader: Leader): number => STARTING_LEADERSHIP + rankOf(leader, "leadership");
 
-export const movementOf = (leader: Leader): number => LEADER_MOVEMENT + rankOf(leader, "movement");
+export const movementOf = (leader: Leader): number => LEADER_MOVEMENT + rankOf(leader, "movement") + marchBonusOf(leader);
+
+/** The best map movement any living unit's mark gives its warband (Stables); marks don't add up. */
+function marchBonusOf(leader: Leader): number {
+  const bonuses = leader.squad.filter((m) => m.hp > 0).flatMap((m) => m.marks.map((mark) => EFFECTS.get(mark.effect.def)?.mapMovement ?? 0));
+  return Math.max(0, ...bonuses);
+}
 
 /** Share of max HP each unit of the warband heals at the start of its side's turn. */
 export const squadHealingOf = (leader: Leader): number => LEADER_HEALING * rankOf(leader, "healing");

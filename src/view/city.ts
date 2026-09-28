@@ -1,9 +1,9 @@
 import type { Tile } from "#rules/battle/types";
-import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST } from "#rules/units/index";
+import { FACTION_ROOTS, GUARDIAN_ID } from "#rules/units/index";
 import { CITY_ARMOR_PER_TIER, CITY_HEALING_PER_TIER, CITY_MAX_TIER, CITY_SLOTS, NODE_MAX_LEVEL } from "#rules/balance";
-import { raisesDeadAt, cityUpgradeCost, elevateProblem, investNodeProblem, nodeInvestCost, recruitProblem, upgradeCityProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem } from "#rules/world/economy";
+import { raisesDeadAt, cityUpgradeCost, elevateProblem, investNodeProblem, nodeInvestCost, recruitCost, recruitProblem, upgradeCityProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem } from "#rules/world/economy";
 import { capacityOf, transferProblem } from "#rules/world/squads";
-import { playerOf, cityById, leaderById, leaderUnit, nodesOf } from "#rules/world/state";
+import { playerOf, cityById, leaderById, leaderUnit, nodesOf, tribeRecruitsOf } from "#rules/world/state";
 import { NODES } from "#rules/nodes";
 import { CITY_RESURRECTION_PREMIUM } from "#rules/research";
 import type { City, PlayerId, SquadMember, SquadRef, World, WorldAction } from "#rules/world/state";
@@ -207,8 +207,10 @@ export class CityScreen implements KeyLayer {
         this.options.act({ type: "transfer", from, fromTile, to, toTile });
       },
       emptyChoices: (ref: SquadRef, tile: Tile): GridChoice[] => {
-        const recruits = FACTION_ROOTS[playerOf(world, side).faction].map((defId) => ({
-          label: `Recruit ${unitName(defId)} · ${RECRUIT_COST[defId] ?? 0} gold`,
+        // The faction's own first tiers, then what a Tribal outpost offers here.
+        const offered = [...FACTION_ROOTS[playerOf(world, side).faction], ...(city ? tribeRecruitsOf(world, city) : [])];
+        const recruits = offered.map((defId) => ({
+          label: `Recruit ${unitName(defId)} · ${recruitCost(defId) ?? 0} gold`,
           problem: recruitProblem(world, defId, ref, tile),
           run: () => this.options.act({ type: "recruit", defId, into: ref, tile }),
         }));
@@ -263,7 +265,7 @@ export class CityScreen implements KeyLayer {
       const next = city.tier + 1;
       const problem = upgradeCityProblem(world, city.id);
       row.appendChild(
-        orderButton("action small", [`Upgrade to tier ${next} · `, gold(cityUpgradeCost(city))], {
+        orderButton("action small", [`Upgrade to tier ${next} · `, gold(cityUpgradeCost(world, city))], {
           mayAct,
           problem,
           explain: `Tier ${next}: ${CITY_SLOTS[next] ?? 0} garrison slots; the garrison and a warband defending here get +${CITY_ARMOR_PER_TIER * (next - 1)} armor; units resting here heal ${Math.round(CITY_HEALING_PER_TIER * next * 100)}% a turn.`,

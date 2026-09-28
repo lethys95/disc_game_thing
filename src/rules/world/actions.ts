@@ -1,10 +1,9 @@
 import { choose } from "#rules/forks";
 import { sameTile } from "#rules/battle/grid";
 import { stepCost } from "#rules/map";
-import { RECRUIT_COST } from "#rules/units/index";
 import { LEADER_MOVEMENT } from "#rules/balance";
 import { defenderOf, engage } from "#rules/world/battles";
-import { nodeMarks, chooseBranchProblem, elevateProblem, freeTile, growSquad, learnSkillProblem, newcomer, recruitProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem, squadsOf, startRound, startTurn, upgradeCityProblem, researchProblem, investNodeProblem, nodeInvestCost, upgradeProblem, cityUpgradeCost } from "#rules/world/economy";
+import { nodeMarks, recruitCost, chooseBranchProblem, elevateProblem, freeTile, growSquad, learnSkillProblem, newcomer, recruitProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem, squadsOf, startRound, startTurn, upgradeCityProblem, researchProblem, investNodeProblem, nodeInvestCost, upgradeProblem, cityUpgradeCost } from "#rules/world/economy";
 import { equipProblem, freeRevival, movementOf, rankOf } from "#rules/world/leaders";
 import { destination, planMove } from "#rules/world/movement";
 import { knownWorld, see, updateVision } from "#rules/world/vision";
@@ -12,12 +11,13 @@ import { castProblem, castSpell, learnSpellProblem } from "#rules/world/spells";
 import { buyItem, buySpell, hire, sellItem } from "#rules/world/structures";
 import { useItem } from "#rules/world/items";
 import { spellById } from "#rules/spells";
+import { hexDistance } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { cityOfSquad, squadAt, transfer, transferProblem } from "#rules/world/squads";
 import { isLeaderOf } from "#rules/world/record";
 import { RESEARCH } from "#rules/research";
 import { UPGRADES } from "#rules/upgrades";
-import { playerOf, capitolOf, cityById, leaderById } from "#rules/world/state";
+import { playerOf, capitolOf, cityById, giftsOf, leaderById } from "#rules/world/state";
 import type { Leader, World, WorldAction, WorldEvent, WorldStep } from "#rules/world/state";
 
 /** Orders a side gives on its turn. */
@@ -56,7 +56,7 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       if (!tile) throw new Error("no room");
       const recruit = newcomer(draft, side, action.defId, tile);
       squad.push({ ...recruit, marks: [...recruit.marks, ...nodeMarks(draft, cityOfSquad(draft, action.into))] });
-      playerOf(draft, side).gold -= RECRUIT_COST[action.defId] ?? 0;
+      playerOf(draft, side).gold -= recruitCost(action.defId) ?? 0;
       events.push({ type: "recruited", defId: action.defId, into: action.into });
       break;
     }
@@ -185,7 +185,7 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       const problem = upgradeCityProblem(draft, action.cityId);
       if (problem) throw new Error(`cannot upgrade the city: ${problem}`);
       const city = cityById(draft, action.cityId);
-      playerOf(draft, side).gold -= cityUpgradeCost(city);
+      playerOf(draft, side).gold -= cityUpgradeCost(draft, city);
       city.tier += 1;
       events.push({ type: "cityUpgraded", cityId: city.id, tier: city.tier });
       break;
@@ -223,6 +223,17 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
   return { world: draft, events };
 }
 
+/** A warband that ends a march near someone else's city with warning nodes (a Bell tower) and wasn't near before. */
+function ringBells(world: World, leader: Leader, from: Hex, events: WorldEvent[]): void {
+  for (const city of world.cities) {
+    if (city.owner === null || city.owner === leader.player) continue;
+    const range = Math.max(0, ...giftsOf(world, city, "warning"));
+    if (range > 0 && hexDistance(city.hex, leader.hex) <= range && hexDistance(city.hex, from) > range) {
+      events.push({ type: "alarm", cityId: city.id, leaderId: leader.id, player: city.owner });
+    }
+  }
+}
+
 /**
  * A march, planned on what its player knows (`knownWorld`) and walked a hex at a time. It stops early when it sights
  * a warband it hadn't seen, or when its way or goal turns out other than it looked through the fog; the next hex
@@ -230,6 +241,7 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
  */
 function march(draft: World, leader: Leader, to: Hex, events: WorldEvent[]): void {
   const side = leader.player;
+  const origin = leader.hex;
   const known = knownWorld(draft, side);
   const plan = planMove(known, leader.id, to);
   if (!plan) throw new Error(`no path for ${leader.id}`);
@@ -259,7 +271,10 @@ function march(draft: World, leader: Leader, to: Hex, events: WorldEvent[]): voi
       break;
     }
   }
-  if (walked.length > 0) events.push({ type: "moved", leaderId: leader.id, path: walked });
+  if (walked.length > 0) {
+    events.push({ type: "moved", leaderId: leader.id, path: walked });
+    ringBells(draft, leader, origin, events);
+  }
   if (captures !== null) {
     cityById(draft, captures).owner = side;
     events.push({ type: "captured", cityId: captures, player: side });

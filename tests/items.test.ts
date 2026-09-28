@@ -89,9 +89,10 @@ describe("the user's items (2026-09-27)", () => {
   });
 
   test("units recruited in a Cathedral's city carry holy water", () => {
-    const world = fresh();
-    const cathedral = world.cities.find((c) => world.nodes.some((n) => n.kind === "cathedral" && n.cityId === c.id));
-    if (!cathedral) throw new Error("no Cathedral on this map");
+    const generated = fresh();
+    const cathedral = generated.cities.find((c) => c.kind === "city");
+    if (!cathedral) throw new Error("no neutral city");
+    const world = { ...generated, nodes: generated.nodes.map((n) => (n.cityId === cathedral.id ? { ...n, kind: n === generated.nodes.find((m) => m.cityId === cathedral.id) ? ("cathedral" as const) : ("gold" as const) } : n)) };
     let w = withGold({ ...world, cities: world.cities.map((c) => (c.id === cathedral.id ? { ...c, owner: 0, garrison: [] } : c)) }, [1000, 1000]);
     w = applyWorldAction(w, { type: "recruit", defId: "congregant", into: { kind: "garrison", cityId: cathedral.id } }).world;
     const recruit = w.cities.find((c) => c.id === cathedral.id)?.garrison[0];

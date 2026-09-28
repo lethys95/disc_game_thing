@@ -98,8 +98,13 @@ export function createBattle(sides: readonly [readonly Placement[], readonly Pla
   };
   const events: BattleEvent[] = [];
   const ctx = makeCtx(battle, events);
-  // Capped only now: effects the units bring (a leader's extra health) can raise their max HP.
-  for (const unit of Object.values(units)) unit.hp = Math.min(unit.hp, ctx.stats(unit.id).maxHp);
+  // Set only now: effects the units bring can raise their max HP (a leader's extra health) and their shield (a
+  // Foundry's plating); shields start every battle full.
+  for (const unit of Object.values(units)) {
+    const stats = ctx.stats(unit.id);
+    unit.hp = Math.min(unit.hp, stats.maxHp);
+    unit.shield = stats.shield;
+  }
   checkOutcome(ctx);
   advance(ctx);
   return { battle, events };
@@ -383,7 +388,7 @@ function passOrder(ctx: Ctx, pass: number): string[] {
     .map((u) => ({ u, initiative: ctx.stats(u.id).initiative }))
     .sort((a, b) => a.u.tile.row - b.u.tile.row || a.u.tile.col - b.u.tile.col);
   const speeds = [...new Set(acting.map((a) => a.initiative))].sort((a, b) => b - a);
-  return speeds.flatMap((speed) => {
+  const order = speeds.flatMap((speed) => {
     const tied = acting.filter((a) => a.initiative === speed);
     const first = tied.filter((a) => a.u.side === lead);
     const second = tied.filter((a) => a.u.side !== lead);
@@ -391,6 +396,9 @@ function passOrder(ctx: Ctx, pass: number): string[] {
       .flat()
       .flatMap((a) => (a ? [a.u.id] : []));
   });
+  // Units whose traits say they go first lead the pass, in the order they'd otherwise have.
+  const ahead = (id: string) => traitsOn(ctx, id).some((t) => t.hooks.precedes?.(ctx, t.self) ?? false);
+  return [...order.filter(ahead), ...order.filter((id) => !ahead(id))];
 }
 
 /** Slots still to come this round. Later passes are a forecast: Wait and initiative changes can reorder them. */

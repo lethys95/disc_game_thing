@@ -7,7 +7,7 @@ import { threeColor } from "#view/colors";
 import { movementOf } from "#rules/world/leaders";
 import { movementPips } from "#view/dom";
 import { CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
-import { hexKey } from "#rules/hex";
+import { hexDistance, hexKey } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import type { WorldMap } from "#rules/map";
 import type { NodeKind } from "#rules/nodes";
@@ -303,6 +303,16 @@ export class MapView {
       }
     }
     this.buildWilds(map, shape);
+    for (const portal of map.portals) {
+      for (const hex of [portal.a, portal.b]) {
+        const gate = portalGate();
+        gate.position.copy(hexPosition(hex)).setY(shape.heightAt(hexPosition(hex).x, hexPosition(hex).z));
+        gate.userData = { hex };
+        this.terrain.add(gate);
+        this.hexes.get(hexKey(hex))?.decoration.push(gate);
+        this.models.dress(gate, MODEL_CHAINS.portal(), 0.9, 0.9);
+      }
+    }
   }
 
   /**
@@ -408,6 +418,17 @@ export class MapView {
         blacksmith: () => anvil(dark, forge),
         mana: () => crystals(node.hex, crystal),
         cathedral: () => chapel(stone, dark, candle),
+        // Placeholders until the new kinds have models (`node/<kind>.glb`).
+        foundry: () => anvil(dark, forge),
+        leech_pits: () => pool(new THREE.Color(0x3a2a1c)),
+        stables: () => lodge(stone, new THREE.MeshStandardMaterial({ color: 0x6b4a2a, roughness: 0.9 })),
+        tannery: () => lodge(stone, new THREE.MeshStandardMaterial({ color: 0x8a6a44, roughness: 0.9 })),
+        siege_workshop: () => lodge(stone, new THREE.MeshStandardMaterial({ color: 0x4a3a2e, roughness: 0.9 })),
+        quarry: () => lodge(stone, stone),
+        ossuary: () => chapel(stone, dark, new THREE.MeshStandardMaterial({ color: 0xd8d0c0, roughness: 0.8 })),
+        watchtower: () => tower(stone, dark, 0.7),
+        bell_tower: () => tower(stone, candle, 0.55),
+        tribal_outpost: () => lodge(new THREE.MeshStandardMaterial({ color: 0x5a4632, roughness: 1 }), new THREE.MeshStandardMaterial({ color: 0x7a2a1e, roughness: 0.9 })),
       };
       const model = models[node.kind]();
       model.position.copy(this.standingPoint(node.hex));
@@ -417,7 +438,7 @@ export class MapView {
       });
       this.siteLayer.add(model);
       this.nodeModels.set(node.id, model);
-      this.models.dress(model, MODEL_CHAINS.node(node.kind), 0.6, 0.7);
+      this.models.dress(model, MODEL_CHAINS.node(node.kind), 0.8, 0.95);
       // A thin road from the node to its city, in the owner's color: which city it feeds (user, 2026-09-26).
       const city = cityOfNode(world, node);
       if (!city) continue;
@@ -676,10 +697,20 @@ export class MapView {
   async walk(leaderId: string, path: readonly Hex[], ours: boolean): Promise<void> {
     const figure = this.leaders.get(leaderId);
     if (!figure) return;
+    let at = hexAt(figure.group.position.x, figure.group.position.z);
     for (const hex of path) {
       if (!ours && !this.sees(hex)) return;
+      const through = hexDistance(at, hex) > 1;
+      at = hex;
       const from = figure.group.position.clone();
       const to = this.standingPoint(hex);
+      if (through) {
+        // Through a portal: it sinks into one end and rises from the other.
+        await this.stage.tween(HEX_STEP_MS, (t) => figure.group.scale.setScalar(1 - t));
+        figure.group.position.copy(to);
+        await this.stage.tween(HEX_STEP_MS, (t) => figure.group.scale.setScalar(t));
+        continue;
+      }
       await this.stage.tween(HEX_STEP_MS, (t) => {
         figure.group.position.lerpVectors(from, to, t);
         figure.group.position.y += Math.sin(t * Math.PI) * 0.12;
@@ -732,6 +763,57 @@ function chapel(stone: THREE.Material, roof: THREE.Material, light: THREE.Materi
   const window = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.1, 0.01), light);
   window.position.set(0, 0.15, 0.225);
   g.add(nave, top, tower, spire, window);
+  return g;
+}
+
+/** A portal's placeholder: a ring of standing stones around a glowing pool. */
+function portalGate(): THREE.Group {
+  const g = new THREE.Group();
+  const stone = new THREE.MeshStandardMaterial({ color: 0x5a5a60, roughness: 0.9, flatShading: true });
+  for (let i = 0; i < 6; i++) {
+    const a = (i / 6) * Math.PI * 2;
+    const menhir = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.34, 0.08), stone);
+    menhir.position.set(Math.cos(a) * 0.3, 0.17, Math.sin(a) * 0.3);
+    g.add(menhir);
+  }
+  const glow = new THREE.Mesh(new THREE.CircleGeometry(0.22, 24).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ color: 0x5a3cff, emissive: 0x7a5cff, emissiveIntensity: 1.6 }));
+  glow.position.y = 0.03;
+  g.add(glow);
+  return g;
+}
+
+/** A placeholder tower: a stone shaft under a pointed cap. */
+function tower(wall: THREE.Material, cap: THREE.Material, height: number): THREE.Group {
+  const g = new THREE.Group();
+  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.13, height, 8), wall);
+  shaft.position.y = height / 2;
+  const top = new THREE.Mesh(new THREE.ConeGeometry(0.15, 0.2, 8), cap);
+  top.position.y = height + 0.1;
+  g.add(shaft, top);
+  return g;
+}
+
+/** A placeholder building: a low hall under a pitched roof. */
+function lodge(wall: THREE.Material, roof: THREE.Material): THREE.Group {
+  const g = new THREE.Group();
+  const hall = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.2, 0.28), wall);
+  hall.position.y = 0.1;
+  const top = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.18, 4), roof);
+  top.position.y = 0.29;
+  top.rotation.y = Math.PI / 4;
+  top.scale.set(1.2, 1, 0.8);
+  g.add(hall, top);
+  return g;
+}
+
+/** A placeholder pit: murky water in a ring of stones. */
+function pool(water: THREE.Color): THREE.Group {
+  const g = new THREE.Group();
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(0.26, 0.05, 6, 12).rotateX(Math.PI / 2), new THREE.MeshStandardMaterial({ color: 0x4a4744, roughness: 1 }));
+  rim.position.y = 0.04;
+  const surface = new THREE.Mesh(new THREE.CircleGeometry(0.25, 16).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ color: water, roughness: 0.3 }));
+  surface.position.y = 0.03;
+  g.add(rim, surface);
   return g;
 }
 

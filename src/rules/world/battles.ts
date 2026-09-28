@@ -3,7 +3,8 @@ import { CITY_ARMOR_PER_TIER } from "#rules/balance";
 import { sameHex } from "#rules/hex";
 import { createBattle } from "#rules/battle/engine";
 import type { Placement } from "#rules/battle/engine";
-import type { Battle, Side } from "#rules/battle/types";
+import type { Battle, EffectSeed, Side } from "#rules/battle/types";
+import { NODES } from "#rules/nodes";
 import { sameTile } from "#rules/battle/grid";
 import { xpValue } from "#rules/progression";
 import { GUARDIAN_ID } from "#rules/units/index";
@@ -13,7 +14,7 @@ import { isLeaderOf, placementOf } from "#rules/world/record";
 import type { MoveTarget } from "#rules/world/movement";
 import { updateVision } from "#rules/world/vision";
 import { bury, clearLair, settleWarbands } from "#rules/world/fate";
-import { alive, cityById, lairById, leaderAt, leaderById, playerOf, unitId } from "#rules/world/state";
+import { alive, cityById, giftsOf, lairById, leaderAt, leaderById, nodesOf, playerOf, unitId } from "#rules/world/state";
 import type { City, Defender, Enchantment, Engagement, Leader, PlayerId, SquadMember, World, WorldEvent, WorldStep } from "#rules/world/state";
 
 /**
@@ -51,7 +52,13 @@ function defendedCity(world: World, defender: Defender, player: PlayerId | null)
 /** The armor a defender gets from a city's walls: a garrison always, a warband only in its own city. */
 function wallsFor(world: World, defender: Defender, player: PlayerId | null): number {
   const city = defendedCity(world, defender, player);
-  return city ? CITY_ARMOR_PER_TIER * (city.tier - 1) : 0;
+  return city ? CITY_ARMOR_PER_TIER * (city.tier - 1) + giftsOf(world, city, "wallArmor").reduce((a, b) => a + b, 0) : 0;
+}
+
+/** What the city's nodes give the defenders behind its walls (a Bell tower's warning). */
+function nodeDefenceFor(world: World, defender: Defender, player: PlayerId | null): EffectSeed[] {
+  const city = defendedCity(world, defender, player);
+  return city ? nodesOf(world, city).flatMap((n) => [...(NODES[n.kind].city?.defenderEffects?.(n.level) ?? [])]) : [];
 }
 
 /** A fight between a warband and whatever it walked into, ready to play. */
@@ -70,9 +77,10 @@ function engagementBattle(world: World, attacker: Leader, defender: Defender): B
   // Defenders in a city fight behind its walls: its garrison, or a warband standing in its own city.
   const walls = wallsFor(world, defender, defending.player);
   const cornered = defendedCity(world, defender, defending.player) !== undefined;
+  const fromNodes = nodeDefenceFor(world, defender, defending.player);
   const theirs = defending.squad.filter(alive).map((m) => {
     const placement = spelled(placementOf(m, defending.leader), theirSpells);
-    const effects = [...(placement.effects ?? []), ...(walls > 0 ? [{ def: "fortified", amount: walls }] : []), ...(cornered ? [{ def: "cornered" }] : [])];
+    const effects = [...(placement.effects ?? []), ...(walls > 0 ? [{ def: "fortified", amount: walls }] : []), ...(cornered ? [{ def: "cornered" }] : []), ...fromNodes];
     return { ...placement, effects };
   });
   const squads: [Placement[], Placement[]] = [ours, theirs];

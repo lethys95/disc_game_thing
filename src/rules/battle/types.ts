@@ -240,6 +240,8 @@ export interface Hooks {
   absorb?(ctx: Ctx, self: TraitSelf, packet: Packet): void;
   /** The target's traits reduce what got past the pools (Defend). */
   mitigate?(ctx: Ctx, self: TraitSelf, packet: Packet): void;
+  /** Whether this unit acts before everyone else in the current pass (a Bell tower's forewarned defenders). */
+  precedes?(ctx: Ctx, self: TraitSelf): boolean;
   /** At the start of this unit's turn; "skip" loses the turn, "leave" takes the unit off the field alive (Retreat). */
   turnStart?(ctx: Ctx, self: TraitSelf): "skip" | "leave" | null;
   /** Before this unit's ability resolves; "cancel" makes it fizzle (the action is still spent). */
@@ -285,6 +287,13 @@ export interface EffectDef {
   readonly hooks: Hooks;
   readonly absorbPriority?: number;
   onExpire?(ctx: Ctx, self: TraitSelf): void;
+  /**
+   * Carried as a mark (`world/state.ts`), extra movement for its warband on the map. Several don't add up: a warband
+   * moves as fast as its best (Stables).
+   */
+  readonly mapMovement?: number;
+  /** A city's walls: armor its bearer has from them, which siege-trained attackers ignore (Siege workshop). */
+  readonly fortifies?: boolean;
   /** What it does, from its own numbers; shown when hovering it. */
   describe(effect: EffectInstance): string;
 }

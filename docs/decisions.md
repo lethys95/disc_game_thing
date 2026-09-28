@@ -190,3 +190,6 @@ The map gets screen-space global illumination (SSGI), denoised within each frame
 
 **2026-09-28 — Wild land around the map; clouds over the unexplored (M59).**
 The margin past the map's edge is scenery: meadow, forest and mountains, always shown, never picked, nothing tall on the camera's side. With the world lit around it, the unexplored map read as a grey hole, so unexplored land now lies under drifting clouds (animated noise in the ground shader), Civilization style. It still hides terrain, and it still lies flat.
+
+**2026-09-28 — Portals are neighbors in the movement graph; a warband on one sees its other end (M63).**
+The user turned the brainstorm's ferry into HoMM3-style portals: map structures nobody holds. The pathfinder, reachability and every AI route use `exits()` (neighbors plus a portal's twin), with an A* estimate that counts portal shortcuts so paths stay cheapest. Fog hides a portal until both ends are explored. The march's rule that its next hex is always in sight broke at a portal (the far end can be out of sight), which let an AI order the same blocked step forever; now a warband standing on a portal sees one hex around its other end.

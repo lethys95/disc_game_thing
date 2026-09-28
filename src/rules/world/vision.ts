@@ -1,8 +1,9 @@
 import { CAPITOL_SIGHT, CITY_SIGHT, WARBAND_SIGHT } from "#rules/balance";
-import { hexDistance, hexKey } from "#rules/hex";
+import { hexDistance, hexKey, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import type { MapTile, WorldMap } from "#rules/map";
-import { emptyMemory, playerOf } from "#rules/world/state";
+import { NODES } from "#rules/nodes";
+import { emptyMemory, nodesHeldBy, playerOf } from "#rules/world/state";
 import { noMana } from "#rules/factions";
 import type { Player, PlayerId, World } from "#rules/world/state";
 
@@ -12,11 +13,24 @@ import type { Player, PlayerId, World } from "#rules/world/state";
  * a player knows. The AI plans from `knownWorld`, never from the world itself.
  */
 
-/** The hexes a player sees now: around its warbands and the cities it holds. */
+/** How far a warband on a portal sees around its other end. */
+const PORTAL_SIGHT = 1;
+
+/** The hexes a player sees now: around its warbands, the cities it holds and their watching nodes. */
 export function sightOf(world: World, player: PlayerId): Set<string> {
   const eyes: [Hex, number][] = [
     ...world.leaders.filter((l) => l.player === player).map((l): [Hex, number] => [l.hex, WARBAND_SIGHT]),
+    // A warband on a portal sees what's around its other end: a march's next hex must always be in sight, and a
+    // portal's next hex is over there.
+    ...world.leaders
+      .filter((l) => l.player === player)
+      .flatMap((l) => world.map.portals.flatMap((p): [Hex, number][] => (sameHex(p.a, l.hex) ? [[p.b, PORTAL_SIGHT]] : sameHex(p.b, l.hex) ? [[p.a, PORTAL_SIGHT]] : []))),
     ...world.cities.filter((c) => c.owner === player).map((c): [Hex, number] => [c.hex, c.kind === "capitol" ? CAPITOL_SIGHT : CITY_SIGHT]),
+    // A node that watches (a Watchtower) sees around itself, for whoever holds its city.
+    ...nodesHeldBy(world, player).flatMap((n): [Hex, number][] => {
+      const range = NODES[n.kind].city?.sight?.(n.level);
+      return range ? [[n.hex, range]] : [];
+    }),
   ];
   const seen = new Set<string>();
   for (const tile of Object.values(world.map.tiles)) {
@@ -111,5 +125,7 @@ function blindMap(map: WorldMap, explored: ReadonlySet<string>): WorldMap {
   if (tiles.every((t) => explored.has(hexKey(t.hex)))) return map;
   const known: Record<string, MapTile> = {};
   for (const tile of tiles) known[hexKey(tile.hex)] = explored.has(hexKey(tile.hex)) ? tile : { hex: tile.hex, terrain: "plain" };
-  return { ...map, tiles: known };
+  // A portal is known once both of its ends have been seen: where it leads isn't known from one end alone.
+  const portals = map.portals.filter((p) => explored.has(hexKey(p.a)) && explored.has(hexKey(p.b)));
+  return { ...map, tiles: known, portals };
 }
