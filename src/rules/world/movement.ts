@@ -1,6 +1,6 @@
-import { hexKey, neighbors } from "#rules/hex";
+import { hexKey } from "#rules/hex";
 import type { Hex } from "#rules/hex";
-import { findPath, stepCost } from "#rules/map";
+import { exits, findPath, stepCost } from "#rules/map";
 import type { Path } from "#rules/map";
 import { cityAt, lairAt, leaderAt, leaderById } from "#rules/world/state";
 import type { PlayerId, World } from "#rules/world/state";
@@ -63,7 +63,7 @@ export function reachable(world: World, leaderId: string): Map<string, number> {
     const hex = frontier.shift();
     if (!hex) break;
     const spent = costs.get(hexKey(hex)) ?? 0;
-    for (const next of neighbors(hex)) {
+    for (const next of exits(world.map, hex)) {
       const cost = stepCost(world.map, next);
       if (cost === null || destination(world, leader.player, next) !== null) continue;
       const total = spent + cost;

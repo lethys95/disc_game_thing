@@ -67,6 +67,7 @@ export function modelSlots(factions: readonly string[], structures: readonly str
     ...structures.flatMap((s) => MODEL_CHAINS.structure(s)),
     ...nodes.flatMap((n) => MODEL_CHAINS.node(n)),
     ...MODEL_CHAINS.dungeon(),
+    ...MODEL_CHAINS.portal(),
     ...Object.entries(TERRAIN_VARIANTS).flatMap(([kind, count]) => Array.from({ length: count }, (_, i) => `terrain/${kind}-${i + 1}`)),
   ];
 }
@@ -78,6 +79,7 @@ export const MODEL_CHAINS = {
   structure: (kind: string) => [`structure/${kind}`],
   node: (kind: string) => [`node/${kind}`],
   dungeon: () => ["lair/dungeon"],
+  portal: () => ["structure/portal"],
 } as const;
 
 /** Loads each model once; places share its geometry and materials (`userData.shared` keeps `discard` off them). */

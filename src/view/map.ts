@@ -7,7 +7,7 @@ import { threeColor } from "#view/colors";
 import { movementOf } from "#rules/world/leaders";
 import { movementPips } from "#view/dom";
 import { CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
-import { hexKey } from "#rules/hex";
+import { hexDistance, hexKey } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import type { WorldMap } from "#rules/map";
 import type { NodeKind } from "#rules/nodes";
@@ -303,6 +303,16 @@ export class MapView {
       }
     }
     this.buildWilds(map, shape);
+    for (const portal of map.portals) {
+      for (const hex of [portal.a, portal.b]) {
+        const gate = portalGate();
+        gate.position.copy(hexPosition(hex)).setY(shape.heightAt(hexPosition(hex).x, hexPosition(hex).z));
+        gate.userData = { hex };
+        this.terrain.add(gate);
+        this.hexes.get(hexKey(hex))?.decoration.push(gate);
+        this.models.dress(gate, MODEL_CHAINS.portal(), 0.9, 0.9);
+      }
+    }
   }
 
   /**
@@ -687,10 +697,20 @@ export class MapView {
   async walk(leaderId: string, path: readonly Hex[], ours: boolean): Promise<void> {
     const figure = this.leaders.get(leaderId);
     if (!figure) return;
+    let at = hexAt(figure.group.position.x, figure.group.position.z);
     for (const hex of path) {
       if (!ours && !this.sees(hex)) return;
+      const through = hexDistance(at, hex) > 1;
+      at = hex;
       const from = figure.group.position.clone();
       const to = this.standingPoint(hex);
+      if (through) {
+        // Through a portal: it sinks into one end and rises from the other.
+        await this.stage.tween(HEX_STEP_MS, (t) => figure.group.scale.setScalar(1 - t));
+        figure.group.position.copy(to);
+        await this.stage.tween(HEX_STEP_MS, (t) => figure.group.scale.setScalar(t));
+        continue;
+      }
       await this.stage.tween(HEX_STEP_MS, (t) => {
         figure.group.position.lerpVectors(from, to, t);
         figure.group.position.y += Math.sin(t * Math.PI) * 0.12;
@@ -743,6 +763,22 @@ function chapel(stone: THREE.Material, roof: THREE.Material, light: THREE.Materi
   const window = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.1, 0.01), light);
   window.position.set(0, 0.15, 0.225);
   g.add(nave, top, tower, spire, window);
+  return g;
+}
+
+/** A portal's placeholder: a ring of standing stones around a glowing pool. */
+function portalGate(): THREE.Group {
+  const g = new THREE.Group();
+  const stone = new THREE.MeshStandardMaterial({ color: 0x5a5a60, roughness: 0.9, flatShading: true });
+  for (let i = 0; i < 6; i++) {
+    const a = (i / 6) * Math.PI * 2;
+    const menhir = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.34, 0.08), stone);
+    menhir.position.set(Math.cos(a) * 0.3, 0.17, Math.sin(a) * 0.3);
+    g.add(menhir);
+  }
+  const glow = new THREE.Mesh(new THREE.CircleGeometry(0.22, 24).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ color: 0x5a3cff, emissive: 0x7a5cff, emissiveIntensity: 1.6 }));
+  glow.position.y = 0.03;
+  g.add(glow);
   return g;
 }
 

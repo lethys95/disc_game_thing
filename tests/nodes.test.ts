@@ -1,5 +1,5 @@
 import { hexDistance, hexKey } from "#rules/hex";
-import { stepCost } from "#rules/map";
+import { exits, findPath, generateMap, stepCost } from "#rules/map";
 import type { NodeKind } from "#rules/nodes";
 import { applyWorldAction } from "#rules/world/actions";
 import { engage } from "#rules/world/battles";
@@ -9,7 +9,8 @@ import { capacityOf } from "#rules/world/squads";
 import { movementOf } from "#rules/world/leaders";
 import { cityById, leaderById } from "#rules/world/state";
 import type { City, World } from "#rules/world/state";
-import { sightOf } from "#rules/world/vision";
+import { knownWorld, sightOf } from "#rules/world/vision";
+import { reachable } from "#rules/world/movement";
 import type { Placement } from "#rules/battle/engine";
 import { COLS } from "#rules/battle/grid";
 import { act, p, start, twoPlayers, unit, until, withGold, withGraveyard, withLeader } from "#tests/helpers";
@@ -152,5 +153,32 @@ describe("Tribal outpost", () => {
     expect(cityById(after, city.id).garrison.map((m) => m.defId)).toEqual(["brigand"]);
     expect(capacityOf(after, garrison)).toBe(slots + 1);
     expect(after.players[0]?.gold).toBe(1000 - (recruitCost("brigand") ?? 0));
+  });
+});
+
+describe("portals", () => {
+  test("every map has one; a path takes it when that's shorter; fog hides it until both ends are seen", () => {
+    for (const seed of [1, 2, 3]) {
+      const map = generateMap(seed, 2);
+      expect(map.portals.length).toBeGreaterThan(0);
+      for (const portal of map.portals) expect(hexDistance(portal.a, portal.b)).toBeGreaterThanOrEqual(4);
+    }
+    const map = generateMap(1, 2);
+    const portal = map.portals[0];
+    if (!portal) throw new Error("no portal");
+    expect(exits(map, portal.a)).toContainEqual(portal.b);
+    const path = findPath(map, portal.a, portal.b, () => false);
+    expect(path?.hexes).toEqual([portal.b]);
+
+    const world = createWorld(1, twoPlayers([squad, squad], [{}, {}], ["jilliath", "jilliath"]));
+    const onPortal = withLeader(world, "leader0", { hex: world.map.portals[0]?.a ?? portal.a, movement: 10 });
+    const known = knownWorld(onPortal, 0);
+    const far = world.map.portals[0]?.b ?? portal.b;
+    const seenBoth = known.map.portals.length > 0;
+    expect(seenBoth).toBe(onPortal.players[0]?.explored.includes(hexKey(far)) ?? false);
+    const revealed = { ...onPortal, players: onPortal.players.map((pl, i) => (i === 0 ? { ...pl, explored: Object.keys(onPortal.map.tiles) } : pl)) };
+    expect(reachable(revealed, "leader0").has(hexKey(far))).toBe(true);
+    // Standing on a portal, a warband sees its other end: a march never steps into what it can't see.
+    expect(sightOf(onPortal, 0).has(hexKey(far))).toBe(true);
   });
 });

@@ -47,6 +47,16 @@ export interface StructureSite {
   readonly hex: Hex;
 }
 
+/**
+ * A portal (user, 2026-09-28: "not unlike HoMM3"): two linked hexes; a warband on one can step to the other as if
+ * they were neighbors. A map structure nobody holds.
+ */
+export interface Portal {
+  readonly id: string;
+  readonly a: Hex;
+  readonly b: Hex;
+}
+
 export interface WorldMap {
   readonly radius: number;
   readonly tiles: Readonly<Record<string, MapTile>>;
@@ -55,6 +65,7 @@ export interface WorldMap {
   readonly sites: readonly Site[];
   readonly lairs: readonly LairSite[];
   readonly structures: readonly StructureSite[];
+  readonly portals: readonly Portal[];
 }
 
 
@@ -131,14 +142,15 @@ export function generateMap(seed: number, players = 2, size: MapSize = defaultMa
       const clear = starts.some((s) => hexDistance(s, hex) <= 1);
       tiles[hexKey(hex)] = { hex, terrain: clear ? "plain" : terrainFor(variant, hex, radius) };
     }
-    const bare: WorldMap = { radius, tiles, starts, sites: [], lairs: [], structures: [] };
+    const bare: WorldMap = { radius, tiles, starts, sites: [], lairs: [], structures: [], portals: [] };
     const first = starts[0];
     if (!first || starts.some((s) => !sameHex(s, first) && !findPath(bare, first, s, () => false))) continue;
     const sites = placeSites(bare, variant, neutralCities);
     const lairs = placeLairs(bare, sites, variant, lairsEach);
     const structures = placeStructures(bare, sites, lairs, variant);
     if (STRUCTURE_KINDS.some((kind) => !structures.some((s) => s.kind === kind))) continue;
-    const map: WorldMap = { ...bare, sites, lairs, structures };
+    const portals = placePortals(bare, [...sites.flatMap((s) => [s.hex, ...s.nodes.map((n) => n.hex)]), ...lairs.map((l) => l.hex), ...structures.map((s) => s.hex)], variant);
+    const map: WorldMap = { ...bare, sites, lairs, structures, portals };
     const spots = [...sites.map((s) => s.hex), ...lairs.map((l) => l.hex), ...structures.map((s) => s.hex)];
     const everyoneReaches = spots.every((hex) => starts.every((start) => sameHex(start, hex) || findPath(map, start, hex, () => false)));
     if (everyoneReaches) return map;
@@ -227,6 +239,47 @@ function placeStructures(map: WorldMap, sites: readonly Site[], lairs: readonly 
   return structures;
 }
 
+/** One pair per this many hexes; the ends at least this far apart (provisional #56). */
+const HEXES_PER_PORTAL = 90;
+const PORTAL_REACH = 4;
+
+/**
+ * Portal pairs on free walkable hexes, each linking to the farthest free hex from its first end, away from the
+ * Capitols, so a portal is a real shortcut across the map.
+ */
+function placePortals(map: WorldMap, taken: readonly Hex[], seed: number): Portal[] {
+  const pairs = Math.max(1, Math.floor(Object.keys(map.tiles).length / HEXES_PER_PORTAL));
+  const portals: Portal[] = [];
+  // A portal may stand beside a city or a camp, just not on one, nor next to another portal.
+  const used = (hex: Hex) => taken.some((t) => sameHex(t, hex)) || portals.some((p) => hexDistance(p.a, hex) < 2 || hexDistance(p.b, hex) < 2);
+  const open = Object.values(map.tiles)
+    .map((t) => t.hex)
+    .filter((hex) => stepCost(map, hex) !== null && map.starts.every((s) => hexDistance(s, hex) >= 3))
+    .sort((a, b) => noise(seed + 71, a.q, a.r) - noise(seed + 71, b.q, b.r));
+  for (const a of open) {
+    if (portals.length >= pairs) break;
+    if (used(a)) continue;
+    const b = open.filter((hex) => !used(hex)).sort((x, y) => hexDistance(y, a) - hexDistance(x, a))[0];
+    if (b && hexDistance(a, b) >= PORTAL_REACH) portals.push({ id: `portal${portals.length}`, a, b });
+  }
+  return portals;
+}
+
+/** Where a warband can step from `hex`: its neighbors, and a portal's other end. */
+export function exits(map: WorldMap, hex: Hex): Hex[] {
+  const twins = map.portals.flatMap((p) => (sameHex(p.a, hex) ? [p.b] : sameHex(p.b, hex) ? [p.a] : []));
+  return [...neighbors(hex), ...twins];
+}
+
+/** A lower bound on the steps from `a` to `b`, portals included, so A* stays exact. */
+function stepsAtLeast(map: WorldMap, a: Hex, b: Hex): number {
+  let best = hexDistance(a, b);
+  for (const p of map.portals) {
+    best = Math.min(best, hexDistance(a, p.a) + 1 + hexDistance(p.b, b), hexDistance(a, p.b) + 1 + hexDistance(p.a, b));
+  }
+  return best;
+}
+
 export interface Path {
   readonly hexes: readonly Hex[];
   readonly cost: number;
@@ -238,7 +291,7 @@ export interface Path {
  */
 export function findPath(map: WorldMap, from: Hex, to: Hex, blocked: (hex: Hex) => boolean): Path | null {
   if (stepCost(map, to) === null) return null;
-  const open = new Map<string, { hex: Hex; cost: number; estimate: number }>([[hexKey(from), { hex: from, cost: 0, estimate: hexDistance(from, to) }]]);
+  const open = new Map<string, { hex: Hex; cost: number; estimate: number }>([[hexKey(from), { hex: from, cost: 0, estimate: stepsAtLeast(map, from, to) }]]);
   const came = new Map<string, Hex>();
   const best = new Map<string, number>([[hexKey(from), 0]]);
   while (open.size > 0) {
@@ -261,7 +314,7 @@ export function findPath(map: WorldMap, from: Hex, to: Hex, blocked: (hex: Hex) 
       }
       return { hexes, cost: current.cost };
     }
-    for (const next of neighbors(current.hex)) {
+    for (const next of exits(map, current.hex)) {
       const cost = stepCost(map, next);
       if (cost === null) continue;
       if (!sameHex(next, to) && blocked(next)) continue;
@@ -270,7 +323,7 @@ export function findPath(map: WorldMap, from: Hex, to: Hex, blocked: (hex: Hex) 
       if (total >= (best.get(k) ?? Infinity)) continue;
       best.set(k, total);
       came.set(k, current.hex);
-      open.set(k, { hex: next, cost: total, estimate: total + hexDistance(next, to) });
+      open.set(k, { hex: next, cost: total, estimate: total + stepsAtLeast(map, next, to) });
     }
   }
   return null;
