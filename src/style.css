@@ -521,3 +521,11 @@ button.action.selected:not(.ability), button.small.selected, button.doctrine.sel
 #setup .setup-extras { gap: 4px; }
 #setup .setup-extras > .note { margin: 0; }
 #setup button.doctrine { border-width: 6px; border-image-width: 6px 14px; padding: 0 10px; }
+/* Tab emblems (assets/ui/icon-*.webp) in the medallions; the text glyph shows only if an emblem is missing. */
+#capitol .rail-tab .glyph[class*="icon-"] { width: 40px; height: 40px; background-position: center; background-size: contain; background-repeat: no-repeat; color: transparent; font-size: 0; margin-top: 0; }
+#capitol .rail-tab .icon-city { background-image: var(--ui-icon-city); }
+#capitol .rail-tab .icon-garrison { background-image: var(--ui-icon-garrison); }
+#capitol .rail-tab .icon-research { background-image: var(--ui-icon-research); }
+#capitol .rail-tab .icon-spells { background-image: var(--ui-icon-spells); }
+#capitol .rail-tab:not(.selected) .glyph { filter: brightness(0.75); }
+

@@ -29,11 +29,11 @@ export interface CityScreenOptions {
 type CityTab = "home" | "garrison" | "research" | "spells";
 
 /** The tab rail (user, 2026-09-27: a neat tab menu on the right, as in a strategy game); glyphs are placeholders. */
-const TABS: Readonly<Record<CityTab, { readonly label: string; readonly glyph: string; readonly capitolOnly: boolean }>> = {
-  home: { label: "City", glyph: "⌂", capitolOnly: false },
-  garrison: { label: "Garrison", glyph: "⚔", capitolOnly: false },
-  research: { label: "Research", glyph: "✦", capitolOnly: true },
-  spells: { label: "Spells", glyph: "✧", capitolOnly: true },
+const TABS: Readonly<Record<CityTab, { readonly label: string; readonly glyph: string; readonly icon: string; readonly capitolOnly: boolean }>> = {
+  home: { label: "City", glyph: "⌂", icon: "city", capitolOnly: false },
+  garrison: { label: "Garrison", glyph: "⚔", icon: "garrison", capitolOnly: false },
+  research: { label: "Research", glyph: "✦", icon: "research", capitolOnly: true },
+  spells: { label: "Spells", glyph: "✧", icon: "spells", capitolOnly: true },
 };
 
 
@@ -118,7 +118,7 @@ export class CityScreen implements KeyLayer {
     const tabs = element("div", "rail-tabs");
     for (const [id, tab] of Object.entries(TABS)) {
       if (!isCityTab(id) || (tab.capitolOnly && city.kind !== "capitol")) continue;
-      const tile = button(`rail-tab${id === current ? " selected" : ""}`, [element("span", "glyph", tab.glyph), element("span", "label", tab.label)], () => {
+      const tile = button(`rail-tab${id === current ? " selected" : ""}`, [element("span", `glyph icon-${tab.icon}`, tab.glyph), element("span", "label", tab.label)], () => {
         this.tab = id;
         this.rerender();
       });

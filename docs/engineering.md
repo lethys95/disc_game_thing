@@ -77,6 +77,8 @@ The step-by-step recipes (units, abilities, effects, nodes, forks, recording the
 - **Changing the World's shape? Bump `SAVE_VERSION`** (`src/rules/save.ts`) and update the snapshot (`pnpm vitest -u tests/save.test.ts`); the shape test fails until you do. Old saves are then refused, never migrated.
 
 ## Gotchas
+- **When screenshots fail with empty `VALIDATE_STATUS false` shader errors, check the GPU, not the code:** `journalctl -k | grep NVRM`. A driver refusing contexts (`NV_ERR_STATE_IN_USE`) needs a reboot; meanwhile `--use-angle=swiftshader --enable-unsafe-swiftshader` renders in software.
+- **A CSS `background` shorthand resets `background-image`**: a more specific rule using the shorthand silently blanks images set by less specific ones. Use longhands (`background-size`, …) when layering.
 - **Chain commits after verify with `&&`, never `;`.** A `;` once merged a failing test into main.
 - **CSS2DRenderer positions labels through `transform`.** A CSS animation on `transform` silently overrides it (every float drew at the top-left). Animate an inner element.
 - **`[hidden]` loses to author `display:` rules.** A global `[hidden] { display: none !important }` is in `style.css`; keep it.

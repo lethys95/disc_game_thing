@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines._
 
-**Updated:** 2026-09-28 (M50 merged)
+**Updated:** 2026-09-28 (M52 on a branch)
 
 ## Where we are
 A playable map game for 2–6 players (hotseat viewer vs AIs): two factions (**Jilliath**, **Ral-Vitahl**) with tier-1 melee/support/mage and Nexus mages to tier 3; bandit camps, dungeons with rewards, neutral cities; gold, mana and spells; nodes (gold, Blacksmith, mana, Cathedral); items on leaders; fog of war; retreat and a battle round limit; sound slots with placeholder SFX and music. The AI plays both the map (a list of planners in `world/ai.ts`) and battles, in a web worker.
@@ -10,7 +10,9 @@ A playable map game for 2–6 players (hotseat viewer vs AIs): two factions (**J
 Architecture: `design/architecture.md`; recipes and gotchas: `engineering.md`. `pnpm verify` before calling anything done. Sims: `pnpm sim:many --seeds 1-16 "p1,p2"` (smoke tests only until factions have their lines).
 
 ## Now
-**M50 map polish** (merged into main): the sky lights the scene, ambient occlusion, props sink into the ground, fuller forests (`design/map-look.md`). M49: every model is TRELLIS.2. The user wants to try video → gaussian splats at some point (`design/asset-pipeline.md`).
+**Branch `m52-tab-icons` (not merged):** generated emblems in the city screen's tab medallions. `pnpm check` passes; `pnpm verify` can't run until GPU 0 is fixed (below), so it waits to merge.
+**GPU 0 needs a reboot:** since 2026-09-27 20:09 its driver refuses new GPU contexts (`NV_ERR_STATE_IN_USE` in the kernel log, no crash), so the headless browser for screenshots and playtests fails. One-off screenshots work with software rendering (`--use-angle=swiftshader`). Finding from 2026-09-28: big-map stalemates are fortress Capitols, not scouting (`provisional.md`).
+M50 map polish (sky lighting, ambient occlusion, grounded props, fuller forests) and M49 (all models TRELLIS.2) are merged.
 
 ## Next
 1. Waiting on the user: `questions.md` (unit designs first: Jilliath's tier-2 support and mage, then Grove/Wastes tier 1, then tribes).

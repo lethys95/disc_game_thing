@@ -45,6 +45,11 @@ const PIECES = [
     look: "A seamless texture of a dark iron panel seen straight on: hammered black metal with faint engraved filigree and a few small rivets, subtle and low contrast, even lighting, filling the whole frame.",
     size: [1024, 1024],
   },
+  // Emblems for the city screen's tab medallions: engraved silver on the medallion's dark stone.
+  { id: "icon-city", look: "A single emblem in tarnished engraved silver relief: a gothic castle keep with three towers and a gate, bold simple silhouette, filling the frame.", size: [1024, 1024] },
+  { id: "icon-garrison", look: "A single emblem in tarnished engraved silver relief: two crossed swords over a kite shield, bold simple silhouette, filling the frame.", size: [1024, 1024] },
+  { id: "icon-research", look: "A single emblem in tarnished engraved silver relief: an open ancient book with a quill, bold simple silhouette, filling the frame.", size: [1024, 1024] },
+  { id: "icon-spells", look: "A single emblem in tarnished engraved silver relief: a crescent moon cradling a four-pointed star, bold simple silhouette, filling the frame.", size: [1024, 1024] },
 ];
 
 const args = process.argv.slice(2);
