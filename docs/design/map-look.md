@@ -13,3 +13,9 @@
 - WASD panning should glide smoothly.
 - The user will playtest after the UI elements.
 
+## First pass on the user's notes (M50, 2026-09-28)
+- Lighting: the sky panorama also lights the scenes (image-based light, environment intensity 0.6) and ambient occlusion shades where things meet; the flat ambient light is halved.
+- Grounding: each terrain prop sinks a share of its height into the ground (hills most, hiding their rim); hills now cover their hex without poking through its sides.
+- Foliage: forests have eight trees and underbrush per hex, on a lighter floor. The tree models still read dark from above (their textures are deep green): a candidate for new concepts.
+- Low poly: every model is TRELLIS.2 now (M49).
+

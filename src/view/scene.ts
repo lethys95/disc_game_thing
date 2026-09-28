@@ -120,11 +120,11 @@ export class BattleScene {
   }
 
   private buildArena(): void {
-    const sky = skyTexture("map");
+    const sky = skyTexture("map", (panorama) => this.stage.lightWith(this.scene, panorama, 0.6));
     this.scene.background = sky ?? new THREE.Color(0x0b0a0c);
     this.scene.fog = sky ? new THREE.Fog(HORIZON_MIST, 22, 60) : new THREE.FogExp2(0x0b0a0c, 0.03);
 
-    this.scene.add(new THREE.HemisphereLight(0x8a98b8, 0x2a2420, 1.0));
+    this.scene.add(new THREE.HemisphereLight(0x8a98b8, 0x2a2420, 0.55));
     const keyLight = new THREE.DirectionalLight(0xffe0bc, 3.2);
     keyLight.position.set(-5, 11, 7);
     keyLight.castShadow = true;
