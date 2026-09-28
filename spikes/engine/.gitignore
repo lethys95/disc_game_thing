@@ -1,0 +1,5 @@
+# Mixamo characters from the three.js examples: fine for a local test, not ours to ship.
+shared/
+# Godot's copies of the assets (shot.sh makes them; Godot writes import files next to whatever it sees).
+godot/assets/
+godot/.godot/
