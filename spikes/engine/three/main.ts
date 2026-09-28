@@ -5,7 +5,7 @@ import { GTAOPass } from "three/addons/postprocessing/GTAOPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
-import { clone as cloneSkinned } from "three/addons/utils/SkeletonUtils.js";
+import { aim, placeSoldier } from "./soldiers";
 
 /** The engine bake-off scene (spikes/engine/README.md), the same as the Godot one: a clearing, sky light, a soldier aiming aside. */
 
@@ -13,8 +13,6 @@ const GRASS_COUNT = 60000;
 const GRASS_RADIUS = 16;
 const TREES = ["tree-1", "tree-2", "tree-3", "tree-4"];
 const UNDERGROWTH = ["bush-1", "bush-2", "rock-1", "rock-2"];
-const CHAIN = ["Spine", "Spine1", "Spine2", "Neck", "Head"];
-const SHARE = [0.2, 0.25, 0.25, 0.15, 0.15];
 
 const params = new URLSearchParams(location.search);
 const at = Number(params.get("at") ?? "1.5");
@@ -102,20 +100,8 @@ async function main(): Promise<void> {
   await forest(scene, loader);
 
   const soldier = await loader.loadAsync("/spikes/engine/shared/Soldier.glb");
-  const place = (at: THREE.Vector3, facing: THREE.Vector3) => {
-    const body = cloneSkinned(soldier.scene);
-    body.position.copy(at);
-    body.rotation.y = Math.atan2(facing.x - at.x, facing.z - at.z) + Math.PI;
-    body.traverse((o) => { o.castShadow = true; });
-    scene.add(body);
-    const mixer = new THREE.AnimationMixer(body);
-    const idle = soldier.animations.find((a) => a.name === "Idle");
-    if (!idle) throw new Error("no Idle");
-    mixer.clipAction(idle).play();
-    return { body, mixer };
-  };
-  const target = place(new THREE.Vector3(-5.2, 0, 3), new THREE.Vector3(0, 0, 0));
-  const aimer = place(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 10));
+  const target = placeSoldier(scene, soldier, new THREE.Vector3(-5.2, 0, 3), new THREE.Vector3(0, 0, 0));
+  const aimer = placeSoldier(scene, soldier, new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 10));
   const aimAt = new THREE.Vector3(-5.2, 1.4, 3);
 
   const composer = new EffectComposer(renderer);
@@ -153,23 +139,6 @@ async function main(): Promise<void> {
       }
     });
   }
-}
-
-/** Turns the upper body toward a point after the animation has posed it, shared along the spine; hips and feet keep the pose. */
-function aim(body: THREE.Object3D, facing: THREE.Vector3, point: THREE.Vector3): void {
-  const toTarget = point.clone().sub(body.position).setY(0);
-  const yaw = Math.atan2(facing.z * toTarget.x - facing.x * toTarget.z, facing.x * toTarget.x + facing.z * toTarget.z);
-  const up = new THREE.Vector3(0, 1, 0);
-  body.updateMatrixWorld(true);
-  CHAIN.forEach((name, i) => {
-    const bone = body.getObjectByName(`mixamorig${name}`);
-    if (!bone?.parent) throw new Error(`no bone ${name}`);
-    const parent = bone.parent.getWorldQuaternion(new THREE.Quaternion());
-    const world = bone.getWorldQuaternion(new THREE.Quaternion());
-    const turned = new THREE.Quaternion().setFromAxisAngle(up, yaw * (SHARE[i] ?? 0)).multiply(world);
-    bone.quaternion.copy(parent.invert().multiply(turned));
-    bone.updateMatrixWorld(true);
-  });
 }
 
 function blade(): THREE.BufferGeometry {

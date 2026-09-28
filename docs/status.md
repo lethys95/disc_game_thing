@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines._
 
-**Updated:** 2026-09-28 (M53 engine bake-off)
+**Updated:** 2026-09-28 (M54 cave bake-off)
 
 ## Where we are
 A playable map game for 2–6 players (hotseat viewer vs AIs): two factions (**Jilliath**, **Ral-Vitahl**) with tier-1 melee/support/mage and Nexus mages to tier 3; bandit camps, dungeons with rewards, neutral cities; gold, mana and spells; nodes (gold, Blacksmith, mana, Cathedral); items on leaders; fog of war; retreat and a battle round limit; sound slots with placeholder SFX and music. The AI plays both the map (a list of planners in `world/ai.ts`) and battles, in a web worker.
@@ -10,7 +10,7 @@ A playable map game for 2–6 players (hotseat viewer vs AIs): two factions (**J
 Architecture: `design/architecture.md`; recipes and gotchas: `engineering.md`. `pnpm verify` before calling anything done. Sims: `pnpm sim:many --seeds 1-16 "p1,p2"` (smoke tests only until factions have their lines).
 
 ## Now
-**M53 engine bake-off** (branch `m53-engine-bakeoff`): the same forest clearing (wind-blown grass, TRELLIS.2 trees, sky light, a soldier aiming its upper body aside) in three.js and Godot 4.7; `spikes/engine/README.md`. Tuned, they look close; Godot gets bounce light, fog into the sky and an editor for free; three.js keeps the browser, the HTML UI and Playwright. Claude recommends staying on three.js; the user judges the pictures. Earlier today: M52 (headless tests on the integrated Radeon; GPU 0 needs a reboot).
+**M54 cave bake-off** (branch `m54-cave-bakeoff`): the user's lighting test, a cave lit by a bonfire and moonlight, in three.js (WebGPU: voxel GI, godrays, bloom) and Godot 4.7; `spikes/engine/README.md`. They look alike; Godot is twice as fast on the integrated chip. Claude's recommendation: stay on three.js, move rendering to WebGPU, keep the rules portable. The user judges the pictures (the comparison page, and `/spikes/engine/shots/` on the dev server). M53: the forest-clearing round.
 
 ## Next
 1. Waiting on the user: `questions.md` (unit designs first: Jilliath's tier-2 support and mage, then Grove/Wastes tier 1, then tribes).
