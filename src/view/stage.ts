@@ -46,6 +46,8 @@ export class Stage {
   private readonly raycaster = new THREE.Raycaster();
   /** Animation speed from the settings: multiplies every animation and AI pause. */
   private speedScale = 1;
+  /** A corner readout of frames per second and the GPU backend (`?fps`), to judge performance on real hardware. */
+  private fpsMeter: { readonly element: HTMLElement; frames: number; since: number } | null = null;
   /** The player's setting: bounce light where a scene asks for it (`BOUNCE_LIGHT`). */
   private bounceLight = true;
   /** Automated play-tests run the game faster still. */
@@ -95,6 +97,13 @@ export class Stage {
     this.controls.minDistance = pose.minDistance;
     this.controls.maxDistance = pose.maxDistance;
     this.controls.update();
+  }
+
+  showFrameRate(): void {
+    const element = document.createElement("div");
+    element.className = "fps-meter";
+    this.host.appendChild(element);
+    this.fpsMeter = { element, frames: 0, since: performance.now() };
   }
 
   /** The player's setting for bounce light; rebuilds the shown scene's chain when it changes. */
@@ -211,6 +220,16 @@ export class Stage {
   }
 
   private frame(time: number): void {
+    const meter = this.fpsMeter;
+    if (meter) {
+      meter.frames++;
+      if (time - meter.since >= 500) {
+        const backend = "isWebGPUBackend" in this.renderer.backend ? "WebGPU" : "WebGL 2";
+        meter.element.textContent = `${Math.round((meter.frames * 1000) / (time - meter.since))} fps · ${backend}${this.bounceLight ? " · bounce light" : ""}`;
+        meter.frames = 0;
+        meter.since = time;
+      }
+    }
     const dt = Math.min(0.05, (time - this.lastFrame) / 1000);
     this.lastFrame = time;
     this.glideVelocity.lerp(this.glideTarget, 1 - Math.exp(-dt * GLIDE_EASE));
