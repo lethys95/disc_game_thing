@@ -184,3 +184,6 @@ The user sensed something wrong with the tiles without naming it. The separate s
 
 **2026-09-28 — The game renders with WebGPU (M57).**
 After the bake-offs (three.js stays; its new lighting is WebGPU-only), the stage moved to `WebGPURenderer` with a TSL post-processing chain, and the landscape's shaders to TSL node materials. It falls back to WebGL 2 on its own where a browser lacks WebGPU, so no player is locked out. Tests run WebGPU headlessly on the integrated Radeon. The look is unchanged; lighting upgrades build on it.
+
+**2026-09-28 — Bounce light on the map, not in battles (M58).**
+The map gets screen-space global illumination (SSGI), denoised within each frame so still pictures stay sharp. Temporal filtering (TRAA) softened the map noticeably in a still frame. Battles keep GTAO: bounce light washed out the pale paper standees and haloed them. A scene opts in with `scene.userData[BOUNCE_LIGHT]`. The sun is lower and warmer, and its shadow camera is fitted to the map's size.

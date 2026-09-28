@@ -2,9 +2,13 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { CSS2DObject, CSS2DRenderer } from "three/addons/renderers/CSS2DRenderer.js";
 import { bloom } from "three/addons/tsl/display/BloomNode.js";
 import { ao } from "three/addons/tsl/display/GTAONode.js";
+import { ssgi } from "three/addons/tsl/display/SSGINode.js";
 import { smaa } from "three/addons/tsl/display/SMAANode.js";
-import { directionToColor, colorToDirection, float, mrt, normalView, output, pass, renderOutput, sample } from "three/tsl";
+import { colorToDirection, diffuseColor, directionToColor, float, mrt, normalView, output, pass, renderOutput, sample, vec4 } from "three/tsl";
 import * as THREE from "three/webgpu";
+
+/** `scene.userData` key: the scene wants screen-space global illumination (see `Stage.chain`). */
+export const BOUNCE_LIGHT = "bounceLight";
 
 export interface CameraPose {
   readonly position: THREE.Vector3;
@@ -46,7 +50,7 @@ export class Stage {
   testScale = 1;
 
   constructor(private readonly host: HTMLElement) {
-    // Antialiasing happens at the end of the chain (SMAA): the ambient occlusion can't read a multisampled depth buffer.
+    // Antialiasing happens at the end of the chain (SMAA): screen-space lighting can't read a multisampled depth buffer.
     this.renderer = new THREE.WebGPURenderer({ antialias: false });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.shadowMap.enabled = true;
@@ -134,22 +138,37 @@ export class Stage {
   }
 
   /**
-   * The post-processing for a scene: ambient occlusion (soft shadow where things meet: props on the ground,
-   * buildings on their hex), a little bloom on what glows, then tone mapping and antialiasing.
+   * The post-processing for a scene: soft shadow where things meet, a little bloom on what glows, then tone mapping
+   * and antialiasing. A scene that asks for it (`BOUNCE_LIGHT`: the map) also gets screen-space global
+   * illumination, light bouncing off the ground onto what stands on it. The battle doesn't: its paper standees
+   * wash out under it. Both are denoised within each frame, not over frames, so a still picture stays sharp.
    */
   private chain(scene: THREE.Scene) {
     const scenePass = pass(scene, this.camera);
-    scenePass.setMRT(mrt({ output, normal: directionToColor(normalView) }));
+    scenePass.setMRT(mrt({ output, diffuseColor, normal: directionToColor(normalView) }));
+    for (const name of ["diffuseColor", "normal"]) scenePass.getTexture(name).type = THREE.UnsignedByteType;
     const color = scenePass.getTextureNode("output");
+    const depth = scenePass.getTextureNode("depth");
     const normal = sample((uv) => colorToDirection(scenePass.getTextureNode("normal").sample(uv)));
-    const occlusion = ao(scenePass.getTextureNode("depth"), normal, this.camera);
-    occlusion.resolutionScale = 0.5;
-    occlusion.radius.value = 0.6;
-    occlusion.distanceExponent.value = 1.5;
-    occlusion.thickness.value = 1;
-    occlusion.scale.value = 1.2;
-    const shaded = color.mul(float(1).sub(float(0.85).mul(float(1).sub(occlusion.getTextureNode().r))));
-    return smaa(renderOutput(shaded.add(bloom(shaded, 0.55, 0.5, 0.8))));
+    let lit;
+    if (scene.userData[BOUNCE_LIGHT] === true) {
+      const light = ssgi(color, depth, normal, this.camera);
+      light.useTemporalFiltering = false;
+      light.sliceCount.value = 3;
+      light.stepCount.value = 8;
+      light.radius.value = 2.5;
+      light.giIntensity.value = 0.6;
+      lit = vec4(color.rgb.mul(light.a).add(scenePass.getTextureNode("diffuseColor").rgb.mul(light.rgb)), color.a);
+    } else {
+      const occlusion = ao(depth, normal, this.camera);
+      occlusion.resolutionScale = 0.5;
+      occlusion.radius.value = 0.6;
+      occlusion.distanceExponent.value = 1.5;
+      occlusion.thickness.value = 1;
+      occlusion.scale.value = 1.2;
+      lit = color.mul(float(1).sub(float(0.85).mul(float(1).sub(occlusion.getTextureNode().r))));
+    }
+    return smaa(renderOutput(lit.add(bloom(lit, 0.55, 0.5, 0.8))));
   }
 
   tween(duration: number, update: (t: number) => void): Promise<void> {

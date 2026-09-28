@@ -16,7 +16,7 @@ import { spellById } from "#rules/spells";
 import { cityName } from "#view/city";
 import type { City, Leader, World } from "#rules/world/state";
 import { buildFigure } from "#view/figures";
-import { discard, discardChildren } from "#view/stage";
+import { BOUNCE_LIGHT, discard, discardChildren } from "#view/stage";
 import type { CameraPose, Stage } from "#view/stage";
 import { STRUCTURES } from "#rules/structures";
 import type { StructureKind } from "#rules/structures";
@@ -166,6 +166,7 @@ export class MapView {
   private readonly models = new Models();
   private readonly ground = new GroundTextures();
   private landscape: Landscape | null = null;
+  private readonly sun = new THREE.DirectionalLight(0xffd9ae, 3.4);
 
   constructor(private readonly stage: Stage) {
     // The sky also lights the scene, once it has loaded.
@@ -173,15 +174,14 @@ export class MapView {
     this.scene.background = sky ?? new THREE.Color(0x0b0a0c);
     // The land beyond the map fades into the sky's misty horizon (sampled from the panorama), so the two meet.
     this.scene.fog = sky ? new THREE.Fog(HORIZON_MIST, 24, 55) : new THREE.FogExp2(0x0b0a0c, 0.028);
-    this.scene.add(new THREE.HemisphereLight(0x8a98b8, 0x1c1c22, 0.5));
-    const keyLight = new THREE.DirectionalLight(0xffe4c8, 3);
-    keyLight.position.set(-6, 12, 8);
-    keyLight.castShadow = true;
-    keyLight.shadow.mapSize.set(2048, 2048);
-    for (const edge of ["left", "bottom"] as const) keyLight.shadow.camera[edge] = -12;
-    for (const edge of ["right", "top"] as const) keyLight.shadow.camera[edge] = 12;
-    keyLight.shadow.bias = -0.0005;
-    this.scene.add(keyLight);
+    // A low, warm sun and a cool sky: long shadows give the land its shape, and the two colors give it depth.
+    this.scene.add(new THREE.HemisphereLight(0x9fb2d4, 0x2a2a1c, 0.45));
+    this.sun.position.set(-11, 8.5, 6);
+    this.sun.castShadow = true;
+    this.sun.shadow.mapSize.set(4096, 4096);
+    this.sun.shadow.bias = -0.0004;
+    this.sun.shadow.normalBias = 0.02;
+    this.scene.add(this.sun, this.sun.target);
     const rim = new THREE.DirectionalLight(0x7f9cff, 1.2);
     rim.position.set(8, 5, -10);
     this.scene.add(rim);
@@ -191,6 +191,7 @@ export class MapView {
     this.scene.add(ground);
     this.scene.add(this.terrain);
     this.scene.add(this.siteLayer);
+    this.scene.userData[BOUNCE_LIGHT] = true;
   }
 
   show(): void {
@@ -214,6 +215,13 @@ export class MapView {
     this.radius = map.radius;
     discardChildren(this.terrain);
     this.hexes.clear();
+    // The sun's shadows cover the whole map and the land around it, however big the map is.
+    const reach = (map.radius + 3) * 1.9;
+    const shadow = this.sun.shadow.camera;
+    shadow.left = shadow.bottom = -reach;
+    shadow.right = shadow.top = reach;
+    shadow.far = 60;
+    shadow.updateProjectionMatrix();
     this.landscape?.dispose();
     this.landscape = new Landscape(map, this.ground, HIGHLIGHTS);
     const shape = this.landscape.shape;
