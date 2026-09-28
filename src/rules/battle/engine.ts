@@ -98,8 +98,13 @@ export function createBattle(sides: readonly [readonly Placement[], readonly Pla
   };
   const events: BattleEvent[] = [];
   const ctx = makeCtx(battle, events);
-  // Capped only now: effects the units bring (a leader's extra health) can raise their max HP.
-  for (const unit of Object.values(units)) unit.hp = Math.min(unit.hp, ctx.stats(unit.id).maxHp);
+  // Set only now: effects the units bring can raise their max HP (a leader's extra health) and their shield (a
+  // Foundry's plating); shields start every battle full.
+  for (const unit of Object.values(units)) {
+    const stats = ctx.stats(unit.id);
+    unit.hp = Math.min(unit.hp, stats.maxHp);
+    unit.shield = stats.shield;
+  }
   checkOutcome(ctx);
   advance(ctx);
   return { battle, events };

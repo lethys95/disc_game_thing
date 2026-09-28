@@ -289,6 +289,96 @@ const effects: readonly EffectDef[] = [
       },
     },
   },
+  // Recruit marks from the user's nodes (design/nodes.md, 2026-09-28); numbers provisional (provisional.md #56).
+  {
+    // Foundry: plating that shields its bearer and mends itself.
+    id: "foundry",
+    quiet: true,
+    name: "Forged plating",
+    describe: (e) => `+${e.amount} shield; ${Math.round(e.amount / 3)} of it mends at the start of each of its turns (from a Foundry).`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      stats: (_ctx, self, subjectId, stats) => {
+        if (subjectId === self.unitId) stats.shield += self.effect?.amount ?? 0;
+      },
+      turnStart: (ctx, self) => {
+        ctx.restoreShield(self.unitId, Math.round((self.effect?.amount ?? 0) / 3));
+        return null;
+      },
+    },
+  },
+  {
+    // Leech pits: heals for a share of the damage it deals.
+    id: "leech",
+    quiet: true,
+    name: "Leech-fed",
+    describe: (e) => `Heals ${e.amount}% of the damage it deals (from Leech pits).`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      afterHit: (ctx, self, _targetId, dealt) => {
+        const healed = Math.floor((dealt * (self.effect?.amount ?? 0)) / 100);
+        if (healed > 0) ctx.heal(self.unitId, healed);
+      },
+    },
+  },
+  {
+    // Tannery: the first blow of a battle that gets through its shield lands softer. Spent once it has.
+    id: "tannery",
+    quiet: true,
+    name: "Tanned hide",
+    describe: (e) => `The first hit to reach it in a battle deals ${e.amount} less (from a Tannery).`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      mitigate: (ctx, self, packet) => {
+        const hide = self.effect;
+        if (!hide || packet.amount <= 0) return;
+        packet.amount = Math.max(0, packet.amount - hide.amount);
+        ctx.removeEffect(self.unitId, hide);
+      },
+    },
+  },
+  {
+    // Siege workshop: its first attack in a battle against a city's defenders goes through their walls. `stacks` 2
+    // marks it as used during that attack; it's gone once the attack has resolved.
+    id: "siege",
+    quiet: true,
+    name: "Siege-trained",
+    describe: () => "Its first attack against a city's defenders ignores their fortification (from a Siege workshop).",
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      outgoing: (ctx, self, packet) => {
+        const trained = self.effect;
+        if (!trained || !packet.tags.includes("attack")) return;
+        const walls = ctx.unit(packet.target).effects.find((e) => (EFFECTS.get(e.def)?.fortifies ?? false));
+        if (!walls) return;
+        packet.amount += walls.amount;
+        trained.stacks = 2;
+      },
+      afterAttack: (ctx, self) => {
+        if (self.effect && self.effect.stacks === 2) ctx.removeEffect(self.unitId, self.effect);
+      },
+    },
+  },
+  {
+    // Stables: a warband with a unit bred there moves farther on the map. No battle effect.
+    id: "stables",
+    quiet: true,
+    name: "Stable-bred",
+    describe: (e) => `Its warband has +${e.amount} movement on the map (from Stables; doesn't add up with others).`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    mapMovement: 1,
+    hooks: {},
+  },
   // A bought unit-type upgrade (placeholder content until the user designs unique ones).
   flatStat({ id: "extra_damage", quiet: true, name: "Extra damage", stat: "damage", stacking: { mode: "merge" }, describe: (e) => `+${e.amount} damage.` }),
   {
@@ -362,7 +452,7 @@ const effects: readonly EffectDef[] = [
   // Worn items (charms): extra initiative.
   flatStat({ id: "extra_initiative", quiet: true, name: "Extra initiative", stat: "initiative", stacking: { mode: "merge" }, describe: (e) => `+${e.amount} initiative.` }),
   // A city's walls: its garrison, and a warband defending in its own city, stand behind them (city tiers).
-  flatStat({ id: "fortified", quiet: true, name: "Fortified", stat: "armor", stacking: { mode: "unique" }, describe: (e) => `+${e.amount} armor, defending a city.` }),
+  { ...flatStat({ id: "fortified", quiet: true, name: "Fortified", stat: "armor", stacking: { mode: "unique" }, describe: (e) => `+${e.amount} armor, defending a city.` }), fortifies: true },
   {
     // Levels past the end of a line (pillars.md): a share of the base stat, so higher tiers gain more per level.
     id: "veteran",

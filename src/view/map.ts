@@ -408,6 +408,12 @@ export class MapView {
         blacksmith: () => anvil(dark, forge),
         mana: () => crystals(node.hex, crystal),
         cathedral: () => chapel(stone, dark, candle),
+        // Placeholders until the new kinds have models (`node/<kind>.glb`).
+        foundry: () => anvil(dark, forge),
+        leech_pits: () => pool(new THREE.Color(0x3a2a1c)),
+        stables: () => lodge(stone, new THREE.MeshStandardMaterial({ color: 0x6b4a2a, roughness: 0.9 })),
+        tannery: () => lodge(stone, new THREE.MeshStandardMaterial({ color: 0x8a6a44, roughness: 0.9 })),
+        siege_workshop: () => lodge(stone, new THREE.MeshStandardMaterial({ color: 0x4a3a2e, roughness: 0.9 })),
       };
       const model = models[node.kind]();
       model.position.copy(this.standingPoint(node.hex));
@@ -732,6 +738,30 @@ function chapel(stone: THREE.Material, roof: THREE.Material, light: THREE.Materi
   const window = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.1, 0.01), light);
   window.position.set(0, 0.15, 0.225);
   g.add(nave, top, tower, spire, window);
+  return g;
+}
+
+/** A placeholder building: a low hall under a pitched roof. */
+function lodge(wall: THREE.Material, roof: THREE.Material): THREE.Group {
+  const g = new THREE.Group();
+  const hall = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.2, 0.28), wall);
+  hall.position.y = 0.1;
+  const top = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.18, 4), roof);
+  top.position.y = 0.29;
+  top.rotation.y = Math.PI / 4;
+  top.scale.set(1.2, 1, 0.8);
+  g.add(hall, top);
+  return g;
+}
+
+/** A placeholder pit: murky water in a ring of stones. */
+function pool(water: THREE.Color): THREE.Group {
+  const g = new THREE.Group();
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(0.26, 0.05, 6, 12).rotateX(Math.PI / 2), new THREE.MeshStandardMaterial({ color: 0x4a4744, roughness: 1 }));
+  rim.position.y = 0.04;
+  const surface = new THREE.Mesh(new THREE.CircleGeometry(0.25, 16).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ color: water, roughness: 0.3 }));
+  surface.position.y = 0.03;
+  g.add(rim, surface);
   return g;
 }
 
