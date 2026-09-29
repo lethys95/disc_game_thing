@@ -30,3 +30,5 @@ Sky (`assets/sky/map.webp`): `scripts/art/sky.ts`, seed 1, shifted up by 24% of 
 The prompts are keyed by slot in `scripts/art/props.ts` (the first two predate that: ids `capitol-jilliath` and `mage`, same text). Cleanup is always `scripts/art/prop_cleanup.py`.
 
 Placeholders for the M42 spike (2026-09-27): the art direction isn't settled (`docs/design/art.md`).
+
+Later the same day (the user's go-ahead): hill-1 and hill-2 from darker heath concepts (seed 3); mountain-3 without its snowy top (seed 3), which read as a pale mound. Sky (`assets/sky/map.webp`): `scripts/art/sky.ts` in gothic, seed 3, raised 28% so its distant mountains sit on the horizon, the rest filled with `HORIZON_MIST` (#4a5358, the haze over those mountains).
