@@ -23,3 +23,6 @@ Not the map camera close up (what M41 built as a stand-in): a **painted town scr
 ## The user's sketch (2026-09-27, `references/city-view-sketch.png`)
 The city view is **a framed panel**: the view sits in a proper frame under the name plaque, left of the tab column. Inside it: a **montage of the city from the inside**, like Unreal Gold's intro: its own scene, different props, people walking around. Far off; until then a static painting of the city in the frame is a fine placeholder. ("The red doesn't mean I want it in red.")
 
+
+## Reference: Unreal's intro (user, 2026-09-29)
+`/home/lethys/Videos/unreal_into.mkv` (outside the repo): the user's reference for how the Capitol screens could look, the montage of the city from the inside. The user's thought: generating video may be faster than gaussian splatting. **Not now**: don't start video generation; if video it is, the user wants to find a newer model first (the installed ones are clunky to fit in memory).

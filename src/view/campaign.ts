@@ -31,7 +31,7 @@ import { HEX_STEP_MS } from "#view/map";
 import type { MapView } from "#view/map";
 import { MapPanels } from "#view/map-panels";
 import { castHint, hintText, leaderName, newsText } from "#view/map-text";
-import { formation, groupAt, showPeek } from "#view/peek";
+import { formation, groupAt, placeInfo, showPeek } from "#view/peek";
 import type { Stage } from "#view/stage";
 import type { Sound } from "#view/sound";
 import { worldCues } from "#view/sound-cues";
@@ -151,7 +151,7 @@ export class Campaign implements KeyLayer {
     canvas.addEventListener("click", () => {
       if (!this.cityScreen.open()) void this.click();
     });
-    // Hold right-click on any group to see its formation.
+    // Hold right-click on any group to see its formation, or on a node, structure or portal to see what it does.
     canvas.addEventListener("contextmenu", (e) => {
       if (this.world) e.preventDefault();
     });
@@ -564,7 +564,9 @@ export class Campaign implements KeyLayer {
     const hex = this.view.pick(x, y);
     const known = this.known();
     const group = hex && known ? groupAt(known, this.viewer, hex, this.view.sees(hex)) : null;
+    const info = !group && hex && known ? placeInfo(known, this.viewer, hex, this.view.sees(hex)) : null;
     if (group) showPeek(this.peek, formation(group), x, y, 300, 200);
+    else if (info) showPeek(this.peek, info, x, y, 300, 140);
     else this.peek.hidden = true;
   }
 
@@ -579,5 +581,11 @@ export class Campaign implements KeyLayer {
 
   capitolHex(player: PlayerId): Hex | null {
     return this.world ? (capitolOf(this.world, player)?.hex ?? null) : null;
+  }
+
+  /** Where the node of this player's Capitol stands (its own gold mine). */
+  homeNodeHex(player: PlayerId): Hex | null {
+    const capitol = this.world ? capitolOf(this.world, player) : undefined;
+    return capitol ? (this.world?.nodes.find((n) => n.cityId === capitol.id)?.hex ?? null) : null;
   }
 }

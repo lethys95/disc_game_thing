@@ -49,6 +49,7 @@ interface Debug {
   hexScreen(q: number, r: number): Point;
   leaderHex(player: number): Hex | null;
   capitolHex(player: number): Hex | null;
+  homeNodeHex(player: number): Hex | null;
   log(): string[];
   awaiting(): "battle" | "map" | null;
 }

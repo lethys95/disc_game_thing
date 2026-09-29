@@ -31,3 +31,6 @@ All of the above, with provisional numbers (`provisional.md` #56). Each neutral 
 - City gifts are data on the node (`nodes.ts` `CityGifts`): upgrade discount, wall armor, raising the dead, sight, warning radius, defender effects, tribe recruits.
 - The Bell tower's defenders act first through a general `precedes` hook.
 - Portals are neighbors in the movement graph (`map.ts` `exits`); a warband standing on one sees its other end.
+
+## The user's own idea: the Waystone (2026-09-29, from the items notes)
+"Could add like a waystone node for cities. Gain spell 'way portal' if controlled. Units elevated to leader in the city get teleported to the city when cast. All units stop counting as having been elevated there if the city is taken." Not built yet.

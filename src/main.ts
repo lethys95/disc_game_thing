@@ -141,6 +141,7 @@ if (params.has("debug")) {
       hexScreen: (q: number, r: number) => campaign.screenPoint({ q, r }),
       leaderHex: (side: 0 | 1) => campaign.hexOfLeader(side),
       capitolHex: (side: 0 | 1) => campaign.capitolHex(side),
+      homeNodeHex: (side: 0 | 1) => campaign.homeNodeHex(side),
       log: () => [...document.querySelectorAll("#log .entry")].map((e) => e.textContent),
       /** What waits for the player's input now, so playtests wait on state rather than on time. */
       awaiting: (): "battle" | "map" | null => (app.playersTurn() ? "battle" : campaign.myTurn() ? "map" : null),

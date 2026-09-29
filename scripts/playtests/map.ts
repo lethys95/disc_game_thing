@@ -9,6 +9,19 @@ const map: Playtest = {
   async run(t) {
     await t.open(`/?fast&map&seed=${SEED}`);
     const visible = (sel: string) => t.page.locator(sel).isVisible();
+    // Holding right-click on a node tells what it does (the user, 2026-09-29).
+    const node = await t.page.evaluate(() => window.discDebug.homeNodeHex(0));
+    if (node) {
+      const at = await t.hexScreen(node);
+      await t.page.mouse.move(at.x, at.y);
+      await t.page.mouse.down({ button: "right" });
+      await t.frames();
+      const text = (await t.page.locator("#peek").textContent()) ?? "";
+      if (!(await visible("#peek")) || !text.includes("Gold mine")) t.fail(`right-click on the Capitol's mine showed ${JSON.stringify(text)}`);
+      else t.log(`peek on a node: ${text.slice(0, 80)}`);
+      await t.page.mouse.up({ button: "right" });
+      await t.frames();
+    } else t.fail("no node by the Capitol");
     let battles = 0;
     for (let step = 0; step < 60; step++) {
       // Whatever comes next: the player's orders, a battle's end, the game's end.

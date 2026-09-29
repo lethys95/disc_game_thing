@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines._
 
-**Updated:** 2026-09-29 (M69 fog and dusk)
+**Updated:** 2026-09-29 (M70 border and place info)
 
 ## Where we are
 A playable map game for 2–6 players (hotseat viewer vs AIs): two factions (**Jilliath**, **Ral-Vitahl**) with tier-1 melee/support/mage and Nexus mages to tier 3; bandit camps, dungeons with rewards, neutral cities; gold, mana and spells; nodes (gold, Blacksmith, mana, Cathedral); items on leaders; fog of war; retreat and a battle round limit; sound slots with placeholder SFX and music. The AI plays both the map (a list of planners in `world/ai.ts`) and battles, in a web worker.
@@ -10,7 +10,7 @@ A playable map game for 2–6 players (hotseat viewer vs AIs): two factions (**J
 Architecture: `design/architecture.md`; recipes and gotchas: `engineering.md`. `pnpm verify` before calling anything done. Sims: `pnpm sim:many --seeds 1-16 "p1,p2"` (smoke tests only until factions have their lines).
 
 ## Now
-**M69 fog and dusk**: dusk is the map's light (the user's choice); the wild rim past the map's edge is fogged like the edge next to it (the user thought it a bug); darker, unlit clouds over unexplored land. Earlier today: M64–M68, the gothic look (buildings, terrain, sky, water; `design/art.md`). Next: whatever the user plays and notices; open items in `questions.md` (unit designs first).
+**M70 border and place info**: a dark band marks the map's playable edge; holding right-click on a node, structure or portal says what it does (map playtest checks it). The user's item verdicts are canon in `design/items.md` (principles: no faction-specific, cursed or temporary items; Leadership sparingly; visible dungeon loot), with their Waystone node idea (`nodes.md`). The Unreal intro reference for the Capitol screen is noted (`capitol-screen.md`; no video generation yet). Next (the user): theorycrafting factions and units; then the taken items. Earlier: M64–M69 the gothic look.
 
 ## Performance (user, 2026-09-28, `?fps`)
 Server desktop (RTX 3090 Ti): a solid 60 fps on the map. User's laptop: about 6 fps. Candidates for the laptop: bounce light off (Settings → Display), then instanced trees and grass.
