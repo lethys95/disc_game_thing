@@ -33,4 +33,10 @@ export const GROVE_UNITS: Readonly<Record<string, UnitDef>> = {
     stats: { maxHp: 390, shield: 0, damage: 76, armor: 0, initiative: 45 },
     abilities: [{ id: "decay", params: { percent: 50 } }, { id: "withering" }, ...kit("attack", "defend", "wait")],
   },
+  // The user (2026-09-29): the Decay line's win condition, late game. Numbers provisional (#57).
+  decay_4: {
+    id: "decay_4", name: "Decay 4", faction: "grove", tier: 4, damageType: "weapon",
+    stats: { maxHp: 376, shield: 0, damage: 72, armor: 0, initiative: 45 },
+    abilities: [{ id: "decay", params: { percent: 55 } }, { id: "withering" }, { id: "lash_out" }, ...kit("attack", "defend", "wait")],
+  },
 };

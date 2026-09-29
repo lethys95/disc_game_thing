@@ -1,4 +1,5 @@
-import { single } from "#rules/abilities/core";
+import { at, single } from "#rules/abilities/core";
+import { frontLine, meleeTargets, opponent } from "#rules/battle/grid";
 import type { Behavior } from "#rules/battle/types";
 
 /**
@@ -6,6 +7,9 @@ import type { Behavior } from "#rules/battle/types";
  * then Regrowth (more regeneration, then support) or Decay (a share of the damage it takes is delayed, then
  * enemies that hit it wither). Every number here is provisional (`provisional.md` #57).
  */
+/** How many of its turns a Decay unit's rot is spread over. */
+const ROT_TURNS = 3;
+
 export const grove: Readonly<Record<string, Behavior>> = {
   regrowth: {
     kind: "passive",
@@ -57,6 +61,36 @@ export const grove: Readonly<Record<string, Behavior>> = {
         if (withered) withered.amount = Math.min(cap, withered.amount + amount);
         else ctx.addEffect(source, { def: "withered", amount, source: self.unitId });
       },
+    },
+  },
+
+  /**
+   * Decay tier 4 (the user, 2026-09-29): "the more it suffers, the more it lashes back". A main action that deals the
+   * rot inside it to the whole enemy front row. Double-edged: the rot stays, and its countdown starts over, so it
+   * suffers it longer. It needs healers behind it (the user: turning a tank into a cannon shouldn't be free).
+   */
+  lash_out: {
+    kind: "active",
+    name: "Lash out",
+    describe: (p) => `Main action: deal ${p["percent"]}% of the rot inside it to the whole enemy front row. The rot stays, and its countdown starts over.`,
+    tags: ["attack", "melee", "damage", "area"],
+    defaults: { percent: 100 },
+    choices: (ctx, self) => {
+      const user = ctx.unit(self.unitId);
+      const rot = user.effects.find((e) => e.def === "rotting");
+      const units = ctx.living();
+      if (!rot || rot.amount <= 0 || meleeTargets(units, user).length === 0) return [];
+      const enemy = opponent(user.side);
+      const row = frontLine(units, enemy);
+      const line = units.filter((u) => u.side === enemy && u.tile.row === row);
+      return line.map((anchor) => at(anchor, line.map((u) => u.id), "main"));
+    },
+    resolve: (ctx, self, choice) => {
+      const rot = ctx.unit(self.unitId).effects.find((e) => e.def === "rotting");
+      if (!rot) return;
+      const power = Math.round((rot.amount * (self.params["percent"] ?? 100)) / 100);
+      ctx.hit(self.unitId, choice.affected, { ...ctx.hitSpec(self), power });
+      rot.stacks = Math.max(rot.stacks, ROT_TURNS);
     },
   },
 

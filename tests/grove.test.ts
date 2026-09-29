@@ -1,6 +1,7 @@
 import { levelBonusPercent } from "#rules/world/record";
 import { forkOptions } from "#rules/forks";
 import { FACTION_ROOTS, UNITS } from "#rules/units/index";
+import { legalActions } from "#rules/battle/engine";
 import { act, p, start, unit, until } from "#tests/helpers";
 import { describe, expect, test } from "vitest";
 
@@ -46,5 +47,21 @@ describe("Grove melee line", () => {
 
   test("the Grove gains 50% more per level past the end of its line than others (the user's ramp)", () => {
     expect(levelBonusPercent("decay_3")).toBe(levelBonusPercent("paladin") * 1.5);
+  });
+});
+
+describe("Decay tier 4: Lash out", () => {
+  test("deals the rot inside it to the whole enemy front row; the rot stays and its countdown starts over", () => {
+    let battle = until(start([p("decay_4", 0, 1)], [p("congregant", 0, 0), p("congregant", 0, 1), p("congregant", 0, 2)]), "0.0.1");
+    const rot = { def: "rotting", source: null, stacks: 1, amount: 30 };
+    battle = { ...battle, units: { ...battle.units, "0.0.1": { ...unit(battle, "0.0.1"), effects: [...unit(battle, "0.0.1").effects, rot] } } };
+    const after = act(battle, "lash_out", "1.0.1").battle;
+    for (const id of ["1.0.0", "1.0.1", "1.0.2"]) expect(90 - unit(after, id).hp).toBe(30);
+    expect(unit(after, "0.0.1").effects.find((e) => e.def === "rotting")).toMatchObject({ amount: 30, stacks: 3 });
+  });
+
+  test("can't lash out with nothing rotting inside it", () => {
+    const battle = until(start([p("decay_4", 0, 1)], [p("congregant", 0, 1)]), "0.0.1");
+    expect(legalActions(battle).map((a) => a.abilityId)).not.toContain("lash_out");
   });
 });
