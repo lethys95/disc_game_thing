@@ -31,4 +31,6 @@
 ## Tier 4 (user, 2026-09-29)
 - **The Regrowth line ends at tier 3.**
 - **Decay tier 4:** "a unit which can actively use the withering on itself and turn it into damage dealt somehow. The more it suffers, the more it lashes back", so the line can be a win condition, fairly late game.
-- Claude's reading and proposal: the rot it carries (its delayed damage) fuels an active ability that deals it out. Open (user's call): is the rot consumed or kept; one target or the front row; main or free action.
+- Claude's reading and proposal: the rot it carries (its delayed damage) fuels an active ability that deals it out.
+- **Answers (user):** a lash-out for sure ("you're trying to turn a tank into a cannon, that shouldn't be free... you should have a backline with some healers"); the **front row** ("it needs to sting"); a **main action**. A release valve too? Unsure. Claude's suggestion, taken for now: no release valve; the healers are the valve.
+- **Built (M74):** Decay 4 with *Lash out*: deals its rot to the enemy front row; the rot stays and its countdown restarts (double-edged).

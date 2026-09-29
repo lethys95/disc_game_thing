@@ -75,4 +75,6 @@ export const EVOLUTIONS: Readonly<Record<string, readonly Evolution[]>> = {
   grove_melee_1: [{ to: "regrowth_2", label: "Regrowth" }, { to: "decay_2", label: "Decay" }],
   regrowth_2: [{ to: "regrowth_3" }],
   decay_2: [{ to: "decay_3" }],
+  // Regrowth ends at tier 3; Decay goes on to a tier 4 (user, 2026-09-29).
+  decay_3: [{ to: "decay_4" }],
 };
