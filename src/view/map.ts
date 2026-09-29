@@ -21,7 +21,7 @@ import type { Grade } from "#view/stage";
 import type { CameraPose, Stage } from "#view/stage";
 import { STRUCTURES } from "#rules/structures";
 import type { StructureKind } from "#rules/structures";
-import { hexAt, Landscape, MARGIN } from "#view/landscape";
+import { edgeHexOf, hexAt, Landscape, MARGIN } from "#view/landscape";
 import { GroundTextures, HORIZON_MIST, MODEL_CHAINS, Models, skyTexture, TERRAIN_VARIANTS } from "#view/models";
 
 const SIZE = 1;
@@ -75,8 +75,8 @@ export interface MapMood {
 }
 
 /**
- * Moods for the user to choose from (2026-09-29, after choosing the gothic style). `day` is what Claude had set
- * (M58), never the user's choice.
+ * Moods for the map (2026-09-29): the user chose `dusk`; the others stay for comparison (`?mood=`). `day` was
+ * Claude's (M58).
  */
 export const MOODS = {
   day: { sun: { color: 0xffd9ae, intensity: 3.4, from: [-11, 8.5, 6] }, fill: { sky: 0x9fb2d4, ground: 0x2a2a1c, intensity: 0.45 }, rim: { color: 0x7f9cff, intensity: 1.2 }, sky: 0.6, grade: { saturation: 1, exposure: 1 } },
@@ -222,7 +222,8 @@ export class MapView {
     this.scene.add(this.sun, this.sun.target);
     this.rim.position.set(8, 5, -10);
     this.scene.add(this.rim);
-    this.setMood(MOODS.day);
+    // The user chose dusk (2026-09-29).
+    this.setMood(MOODS.dusk);
     const ground = new THREE.Mesh(new THREE.CircleGeometry(400, 64), new THREE.MeshStandardMaterial({ color: sky ? 0x23282b : 0x0f0e0d, roughness: 1 }));
     ground.rotation.x = -Math.PI / 2;
     ground.receiveShadow = true;
@@ -360,7 +361,7 @@ export class MapView {
 
   /**
    * The wild land past the map's edge: forest nearer in, mountains mostly on the outer rings, so the map sits in a
-   * world rather than ending at a line. Scenery only: always shown (it holds nothing to discover), never picked.
+   * world rather than ending at a line. Scenery only, never picked; it shows once the edge next to it is explored.
    */
   private buildWilds(map: WorldMap, shape: Landscape["shape"]): void {
     const place = (hex: Hex, kind: "tree" | "mountain", variants: number, salt: number, x: number, z: number, height: number, width: number) => {
@@ -369,6 +370,8 @@ export class MapView {
       host.position.set(at.x + x, shape.heightAt(at.x + x, at.z + z) - height * SINK[kind], at.z + z);
       host.rotation.y = jitter(hex, salt + 50) * Math.PI * 2;
       this.terrain.add(host);
+      // Hidden with the edge hex nearest it until that's explored, like the land under it.
+      this.hexes.get(hexKey(edgeHexOf(hex, map.radius)))?.decoration.push(host);
       this.models.dress(host, [`terrain/${kind}-${1 + Math.floor(jitter(hex, salt) * variants)}`, `terrain/${kind}-1`], height, width);
     };
     for (let ring = map.radius + 1; ring <= map.radius + MARGIN; ring++) {
