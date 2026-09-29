@@ -15,7 +15,7 @@ describe("Grove melee line", () => {
 
   test("Regrowth: heals a share of its max HP at the start of its turns", () => {
     let battle = until(start([p("congregant", 0, 1)], [{ ...p("grove_melee_1", 0, 1), hp: 50 }]), "1.0.1");
-    expect(unit(battle, "1.0.1").hp).toBe(50 + Math.round(110 * 0.06));
+    expect(unit(battle, "1.0.1").hp).toBe(50 + Math.round(121 * 0.06));
     battle = act(battle, "defend").battle;
     expect(unit(battle, "1.0.1").hp).toBeGreaterThan(50);
   });
@@ -25,7 +25,7 @@ describe("Grove melee line", () => {
     battle = until(act(battle, "attack", "1.0.1").battle, "1.0.1");
     // A Congregant alone hits for 20: 40% (8) rots in and 12 lands now; as its turn starts, a third of the rot,
     // rounded up (3), is lost, and 5 remain for its next two turns.
-    expect(175 - unit(battle, "1.0.1").hp).toBe(12 + 3);
+    expect(190 - unit(battle, "1.0.1").hp).toBe(12 + 3);
     expect(unit(battle, "1.0.1").effects.find((e) => e.def === "rotting")).toMatchObject({ amount: 5, stacks: 2 });
     expect(UNITS["decay_2"]?.abilities.some((a) => a.id === "regrowth")).toBe(false);
   });
@@ -39,8 +39,8 @@ describe("Grove melee line", () => {
   test("Grove mend: an ally regrows at the start of its next turns", () => {
     let battle = until(start([p("congregant", 0, 1)], [p("regrowth_3", 0, 1), { ...p("grove_melee_1", 0, 0), hp: 40 }]), "1.0.1");
     battle = until(act(battle, "grove_mend", "1.0.0").battle, "1.0.0");
-    // Its turn has started: 15 regrown (on top of its own regrowth), two more turns to come.
-    expect(unit(battle, "1.0.0").hp).toBeGreaterThanOrEqual(40 + 15);
+    // Its turn has started: 40 regrown (on top of its own regrowth), two more turns to come.
+    expect(unit(battle, "1.0.0").hp).toBeGreaterThanOrEqual(40 + 40);
     expect(unit(battle, "1.0.0").effects.find((e) => e.def === "mending")?.stacks).toBe(2);
   });
 
