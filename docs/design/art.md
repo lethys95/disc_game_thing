@@ -81,3 +81,6 @@ Regular trees, maybe with autumn colors; withered trees for the Grove's decay. N
 ## UI references (user, 2026-09-27)
 Disciples II's city screen (`references/disciples2-city.png`): the ornate right-hand panel (carved metal and stone, round buttons, pale marble plaques for names and pictures). Also Diablo II's HUD; gargoyles, statues and arches fit.
 
+
+## The props' framing was Claude's, not the user's (2026-09-29)
+Every map model and ground texture was generated with "stylized dark fantasy, hand-painted textures, chunky readable shapes", which Claude wrote into `scripts/art/props.ts` (M42) and `ground.ts` without the user. The user: the game is meant to be mature, for adults; cheerful buildings don't fit the story or the HUD. A style probe (`scripts/art/style-probe.ts`, `shots/style-probe.png`) shows the same props as grounded, gothic and painterly; the user picks, then everything is regenerated from the scripts (about an hour of GPU time). The map's bright, warm lighting (M58) is also Claude's choice, for the user to judge alongside.
