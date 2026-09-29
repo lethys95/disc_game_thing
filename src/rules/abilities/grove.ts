@@ -187,6 +187,66 @@ export const grove: Readonly<Record<string, Behavior>> = {
     },
   },
 
+  /** Spiritess (the user: a semi-HoT, like WoW's Regrowth): a heal now, and more over the ally's next turns. */
+  spirit_bloom: {
+    kind: "active",
+    name: "Spirit bloom",
+    describe: (p) => `Main action: an ally (or itself) heals ${p["heal"]} now, and regrows ${p["amount"]} at the start of each of its next ${p["turns"]} turns.`,
+    tags: ["heal"],
+    defaults: { heal: 25, amount: 12, turns: 3 },
+    choices: (ctx, self) => ctx.living(ctx.unit(self.unitId).side).map((u) => single(u, "main")),
+    resolve: (ctx, self, choice) => {
+      for (const id of choice.affected) {
+        ctx.heal(id, self.params["heal"] ?? 0);
+        ctx.addEffect(id, { def: "mending", amount: self.params["amount"] ?? 0, stacks: self.params["turns"] ?? 3, source: self.unitId });
+      }
+    },
+  },
+
+  /**
+   * Spiritess (the user: like WoW's Swiftmend): every regrowing effect on an ally is consumed at once for a burst
+   * heal of what it would still have healed, and more. A Regrowth melee's own regeneration counts too, without being
+   * consumed (the user: it stacks with the Regrowth side's HoTs).
+   */
+  burst_mend: {
+    kind: "active",
+    name: "Burst mend",
+    describe: (p) => `Main action, ${p["charges"]} per combat: an ally's regrowing effects are all consumed at once; it heals ${p["percent"]}% of what they'd still have healed (a Regrowth melee's own regeneration counts as three turns of it).`,
+    tags: ["heal"],
+    defaults: { charges: 2, percent: 150 },
+    choices: (ctx, self) =>
+      ctx
+        .living(ctx.unit(self.unitId).side)
+        .filter((u) => u.effects.some((e) => e.def === "mending") || ctx.abilityIds(u.id).includes("regrowth"))
+        .map((u) => single(u, "main")),
+    resolve: (ctx, self, choice) => {
+      for (const id of choice.affected) {
+        const target = ctx.unit(id);
+        const hots = target.effects.filter((e) => e.def === "mending");
+        let pending = hots.reduce((sum, e) => sum + e.amount * e.stacks, 0);
+        for (const hot of hots) ctx.removeEffect(id, hot);
+        if (ctx.abilityIds(id).includes("regrowth")) pending += Math.round((ctx.stats(id).maxHp * (ctx.abilityRef(id, "regrowth").params?.["percent"] ?? 6) * 3) / 100);
+        ctx.heal(id, Math.round((pending * (self.params["percent"] ?? 100)) / 100));
+      }
+    },
+  },
+
+  /**
+   * Psychopomp (user, 2026-09-29): a unit of either side walks among the spirits. It leaves the field (not a
+   * target, doesn't hold its front line, can't act) and returns healed. On an enemy, a banish; on an ally, a rescue.
+   */
+  spiritwalk: {
+    kind: "active",
+    name: "Spiritwalk",
+    describe: (p) => `Main action, ${p["charges"]} per combat: any other unit, ally or enemy, leaves the field for ${p["rounds"]} round starts: it can't act or be hit, and doesn't hold its line. It returns healed ${p["heal"]}% of its max HP.`,
+    tags: [],
+    defaults: { charges: 1, rounds: 2, heal: 40 },
+    choices: (ctx, self) => ctx.living().filter((u) => u.id !== self.unitId).map((u) => single(u, "main")),
+    resolve: (ctx, self, choice) => {
+      for (const id of choice.affected) ctx.addEffect(id, { def: "spiritwalking", stacks: self.params["rounds"] ?? 2, amount: self.params["heal"] ?? 0, source: self.unitId });
+    },
+  },
+
   grove_mend: {
     kind: "active",
     name: "Grove mend",

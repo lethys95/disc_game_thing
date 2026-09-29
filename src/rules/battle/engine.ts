@@ -296,6 +296,14 @@ export function sameEnhancement(a: Enhancement, b: Enhancement): boolean {
 }
 
 /** Ends every effect with this lifetime that `matches`, running its expiry. */
+/** Effects that last a number of rounds count one down as each round starts, and expire at zero. */
+function countRounds(ctx: Ctx): void {
+  for (const unit of Object.values(ctx.battle.units)) {
+    for (const effect of unit.effects) if (effectDef(effect.def).lifetime === "rounds") effect.stacks -= 1;
+  }
+  expire(ctx, "rounds", (_unit, effect) => effect.stacks <= 0);
+}
+
 function expire(ctx: Ctx, lifetime: Lifetime, matches: (unit: BattleUnit, effect: EffectInstance) => boolean): void {
   for (const unit of Object.values(ctx.battle.units)) {
     for (const effect of [...unit.effects]) {
@@ -363,6 +371,7 @@ function startRound(ctx: Ctx): void {
   battle.pass = 0;
   battle.actionsThisRound = {};
   expire(ctx, "untilRoundEnd", () => true);
+  countRounds(ctx);
   for (const unit of ctx.living()) battle.actionsThisRound[unit.id] = actionsPerRound(ctx.stats(unit.id).initiative);
   ctx.emit({ type: "roundStart", round: battle.round });
   startPass(ctx);
@@ -414,8 +423,10 @@ export function upcomingSlots(battle: Battle): string[] {
 function checkOutcome(ctx: Ctx): void {
   const battle = ctx.battle;
   if (battle.outcome) return;
-  const first = ctx.living(0).length;
-  const second = ctx.living(1).length;
+  // Everyone alive counts, present or not: a unit walking among the spirits hasn't lost the battle for its side.
+  const standing = (side: Side) => Object.values(battle.units).filter((u) => u.alive && u.side === side).length;
+  const first = standing(0);
+  const second = standing(1);
   if (first > 0 && second > 0) return;
   battle.outcome =
     first === 0 && second === 0 ? { winner: null, reason: "mutualDestruction" } : { winner: first === 0 ? 1 : 0 };
@@ -430,8 +441,9 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
     if (!found) throw new Error(`unknown unit id: ${id}`);
     return found;
   };
+  // The living who are present: an effect can take a unit off the field for a while (`EffectDef.absent`).
   const living = (side?: Side) =>
-    Object.values(battle.units).filter((u) => u.alive && (side === undefined || u.side === side));
+    Object.values(battle.units).filter((u) => u.alive && (side === undefined || u.side === side) && !u.effects.some((e) => effectDef(e.def).absent));
 
   /**
    * Trait lists and ability ids only change when an effect comes or goes or a unit dies, but hooks ask for them

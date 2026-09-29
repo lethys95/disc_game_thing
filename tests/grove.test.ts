@@ -106,3 +106,42 @@ describe("the Grove's backline and corpses (user, 2026-09-29)", () => {
     expect(unit(battle, "0.0.1").effects.find((e) => e.def === "rotting")?.amount).toBe(12);
   });
 });
+
+describe("the Spiritess branch (user, 2026-09-29)", () => {
+  test("Spirit bloom heals now and over time; HoTs from different healers run side by side", () => {
+    let battle = until(start([p("spiritess_2", 2, 1), { ...p("regrowth_3", 0, 1), hp: 100 }], [p("congregant", 2, 1)]), "0.2.1");
+    battle = act(battle, "spirit_bloom", "0.0.1").battle;
+    expect(unit(battle, "0.0.1").hp).toBeGreaterThanOrEqual(125);
+    expect(unit(battle, "0.0.1").effects.filter((e) => e.def === "mending")).toHaveLength(1);
+  });
+
+  test("Burst mend consumes the HoTs at once for more than they'd heal, and counts a Regrowth melee's regeneration", () => {
+    const base = until(start([p("spiritess_2", 2, 1), { ...p("regrowth_3", 0, 1), hp: 60 }], [p("congregant", 2, 1)]), "0.2.1");
+    const hot = { def: "mending", source: "x", stacks: 3, amount: 10 };
+    const battle = { ...base, units: { ...base.units, "0.0.1": { ...unit(base, "0.0.1"), effects: [hot] } } };
+    const after = act(battle, "burst_mend", "0.0.1").battle;
+    // 30 pending from the HoT + 3 turns of 12% of 260 (94) = 124, at 150%: 186.
+    expect(unit(after, "0.0.1").hp).toBeGreaterThanOrEqual(60 + 186);
+    expect(unit(after, "0.0.1").effects.some((e) => e.def === "mending")).toBe(false);
+  });
+
+  test("Spiritwalk: the unit leaves the field (not a target, doesn't hold its line), then returns healed; the battle doesn't end while it's away", () => {
+    let battle = until(start([p("psychopomp", 2, 1)], [{ ...p("congregant", 0, 1), hp: 30 }, p("cleric", 2, 1)]), "0.2.1");
+    battle = act(battle, "spiritwalk", "1.0.1").battle;
+    expect(unit(battle, "1.0.1").effects.some((e) => e.def === "spiritwalking")).toBe(true);
+    expect(battle.outcome).toBeNull();
+    // Nobody may target it while it's away.
+    const later = until(battle, "0.2.1");
+    const targets = legalActions(later).flatMap((a) => a.choices.flatMap((c) => c.affected));
+    expect(targets).not.toContain("1.0.1");
+    // It comes back after two round starts, healed 40% of 90.
+    let back = later;
+    for (let i = 0; i < 40 && unit(back, "1.0.1").effects.some((e) => e.def === "spiritwalking") && !back.outcome; i++) back = act(back, legalActions(back).some((a) => a.abilityId === "wait") ? "wait" : "defend").battle;
+    expect(unit(back, "1.0.1").hp).toBeGreaterThanOrEqual(30 + 36);
+  });
+
+  test("a side whose only unit is spiritwalking hasn't lost", () => {
+    const battle = until(start([p("psychopomp", 2, 1)], [p("congregant", 0, 1)]), "0.2.1");
+    expect(act(battle, "spiritwalk", "1.0.1").battle.outcome).toBeNull();
+  });
+});

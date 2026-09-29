@@ -76,6 +76,7 @@ export const EVOLUTIONS: Readonly<Record<string, readonly Evolution[]>> = {
   decay_2: [{ to: "decay_3" }],
   // Regrowth ends at tier 3; Decay goes on to a tier 4 (user, 2026-09-29).
   decay_3: [{ to: "decay_4" }],
-  // The support forks into Spiritess (crowd control; not designed yet) and Decay (corpses).
-  grove_support_1: [{ to: "decay_support_2" }],
+  // The support forks into Spiritess (healing over time, then the Psychopomp's crowd control) and Decay (corpses).
+  grove_support_1: [{ to: "spiritess_2", label: "Spiritess" }, { to: "decay_support_2", label: "Decay" }],
+  spiritess_2: [{ to: "psychopomp" }],
 };

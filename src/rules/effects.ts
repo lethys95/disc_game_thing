@@ -449,13 +449,27 @@ const effects: readonly EffectDef[] = [
       },
     },
   },
+  {
+    // Spiritwalk (user, 2026-09-29): off the field, invulnerable because untargetable, unable to act; it comes
+    // back healed. Double-edged: on an enemy it's a banish that heals them; on an ally, a rescue that benches them.
+    id: "spiritwalking",
+    name: "Spiritwalking",
+    describe: (e) => `Walks among the spirits: not on the field, can't act or be hit. Returns in ${e.stacks} round${e.stacks === 1 ? "" : "s"}, healed ${e.amount}% of its max HP.`,
+    stacking: { mode: "unique" },
+    lifetime: "rounds",
+    visibility: "public",
+    absent: true,
+    hooks: {},
+    onExpire: (ctx, self) => ctx.heal(self.unitId, Math.round((ctx.stats(self.unitId).maxHp * (self.effect?.amount ?? 0)) / 100)),
+  },
   flatStat({ id: "withered", name: "Withered", stat: "damage", sign: -1, stacking: { mode: "unique" }, describe: (e) => `Deals ${e.amount} less damage (withered by a Decay unit).` }),
   {
     // Mend: heals at the start of each of the bearer's turns while it lasts (`stacks` turns).
     id: "mending",
     name: "Mending",
     describe: (e) => `Regrows ${e.amount} HP at the start of each of its next ${e.stacks} turn${e.stacks === 1 ? "" : "s"}.`,
-    stacking: { mode: "unique" },
+    // One per healer: HoTs from different units run side by side (and a Burst mend consumes them all).
+    stacking: { mode: "perSource" },
     lifetime: "battle",
     visibility: "public",
     hooks: {

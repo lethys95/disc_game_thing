@@ -276,9 +276,9 @@ export type Stacking = { readonly mode: "unique" } | { readonly mode: "merge"; r
 /**
  * When an effect ends: `battle` lasts the fight; `untilOwnTurn` ends as its bearer's next turn starts;
  * `untilRoundEnd` ends when the round does; `untilSourceTurn` ends as its source's next turn starts; `untilTurnEnd`
- * ends when the bearer's current turn does.
+ * ends when the bearer's current turn does; `rounds` lasts `stacks` round starts (its `onExpire` runs then).
  */
-export type Lifetime = "battle" | "untilOwnTurn" | "untilRoundEnd" | "untilSourceTurn" | "untilTurnEnd";
+export type Lifetime = "battle" | "untilOwnTurn" | "untilRoundEnd" | "untilSourceTurn" | "untilTurnEnd" | "rounds";
 
 export interface EffectDef {
   readonly id: string;
@@ -297,6 +297,11 @@ export interface EffectDef {
    * moves as fast as its best (Stables).
    */
   readonly mapMovement?: number;
+  /**
+   * Its bearer is off the field for now (Spiritwalk, user 2026-09-29): not a target, not in the front line, takes no
+   * turns, "doesn't count as present". Alive all the same.
+   */
+  readonly absent?: boolean;
   /** A city's walls: armor its bearer has from them, which siege-trained attackers ignore (Siege workshop). */
   readonly fortifies?: boolean;
   /** What it does, from its own numbers; shown when hovering it. */

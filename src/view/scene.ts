@@ -1,3 +1,4 @@
+import { EFFECTS } from "#rules/effects";
 import { BEHAVIORS } from "#rules/abilities/index";
 import * as THREE from "three";
 import { CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
@@ -249,7 +250,8 @@ export class BattleScene {
       );
       this.updateBar(figure);
       figure.group.position.copy(this.position(unit.side, unit.tile)).setY(0.28);
-      figure.group.visible = !unit.fled;
+      // Off the field for now (Spiritwalk): hidden until it returns.
+      figure.group.visible = !unit.fled && !unit.effects.some((e) => EFFECTS.get(e.def)?.absent);
       if (!unit.alive && !unit.fled && !figure.fallen) this.topple(figure, 0);
     }
   }
