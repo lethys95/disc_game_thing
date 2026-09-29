@@ -453,10 +453,18 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
     const known = memo().grants.get(id);
     if (known) return known;
     const refs: AbilityRef[] = [];
+    // Auras don't stack (user, 2026-09-29): what other units' passives grant comes once per ability, however many
+    // units grant it. What a unit's own effects grant (a carried item's ability, a node's) each stays its own.
+    const fromOthers = new Set<string>();
     for (const owner of living()) {
       for (const ref of owner.abilities) {
         const b = behavior(ref.id);
-        if (b.kind === "passive" && b.hooks.grants) refs.push(...b.hooks.grants(ctx, { unitId: owner.id, params: paramsOf(ref), effect: null }, id));
+        if (b.kind !== "passive" || !b.hooks.grants) continue;
+        for (const granted of b.hooks.grants(ctx, { unitId: owner.id, params: paramsOf(ref), effect: null }, id)) {
+          if (fromOthers.has(granted.id)) continue;
+          fromOthers.add(granted.id);
+          refs.push(granted);
+        }
       }
       for (const effect of owner.effects) {
         const grants = effectDef(effect.def).hooks.grants;

@@ -3,7 +3,7 @@ import { UNITS } from "#rules/units/index";
 import { createBattle, effectiveStats, legalActions } from "#rules/battle/engine";
 import type { BattleContext } from "#rules/battle/engine";
 import type { BattleEvent } from "#rules/battle/types";
-import { act, anchorKey, p, until } from "#tests/helpers";
+import { act, anchorKey, p, start, until } from "#tests/helpers";
 import { describe, expect, test } from "vitest";
 
 /**
@@ -75,4 +75,10 @@ describe("stacking and lifetimes", () => {
 
 test("no two ability sets define the same ability id", () => {
   expect(duplicateAbilityIds()).toEqual([]);
+});
+
+test("auras don't stack: a unit between two Templars gets one Devotion Aura", () => {
+  const between = start([p("templar", 0, 0), p("congregant", 0, 1), p("templar", 0, 2)], [p("congregant", 2, 1)]);
+  const alone = start([p("templar", 0, 0), p("congregant", 0, 1)], [p("congregant", 2, 1)]);
+  expect(effectiveStats(between, "0.0.1").armor).toBe(effectiveStats(alone, "0.0.1").armor);
 });

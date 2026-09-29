@@ -124,3 +124,17 @@ export const core: Readonly<Record<string, Behavior>> = {
     resolve: () => {},
   },
 };
+
+/**
+ * Auras don't stack (user, 2026-09-29): when several units' copies of one aura reach a unit, only the strongest
+ * applies (ties go to the first unit by id). True if `self` is that one, among the units `reaches` says reach the
+ * unit in question.
+ */
+export function auraSource(ctx: Ctx, self: TraitSelf, abilityId: string, reaches: (sourceId: string) => boolean, strength: (params: Params) => number): boolean {
+  const sources = ctx
+    .living(ctx.unit(self.unitId).side)
+    .filter((u) => ctx.abilityIds(u.id).includes(abilityId) && reaches(u.id))
+    .map((u) => ({ id: u.id, strength: strength(ctx.abilityRef(u.id, abilityId).params ?? {}) }))
+    .sort((a, b) => b.strength - a.strength || (a.id < b.id ? -1 : 1));
+  return sources[0]?.id === self.unitId;
+}
