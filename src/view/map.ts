@@ -16,7 +16,8 @@ import { spellById } from "#rules/spells";
 import { cityName } from "#view/city";
 import type { City, Leader, World } from "#rules/world/state";
 import { buildFigure } from "#view/figures";
-import { BOUNCE_LIGHT, discard, discardChildren } from "#view/stage";
+import { BOUNCE_LIGHT, discard, discardChildren, GRADE } from "#view/stage";
+import type { Grade } from "#view/stage";
 import type { CameraPose, Stage } from "#view/stage";
 import { STRUCTURES } from "#rules/structures";
 import type { StructureKind } from "#rules/structures";
@@ -63,6 +64,29 @@ interface LeaderFigure {
 }
 
 const NONE = new THREE.Color(0x000000);
+/** A mood for the map: light, sky and color grade. */
+export interface MapMood {
+  readonly sun: { readonly color: number; readonly intensity: number; readonly from: readonly [number, number, number] };
+  readonly fill: { readonly sky: number; readonly ground: number; readonly intensity: number };
+  readonly rim: { readonly color: number; readonly intensity: number };
+  /** How strongly the sky panorama lights the scene (and shows). */
+  readonly sky: number;
+  readonly grade: Grade;
+}
+
+/**
+ * Moods for the user to choose from (2026-09-29, after choosing the gothic style). `day` is what Claude had set
+ * (M58), never the user's choice.
+ */
+export const MOODS = {
+  day: { sun: { color: 0xffd9ae, intensity: 3.4, from: [-11, 8.5, 6] }, fill: { sky: 0x9fb2d4, ground: 0x2a2a1c, intensity: 0.45 }, rim: { color: 0x7f9cff, intensity: 1.2 }, sky: 0.6, grade: { saturation: 1, exposure: 1 } },
+  overcast: { sun: { color: 0xd8dde6, intensity: 1.4, from: [-6, 12, 5] }, fill: { sky: 0xa8b0bc, ground: 0x2a2a26, intensity: 0.8 }, rim: { color: 0x8a96b0, intensity: 0.5 }, sky: 0.5, grade: { saturation: 0.7, exposure: 0.9 } },
+  dusk: { sun: { color: 0xff9a5a, intensity: 2.6, from: [-14, 4.5, 3] }, fill: { sky: 0x5a6a9a, ground: 0x1c1a20, intensity: 0.5 }, rim: { color: 0x6a7cff, intensity: 1.4 }, sky: 0.4, grade: { saturation: 0.85, exposure: 0.85 } },
+  grim: { sun: { color: 0xc8c0b0, intensity: 1.8, from: [-9, 9, 7] }, fill: { sky: 0x707888, ground: 0x1a1a1a, intensity: 0.5 }, rim: { color: 0x7080a0, intensity: 0.6 }, sky: 0.35, grade: { saturation: 0.55, exposure: 0.8 } },
+} as const satisfies Readonly<Record<string, MapMood>>;
+
+export const isMood = (key: string): key is keyof typeof MOODS => key in MOODS;
+
 /** Hex highlights, glowing from the ground (`view/landscape.ts`). */
 const HIGHLIGHTS = {
   reach: new THREE.Color(0x10140c),
@@ -177,25 +201,25 @@ export class MapView {
   private readonly models = new Models();
   private readonly ground = new GroundTextures();
   private landscape: Landscape | null = null;
-  private readonly sun = new THREE.DirectionalLight(0xffd9ae, 3.4);
+  private readonly sun = new THREE.DirectionalLight();
+  private readonly fill = new THREE.HemisphereLight();
+  private readonly rim = new THREE.DirectionalLight();
 
   constructor(private readonly stage: Stage) {
     // The sky also lights the scene, once it has loaded.
-    const sky = skyTexture("map", (panorama) => stage.lightWith(this.scene, panorama, 0.6));
+    const sky = skyTexture("map", (panorama) => stage.lightWith(this.scene, panorama, this.scene.environmentIntensity));
     this.scene.background = sky ?? new THREE.Color(0x0b0a0c);
     // The land beyond the map fades into the sky's misty horizon (sampled from the panorama), so the two meet.
     this.scene.fog = sky ? new THREE.Fog(HORIZON_MIST, 24, 55) : new THREE.FogExp2(0x0b0a0c, 0.028);
-    // A low, warm sun and a cool sky: long shadows give the land its shape, and the two colors give it depth.
-    this.scene.add(new THREE.HemisphereLight(0x9fb2d4, 0x2a2a1c, 0.45));
-    this.sun.position.set(-11, 8.5, 6);
+    this.scene.add(this.fill);
     this.sun.castShadow = true;
     this.sun.shadow.mapSize.set(4096, 4096);
     this.sun.shadow.bias = -0.0004;
     this.sun.shadow.normalBias = 0.02;
     this.scene.add(this.sun, this.sun.target);
-    const rim = new THREE.DirectionalLight(0x7f9cff, 1.2);
-    rim.position.set(8, 5, -10);
-    this.scene.add(rim);
+    this.rim.position.set(8, 5, -10);
+    this.scene.add(this.rim);
+    this.setMood(MOODS.day);
     const ground = new THREE.Mesh(new THREE.CircleGeometry(400, 64), new THREE.MeshStandardMaterial({ color: sky ? 0x1c2230 : 0x0f0e0d, roughness: 1 }));
     ground.rotation.x = -Math.PI / 2;
     ground.receiveShadow = true;
@@ -207,6 +231,22 @@ export class MapView {
 
   show(): void {
     this.stage.show(this.scene, this.pose);
+  }
+
+  /** The map's light and color: the sun, the sky's fill, fog and a grade (`MOODS`). */
+  setMood(mood: MapMood): void {
+    this.sun.color.set(mood.sun.color);
+    this.sun.intensity = mood.sun.intensity;
+    this.sun.position.set(...mood.sun.from);
+    this.fill.color.set(mood.fill.sky);
+    this.fill.groundColor.set(mood.fill.ground);
+    this.fill.intensity = mood.fill.intensity;
+    this.rim.color.set(mood.rim.color);
+    this.rim.intensity = mood.rim.intensity;
+    this.scene.environmentIntensity = mood.sky;
+    this.scene.backgroundIntensity = mood.sky / 0.6;
+    this.scene.userData[GRADE] = mood.grade;
+    this.stage.regrade(this.scene);
   }
 
   /** Glides the map camera (speed in world units per second, zero to stop); it can't wander far past the map's edge. */

@@ -8,7 +8,7 @@ import { applyUiKit } from "#view/art";
 import { App } from "#view/app";
 import { byId } from "#view/dom";
 import { Campaign } from "#view/campaign";
-import { MapView } from "#view/map";
+import { isMood, MapView, MOODS } from "#view/map";
 import { BattleScene } from "#view/scene";
 import { Setup } from "#view/setup";
 import { BANDIT_GROUP, NEXUS_PRESETS, PRESETS } from "#rules/units/presets";
@@ -39,6 +39,9 @@ if (params.has("fast")) stage.testScale = 0.1;
 if (params.has("fps")) stage.showFrameRate();
 const battleScene = new BattleScene(stage);
 const mapView = new MapView(stage);
+// The mood probe (2026-09-29): `?mood=day|overcast|dusk|grim`.
+const mood = params.get("mood");
+if (mood && isMood(mood)) mapView.setMood(MOODS[mood]);
 const ai = new AiClient();
 const app: App = new App(stage, battleScene, ai, settings, sound, { onSetup: () => showSetup() });
 const saves = new LocalSaveStore();
