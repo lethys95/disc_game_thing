@@ -39,4 +39,21 @@ export const GROVE_UNITS: Readonly<Record<string, UnitDef>> = {
     stats: { maxHp: 376, shield: 0, damage: 72, armor: 0, initiative: 45 },
     abilities: [{ id: "decay", params: { percent: 55 } }, { id: "withering" }, { id: "lash_out" }, ...kit("attack", "defend", "wait")],
   },
+  // The backline (user, 2026-09-29: `faction-stuff/sylvan/support.md`, `mage.md`). Numbers provisional (#58).
+  grove_support_1: {
+    id: "grove_support_1", name: "Grove support 1", faction: "grove", tier: 1, damageType: "weapon",
+    stats: { maxHp: 70, shield: 0, damage: 10, armor: 0, initiative: 45 },
+    abilities: kit("bloom", "shoot", "defend", "wait"),
+  },
+  // The Decay branch: weaker healing, corpses. (The Spiritess branch, crowd control, awaits the user's design.)
+  decay_support_2: {
+    id: "decay_support_2", name: "Decay support 2", faction: "grove", tier: 2, damageType: "weapon",
+    stats: { maxHp: 95, shield: 0, damage: 12, armor: 0, initiative: 45 },
+    abilities: [{ id: "bloom", params: { amount: 8 } }, ...kit("corpse_growth", "corpse_explosion", "shoot", "defend", "wait")],
+  },
+  grove_mage_1: {
+    id: "grove_mage_1", name: "Grove mage 1", faction: "grove", tier: 1, damageType: "weapon",
+    stats: { maxHp: 55, shield: 0, damage: 8, armor: 0, initiative: 45 },
+    abilities: kit("cycle", "defend", "wait"),
+  },
 };

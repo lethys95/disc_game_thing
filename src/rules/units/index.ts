@@ -25,8 +25,7 @@ export type Playable = Exclude<Faction, "neutral">;
 export const FACTION_ROOTS: Readonly<Record<Playable, readonly string[]>> = {
   jilliath: ["congregant", "cleric", "jilliath_mage_1"],
   nexus: ["custodian", "technician", "apprentice"],
-  // Only the melee line is designed so far (user, 2026-09-29).
-  grove: ["grove_melee_1"],
+  grove: ["grove_melee_1", "grove_support_1", "grove_mage_1"],
 };
 
 /**
@@ -37,10 +36,10 @@ export const ARCHETYPES = ["melee", "support", "mage", "joker"] as const;
 export type Archetype = (typeof ARCHETYPES)[number];
 
 /** Which kind of line each tier-1 unit starts (user: the melee lines, the Technician supports, the Apprentice casts). */
-export const LINE_ARCHETYPE: Readonly<Record<string, Archetype>> = { congregant: "melee", cleric: "support", jilliath_mage_1: "mage", custodian: "melee", technician: "support", apprentice: "mage", grove_melee_1: "melee" };
+export const LINE_ARCHETYPE: Readonly<Record<string, Archetype>> = { congregant: "melee", cleric: "support", jilliath_mage_1: "mage", custodian: "melee", technician: "support", apprentice: "mage", grove_melee_1: "melee", grove_support_1: "support", grove_mage_1: "mage" };
 
 /** Canon: the Congregant costs 40 gold. The Nexus prices are provisional ("costly", quality over quantity). */
-export const RECRUIT_COST: Readonly<Record<string, number>> = { congregant: 40, cleric: 50, jilliath_mage_1: 60, custodian: 60, technician: 50, apprentice: 60, grove_melee_1: 45 };
+export const RECRUIT_COST: Readonly<Record<string, number>> = { congregant: 40, cleric: 50, jilliath_mage_1: 60, custodian: 60, technician: 50, apprentice: 60, grove_melee_1: 45, grove_support_1: 50, grove_mage_1: 60 };
 
 /** One step up an evolution tree. */
 export interface Evolution {
@@ -77,4 +76,6 @@ export const EVOLUTIONS: Readonly<Record<string, readonly Evolution[]>> = {
   decay_2: [{ to: "decay_3" }],
   // Regrowth ends at tier 3; Decay goes on to a tier 4 (user, 2026-09-29).
   decay_3: [{ to: "decay_4" }],
+  // The support forks into Spiritess (crowd control; not designed yet) and Decay (corpses).
+  grove_support_1: [{ to: "decay_support_2" }],
 };

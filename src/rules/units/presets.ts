@@ -57,12 +57,11 @@ export const NEXUS_PRESETS: Readonly<Record<"uncommitted" | "scheme" | "overload
 };
 
 
-/** The Grove: only its melee line exists yet (user, 2026-09-29), so its squads are that line in several forms. */
+/** The Grove: its melee line and the first of its backline (user, 2026-09-29). */
 export const GROVE_PRESETS = {
-  uncommitted: [at("grove_melee_1", 0, 0), at("grove_melee_1", 0, 1), at("grove_melee_1", 0, 2), at("grove_melee_1", 1, 0), at("grove_melee_1", 1, 2)],
-  // Five units, like the other factions' presets.
-  regrowth: [at("regrowth_2", 0, 0), at("regrowth_2", 0, 1), at("regrowth_2", 0, 2), at("regrowth_3", 1, 1), at("grove_melee_1", 1, 0)],
-  decay: [at("decay_2", 0, 0), at("decay_3", 0, 1), at("decay_2", 0, 2), at("grove_melee_1", 1, 0), at("grove_melee_1", 1, 2)],
+  uncommitted: [at("grove_melee_1", 0, 0), at("grove_melee_1", 0, 1), at("grove_melee_1", 0, 2), at("grove_support_1", 2, 0), at("grove_mage_1", 2, 2)],
+  regrowth: [at("regrowth_2", 0, 0), at("regrowth_2", 0, 2), at("regrowth_3", 0, 1), at("grove_support_1", 2, 0), at("grove_mage_1", 2, 2)],
+  decay: [at("decay_2", 0, 0), at("decay_3", 0, 1), at("decay_2", 0, 2), at("decay_support_2", 2, 0), at("grove_mage_1", 2, 2)],
 } as const satisfies Readonly<Record<string, readonly Placement[]>>;
 
 /** A bandit group using all four of the user's bandit units. The formation is not canon. */

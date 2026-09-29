@@ -1,5 +1,6 @@
-import { at, single } from "#rules/abilities/core";
-import { frontLine, meleeTargets, opponent } from "#rules/battle/grid";
+import { at, rangedChoices, single } from "#rules/abilities/core";
+import { adjacent, frontLine, meleeTargets, opponent } from "#rules/battle/grid";
+import type { BattleUnit, Ctx } from "#rules/battle/types";
 import type { Behavior } from "#rules/battle/types";
 
 /**
@@ -9,6 +10,23 @@ import type { Behavior } from "#rules/battle/types";
  */
 /** How many of its turns a Decay unit's rot is spread over. */
 const ROT_TURNS = 3;
+
+/** Rot joins whatever already rots in the unit, and the countdown starts over. */
+function addRot(ctx: Ctx, unitId: string, amount: number, turns = ROT_TURNS): void {
+  if (amount <= 0) return;
+  const rot = ctx.unit(unitId).effects.find((e) => e.def === "rotting");
+  if (rot) {
+    rot.amount += amount;
+    rot.stacks = turns;
+  } else ctx.addEffect(unitId, { def: "rotting", amount, stacks: turns });
+}
+
+/** The corpses still intact on the field, of `side` (or both): the dead that didn't flee. */
+function corpses(ctx: Ctx, side: 0 | 1 | null): BattleUnit[] {
+  return Object.keys(ctx.battle.units)
+    .map((id) => ctx.unit(id))
+    .filter((u) => !u.alive && !u.fled && u.corpse === "intact" && (side === null || u.side === side));
+}
 
 export const grove: Readonly<Record<string, Behavior>> = {
   regrowth: {
@@ -36,11 +54,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
         if (delayed <= 0) return;
         packet.amount -= delayed;
         const turns = self.params["turns"] ?? 3;
-        const rot = ctx.unit(self.unitId).effects.find((e) => e.def === "rotting");
-        if (rot) {
-          rot.amount += delayed;
-          rot.stacks = turns;
-        } else ctx.addEffect(self.unitId, { def: "rotting", amount: delayed, stacks: turns });
+        addRot(ctx, self.unitId, delayed, turns);
       },
       aiValue: (ctx, self) => (ctx.stats(self.unitId).maxHp * (self.params["percent"] ?? 0)) / 200,
     },
@@ -91,6 +105,85 @@ export const grove: Readonly<Record<string, Behavior>> = {
       const power = Math.round((rot.amount * (self.params["percent"] ?? 100)) / 100);
       ctx.hit(self.unitId, choice.affected, { ...ctx.hitSpec(self), power });
       rot.stacks = Math.max(rot.stacks, ROT_TURNS);
+    },
+  },
+
+  /** Grove support (tier 1, the user: basic): an ally regrows over its next turns. */
+  bloom: {
+    kind: "active",
+    name: "Bloom",
+    describe: (p) => `Main action: an ally (or itself) regrows ${p["amount"]} HP at the start of each of its next ${p["turns"]} turns.`,
+    tags: ["heal"],
+    defaults: { amount: 12, turns: 3 },
+    choices: (ctx, self) => ctx.living(ctx.unit(self.unitId).side).map((u) => single(u, "main")),
+    resolve: (ctx, self, choice) => {
+      for (const id of choice.affected) ctx.addEffect(id, { def: "mending", amount: self.params["amount"] ?? 0, stacks: self.params["turns"] ?? 3, source: self.unitId });
+    },
+  },
+
+  /** Decay support: growth from a corpse of either side heals every living ally; the corpse is used up. */
+  corpse_growth: {
+    kind: "active",
+    name: "Corpse growth",
+    describe: (p) => `Main action: growth springs from a corpse (either side's); every living ally heals ${p["amount"]}. The corpse is used up.`,
+    tags: ["heal"],
+    defaults: { amount: 25 },
+    choices: (ctx) => corpses(ctx, null).map((c) => at(c, [c.id], "main")),
+    resolve: (ctx, self, choice) => {
+      const corpse = choice.affected[0] ? ctx.unit(choice.affected[0]) : null;
+      if (!corpse || corpse.corpse !== "intact") return;
+      corpse.corpse = "used";
+      for (const ally of ctx.living(ctx.unit(self.unitId).side)) ctx.heal(ally.id, self.params["amount"] ?? 0);
+    },
+  },
+
+  /**
+   * Decay support (the canon mage idea, moved to the support by the user): an enemy corpse bursts; a fungal
+   * infestation damages the enemies next to it now and at the start of their next turns. The corpse is destroyed:
+   * that unit never reaches its graveyard.
+   */
+  corpse_explosion: {
+    kind: "active",
+    name: "Corpse explosion",
+    describe: (p) => `Main action: an enemy corpse bursts. The enemies next to it take ${p["power"]} now and ${p["infest"]} at the start of each of their next ${p["turns"]} turns. The dead can't be raised.`,
+    tags: ["damage", "area"],
+    defaults: { power: 30, infest: 10, turns: 3 },
+    choices: (ctx, self) => {
+      const enemy = opponent(ctx.unit(self.unitId).side);
+      return corpses(ctx, enemy).map((c) => at(c, [c.id, ...ctx.living(enemy).filter((u) => adjacent(u.tile, c.tile)).map((u) => u.id)], "main"));
+    },
+    resolve: (ctx, self, choice) => {
+      const [corpseId, ...near] = choice.affected;
+      const corpse = corpseId ? ctx.unit(corpseId) : null;
+      if (!corpse || corpse.corpse !== "intact") return;
+      corpse.corpse = "destroyed";
+      if (near.length > 0) ctx.hit(self.unitId, near, { ...ctx.hitSpec(self), power: self.params["power"] ?? 0 });
+      for (const id of near) if (ctx.unit(id).alive) ctx.addEffect(id, { def: "infested", amount: self.params["infest"] ?? 0, stacks: self.params["turns"] ?? 3, source: self.unitId });
+    },
+  },
+
+  /**
+   * Grove mage (tier 1; the user's double-edged nuke): on an enemy, damage that heals back a third at its next turn;
+   * on an ally, a heal, and part of it comes back as rot, which feeds a Decay unit's Lash out (the user's synergy).
+   */
+  cycle: {
+    kind: "active",
+    name: "Cycle",
+    describe: (p) => `Main action, ranged. An enemy takes ${p["power"]}, and heals back a third at the start of its next turn. An ally heals ${p["heal"]}, and ${p["rot"]} rots in over its next 3 turns (feeding a Decay unit's rot).`,
+    tags: ["damage"],
+    defaults: { power: 40, heal: 35, rot: 12 },
+    choices: (ctx, self) => [...rangedChoices(ctx, self), ...ctx.living(ctx.unit(self.unitId).side).map((u) => single(u, "main"))],
+    resolve: (ctx, self, choice) => {
+      const me = ctx.unit(self.unitId);
+      for (const id of choice.affected) {
+        if (ctx.unit(id).side !== me.side) {
+          ctx.hit(self.unitId, [id], { ...ctx.hitSpec(self), power: self.params["power"] ?? 0 });
+          if (ctx.unit(id).alive) ctx.addEffect(id, { def: "healing_back", amount: Math.round((self.params["power"] ?? 0) / 3), source: self.unitId });
+        } else {
+          ctx.heal(id, self.params["heal"] ?? 0);
+          addRot(ctx, id, self.params["rot"] ?? 0);
+        }
+      }
     },
   },
 

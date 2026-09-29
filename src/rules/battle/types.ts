@@ -90,6 +90,11 @@ export interface BattleUnit {
   alive: boolean;
   /** Left the battle alive (Retreat): off the field like the dead, but it keeps its health and isn't a kill. */
   fled: boolean;
+  /**
+   * What's left of it once dead (the Grove's corpse abilities, user 2026-09-29): `intact`, `used` (consumed once;
+   * every corpse is used up), or `destroyed` (burst by a corpse explosion: it never reaches the graveyard).
+   */
+  corpse: "intact" | "used" | "destroyed";
   /** Spell charges left this battle. */
   spellCharges: number;
   /** Leads its squad on the map. No combat effect (canon: elevation grants no stat boost); shown to the player. */

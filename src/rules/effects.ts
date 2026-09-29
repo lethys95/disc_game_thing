@@ -412,6 +412,43 @@ const effects: readonly EffectDef[] = [
       },
     },
   },
+  {
+    // Corpse explosion: a fungal infestation, damage at the start of each of the bearer's turns while it lasts.
+    id: "infested",
+    name: "Infested",
+    describe: (e) => `Loses ${e.amount} HP at the start of each of its next ${e.stacks} turn${e.stacks === 1 ? "" : "s"} (a fungal infestation).`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      turnStart: (ctx, self) => {
+        const infestation = self.effect;
+        if (!infestation) return null;
+        ctx.lose(self.unitId, infestation.amount, infestation.source);
+        infestation.stacks -= 1;
+        if (infestation.stacks <= 0) ctx.removeEffect(self.unitId, infestation);
+        return null;
+      },
+    },
+  },
+  {
+    // Cycle on an enemy: part of the damage heals back at the start of its next turn.
+    id: "healing_back",
+    name: "Healing back",
+    describe: (e) => `Heals ${e.amount} at the start of its next turn.`,
+    stacking: { mode: "merge" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      turnStart: (ctx, self) => {
+        if (self.effect) {
+          ctx.heal(self.unitId, self.effect.amount);
+          ctx.removeEffect(self.unitId, self.effect);
+        }
+        return null;
+      },
+    },
+  },
   flatStat({ id: "withered", name: "Withered", stat: "damage", sign: -1, stacking: { mode: "unique" }, describe: (e) => `Deals ${e.amount} less damage (withered by a Decay unit).` }),
   {
     // Mend: heals at the start of each of the bearer's turns while it lasts (`stacks` turns).
