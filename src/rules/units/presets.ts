@@ -60,7 +60,7 @@ export const NEXUS_PRESETS: Readonly<Record<"uncommitted" | "scheme" | "overload
 /** The Grove: its melee line and the first of its backline (user, 2026-09-29). */
 export const GROVE_PRESETS = {
   uncommitted: [at("grove_melee_1", 0, 0), at("grove_melee_1", 0, 1), at("grove_melee_1", 0, 2), at("grove_support_1", 2, 0), at("grove_mage_1", 2, 2)],
-  regrowth: [at("regrowth_2", 0, 0), at("regrowth_2", 0, 2), at("regrowth_3", 0, 1), at("grove_support_1", 2, 0), at("grove_mage_1", 2, 2)],
+  regrowth: [at("regrowth_2", 0, 0), at("regrowth_2", 0, 2), at("regrowth_3", 0, 1), at("psychopomp", 2, 0), at("grove_mage_1", 2, 2)],
   decay: [at("decay_2", 0, 0), at("decay_3", 0, 1), at("decay_2", 0, 2), at("decay_support_2", 2, 0), at("grove_mage_1", 2, 2)],
 } as const satisfies Readonly<Record<string, readonly Placement[]>>;
 

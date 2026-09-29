@@ -51,6 +51,17 @@ export const GROVE_UNITS: Readonly<Record<string, UnitDef>> = {
     stats: { maxHp: 95, shield: 0, damage: 12, armor: 0, initiative: 45 },
     abilities: [{ id: "bloom", params: { amount: 8 } }, ...kit("corpse_growth", "corpse_explosion", "shoot", "defend", "wait")],
   },
+  // The Spiritess branch (user, 2026-09-29): semi-HoT and Burst mend at tier 2; the Psychopomp adds Spiritwalk.
+  spiritess_2: {
+    id: "spiritess_2", name: "Spiritess 2", faction: "grove", tier: 2, damageType: "weapon",
+    stats: { maxHp: 95, shield: 0, damage: 10, armor: 0, initiative: 45 },
+    abilities: kit("spirit_bloom", "burst_mend", "shoot", "defend", "wait"),
+  },
+  psychopomp: {
+    id: "psychopomp", name: "Psychopomp", faction: "grove", tier: 3, damageType: "weapon",
+    stats: { maxHp: 130, shield: 0, damage: 14, armor: 0, initiative: 50 },
+    abilities: [{ id: "spirit_bloom", params: { heal: 30, amount: 15 } }, ...kit("burst_mend", "spiritwalk", "shoot", "defend", "wait")],
+  },
   grove_mage_1: {
     id: "grove_mage_1", name: "Grove mage 1", faction: "grove", tier: 1, damageType: "weapon",
     stats: { maxHp: 55, shield: 0, damage: 8, armor: 0, initiative: 45 },
