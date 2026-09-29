@@ -24,3 +24,10 @@ The worry: the mage line partly heals and the Regrowth melee heals, so what make
 - **The late plan:** the Decay tier-4 melee as the win condition, which needs a backline that heals.
 - **The synergy:** the caster's ally-target (heal, then damage over time) **stacks with the Decay melee's rot**, loading the tier 4 for a bigger Lash out.
 - Open (user's call): is the Psychopomp the support's tier 1, or one branch? Whose corpses count (enemies, allies, both)? Is a corpse used up once consumed (Claude: yes)?
+
+## Answers (user, 2026-09-29)
+1. **Tier 1 is basic**; the Psychopomp is a higher tier. The other branch is the **"Spiritess" branch: crowd control**, more moderate healing plus CC. Its idea: **Spiritwalk**, a double-sided banish: on an enemy it phases them out (they heal up and become invulnerable, but can't act); on an ally, it heals them the same way, and they're phased out under the same conditions. Still being played with.
+   - **Faction identity (user):** "a lot of units heal some, but there isn't a super dedicated healer like Jilliath's support line."
+2. **Corpses from both sides** count. The **offensive corpse explosion only on enemy corpses**; the **healing growth on corpses of either side**. It counters Jilliath's resurrection.
+3. **A corpse is used up** once consumed.
+- Claude's provisional reading (#58): only the explosion destroys the dead for good (the canon fungal infestation "prevents resurrection"); growth on an allied corpse doesn't cost it its place in the graveyard.
