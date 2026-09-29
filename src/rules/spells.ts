@@ -10,7 +10,7 @@ import type { ManaColor } from "#rules/factions";
  * mostly nukes) until the user designs the real ones (provisional.md). Names are plain descriptions, not lore.
  */
 
-export const MANA_NAMES: Readonly<Record<ManaColor, string>> = { red: "red mana", teal: "teal mana" };
+export const MANA_NAMES: Readonly<Record<ManaColor, string>> = { red: "red mana", teal: "teal mana", green: "green mana" };
 
 /** What a spell can be aimed at: someone else's group (a warband, or neutrals in a lair), one of yours, a city, or an area. */
 export type SpellTarget = "enemyGroup" | "ownWarband" | "enemyCity" | "area";

@@ -57,6 +57,13 @@ export const NEXUS_PRESETS: Readonly<Record<"uncommitted" | "scheme" | "overload
 };
 
 
+/** The Grove: only its melee line exists yet (user, 2026-09-29), so its squads are that line in several forms. */
+export const GROVE_PRESETS = {
+  uncommitted: [at("grove_melee_1", 0, 0), at("grove_melee_1", 0, 1), at("grove_melee_1", 0, 2), at("grove_melee_1", 1, 1)],
+  regrowth: [at("regrowth_3", 0, 1), at("regrowth_2", 0, 0), at("regrowth_2", 0, 2), at("grove_melee_1", 1, 1)],
+  decay: [at("decay_3", 0, 1), at("decay_2", 0, 0), at("decay_2", 0, 2), at("grove_melee_1", 1, 1)],
+} as const satisfies Readonly<Record<string, readonly Placement[]>>;
+
 /** A bandit group using all four of the user's bandit units. The formation is not canon. */
 export const BANDIT_GROUP: readonly Placement[] = [
   at("brigand", 0, 0), at("marauder", 0, 1), at("brigand", 0, 2),
@@ -79,5 +86,10 @@ export const FORMATIONS: Readonly<Record<Playable, readonly { readonly name: str
     { name: "Scheme: Etherborn", squad: NEXUS_PRESETS.etherborn },
     { name: "Scheme: Backlasher", squad: NEXUS_PRESETS.backlasher },
     { name: "Overload: Maelstrom", squad: NEXUS_PRESETS.maelstrom },
+  ],
+  grove: [
+    { name: "Tier 1", squad: GROVE_PRESETS.uncommitted },
+    { name: "Regrowth", squad: GROVE_PRESETS.regrowth },
+    { name: "Decay", squad: GROVE_PRESETS.decay },
   ],
 };

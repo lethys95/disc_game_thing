@@ -1,4 +1,5 @@
 import type { Faction, UnitDef } from "#rules/battle/types";
+import { GROVE_UNITS } from "#rules/units/grove";
 import { JILLIATH_UNITS } from "#rules/units/jilliath";
 import { NEUTRAL_UNITS } from "#rules/units/neutral";
 import { NEXUS_UNITS } from "#rules/units/nexus";
@@ -10,7 +11,7 @@ import { NEXUS_UNITS } from "#rules/units/nexus";
 const canRetreat = (units: Readonly<Record<string, UnitDef>>): Record<string, UnitDef> =>
   Object.fromEntries(Object.entries(units).map(([id, def]) => [id, { ...def, abilities: [...def.abilities, { id: "retreat" }] }]));
 
-export const UNITS: Readonly<Record<string, UnitDef>> = { ...canRetreat(JILLIATH_UNITS), ...canRetreat(NEXUS_UNITS), ...NEUTRAL_UNITS };
+export const UNITS: Readonly<Record<string, UnitDef>> = { ...canRetreat(JILLIATH_UNITS), ...canRetreat(NEXUS_UNITS), ...canRetreat(GROVE_UNITS), ...NEUTRAL_UNITS };
 
 export const GUARDIAN_ID = "capitol_guardian";
 
@@ -24,6 +25,8 @@ export type Playable = Exclude<Faction, "neutral">;
 export const FACTION_ROOTS: Readonly<Record<Playable, readonly string[]>> = {
   jilliath: ["congregant", "cleric", "jilliath_mage_1"],
   nexus: ["custodian", "technician", "apprentice"],
+  // Only the melee line is designed so far (user, 2026-09-29).
+  grove: ["grove_melee_1"],
 };
 
 /**
@@ -34,10 +37,10 @@ export const ARCHETYPES = ["melee", "support", "mage", "joker"] as const;
 export type Archetype = (typeof ARCHETYPES)[number];
 
 /** Which kind of line each tier-1 unit starts (user: the melee lines, the Technician supports, the Apprentice casts). */
-export const LINE_ARCHETYPE: Readonly<Record<string, Archetype>> = { congregant: "melee", cleric: "support", jilliath_mage_1: "mage", custodian: "melee", technician: "support", apprentice: "mage" };
+export const LINE_ARCHETYPE: Readonly<Record<string, Archetype>> = { congregant: "melee", cleric: "support", jilliath_mage_1: "mage", custodian: "melee", technician: "support", apprentice: "mage", grove_melee_1: "melee" };
 
 /** Canon: the Congregant costs 40 gold. The Nexus prices are provisional ("costly", quality over quantity). */
-export const RECRUIT_COST: Readonly<Record<string, number>> = { congregant: 40, cleric: 50, jilliath_mage_1: 60, custodian: 60, technician: 50, apprentice: 60 };
+export const RECRUIT_COST: Readonly<Record<string, number>> = { congregant: 40, cleric: 50, jilliath_mage_1: 60, custodian: 60, technician: 50, apprentice: 60, grove_melee_1: 45 };
 
 /** One step up an evolution tree. */
 export interface Evolution {
@@ -68,4 +71,8 @@ export const EVOLUTIONS: Readonly<Record<string, readonly Evolution[]>> = {
   // Tier 3 mages (user, 2026-09-26).
   justiciar: [{ to: "etherborn" }, { to: "backlasher" }],
   thaumaturge: [{ to: "maelstrom" }],
+  // The Grove's melee line: life and death (user, 2026-09-29).
+  grove_melee_1: [{ to: "regrowth_2", label: "Regrowth" }, { to: "decay_2", label: "Decay" }],
+  regrowth_2: [{ to: "regrowth_3" }],
+  decay_2: [{ to: "decay_3" }],
 };

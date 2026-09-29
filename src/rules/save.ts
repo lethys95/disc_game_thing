@@ -9,7 +9,7 @@ import type { World } from "#rules/world/state";
  * from another version is refused (docs/decisions.md). Bump SAVE_VERSION whenever the World's shape changes;
  * `tests/save.test.ts` fails until you do.
  */
-export const SAVE_VERSION = 20;
+export const SAVE_VERSION = 21;
 
 export interface Save {
   readonly format: "disc-save";

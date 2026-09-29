@@ -24,3 +24,8 @@ Spells: self healing, buffs, etc.
 - **No zombies,** for the Grove or the Wastes. The Grove's side of death is **decay**.
 - **Mage idea:** a caster makes an enemy corpse explode, and a fungal infestation bursts out of it, damaging units adjacent to the corpse every turn. It also prevents resurrection (which is likely a Jilliath mechanic).
 - **Environment:** regular trees, maybe with autumn colors; withered trees for decay. Not every tree shows the life/death dichotomy, and no skeleton trees (the agent-built tree was "a nice test", too literal).
+
+## User, 2026-09-29
+- **Golgari** (MTG): withering, rot, the balance of life and death, life from the dead, regrowth, the cycle. (The Wastes' death is ghosts, shades, phantasmagoria, mystery: different.)
+- Ramp: units gain 50% more per level past the end of their line (`FACTIONS.grove.levelBonusPercent`).
+- The melee line forks into **Regrowth** and **Decay** (`faction-stuff/sylvan/melee.md`).

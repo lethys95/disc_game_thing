@@ -1,6 +1,8 @@
 import { ownStats } from "#rules/battle/engine";
 import type { Placement } from "#rules/battle/engine";
 import { LEVEL_BONUS_PERCENT } from "#rules/balance";
+import { FACTIONS } from "#rules/factions";
+import { UNITS } from "#rules/units/index";
 import { sameTile } from "#rules/battle/grid";
 import { itemById } from "#rules/items";
 import { leaderEffects } from "#rules/world/leaders";
@@ -14,7 +16,7 @@ export const isLeaderOf = (m: SquadMember, leader: Leader | undefined): leader i
 /** Every difference from the unit's baseline, each with its source: the unit's track record. */
 export function recordOf(m: SquadMember, leader: Leader | undefined): Mark[] {
   const fromTree = isLeaderOf(m, leader) ? leaderEffects(leader).map(({ skill, effect }): Mark => ({ effect, source: { kind: "leaderTree", skill } })) : [];
-  const fromLevels: Mark[] = m.level > 0 ? [{ effect: { def: "veteran", amount: m.level * LEVEL_BONUS_PERCENT }, source: { kind: "levels", levels: m.level } }] : [];
+  const fromLevels: Mark[] = m.level > 0 ? [{ effect: { def: "veteran", amount: m.level * levelBonusPercent(m.defId) }, source: { kind: "levels", levels: m.level } }] : [];
   // Worn items: the leader's own unit wears them; a banner reaches the whole warband.
   const worn = leader?.worn.map(itemById) ?? [];
   const fromItems: Mark[] = worn.flatMap((item) =>
@@ -31,4 +33,10 @@ export function placementOf(m: SquadMember, leader: Leader | undefined): Placeme
 export function maxHpOf(m: SquadMember, leader: Leader | undefined): number {
   const effects = recordOf(m, leader).map((r) => r.effect);
   return effects.length === 0 ? fullHp(m.defId) : ownStats({ defId: m.defId, tile: m.tile, effects }).maxHp;
+}
+
+/** A unit's gain per level past the end of its line, in percent: its faction's (the Grove ramps), else the default. */
+export function levelBonusPercent(defId: string): number {
+  const faction = UNITS[defId]?.faction;
+  return faction && faction !== "neutral" ? FACTIONS[faction].levelBonusPercent : LEVEL_BONUS_PERCENT;
 }

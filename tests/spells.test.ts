@@ -17,7 +17,7 @@ const three: Placement[] = COLS.map((col) => ({ defId: "congregant", tile: { row
 /** Player 0 plays `faction`, rich in gold and mana, and knows every spell of its faction. */
 function world(faction: "jilliath" | "nexus", spells: string[]): World {
   const w = createWorld(1, twoPlayers([three, three], [{}, {}], [faction, "jilliath"]));
-  return { ...w, players: w.players.map((p, i) => (i === 0 ? { ...p, gold: 1000, mana: { red: 100, teal: 100 }, spells } : p)) };
+  return { ...w, players: w.players.map((p, i) => (i === 0 ? { ...p, gold: 1000, mana: { red: 100, teal: 100, green: 100 }, spells } : p)) };
 }
 
 
@@ -26,7 +26,7 @@ describe("mana and learning", () => {
   test("a Capitol yields its owner's color each turn", () => {
     const w = createWorld(1, twoPlayers([three, three], [{}, {}], ["jilliath", "nexus"]));
     const next = applyWorldAction(w, { type: "endTurn" }).world;
-    expect(playerOf(next, 1).mana).toEqual({ red: 0, teal: CAPITOL_MANA });
+    expect(playerOf(next, 1).mana).toEqual({ red: 0, teal: CAPITOL_MANA, green: 0 });
   });
 
   test("learning costs gold, only at a Capitol, only your faction's spells", () => {

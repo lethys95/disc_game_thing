@@ -14,6 +14,7 @@ export interface Palette {
 const ACCENTS: Readonly<Record<Faction, THREE.Color>> = {
   jilliath: new THREE.Color(0xc0281c),
   nexus: new THREE.Color(0x2fd8d0),
+  grove: new THREE.Color(0x5e9a3a),
   neutral: new THREE.Color(0xa87a3a),
 };
 

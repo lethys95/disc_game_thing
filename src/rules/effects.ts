@@ -390,6 +390,48 @@ const effects: readonly EffectDef[] = [
     visibility: "public",
     hooks: { precedes: (ctx) => ctx.battle.round === 1 },
   },
+  // The Grove (user's design, 2026-09-29; numbers provisional #57).
+  {
+    // Decay: damage that rotted in instead of landing, lost evenly over the bearer's next turns (`stacks` of them).
+    id: "rotting",
+    name: "Rotting",
+    describe: (e) => `${e.amount} damage rots in it, lost over its next ${e.stacks} turn${e.stacks === 1 ? "" : "s"}.`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      turnStart: (ctx, self) => {
+        const rot = self.effect;
+        if (!rot || rot.amount <= 0) return null;
+        const tick = Math.ceil(rot.amount / Math.max(1, rot.stacks));
+        rot.amount -= tick;
+        rot.stacks = Math.max(1, rot.stacks - 1);
+        ctx.lose(self.unitId, tick, null);
+        if (rot.amount <= 0) ctx.removeEffect(self.unitId, rot);
+        return null;
+      },
+    },
+  },
+  flatStat({ id: "withered", name: "Withered", stat: "damage", sign: -1, stacking: { mode: "unique" }, describe: (e) => `Deals ${e.amount} less damage (withered by a Decay unit).` }),
+  {
+    // Mend: heals at the start of each of the bearer's turns while it lasts (`stacks` turns).
+    id: "mending",
+    name: "Mending",
+    describe: (e) => `Regrows ${e.amount} HP at the start of each of its next ${e.stacks} turn${e.stacks === 1 ? "" : "s"}.`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      turnStart: (ctx, self) => {
+        const mend = self.effect;
+        if (!mend) return null;
+        ctx.heal(self.unitId, mend.amount);
+        mend.stacks -= 1;
+        if (mend.stacks <= 0) ctx.removeEffect(self.unitId, mend);
+        return null;
+      },
+    },
+  },
   // A bought unit-type upgrade (placeholder content until the user designs unique ones).
   flatStat({ id: "extra_damage", quiet: true, name: "Extra damage", stat: "damage", stacking: { mode: "merge" }, describe: (e) => `+${e.amount} damage.` }),
   {
