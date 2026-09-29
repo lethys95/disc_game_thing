@@ -116,6 +116,8 @@ export class Stage {
     element.className = "fps-meter";
     this.host.appendChild(element);
     this.fpsMeter = { element, frames: 0, since: performance.now() };
+    // Count a whole frame's triangles, every pass of it, not just the last pass's.
+    this.renderer.info.autoReset = false;
   }
 
   /** The player's setting for bounce light; rebuilds the shown scene's chain when it changes. */
@@ -247,7 +249,9 @@ export class Stage {
       meter.frames++;
       if (time - meter.since >= 500) {
         const backend = "isWebGPUBackend" in this.renderer.backend ? "WebGPU" : "WebGL 2";
-        meter.element.textContent = `${Math.round((meter.frames * 1000) / (time - meter.since))} fps · ${backend}${this.bounceLight ? " · bounce light" : ""}`;
+        const triangles = (this.renderer.info.render.triangles / 1e6).toFixed(1);
+        meter.element.textContent = `${Math.round((meter.frames * 1000) / (time - meter.since))} fps · ${backend}${this.bounceLight ? " · bounce light" : ""} · ${triangles}M triangles`;
+        meter.element.dataset["triangles"] = String(this.renderer.info.render.triangles);
         meter.frames = 0;
         meter.since = time;
       }
@@ -267,6 +271,7 @@ export class Stage {
       }
     }
     this.controls.update();
+    if (this.fpsMeter) this.renderer.info.reset();
     this.pipeline.render();
     this.labels.render(this.active, this.camera);
   }

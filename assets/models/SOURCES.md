@@ -2,7 +2,7 @@
 
 Every model here was generated locally; the recipe regenerates it exactly.
 
-**Buildings (every `site/`, `structure/`, `node/` and `lair/` model) were regenerated in the user's gothic style on 2026-09-29** (`scripts/art/props.ts` `GOTHIC`): concept seed 1 for every slot, TRELLIS.2 1024_cascade with `--faces` at the cleanup budget below and `--texture 2048`. The seeds in the table below are the earlier, cheerful set's (Claude's framing, `design/art.md`); terrain still uses them.
+**Buildings (every `site/`, `structure/`, `node/` and `lair/` model) were regenerated in the user's gothic style on 2026-09-29** (`scripts/art/props.ts` `GOTHIC`): concept seed 1 for every slot, TRELLIS.2 1024_cascade with `--faces` at the cleanup budget below and `--texture 2048`. The seeds in the table below are the earlier, cheerful set's (Claude's framing, `design/art.md`); Terrain was regenerated in gothic the same day at map budgets (trees and rocks 1500 triangles, hills 2500, mountains 5000, bushes 800), seed 1; tree-1, tree-4 and bush-1 overflowed TRELLIS.2's simplifier and were meshed with TRELLIS v1 (`run_trellis1.sh`) and decimated in Blender. No albedo lift for terrain. Ground textures: `scripts/art/ground.ts` in gothic, seeds 1-3, 512 px WebP.
 
 | File | Concept (Krea-2 Turbo via ComfyUI, `scripts/art/props.ts`, by slot) | Mesh | Cleanup (`scripts/art/prop_cleanup.py`) |
 |---|---|---|---|
