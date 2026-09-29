@@ -24,7 +24,7 @@ Tests prove the rules; only a rendered frame proves the view. Always look at the
 | `?auto=1` | AI plays both sides |
 | `?map&seed=N` | skip setup, straight onto the map (both sides uncommitted Jilliath; `?map=nexus` makes the enemy Nexus; `&xp=100` starts your units and leader with that XP, e.g. to see the fork prompt or spend leader points; `&capitol` opens the Capitol screen (`&capitol=garrison|research|spells` on that tab), `&leader` the first warband's leader screen, `&structure=mercenaries|merchant|mage` puts it on that structure with its screen open, `&reveal` explores the whole map, `&players=N` adds AI players, `&size=small|medium|large|huge` picks the map size) |
 | `?fast` | animations and AI pauses ×0.1 (for scripted runs) |
-| `&mood=day\|overcast\|dusk\|grim` | the map's light and grade (`MOODS` in `view/map.ts`), for the user's mood choice |
+| `&mood=day\|contrast\|overcast\|dusk\|grim` | the map's light and grade (`MOODS` in `view/map.ts`), for the user's mood choice |
 | `&fps` | a corner readout: frames per second, the GPU backend (WebGPU or its WebGL 2 fallback), bounce light on/off. For the user on real hardware; headless numbers come from the integrated Radeon |
 | `?debug` | exposes `window.discDebug` (below) |
 

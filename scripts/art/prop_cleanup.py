@@ -1,15 +1,17 @@
 """Makes a generated mesh game-ready for the map: headless Blender, glTF in and out.
 
-    blender -b -P scripts/art/prop_cleanup.py -- <in.glb> <out.glb> [max_triangles] [texture_size]
+    blender -b -P scripts/art/prop_cleanup.py -- <in.glb> <out.glb> [max_triangles] [texture_size] [albedo_mean]
 
 Joins the meshes, welds seams, drops loose specks, recalculates normals, decimates to the triangle budget, scales
-textures down so the file stays small, and makes materials matte. The game fits the model's size and position itself (`src/view/models.ts`).
+textures down so the file stays small, makes materials matte and, given a target, lifts a base color texture that
+came out too dark (shading the concept painted in) toward that mean brightness. The game fits the model's size and position itself (`src/view/models.ts`).
 """
 
 import sys
 from dataclasses import dataclass
 
 import bpy
+import numpy
 
 LOOSE_SPECK_SHARE = 0.002
 """Loose parts with fewer than this share of all triangles are dropped (generator crumbs); bigger ones stay."""
@@ -21,6 +23,7 @@ class Options:
     target: str
     max_triangles: int
     texture_size: int
+    albedo_mean: float | None
 
 
 def parse_options(argv: list[str]) -> Options:
@@ -32,6 +35,7 @@ def parse_options(argv: list[str]) -> Options:
         target=args[1],
         max_triangles=int(args[2]) if len(args) > 2 else 12000,
         texture_size=int(args[3]) if len(args) > 3 else 1024,
+        albedo_mean=float(args[4]) if len(args) > 4 else None,
     )
 
 
@@ -111,6 +115,37 @@ def matte(roughness: float) -> None:
             shader.inputs["Roughness"].default_value = roughness
 
 
+def lift_albedo(target: float) -> None:
+    """
+    A gamma curve on each base color texture darker than `target` (mean luminance, 0-1, in sRGB), so it reaches it.
+    A curve, not a gain: the texture's own darks and lights keep their order and nothing clips.
+    """
+    for material in bpy.data.materials:
+        shader = material.node_tree.nodes.get("Principled BSDF") if material.node_tree else None
+        links = shader.inputs["Base Color"].links if shader else ()
+        image = links[0].from_node.image if links else None
+        if image is None:
+            continue
+        pixels = numpy.empty(len(image.pixels), dtype=numpy.float32)
+        image.pixels.foreach_get(pixels)
+        rgba = pixels.reshape(-1, 4)
+        luminance = rgba[:, :3] @ numpy.array([0.2126, 0.7152, 0.0722], dtype=numpy.float32)
+        mean = float(luminance.mean())
+        if mean <= 0 or mean >= target:
+            continue
+        low, high = 0.2, 1.0
+        for _ in range(30):
+            gamma = (low + high) / 2
+            if float((numpy.clip(luminance, 1e-6, 1) ** gamma).mean()) < target:
+                high = gamma
+            else:
+                low = gamma
+        rgba[:, :3] = numpy.clip(rgba[:, :3], 1e-6, 1) ** gamma
+        image.pixels.foreach_set(rgba.ravel())
+        image.update()
+        print(f"prop_cleanup: lifted {image.name} from mean {mean:.2f} to {target:.2f} (gamma {gamma:.2f})")
+
+
 def main() -> None:
     options = parse_options(sys.argv)
     bpy.ops.wm.read_factory_settings(use_empty=True)
@@ -122,6 +157,8 @@ def main() -> None:
     obj = bpy.context.view_layer.objects.active
     decimate(obj, options.max_triangles)
     shrink_textures(options.texture_size)
+    if options.albedo_mean is not None:
+        lift_albedo(options.albedo_mean)
     matte(0.85)
     bpy.ops.export_scene.gltf(filepath=options.target, export_format="GLB", export_image_format="WEBP")
     print(f"prop_cleanup: {before} -> {triangle_count(obj)} triangles, textures <= {options.texture_size}px, {options.target}")

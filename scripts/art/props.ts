@@ -8,10 +8,14 @@ import { runBatch } from "#scripts/art/batch";
 
 /** What image-to-3D needs: one object, plain background, even light, no mist, bold forms (`design/asset-pipeline.md`). */
 const FOR_3D =
-  "A single object, isolated and centered, the whole of it in frame with margin, three-quarter view from slightly above, plain flat light grey background, even light, no ground, no cast shadow, no mist or smoke, no text.";
+  "A single object, isolated and centered, the whole of it in frame with margin, three-quarter view from slightly above, plain flat light grey background, no ground, no mist or smoke, no text. " +
+  // The concept's shading becomes the model's color texture: painted shadows would stay dark under any light in the game
+  // (the user saw it, 2026-09-29). Its materials' true colors, lit flat, and the game does the lighting.
+  "Flat, even, shadowless lighting from all sides, like a texture reference: no cast or painted shadows, no dark recesses, every surface showing its material's true color.";
 
 /** The user's style for buildings (2026-09-29, from the style probe: "gothic is correct, definitely gothic"). */
-const GOTHIC = "Dark gothic fantasy in the manner of Disciples II's art: rich, brooding and ornate, deep shadows in its recesses, desaturated colors with dark accents, dramatic and grim. Serious, adult, not cartoonish.";
+// "Deep shadows in its recesses" from the probe's wording is left out: it painted the shadows in (FOR_3D).
+const GOTHIC = "Dark gothic fantasy in the manner of Disciples II's art: rich, brooding and ornate, desaturated colors with dark accents, dramatic and grim materials. Serious, adult, not cartoonish.";
 
 /**
  * Terrain keeps the framing it was made with until the user has seen it in gothic (the user liked the mountains and
