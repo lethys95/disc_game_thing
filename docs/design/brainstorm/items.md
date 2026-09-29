@@ -1,5 +1,7 @@
 # Items: a brainstorm (Claude's proposals)
 
+> **Verdicts (user, 2026-09-29):** inline below as "lethys:" notes; the taken items and the user's principles are canon in `../items.md`.
+
 Slots today: head, armor, weapon, two utility, banner, and a bag. The user's Stratholme test: an item is memorable when it does something no other item does, and when it rewards knowing it well (Rivendare's sword is stronger in the right hands).
 
 Effort tags: **[fits]** the effect system already does it, or nearly; **[hook]** needs a new hook point in the rules; **[system]** needs something new (item memory, map rules, a new kind of thing).

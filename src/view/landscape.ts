@@ -349,6 +349,15 @@ export class Landscape {
     ground = mix(ground.mul(0.9), ground, inMap);
     const edge = hexEdgeNode(world, hex);
     const line = float(1).sub(smoothstep(0.012, 0.035, edge)).mul(inMap).mul(step(0.3, sight));
+    // The map's edge (the user, 2026-09-29: it wasn't clear where warbands can't go): a dark band on the playable side
+    // of the last hexes, where a point a little outward already lies outside the map.
+    const outside = (reach: number) =>
+      Array.from({ length: 6 }, (_, i) => {
+        const a = (i / 6) * Math.PI * 2 + Math.PI / 6;
+        return float(1).sub(cellOf(hexOfNode(world.add(vec2(Math.cos(a) * reach, Math.sin(a) * reach)))).b);
+      }).reduce((m, v) => max(m, v));
+    const border = max(outside(0.06), outside(0.16).mul(0.45)).mul(inMap);
+    ground = mix(ground, ground.mul(0.25), border);
     this.material.colorNode = mix(ground, ground.mul(0.45), line.mul(0.55));
     // Highlighted hexes glow faintly, their rims more.
     const tints = uniformArray<"vec3">([NONE, highlightColors.reach, highlightColors.walk, highlightColors.later, highlightColors.attack].map((c) => new THREE.Vector3(c.r, c.g, c.b)), "vec3");

@@ -221,6 +221,8 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 
 #peek { position: fixed; width: 280px; padding: 10px 12px; pointer-events: none; z-index: 10; }
 #peek .title { font: 700 16px var(--display); margin-bottom: 6px; }
+#peek .note + .note { margin-top: 6px; }
+#peek .muted { color: var(--muted); font-size: 12px; }
 #peek .formation { display: grid; grid-template-columns: 44px repeat(3, 1fr); gap: 3px; align-items: center; }
 #peek .row-label { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; }
 #peek .cell { min-height: 30px; border: 1px dashed var(--rule); padding: 2px 4px; }
