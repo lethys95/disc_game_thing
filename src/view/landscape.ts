@@ -213,7 +213,7 @@ const CLEARING = 0.5;
  * glossy enough to catch the sky.
  */
 function waterMaterial(): THREE.MeshStandardNodeMaterial {
-  const material = new THREE.MeshStandardNodeMaterial({ roughness: 0.28, metalness: 0, transparent: true, opacity: 0.92 });
+  const material = new THREE.MeshStandardNodeMaterial({ roughness: 0.55, metalness: 0, transparent: true, opacity: 0.95 });
   const p = positionWorld.xz;
   const wave = (x: Vec2Node) => mx_fractal_noise_float(vec3(x.mul(1.6), time.mul(0.35)), 3, 2.0, 0.5);
   const step = 0.02;
@@ -222,7 +222,8 @@ function waterMaterial(): THREE.MeshStandardNodeMaterial {
   const slopeZ = wave(p.add(vec2(0, step))).sub(here).div(step);
   material.normalNode = transformNormalToView(vec3(slopeX.mul(-0.025), 1, slopeZ.mul(-0.025)).normalize());
   // Brighter where the ripples rise, as light catches their crests.
-  material.colorNode = mix(vec3(0.02, 0.07, 0.13), vec3(0.05, 0.14, 0.23), smoothstep(-0.3, 0.5, here));
+  // Dark, cold and murky under the gothic sky (the user, 2026-09-29: the lakes were a brighter blue than the rest).
+  material.colorNode = mix(vec3(0.015, 0.03, 0.04), vec3(0.04, 0.07, 0.08), smoothstep(-0.3, 0.5, here));
   return material;
 }
 

@@ -223,7 +223,7 @@ export class MapView {
     this.rim.position.set(8, 5, -10);
     this.scene.add(this.rim);
     this.setMood(MOODS.day);
-    const ground = new THREE.Mesh(new THREE.CircleGeometry(400, 64), new THREE.MeshStandardMaterial({ color: sky ? 0x1c2230 : 0x0f0e0d, roughness: 1 }));
+    const ground = new THREE.Mesh(new THREE.CircleGeometry(400, 64), new THREE.MeshStandardMaterial({ color: sky ? 0x23282b : 0x0f0e0d, roughness: 1 }));
     ground.rotation.x = -Math.PI / 2;
     ground.receiveShadow = true;
     this.scene.add(ground);

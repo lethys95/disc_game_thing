@@ -42,7 +42,7 @@ export class GroundTextures {
 }
 
 /** The haze where the sky's painted mountains meet the land (`assets/sky/map.webp`); fog fades into it. */
-export const HORIZON_MIST = 0x5a70a0;
+export const HORIZON_MIST = 0x4a5358;
 
 const SKIES = import.meta.glob<string>("/assets/sky/*.webp", { eager: true, query: "?url", import: "default" });
 
