@@ -15,3 +15,6 @@
 - **Abilities (Claude):** *Attack*.
 - **Strong against / weak against (Claude):** single big hits (the shield soaks) / swarms and area damage.
 - **Status:** idea (Claude's pitch).
+
+## Direction (user, 2026-09-29)
+"Wastes melee line will mostly play around with death wards." (The engine has a `deathward` effect already; the Burial wrappings item gives one too, so the line should do more with it: ward others, regain it, and so on.)
