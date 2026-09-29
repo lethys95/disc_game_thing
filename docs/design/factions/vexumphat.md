@@ -43,3 +43,8 @@ The Ton'Arilliet story (`../lore/ton-arilliet.md`) is the user's and establishes
 "Vexumphat is intended to use the graveyard to their advantage": resurrection is much cheaper for them, and the city upgrade that unlocks the graveyard (resurrection outside the Capitol) is available from the start. Unit mechanics can lean the same way. It is **not their entire identity**: when their units are designed, find more themes, mechanics and playstyle unique to them.
 - Stickiness idea (user, not settled): a death ward, stopping a unit from going below 1 HP once; maybe the tier-1 melee line.
 - The user isn't sold on all of the Wastes' mechanics yet.
+
+## The Capitol's look (user, 2026-09-29)
+Inspiration: **the castle in Scorn** (the user's screenshot, kept outside the repo): "sort of ghostly too". What it shows: a towering, pale, bone- or porcelain-like cathedral-palace, ornate yet organic in its curves; vertical, symmetrical, crowned with spires; wrapped in mist under a lavender sky. It matches the canon above ("bleeding porcelain horror", "almost right but wrong", ethereals, phantasmagoria).
+- Claude's reading: take the pale ornate silhouette and the ghostliness for this faction's architecture; the game's overall look stays fantasy, not biomechanical (`art.md`: the user ruled biomechanical out as a style).
+- Concepts: `scripts/art/wastes.ts` (candidates in `art/candidates/wastes/`, not committed). Best so far: "solid" seed 1, meshed with TRELLIS.2 (`art/candidates/wastes/meshes/capitol-solid-1-clean.glb`); it goes into the game with the faction.

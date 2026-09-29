@@ -92,3 +92,6 @@ The user asked to see how far iterative AI work in Blender goes. A subagent ran 
 - Verify a glTF export by re-importing it into an empty scene and rendering from the file alone.
 - Blender 5.2 headless renders EEVEE, Workbench and Cycles; bloom now goes through `scene.compositing_node_group`.
 Next steps it proposed: ink treatment (hard black in crevices, outlines on big shapes), canopy gaps, variants (sapling, dead) and a check in the real map renderer.
+
+## Lesson: what TRELLIS.2 can't rebuild (2026-09-29, the Wastes Capitol test)
+Mist in a concept became solid grey sheets fused to the building, and thin filigree and needle spires came out as lumps: the generator can't tell fog from stone, and sub-voxel detail melts. Concepts for image-to-3D ask for **no mist, smoke or fog** (the game adds its own) and **bold, thick forms**; with that, the Scorn-inspired Capitol kept its silhouette, spires and bone sculpting from every side (`scripts/art/wastes.ts`, "solid"). Part of the "soft, cheerful" look the user noticed comes from the concepts' framing too ("hand-painted, chunky"); faction-specific framings ("dark, eerie, muted") steer away from it.
