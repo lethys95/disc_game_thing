@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines._
 
-**Updated:** 2026-09-29 (M65 lit buildings)
+**Updated:** 2026-09-29 (M66 gothic terrain)
 
 ## Where we are
 A playable map game for 2–6 players (hotseat viewer vs AIs): two factions (**Jilliath**, **Ral-Vitahl**) with tier-1 melee/support/mage and Nexus mages to tier 3; bandit camps, dungeons with rewards, neutral cities; gold, mana and spells; nodes (gold, Blacksmith, mana, Cathedral); items on leaders; fog of war; retreat and a battle round limit; sound slots with placeholder SFX and music. The AI plays both the map (a list of planners in `world/ai.ts`) and battles, in a web worker.
@@ -10,7 +10,7 @@ A playable map game for 2–6 players (hotseat viewer vs AIs): two factions (**J
 Architecture: `design/architecture.md`; recipes and gotchas: `engineering.md`. `pnpm verify` before calling anything done. Sims: `pnpm sim:many --seeds 1-16 "p1,p2"` (smoke tests only until factions have their lines).
 
 ## Now
-**M65 lit buildings** (branch `m65-delit`): the user saw the gothic buildings' darkness baked into their textures. Concepts now ask for shadowless light, and the cleanup lifts dark albedo; all 22 buildings rebuilt (`scripts/art/rebuild-props.sh`), now lit by the scene. Waiting on the user: the terrain probe (`shots/terrain-probe.png`: all gothic, or keep some current pieces?) and a map mood (`?mood=day|contrast|overcast|dusk|grim`, `shots/mood-probe.png`). Earlier: M64 gothic buildings, M63 nodes.
+**M66 gothic terrain** (branch `m66-gothic-terrain`): ground textures, trees, rocks, hills, mountains and grass in the user's gothic style, at map budgets (the user asked about LOD): triangles per frame 7.1M -> 2.5M on a small map, 13.2M -> 4.7M on a huge one (`?fps` now counts them). Terrain skips the albedo lift (it made foliage pale). Waiting on the user: a verdict on the terrain, then a mood (`?mood=`). Open: hills read pale; lakes are bright. Earlier: M65 lit buildings, M64 gothic buildings.
 
 ## Performance (user, 2026-09-28, `?fps`)
 Server desktop (RTX 3090 Ti): a solid 60 fps on the map. User's laptop: about 6 fps. Candidates for the laptop: bounce light off (Settings → Display), then instanced trees and grass.

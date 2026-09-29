@@ -17,11 +17,6 @@ const FOR_3D =
 // "Deep shadows in its recesses" from the probe's wording is left out: it painted the shadows in (FOR_3D).
 const GOTHIC = "Dark gothic fantasy in the manner of Disciples II's art: rich, brooding and ornate, desaturated colors with dark accents, dramatic and grim materials. Serious, adult, not cartoonish.";
 
-/**
- * Terrain keeps the framing it was made with until the user has seen it in gothic (the user liked the mountains and
- * the lighter trees); it was Claude's, not the user's (`design/art.md`).
- */
-const TERRAIN_STYLE = "Stylized dark fantasy, hand-painted textures, chunky readable shapes.";
 
 /** Keyed by the model slot each fills (`assets/models/<slot>.glb`, `src/view/models.ts`). */
 const PROPS: readonly { readonly slot: string; readonly look: string }[] = [
@@ -85,10 +80,10 @@ const PROPS: readonly { readonly slot: string; readonly look: string }[] = [
   { slot: "node/tribal_outpost", look: "A tribal outpost: a ring of rough hide tents and a wooden palisade around a fire pit, totems with skulls and feathers, weapons on a rack." },
   { slot: "structure/portal", look: "An ancient portal: a ring of tall weathered standing stones carved with runes around a swirling pool of glowing violet light." },
   // Terrain (user, 2026-09-27: a forest biome to begin with). Several of each, so no two hexes look copied.
-  { slot: "terrain/tree-1", look: "A single broad oak tree with a thick gnarled trunk, exposed roots and a full rounded crown of fresh, sunlit leafy green, lighter toward the top." },
-  { slot: "terrain/tree-2", look: "A single tall pine tree with layered drooping branches of lively mid green needles, sunlit highlights on the upper sides of the boughs." },
-  { slot: "terrain/tree-3", look: "A single slender birch-like tree with a pale trunk and a light, airy crown of green leaves." },
-  { slot: "terrain/tree-4", look: "A small cluster of three young fir trees of different heights growing together, bright fresh green with lighter new growth at the tips." },
+  { slot: "terrain/tree-1", look: "A single broad old oak tree with a thick gnarled trunk, exposed roots and a full crown of deep green leaves." },
+  { slot: "terrain/tree-2", look: "A single tall dark pine tree with layered drooping branches." },
+  { slot: "terrain/tree-3", look: "A single slender birch with a pale trunk and a sparse, airy crown of dull green leaves." },
+  { slot: "terrain/tree-4", look: "A small cluster of three dark fir trees of different heights growing together." },
   { slot: "terrain/mountain-1", look: "A single steep rocky mountain peak of jagged grey stone with snow on its summit and scree at its base." },
   { slot: "terrain/mountain-2", look: "A craggy mountain of layered dark grey rock with two sharp summits and a dusting of snow." },
   { slot: "terrain/mountain-3", look: "A broad, weathered granite mountain with cliffs, ledges and a flat snowy top." },
@@ -96,7 +91,7 @@ const PROPS: readonly { readonly slot: string; readonly look: string }[] = [
   { slot: "terrain/hill-2", look: "A rolling grassy knoll with a small rocky outcrop and a lone shrub on top." },
   { slot: "terrain/rock-1", look: "A cluster of three mossy grey boulders of different sizes." },
   { slot: "terrain/rock-2", look: "A single large weathered standing rock, cracked, with lichen and moss at its foot." },
-  { slot: "terrain/bush-1", look: "A round leafy green shrub with a few small wildflowers." },
+  { slot: "terrain/bush-1", look: "A round, dense, dark green shrub." },
   { slot: "terrain/bush-2", look: "A clump of tall wild grass and ferns." },
 ];
 
@@ -107,6 +102,6 @@ const slots = args.filter((a) => Number.isNaN(Number(a)));
 const chosen = slots.length > 0 ? PROPS.filter((p) => slots.includes(p.slot)) : PROPS;
 await runBatch(
   "art/candidates/props",
-  chosen.map((p) => ({ id: p.slot.replace("/", "_"), prompt: `${p.look} ${p.slot.startsWith("terrain/") ? TERRAIN_STYLE : GOTHIC} ${FOR_3D}`, width: 1024, height: 1024 })),
+  chosen.map((p) => ({ id: p.slot.replace("/", "_"), prompt: `${p.look} ${GOTHIC} ${FOR_3D}`, width: 1024, height: 1024 })),
   seeds.length > 0 ? seeds : [1, 2, 3, 4],
 );

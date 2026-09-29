@@ -230,8 +230,9 @@ function waterMaterial(): THREE.MeshStandardNodeMaterial {
 function grassTuft(): THREE.BufferGeometry {
   const positions: number[] = [];
   const colors: number[] = [];
-  const base = new THREE.Color().setRGB(0.24, 0.36, 0.1, THREE.SRGBColorSpace);
-  const tip = new THREE.Color().setRGB(0.58, 0.7, 0.3, THREE.SRGBColorSpace);
+  // Duller, darker greens for the user's gothic look (2026-09-29).
+  const base = new THREE.Color().setRGB(0.15, 0.2, 0.09, THREE.SRGBColorSpace);
+  const tip = new THREE.Color().setRGB(0.36, 0.42, 0.22, THREE.SRGBColorSpace);
   for (let b = 0; b < 5; b++) {
     const angle = (b / 5) * Math.PI * 2;
     const lean = 0.35 + (b % 2) * 0.2;
