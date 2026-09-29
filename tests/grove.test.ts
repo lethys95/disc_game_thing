@@ -8,7 +8,7 @@ import { describe, expect, test } from "vitest";
 /** The Grove's melee line (the user's design, 2026-09-29). Numbers provisional. */
 describe("Grove melee line", () => {
   test("tier 1 recruits and forks into Regrowth and Decay; each branch goes on to tier 3", () => {
-    expect(FACTION_ROOTS.grove).toEqual(["grove_melee_1"]);
+    expect(FACTION_ROOTS.grove).toEqual(["grove_melee_1", "grove_support_1", "grove_mage_1"]);
     expect(forkOptions("grove_melee_1")).toEqual(["regrowth_2", "decay_2"]);
     expect(UNITS["regrowth_3"]?.tier).toBe(3);
     expect(UNITS["decay_3"]?.tier).toBe(3);
@@ -63,5 +63,46 @@ describe("Decay tier 4: Lash out", () => {
   test("can't lash out with nothing rotting inside it", () => {
     const battle = until(start([p("decay_4", 0, 1)], [p("congregant", 0, 1)]), "0.0.1");
     expect(legalActions(battle).map((a) => a.abilityId)).not.toContain("lash_out");
+  });
+});
+
+describe("the Grove's backline and corpses (user, 2026-09-29)", () => {
+  /** A battle where the enemy's front middle has just died, leaving a corpse. */
+  const withCorpse = () => {
+    const battle = until(start([p("decay_support_2", 2, 1), { ...p("grove_melee_1", 0, 1), hp: 40 }], [p("congregant", 0, 0), p("congregant", 0, 1), p("congregant", 0, 2)]), "0.2.1");
+    const dead = { ...unit(battle, "1.0.1"), alive: false, hp: 0 };
+    return { ...battle, units: { ...battle.units, "1.0.1": dead } };
+  };
+
+  test("Corpse growth: every living ally heals; the corpse is used up and can't be used again", () => {
+    const battle = withCorpse();
+    const after = act(battle, "corpse_growth", "1.0.1").battle;
+    expect(unit(after, "0.0.1").hp).toBeGreaterThanOrEqual(40 + 25);
+    expect(unit(after, "1.0.1").corpse).toBe("used");
+    const again = until(after, "0.2.1");
+    expect(legalActions(again).find((a) => a.abilityId === "corpse_growth")?.choices ?? []).toHaveLength(0);
+  });
+
+  test("Corpse explosion: only on enemy corpses; the enemies next to it are hit and infested; the corpse is destroyed", () => {
+    const battle = withCorpse();
+    const after = act(battle, "corpse_explosion", "1.0.1").battle;
+    expect(unit(after, "1.0.1").corpse).toBe("destroyed");
+    for (const id of ["1.0.0", "1.0.2"]) {
+      expect(unit(after, id).hp).toBeLessThan(90);
+      expect(unit(after, id).effects.some((e) => e.def === "infested")).toBe(true);
+    }
+    // An allied corpse can grow, not burst.
+    const own = { ...battle, units: { ...battle.units, "0.0.1": { ...unit(battle, "0.0.1"), alive: false, hp: 0 } } };
+    const bursts = legalActions(own).find((a) => a.abilityId === "corpse_explosion")?.choices.map((c) => c.affected[0]) ?? [];
+    expect(bursts).not.toContain("0.0.1");
+  });
+
+  test("Cycle: on an enemy it hurts and heals back a third; on an ally it heals and rots in, feeding a Decay unit's rot", () => {
+    let battle = until(start([p("grove_mage_1", 2, 1), p("decay_4", 0, 1)], [p("congregant", 0, 1)]), "0.2.1");
+    // Its turn starts right after: 40 taken, 13 healed back.
+    const onEnemy = until(act(battle, "cycle", "1.0.1").battle, "1.0.1");
+    expect(unit(onEnemy, "1.0.1").hp).toBe(90 - 40 + 13);
+    battle = act(battle, "cycle", "0.0.1").battle;
+    expect(unit(battle, "0.0.1").effects.find((e) => e.def === "rotting")?.amount).toBe(12);
   });
 });

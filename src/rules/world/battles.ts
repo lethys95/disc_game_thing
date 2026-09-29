@@ -122,8 +122,10 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
 
   // The dead leave their squads (a fallen leader stays, to be revived).
   const gone = (before: readonly SquadMember[], after: readonly SquadMember[]) => before.filter((m) => !after.some((a) => sameTile(a.tile, m.tile)));
-  bury(draft, attacker.player, gone(attacker.squad, attackers), events);
-  bury(draft, defending.player, gone(defending.squad, defenders), events);
+  // A corpse burst by a corpse explosion never reaches the graveyard (the canon fungal infestation prevents it).
+  const intact = (side: Side) => (m: SquadMember) => battle.units[unitId(side, m.tile)]?.corpse !== "destroyed";
+  bury(draft, attacker.player, gone(attacker.squad, attackers).filter(intact(ATTACKER)), events);
+  bury(draft, defending.player, gone(defending.squad, defenders).filter(intact(DEFENDER)), events);
 
   attacker.squad = attackers;
   const defender = engagement.defender;

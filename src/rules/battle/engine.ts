@@ -81,6 +81,7 @@ export function createBattle(sides: readonly [readonly Placement[], readonly Pla
         effects: [...(effects ?? []), ...context.sideEffects[side]].map(instance),
         alive: true,
         fled: false,
+        corpse: "intact",
         spellCharges: def.spellCharges ?? 0,
         leader: leader ?? false,
       };
