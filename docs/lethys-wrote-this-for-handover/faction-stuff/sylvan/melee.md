@@ -27,3 +27,8 @@
 - **Faction flavor (user):** the Grove is Golgari (MTG): withering, rot, the balance of life and death, life from the dead, regrowth, the cycle. The Wastes' death is a different kind: ghosts, shades, phantasmagoria, mystery, spooky.
 - **Built (M71):** placeholder names Grove melee 1, Regrowth 2/3, Decay 2/3 (`rules/units/grove.ts`); numbers `provisional.md` #57.
 - Claude's read: the Wastes melee's death wards (the user: "will mostly play around with death wards") are binary (cheat death once) where the Grove's death branch spreads damage over time, so the two stay distinct.
+
+## Tier 4 (user, 2026-09-29)
+- **The Regrowth line ends at tier 3.**
+- **Decay tier 4:** "a unit which can actively use the withering on itself and turn it into damage dealt somehow. The more it suffers, the more it lashes back", so the line can be a win condition, fairly late game.
+- Claude's reading and proposal: the rot it carries (its delayed damage) fuels an active ability that deals it out. Open (user's call): is the rot consumed or kept; one target or the front row; main or free action.
