@@ -26,3 +26,10 @@ The city view is **a framed panel**: the view sits in a proper frame under the n
 
 ## Reference: Unreal's intro (user, 2026-09-29)
 `/home/lethys/Videos/unreal_into.mkv` (outside the repo): the user's reference for how the Capitol screens could look, the montage of the city from the inside. The user's thought: generating video may be faster than gaussian splatting. **Not now**: don't start video generation; if video it is, the user wants to find a newer model first (the installed ones are clunky to fit in memory).
+
+## How to make the montage (Claude, 2026-09-29, from the Unreal intro)
+The intro (frames read with ffmpeg) is **not a video but the engine with a scripted camera**: one continuous ~54 s shot on a spline that loops (its end meets its start), slow glides with dutch angles rolling back to level, low angles up at towers, drifting past torches and flags. Low-poly geometry, made by darkness, flickering torchlight, fog and a storm sky.
+- **Video generation** (camera-controlled models): quickest to something pretty, but a fixed clip (5–10 s pieces to stitch, morphing, seams), can't show the Capitol's state, one set per faction and state.
+- **Gaussian splatting**: free camera, but needs a scene to capture (capturing a generated video compounds its artifacts), baked light, no state, large files.
+- **A real-time scene with a camera spline** (what Unreal did): our gothic models, torchlight (the cave bake-off: `spikes/engine/`), fog, a looping path. Loops perfectly, matches the map, and can show the Capitol's real state (a built node appears in it, as in HoMM's town screens). Risk: close-ups show TRELLIS's softness; darkness and fog carry it, as they carried Unreal.
+- **Claude's recommendation:** the real-time scene; generated imagery at most for a distant backdrop later. Spike: `spikes/montage/`.
