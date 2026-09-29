@@ -10,7 +10,7 @@ A playable map game for 2–6 players (hotseat viewer vs AIs): two factions (**J
 Architecture: `design/architecture.md`; recipes and gotchas: `engineering.md`. `pnpm verify` before calling anything done. Sims: `pnpm sim:many --seeds 1-16 "p1,p2"` (smoke tests only until factions have their lines).
 
 ## Now
-**M66 gothic terrain** (branch `m66-gothic-terrain`): ground textures, trees, rocks, hills, mountains and grass in the user's gothic style, at map budgets (the user asked about LOD): triangles per frame 7.1M -> 2.5M on a small map, 13.2M -> 4.7M on a huge one (`?fps` now counts them). Terrain skips the albedo lift (it made foliage pale). Waiting on the user: a verdict on the terrain, then a mood (`?mood=`). Open: hills read pale; lakes are bright. Earlier: M65 lit buildings, M64 gothic buildings.
+**M66 gothic terrain** (branch `m66-gothic-terrain`): ground textures, trees, rocks, hills, mountains and grass in the user's gothic style, at map budgets (the user asked about LOD): triangles per frame 7.1M -> 2.5M on a small map, 13.2M -> 4.7M on a huge one (`?fps` now counts them). Terrain skips the albedo lift (it made foliage pale). The user: "so much better, the ground looks amazing"; buildings without albedo lift (the user's pick from `shots/building-lift.png`). Next: a mood (`?mood=`), when the user is ready. Open: hills read pale; lakes are bright; the sky panorama is from the old cheerful batch. Earlier: M65 lit buildings, M64 gothic buildings.
 
 ## Performance (user, 2026-09-28, `?fps`)
 Server desktop (RTX 3090 Ti): a solid 60 fps on the map. User's laptop: about 6 fps. Candidates for the laptop: bounce light off (Settings → Display), then instanced trees and grass.

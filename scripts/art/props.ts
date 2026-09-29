@@ -91,7 +91,7 @@ const PROPS: readonly { readonly slot: string; readonly look: string }[] = [
   { slot: "terrain/hill-2", look: "A rolling grassy knoll with a small rocky outcrop and a lone shrub on top." },
   { slot: "terrain/rock-1", look: "A cluster of three mossy grey boulders of different sizes." },
   { slot: "terrain/rock-2", look: "A single large weathered standing rock, cracked, with lichen and moss at its foot." },
-  { slot: "terrain/bush-1", look: "A round, dense, dark green shrub." },
+  { slot: "terrain/bush-1", look: "A low, rounded shrub of dull green leaves on a few woody stems, with visible gaps between its branches." },
   { slot: "terrain/bush-2", look: "A clump of tall wild grass and ferns." },
 ];
 
