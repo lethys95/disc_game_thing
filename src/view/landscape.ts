@@ -66,6 +66,25 @@ export function hexAt(x: number, z: number): Hex {
   return { q: rq + 0, r: rr + 0 };
 }
 
+/** The map hex nearest `hex` on the way to the middle: `hex` itself inside the map, an edge hex outside it. */
+export function edgeHexOf(hex: Hex, radius: number): Hex {
+  const distance = hexDistance(hex, { q: 0, r: 0 });
+  if (distance <= radius) return hex;
+  const t = radius / distance;
+  const q = hex.q * t;
+  const r = hex.r * t;
+  const s = -q - r;
+  let rq = Math.round(q);
+  let rr = Math.round(r);
+  const rs = Math.round(s);
+  const dq = Math.abs(rq - q);
+  const dr = Math.abs(rr - r);
+  const ds = Math.abs(rs - s);
+  if (dq > dr && dq > ds) rq = -rr - rs;
+  else if (dr > ds) rr = -rq - rs;
+  return { q: rq + 0, r: rr + 0 };
+}
+
 /** Smooth value noise, deterministic, roughly in [-1, 1]. */
 function noise(x: number, z: number, salt: number): number {
   const ix = Math.floor(x);
@@ -261,14 +280,16 @@ export class Landscape {
   private readonly state: HexStateTexture;
   private readonly material: THREE.MeshStandardNodeMaterial;
   private readonly hexes: readonly Hex[];
+  private readonly radius: number;
 
   constructor(map: WorldMap, grounds: GroundTextures, highlightColors: Readonly<Record<Exclude<Highlight, "none">, THREE.Color>>) {
     this.shape = new GroundShape(map);
     this.hexes = Object.values(map.tiles).map((t) => t.hex);
     this.state = new HexStateTexture(map.radius);
+    this.radius = map.radius;
     const outer = map.radius + MARGIN;
-    // Every cell, the map's hexes and the land around them alike: the land outside is seen (it's scenery, nothing to
-    // discover there) but has no grid.
+    // Every cell, the map's hexes and the land around them alike; the land outside has no grid, and takes its fog
+    // from the map's edge (`setSight`).
     for (let q = -this.state.offset; q <= this.state.offset; q++) {
       for (let r = -this.state.offset; r <= this.state.offset; r++) {
         const hex = { q, r };
@@ -319,8 +340,12 @@ export class Landscape {
     ground = ground.mul(select(sight.greaterThan(0.9), float(1), float(0.55)));
     // Unexplored land lies under drifting clouds, showing nothing of what's beneath.
     const drift = mx_fractal_noise_float(vec3(world.mul(0.35), time.mul(0.04)), 4, 2.0, 0.5);
-    const clouds = mix(vec3(0.15, 0.16, 0.2), vec3(0.52, 0.54, 0.6), smoothstep(-0.35, 0.45, drift));
-    ground = select(sight.lessThan(0.1), clouds, ground);
+    // Darker, at the user's request (2026-09-29).
+    const clouds = mix(vec3(0.008, 0.009, 0.012), vec3(0.05, 0.053, 0.062), smoothstep(-0.35, 0.45, drift));
+    // The clouds glow with their own fixed color and take no light: lit, the scene's sun and bounce light made them
+    // bright whatever their color (the user asked for darker fog, 2026-09-29).
+    const fogged = sight.lessThan(0.1);
+    ground = select(fogged, vec3(0), ground);
     ground = mix(ground.mul(0.9), ground, inMap);
     const edge = hexEdgeNode(world, hex);
     const line = float(1).sub(smoothstep(0.012, 0.035, edge)).mul(inMap).mul(step(0.3, sight));
@@ -329,7 +354,7 @@ export class Landscape {
     const tints = uniformArray<"vec3">([NONE, highlightColors.reach, highlightColors.walk, highlightColors.later, highlightColors.attack].map((c) => new THREE.Vector3(c.r, c.g, c.b)), "vec3");
     const code = cell.g.mul(255).add(0.5).toInt();
     const rim = float(1).sub(smoothstep(0.02, 0.16, edge));
-    this.material.emissiveNode = tints.element(code).mul(rim.mul(0.7).add(0.12));
+    this.material.emissiveNode = select(fogged, clouds, tints.element(code).mul(rim.mul(0.7).add(0.12)));
 
     const land = new THREE.Mesh(this.geometry(outer), this.material);
     land.receiveShadow = true;
@@ -452,7 +477,15 @@ export class Landscape {
 
   /** Fog of war: how much of each map hex the player at this screen has seen. */
   setSight(sight: (hex: Hex) => Sight): void {
-    for (const hex of this.hexes) this.state.set(hex, 0, [0, 110, 255][SIGHT_CODE[sight(hex)]] ?? 0);
+    const code = (hex: Hex) => [0, 110, 255][SIGHT_CODE[sight(hex)]] ?? 0;
+    for (const hex of this.hexes) this.state.set(hex, 0, code(hex));
+    // The wild land past the edge is as seen as the edge hex nearest it (the user saw it clear under the fog, 2026-09-29).
+    for (let q = -this.state.offset; q <= this.state.offset; q++) {
+      for (let r = -this.state.offset; r <= this.state.offset; r++) {
+        const hex = { q, r };
+        if (!this.shape.inMap(hex)) this.state.set(hex, 0, code(edgeHexOf(hex, this.radius)));
+      }
+    }
     this.state.flush();
   }
 

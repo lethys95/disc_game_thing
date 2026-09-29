@@ -193,3 +193,6 @@ The margin past the map's edge is scenery: meadow, forest and mountains, always 
 
 **2026-09-28 — Portals are neighbors in the movement graph; a warband on one sees its other end (M63).**
 The user turned the brainstorm's ferry into HoMM3-style portals: map structures nobody holds. The pathfinder, reachability and every AI route use `exits()` (neighbors plus a portal's twin), with an A* estimate that counts portal shortcuts so paths stay cheapest. Fog hides a portal until both ends are explored. The march's rule that its next hex is always in sight broke at a portal (the far end can be out of sight), which let an AI order the same blocked step forever; now a warband standing on a portal sees one hex around its other end.
+
+**2026-09-29 — The wild land past the edge takes the fog of the nearest edge hex; the fog glows dark; dusk is the map's light (M69).**
+The user saw a three-hex band around the map unfogged at the start of a game and took it for a bug: it was M59's scenery, left always visible. Now each outside cell, and the props on it, follows the nearest edge hex of the map (`edgeHexOf`). The clouds over unexplored land are emissive and unlit (lit, the dusk sun and bounce light brightened them whatever their color) and darker, as the user asked. Dusk is the default mood, the user's choice.
