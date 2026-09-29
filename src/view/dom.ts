@@ -58,7 +58,7 @@ export function gold(amount: number | string, className = ""): HTMLElement {
 }
 
 /** Each mana color on screen: the faction's accent (art.md). */
-const MANA_HEX: Readonly<Record<ManaColor, string>> = { red: "#d0402e", teal: "#2bb8ad" };
+const MANA_HEX: Readonly<Record<ManaColor, string>> = { red: "#d0402e", teal: "#2bb8ad", green: "#5e9a3a" };
 
 /** An amount of mana with a gem of its color in front. */
 export function mana(amount: number | string, color: ManaColor): HTMLElement {

@@ -34,7 +34,7 @@ export interface AbilityRef {
   readonly name?: string;
 }
 
-export type Faction = "jilliath" | "nexus" | "neutral";
+export type Faction = "jilliath" | "nexus" | "grove" | "neutral";
 
 export interface UnitDef {
   readonly id: string;

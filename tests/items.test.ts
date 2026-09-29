@@ -109,7 +109,7 @@ describe("deaths on the map, whoever caused them (world/fate.ts)", () => {
     const beside = neighbors(target).find((h) => stepCost(w.map, h) !== null && !w.cities.some((c) => sameHex(c.hex, h)) && !w.lairs.some((l) => sameHex(l.hex, h)));
     if (!beside) throw new Error("no free hex");
     w = withLeader(withLeader(w, "leader0", { hex: beside }), "leader1", { worn: ["iron_helm"], squad: [{ ...leaderById(w, "leader1").squad[0]!, hp: 5 }] });
-    w = { ...w, players: w.players.map((pl, i) => (i === 0 ? { ...pl, mana: { red: 0, teal: 100 }, spells: ["lightning_strike"] } : pl)) };
+    w = { ...w, players: w.players.map((pl, i) => (i === 0 ? { ...pl, mana: { red: 0, teal: 100, green: 0 }, spells: ["lightning_strike"] } : pl)) };
     const next = structuredClone(w);
     updateVision(next);
     const step = applyWorldAction(next, { type: "castSpell", spell: "lightning_strike", at: target });

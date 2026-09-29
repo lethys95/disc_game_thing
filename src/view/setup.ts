@@ -7,6 +7,9 @@ import { COLS, ROWS, sameTile } from "#rules/battle/grid";
 import type { Side, Tile } from "#rules/battle/types";
 import { UNITS } from "#rules/units/index";
 import { FACTIONS } from "#rules/factions";
+
+/** Every playable faction, in the order the setup offers them. */
+const PLAYABLE = Object.keys(FACTIONS).filter((f): f is Playable => f in FACTIONS);
 import type { Playable } from "#rules/units/index";
 import { defaultColors, fallbackColor, freeColor, PLAYER_COLORS } from "#rules/world/colors";
 import type { PlayerColor } from "#rules/world/colors";
@@ -211,7 +214,7 @@ export class Setup {
       const dot = element("span", "dot");
       dot.style.background = COLOR_HEX[colors[i] ?? "white"];
       row.appendChild(dot);
-      for (const faction of ["jilliath", "nexus"] as const) {
+      for (const faction of PLAYABLE) {
         const button = element("button", `doctrine faction small${extra.faction === faction ? " selected" : ""}`, FACTIONS[faction].name);
         button.addEventListener("click", () => {
           this.extras[i] = { faction, formation: FORMATIONS[faction][0]?.name ?? "" };
@@ -273,7 +276,7 @@ export class Setup {
     });
     panel.appendChild(element("div", "title", side === 0 ? "Your squad" : "Enemy squad"));
     const factions = element("div", "factions");
-    for (const faction of ["jilliath", "nexus"] as const) {
+    for (const faction of PLAYABLE) {
       const button = element("button", `doctrine faction${this.factions[side] === faction ? " selected" : ""}`, FACTIONS[faction].name);
       button.addEventListener("click", (e) => {
         e.stopPropagation();

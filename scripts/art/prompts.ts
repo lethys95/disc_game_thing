@@ -11,6 +11,7 @@ import type { Slot } from "#view/art-slots";
 const COLORS: Readonly<Record<Faction, string>> = {
   jilliath: "vivid blood red",
   nexus: "electric teal, like lightning",
+  grove: "deep moss green",
   neutral: "rust orange",
 };
 

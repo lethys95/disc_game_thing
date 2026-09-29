@@ -270,7 +270,7 @@ export class Campaign implements KeyLayer {
   startingMana(amount: number): void {
     const world = this.world;
     if (!world) return;
-    this.world = { ...world, players: world.players.map((p, id) => (id === this.viewer ? { ...p, mana: { red: amount, teal: amount } } : p)) };
+    this.world = { ...world, players: world.players.map((p, id) => (id === this.viewer ? { ...p, mana: { red: amount, teal: amount, green: amount } } : p)) };
     this.render();
   }
 

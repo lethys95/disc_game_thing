@@ -1,7 +1,7 @@
 # Wastes: melee line
 
 > **Pitch (Claude, 2026-09-27): everything below marked (Claude) is a proposal for you to cut, rename or veto.**
-> Faction-wide hook, from "abuses the graveyard, weak by design": Wastes units **resurrect at half the price, and the
+> Faction-wide hook (**the user agrees 100%, 2026-09-29**: "exactly something like that I had in mind"): Wastes units **resurrect at half the price, and the
 > price drops twice as fast** each turn; they're also **cheap to recruit** and weak for their tier. Every defeat
 > still feeds the enemy XP.
 

@@ -11,7 +11,7 @@ import { Campaign } from "#view/campaign";
 import { isMood, MapView, MOODS } from "#view/map";
 import { BattleScene } from "#view/scene";
 import { Setup } from "#view/setup";
-import { BANDIT_GROUP, NEXUS_PRESETS, PRESETS } from "#rules/units/presets";
+import { BANDIT_GROUP, GROVE_PRESETS, NEXUS_PRESETS, PRESETS } from "#rules/units/presets";
 import { ANIMATION_SPEEDS, Settings } from "#view/settings";
 import { Sound } from "#view/sound";
 import { Stage } from "#view/stage";
@@ -98,14 +98,15 @@ const presets = [PRESETS.preserve, PRESETS.punishment] as const;
 // Screenshots and playtests skip the setup screen.
 if (params.has("map")) {
   setup.hide();
-  const nexus = params.get("map") === "nexus";
+  // `map=nexus|grove`: the first enemy's faction.
+  const enemyFaction: Playable = params.get("map") === "nexus" ? "nexus" : params.get("map") === "grove" ? "grove" : "jilliath";
   // `players=N`: more AI opponents, alternating factions after the first two.
   const count = Math.min(6, Math.max(2, Number(params.get("players") ?? 2)));
-  const factions = Array.from({ length: count }, (_, i): Playable => (i === 0 ? "jilliath" : i === 1 ? (nexus ? "nexus" : "jilliath") : i % 2 === 0 ? "nexus" : "jilliath"));
+  const factions = Array.from({ length: count }, (_, i): Playable => (i === 0 ? "jilliath" : i === 1 ? enemyFaction : i % 2 === 0 ? "nexus" : "jilliath"));
   const colors = defaultColors(factions);
   const sizeParam = params.get("size") ?? "";
   campaign.start(
-    factions.map((faction, i) => ({ squad: faction === "nexus" ? NEXUS_PRESETS.uncommitted : PRESETS.uncommitted, faction, commitment: {}, color: colors[i] ?? "white" })),
+    factions.map((faction, i) => ({ squad: faction === "nexus" ? NEXUS_PRESETS.uncommitted : faction === "grove" ? GROVE_PRESETS.uncommitted : PRESETS.uncommitted, faction, commitment: {}, color: colors[i] ?? "white" })),
     Number(params.get("seed") ?? 1),
     // `size=large`: a map size other than the default for the number of players.
     isMapSize(sizeParam) ? sizeParam : undefined,
@@ -121,7 +122,12 @@ if (params.has("map")) {
   setup.hide();
   const fight = params.get("fight") ?? "";
   const nexusKey = fight.startsWith("nexus:") ? fight.slice(6) : "uncommitted";
-  const enemy = fight.startsWith("nexus") ? (nexusKey === "scheme" || nexusKey === "overload" ? NEXUS_PRESETS[nexusKey] : NEXUS_PRESETS.uncommitted) : fight === "bandits" ? BANDIT_GROUP : presets[1];
+  const groveKey = fight.startsWith("grove:") ? fight.slice(6) : "uncommitted";
+  const enemy = fight.startsWith("nexus")
+    ? nexusKey === "scheme" || nexusKey === "overload" ? NEXUS_PRESETS[nexusKey] : NEXUS_PRESETS.uncommitted
+    : fight.startsWith("grove")
+      ? groveKey === "regrowth" || groveKey === "decay" ? GROVE_PRESETS[groveKey] : GROVE_PRESETS.uncommitted
+      : fight === "bandits" ? BANDIT_GROUP : presets[1];
   // `terrain=forest`, `backdrop=capitol|city|dungeon`: fight somewhere other than open plains (screenshots).
   const terrain = params.get("terrain") ?? "plain";
   const backdrop = params.get("backdrop");
@@ -129,7 +135,7 @@ if (params.has("map")) {
     terrain: isTerrain(terrain) ? terrain : "plain",
     backdrop: backdrop === "capitol" ? MODEL_CHAINS.capitol("jilliath") : backdrop === "city" ? MODEL_CHAINS.city() : backdrop === "dungeon" ? MODEL_CHAINS.dungeon() : null,
   };
-  app.start([presets[0], enemy], params.get("auto") === "1" ? null : params.get("side") === "1" ? 1 : 0, colorPair(["jilliath", fight.startsWith("nexus") ? "nexus" : "jilliath"]), Number(params.get("steps") ?? 0), setting);
+  app.start([presets[0], enemy], params.get("auto") === "1" ? null : params.get("side") === "1" ? 1 : 0, colorPair(["jilliath", fight.startsWith("nexus") ? "nexus" : fight.startsWith("grove") ? "grove" : "jilliath"]), Number(params.get("steps") ?? 0), setting);
 } else {
   showSetup();
 }

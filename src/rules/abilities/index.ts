@@ -1,10 +1,20 @@
 import { core } from "#rules/abilities/core";
+import { grove } from "#rules/abilities/grove";
 import { jilliath } from "#rules/abilities/jilliath";
 import { neutral } from "#rules/abilities/neutral";
 import { nexus } from "#rules/abilities/nexus";
 import type { AbilityRef, Behavior, Params } from "#rules/battle/types";
 
-export const BEHAVIORS: Readonly<Record<string, Behavior>> = { ...core, ...jilliath, ...nexus, ...neutral };
+const SETS: readonly Readonly<Record<string, Behavior>>[] = [core, jilliath, nexus, grove, neutral];
+
+/** Every ability by id. Two sets naming the same id would silently replace one (it happened: the Cleric's Mend). */
+export const BEHAVIORS: Readonly<Record<string, Behavior>> = Object.assign({}, ...SETS);
+
+/** Ability ids defined in more than one set: must be none (`tests/architecture.test.ts`). */
+export const duplicateAbilityIds = (): string[] => {
+  const seen = SETS.flatMap((set) => Object.keys(set));
+  return seen.filter((id, i) => seen.indexOf(id) !== i);
+};
 
 export function behavior(id: string): Behavior {
   const found = BEHAVIORS[id];

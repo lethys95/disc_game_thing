@@ -1,3 +1,4 @@
+import { duplicateAbilityIds } from "#rules/abilities/index";
 import { UNITS } from "#rules/units/index";
 import { createBattle, effectiveStats, legalActions } from "#rules/battle/engine";
 import type { BattleContext } from "#rules/battle/engine";
@@ -70,4 +71,8 @@ describe("stacking and lifetimes", () => {
     const loans = battle.units["0.0.1"]?.effects.filter((e) => e.def === "lent_shield").map((e) => [e.source, e.amount]);
     expect(loans).toEqual([["0.0.0", 80], ["0.0.2", 40]]);
   });
+});
+
+test("no two ability sets define the same ability id", () => {
+  expect(duplicateAbilityIds()).toEqual([]);
 });
