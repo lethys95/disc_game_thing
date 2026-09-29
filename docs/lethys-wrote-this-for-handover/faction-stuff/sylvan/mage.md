@@ -31,3 +31,5 @@ fits the existing hooks. Stats: health low · damage medium · armor none · ini
 ## Tier 4
 
 ## Tier 5
+## Synergy (user, 2026-09-29)
+The dual-target nuke is confirmed: on an enemy, large damage that heals back afterwards; on an ally, a heal with damage over time afterwards. **The damage over time on allies stacks with the Decay melee line's rot**, so the caster can load a Decay tier 4 for a bigger Lash out. Claude's reading: the ally-side damage over time *is* rot (`rotting`). Watch in tuning: spamming the heal on a tier 4 as free fuel (it costs the caster its turn). The aggressive caster also pairs with the support's corpse explosion (`support.md`).
