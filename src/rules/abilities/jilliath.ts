@@ -1,4 +1,4 @@
-import { at, rangedChoices, single, uses } from "#rules/abilities/core";
+import { auraSource, at, rangedChoices, single, uses } from "#rules/abilities/core";
 import { PUNISHMENT_MAX_STACKS } from "#rules/balance";
 import { PUNISHED_PER_STACK } from "#rules/effects";
 import { adjacent, frontLine, meleeTargets, occupant, opponent } from "#rules/battle/grid";
@@ -106,13 +106,15 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
     kind: "passive",
     name: "Devotion Aura",
     describe: (p) =>
-      `Adjacent allies gain +${p["armor"]} armor.`,
+      `Adjacent allies gain +${p["armor"]} armor. Doesn't stack: an ally next to several gets the strongest.`,
     defaults: { armor: 20 },
     hooks: {
       stats: (ctx, self, subjectId, stats) => {
         const owner = ctx.unit(self.unitId);
         const subject = ctx.unit(subjectId);
-        if (owner.side === subject.side && adjacent(owner.tile, subject.tile)) stats.armor += self.params["armor"] ?? 0;
+        if (owner.side !== subject.side || !adjacent(owner.tile, subject.tile)) return;
+        const reaches = (sourceId: string) => adjacent(ctx.unit(sourceId).tile, subject.tile);
+        if (auraSource(ctx, self, "devotion_aura", reaches, (p) => p["armor"] ?? 20)) stats.armor += self.params["armor"] ?? 0;
       },
     },
   },
