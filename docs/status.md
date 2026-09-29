@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines._
 
-**Updated:** 2026-09-29 (M64 gothic)
+**Updated:** 2026-09-29 (M65 lit buildings)
 
 ## Where we are
 A playable map game for 2–6 players (hotseat viewer vs AIs): two factions (**Jilliath**, **Ral-Vitahl**) with tier-1 melee/support/mage and Nexus mages to tier 3; bandit camps, dungeons with rewards, neutral cities; gold, mana and spells; nodes (gold, Blacksmith, mana, Cathedral); items on leaders; fog of war; retreat and a battle round limit; sound slots with placeholder SFX and music. The AI plays both the map (a list of planners in `world/ai.ts`) and battles, in a web worker.
@@ -10,7 +10,7 @@ A playable map game for 2–6 players (hotseat viewer vs AIs): two factions (**J
 Architecture: `design/architecture.md`; recipes and gotchas: `engineering.md`. `pnpm verify` before calling anything done. Sims: `pnpm sim:many --seeds 1-16 "p1,p2"` (smoke tests only until factions have their lines).
 
 ## Now
-**M64 gothic** (branch `m64-gothic`): the user caught that the props' "stylized, hand-painted, chunky" framing was Claude's and cheerful; from a style probe the user chose **gothic** (`design/art.md`). All 22 buildings regenerated in gothic (merchant and blacksmith needed simpler concepts: cluttered ones overflow TRELLIS.2's simplifier). Map moods (`MOODS`, `?mood=`) for the user to choose from; they show that the loud colors are in the terrain (ground textures, grass tufts, trees), also Claude's framing. Next: the terrain in gothic, for the user to see first (they liked the mountains and trees). Earlier: M63 nodes, M55–M62 map look.
+**M65 lit buildings** (branch `m65-delit`): the user saw the gothic buildings' darkness baked into their textures. Concepts now ask for shadowless light, and the cleanup lifts dark albedo; all 22 buildings rebuilt (`scripts/art/rebuild-props.sh`), now lit by the scene. Waiting on the user: the terrain probe (`shots/terrain-probe.png`: all gothic, or keep some current pieces?) and a map mood (`?mood=day|contrast|overcast|dusk|grim`, `shots/mood-probe.png`). Earlier: M64 gothic buildings, M63 nodes.
 
 ## Performance (user, 2026-09-28, `?fps`)
 Server desktop (RTX 3090 Ti): a solid 60 fps on the map. User's laptop: about 6 fps. Candidates for the laptop: bounce light off (Settings → Display), then instanced trees and grass.

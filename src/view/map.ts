@@ -82,6 +82,9 @@ export const MOODS = {
   day: { sun: { color: 0xffd9ae, intensity: 3.4, from: [-11, 8.5, 6] }, fill: { sky: 0x9fb2d4, ground: 0x2a2a1c, intensity: 0.45 }, rim: { color: 0x7f9cff, intensity: 1.2 }, sky: 0.6, grade: { saturation: 1, exposure: 1 } },
   overcast: { sun: { color: 0xd8dde6, intensity: 1.4, from: [-6, 12, 5] }, fill: { sky: 0xa8b0bc, ground: 0x2a2a26, intensity: 0.8 }, rim: { color: 0x8a96b0, intensity: 0.5 }, sky: 0.5, grade: { saturation: 0.7, exposure: 0.9 } },
   dusk: { sun: { color: 0xff9a5a, intensity: 2.6, from: [-14, 4.5, 3] }, fill: { sky: 0x5a6a9a, ground: 0x1c1a20, intensity: 0.5 }, rim: { color: 0x6a7cff, intensity: 1.4 }, sky: 0.4, grade: { saturation: 0.85, exposure: 0.85 } },
+  // More sun, less fill: buildings get lit faces and shadowed sides (the user, 2026-09-29: their darkness should come
+  // from the light, not only from their textures).
+  contrast: { sun: { color: 0xffe2c0, intensity: 4.6, from: [-11, 8.5, 6] }, fill: { sky: 0x9fb2d4, ground: 0x1e1e16, intensity: 0.18 }, rim: { color: 0x7f9cff, intensity: 0.8 }, sky: 0.3, grade: { saturation: 0.9, exposure: 1 } },
   grim: { sun: { color: 0xc8c0b0, intensity: 1.8, from: [-9, 9, 7] }, fill: { sky: 0x707888, ground: 0x1a1a1a, intensity: 0.5 }, rim: { color: 0x7080a0, intensity: 0.6 }, sky: 0.35, grade: { saturation: 0.55, exposure: 0.8 } },
 } as const satisfies Readonly<Record<string, MapMood>>;
 
