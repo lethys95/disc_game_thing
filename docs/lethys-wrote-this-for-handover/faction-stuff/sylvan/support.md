@@ -31,3 +31,8 @@ The worry: the mage line partly heals and the Regrowth melee heals, so what make
 2. **Corpses from both sides** count. The **offensive corpse explosion only on enemy corpses**; the **healing growth on corpses of either side**. It counters Jilliath's resurrection.
 3. **A corpse is used up** once consumed.
 - Claude's provisional reading (#58): only the explosion destroys the dead for good (the canon fungal infestation "prevents resurrection"); growth on an allied corpse doesn't cost it its place in the graveyard.
+
+## The Spiritess branch (user, 2026-09-29)
+- **Tier 2, Spiritess:** healing as a **semi-HoT, like WoW's Regrowth** (a heal now and more over time), and a **Swiftmend-like** ability that **instantly consumes the HoTs** on an ally for a massive burst heal. It **stacks with the Regrowth melee's HoT effects**: more synergy.
+- **Tier 3, Psychopomp:** brings **Spiritwalk**. A spiritwalking unit **doesn't count as present**: it can't be targeted and doesn't hold up the enemy's melee line ("otherwise it just makes the melee line incapable of acting because their only target is invulnerable. That'd be busted").
+- **Tier 4:** other ways of buffing or debuffing; probably **AoE healing**, which the faction has none of yet, "maybe even healing for everyone... some overgrowth stuff". Not settled.
