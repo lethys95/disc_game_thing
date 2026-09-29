@@ -4,11 +4,23 @@ import { bloom } from "three/addons/tsl/display/BloomNode.js";
 import { ao } from "three/addons/tsl/display/GTAONode.js";
 import { ssgi } from "three/addons/tsl/display/SSGINode.js";
 import { smaa } from "three/addons/tsl/display/SMAANode.js";
-import { colorToDirection, diffuseColor, directionToColor, float, mrt, normalView, output, pass, renderOutput, sample, vec4 } from "three/tsl";
+import { colorToDirection, diffuseColor, directionToColor, float, mrt, normalView, output, pass, renderOutput, sample, saturation, vec4 } from "three/tsl";
 import * as THREE from "three/webgpu";
+
+/** `scene.userData` key: the scene's color grade (`Grade`), applied before tone mapping. */
+export const GRADE = "grade";
+
+/** A color grade: saturation (1 unchanged) and exposure (a multiplier). */
+export interface Grade {
+  readonly saturation: number;
+  readonly exposure: number;
+}
 
 /** `scene.userData` key: the scene wants screen-space global illumination (see `Stage.chain`). */
 export const BOUNCE_LIGHT = "bounceLight";
+
+const isGrade = (value: unknown): value is Grade =>
+  typeof value === "object" && value !== null && typeof Reflect.get(value, "saturation") === "number" && typeof Reflect.get(value, "exposure") === "number";
 
 export interface CameraPose {
   readonly position: THREE.Vector3;
@@ -187,7 +199,17 @@ export class Stage {
       occlusion.scale.value = 1.2;
       lit = color.mul(float(1).sub(float(0.85).mul(float(1).sub(occlusion.getTextureNode().r))));
     }
-    return smaa(renderOutput(lit.add(bloom(lit, 0.55, 0.5, 0.8))));
+    const grade: unknown = scene.userData[GRADE];
+    const bloomed = lit.add(bloom(lit, 0.55, 0.5, 0.8));
+    const graded = isGrade(grade) ? saturation(bloomed.rgb.mul(grade.exposure), grade.saturation) : bloomed.rgb;
+    return smaa(renderOutput(vec4(graded, 1)));
+  }
+
+  /** A scene's grade changed: rebuild its chain if it's the one shown. */
+  regrade(scene: THREE.Scene): void {
+    if (scene !== this.active) return;
+    this.pipeline.outputNode = this.chain(scene);
+    this.pipeline.needsUpdate = true;
   }
 
   tween(duration: number, update: (t: number) => void): Promise<void> {

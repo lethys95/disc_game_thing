@@ -6,9 +6,18 @@ import { runBatch } from "#scripts/art/batch";
  * generator sees the full silhouette and no cast shadows.
  */
 
-const FRAMING =
-  "A single game miniature, isolated and centered, the whole object in frame with margin around it, three-quarter view from slightly above, " +
-  "plain flat light grey background, soft even studio lighting, no ground, no cast shadow, no text. Stylized dark fantasy, hand-painted textures, chunky readable shapes.";
+/** What image-to-3D needs: one object, plain background, even light, no mist, bold forms (`design/asset-pipeline.md`). */
+const FOR_3D =
+  "A single object, isolated and centered, the whole of it in frame with margin, three-quarter view from slightly above, plain flat light grey background, even light, no ground, no cast shadow, no mist or smoke, no text.";
+
+/** The user's style for buildings (2026-09-29, from the style probe: "gothic is correct, definitely gothic"). */
+const GOTHIC = "Dark gothic fantasy in the manner of Disciples II's art: rich, brooding and ornate, deep shadows in its recesses, desaturated colors with dark accents, dramatic and grim. Serious, adult, not cartoonish.";
+
+/**
+ * Terrain keeps the framing it was made with until the user has seen it in gothic (the user liked the mountains and
+ * the lighter trees); it was Claude's, not the user's (`design/art.md`).
+ */
+const TERRAIN_STYLE = "Stylized dark fantasy, hand-painted textures, chunky readable shapes.";
 
 /** Keyed by the model slot each fills (`assets/models/<slot>.glb`, `src/view/models.ts`). */
 const PROPS: readonly { readonly slot: string; readonly look: string }[] = [
@@ -31,7 +40,8 @@ const PROPS: readonly { readonly slot: string; readonly look: string }[] = [
   },
   {
     slot: "structure/merchant",
-    look: "A travelling merchant's stall: a sturdy wooden cart and counter under a patched ochre canvas awning, stacked crates and barrels, hanging lanterns, wares on display.",
+    // Few, large parts: a cart heaped with small wares overflows TRELLIS.2's mesh simplifier (2026-09-29).
+    look: "A travelling merchant's covered wagon: a sturdy wooden wagon under a heavy canvas cover, a folding counter, a few large crates and barrels beside it, one hanging lantern.",
   },
   {
     slot: "structure/mercenaries",
@@ -43,7 +53,8 @@ const PROPS: readonly { readonly slot: string; readonly look: string }[] = [
   },
   {
     slot: "node/blacksmith",
-    look: "A blacksmith's forge: a small stone smithy with a glowing orange furnace, a heavy anvil in front, a water barrel, tongs and hammers hanging on the wall.",
+    // Few, large parts, as for the merchant.
+    look: "A blacksmith's forge: a small, solid stone smithy with a glowing furnace in its open front, a single heavy anvil before it and a water barrel.",
   },
   {
     slot: "node/mana",
@@ -92,6 +103,6 @@ const slots = args.filter((a) => Number.isNaN(Number(a)));
 const chosen = slots.length > 0 ? PROPS.filter((p) => slots.includes(p.slot)) : PROPS;
 await runBatch(
   "art/candidates/props",
-  chosen.map((p) => ({ id: p.slot.replace("/", "_"), prompt: `${p.look} ${FRAMING}`, width: 1024, height: 1024 })),
+  chosen.map((p) => ({ id: p.slot.replace("/", "_"), prompt: `${p.look} ${p.slot.startsWith("terrain/") ? TERRAIN_STYLE : GOTHIC} ${FOR_3D}`, width: 1024, height: 1024 })),
   seeds.length > 0 ? seeds : [1, 2, 3, 4],
 );
