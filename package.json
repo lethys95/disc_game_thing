@@ -16,6 +16,7 @@
     "sim:world": "scripts/bundle-sims.sh && node .sim/sim-world.mjs",
     "sim:t1": "scripts/bundle-sims.sh && node .sim/sim-tier1.mjs",
     "sim:many": "scripts/bundle-sims.sh && node .sim/sim-many.mjs",
+    "sim:comps": "scripts/bundle-sims.sh && node .sim/balance/compositions.mjs",
     "verify": "pnpm check && tsx scripts/shot.ts shots/verify.png \"/?fight&steps=6\" && tsx scripts/playtest.ts",
     "art": "tsx scripts/art/assets.ts",
     "audio": "tsx scripts/audio/report.ts"
