@@ -48,6 +48,10 @@ const FOR_RIG =
 const GOTHIC_MATERIALS =
   "Dark gothic fantasy in the manner of Disciples II's art: rich, brooding and ornate, desaturated colors with dark accents, dramatic and grim materials, weathered and worn. Serious, adult, not cartoonish.";
 
+/** GOTHIC_MATERIALS for a 3D render: the same mood, with physically based materials instead of a painting's hand. */
+const GOTHIC_3D =
+  "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: rough cracked stone, tarnished brass, frayed cloth. Serious, adult, not cartoonish.";
+
 const GOLEM =
   "A hulking golem guardian, not a person: a massive body of cracked grey stone blocks bound with dark brass bands, a blank stone head, thick stone arms and legs, " +
   "faint electric teal lightning crackling in the cracks, a scrap of old cloth at its waist.";
@@ -56,6 +60,9 @@ const JOBS = [
   { id: "custodian-tpose", prompt: `A full-body character model reference of a single figure, the whole figure visible from head to feet. ${GOLEM} ${FOR_RIG}` },
   // The buildings' framing (the user's gothic, 2026-09-29), which survives flat light: the T-pose above drifted cartoonish.
   { id: "custodian-tpose-gothic", prompt: `A full-body character model reference of a single figure, the whole figure visible from head to feet. ${GOLEM} ${GOTHIC_MATERIALS} ${FOR_RIG}` },
+  // The user liked the gothic one but it read as a 2D drawing (2026-09-30): lead with a 3D render in a T-pose, and keep
+  // the gothic materials without "Disciples II's art", which pulls toward painting.
+  { id: "custodian-3d", prompt: `A 3D render of a game character model in a T-pose, the whole figure visible from head to feet and fingertip to fingertip with a margin around it, like a sculpted and textured asset shown in a modelling program. ${GOLEM} ${GOTHIC_3D} ${FOR_RIG}` },
   { id: "custodian-front", prompt: `${FIGURE} ${CUSTODIAN_3D} ${ANCHOR("electric teal, like lightning")}` },
   { id: "zealot-anchor", prompt: `${FIGURE} ${ZEALOT} ${ANCHOR("vivid blood red")}` },
   { id: "zealot-plain", prompt: `${FIGURE} ${ZEALOT} ${PLAIN("vivid blood red")}` },
@@ -68,6 +75,7 @@ const seeds = args.map(Number).filter((n) => !Number.isNaN(n));
 const ids = args.filter((a) => Number.isNaN(Number(a)));
 await runBatch(
   "art/candidates/concepts",
-  JOBS.filter((j) => ids.length === 0 || ids.includes(j.id)).map((j) => ({ ...j, width: 896, height: 1152 })),
+  // A T-pose spans wider than it stands tall: the portrait frame cut the arms off.
+  JOBS.filter((j) => ids.length === 0 || ids.includes(j.id)).map((j) => ({ ...j, ...(j.id.includes("tpose") || j.id.endsWith("-3d") ? { width: 1344, height: 1024 } : { width: 896, height: 1152 }) })),
   seeds.length > 0 ? seeds : [1000, 1001, 1002, 1003],
 );
