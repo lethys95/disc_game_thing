@@ -26,7 +26,7 @@ describe("Grove melee line", () => {
     battle = until(act(battle, "attack", "1.0.1").battle, "1.0.1");
     // A Congregant alone hits for 20: 40% (8) rots in and 12 lands now; as its turn starts, a third of the rot,
     // rounded up (3), is lost, and 5 remain for its next two turns.
-    expect(190 - unit(battle, "1.0.1").hp).toBe(12 + 3);
+    expect((UNITS["decay_2"]?.stats.maxHp ?? 0) - unit(battle, "1.0.1").hp).toBe(12 + 3);
     expect(unit(battle, "1.0.1").effects.find((e) => e.def === "rotting")).toMatchObject({ amount: 5, stacks: 2 });
     expect(UNITS["decay_2"]?.abilities.some((a) => a.id === "regrowth")).toBe(false);
   });

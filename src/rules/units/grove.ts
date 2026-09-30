@@ -13,13 +13,13 @@ export const GROVE_UNITS: Readonly<Record<string, UnitDef>> = {
   },
   regrowth_2: {
     id: "regrowth_2", name: "Regrowth 2", faction: "grove", tier: 2, damageType: "weapon",
-    stats: { maxHp: 192, shield: 0, damage: 43, armor: 0, initiative: 45 },
-    abilities: [{ id: "regrowth", params: { percent: 12 } }, ...kit("attack", "defend", "wait")],
+    stats: { maxHp: 192, shield: 0, damage: 48, armor: 0, initiative: 45 },
+    abilities: [{ id: "regrowth", params: { percent: 15 } }, ...kit("attack", "defend", "wait")],
   },
   // The user: no regeneration on the decay branch; tankier, and it needs a support backline.
   decay_2: {
     id: "decay_2", name: "Decay 2", faction: "grove", tier: 2, damageType: "weapon",
-    stats: { maxHp: 190, shield: 0, damage: 38, armor: 0, initiative: 45 },
+    stats: { maxHp: 210, shield: 0, damage: 46, armor: 0, initiative: 45 },
     abilities: [{ id: "decay", params: { percent: 40 } }, ...kit("attack", "defend", "wait")],
   },
   // "Would probably not attack as much": a weak attack; mends and shelters instead.
@@ -55,12 +55,12 @@ export const GROVE_UNITS: Readonly<Record<string, UnitDef>> = {
   spiritess_2: {
     id: "spiritess_2", name: "Spiritess 2", faction: "grove", tier: 2, damageType: "weapon",
     stats: { maxHp: 95, shield: 0, damage: 10, armor: 0, initiative: 45 },
-    abilities: kit("spirit_bloom", "burst_mend", "shoot", "defend", "wait"),
+    abilities: [{ id: "spirit_bloom", params: { heal: 35 } }, ...kit("burst_mend", "shoot", "defend", "wait")],
   },
   psychopomp: {
     id: "psychopomp", name: "Psychopomp", faction: "grove", tier: 3, damageType: "weapon",
     stats: { maxHp: 130, shield: 0, damage: 14, armor: 0, initiative: 50 },
-    abilities: [{ id: "spirit_bloom", params: { heal: 30, amount: 15 } }, ...kit("burst_mend", "spiritwalk", "shoot", "defend", "wait")],
+    abilities: [{ id: "spirit_bloom", params: { heal: 40, amount: 15 } }, ...kit("burst_mend", "spiritwalk", "shoot", "defend", "wait")],
   },
   grove_mage_1: {
     id: "grove_mage_1", name: "Grove mage 1", faction: "grove", tier: 1, damageType: "weapon",
