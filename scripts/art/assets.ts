@@ -41,7 +41,7 @@ async function generateMissing(filter: string, seeds: number): Promise<void> {
   const slots = allSlots().filter((s) => (s.kind === filter || slotKey(s) === filter) && !has(slotKey(s)));
   if (slots.length === 0) throw new Error(`no slots without art match "${filter}"`);
   const jobs = slots.map((slot: Slot) => ({ id: `${slot.kind}_${slot.id}`, ...promptFor(slot) }));
-  await runBatch(`art/candidates/slots-${filter.replace("/", "_")}`, jobs, Array.from({ length: seeds }, (_, i) => 1000 + i));
+  await runBatch(`art/candidates/slots/${filter.replace("/", "_")}`, jobs, Array.from({ length: seeds }, (_, i) => 1000 + i));
 }
 
 async function accept(file: string, key: string): Promise<void> {

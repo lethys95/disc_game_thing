@@ -33,7 +33,7 @@ const SUBJECTS: readonly { readonly id: string; readonly look: string }[] = [
 /** `pnpm tsx scripts/art/style-probe.ts [seed…]` */
 const seeds = process.argv.slice(2).map(Number).filter((n) => !Number.isNaN(n));
 await runBatch(
-  "art/candidates/style-probe",
+  "art/candidates/models/style-probe",
   FRAMINGS.flatMap((f) => SUBJECTS.map((s) => ({ id: `${f.id}-${s.id}`, prompt: `${s.look} ${f.style} ${FOR_3D}`, width: 1024, height: 1024 }))),
   seeds.length > 0 ? seeds : [1, 2],
 );

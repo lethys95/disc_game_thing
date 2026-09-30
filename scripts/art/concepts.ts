@@ -87,7 +87,7 @@ const args = process.argv.slice(2);
 const seeds = args.map(Number).filter((n) => !Number.isNaN(n));
 const ids = args.filter((a) => Number.isNaN(Number(a)));
 await runBatch(
-  "art/candidates/concepts",
+  "art/candidates/units/concepts",
   // A T-pose spans wider than it stands tall: the portrait frame cut the arms off.
   JOBS.filter((j) => ids.length === 0 || ids.includes(j.id)).map((j) => ({ ...j, ...(j.id.includes("turnaround") ? { width: 2048, height: 832 } : j.id.includes("tpose") || j.id.includes("-3d") ? { width: 1344, height: 1024 } : { width: 896, height: 1152 }) })),
   seeds.length > 0 ? seeds : [1000, 1001, 1002, 1003],

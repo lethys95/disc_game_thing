@@ -29,7 +29,7 @@ const seeds = args.map(Number).filter((n) => !Number.isNaN(n));
 const slots = args.filter((a) => Number.isNaN(Number(a)));
 const chosen = slots.length > 0 ? VIEWS.filter((v) => slots.includes(v.slot)) : VIEWS;
 await runBatch(
-  "art/candidates/city-views",
+  "art/candidates/ui/city-views",
   chosen.map((v) => ({ id: v.slot, prompt: `${v.look} ${FRAMING}`, width: 1536, height: 864 })),
   seeds.length > 0 ? seeds : [1, 2, 3],
 );

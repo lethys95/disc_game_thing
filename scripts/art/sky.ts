@@ -11,4 +11,4 @@ const SKY =
   "Dark gothic fantasy in the manner of Disciples II's art, grim and serious, not cartoonish.";
 
 const seeds = process.argv.slice(2).map(Number).filter((n) => !Number.isNaN(n));
-await runBatch("art/candidates/sky", [{ id: "map", prompt: SKY, width: 2048, height: 1024 }], seeds.length > 0 ? seeds : [1, 2, 3, 4]);
+await runBatch("art/candidates/terrain/sky", [{ id: "map", prompt: SKY, width: 2048, height: 1024 }], seeds.length > 0 ? seeds : [1, 2, 3, 4]);

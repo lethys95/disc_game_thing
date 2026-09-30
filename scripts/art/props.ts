@@ -115,7 +115,7 @@ const seeds = args.map(Number).filter((n) => !Number.isNaN(n));
 const slots = args.filter((a) => Number.isNaN(Number(a)));
 const chosen = slots.length > 0 ? PROPS.filter((p) => slots.includes(p.slot)) : PROPS;
 await runBatch(
-  "art/candidates/props",
+  "art/candidates/models/props",
   chosen.map((p) => ({ id: p.slot.replace("/", "_"), prompt: `${p.look} ${GOTHIC} ${FOR_3D}`, width: 1024, height: 1024 })),
   seeds.length > 0 ? seeds : [1, 2, 3, 4],
 );

@@ -28,7 +28,7 @@ const args = process.argv.slice(2);
 const seeds = args.map(Number).filter((n) => !Number.isNaN(n));
 const ids = args.filter((a) => Number.isNaN(Number(a)));
 await runBatch(
-  "art/candidates/ground",
+  "art/candidates/terrain/ground",
   GROUNDS.filter((g) => ids.length === 0 || ids.includes(g.id)).map((g) => ({ id: g.id, prompt: `${g.look} ${FRAMING}`, width: 1024, height: 1024 })),
   seeds.length > 0 ? seeds : [1, 2, 3],
 );

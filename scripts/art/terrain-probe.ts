@@ -23,4 +23,4 @@ const JOBS: readonly { readonly id: string; readonly prompt: string; readonly wi
 
 /** `pnpm tsx scripts/art/terrain-probe.ts [seed…]` */
 const seeds = process.argv.slice(2).map(Number).filter((n) => !Number.isNaN(n));
-await runBatch("art/candidates/terrain-probe", JOBS, seeds.length > 0 ? seeds : [1, 2]);
+await runBatch("art/candidates/terrain/terrain-probe", JOBS, seeds.length > 0 ? seeds : [1, 2]);

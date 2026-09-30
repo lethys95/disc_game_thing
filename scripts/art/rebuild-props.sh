@@ -19,8 +19,8 @@ for slot in "${slots[@]}"; do
   faces=$(budget "$slot")
   built=""
   for seed in 1 2; do
-    mesh=art/candidates/props/meshes/$id-$seed.glb
-    if ~/programs/image-to-3d/run_trellis2.sh "art/candidates/props/$id-$seed.png" "$mesh" --pipeline 1024_cascade --faces "$faces" --texture 2048 >/dev/null 2>&1 && [ -f "$mesh" ]; then
+    mesh=art/candidates/models/props/meshes/$id-$seed.glb
+    if ~/programs/image-to-3d/run_trellis2.sh "art/candidates/models/props/$id-$seed.png" "$mesh" --pipeline 1024_cascade --faces "$faces" --texture 2048 >/dev/null 2>&1 && [ -f "$mesh" ]; then
       # Terrain is meant to be dark (foliage, rock): lifting it turned trees pale (2026-09-29).
       lift=$ALBEDO_MEAN; [[ $slot == terrain/* ]] && lift=""
       blender -b -P scripts/art/prop_cleanup.py -- "$mesh" "assets/models/$slot.glb" "$faces" 2048 $lift 2>&1 | grep prop_cleanup

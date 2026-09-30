@@ -64,7 +64,7 @@ The user's design and palette held fixed; only the stroke varies (`pnpm art zeal
 - The user's worry: does it scale? Next test: the Grove's Psychopomp (`units/sylvan-psychopomp.md`), a completely different message in the same style. Grove colors from the user: greens, with purples for pulses.
 
 ## Scaling test: Zealot + Psychopomp (2026-09-25)
-`pnpm art pairing`: same framing (single full-body figure on pale paper), same palette structure (pale, hard black, only the faction's colors saturated: Jilliath red; Grove moss green with violet pulses), same strokes; only subject and mood differ. Regenerating a picked image from its manifest (prompt + seed) is pixel-identical (checked on `zealot_inkBrush-1001`). First pass: every Psychopomp had closed eyes and the ink one's spirits were cute blobs (kept in `art/candidates/pairing-closed-eyes/`); saying "eyes wide open, violet irises, spiralling pupils" and "spectral echoes of her own face" fixed both.
+`pnpm art pairing`: same framing (single full-body figure on pale paper), same palette structure (pale, hard black, only the faction's colors saturated: Jilliath red; Grove moss green with violet pulses), same strokes; only subject and mood differ. Regenerating a picked image from its manifest (prompt + seed) is pixel-identical (checked on `zealot_inkBrush-1001`). First pass: every Psychopomp had closed eyes and the ink one's spirits were cute blobs (kept in `art/candidates/units/zealot-probes/pairing-closed-eyes/`); saying "eyes wide open, violet irises, spiralling pupils" and "spectral echoes of her own face" fixed both.
 - User (2026-09-25): "these are pretty great". Pick: **`psychopomp_inkBrush-1003`** ("clearer that this is definitely not a human"). Together with `zealot_inkBrush-1001` these two define the style.
 - Next (user, tomorrow): look for existing Krea 2 LoRAs. Leads: Krea's own collection trained on Raw for use on Turbo (huggingface.co/collections/krea/krea-2-loras); ComfyUI's Turbo blueprint ships `krea2_darkbrush` (Comfy-Org/Krea-2, `loras/`); the style-reference blueprint uses `krea2_style_reference` with an int8 Turbo, which could take our two keepers as references.
 
@@ -76,7 +76,7 @@ The game now has art slots (`docs/engineering.md` → Art). Installed from the u
 **Not settled.** Yesterday's ink-brush work was theorycrafting, not a final art direction; there's a lot of art work still ahead. The keepers stand as references, nothing more. **Paper standees** (flat portrait cards on the 3D battlefield) are a stand-in for battle figures, **not what ships**.
 
 ## Environment (user, 2026-09-26)
-Regular trees, maybe with autumn colors; withered trees for the Grove's decay. Not every tree shows the life/death dichotomy; no skeleton trees. The agent-built Grove tree (`art/blender/grove-tree/`) was a nice test, too literal.
+Regular trees, maybe with autumn colors; withered trees for the Grove's decay. Not every tree shows the life/death dichotomy; no skeleton trees. The agent-built Grove tree (`spikes/grove-tree/`) was a nice test, too literal.
 
 ## UI references (user, 2026-09-27)
 Disciples II's city screen (`references/disciples2-city.png`): the ornate right-hand panel (carved metal and stone, round buttons, pale marble plaques for names and pictures). Also Diablo II's HUD; gargoyles, statues and arches fit.

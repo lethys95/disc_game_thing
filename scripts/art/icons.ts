@@ -64,4 +64,4 @@ const args = process.argv.slice(2);
 const seeds = args.map(Number).filter((n) => !Number.isNaN(n));
 const chosen = args.filter((a) => Number.isNaN(Number(a)));
 const jobs = ICONS.filter((i) => chosen.length === 0 || chosen.includes(i.id)).map((i) => ({ id: `icon_${i.id}`, prompt: RECIPE(i.subject, ACCENT[i.faction]), width: 1024, height: 1024 }));
-await runBatch("art/candidates/icons", jobs, seeds.length > 0 ? seeds : [1000, 1001]);
+await runBatch("art/candidates/icons/abilities", jobs, seeds.length > 0 ? seeds : [1000, 1001]);

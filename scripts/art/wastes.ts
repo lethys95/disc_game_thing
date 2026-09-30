@@ -34,7 +34,7 @@ const DIRECTIONS: readonly { readonly id: string; readonly look: string }[] = [
 /** `pnpm tsx scripts/art/wastes.ts [seed…]` */
 const seeds = process.argv.slice(2).map(Number).filter((n) => !Number.isNaN(n));
 await runBatch(
-  "art/candidates/wastes",
+  "art/candidates/models/wastes",
   DIRECTIONS.map((d) => ({ id: `capitol-${d.id}`, prompt: `${d.look} ${FRAMING}`, width: 1024, height: 1024 })),
   seeds.length > 0 ? seeds : [1, 2, 3, 4],
 );

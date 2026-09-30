@@ -57,7 +57,7 @@ const seeds = args.map(Number).filter((n) => !Number.isNaN(n));
 const ids = args.filter((a) => Number.isNaN(Number(a)));
 const chosen = ids.length > 0 ? PIECES.filter((p) => ids.includes(p.id)) : PIECES;
 await runBatch(
-  "art/candidates/ui",
+  "art/candidates/ui/kit",
   chosen.map((p) => ({ id: p.id, prompt: `${p.look} ${FLAT}`, width: p.size[0] ?? 1024, height: p.size[1] ?? 1024 })),
   seeds.length > 0 ? seeds : [1, 2, 3, 4],
 );
