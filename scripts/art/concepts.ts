@@ -35,7 +35,27 @@ const CUSTODIAN_3D =
   "a crackling protective shield of electric energy around it, a scrap of old cloth at its waist. " +
   "Front view, facing the viewer, standing straight with arms held slightly away from the body and legs apart, every limb clearly separated.";
 
+/**
+ * A unit's reference for image-to-3D and rigging (Tripo's advice and our prop lesson): flat, shadowless light so
+ * the texture carries true colors, and a T-pose so every limb stands clear for the rig.
+ */
+const FOR_RIG =
+  "Front view, facing the viewer, standing in a T-pose: arms straight out to the sides at shoulder height, legs slightly apart, every limb clearly separated from the body. " +
+  "Flat, even, shadowless lighting from all sides, like a texture reference: no cast or painted shadows, no dark recesses, every surface showing its material's true color. " +
+  "A plain flat light grey background, no ground, no mist, no smoke, no text.";
+
+/** `scripts/art/props.ts` GOTHIC: the user's style for buildings, worded for materials rather than light. */
+const GOTHIC_MATERIALS =
+  "Dark gothic fantasy in the manner of Disciples II's art: rich, brooding and ornate, desaturated colors with dark accents, dramatic and grim materials, weathered and worn. Serious, adult, not cartoonish.";
+
+const GOLEM =
+  "A hulking golem guardian, not a person: a massive body of cracked grey stone blocks bound with dark brass bands, a blank stone head, thick stone arms and legs, " +
+  "faint electric teal lightning crackling in the cracks, a scrap of old cloth at its waist.";
+
 const JOBS = [
+  { id: "custodian-tpose", prompt: `A full-body character model reference of a single figure, the whole figure visible from head to feet. ${GOLEM} ${FOR_RIG}` },
+  // The buildings' framing (the user's gothic, 2026-09-29), which survives flat light: the T-pose above drifted cartoonish.
+  { id: "custodian-tpose-gothic", prompt: `A full-body character model reference of a single figure, the whole figure visible from head to feet. ${GOLEM} ${GOTHIC_MATERIALS} ${FOR_RIG}` },
   { id: "custodian-front", prompt: `${FIGURE} ${CUSTODIAN_3D} ${ANCHOR("electric teal, like lightning")}` },
   { id: "zealot-anchor", prompt: `${FIGURE} ${ZEALOT} ${ANCHOR("vivid blood red")}` },
   { id: "zealot-plain", prompt: `${FIGURE} ${ZEALOT} ${PLAIN("vivid blood red")}` },
