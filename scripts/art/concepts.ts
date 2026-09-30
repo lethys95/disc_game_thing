@@ -63,6 +63,8 @@ const JOBS = [
   // The user liked the gothic one but it read as a 2D drawing (2026-09-30): lead with a 3D render in a T-pose, and keep
   // the gothic materials without "Disciples II's art", which pulls toward painting.
   { id: "custodian-3d", prompt: `A 3D render of a game character model in a T-pose, the whole figure visible from head to feet and fingertip to fingertip with a margin around it, like a sculpted and textured asset shown in a modelling program. ${GOLEM} ${GOTHIC_3D} ${FOR_RIG}` },
+  // The user's check (2026-09-30): does "in the manner of Disciples II's art" alone turn the 3D render into a painting?
+  { id: "custodian-3d-d2", prompt: `A 3D render of a game character model in a T-pose, the whole figure visible from head to feet and fingertip to fingertip with a margin around it, like a sculpted and textured asset shown in a modelling program. ${GOLEM} ${GOTHIC_3D.replace("Dark gothic fantasy,", "Dark gothic fantasy in the manner of Disciples II's art,")} ${FOR_RIG}` },
   { id: "custodian-front", prompt: `${FIGURE} ${CUSTODIAN_3D} ${ANCHOR("electric teal, like lightning")}` },
   { id: "zealot-anchor", prompt: `${FIGURE} ${ZEALOT} ${ANCHOR("vivid blood red")}` },
   { id: "zealot-plain", prompt: `${FIGURE} ${ZEALOT} ${PLAIN("vivid blood red")}` },
@@ -76,6 +78,6 @@ const ids = args.filter((a) => Number.isNaN(Number(a)));
 await runBatch(
   "art/candidates/concepts",
   // A T-pose spans wider than it stands tall: the portrait frame cut the arms off.
-  JOBS.filter((j) => ids.length === 0 || ids.includes(j.id)).map((j) => ({ ...j, ...(j.id.includes("tpose") || j.id.endsWith("-3d") ? { width: 1344, height: 1024 } : { width: 896, height: 1152 }) })),
+  JOBS.filter((j) => ids.length === 0 || ids.includes(j.id)).map((j) => ({ ...j, ...(j.id.includes("tpose") || j.id.includes("-3d") ? { width: 1344, height: 1024 } : { width: 896, height: 1152 }) })),
   seeds.length > 0 ? seeds : [1000, 1001, 1002, 1003],
 );
