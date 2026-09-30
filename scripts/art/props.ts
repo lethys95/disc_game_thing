@@ -93,6 +93,20 @@ const PROPS: readonly { readonly slot: string; readonly look: string }[] = [
   { slot: "terrain/rock-2", look: "A single large weathered standing rock, cracked, with lichen and moss at its foot." },
   { slot: "terrain/bush-1", look: "A low, rounded shrub of dull green leaves on a few woody stems, with visible gaps between its branches." },
   { slot: "terrain/bush-2", look: "A clump of tall wild grass and ferns." },
+  // The desert biome (user, 2026-09-30): its forest hexes are palm groves and thorn scrub, its water oases.
+  { slot: "terrain/desert-tree-1", look: "A single tall date palm tree with a slender ringed trunk, slightly bent, and a crown of long dry fronds." },
+  { slot: "terrain/desert-tree-2", look: "A small cluster of three date palms of different heights growing together." },
+  { slot: "terrain/desert-tree-3", look: "A single gnarled, wind-bent thorn tree with a flat, sparse crown of small dull leaves on twisted branches." },
+  { slot: "terrain/desert-tree-4", look: "A single dead desert tree: a bleached, twisted trunk with bare, broken branches." },
+  { slot: "terrain/desert-mountain-1", look: "A single flat-topped sandstone mesa with sheer layered cliffs of ochre and rust rock and scree at its base." },
+  { slot: "terrain/desert-mountain-2", look: "A tall wind-carved sandstone butte with two eroded spires of layered red and ochre rock." },
+  { slot: "terrain/desert-mountain-3", look: "A broad, eroded sandstone massif with cliffs, ledges and deep gullies, bare rock in ochre and dull red." },
+  { slot: "terrain/desert-hill-1", look: "A single low sand dune with a sharp wind-cut crest and rippled slopes." },
+  { slot: "terrain/desert-hill-2", look: "A low rounded knoll of sand and gravel with a flat sandstone outcrop and a dry shrub on top." },
+  { slot: "terrain/desert-rock-1", look: "A cluster of three wind-eroded sandstone boulders of different sizes, smoothed and pitted." },
+  { slot: "terrain/desert-rock-2", look: "A single tall wind-carved sandstone rock, narrow at its base, cracked and layered." },
+  { slot: "terrain/desert-bush-1", look: "A low, dry thorny desert shrub of grey-green twigs, with visible gaps between its branches." },
+  { slot: "terrain/desert-bush-2", look: "A clump of tall, dry, straw-colored desert grass." },
 ];
 
 /** `pnpm tsx scripts/art/props.ts [slot…] [seed…]`: the named slots (all by default), each at the given seeds. */

@@ -12,7 +12,7 @@ if [ ${#slots[@]} -eq 0 ]; then
   mapfile -t slots < <(grep -oE 'slot: "[a-z_/-]+"' scripts/art/props.ts | cut -d'"' -f2 | grep -v '^terrain/')
 fi
 # Terrain is small on screen and drawn hundreds of times: map-sized budgets (the user asked about LOD, 2026-09-29).
-budget() { case $1 in site/capitol-*) echo 40000;; site/city) echo 30000;; structure/*|lair/*) echo 20000;; node/*) echo 16000;; terrain/mountain-*) echo 5000;; terrain/hill-*) echo 2500;; terrain/tree-*|terrain/rock-*) echo 1500;; terrain/bush-*) echo 800;; *) echo 8000;; esac; }
+budget() { case $1 in site/capitol-*) echo 40000;; site/city) echo 30000;; structure/*|lair/*) echo 20000;; node/*) echo 16000;; terrain/*mountain-*) echo 5000;; terrain/*hill-*) echo 2500;; terrain/*tree-*|terrain/*rock-*) echo 1500;; terrain/*bush-*) echo 800;; *) echo 8000;; esac; }
 pnpm exec tsx scripts/art/props.ts "${slots[@]}" 1 2 >/dev/null
 for slot in "${slots[@]}"; do
   id=${slot/\//_}

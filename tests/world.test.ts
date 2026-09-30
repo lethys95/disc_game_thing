@@ -1,6 +1,6 @@
 import { autoplay } from "#rules/ai";
 import type { Placement } from "#rules/battle/engine";
-import { hexagon, hexDistance, hexKey } from "#rules/hex";
+import { hexagon, hexDistance, hexKey, neighbors } from "#rules/hex";
 import { SPECIAL_NODES, findPath, generateMap, TERRAIN_COST } from "#rules/map";
 import type { Commitment } from "#rules/forks";
 import { GUARDIAN_ID } from "#rules/units/index";
@@ -62,6 +62,29 @@ describe("map", () => {
       expect(new Set(specials).size).toBe(Math.min(specials.length, SPECIAL_NODES.length));
     }
     expect(generateMap(1)).not.toEqual(generateMap(2));
+  });
+
+  test("every map has one desert, one patch of neighboring hexes, a part of the map and not all of it", () => {
+    for (const seed of [1, 2, 3, 42, 1234]) {
+      const tiles = Object.values(generateMap(seed).tiles);
+      const desert = tiles.filter((t) => t.biome === "desert");
+      expect(desert.length).toBeGreaterThan(tiles.length * 0.1);
+      expect(desert.length).toBeLessThan(tiles.length * 0.4);
+      const keys = new Set(desert.map((t) => hexKey(t.hex)));
+      const first = desert[0];
+      if (!first) throw new Error("no desert");
+      const reached = new Set([hexKey(first.hex)]);
+      const frontier = [first.hex];
+      for (let hex = frontier.pop(); hex; hex = frontier.pop()) {
+        for (const n of neighbors(hex)) {
+          if (keys.has(hexKey(n)) && !reached.has(hexKey(n))) {
+            reached.add(hexKey(n));
+            frontier.push(n);
+          }
+        }
+      }
+      expect(reached.size).toBe(keys.size);
+    }
   });
 
   test("paths never cross impassable terrain and cost what their terrain costs", () => {

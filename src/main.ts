@@ -128,11 +128,12 @@ if (params.has("map")) {
     : fight.startsWith("grove")
       ? groveKey === "regrowth" || groveKey === "decay" ? GROVE_PRESETS[groveKey] : GROVE_PRESETS.uncommitted
       : fight === "bandits" ? BANDIT_GROUP : presets[1];
-  // `terrain=forest`, `backdrop=capitol|city|dungeon`: fight somewhere other than open plains (screenshots).
+  // `terrain=forest`, `biome=desert`, `backdrop=capitol|city|dungeon`: fight somewhere other than open plains (screenshots).
   const terrain = params.get("terrain") ?? "plain";
   const backdrop = params.get("backdrop");
   const setting: BattleSetting = {
     terrain: isTerrain(terrain) ? terrain : "plain",
+    biome: params.get("biome") === "desert" ? "desert" : "temperate",
     backdrop: backdrop === "capitol" ? MODEL_CHAINS.capitol("jilliath") : backdrop === "city" ? MODEL_CHAINS.city() : backdrop === "dungeon" ? MODEL_CHAINS.dungeon() : null,
   };
   app.start([presets[0], enemy], params.get("auto") === "1" ? null : params.get("side") === "1" ? 1 : 0, colorPair(["jilliath", fight.startsWith("nexus") ? "nexus" : fight.startsWith("grove") ? "grove" : "jilliath"]), Number(params.get("steps") ?? 0), setting);

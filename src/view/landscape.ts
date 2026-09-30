@@ -1,9 +1,10 @@
 import type { Hex } from "#rules/hex";
 import { hexDistance, hexKey } from "#rules/hex";
-import type { Terrain, WorldMap } from "#rules/map";
+import type { Biome, Terrain, WorldMap } from "#rules/map";
 import { abs, attribute, float, floor, instancedBufferAttribute, max, mix, mx_fractal_noise_float, positionLocal, positionWorld, select, sin, smoothstep, step, texture, time, transformNormalToView, uniformArray, vec2, vec3 } from "three/tsl";
 import * as THREE from "three/webgpu";
 import type { GroundTextures } from "#view/models";
+import { GROUND_LOOK, groundName } from "#view/models";
 
 /**
  * The map's ground as one continuous landscape (M56): gentle heights flowing between hexes, the terrains' textures
@@ -109,6 +110,8 @@ interface GroundSample {
   readonly weights: readonly [number, number, number, number];
   /** How much of the point is water (0..1). */
   readonly wet: number;
+  /** How much of the point is desert (0..1): the biomes blend along the same noisy edges as the terrains. */
+  readonly desert: number;
   /** The hexes the sample drew from (for fog: a point is as explored as the hexes around it). */
   readonly hexes: readonly Hex[];
 }
@@ -121,6 +124,11 @@ export class GroundShape {
     return this.map.tiles[hexKey(hex)]?.terrain ?? OUTSIDE;
   }
 
+  /** A hex's biome; the land past the edge takes the biome of the edge hex nearest it. */
+  biomeOf(hex: Hex): Biome {
+    return this.map.tiles[hexKey(edgeHexOf(hex, this.map.radius))]?.biome ?? "temperate";
+  }
+
   inMap(hex: Hex): boolean {
     return hexKey(hex) in this.map.tiles;
   }
@@ -131,6 +139,7 @@ export class GroundShape {
     const weights: [number, number, number, number] = [0, 0, 0, 0];
     let height = 0;
     let wet = 0;
+    let desert = 0;
     const hexes: Hex[] = [];
     for (const [dx, dz] of TAPS) {
       const hex = hexAt(wx + dx, wz + dz);
@@ -138,11 +147,12 @@ export class GroundShape {
       const terrain = this.terrainOf(hex);
       height += BASE_HEIGHT[terrain] + fbm(x * 1.7, z * 1.7, 37) * RELIEF[terrain];
       if (terrain === "water") wet += 1;
+      if (this.biomeOf(hex) === "desert") desert += 1;
       const layer = LAYERS.indexOf(terrain === "water" ? UNDERWATER : terrain);
       weights[layer] = (weights[layer] ?? 0) + 1;
     }
     const n = TAPS.length;
-    return { height: height / n, weights: [weights[0] / n, weights[1] / n, weights[2] / n, weights[3] / n], wet: wet / n, hexes };
+    return { height: height / n, weights: [weights[0] / n, weights[1] / n, weights[2] / n, weights[3] / n], wet: wet / n, desert: desert / n, hexes };
   }
 
   heightAt(x: number, z: number): number {
@@ -224,6 +234,9 @@ function layerNode(tex: THREE.Texture, uv: Vec2Node) {
 
 /** Grass tufts per square world unit, by the ground they grow on (plain, forest floor, hills, mountain). */
 const GRASS_DENSITY = [60, 16, 34, 0] as const;
+/** The desert grows a sparse fraction of that, dry and straw-colored (a tint on the green tufts). */
+const DESERT_GRASS = 0.12;
+const DRY = new THREE.Color().setRGB(1.55, 1.05, 0.55);
 /** No grass right around a place (a city, a camp, a dungeon): its model stands on bare ground. */
 const CLEARING = 0.5;
 
@@ -302,8 +315,8 @@ export class Landscape {
 
     const blank = new THREE.DataTexture(new Uint8Array([90, 110, 60, 255]), 1, 1);
     blank.needsUpdate = true;
-    const layer = (terrain: (typeof LAYERS)[number]) => {
-      const loaded = grounds.get(terrain, 1);
+    const layer = (terrain: (typeof LAYERS)[number], biome: Biome = "temperate") => {
+      const loaded = grounds.get(groundName(biome, terrain), 1) ?? grounds.get(terrain, 1);
       if (!loaded) return blank;
       loaded.wrapS = loaded.wrapT = THREE.RepeatWrapping;
       // Re-upload only a texture that's already loaded (another screen used it unrepeated); a pending one uploads
@@ -322,10 +335,12 @@ export class Landscape {
     const uv = world.div(GROUND_SCALE);
     const weights = attribute<"vec4">("groundWeights", "vec4");
     const w = weights.div(max(weights.x.add(weights.y).add(weights.z).add(weights.w), 0.001));
-    let ground = layerNode(layer("plain"), uv).mul(w.x)
-      .add(layerNode(layer("forest"), uv).mul(w.y).mul(1.35))
-      .add(layerNode(layer("hills"), uv).mul(w.z))
-      .add(layerNode(layer("mountain"), uv).mul(w.w));
+    const blend = (biome: Biome) =>
+      layerNode(layer("plain", biome), uv).mul(w.x)
+        .add(layerNode(layer("forest", biome), uv).mul(w.y).mul(biome === "temperate" ? 1.35 : 1))
+        .add(layerNode(layer("hills", biome), uv).mul(w.z))
+        .add(layerNode(layer("mountain", biome), uv).mul(w.w));
+    let ground = mix(blend("temperate"), blend("desert").mul(GROUND_LOOK.desert.tone), attribute<"float">("groundDesert", "float"));
     ground = ground.mul(mix(float(1), float(0.45), attribute<"float">("groundWet", "float")));
     // A pale, muddy shore where the land dips to the water.
     const shore = smoothstep(WATER_LEVEL + 0.07, WATER_LEVEL + 0.005, positionWorld.y);
@@ -381,7 +396,7 @@ export class Landscape {
 
   /** Grass tufts, swaying in the wind, where the ground is grassy; none on water or around places. */
   private grass(places: readonly THREE.Vector3[]): THREE.InstancedMesh {
-    const blades: { x: number; z: number; y: number; height: number; turn: number; shade: number; hex: Hex }[] = [];
+    const blades: { x: number; z: number; y: number; height: number; turn: number; shade: number; dry: boolean; hex: Hex }[] = [];
     let seed = 1;
     const random = () => {
       seed = (seed * 1664525 + 1013904223) % 4294967296;
@@ -394,7 +409,7 @@ export class Landscape {
         for (let cz = -1; cz < 1; cz += cell) {
           const probe = this.shape.sample(center.x + cx + cell / 2, center.z + cz + cell / 2);
           if (probe.wet > 0.01) continue;
-          const density = probe.weights.reduce((sum, w, i) => sum + w * (GRASS_DENSITY[i] ?? 0), 0);
+          const density = probe.weights.reduce((sum, w, i) => sum + w * (GRASS_DENSITY[i] ?? 0), 0) * (1 - probe.desert * (1 - DESERT_GRASS));
           const count = Math.round(density * cell * cell);
           for (let i = 0; i < count; i++) {
             const x = center.x + cx + random() * cell;
@@ -402,7 +417,7 @@ export class Landscape {
             const own = hexAt(x, z);
             if (own.q !== hex.q || own.r !== hex.r) continue;
             if (places.some((p) => Math.hypot(p.x - x, p.z - z) < CLEARING)) continue;
-            blades.push({ x, z, y: this.shape.heightAt(x, z), height: 0.07 + random() * 0.08, turn: random() * Math.PI * 2, shade: 0.75 + random() * 0.45, hex });
+            blades.push({ x, z, y: this.shape.heightAt(x, z), height: 0.07 + random() * 0.08, turn: random() * Math.PI * 2, shade: 0.75 + random() * 0.45, dry: random() < probe.desert, hex });
           }
         }
       }
@@ -432,7 +447,8 @@ export class Landscape {
     blades.forEach((b, i) => {
       rotation.setFromAxisAngle(new THREE.Vector3(0, 1, 0), b.turn);
       mesh.setMatrixAt(i, matrix.compose(new THREE.Vector3(b.x, b.y - 0.005, b.z), rotation, new THREE.Vector3(b.height * 0.9, b.height, b.height * 0.9)));
-      mesh.setColorAt(i, new THREE.Color().setRGB(b.shade, b.shade, b.shade, THREE.SRGBColorSpace));
+      const shade = new THREE.Color().setRGB(b.shade, b.shade, b.shade, THREE.SRGBColorSpace);
+      mesh.setColorAt(i, b.dry ? shade.multiply(DRY) : shade);
     });
     mesh.receiveShadow = true;
     mesh.name = "grass";
@@ -449,6 +465,7 @@ export class Landscape {
     const positions: number[] = [];
     const weights: number[] = [];
     const wet: number[] = [];
+    const desert: number[] = [];
     const hexOf: number[] = [];
     for (let row = 0; row <= rows; row++) {
       for (let col = 0; col <= columns; col++) {
@@ -458,6 +475,7 @@ export class Landscape {
         positions.push(x, sample.height, z);
         weights.push(...sample.weights);
         wet.push(sample.wet);
+        desert.push(sample.desert);
         const own = hexAt(x, z);
         hexOf.push(own.q, own.r);
       }
@@ -478,6 +496,7 @@ export class Landscape {
     geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
     geometry.setAttribute("groundWeights", new THREE.Float32BufferAttribute(weights, 4));
     geometry.setAttribute("groundWet", new THREE.Float32BufferAttribute(wet, 1));
+    geometry.setAttribute("groundDesert", new THREE.Float32BufferAttribute(desert, 1));
     geometry.setAttribute("groundHex", new THREE.Float32BufferAttribute(hexOf, 2));
     geometry.setIndex(indices);
     geometry.computeVertexNormals();

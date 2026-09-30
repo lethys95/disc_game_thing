@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import type { Biome } from "#rules/map";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
 
@@ -56,8 +57,31 @@ export function skyTexture(name: string, loaded?: (texture: THREE.Texture) => vo
   return texture;
 }
 
-/** How many variants each terrain prop has (`terrain/<kind>-<n>.glb`). */
+/** How many variants each terrain prop has (`terrain/<kind>-<n>.glb`, `terrain/<biome>-<kind>-<n>.glb`). */
 export const TERRAIN_VARIANTS = { tree: 4, mountain: 3, hill: 2, rock: 2, bush: 2 } as const;
+export type TerrainProp = keyof typeof TERRAIN_VARIANTS;
+
+/** The biomes other than the temperate land draw their props and grounds under their own prefix. */
+const BIOME_PREFIX: Readonly<Record<Biome, string>> = { temperate: "", desert: "desert-" };
+
+/** A terrain prop's slot chain: the biome's variant, then its first, then the temperate ones while it has none. */
+export function terrainChain(biome: Biome, kind: TerrainProp, variant: number): string[] {
+  const own = BIOME_PREFIX[biome];
+  return [...new Set([`terrain/${own}${kind}-${variant}`, `terrain/${own}${kind}-1`, `terrain/${kind}-${variant}`, `terrain/${kind}-1`])];
+}
+
+/** A biome's ground texture name for a terrain (`assets/ground/<name>-<n>.webp`). */
+export const groundName = (biome: Biome, terrain: string): string => `${BIOME_PREFIX[biome]}${terrain}`;
+
+/**
+ * How a biome's grounds are drawn. Sand is far paler than the gothic grass and drew the eye (2026-09-30), so the
+ * desert's are toned down to the same range; they were made tileable, so they repeat without the mirroring that
+ * hides the temperate grounds' seams (on sand ripples the mirror showed as a kaleidoscope).
+ */
+export const GROUND_LOOK: Readonly<Record<Biome, { readonly tone: number; readonly seamless: boolean }>> = {
+  temperate: { tone: 1, seamless: false },
+  desert: { tone: 0.7, seamless: true },
+};
 
 /** Every model slot the map can show, for the orphan check (`tests/models.test.ts`). */
 export function modelSlots(factions: readonly string[], structures: readonly string[], nodes: readonly string[]): string[] {
@@ -68,7 +92,9 @@ export function modelSlots(factions: readonly string[], structures: readonly str
     ...nodes.flatMap((n) => MODEL_CHAINS.node(n)),
     ...MODEL_CHAINS.dungeon(),
     ...MODEL_CHAINS.portal(),
-    ...Object.entries(TERRAIN_VARIANTS).flatMap(([kind, count]) => Array.from({ length: count }, (_, i) => `terrain/${kind}-${i + 1}`)),
+    ...Object.values(BIOME_PREFIX).flatMap((prefix) =>
+      Object.entries(TERRAIN_VARIANTS).flatMap(([kind, count]) => Array.from({ length: count }, (_, i) => `terrain/${prefix}${kind}-${i + 1}`)),
+    ),
   ];
 }
 

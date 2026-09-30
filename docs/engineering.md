@@ -57,6 +57,7 @@ Art is assigned by **slot**: one per unit (`portrait/<unitId>`), ability (`abili
 - `pnpm art report`: which slots have art. `pnpm art generate <kind|key> [seeds]`: candidates for slots without art (prompts from `scripts/art/prompts.ts`: the locked style + the user's `LOOKS`, else the content's name and rules text). `pnpm art accept <png> <key>`: resize to WebP and record prompt/seed in `assets/art/provenance.json`.
 - New content gets its slots automatically. `tests/art.test.ts` fails on art files that no slot uses (a rename would orphan them).
 - Candidates live in `art/candidates/` (not committed); only accepted art is.
+- **Biomes** (`Biome` on each `MapTile`) change only the look: the same terrains under a prefix. Props `terrain/<biome>-<kind>-<n>` (`terrainChain` falls back to the temperate ones), grounds `assets/ground/<biome>-<terrain>-1.webp` (`groundName`), and `GROUND_LOOK` (tone, seamless) for how each biome's grounds are drawn on the map and in battle. The landscape blends the biomes per vertex (`groundDesert`), along the same noisy edges as the terrains. A new biome: a prefix in `BIOME_PREFIX`, its grounds and props, a weight in the landscape.
 
 ## Adding content
 The step-by-step recipes (units, abilities, effects, nodes, forks, recording the user's design first) live in the `add-content` skill (`.claude/skills/add-content/SKILL.md`), so they come up whenever content is added.

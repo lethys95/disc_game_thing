@@ -124,7 +124,7 @@ function blindMap(map: WorldMap, explored: ReadonlySet<string>): WorldMap {
   const tiles = Object.values(map.tiles);
   if (tiles.every((t) => explored.has(hexKey(t.hex)))) return map;
   const known: Record<string, MapTile> = {};
-  for (const tile of tiles) known[hexKey(tile.hex)] = explored.has(hexKey(tile.hex)) ? tile : { hex: tile.hex, terrain: "plain" };
+  for (const tile of tiles) known[hexKey(tile.hex)] = explored.has(hexKey(tile.hex)) ? tile : { hex: tile.hex, terrain: "plain", biome: "temperate" };
   // A portal is known once both of its ends have been seen: where it leads isn't known from one end alone.
   const portals = map.portals.filter((p) => explored.has(hexKey(p.a)) && explored.has(hexKey(p.b)));
   return { ...map, tiles: known, portals };
