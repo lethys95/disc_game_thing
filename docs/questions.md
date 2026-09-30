@@ -7,6 +7,8 @@ Kept short: only what is the user's to decide, most blocking first. Answer inlin
 2. **A name for Jilliath's tier-1 mage** (the unit is in the game as `jilliath_mage_1`).
 3. **The joker line** per faction (`design/pillars.md`): whenever an idea comes.
 
+10. **The Regrowth line's damage (the composition matrix, 2026-09-30, `provisional.md` #61):** Regrowth 3 "supports and attacks weakly" (your design), and the Grove has no damage dealer past its tier-1 mage. So Regrowth squads win 0–17% against Jilliath's tier 3 (Templars' 20 armor turn its 32 into 12) while Decay squads win 92%. A tier-2 Grove mage would give it a partner; or Regrowth 3 hits harder; or it stays the Grove's weak matchup. Your call.
+
 ## Look and sound
 4. **The map's look:** "actual grass", and which way terrain goes (`design/map-look.md`). Reference images or games whose map look you like would help most.
 5. **Music:** the placeholder tracks are ACE-Step takes; you mentioned Suno for final AI music. Direction per faction, or references?
