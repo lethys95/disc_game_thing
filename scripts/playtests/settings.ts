@@ -2,7 +2,7 @@ import type { Playtest } from "#scripts/playtests/harness";
 
 const settings: Playtest = {
   name: "settings",
-  about: "remap Defend, pick an animation speed, reload, and find both kept and in use",
+  about: "remap Defend, pick an animation speed, show the frame rate, reload, and find all three kept and in use",
   async run(t) {
     const openSettings = async () => {
       await t.page.click("#mapmenu");
@@ -15,7 +15,10 @@ const settings: Playtest = {
     await t.page.locator("#menu .save-row", { hasText: "Defend" }).locator("button").click();
     await t.page.keyboard.press("x");
     await t.page.locator("#menu .segmented button", { hasText: "Fastest" }).click();
+    await t.page.locator("#menu label", { hasText: "Show the frame rate" }).locator("input").check();
+    await t.page.waitForSelector(".fps-meter");
     t.log(`after remap: Defend ${await defendKey()}`);
+    await t.page.locator("#menu label", { hasText: "Show the frame rate" }).scrollIntoViewIfNeeded();
     await t.shot("playtest-settings");
 
     await t.open("/?map&seed=1");
@@ -25,6 +28,9 @@ const settings: Playtest = {
     t.log(`after reload: Defend ${kept}, speed ${speed}`);
     if (kept !== "X") t.fail(`the remapped key wasn't kept: ${kept}`);
     if (speed !== "Fastest") t.fail(`the speed wasn't kept: ${speed}`);
+    const meter = await t.page.locator(".fps-meter").textContent();
+    t.log(`after reload: frame rate ${meter}`);
+    if (!meter?.includes("fps")) t.fail(`the frame-rate readout wasn't kept: ${meter}`);
 
     // In a battle, Defend now answers to X.
     await t.open("/?fight");

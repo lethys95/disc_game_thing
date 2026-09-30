@@ -29,6 +29,7 @@ const stage = new Stage(byId("stage"));
 const settings = new Settings();
 settings.follow((s) => stage.setFeel(ANIMATION_SPEEDS[s.speed].scale, s.rotate, s.zoom));
 settings.follow((s) => stage.setBounceLight(s.bounceLight));
+settings.follow((s) => stage.setFrameRate(s.showFrameRate));
 const sound = new Sound();
 settings.follow((s) => sound.setVolumes(s));
 // Every button clicks.
@@ -36,7 +37,6 @@ document.addEventListener("click", (e) => {
   if (e.target instanceof Element && e.target.closest("button")) sound.play(["ui/click"]);
 });
 if (params.has("fast")) stage.testScale = 0.1;
-if (params.has("fps")) stage.showFrameRate();
 const battleScene = new BattleScene(stage);
 const mapView = new MapView(stage);
 // The mood probe (2026-09-29): `?mood=day|overcast|dusk|grim`.

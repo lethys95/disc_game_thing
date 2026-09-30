@@ -58,7 +58,7 @@ export class Stage {
   private readonly raycaster = new THREE.Raycaster();
   /** Animation speed from the settings: multiplies every animation and AI pause. */
   private speedScale = 1;
-  /** A corner readout of frames per second and the GPU backend (`?fps`), to judge performance on real hardware. */
+  /** A corner readout of frames per second and the GPU backend (the player's setting), to judge real hardware. */
   private fpsMeter: { readonly element: HTMLElement; frames: number; since: number } | null = null;
   /** The player's setting: bounce light where a scene asks for it (`BOUNCE_LIGHT`). */
   private bounceLight = true;
@@ -111,7 +111,15 @@ export class Stage {
     this.controls.update();
   }
 
-  showFrameRate(): void {
+  /** The player's setting for the frame-rate readout. */
+  setFrameRate(on: boolean): void {
+    if (on === (this.fpsMeter !== null)) return;
+    if (!on) {
+      this.fpsMeter?.element.remove();
+      this.fpsMeter = null;
+      this.renderer.info.autoReset = true;
+      return;
+    }
     const element = document.createElement("div");
     element.className = "fps-meter";
     this.host.appendChild(element);

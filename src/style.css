@@ -532,7 +532,7 @@ button.action.selected:not(.ability), button.small.selected, button.doctrine.sel
 #capitol .rail-tab:not(.selected) .glyph { filter: brightness(0.75); }
 
 
-/* ?fps: frame rate readout for judging performance on real hardware. */
+/* The frame-rate readout (a setting) for judging performance on real hardware. */
 .fps-meter {
   position: absolute;
   left: 8px;

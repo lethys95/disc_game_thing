@@ -31,9 +31,11 @@ export interface SettingsData {
   readonly musicVolume: number;
   /** Light bouncing off the ground on the map (screen-space GI): the costliest effect; off for a modest GPU. */
   readonly bounceLight: boolean;
+  /** A corner readout of frames per second, triangles and the GPU backend, to judge performance on real hardware. */
+  readonly showFrameRate: boolean;
 }
 
-export const DEFAULT_SETTINGS: SettingsData = { speed: "normal", rotate: 1, zoom: 1, hotkeys: {}, slotKeys: true, masterVolume: 0.8, effectsVolume: 1, musicVolume: 0.6, bounceLight: true };
+export const DEFAULT_SETTINGS: SettingsData = { speed: "normal", rotate: 1, zoom: 1, hotkeys: {}, slotKeys: true, masterVolume: 0.8, effectsVolume: 1, musicVolume: 0.6, bounceLight: true, showFrameRate: false };
 
 /** Camera multipliers stay within this range. */
 export const CAMERA_RANGE = { min: 0.25, max: 2.5 } as const;
@@ -58,6 +60,7 @@ export function parseSettings(text: string | null): SettingsData {
   const speed: unknown = Reflect.get(parsed, "speed");
   const slotKeys: unknown = Reflect.get(parsed, "slotKeys");
   const bounceLight: unknown = Reflect.get(parsed, "bounceLight");
+  const showFrameRate: unknown = Reflect.get(parsed, "showFrameRate");
   const hotkeys: unknown = Reflect.get(parsed, "hotkeys");
   const keys: Record<string, string> = {};
   if (typeof hotkeys === "object" && hotkeys !== null) {
@@ -73,6 +76,7 @@ export function parseSettings(text: string | null): SettingsData {
     effectsVolume: volume(Reflect.get(parsed, "effectsVolume")) ?? DEFAULT_SETTINGS.effectsVolume,
     musicVolume: volume(Reflect.get(parsed, "musicVolume")) ?? DEFAULT_SETTINGS.musicVolume,
     bounceLight: typeof bounceLight === "boolean" ? bounceLight : DEFAULT_SETTINGS.bounceLight,
+    showFrameRate: typeof showFrameRate === "boolean" ? showFrameRate : DEFAULT_SETTINGS.showFrameRate,
   };
 }
 

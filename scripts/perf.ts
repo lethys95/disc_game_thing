@@ -3,7 +3,7 @@ import { chromium } from "playwright";
 import { createServer } from "vite";
 
 /**
- * Frame rate on the headless integrated Radeon, the nearest thing here to the user's laptop: the `?fps` readout after
+ * Frame rate on the headless integrated Radeon, the nearest thing here to the user's laptop: the frame-rate readout after
  * the scene settles, with bounce light on and off. `pnpm tsx scripts/perf.ts [route]` (default: the revealed map).
  */
 const route = process.argv[2] ?? "/?map&seed=1&reveal";
@@ -16,9 +16,9 @@ const browser = await chromium.launch({ args: [...HEADLESS_GPU_ARGS], env: HEADL
 
 for (const bounceLight of [true, false]) {
   const context = await browser.newContext({ viewport: { width: 1280, height: 720 } });
-  await context.addInitScript((on: boolean) => window.localStorage.setItem("disc-settings", JSON.stringify({ bounceLight: on })), bounceLight);
+  await context.addInitScript((on: boolean) => window.localStorage.setItem("disc-settings", JSON.stringify({ bounceLight: on, showFrameRate: true })), bounceLight);
   const page = await context.newPage();
-  await page.goto(new URL(`${route}&fps`, address).href);
+  await page.goto(new URL(route, address).href);
   await page.waitForSelector("body[data-ready=true]", { timeout: 30000 });
   await page.waitForTimeout(6000);
   const readings: string[] = [];
