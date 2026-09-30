@@ -15,6 +15,6 @@ Kept short: only what is the user's to decide, most blocking first. Answer inlin
 9. **Hugging Face access for TRELLIS.2** (the better mesh generator; TRELLIS v1 works meanwhile): request access at https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m, then run `! hf auth login` here. Only if you want it.
 
 ## Rules
-6. **Terrain and nodes (your idea):** which terrain types, and which nodes each can spawn (`design/map-look.md`).
+6. **Biomes: node pools and tribes (your idea; the desert exists now, M77):** which nodes each biome's cities can spawn, and which tribe guards its camps. Rule effects only with care (you, 2026-09-30). Claude's pitches for pools are in `design/brainstorm/biomes.md`, not canon.
 7. **Spells:** should mana nodes have a color of their own (D2's typed crystals), so capturing one gives that color? And what gates the spell tree: Capitol tier, research, mana spent? The real spells are yours to design whenever you like (placeholders now).
 8. **Items:** yours to design whenever you like (placeholders now); the merchant and dungeons sell and give whatever exists.
