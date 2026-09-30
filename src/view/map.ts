@@ -22,7 +22,7 @@ import type { CameraPose, Stage } from "#view/stage";
 import { STRUCTURES } from "#rules/structures";
 import type { StructureKind } from "#rules/structures";
 import { edgeHexOf, hexAt, Landscape, MARGIN } from "#view/landscape";
-import { GroundTextures, HORIZON_MIST, MODEL_CHAINS, Models, skyTexture, TERRAIN_VARIANTS } from "#view/models";
+import { GroundTextures, HORIZON_MIST, MODEL_CHAINS, Models, skyTexture, terrainChain, TERRAIN_VARIANTS } from "#view/models";
 
 const SIZE = 1;
 /** How long a warband's figure takes to walk one hex. */
@@ -304,14 +304,15 @@ export class MapView {
         this.terrain.add(host);
         decoration.push(host);
         const variant = 1 + Math.floor(jitter(tile.hex, salt) * variants);
-        this.models.dress(host, [`terrain/${kind}-${variant}`, `terrain/${kind}-1`], height, width);
+        this.models.dress(host, terrainChain(tile.biome, kind, variant), height, width);
       };
       if (tile.terrain === "forest") {
         // A ring of seven and one in the middle, with underbrush between: a forest should read as a forest from the
-        // map's height.
-        for (let i = 0; i < 8; i++) {
-          const angle = (i / 7) * Math.PI * 2 + jitter(tile.hex, i) * 0.8;
-          const reach = i === 7 ? 0.05 : 0.36 + jitter(tile.hex, i + 20) * 0.22;
+        // map's height. A desert's groves are sparser.
+        const trees = tile.biome === "desert" ? 5 : 8;
+        for (let i = 0; i < trees; i++) {
+          const angle = (i / (trees - 1)) * Math.PI * 2 + jitter(tile.hex, i) * 0.8;
+          const reach = i === trees - 1 ? 0.05 : 0.36 + jitter(tile.hex, i + 20) * 0.22;
           const height = 0.75 + jitter(tile.hex, i + 10) * 0.4;
           const tree = new THREE.Group();
           const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.05, height, 5), trunk);
@@ -366,13 +367,14 @@ export class MapView {
   private buildWilds(map: WorldMap, shape: Landscape["shape"]): void {
     const place = (hex: Hex, kind: "tree" | "mountain", variants: number, salt: number, x: number, z: number, height: number, width: number) => {
       const at = hexPosition(hex);
+      const edge = edgeHexOf(hex, map.radius);
       const host = new THREE.Group();
       host.position.set(at.x + x, shape.heightAt(at.x + x, at.z + z) - height * SINK[kind], at.z + z);
       host.rotation.y = jitter(hex, salt + 50) * Math.PI * 2;
       this.terrain.add(host);
       // Hidden with the edge hex nearest it until that's explored, like the land under it.
-      this.hexes.get(hexKey(edgeHexOf(hex, map.radius)))?.decoration.push(host);
-      this.models.dress(host, [`terrain/${kind}-${1 + Math.floor(jitter(hex, salt) * variants)}`, `terrain/${kind}-1`], height, width);
+      this.hexes.get(hexKey(edge))?.decoration.push(host);
+      this.models.dress(host, terrainChain(shape.biomeOf(edge), kind, 1 + Math.floor(jitter(hex, salt) * variants)), height, width);
     };
     for (let ring = map.radius + 1; ring <= map.radius + MARGIN; ring++) {
       for (const hex of hexRing(ring)) {

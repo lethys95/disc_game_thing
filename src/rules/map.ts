@@ -18,9 +18,16 @@ export const TERRAIN_COST: Readonly<Record<Terrain, number | null>> = {
   water: null,
 };
 
+/**
+ * A region's look (user, 2026-09-30: biomes are mostly cosmetic; careful with effects): the same terrains, drawn
+ * differently. It changes no rule yet. "temperate" is a placeholder name for the land the map had before biomes.
+ */
+export type Biome = "temperate" | "desert";
+
 export interface MapTile {
   readonly hex: Hex;
   readonly terrain: Terrain;
+  readonly biome: Biome;
 }
 
 /**
@@ -97,6 +104,19 @@ function terrainFor(seed: number, hex: Hex, radius: number): Terrain {
 }
 
 /**
+ * Provisional (#60): one desert per map, a patch with a wandering edge about half the map's radius across, centered
+ * on a hex partway out from the middle, in a direction the seed picks.
+ */
+function biomeFor(seed: number, hex: Hex, radius: number): Biome {
+  const angle = noise(seed + 6007, 0, 0) * Math.PI * 2;
+  const out = radius * 0.45;
+  const q = Math.round(out * Math.cos(angle));
+  const r = Math.round(out * Math.sin(angle) - q / 2);
+  const reach = radius * 0.5 + (smooth(seed + 6011, hex) - 0.5) * 3;
+  return hexDistance(hex, { q, r }) <= reach ? "desert" : "temperate";
+}
+
+/**
  * One start per player on the corners of the ring just inside the edge, spread evenly (two players: opposite
  * corners). Up to six players; the start hexes are cleared to plain ground.
  */
@@ -140,7 +160,7 @@ export function generateMap(seed: number, players = 2, size: MapSize = defaultMa
     const tiles: Record<string, MapTile> = {};
     for (const hex of hexagon(radius)) {
       const clear = starts.some((s) => hexDistance(s, hex) <= 1);
-      tiles[hexKey(hex)] = { hex, terrain: clear ? "plain" : terrainFor(variant, hex, radius) };
+      tiles[hexKey(hex)] = { hex, terrain: clear ? "plain" : terrainFor(variant, hex, radius), biome: biomeFor(variant, hex, radius) };
     }
     const bare: WorldMap = { radius, tiles, starts, sites: [], lairs: [], structures: [], portals: [] };
     const first = starts[0];

@@ -25,6 +25,8 @@ TRELLIS.2 runs are offline and never use a stored login (`run_trellis2.sh`). `15
 
 Ground textures (`assets/ground/<terrain>-<n>.webp`): `scripts/art/ground.ts`, seeds 1–3, resized to 512 px WebP.
 
+The desert (2026-09-30): props `terrain/desert-<kind>-<n>` from `scripts/art/props.ts` (gothic framing, concept seed 1, else 2), meshed at the terrain budgets above with no albedo lift. Grounds `assets/ground/desert-<terrain>-1.webp`: plain seed 5, hills seed 4, mountain seed 1, forest seed 4 cropped to its middle 520 px (the model framed it with dark fronds); each made tileable (blended with a copy rolled by half, radial mask) and resized to 512 px WebP.
+
 Sky (`assets/sky/map.webp`): `scripts/art/sky.ts`, seed 1, shifted up by 24% of its height so the painted misty mountains sit on the horizon, the gap below filled with the horizon mist (`HORIZON_MIST` in `src/view/map.ts`).
 
 The prompts are keyed by slot in `scripts/art/props.ts` (the first two predate that: ids `capitol-jilliath` and `mage`, same text). Cleanup is always `scripts/art/prop_cleanup.py`.

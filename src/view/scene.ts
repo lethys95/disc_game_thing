@@ -16,7 +16,7 @@ import { effectDef } from "#rules/effects";
 import { UNITS } from "#rules/units/index";
 import type { Terrain } from "#rules/map";
 import type { BattleSetting } from "#view/battle-setting";
-import { GroundTextures, HORIZON_MIST, Models, skyTexture, TERRAIN_VARIANTS } from "#view/models";
+import { GROUND_LOOK, GroundTextures, groundName, HORIZON_MIST, Models, skyTexture, terrainChain, TERRAIN_VARIANTS } from "#view/models";
 
 export interface TileRef {
   readonly side: Side;
@@ -172,19 +172,19 @@ export class BattleScene {
     if (this.setting && JSON.stringify(this.setting) === JSON.stringify(setting)) return;
     this.setting = setting;
     discardChildren(this.settingLayer);
-    const texture = this.grounds.get(setting.terrain, 1);
+    const texture = this.grounds.get(groundName(setting.biome, setting.terrain), 1) ?? this.grounds.get(setting.terrain, 1);
     const material = this.ground.material;
     material.map?.dispose();
     material.map = null;
     if (texture) {
       const tiled = texture.clone();
       tiled.userData = {};
-      tiled.wrapS = THREE.MirroredRepeatWrapping;
-      tiled.wrapT = THREE.MirroredRepeatWrapping;
+      const look = GROUND_LOOK[setting.biome];
+      tiled.wrapS = tiled.wrapT = look.seamless ? THREE.RepeatWrapping : THREE.MirroredRepeatWrapping;
       tiled.repeat.set(44, 44);
       tiled.needsUpdate = true;
       material.map = tiled;
-      material.color.set(0xffffff);
+      material.color.setScalar(look.tone);
     } else material.color.set(0x1c2230);
     material.needsUpdate = true;
     for (const prop of ARENA_PROPS[setting.terrain]) {
@@ -199,7 +199,7 @@ export class BattleScene {
         this.settingLayer.add(host);
         const variant = 1 + (i % prop.variants);
         const scale = 0.8 + ((i * 0.53) % 1) * 0.4;
-        this.models.dress(host, [`terrain/${prop.kind}-${variant}`, `terrain/${prop.kind}-1`], prop.height * scale, prop.width * scale);
+        this.models.dress(host, terrainChain(setting.biome, prop.kind, variant), prop.height * scale, prop.width * scale);
       }
     }
     if (setting.backdrop) {
