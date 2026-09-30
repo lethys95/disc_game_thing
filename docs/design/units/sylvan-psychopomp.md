@@ -5,3 +5,5 @@
 **Look (user, canon):** a woman, an elf with pointed ears. Shamanistic, druidism. Psychedelic: life, sprawling with life, confusion. Hypnotic eyes. Multiple different spectral, blurry shapes, barely visible, brush out from her face. Trinkets and baubles in her hair; a rough hairstyle. Greens, roots and vines; purples for pulses.
 
 **Art intent (user):** a completely different message from the Zealot in a similar art style: "it should be clear that these two characters come from the same game."
+
+**Look, refined (user, 2026-09-30):** closer to the original ink portrait than the painted tries. Stronger: **eyes glowing blue, mouth open, a ghastly smoke pouring out.** The ghosts are **full bodies trying to glitch out of her form**, not blobs following her around. In the final version: rapid, glitchy, bluish ghostly spectres skipping out of her frame, like an evasion effect in some games, but blue. As if she's **possessed or haunted**. Wild, not a pretty elf (the Grove's character, `factions/sylvan.md`). To come back to.

@@ -29,3 +29,8 @@ Spells: self healing, buffs, etc.
 - **Golgari** (MTG): withering, rot, the balance of life and death, life from the dead, regrowth, the cycle. (The Wastes' death is ghosts, shades, phantasmagoria, mystery: different.)
 - Ramp: units gain 50% more per level past the end of their line (`FACTIONS.grove.levelBonusPercent`).
 - The melee line forks into **Regrowth** and **Decay** (`faction-stuff/sylvan/melee.md`).
+
+## User, 2026-09-30
+- **Character: wild, fierce, not noble.** "More wild than the pretty elves from other games." A fierce, protective culture around the balance of regrowth and decay they've cultivated: they spent a long time getting nature back in order after terrible events in the past (lore, not yet written), and now they're furiously protective of what they've cultivated. "It's not particularly noble at all."
+- **Tribalistic side.** The music the user made for Grove battles captures it (Suno, below): low, brooding, tribal.
+- **Battle music** (the user's Suno prompt, which "really captured the mood"): "off-beat, combat thinking game music, tribal, drums, wild, irregular drum pattern, dark, slow, background, sylvan grove themed thinking combat game background music, exotic instruments, unusual, savage elves scheming ambush type music". The user's rule for all factions: a strategy game isn't high-octane, so its music shouldn't be; low and brooding over high energy.

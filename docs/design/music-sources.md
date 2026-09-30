@@ -6,6 +6,9 @@ web on the date above. The companion doc `audio-sources.md` covers SFX and human
 `audio-pipeline.md` covers the ACE-Step setup. **Terms change often (Suno changed its terms on 2026-09-03). Recheck
 on the day you generate or buy, and save a copy of the terms with the files.** This is not legal advice.
 
+## The user's direction (2026-09-30)
+The user tried Suno's free tier: "well beyond anything we could possibly make ourselves through our local tools". The Grove battle track (prompt in `factions/sylvan.md`) is "just perfect". Plan: churn out as much as is reasonable per faction, as long as each faction's mood is captured. Style rule: low, brooding music; a strategy game isn't high-octane. **Free-tier tracks can't ship** (below): keep the prompts, and regenerate the keepers on a paid month.
+
 ## Short answer on Suno
 
 **The contract doesn't block a paid game, but Suno is the weakest of the realistic options.**
