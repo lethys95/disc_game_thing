@@ -1,6 +1,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { chromium } from "playwright";
 import { generate, KREA2_TURBO } from "#scripts/art/comfy";
+import type { Job } from "#scripts/art/comfy";
 
 export interface Candidate {
   readonly file: string;
@@ -8,22 +9,24 @@ export interface Candidate {
   readonly seed: number;
   readonly prompt: string;
   readonly model: string;
+  readonly negative?: string;
+  readonly cfg?: number;
 }
 
 /**
  * Every job once per seed into `dir`, with a manifest (prompt, seed, model: enough to regenerate any image exactly)
  * and a contact sheet to judge the lot at a glance.
  */
-export async function runBatch(dir: string, jobs: readonly { id: string; prompt: string; width: number; height: number }[], seeds: readonly number[]): Promise<Candidate[]> {
+export async function runBatch(dir: string, jobs: readonly (Omit<Job, "seed"> & { readonly id: string })[], seeds: readonly number[]): Promise<Candidate[]> {
   await mkdir(dir, { recursive: true });
   const manifest: Candidate[] = [];
   for (const job of jobs) {
     for (const seed of seeds) {
       const file = `${job.id}-${seed}.png`;
       const started = Date.now();
-      await writeFile(`${dir}/${file}`, await generate({ prompt: job.prompt, seed, width: job.width, height: job.height }, `disc/${job.id}`));
+      await writeFile(`${dir}/${file}`, await generate({ ...job, seed }, `disc/${job.id}`));
       console.log(`${dir}/${file} (${((Date.now() - started) / 1000).toFixed(1)} s)`);
-      manifest.push({ file, id: job.id, seed, prompt: job.prompt, model: KREA2_TURBO.diffusionModel });
+      manifest.push({ file, id: job.id, seed, prompt: job.prompt, model: KREA2_TURBO.diffusionModel, ...(job.negative ? { negative: job.negative, cfg: job.cfg ?? KREA2_TURBO.cfg } : {}) });
     }
   }
   await writeFile(`${dir}/manifest.json`, JSON.stringify(manifest, null, 2));

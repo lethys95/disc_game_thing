@@ -1,6 +1,7 @@
 /**
  * A minimal client for a local ComfyUI's HTTP API: queue a graph, wait for it, fetch the images. The graph mirrors
- * ComfyUI's own "Text to Image (Krea-2 Turbo)" blueprint (8 steps, cfg 1, euler/simple, zeroed negative).
+ * ComfyUI's own "Text to Image (Krea-2 Turbo)" blueprint (8 steps, cfg 1, euler/simple, zeroed negative). At cfg 1 the
+ * sampler ignores the negative; a job with a negative prompt must also raise `cfg` for it to have any effect.
  */
 
 export const COMFY_URL = process.env["COMFY_URL"] ?? "http://127.0.0.1:8188";
@@ -18,6 +19,8 @@ export interface Job {
   readonly seed: number;
   readonly width: number;
   readonly height: number;
+  readonly negative?: string;
+  readonly cfg?: number;
 }
 
 type Input = string | number | readonly [string, number];
@@ -29,13 +32,15 @@ function krea2Graph(job: Job, prefix: string): Graph {
     clip: { class_type: "CLIPLoader", inputs: { clip_name: KREA2_TURBO.textEncoder, type: "krea2", device: "default" } },
     vae: { class_type: "VAELoader", inputs: { vae_name: KREA2_TURBO.vae } },
     positive: { class_type: "CLIPTextEncode", inputs: { clip: ["clip", 0], text: job.prompt } },
-    negative: { class_type: "ConditioningZeroOut", inputs: { conditioning: ["positive", 0] } },
+    negative: job.negative
+      ? { class_type: "CLIPTextEncode", inputs: { clip: ["clip", 0], text: job.negative } }
+      : { class_type: "ConditioningZeroOut", inputs: { conditioning: ["positive", 0] } },
     latent: { class_type: "EmptyLatentImage", inputs: { width: job.width, height: job.height, batch_size: 1 } },
     sample: {
       class_type: "KSampler",
       inputs: {
         model: ["unet", 0], positive: ["positive", 0], negative: ["negative", 0], latent_image: ["latent", 0],
-        seed: job.seed, steps: KREA2_TURBO.steps, cfg: KREA2_TURBO.cfg, sampler_name: "euler", scheduler: "simple", denoise: 1,
+        seed: job.seed, steps: KREA2_TURBO.steps, cfg: job.cfg ?? KREA2_TURBO.cfg, sampler_name: "euler", scheduler: "simple", denoise: 1,
       },
     },
     decode: { class_type: "VAEDecode", inputs: { samples: ["sample", 0], vae: ["vae", 0] } },

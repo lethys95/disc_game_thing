@@ -56,6 +56,12 @@ const GOLEM =
   "A hulking golem guardian, not a person: a massive body of cracked grey stone blocks bound with dark brass bands, a blank stone head, thick stone arms and legs, " +
   "faint electric teal lightning crackling in the cracks, a scrap of old cloth at its waist.";
 
+/** Several angles in one image (the user, 2026-09-30), for multi-view 3D: painted together, the views agree. */
+const TURNAROUND =
+  "A character turnaround sheet of a 3D game character model: the same figure shown three times side by side at the same size, in a front view, a side view from the left, and a back view, all standing in the same T-pose, " +
+  `like a sculpted and textured asset shown in a modelling program, each view whole from head to feet and fingertip to fingertip. ${GOLEM} ${GOTHIC_3D} ` +
+  "Flat, even, shadowless lighting from all sides, like a texture reference: no cast or painted shadows, no dark recesses. A plain flat light grey background, no ground, no text, no labels.";
+
 const JOBS = [
   { id: "custodian-tpose", prompt: `A full-body character model reference of a single figure, the whole figure visible from head to feet. ${GOLEM} ${FOR_RIG}` },
   // The buildings' framing (the user's gothic, 2026-09-29), which survives flat light: the T-pose above drifted cartoonish.
@@ -67,13 +73,9 @@ const JOBS = [
   { id: "custodian-3d-d2", prompt: `A 3D render of a game character model in a T-pose, the whole figure visible from head to feet and fingertip to fingertip with a margin around it, like a sculpted and textured asset shown in a modelling program. ${GOLEM} ${GOTHIC_3D.replace("Dark gothic fantasy,", "Dark gothic fantasy in the manner of Disciples II's art,")} ${FOR_RIG}` },
   // The user (2026-09-30): several angles in one image, for Tripo's multi-view input; painted together, the views
   // should agree with each other more than separate generations would.
-  {
-    id: "custodian-turnaround",
-    prompt:
-      "A character turnaround sheet of a 3D game character model: the same figure shown three times side by side at the same size, in a front view, a side view from the left, and a back view, all standing in the same T-pose, " +
-      `like a sculpted and textured asset shown in a modelling program, each view whole from head to feet and fingertip to fingertip. ${GOLEM} ${GOTHIC_3D} ` +
-      "Flat, even, shadowless lighting from all sides, like a texture reference: no cast or painted shadows, no dark recesses. A plain flat light grey background, no ground, no text, no labels.",
-  },
+  { id: "custodian-turnaround", prompt: TURNAROUND },
+  // The user (2026-09-30): does a negative prompt keep the turnaround in a T-pose? Only at cfg above 1 (comfy.ts).
+  ...[2, 3].map((cfg) => ({ id: `custodian-turnaround-neg-cfg${cfg}`, prompt: TURNAROUND, negative: "A-pose, arms hanging down, arms angled down, relaxed arms", cfg })),
   { id: "custodian-front", prompt: `${FIGURE} ${CUSTODIAN_3D} ${ANCHOR("electric teal, like lightning")}` },
   { id: "zealot-anchor", prompt: `${FIGURE} ${ZEALOT} ${ANCHOR("vivid blood red")}` },
   { id: "zealot-plain", prompt: `${FIGURE} ${ZEALOT} ${PLAIN("vivid blood red")}` },
@@ -87,6 +89,6 @@ const ids = args.filter((a) => Number.isNaN(Number(a)));
 await runBatch(
   "art/candidates/concepts",
   // A T-pose spans wider than it stands tall: the portrait frame cut the arms off.
-  JOBS.filter((j) => ids.length === 0 || ids.includes(j.id)).map((j) => ({ ...j, ...(j.id.endsWith("turnaround") ? { width: 2048, height: 832 } : j.id.includes("tpose") || j.id.includes("-3d") ? { width: 1344, height: 1024 } : { width: 896, height: 1152 }) })),
+  JOBS.filter((j) => ids.length === 0 || ids.includes(j.id)).map((j) => ({ ...j, ...(j.id.includes("turnaround") ? { width: 2048, height: 832 } : j.id.includes("tpose") || j.id.includes("-3d") ? { width: 1344, height: 1024 } : { width: 896, height: 1152 }) })),
   seeds.length > 0 ? seeds : [1000, 1001, 1002, 1003],
 );
