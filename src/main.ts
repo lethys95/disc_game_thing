@@ -150,6 +150,7 @@ if (params.has("debug")) {
       capitolHex: (side: 0 | 1) => campaign.capitolHex(side),
       homeNodeHex: (side: 0 | 1) => campaign.homeNodeHex(side),
       log: () => [...document.querySelectorAll("#log .entry")].map((e) => e.textContent),
+      music: () => sound.battleMusicNow(),
       /** What waits for the player's input now, so playtests wait on state rather than on time. */
       awaiting: (): "battle" | "map" | null => (app.playersTurn() ? "battle" : campaign.myTurn() ? "map" : null),
     },

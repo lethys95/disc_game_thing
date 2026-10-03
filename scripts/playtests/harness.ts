@@ -51,6 +51,7 @@ interface Debug {
   capitolHex(player: number): Hex | null;
   homeNodeHex(player: number): Hex | null;
   log(): string[];
+  music(): { lead: 0 | 1; tracks: [string | null, string | null] } | null;
   awaiting(): "battle" | "map" | null;
 }
 

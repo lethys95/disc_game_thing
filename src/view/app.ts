@@ -5,6 +5,7 @@ import { sameTile } from "#rules/battle/grid";
 import type { Action, Battle, BattleEvent, BattleUnit, Enhancement, LegalAbility, Side, TargetChoice } from "#rules/battle/types";
 import { PLAIN } from "#rules/battle/types";
 import type { PlayerColor } from "#rules/world/colors";
+import { openingLeader, standing, Tug } from "#view/battle-music";
 import { applySideColors, colorPair } from "#view/colors";
 import { actionButtons, enhancementLabel, Hud, optionKey, unitLabel, withOverload } from "#view/hud";
 import { asKnown, masked } from "#view/secrecy";
@@ -63,6 +64,8 @@ function ownEvents(events: readonly BattleEvent[]): readonly BattleEvent[] {
 
 export class App implements KeyLayer {
   private battle: Battle | null = null;
+  /** Whose theme the battle music is on (`view/battle-music.ts`). */
+  private tug: Tug | null = null;
   private playerSide: Side | null = 0;
   private finish: Finish = { kind: "skirmish", squads: [[], []], colors: colorPair(["jilliath", "jilliath"]) };
   /** The chosen ability variant (`optionKey`). */
@@ -168,9 +171,11 @@ export class App implements KeyLayer {
     this.playerSide = playerSide;
     this.finish = finish;
     this.auto = false;
-    // The attacker (side 0) sets the music: its faction's battle tracks, in turn.
-    const attacker = Object.values(start.units).find((u) => u.side === 0);
-    this.sound.battleMusic(UNITS[attacker?.defId ?? ""]?.faction ?? "neutral");
+    // Both sides' themes play; the side that's winning is heard (`view/battle-music.ts`).
+    const factionOf = (side: Side) => UNITS[Object.values(start.units).find((u) => u.side === side)?.defId ?? ""]?.faction ?? "neutral";
+    const opening = openingLeader(standing(start));
+    this.tug = new Tug(opening, performance.now());
+    this.sound.battleMusic([factionOf(0), factionOf(1)], opening);
     this.sound.ambience(null);
     let battle = start;
     this.scene.show();
@@ -185,6 +190,7 @@ export class App implements KeyLayer {
       battle = next.battle;
     }
     this.battle = battle;
+    this.followLead();
     this.scene.reset();
     this.scene.sync(battle);
     this.selectDefault();
@@ -223,6 +229,7 @@ export class App implements KeyLayer {
     if (generation !== this.generation) return;
     this.busy = false;
     this.battle = done;
+    this.followLead();
     if (done.outcome) {
       const end: BattleEvent[] = [{ type: "battleEnd", outcome: done.outcome }];
       this.hud.appendLog(end, done, this.playerSide);
@@ -377,12 +384,18 @@ export class App implements KeyLayer {
     for (const cue of battleCues(visible, step.battle, this.playerSide)) this.sound.play(cue.chain, cue.delay * this.stage.timeScale, cue.duration);
     this.hud.appendLog(visible, step.battle, this.playerSide);
     this.battle = step.battle;
+    this.followLead();
     await this.scene.play(visible, step.battle);
     if (generation !== this.generation) return;
     this.busy = false;
     this.selectDefault();
     this.render();
     this.schedule();
+  }
+
+  /** The battle music turns to whoever is winning now. */
+  private followLead(): void {
+    if (this.battle && this.tug) this.sound.musicLead(this.tug.update(standing(this.battle), performance.now()));
   }
 
   private schedule(): void {

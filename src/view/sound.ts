@@ -1,3 +1,5 @@
+import type { Side } from "#rules/battle/types";
+import { Bucket } from "#view/bucket";
 import type { SettingsData } from "#view/settings";
 
 /**
@@ -18,8 +20,9 @@ export const resolve = (chain: readonly string[]): string | undefined => chain.f
 const REPEAT_MS = 60;
 
 /**
- * Music, one looping track at a time, crossfaded: `assets/audio/music/<faction>/map.ogg` and `battle-<n>.ogg`
- * (user, 2026-09-27: on the map your faction's theme; in battle the attacker's faction, rotating through its tracks).
+ * Music: `assets/audio/music/<faction>/map.ogg` and `battle-<n>.ogg`. On the map, your faction's theme, looping
+ * (user, 2026-09-27). In battle, both sides' themes play at once and the side that's winning is the one heard (user,
+ * 2026-10-03: a tug of war), each drawing its tracks from its faction's bucket (`view/bucket.ts`).
  */
 export type Track = string;
 
@@ -31,6 +34,8 @@ export const musicTracks = (): string[] =>
   });
 
 const CROSSFADE_S = 1.5;
+/** How long the battle music takes to turn from one side's theme to the other's. */
+const TURN_S = 4;
 
 /** A looping layer: music, or an ambience bed under it. One file at a time, crossfaded. */
 interface Loop {
@@ -38,6 +43,14 @@ interface Loop {
   want: string | null;
   playing: { readonly key: string; readonly source: AudioBufferSourceNode; readonly fade: GainNode } | null;
   bus: GainNode | null;
+}
+
+/** One side's theme in battle: a track from its faction's bucket, then the next when it ends. */
+interface Voice {
+  readonly bucket: Bucket<string>;
+  readonly fade: GainNode;
+  source: AudioBufferSourceNode | null;
+  track: string | null;
 }
 
 export class Sound {
@@ -49,8 +62,12 @@ export class Sound {
   private readonly buffers = new Map<string, Promise<AudioBuffer | null>>();
   private readonly lastPlayed = new Map<string, number>();
   private volumes = { master: 1, effects: 1, music: 1 };
-  /** Where each faction's battle tracklist is up to. */
-  private readonly rotation = new Map<string, number>();
+  /** Each faction's battle tracks, drawn in a shuffled order that only repeats once all have played. */
+  private readonly buckets = new Map<string, Bucket<string>>();
+  /** The battle's themes, by side; a side whose faction has no music (or the same as the other's) shares one. */
+  private voices: Readonly<Record<Side, Voice>> | null = null;
+  /** Asked before audio opened: the battle music to start when it does. */
+  private wantBattle: { readonly factions: readonly [string, string]; lead: Side } | null = null;
 
   /** Browsers only let audio start after the player interacts; the first click or key opens it. */
   constructor() {
@@ -110,19 +127,113 @@ export class Sound {
     this.music(tracks.find((t) => t === `${faction}/map`) ?? tracks[0] ?? null);
   }
 
-  /** The attacker's battle music: the next track of its faction's list (any faction's if it has none yet). */
-  battleMusic(faction: string): void {
-    const all = musicTracks().filter((t) => /\/battle-\d+$/.test(t)).sort();
-    const own = all.filter((t) => t.startsWith(`${faction}/`));
-    const list = own.length > 0 ? own : all;
-    const next = this.rotation.get(faction) ?? 0;
-    this.rotation.set(faction, next + 1);
-    this.music(list[next % Math.max(1, list.length)] ?? null);
+  /**
+   * A battle's music: each side's faction theme, `lead`'s heard. A faction without battle tracks borrows the other
+   * side's; if neither has any, any faction's.
+   */
+  battleMusic(factions: readonly [string, string], lead: Side): void {
+    this.loop(this.musicLoop, null);
+    this.stopVoices();
+    this.wantBattle = { factions, lead };
+    this.startVoices();
+  }
+
+  /** Turns the battle music to `side`'s theme, picking it up where it is. */
+  musicLead(side: Side): void {
+    const want = this.wantBattle;
+    if (!want || want.lead === side) return;
+    want.lead = side;
+    const context = this.context;
+    const voices = this.voices;
+    if (!context || !voices) return;
+    for (const v of [0, 1] as const) {
+      const gain = voices[v].fade.gain;
+      gain.cancelScheduledValues(context.currentTime);
+      gain.setValueAtTime(gain.value, context.currentTime);
+      gain.linearRampToValueAtTime(v === side || voices[0] === voices[1] ? 1 : 0, context.currentTime + TURN_S);
+    }
   }
 
   /** Crossfades to `track`, looping (null: fade out). Asked before audio opens, it starts when it does. */
   music(track: Track | null): void {
+    this.stopVoices();
+    this.wantBattle = null;
     this.loop(this.musicLoop, track === null ? null : `music/${track}`);
+  }
+
+  /** The battle music now, for playtests: whose theme is heard, and each side's track. */
+  battleMusicNow(): { readonly lead: Side; readonly tracks: readonly [string | null, string | null] } | null {
+    const want = this.wantBattle;
+    const voices = this.voices;
+    return want && voices ? { lead: want.lead, tracks: [voices[0].track, voices[1].track] } : null;
+  }
+
+  private bucketOf(faction: string): Bucket<string> | null {
+    let bucket = this.buckets.get(faction);
+    if (!bucket) {
+      const all = musicTracks().filter((t) => /\/battle-\d+$/.test(t)).sort();
+      const own = all.filter((t) => t.startsWith(`${faction}/`));
+      bucket = new Bucket(faction === "" ? all : own);
+      this.buckets.set(faction, bucket);
+    }
+    return bucket.size > 0 ? bucket : null;
+  }
+
+  private startVoices(): void {
+    const context = this.context;
+    const bus = this.musicLoop.bus;
+    const want = this.wantBattle;
+    if (!context || !bus || !want || this.voices) return;
+    const [a, b] = want.factions.map((f) => this.bucketOf(f));
+    const fallback = a ?? b ?? this.bucketOf("");
+    if (!fallback) return;
+    const voice = (bucket: Bucket<string>, heard: boolean): Voice => {
+      const fade = context.createGain();
+      fade.gain.setValueAtTime(0, context.currentTime);
+      fade.gain.linearRampToValueAtTime(heard ? 1 : 0, context.currentTime + CROSSFADE_S);
+      fade.connect(bus);
+      return { bucket, fade, source: null, track: null };
+    };
+    const shared = !a || !b || want.factions[0] === want.factions[1];
+    const first = voice(a ?? fallback, shared || want.lead === 0);
+    const second = shared ? first : voice(b, want.lead === 1);
+    this.voices = { 0: first, 1: second };
+    for (const v of new Set([first, second])) this.nextTrack(context, v);
+  }
+
+  /** Plays the voice's next track from its bucket, and the one after when that ends. */
+  private nextTrack(context: AudioContext, voice: Voice): void {
+    const track = voice.bucket.take();
+    if (!track) return;
+    void this.load(context, `music/${track}`).then((buffer) => {
+      if (!buffer || !this.isVoice(voice)) return;
+      const source = context.createBufferSource();
+      source.buffer = buffer;
+      source.connect(voice.fade);
+      source.onended = () => {
+        if (voice.source === source && this.isVoice(voice)) this.nextTrack(context, voice);
+      };
+      source.start();
+      voice.source = source;
+      voice.track = track;
+    });
+  }
+
+  private isVoice(voice: Voice): boolean {
+    return this.voices !== null && (this.voices[0] === voice || this.voices[1] === voice);
+  }
+
+  private stopVoices(): void {
+    const context = this.context;
+    const voices = this.voices;
+    this.voices = null;
+    if (!context || !voices) return;
+    for (const voice of new Set([voices[0], voices[1]])) {
+      voice.fade.gain.cancelScheduledValues(context.currentTime);
+      voice.fade.gain.setValueAtTime(voice.fade.gain.value, context.currentTime);
+      voice.fade.gain.linearRampToValueAtTime(0, context.currentTime + CROSSFADE_S);
+      voice.source?.stop(context.currentTime + CROSSFADE_S);
+    }
   }
 
   /** An ambience bed under the music (`ambience/map`), looping; null fades it out. */
@@ -186,6 +297,7 @@ export class Sound {
     this.ambienceLoop.bus = effects;
     this.startLoop(this.musicLoop);
     this.startLoop(this.ambienceLoop);
+    this.startVoices();
   }
 
   private load(context: AudioContext, key: string): Promise<AudioBuffer | null> {
