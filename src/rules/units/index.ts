@@ -73,9 +73,9 @@ export const EVOLUTIONS: Readonly<Record<string, readonly Evolution[]>> = {
   // The Grove's melee line: life and death (user, 2026-09-29).
   sproutling: [{ to: "regrowth_2", label: "Regrowth" }, { to: "moldling", label: "Decay" }],
   regrowth_2: [{ to: "regrowth_3" }],
-  moldling: [{ to: "bog_giant" }],
+  moldling: [{ to: "deadwood" }],
   // Regrowth ends at tier 3; Decay goes on to a tier 4 (user, 2026-09-29), in two kinds (user, 2026-10-04).
-  bog_giant: [{ to: "deadwood" }, { to: "mulch_gorger" }],
+  deadwood: [{ to: "bog_giant" }, { to: "mulch_gorger" }],
   // The support forks into Spiritess (healing over time, then the Psychopomp's crowd control) and Decay (corpses).
   grove_support_1: [{ to: "spiritess_2", label: "Spiritess" }, { to: "decay_support_2", label: "Decay" }],
   spiritess_2: [{ to: "psychopomp" }],

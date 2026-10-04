@@ -61,7 +61,7 @@ export const NEXUS_PRESETS: Readonly<Record<"uncommitted" | "scheme" | "overload
 export const GROVE_PRESETS = {
   uncommitted: [at("sproutling", 0, 0), at("sproutling", 0, 1), at("sproutling", 0, 2), at("grove_support_1", 2, 0), at("grove_mage_1", 2, 2)],
   regrowth: [at("regrowth_2", 0, 0), at("regrowth_2", 0, 2), at("regrowth_3", 0, 1), at("psychopomp", 2, 0), at("grove_mage_1", 2, 2)],
-  decay: [at("moldling", 0, 0), at("bog_giant", 0, 1), at("moldling", 0, 2), at("decay_support_2", 2, 0), at("grove_mage_1", 2, 2)],
+  decay: [at("moldling", 0, 0), at("deadwood", 0, 1), at("moldling", 0, 2), at("decay_support_2", 2, 0), at("grove_mage_1", 2, 2)],
 } as const satisfies Readonly<Record<string, readonly Placement[]>>;
 
 /** A bandit group using all four of the user's bandit units. The formation is not canon. */

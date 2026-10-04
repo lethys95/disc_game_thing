@@ -7,8 +7,8 @@
 
 ```
 Sproutling (1) ─┬─ Regrowth 2 ── Regrowth 3                     (life; placeholder names)
-                └─ Moldling (2) ── Bog Giant (3) ─┬─ Deadwood (4)
-                                                  └─ Mulch Gorger (4)
+                └─ Moldling (2) ── Deadwood (3) ─┬─ Bog Giant (4)
+                                                 └─ Mulch Gorger (4)
 ```
 
 Shared look (Claude): the Custodian's turnaround recipe (a 3D model sheet, front, side and back, flat light on light
@@ -20,6 +20,7 @@ user (after round one): not humanoid by default, and never symmetrical. Prompts:
 - **Play (user):** "some regen": the persistent front. Heals a share of its max HP at the start of its turns.
   Recruited at 45 gold. Forks at tier 2 into Regrowth (life) or Decay (death).
 - **Numbers:** 121 HP, 24 damage, initiative 45, Regrowth 6%.
+- **Picked (user, 2026-10-04):** `sproutling-stump-turnaround-1002`, a small treant.
 - **Look concepts (Claude):** not a cute sprout: it's the raw material both branches grow from.
   1. *Graft:* a gaunt, feral elf warrior whose ritual scars sprout pale shoots; wounds closed with bark scabs; a carved
      war mask. The regeneration made visible.
@@ -39,28 +40,27 @@ user (after round one): not humanoid by default, and never symmetrical. Prompts:
      fungus mask.
   3. *Mycelium:* black rotting wood held together by white mycelium threads like tendons and bandages.
 
-## Bog Giant (Decay tier 3, `bog_giant`)
+> **Swap (user, 2026-10-04, after round two):** tier 3 is now **Deadwood** and tier 4 the **Bog Giant**, for the look
+> (small tree → dead tree → swamp or corpse); each tier kept its kit. The round-one concepts below were made under the
+> old names (Bog Giant = tier 3, Deadwood = tier 4).
+
+## Deadwood (Decay tier 3, `deadwood`)
 - **Play (user):** Decay, plus *withering*: an enemy that hits it deals less damage for the rest of combat.
 - **Numbers:** 390 HP, 76 damage, initiative 45, Decay 50%, Withering 5 per hit (up to 15).
-- **Look concepts (Claude):** the bog is where things go to rot slowly; whatever strikes it comes away weaker.
-  1. *Peat:* a hunched giant of black peat and bog oak, dripping, moss on the shoulders, bog-iron fetters, a
-     will-o'-the-wisp light in its chest.
-  2. *Idol:* a mound of roots and peat with an ancient carved wooden idol for a head, rawhide straps and bone fetishes.
-     The tribe's worship made giant.
-  3. *Troll:* a heavy moss-hided brute with root legs and a bog oak club. The most conventional of the three.
+- **Look (user):** "pretty much just an animated dead tree… the face being strange and ghostly. Nothing about it looks
+  humanoid. Both arms are massive stumps", moving "more like a gorilla than a human". **Picked:**
+  `deadwood-blasted-turnaround-1002` ("a bit too literal with the gorilla, but we'll just take it anyway. It's good
+  enough"). Its half-human face makes it "a decent transition to both bog giant and mulch gorger".
+- Round one (under the old tier-4 name): *Blasted*, *Knight*, *Gaunt*.
 
-## Deadwood (Decay tier 4, `deadwood`)
+## Bog Giant (Decay tier 4, `bog_giant`)
 - **Play (user):** "the more it suffers, the more it lashes back": *Lash out* (main action) deals the rot inside it
   to the whole enemy front row; the rot stays and its countdown restarts. The melee line's win condition, late game;
   it needs healers behind it. Keeps Decay and Withering.
 - **Numbers:** 376 HP, 72 damage, initiative 45, Decay 55%, Withering, Lash out 100%.
-- **Look concepts (Claude):** dead wood that has stored up everything done to it.
-  1. *Blasted:* split, lightning-struck grey wood, a charred hollow core glowing green, splinters like spikes, whip
-     branches for arms, sap running like blood.
-  2. *Knight:* bleached driftwood grown into the shape of gothic plate, a crown of broken branch spikes. The closest
-     to the Custodian's silhouette.
-  3. *Gaunt:* skeletal-thin twisted dead wood, bark peeling in strips, a cavity mouth. Starved and spiteful, not a
-     noble tree spirit.
+- **Look (user):** "more a hunk of bark, asymmetric sludge and basically whatever you associate with a swamp", the
+  right arm huge; fog later as a VFX. **Picked:** `bog-giant-hulk-turnaround-1002`.
+- Round one (under the old tier-3 name): *Peat*, *Idol*, *Troll*.
 
 ## Mulch Gorger (Decay tier 4, `mulch_gorger`)
 - **Play (user):** "whenever someone dies or a corpse gets interacted with (resurrection, corpse explosion, etc) it
@@ -112,5 +112,12 @@ skeleton in a T-pose: no gaping mouth, no lolling skull, no stump feet). Claude'
 turnaround frame pull toward a clean, upright, even figure; a single front or three-quarter concept first may get the
 grotesque pose, then a turnaround from it.
 
+## Round three: the Mulch Gorger (2026-10-04)
+The user on round two: "mulch gorger still fails. It looks like a human. Maybe not mention skeleton, maybe just say
+skull. It's too humanoid. I really don't need any flesh on this model at all. It's just skull and plant matter. More
+asymmetry, less human." Three readings, no "skeleton", no body under the plant matter, no T-pose; plus a single
+three-quarter view of each (Claude's test: does the turnaround frame pull toward an upright, even figure?).
+
 ## Open
-- The user's pick per unit (or a mix) before any of them goes to Tripo.
+- Picked: Sproutling, Deadwood, Bog Giant (all `art/candidates/units/grove/`, prompts in `GROVE`). Open: the
+  Moldling (round two's two readings converged) and the Mulch Gorger (round three).

@@ -11,7 +11,7 @@ describe("Grove melee line", () => {
     expect(FACTION_ROOTS.grove).toEqual(["sproutling", "grove_support_1", "grove_mage_1"]);
     expect(forkOptions("sproutling")).toEqual(["regrowth_2", "moldling"]);
     expect(UNITS["regrowth_3"]?.tier).toBe(3);
-    expect(UNITS["bog_giant"]?.tier).toBe(3);
+    expect(UNITS["deadwood"]?.tier).toBe(3);
   });
 
   test("Regrowth: heals a share of its max HP at the start of its turns", () => {
@@ -32,7 +32,7 @@ describe("Grove melee line", () => {
   });
 
   test("Withering: an enemy that hits a tier-3 Decay deals less damage from then on, up to a cap", () => {
-    let battle = until(start([p("congregant", 0, 1)], [p("bog_giant", 0, 1)]), "0.0.1");
+    let battle = until(start([p("congregant", 0, 1)], [p("deadwood", 0, 1)]), "0.0.1");
     battle = act(battle, "attack", "1.0.1").battle;
     expect(unit(battle, "0.0.1").effects.find((e) => e.def === "withered")?.amount).toBe(5);
   });
@@ -46,13 +46,13 @@ describe("Grove melee line", () => {
   });
 
   test("the Grove gains 50% more per level past the end of its line than others (the user's ramp)", () => {
-    expect(levelBonusPercent("bog_giant")).toBe(levelBonusPercent("paladin") * 1.5);
+    expect(levelBonusPercent("deadwood")).toBe(levelBonusPercent("paladin") * 1.5);
   });
 });
 
 describe("Decay tier 4: Lash out", () => {
   test("deals the rot inside it to the whole enemy front row; the rot stays and its countdown starts over", () => {
-    let battle = until(start([p("deadwood", 0, 1)], [p("congregant", 0, 0), p("congregant", 0, 1), p("congregant", 0, 2)]), "0.0.1");
+    let battle = until(start([p("bog_giant", 0, 1)], [p("congregant", 0, 0), p("congregant", 0, 1), p("congregant", 0, 2)]), "0.0.1");
     const rot = { def: "rotting", source: null, stacks: 1, amount: 30 };
     battle = { ...battle, units: { ...battle.units, "0.0.1": { ...unit(battle, "0.0.1"), effects: [...unit(battle, "0.0.1").effects, rot] } } };
     const after = act(battle, "lash_out", "1.0.1").battle;
@@ -61,14 +61,14 @@ describe("Decay tier 4: Lash out", () => {
   });
 
   test("can't lash out with nothing rotting inside it", () => {
-    const battle = until(start([p("deadwood", 0, 1)], [p("congregant", 0, 1)]), "0.0.1");
+    const battle = until(start([p("bog_giant", 0, 1)], [p("congregant", 0, 1)]), "0.0.1");
     expect(legalActions(battle).map((a) => a.abilityId)).not.toContain("lash_out");
   });
 });
 
 describe("Decay tier 4: the Mulch Gorger (user, 2026-10-04)", () => {
-  test("the Bog Giant forks into Deadwood and the Mulch Gorger, and the line ends there", () => {
-    expect(forkOptions("bog_giant")).toEqual(["deadwood", "mulch_gorger"]);
+  test("the Deadwood forks into Bog Giant and the Mulch Gorger, and the line ends there", () => {
+    expect(forkOptions("deadwood")).toEqual(["bog_giant", "mulch_gorger"]);
     expect(forkOptions("mulch_gorger")).toEqual([]);
   });
 
@@ -126,7 +126,7 @@ describe("the Grove's backline and corpses (user, 2026-09-29)", () => {
   });
 
   test("Cycle: on an enemy it hurts and heals back a third; on an ally it heals and rots in, feeding a Decay unit's rot", () => {
-    let battle = until(start([p("grove_mage_1", 2, 1), p("deadwood", 0, 1)], [p("congregant", 0, 1)]), "0.2.1");
+    let battle = until(start([p("grove_mage_1", 2, 1), p("bog_giant", 0, 1)], [p("congregant", 0, 1)]), "0.2.1");
     // Its turn starts right after: 40 taken, 13 healed back.
     const onEnemy = until(act(battle, "cycle", "1.0.1").battle, "1.0.1");
     expect(unit(onEnemy, "1.0.1").hp).toBe(90 - 40 + 13);

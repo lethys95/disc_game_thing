@@ -41,3 +41,7 @@
 - **Mulch Gorger (user):** "a plant skeleton. Whenever someone dies or a corpse gets interacted with (resurrection, corpse explosion, etc) it heals and gains damage for the rest of combat stacking indefinitely."
 - **Look (user):** "the wood and plant matter receding into showing its nature, parasitically infesting a corpse with bark, vines, moss and other such related plant matter." Likely the only direct skeleton or zombie in the faction (an exception to "no zombies" the user made here).
 - **Built:** `sproutling`, `moldling`, `bog_giant`, `deadwood`, `mulch_gorger` (`rules/units/grove.ts`). Claude's reading, for you to overrule: "someone" is any unit, either side; the Gorger keeps the line's Decay and Withering; its passive is called *Gorge*. Numbers `provisional.md` #57.
+- **Swap (user, 2026-10-04, after the second round of concepts):** "it's a bit weird thematically to go from small
+  tree, larger dead tree to bog giant and then back to dead tree again." **Tier 3 is now Deadwood** (the blasted dead
+  tree, whose half-human face leads to both tier 4s) and **tier 4 is the Bog Giant**; "keeping the t4 kit at t4, etc.
+  It's just the visuals and name." So: Moldling → Deadwood (Decay, Withering) → Bog Giant (Lash out) or Mulch Gorger.

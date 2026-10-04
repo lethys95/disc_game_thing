@@ -82,14 +82,10 @@ const UNEVEN =
 const CLEAR_POSE = "all in the same neutral standing pose with every limb held clear of the body";
 
 const GROVE: Readonly<Record<string, { readonly subject: string; readonly pose?: string }>> = {
+  // Picked: seed 1002.
   "sproutling-stump": {
     subject:
       "A small treant, nothing human about it: a squat, gnarled young stump of dark bark walking on uneven root legs, one arm a long crooked branch and the other a short thick knot of wood, a face of knotholes with a ragged split in the bark for a mouth, pale new shoots and a few leaves sprouting from one side of its head and one shoulder, moss in its cracks. Feral and hostile, not childlike.",
-    pose: CLEAR_POSE,
-  },
-  "sproutling-sapling": {
-    subject:
-      "A small treant made from a young twisted sapling, nothing human about it: a thin trunk body bent to one side, splayed root feet, two branch arms of different lengths ending in twig claws, a sparse lopsided crown of shoots, a face of dark knotholes with a faint deep moss green glow deep inside. Hungry and wild, not cute.",
     pose: CLEAR_POSE,
   },
   // The user liked round one's mycelium: "make it skinnier. The face is great, the shrooms are probably too large and too symmetrical."
@@ -101,36 +97,37 @@ const GROVE: Readonly<Record<string, { readonly subject: string; readonly pose?:
     subject:
       "A skinny, hunched body of wet black rotting wood bound together by white threads of mycelium like tendons and bandages, leaning to one side, one arm longer and thinner than the other, a head like a split rotten log with a dark hollow face, small grey mushroom caps scattered unevenly, mostly on one side, white mold furring one leg.",
   },
-  // The user: "a hunk of bark, asymmetric sludge and basically whatever you associate with a swamp", the right arm huge. Fog later as VFX.
+  // Now tier 4: "a hunk of bark, asymmetric sludge and basically whatever you associate with a swamp", the right arm
+  // huge. Fog later as VFX. Picked: seed 1002.
   "bog-giant-hulk": {
     subject:
       "A massive hunched hulk with no human shape: a lump of black bark and sodden bog oak with swamp sludge, peat and mud oozing down it unevenly, reeds, cattails and hanging sphagnum moss, duckweed stuck to it, a rotting log and roots grown into its back, a small sunken face low in the bark. Its right arm is enormous, a huge club-like mass of bark, roots and mud hanging down to the ground; its left arm is small and withered. Two thick stumpy legs. No fog, no mist.",
     pose: CLEAR_POSE,
   },
-  "bog-giant-mire": {
-    subject:
-      "A massive lopsided swamp creature, no human shape: a heap of bark slabs, black mud and dripping sludge, stagnant water running off it, reeds, cattails, lily pads and a drowned branch sticking out of its shoulder, leeches and snails on its flanks, a dim deep moss green marsh light glowing in a hollow in its chest. Its right arm is huge, swollen with mud and roots, dragging on the ground; its left is a thin crooked root. Stumpy legs. No fog, no mist.",
-    pose: CLEAR_POSE,
-  },
-  // The user: "an animated dead tree… strange and ghostly face… both arms are massive stumps", moving more like a gorilla.
-  "deadwood-tree": {
-    subject:
-      "An animated dead tree, nothing humanoid about it: a thick hollow grey trunk with split, peeling bark, bare broken branches jutting from its top and back at odd angles, two massive arms that are thick dead stumps ending in blunt splintered ends, short gnarled root legs. In the trunk, a strange ghostly face: a pale stretched hollow like a face pressed through the wood from inside, dim moss green lights for eyes, a long dark split for a mouth.",
-    pose: "all in the same pose, hunched forward and leaning on its two massive arm stumps like a gorilla, every limb clear of the body",
-  },
+  // Now tier 3 (the user swapped Deadwood and Bog Giant): "an animated dead tree… strange and ghostly face… both arms
+  // are massive stumps", moving more like a gorilla. Picked: seed 1002.
   "deadwood-blasted": {
     subject:
       "An animated dead tree, nothing humanoid about it: a lightning-split, charred grey trunk, one side burned black, the other bleached and peeling, a few dead branches clawing up from its top on one side only, two massive arms that are thick dead stumps of different lengths, short root legs. A ghostly face in the split of the trunk, smoky and faint, as if something trapped inside were looking out, with a faint deep moss green glow.",
     pose: "all in the same pose, hunched forward and leaning on its two massive arm stumps like a gorilla, every limb clear of the body",
   },
-  // The user: "a corpse being possessed by the worst nature has to offer": mouth open, cranium lolling back, the host barely there.
-  "mulch-gorger-possessed": {
+  // The user: "a corpse being possessed by the worst nature has to offer": mouth open, cranium lolling back. Round three
+  // (after "it looks like a human… just say skull… I really don't need any flesh on this model at all"): only a skull
+  // and plant matter.
+  "mulch-gorger-skull": {
     subject:
-      "A grotesque thing: a corpse possessed and overgrown by the worst of nature, the body barely there under it, a lean skeleton frame with bark grown over and through the bones, bracket fungi, slime mold, rotting leaves, roots and thorny vines bursting out of the ribcage, the skull lolling back on a bent neck with its jaw hanging wide open and growth spilling out of the mouth. Lean, not fat. Its feet are stumps of rotten wood. Lopsided, diseased, repulsive.",
+      "A grotesque creature made only of a human skull and rotting plant matter, nothing else: no flesh, no skin, no bones besides the skull. The skull sits crooked on top, lolling backwards on a twisted stalk of roots, its jaw hanging wide open, fungus, moss and wet leaves spilling out of the mouth. Below it a lopsided, hunched mass of rotting bark, bracket fungi, slime mold, dead leaves, thorny vines and tangled roots. One arm a long whip of roots and thorns trailing to the ground, the other a short thick knot of bark crusted with fungus. Its legs end in rotten wooden stumps. Not human in shape or proportion, not fat; repulsive, the worst of nature.",
+    pose: CLEAR_POSE,
   },
-  "mulch-gorger-host": {
+  "mulch-gorger-heap": {
     subject:
-      "A grotesque, gaunt figure: rot and growth wearing a dead body like a frame, the host almost gone, ribs and a spine showing through a mass of bark, pale fungus, black mold, rotting leaves and tangled roots, one arm grown long and twisted with wood, the skull tipped back with the mouth gaping open and fungus growing from it. Thin, not fat. Its feet are rotten wooden stumps. Uneven and repulsive.",
+      "A lurching heap of rot with a human skull half sunk into its top, tipped back so its jaw gapes open at the sky, moss and fungus growing from the mouth and eye sockets. The heap is black rotting bark, mulch, bracket fungi, pale mold, wet leaves, roots and briars, leaning to one side, with no flesh and no bones but the skull. Three uneven limbs of twisted roots and bark: two end in rotten wooden stumps it walks on, one is a long grasping root. Grotesque, not humanoid, not fat.",
+    pose: CLEAR_POSE,
+  },
+  "mulch-gorger-stalk": {
+    subject:
+      "A tall, stooped, spidery thing of roots, briars and rotting bark with a human skull hanging from the end of a long bent neck of twisted vines, the skull lolling backwards with the jaw hanging open and a bracket fungus growing out of one eye socket. Clusters of fungus, slime mold and dead leaves cling to it unevenly. Its two front limbs differ: one a long thin root, one a thick club of bark; its legs end in rotten wooden stumps. No flesh, no skin, no ribs, nothing human but the skull. Grotesque, not fat.",
+    pose: CLEAR_POSE,
   },
 };
 const JOBS = [
@@ -155,7 +152,16 @@ const JOBS = [
 ];
 
 /** The Grove's turnarounds get their own folder, so a concept run doesn't overwrite their manifest. */
-const GROVE_JOBS = Object.entries(GROVE).map(([id, { subject, pose }]) => ({ id: `${id}-turnaround`, prompt: `${turnaround(subject, `${GROVE_3D} ${UNEVEN}`, pose)}` }));
+const GROVE_JOBS = [
+  ...Object.entries(GROVE).map(([id, { subject, pose }]) => ({ id: `${id}-turnaround`, prompt: turnaround(subject, `${GROVE_3D} ${UNEVEN}`, pose) })),
+  // Claude's test (round three): one three-quarter view, in case the turnaround frame is what pulls figures upright and even.
+  ...Object.entries(GROVE).map(([id, { subject }]) => ({
+    id: `${id}-front`,
+    prompt:
+      "A 3D render of a game creature model in a three-quarter front view, the whole figure visible from head to feet with a margin around it, like a sculpted and textured asset shown in a modelling program. " +
+      `${subject} ${GROVE_3D} ${UNEVEN} Flat, even, shadowless lighting from all sides, like a texture reference. A plain flat light grey background, no ground, no text.`,
+  })),
+];
 
 const args = process.argv.slice(2);
 const seeds = args.map(Number).filter((n) => !Number.isNaN(n));

@@ -36,5 +36,5 @@ Spells: self healing, buffs, etc.
 - **Battle music** (the user's Suno prompt, which "really captured the mood"): "off-beat, combat thinking game music, tribal, drums, wild, irregular drum pattern, dark, slow, background, sylvan grove themed thinking combat game background music, exotic instruments, unusual, savage elves scheming ambush type music". The user's rule for all factions: a strategy game isn't high-octane, so its music shouldn't be; low and brooding over high energy.
 
 ## User, 2026-10-04
-- **Melee names:** Sproutling (tier 1); the Decay side: Moldling, Bog Giant, then Deadwood or the **Mulch Gorger** (a second tier 4: the Decay line forks again after the Bog Giant). Detail in `faction-stuff/sylvan/melee.md`.
+- **Melee names:** Sproutling (tier 1); the Decay side: Moldling, Deadwood, then the Bog Giant or the **Mulch Gorger** (a second tier 4: the Decay line forks again after tier 3). The user swapped Deadwood and Bog Giant the same day, for the look: the dead tree before the swamp; each tier kept its kit. Detail in `faction-stuff/sylvan/melee.md`.
 - **The one exception to "no zombies":** the Mulch Gorger is a plant skeleton, plant matter parasitically infesting a corpse (bark, vines, moss), "likely going to be the only direct skeleton or zombie in the faction."

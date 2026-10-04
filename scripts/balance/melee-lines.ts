@@ -13,7 +13,7 @@ const duel = (a: string, b: string) => {
 const tiers: [string[], string[]][] = [
   [["sproutling"], ["congregant", "custodian"]],
   [["regrowth_2", "moldling"], ["paladin", "zealot", "cyclops", "mutant"]],
-  [["regrowth_3", "bog_giant"], ["templar", "punisher", "fanatic"]],
-  [["deadwood", "mulch_gorger"], ["immortal", "torturer", "chosen"]],
+  [["regrowth_3", "deadwood"], ["templar", "punisher", "fanatic"]],
+  [["bog_giant", "mulch_gorger"], ["immortal", "torturer", "chosen"]],
 ];
 for (const [grove, others] of tiers) for (const g of grove) console.log(g.padEnd(14), others.map((o) => duel(g, o)).join("  "));

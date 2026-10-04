@@ -3,7 +3,8 @@ import type { UnitDef } from "#rules/battle/types";
 
 /**
  * The Grove (Sylvan): its melee line, the user's design (2026-09-29, `faction-stuff/sylvan/melee.md`). The user named
- * tier 1 and the Decay side (2026-10-04); "Regrowth 2/3" and the backline's names are placeholders. Stats are
+ * tier 1 and the Decay side (2026-10-04), then swapped the Decay names of tiers 3 and 4 for the look (the dead tree
+ * comes before the swamp; each tier kept its kit); "Regrowth 2/3" and the backline's names are placeholders. Stats are
  * provisional (`provisional.md` #57).
  */
 export const GROVE_UNITS: Readonly<Record<string, UnitDef>> = {
@@ -29,18 +30,18 @@ export const GROVE_UNITS: Readonly<Record<string, UnitDef>> = {
     stats: { maxHp: 260, shield: 0, damage: 32, armor: 0, initiative: 50 },
     abilities: [{ id: "regrowth", params: { percent: 12 } }, { id: "grove_mend", params: { amount: 40 } }, ...kit("attack", "defend", "wait")],
   },
-  bog_giant: {
-    id: "bog_giant", name: "Bog Giant", faction: "grove", tier: 3, damageType: "weapon",
+  deadwood: {
+    id: "deadwood", name: "Deadwood", faction: "grove", tier: 3, damageType: "weapon",
     stats: { maxHp: 390, shield: 0, damage: 76, armor: 0, initiative: 45 },
     abilities: [{ id: "decay", params: { percent: 50 } }, { id: "withering" }, ...kit("attack", "defend", "wait")],
   },
   // The user (2026-09-29): the Decay line's win condition, late game. Numbers provisional (#57).
-  deadwood: {
-    id: "deadwood", name: "Deadwood", faction: "grove", tier: 4, damageType: "weapon",
+  bog_giant: {
+    id: "bog_giant", name: "Bog Giant", faction: "grove", tier: 4, damageType: "weapon",
     stats: { maxHp: 376, shield: 0, damage: 72, armor: 0, initiative: 45 },
     abilities: [{ id: "decay", params: { percent: 55 } }, { id: "withering" }, { id: "lash_out" }, ...kit("attack", "defend", "wait")],
   },
-  // The user (2026-10-04): the Decay line forks again after the Bog Giant; a plant skeleton that feeds on the dead.
+  // The user (2026-10-04): the Decay line forks again after the Deadwood; a plant skeleton that feeds on the dead.
   // It keeps the line's decay and withering (Claude's reading). End of the line. Numbers provisional (#57).
   mulch_gorger: {
     id: "mulch_gorger", name: "Mulch Gorger", faction: "grove", tier: 4, damageType: "weapon",
