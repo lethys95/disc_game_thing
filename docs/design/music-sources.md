@@ -9,6 +9,10 @@ on the day you generate or buy, and save a copy of the terms with the files.** T
 ## The user's direction (2026-09-30)
 The user tried Suno's free tier: "well beyond anything we could possibly make ourselves through our local tools". The Grove battle track (prompt in `factions/sylvan.md`) is "just perfect". Plan: churn out as much as is reasonable per faction, as long as each faction's mood is captured. Style rule: low, brooding music; a strategy game isn't high-octane. **Free-tier tracks can't ship** (below): keep the prompts, and regenerate the keepers on a paid month.
 
+## Update (user, 2026-10-04): Suno's limit, and MiniMax-Music3
+- **Suno caps downloads at 20 a month** (Pro), which is limiting; the user cancelled, with the rest of the month left. The seven Grove battle tracks are in the game (`assets/audio/SOURCES.md`).
+- **MiniMax-Music3** (https://huggingface.co/MiniMaxAI/MiniMax-Music3), the user's candidate to replace it, **runs locally**: full songs up to 5 minutes (with vocals or arrangements), 32 kHz stereo WAV, under 24 GB of VRAM (our cards are 24 GB; layer streaming fits 8 GB), via SGLang-Omni, Diffusers or ComfyUI. **License (MiniMax-Music3 Community License, read 2026-10-04):** commercial use allowed, but "You shall prominently display 'MiniMax-Music3' on the user interface of commercial product or service that uses the Software", and authorization is needed above $20M yearly revenue. No territorial restriction stated; output ownership not addressed. So it's usable with a visible credit (where it must show, a credits screen or the main menu, is worth confirming). ACE-Step 1.5 (MIT, installed, made the current placeholders) stays the no-strings fallback. Next: a side-by-side with the Grove prompt once the user wants it.
+
 ## Short answer on Suno
 
 **The contract doesn't block a paid game, but Suno is the weakest of the realistic options.**

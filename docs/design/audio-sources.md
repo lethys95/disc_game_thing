@@ -4,6 +4,9 @@ Stable Audio 3 SFX weren't good enough (see `audio-pipeline.md`), so this survey
 effects and music. A Claude agent did the research on the web on the date above. Quotes come from the license pages linked below.
 Recheck each license on the day you download, and keep a copy of the license text with the files.
 
+## Decision (user, 2026-10-04): sound effects from ElevenLabs
+https://elevenlabs.io/sound-effects makes effects from text prompts, several takes per prompt, up to 30 s, with seamless loops on paid plans (ambience beds). **Free tier: personal use only, MP3.** Paid plans allow commercial use with no attribution, WAV at 48 kHz, and an API from Starter ($6/month): Starter 30k credits a month, Creator ($22) 121k, Pro ($99) 600k, about $0.03–0.07 per generation; on Creator and Pro the rights survive cancelling. Like Suno, only effects made on a paid plan can ship. The current placeholders (Sonniss GDC bundles, royalty-free) stay until replaced; `scripts/audio/sfx.sh` already trims, levels and encodes whatever comes in.
+
 ## Recommendation: start with these four
 
 1. **Sonniss #GameAudioGDC archive (free).** This is the backbone: 2015–2026, over 200 GB of professional library
