@@ -103,3 +103,11 @@ times).
 - **Round three** (`eyespot-fan`, `eyespot-blind`, `chrysalis-object`): the Eyespot with four wine-red wings in a
   peacock's fan set with human eyes, or with an eyeless head and bloodshot eyes on its wings; the Chrysalis turnaround
   as an object with no limbs.
+- **Round three, read:** the wine-red **fan Eyespot** works as a silhouette (a veiled widow in a black coat before four
+  dark wings); the eyes never became real eyes in three tries, so the colour and the veil carry it. The eyeless
+  Eyespot turned into a pretty elf in its turnarounds. The Chrysalis "object" turnaround came out as gothic women in
+  feathered dresses, one beside a cocoon: turnarounds won't keep it a thing.
+- **Picks (Claude's):** Dustwing `dustwing-ragged-turnaround-1001` (stance 1000); Chrysalis
+  `chrysalis-cocoon-stance-1002`, a single view for 3D; Lightdrinker `lightdrinker-deathshead-turnaround-1001`
+  (stance 1000); Eyespot `eyespot-fan-turnaround-1000` (stance 1001); Pale Mother `pale-mother-turnaround-1002`
+  (stance 1000). Page with every round: `shots/drawn.html`.
