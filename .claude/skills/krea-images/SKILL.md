@@ -36,18 +36,19 @@ Expected output folder: <e.g. art/candidates/units/concepts/>
 
 1. Check ComfyUI is up: `curl -s -m 5 http://127.0.0.1:8188/system_stats`. If it doesn't answer, stop and report
    that; don't start or restart it.
-2. Run the command (it can take ~15-20 s per image; use a long timeout, up to 10 minutes per call; for a big batch run
-   it in the background). Don't report until the command has exited and every expected file exists: a report with
-   the batch half done is not done. Wait with a loop like
-   `until ! pgrep -f "<script name>" >/dev/null; do sleep 20; done` (in calls of up to 10 minutes, repeated).
+2. Start it detached and keep its process id: `nohup <command> > <log> 2>&1 & echo $! > <pidfile>` (about 23 s per
+   image). Then wait with blocking calls of at most 9 minutes each, repeated until it has exited:
+   `for i in $(seq 27); do kill -0 $(cat <pidfile>) 2>/dev/null || break; sleep 20; done`
+   Never wait on `pgrep -f "<name>"`: it matches the waiting shell's own command line and never ends. Don't report
+   until the process has exited and every expected file exists; send no interim or progress reports.
 3. Report: the files written (paths), seconds per image, the contact sheet path, and any error output verbatim.
    Don't describe or judge the images; the main session looks at them.
 ```
 
 Then carry on with other work. Don't poll; the notification arrives when the subagent is done. If the subagent
 keeps waking you with interim reports anyway (a haiku run did, 2026-10-04): check that the generation runs detached
-(`ps` its parent chain up to `systemd --user`), stop the agent (TaskStop), and wait for the process yourself in a
-background `until ! pgrep …` loop.
+(`ps` its parent chain up to `systemd --user`), stop the agent (TaskStop), and wait for the process yourself by its
+pid (`kill -0`), not by `pgrep -f`.
 
 ## 3. When it reports
 Look at the contact sheet (or a sheet you compose with `magick … +append/-append` into the scratchpad) yourself
