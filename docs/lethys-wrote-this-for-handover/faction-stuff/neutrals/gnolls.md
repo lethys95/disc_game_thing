@@ -91,6 +91,11 @@ glaive. Each as a T-pose turnaround (model, rig) and a single view in its stance
 (`GNOLLS`), images in `art/candidates/units/gnolls/`. No accent colour in the prompts (the neutral icons use ember;
 yours to say).
 
+**Round one (Claude's read; page `shots/gnolls.html`):** the Cackler (rotten jester, bells, skull staff) and the
+Matriarch (horned, ornate armour, glaive) are the most distinct and the most gothic; the Bonecracker (jaw, gauntlets)
+and the Hamstringer (mid-throw, javelins, bolas) read well; the Packstalker lost its spear in every image and came out
+a near-naked werehyena, the weakest read and the least gothic.
+
 ### Earlier notes (Claude, before the concepts)
 Lean, long-legged runners with sloping backs and heavy shoulders; spotted and striped pelts; sun-bleached hide,
 beads and painted clan marks (territory, rank); bronze and rawhide gear, javelins and bolas. Accent: the neutral
