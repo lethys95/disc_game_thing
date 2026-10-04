@@ -106,6 +106,10 @@ and Hamstringer "look too much alike… need some work to make them more distinc
 Hamstringer wrapped head to toe in dusty nomad cloth under a deep cowl, bolas across its chest. No weapon in their
 turnarounds; the stance views show it; the spear and the javelins with bolas get prop sheets of their own.
 
+**Round two (Claude's read; `shots/gnolls-2.html`):** the clothing worked: the Packstalker's horned antelope-skull
+helm and red strips against the Hamstringer's cloth wraps and face scarf. No weapons in their turnarounds. The prop
+sheets have the spear and the javelins with bolas, padded with fur tails and cloth the model added.
+
 ### Earlier notes (Claude, before the concepts)
 Lean, long-legged runners with sloping backs and heavy shoulders; spotted and striped pelts; sun-bleached hide,
 beads and painted clan marks (territory, rank); bronze and rawhide gear, javelins and bolas. Accent: the neutral
