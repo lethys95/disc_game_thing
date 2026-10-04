@@ -44,6 +44,9 @@ user (after round one): not humanoid by default, and never symmetrical. Prompts:
 > (small tree → dead tree → swamp or corpse); each tier kept its kit. The round-one concepts below were made under the
 > old names (Bog Giant = tier 3, Deadwood = tier 4).
 
+- **Picked (user, 2026-10-04):** `moldling-mycelium-hunched-turnaround-1000`: "It's good enough, I don't know what
+  else to do with it."
+
 ## Deadwood (Decay tier 3, `deadwood`)
 - **Play (user):** Decay, plus *withering*: an enemy that hits it deals less damage for the rest of combat.
 - **Numbers:** 390 HP, 76 damage, initiative 45, Decay 50%, Withering 5 per hit (up to 15).
@@ -119,5 +122,6 @@ asymmetry, less human." Three readings, no "skeleton", no body under the plant m
 three-quarter view of each (Claude's test: does the turnaround frame pull toward an upright, even figure?).
 
 ## Open
-- Picked: Sproutling, Deadwood, Bog Giant (all `art/candidates/units/grove/`, prompts in `GROVE`). Open: the
-  Moldling (round two's two readings converged) and the Mulch Gorger (round three).
+- Picked: Sproutling, Moldling, Deadwood, Bog Giant (all `art/candidates/units/grove/`, prompts in `GROVE`). Open:
+  the Mulch Gorger (round three). The picks split into single views for Tripo: `shots/tripo/` (the user tries how
+  Tripo handles the more complex shapes).
