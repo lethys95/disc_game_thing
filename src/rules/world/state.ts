@@ -326,8 +326,8 @@ export const emptyMemory = (): Memory => ({ cities: [], lairs: [], nodes: [], st
 
 export type Strength = "weak" | "medium" | "strong";
 
-/** The neutral peoples who guard camps and dungeons (`design/tribes.md`). */
-export type Tribe = "bandits" | "gnolls";
+/** The neutral peoples who guard camps and dungeons (`design/tribes.md`). The Drawn aren't placed on the map yet. */
+export type Tribe = "bandits" | "gnolls" | "drawn";
 
 type Group = { readonly level: number; readonly units: readonly [string, Tile][] };
 
@@ -374,6 +374,27 @@ const GROUPS: Readonly<Record<Tribe, Readonly<Record<Strength, Group>>>> = {
       units: [
         ["packstalker", { row: 0, col: 0 }], ["matriarch", { row: 0, col: 1 }], ["bonecracker", { row: 0, col: 2 }],
         ["hamstringer", { row: 1, col: 0 }], ["cackler", { row: 1, col: 1 }], ["hamstringer", { row: 1, col: 2 }],
+      ],
+    },
+  },
+  // Claude's own tribe (2026-10-04, provisional #64).
+  drawn: {
+    weak: {
+      level: 0,
+      units: [["dustwing", { row: 0, col: 0 }], ["chrysalis", { row: 0, col: 1 }], ["eyespot", { row: 1, col: 0 }], ["lightdrinker", { row: 1, col: 1 }]],
+    },
+    medium: {
+      level: 2,
+      units: [
+        ["dustwing", { row: 0, col: 0 }], ["chrysalis", { row: 0, col: 1 }], ["dustwing", { row: 0, col: 2 }],
+        ["eyespot", { row: 1, col: 0 }], ["lightdrinker", { row: 1, col: 1 }],
+      ],
+    },
+    strong: {
+      level: 4,
+      units: [
+        ["chrysalis", { row: 0, col: 0 }], ["pale_mother", { row: 0, col: 1 }], ["dustwing", { row: 0, col: 2 }],
+        ["eyespot", { row: 1, col: 0 }], ["lightdrinker", { row: 1, col: 1 }], ["eyespot", { row: 1, col: 2 }],
       ],
     },
   },

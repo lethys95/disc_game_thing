@@ -76,6 +76,12 @@ export const GNOLL_GROUP: readonly Placement[] = [
   at("hamstringer", 1, 0), at("cackler", 1, 1), at("hamstringer", 1, 2),
 ];
 
+/** The Drawn, Claude's moth-folk tribe, led by the Pale Mother (`?fight=drawn`). The formation is not canon. */
+export const DRAWN_GROUP: readonly Placement[] = [
+  at("chrysalis", 0, 0), at("pale_mother", 0, 1), at("dustwing", 0, 2),
+  at("eyespot", 1, 0), at("lightdrinker", 1, 1), at("eyespot", 1, 2),
+];
+
 /** The setup screen's formation presets per faction, named after the branches they took. */
 export const FORMATIONS: Readonly<Record<Playable, readonly { readonly name: string; readonly squad: readonly Placement[] }[]>> = {
   jilliath: [

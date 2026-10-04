@@ -15,7 +15,7 @@ import type { Outcome } from "#rules/battle/types";
 const won = (outcome: Outcome | null, side: 0 | 1) => outcome !== null && outcome.winner === side && !("withdrew" in outcome && outcome.withdrew);
 
 const strengths: readonly Strength[] = ["weak", "medium", "strong"];
-const tribes: readonly Tribe[] = ["bandits", "gnolls"];
+const tribes: readonly Tribe[] = ["bandits", "gnolls", "drawn"];
 const squads = Object.values(FORMATIONS).flatMap((list) => list.map((preset) => preset.squad));
 for (const strength of strengths) {
   const row = tribes.map((tribe) => {
@@ -33,11 +33,13 @@ for (const strength of strengths) {
   console.log(`${strength.padEnd(7)} ${row.join("  ")}  (the tribe's wins over ${squads.length} faction presets)`);
 }
 
-// Head to head at each strength: the gnolls' wins over the bandits, both seatings.
+// Head to head at each strength: each newer tribe's wins over the bandits, both seatings.
 for (const strength of strengths) {
-  const [bandits, gnolls] = tribes.map((tribe) => neutralGroup(tribe, strength).map((m) => placementOf(m, undefined)));
-  const first = autoplay(createBattle([gnolls ?? [], bandits ?? []]).battle).outcome;
-  const second = autoplay(createBattle([bandits ?? [], gnolls ?? []]).battle).outcome;
-  const wins = (won(first, 0) ? 1 : 0) + (won(second, 1) ? 1 : 0);
-  console.log(`${strength.padEnd(7)} gnolls beat bandits ${wins}/2`);
+  const groupOf = (tribe: Tribe) => neutralGroup(tribe, strength).map((m) => placementOf(m, undefined));
+  const row = tribes.slice(1).map((tribe) => {
+    const first = autoplay(createBattle([groupOf(tribe), groupOf("bandits")]).battle).outcome;
+    const second = autoplay(createBattle([groupOf("bandits"), groupOf(tribe)]).battle).outcome;
+    return `${tribe} beat bandits ${(won(first, 0) ? 1 : 0) + (won(second, 1) ? 1 : 0)}/2`;
+  });
+  console.log(`${strength.padEnd(7)} ${row.join("  ")}`);
 }

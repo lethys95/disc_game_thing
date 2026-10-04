@@ -665,6 +665,64 @@ const effects: readonly EffectDef[] = [
       },
     },
   },
+  // The Drawn (`abilities/drawn.ts`).
+  {
+    // A Dustwing's dust: the next hit this unit makes lands as nothing.
+    id: "dusted",
+    name: "Dusted",
+    describe: () => "Coated in moth dust: its next hit lands as nothing.",
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      outgoing: (ctx, self, packet) => {
+        if (packet.amount <= 0 || !self.effect) return;
+        packet.amount = 0;
+        ctx.removeEffect(self.unitId, self.effect);
+      },
+      aiValue: (ctx, self) => -ctx.stats(self.unitId).damage,
+    },
+  },
+  {
+    id: "pupating",
+    name: "Pupating",
+    describe: (e) => `Shut in its cocoon: emerges at the start of its turn in ${e.stacks} turn${e.stacks === 1 ? "" : "s"}.`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {},
+  },
+  {
+    // A Chrysalis that has emerged: it hits harder and flies.
+    id: "emerged",
+    name: "Emerged",
+    describe: (e) => `Emerged from its cocoon: +${e.amount} damage, and it flies (Flit).`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      stats: (_ctx, self, subjectId, stats) => {
+        if (subjectId === self.unitId) stats.damage += self.effect?.amount ?? 0;
+      },
+      grants: (_ctx, self, subjectId) => (subjectId === self.unitId ? [{ id: "flit" }] : []),
+    },
+  },
+  {
+    // An Eyespot's or the Pale Mother's gaze: the bearer loses its next turn, unless it's hurt first.
+    id: "mesmerized",
+    name: "Mesmerized",
+    describe: () => "Loses its next turn, unless it is hurt before then.",
+    stacking: { mode: "unique" },
+    lifetime: "untilOwnTurn",
+    visibility: "public",
+    hooks: {
+      turnStart: () => "skip",
+      incoming: (ctx, self, packet) => {
+        if (packet.amount > 0 && self.effect) ctx.removeEffect(self.unitId, self.effect);
+      },
+      aiValue: (ctx, self) => -ctx.stats(self.unitId).damage,
+    },
+  },
   {
     // The Matriarch fell: the strongest gnoll left leads, at half her strength.
     id: "next_in_line",

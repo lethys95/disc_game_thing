@@ -60,4 +60,32 @@ export const NEUTRAL_UNITS: Readonly<Record<string, UnitDef>> = {
     stats: { maxHp: 260, shield: 0, damage: 42, armor: 5, initiative: 50 },
     abilities: [{ id: "pecking_order" }, { id: "run_them_down" }, ...kit("attack", "defend", "wait")],
   },
+  // The Drawn: moth-folk, Claude's own tribe (the user asked for one, 2026-10-04: `faction-stuff/neutrals/the-drawn.md`).
+  // Not on the map yet. Numbers provisional (#64).
+  dustwing: {
+    id: "dustwing", name: "Dustwing", faction: "neutral", tier: 1, damageType: "weapon",
+    stats: { maxHp: 80, shield: 0, damage: 22, armor: 0, initiative: 55 },
+    abilities: [{ id: "dust" }, ...kit("flit", "defend", "wait")],
+  },
+  chrysalis: {
+    id: "chrysalis", name: "Chrysalis", faction: "neutral", tier: 1, damageType: "weapon",
+    stats: { maxHp: 170, shield: 0, damage: 22, armor: 4, initiative: 35 },
+    abilities: [{ id: "metamorphosis" }, ...kit("defend", "wait")],
+  },
+  lightdrinker: {
+    id: "lightdrinker", name: "Lightdrinker", faction: "neutral", tier: 1, damageType: "weapon",
+    stats: { maxHp: 60, shield: 0, damage: 12, armor: 0, initiative: 45 },
+    abilities: kit("drink_light", "shoot", "defend", "wait"),
+  },
+  eyespot: {
+    id: "eyespot", name: "Eyespot", faction: "neutral", tier: 1, damageType: "weapon",
+    stats: { maxHp: 65, shield: 0, damage: 14, armor: 0, initiative: 50 },
+    abilities: kit("mesmerize", "shoot", "defend", "wait"),
+  },
+  // Strong camps: the brood's mother.
+  pale_mother: {
+    id: "pale_mother", name: "Pale Mother", faction: "neutral", tier: 2, damageType: "weapon",
+    stats: { maxHp: 240, shield: 0, damage: 34, armor: 3, initiative: 45 },
+    abilities: [{ id: "dust_veil" }, ...kit("flit", "open_the_eyes", "defend", "wait")],
+  },
 };
