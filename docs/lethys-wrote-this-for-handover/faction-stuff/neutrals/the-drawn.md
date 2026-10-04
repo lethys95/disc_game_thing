@@ -83,3 +83,14 @@ cloak. Concepts: `scripts/art/concepts.ts` (`DRAWN`), `art/candidates/units/draw
 strong (bandits and gnolls 0 / 0 / 36%); head to head they lose to bandits at weak and medium and win at strong. The
 AI uses everything (across the formations: 20 Mesmerize, 8 Open the eyes, 10 Drink the light; Chrysalises emerged 14
 times).
+
+## Concept log (Claude's art direction; every image kept in `art/candidates/units/drawn/`)
+- **Round one** (`<unit>-stance|turnaround-1000…1002`): one shared moth body for all five. The tribe reads as one
+  people, and the **Pale Mother** (veiled, ivory, a crown of lit candles) is a keeper. But the rest are one creature in
+  different clothes: the same fluffy round head and button eyes (cute, which the world isn't), the same grey eyespot
+  wings; the Dustwing and the Eyespot are near twins; the Eyespot's spots are just moth spots; the Chrysalis is a moth
+  bound in cord with its wings out, not a cocoon; the Lightdrinker's proboscis never shows. The Chrysalis turnarounds
+  1000 and 1002 drew a separate cocoon next to the figure, which hints at what it should be.
+- **Round two** (`dustwing-ragged`, `chrysalis-cocoon`, `lightdrinker-deathshead`, `eyespot-eyes`): a different moth
+  and body for each (a ragged clothes moth; a cocoon with nothing outside but a split; a death's-head hawkmoth with the
+  skull on its thorax and a long proboscis; wings covered in real-looking eyes), and gaunt insect faces for all.
