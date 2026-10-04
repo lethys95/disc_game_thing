@@ -94,3 +94,12 @@ times).
 - **Round two** (`dustwing-ragged`, `chrysalis-cocoon`, `lightdrinker-deathshead`, `eyespot-eyes`): a different moth
   and body for each (a ragged clothes moth; a cocoon with nothing outside but a split; a death's-head hawkmoth with the
   skull on its thorax and a long proboscis; wings covered in real-looking eyes), and gaunt insect faces for all.
+- **Round two, read:** the **Lightdrinker** as a death's-head hawkmoth is the best of the tribe so far (black fur, a
+  skull face, banded body, vials; still no long proboscis, and it doesn't need one). The **Dustwing** improved a lot:
+  six thin clawed limbs, holed and tattered wings, gaunt; its six-armed turnaround is properly creepy. The
+  **Chrysalis** single views are finally a true cocoon (a scaled silk shroud bound in wire, almost a sarcophagus), but
+  its turnarounds grew a cloaked figure with wings again. The **Eyespot** failed again: plain moth spots, grey wings
+  like the Pale Mother's.
+- **Round three** (`eyespot-fan`, `eyespot-blind`, `chrysalis-object`): the Eyespot with four wine-red wings in a
+  peacock's fan set with human eyes, or with an eyeless head and bloodshot eyes on its wings; the Chrysalis turnaround
+  as an object with no limbs.
