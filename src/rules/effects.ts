@@ -5,6 +5,8 @@ import type { EffectDef, EffectInstance, Stacking, Stats } from "#rules/battle/t
 export const PUNISHED_PER_STACK = 10;
 /** Mutate's per-stack damage bonus. */
 export const MUTATED_PER_STACK = 10;
+/** What the AI thinks a goaded healer or caster is worth to the other side: about one heal (provisional #63). */
+const GOADED_AI_VALUE = 25;
 
 /**
  * An effect that adds its `amount` (or with `sign` -1, takes it away) to one stat of its bearer for the battle: the
@@ -654,6 +656,12 @@ const effects: readonly EffectDef[] = [
         const attacks = [...allowed].filter((id) => ctx.hasTag(id, "attack"));
         if (attacks.length === 0) return;
         for (const id of [...allowed]) if (!attacks.includes(id)) allowed.delete(id);
+      },
+      // A healer's or caster's turn taken from its spells is worth about a heal to the other side (provisional #63).
+      aiValue: (ctx, self) => {
+        const ids = ctx.abilityIds(self.unitId);
+        const denied = ids.some((id) => ctx.hasTag(id, "heal") || (ctx.hasTag(id, "spell") && !ctx.hasTag(id, "attack")));
+        return denied && ids.some((id) => ctx.hasTag(id, "attack")) ? -GOADED_AI_VALUE : 0;
       },
     },
   },

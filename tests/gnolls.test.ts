@@ -1,4 +1,4 @@
-import { effectiveStatsOf, legalActions } from "#rules/battle/engine";
+import { effectiveStatsOf, legalActions, traitValues } from "#rules/battle/engine";
 import { createWorld } from "#rules/world/create";
 import { neutralGroup, tribeAt } from "#rules/world/state";
 import { act, p, start, twoPlayers, unit, until } from "#tests/helpers";
@@ -32,6 +32,13 @@ describe("gnolls", () => {
     expect(legalActions(battle).map((a) => a.abilityId)).toEqual(["shoot"]);
     battle = act(battle, "shoot", "0.2.1").battle;
     expect(unit(battle, "1.2.1").effects.some((e) => e.def === "goaded")).toBe(false);
+  });
+
+  test("the AI sees a goaded healer or caster as a win, and a goaded fighter as nothing", () => {
+    const goaded = [{ def: "goaded", source: "0.2.1" }];
+    const values = traitValues(start([p("cackler", 2, 1)], [p("cleric", 2, 0, goaded), p("congregant", 0, 1, goaded)]));
+    expect(values["1.2.0"]).toBeLessThan(0);
+    expect(values["1.0.1"]).toBe(0);
   });
 
   test("Run them down: while a Cackler or the Matriarch is in the fight, enemies can't retreat", () => {
