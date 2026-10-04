@@ -76,7 +76,7 @@ large dark compound eyes, thin clawed limbs; clothing scraps of old lace, velvet
 tarnished silver, candle wax. Each unit has its own silhouette: the Dustwing small and all wings; the Chrysalis a
 cocoon of silk, wax and wrapped cloth with something moving inside; the Lightdrinker gaunt with a long coiled
 proboscis; the Eyespot with huge wings spread like a fan of eyes; the Pale Mother large and veiled, wings folded like a
-cloak. Concepts: `scripts/art/concepts.ts` (`DRAWN`), `art/candidates/units/drawn/`; every round is kept.
+cloak. Concepts: `scripts/art/concepts.ts` (`DRAWN`), `art/candidates/units/drawn/`. The user (2026-10-04): keep every image, the rejected ones too ("I'd like to see what you made afterwards, even what you decided not to go with"); the code and prompts change freely. The final page shows every round.
 
 **Status:** in game as `dustwing`, `chrysalis`, `lightdrinker`, `eyespot`, `pale_mother` (`?fight=drawn`); numbers
 `provisional.md` #64. `scripts/balance/tribes.ts`: against the 14 setup formations they win 0% weak, 11% medium, 43%
