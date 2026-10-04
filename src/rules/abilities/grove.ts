@@ -108,6 +108,26 @@ export const grove: Readonly<Record<string, Behavior>> = {
     },
   },
 
+  /**
+   * Mulch Gorger (Decay tier 4, the user, 2026-10-04): "whenever someone dies or a corpse gets interacted with
+   * (resurrection, corpse explosion, etc.) it heals and gains damage for the rest of combat, stacking indefinitely."
+   * Anyone, either side. Numbers provisional (#57).
+   */
+  gorge: {
+    kind: "passive",
+    name: "Gorge",
+    defaults: { heal: 25, damage: 6 },
+    describe: (p) => `Whenever any unit dies, or a corpse is used up or destroyed, it heals ${p["heal"]} and deals ${p["damage"]} more damage for the rest of combat (no limit).`,
+    hooks: {
+      remains: (ctx, self, unitId) => {
+        if (unitId === self.unitId || !ctx.unit(self.unitId).alive) return;
+        ctx.heal(self.unitId, self.params["heal"] ?? 0);
+        ctx.addEffect(self.unitId, { def: "gorged", amount: self.params["damage"] ?? 0, source: self.unitId });
+      },
+      aiValue: (ctx, self) => (self.params["damage"] ?? 0) * ctx.living().length,
+    },
+  },
+
   /** Grove support (tier 1, the user: basic): an ally regrows over its next turns. */
   bloom: {
     kind: "active",
@@ -132,7 +152,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
     resolve: (ctx, self, choice) => {
       const corpse = choice.affected[0] ? ctx.unit(choice.affected[0]) : null;
       if (!corpse || corpse.corpse !== "intact") return;
-      corpse.corpse = "used";
+      ctx.spendCorpse(corpse.id, "used");
       for (const ally of ctx.living(ctx.unit(self.unitId).side)) ctx.heal(ally.id, self.params["amount"] ?? 0);
     },
   },
@@ -156,7 +176,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
       const [corpseId, ...near] = choice.affected;
       const corpse = corpseId ? ctx.unit(corpseId) : null;
       if (!corpse || corpse.corpse !== "intact") return;
-      corpse.corpse = "destroyed";
+      ctx.spendCorpse(corpse.id, "destroyed");
       if (near.length > 0) ctx.hit(self.unitId, near, { ...ctx.hitSpec(self), power: self.params["power"] ?? 0 });
       for (const id of near) if (ctx.unit(id).alive) ctx.addEffect(id, { def: "infested", amount: self.params["infest"] ?? 0, stacks: self.params["turns"] ?? 3, source: self.unitId });
     },

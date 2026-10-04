@@ -571,6 +571,12 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
       target.effects = target.effects.filter((e) => e !== effect);
       ctx.emit({ type: "effectEnded", unitId: targetId, effect: effect.def, source: effect.source });
     },
+    spendCorpse: (unitId, state) => {
+      const dead = unit(unitId);
+      if (dead.alive || dead.corpse !== "intact") return;
+      dead.corpse = state;
+      for (const t of [...allTraits(ctx)]) t.hooks.remains?.(ctx, t.self, unitId, state);
+    },
     consumeCharge: (unitId, abilityId) => {
       if (chargesLeft(ctx, unitId, abilityId) <= 0) return false;
       const owner = unit(unitId);

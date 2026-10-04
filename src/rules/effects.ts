@@ -462,6 +462,7 @@ const effects: readonly EffectDef[] = [
     hooks: {},
     onExpire: (ctx, self) => ctx.heal(self.unitId, Math.round((ctx.stats(self.unitId).maxHp * (self.effect?.amount ?? 0)) / 100)),
   },
+  flatStat({ id: "gorged", name: "Gorged", stat: "damage", stacking: { mode: "merge" }, describe: (e) => `Deals ${e.amount} more damage (fed on the dead).` }),
   flatStat({ id: "withered", name: "Withered", stat: "damage", sign: -1, stacking: { mode: "unique" }, describe: (e) => `Deals ${e.amount} less damage (withered by a Decay unit).` }),
   {
     // Mend: heals at the start of each of the bearer's turns while it lasts (`stacks` turns).

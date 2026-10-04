@@ -257,6 +257,8 @@ export interface Hooks {
   afterAttack?(ctx: Ctx, self: TraitSelf, dealt: number, kills: number): void;
   /** When this unit would die; true keeps it at 1 HP. */
   preventDeath?(ctx: Ctx, self: TraitSelf): boolean;
+  /** When any unit dies, or a corpse is used or destroyed. Asked of every trait on the field. */
+  remains?(ctx: Ctx, self: TraitSelf, unitId: string, change: RemainsChange): void;
   /**
    * When healing (or a shield restoration) is about to reach this unit: the traits may change `heal.amount`, down to
    * zero, and do something else instead (Negate turns it into damage).
@@ -269,6 +271,9 @@ export interface Hooks {
   /** What this trait is worth to its unit's side, for the AI's valuation. */
   aiValue?(ctx: Ctx, self: TraitSelf): number;
 }
+
+/** What happened to a unit's remains: it died (leaving a corpse), or its corpse was used or destroyed. */
+export type RemainsChange = "died" | "used" | "destroyed";
 
 /** `each`: every application is its own instance (a unit can carry several granted abilities). */
 export type Stacking = { readonly mode: "unique" } | { readonly mode: "merge"; readonly cap?: number } | { readonly mode: "perSource" } | { readonly mode: "each" };
@@ -365,6 +370,8 @@ export interface Ctx {
   restoreShield(targetId: string, amount: number): void;
   addEffect(targetId: string, seed: EffectSeed): void;
   removeEffect(targetId: string, instance: EffectInstance): void;
+  /** Uses up or destroys an intact corpse; every trait on the field hears of it (`Hooks.remains`). */
+  spendCorpse(unitId: string, state: "used" | "destroyed"): void;
   /** Uses one charge of the unit's ability; false when none are left. */
   consumeCharge(unitId: string, abilityId: string): boolean;
   /** Ability ids the unit has, including ones granted by traits. */

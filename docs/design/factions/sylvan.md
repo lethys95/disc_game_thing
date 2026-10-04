@@ -34,3 +34,7 @@ Spells: self healing, buffs, etc.
 - **Character: wild, fierce, not noble.** "More wild than the pretty elves from other games." A fierce, protective culture around the balance of regrowth and decay they've cultivated: they spent a long time getting nature back in order after terrible events in the past (lore, not yet written), and now they're furiously protective of what they've cultivated. "It's not particularly noble at all."
 - **Tribalistic side.** The music the user made for Grove battles captures it (Suno, below): low, brooding, tribal.
 - **Battle music** (the user's Suno prompt, which "really captured the mood"): "off-beat, combat thinking game music, tribal, drums, wild, irregular drum pattern, dark, slow, background, sylvan grove themed thinking combat game background music, exotic instruments, unusual, savage elves scheming ambush type music". The user's rule for all factions: a strategy game isn't high-octane, so its music shouldn't be; low and brooding over high energy.
+
+## User, 2026-10-04
+- **Melee names:** Sproutling (tier 1); the Decay side: Moldling, Bog Giant, then Deadwood or the **Mulch Gorger** (a second tier 4: the Decay line forks again after the Bog Giant). Detail in `faction-stuff/sylvan/melee.md`.
+- **The one exception to "no zombies":** the Mulch Gorger is a plant skeleton, plant matter parasitically infesting a corpse (bark, vines, moss), "likely going to be the only direct skeleton or zombie in the faction."

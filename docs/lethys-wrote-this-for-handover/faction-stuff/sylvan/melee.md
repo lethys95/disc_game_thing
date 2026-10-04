@@ -34,3 +34,10 @@
 - Claude's reading and proposal: the rot it carries (its delayed damage) fuels an active ability that deals it out.
 - **Answers (user):** a lash-out for sure ("you're trying to turn a tank into a cannon, that shouldn't be free... you should have a backline with some healers"); the **front row** ("it needs to sting"); a **main action**. A release valve too? Unsure. Claude's suggestion, taken for now: no release valve; the healers are the valve.
 - **Built (M74):** Decay 4 with *Lash out*: deals its rot to the enemy front row; the rot stays and its countdown restarts (double-edged).
+
+## Names and the second tier 4 (user, 2026-10-04)
+- **Names:** tier 1 **Sproutling**; Decay tier 2 **Moldling**, tier 3 **Bog Giant**, tier 4 **Deadwood** (the Lash out unit). The Regrowth side keeps placeholder names.
+- **Decay branches again, tier 3 → 4:** the Bog Giant becomes either Deadwood or the **Mulch Gorger**. End of the line; no tier 5.
+- **Mulch Gorger (user):** "a plant skeleton. Whenever someone dies or a corpse gets interacted with (resurrection, corpse explosion, etc) it heals and gains damage for the rest of combat stacking indefinitely."
+- **Look (user):** "the wood and plant matter receding into showing its nature, parasitically infesting a corpse with bark, vines, moss and other such related plant matter." Likely the only direct skeleton or zombie in the faction (an exception to "no zombies" the user made here).
+- **Built:** `sproutling`, `moldling`, `bog_giant`, `deadwood`, `mulch_gorger` (`rules/units/grove.ts`). Claude's reading, for you to overrule: "someone" is any unit, either side; the Gorger keeps the line's Decay and Withering; its passive is called *Gorge*. Numbers `provisional.md` #57.

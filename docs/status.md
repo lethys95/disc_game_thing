@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines._
 
-**Updated:** 2026-09-30 (M77 the desert)
+**Updated:** 2026-10-04 (M78 Decay names and the Mulch Gorger)
 
 ## Where we are
 A playable map game for 2–6 players (hotseat viewer vs AIs): two factions (**Jilliath**, **Ral-Vitahl**) with tier-1 melee/support/mage and Nexus mages to tier 3; bandit camps, dungeons with rewards, neutral cities; gold, mana and spells; nodes (gold, Blacksmith, mana, Cathedral); items on leaders; fog of war; retreat and a battle round limit; sound slots with placeholder SFX and music. The AI plays both the map (a list of planners in `world/ai.ts`) and battles, in a web worker.
@@ -10,6 +10,7 @@ A playable map game for 2–6 players (hotseat viewer vs AIs): two factions (**J
 Architecture: `design/architecture.md`; recipes and gotchas: `engineering.md`. `pnpm verify` before calling anything done. Sims: `pnpm sim:many --seeds 1-16 "p1,p2"` (smoke tests only until factions have their lines).
 
 ## Now
+**M78 Decay line (2026-10-04, the user's design):** names Sproutling (tier 1), Moldling, Bog Giant, Deadwood; the Decay line forks again at tier 4 into Deadwood or the **Mulch Gorger** (a plant skeleton: every death or corpse used heals it and adds damage for the rest of combat, no cap). New engine hook `remains` (a death, or a corpse used/destroyed) and `ctx.spendCorpse`. Save version 24. Numbers #57; judged by composition, not parity. Next: the gnoll tribe pitch (the user's ask), then its build once approved.
 **Battle music (2026-10-03):** both sides' themes play and the winning side's is heard (tug of war, `provisional.md` #62); every faction's tracks come from a bucket (shuffle bag). The Grove has the user's seven Suno battle tracks. Try `?fight=grove`.
 **Balance by composition (2026-09-30):** `pnpm sim:comps [tier]` pits every squad a faction can field at a tier against the others' (the user: composition matters, not unit parity). Retuned: Thaumaturge lightning 80 → 55 (its pair was undefeated), Grove tier-2 melee and Spiritess up. Best squads now tier 1 J 88 / N 94 / G 81, tier 2 94 / 90 / 75, tier 3 89 / 79 / 89 (`provisional.md` #61). Open: Regrowth vs Jilliath (questions #10), the Etherborn (no damage carry; AI plays secrets poorly), Nexus tier-3 melee (content gap). The frame-rate readout is a stored setting now.
 **M77 the desert** (branch `m77-desert`, the user's ask: a desert biome, mostly cosmetic): every map has one desert, about a fifth of it (`provisional.md` #60). No rule changes: the same terrains drawn as sand, palm groves and thorn scrub, dunes, sandstone mesas, oases, with sparse dry tufts for grass; battles fought there get its ground and props. Its 14 props are meshed (TRELLIS.2, all first try); the boulder cluster came out dark and pitted, more lava than sandstone (a redo candidate). Try: any `?map&reveal`, `?fight&biome=desert`. Next: the user's look at it.
