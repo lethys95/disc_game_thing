@@ -121,6 +121,11 @@ skull. It's too humanoid. I really don't need any flesh on this model at all. It
 asymmetry, less human." Three readings, no "skeleton", no body under the plant matter, no T-pose; plus a single
 three-quarter view of each (Claude's test: does the turnaround frame pull toward an upright, even figure?).
 
+Result (Claude's read; page `shots/grove-decay-3.html`): the single three-quarter views are far less human than the
+turnarounds of the same prompts, which stand upright like a person again. Best: the *stalk* front (the skull hanging
+off a long vine neck), then the *heap* front (the skull sunk into a hunched mass). Tripo takes a single image, so a
+front view can go to it as is.
+
 ## Open
 - Picked: Sproutling, Moldling, Deadwood, Bog Giant (all `art/candidates/units/grove/`, prompts in `GROVE`). Open:
   the Mulch Gorger (round three). The picks split into single views for Tripo: `shots/tripo/` (the user tries how
