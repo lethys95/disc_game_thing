@@ -1,81 +1,91 @@
 # Neutrals: the gnoll tribe
 
 > **Pitch (Claude, 2026-10-04), from the user's ask:** "think of a neutral tribe of gnoll units so we can have more
-> available units to fight against in the overworld." Everything here is Claude's: cut, rename or veto. The names are
+> available units to fight against in the overworld." Everything here is Claude's: cut, rename or veto. Names are
 > suggestions; until you pick, the code would say "Gnoll 1…5".
+>
+> **Second try (the user, 2026-10-04):** the first pitch (scavengers that feed on the dead) leaned on the Grove's
+> Golgari themes: "consider what else gnolls are about instead of more death." The bag was shuffled; this one keeps
+> no corpse or death trigger at all.
+
+## What gnolls are about, besides death
+Hyena-folk. What a hyena actually is, and what the old gnoll stories make of it:
+- **The chase.** Hyenas are endurance hunters: they don't ambush, they run prey down until it can't run any more.
+- **The pack and its rank.** A strict pecking order, led by the matriarch; everyone knows their place, and fights
+  over it.
+- **The jaws.** A bite that cracks bone: armor and shields don't stop it.
+- **The laugh.** The cackle is how the pack talks, and it unnerves everything else.
+- **Nomads.** Raiders of the open dry country who follow the herds; their land is marked, not walled.
 
 ## The tribe
-- **Role in the game:** a second tribe beside the bandits (`design/tribes.md`), guarding camps and dungeons, and
-  recruitable from a tribal outpost (`design/nodes.md`). Bandits are a cross-section of people (stun, armor-breaker,
-  archer, mage); gnolls should feel different to fight.
-- **Theme (Claude):** a scavenger pack. They follow battles and eat the dead, finish off the wounded, and grow
-  bolder as things die. Laughter as a weapon. Not evil, not noble: hungry.
-- **Why it plays differently:** the bandits test your armor and your front line; the gnolls test **how you take
-  losses**. A squad that trades units badly feeds them. Corpses matter in our battles now (the Grove), and gnolls
-  compete for them, so they also cut into the Grove's corpse abilities and feed a Mulch Gorger.
-- **Biome fit (Claude, for questions #6):** hyenas fit the **desert** (savanna, carrion). It would give the desert its
-  tribe without a rule effect. The bandits stay on roads and temperate land.
-- **Tiers:** four tier-1 units, as the bandits have, and one tier-2 leader for strong camps only, so strong camps
-  differ from weak ones by more than levels.
+- **Role:** a second tribe beside the bandits (`design/tribes.md`), guarding camps and dungeons, recruitable from a
+  tribal outpost (`design/nodes.md`).
+- **How it plays (Claude):** the bandits test your armor and your front line; the gnolls test **your tempo**. They
+  pick one target and swarm it, get faster as the fight goes on, slow your units down, and don't let you run. A slow,
+  heavy squad that wants a long fight struggles; a fast squad that kills the leader first does well.
+- **Biome fit (Claude, for questions #6):** the open desert and dry plains: hunters of the open country. It would give
+  the desert its tribe without a rule effect.
+- **Tiers:** four tier-1 units, as the bandits have, and a tier-2 Matriarch for strong camps only.
 
 ## Tier 1
 
-### Gnoll 1: "Pack hunter" (suggested)
-- **Role:** melee finisher.
-- **Intent:** goes for the wounded. Ignoring a hurt unit of yours is a mistake against them.
-- **Stats:** health medium · damage low · armor none · initiative medium-high.
-- **Abilities:** *Finish the weak* (passive): deals 50% more damage to a target below half its health.
-- **Strong against / weak against:** chip-damage fights, healers who fall behind / big health pools that stay
-  topped up, armor.
+### Gnoll 1: "Packstalker" (suggested)
+- **Role:** melee, the pack's spearhead.
+- **Intent:** names the prey. Once it has hit a unit, the whole pack goes for that one.
+- **Stats:** health medium · damage low · armor none · initiative high.
+- **Abilities:** *Prey* (passive): the unit it hits becomes the pack's prey until the end of the next round: every
+  gnoll deals more damage to it.
+- **Strong against / weak against:** squads that rely on one big unit / many even, cheap units (marking one barely
+  matters).
 
-### Gnoll 2: "Carrion eater" (suggested)
-- **Role:** melee bruiser that feeds on corpses.
-- **Intent:** a front-liner that eats the dead to stay up: a race for the corpses with the Grove, and a tax on
-  any side that loses units early.
-- **Stats:** health high · damage low · armor very low · initiative low.
-- **Abilities:** *Feed* (main action): eats a corpse of either side; heals a large amount and deals more damage for
-  the rest of combat. The corpse is used up (no corpse growth, no explosion; it feeds a Mulch Gorger).
-- **Strong against / weak against:** long fights with deaths / a clean fight where nothing dies; the Grove's corpse
-  users take its food.
+### Gnoll 2: "Bonecracker" (suggested)
+- **Role:** heavy melee.
+- **Intent:** the jaws. Cracks armor open for the rest of the pack.
+- **Stats:** health high · damage medium · armor low · initiative low.
+- **Abilities:** *Crack* (passive): each hit takes some of the target's armor away for the rest of combat (it adds up).
+  Different from the Marauder, which hits armored units harder but leaves the armor where it was.
+- **Strong against / weak against:** Paladins, Templars, Custodians / unarmored swarms and casters.
 
-### Gnoll 3: "Bone thrower" (suggested)
+### Gnoll 3: "Hamstringer" (suggested; a javelin or bola thrower)
 - **Role:** ranged.
-- **Intent:** hits leave wounds that keep bleeding, which sets up the Pack hunter's half-health bonus.
+- **Intent:** the chase: slows the prey down so the pack catches it.
 - **Stats:** health low · damage low (ranged) · armor none · initiative high.
-- **Abilities:** *Jagged throw* (its attack): part of the hit bleeds over the target's next turns (the existing
-  bleed).
+- **Abilities:** *Hamstring* (its attack): the target loses initiative until the end of the next round, so it may
+  lose an action.
 
 ### Gnoll 4: "Cackler" (suggested)
-- **Role:** support / debuffer.
-- **Intent:** the laugh that makes the other side flinch. No damage spell; it weakens.
+- **Role:** support.
+- **Intent:** the laugh: the pack's voice and the enemy's nerves.
 - **Stats:** health very low · damage very low · armor none · initiative medium.
-- **Abilities:** *Cackle* (main action): every enemy deals less damage until the end of the round. *Bolder with
-  every death* (passive aura, its squad): when any unit dies, the gnolls gain a little initiative for the rest of
-  combat (the pack smells blood).
+- **Abilities:** *Cackle* (main action): every gnoll gains initiative for the round and every enemy loses some (the
+  pack moves first). *Run them down* (passive): while it lives, enemy units can't retreat.
 
 ## Tier 2 (strong camps)
 
 ### Gnoll 5: "Matriarch" (suggested; real hyena packs are led by females)
-- **Role:** leader and heavy melee.
-- **Intent:** the reason a strong camp is scary. Kill her first and the pack falters.
+- **Role:** leader, heavy melee.
+- **Intent:** rank. The pack fights harder for her, and when she falls the pecking order reshuffles instead of
+  collapsing.
 - **Stats:** health very high · damage high · armor low · initiative medium.
-- **Abilities:** *Pack leader* (aura): other gnolls deal more damage while she lives; when she dies, they lose
-  initiative instead.
+- **Abilities:** *Pecking order* (aura): the other gnolls deal more damage while she's in the fight. If she leaves it,
+  the gnoll with the most health left takes up the aura at half strength: the next in line. *Run them down* as well.
 
 ## Camps (Claude)
-- Weak: Pack hunter, Carrion eater, Bone thrower, Cackler (like the bandits' four).
-- Medium: two Pack hunters, Carrion eater, Bone thrower, Cackler, at level 2.
-- Strong: Matriarch with two Pack hunters, two Bone throwers and a Cackler, at level 4.
-- Which camps are gnolls: by biome if you take the desert idea (#6); otherwise half the camps, by the map's seed.
+- Weak: Packstalker, Bonecracker, Hamstringer, Cackler.
+- Medium: two Packstalkers, Bonecracker, Hamstringer, Cackler, at level 2.
+- Strong: Matriarch, Packstalker, Bonecracker, two Hamstringers, Cackler, at level 4.
+- Which camps are gnolls: by biome if you take the desert idea (#6); otherwise some of the camps, by the map's seed.
+- **Bigger idea, not part of this pitch:** nomads that roam. Gnoll warbands could wander their territory on the map
+  instead of sitting in a camp, a new kind of neutral. Larger work; only if you want it.
 
 ## Look (Claude's notes, not prompts yet)
-Hyena-folk: hunched, long-armed, spotted pelts, scavenged armor and trinkets pulled from other factions' dead (a
-Jilliath tabard, a Nexus cable), bone fetishes. Accent: the neutral ember. The style words stay yours
-(no-silent-style); a concept probe only when you ask.
+Lean, long-legged runners with sloping backs and heavy shoulders; spotted and striped pelts; sun-bleached hide,
+beads and painted clan marks (territory, rank); bronze and rawhide gear, javelins and bolas. Accent: the neutral
+ember. The style words stay yours (no-silent-style); a concept probe only when you ask.
 
 ## Open questions
 - Keep, cut or swap any of the five? Names?
 - Desert tribe, or everywhere?
-- Can a tribal outpost recruit the Matriarch, or only tier 1?
+- Roaming gnoll warbands: worth it later?
 
-**Status:** idea (Claude's pitch).
+**Status:** idea (Claude's pitch, second try).

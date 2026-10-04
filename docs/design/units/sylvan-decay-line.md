@@ -1,0 +1,82 @@
+# Sylvan: the Sproutling and the Decay line
+
+> The user's design (2026-09-29 and 2026-10-04: `faction-stuff/sylvan/melee.md`). What each unit does is the user's;
+> the numbers are Claude's (`provisional.md` #57). **Look concepts are Claude's** (marked) for the user to pick from;
+> the Mulch Gorger's look is the user's. The world is dark and gothic, and the Grove is wild, fierce and not noble
+> (`factions/sylvan.md`): nothing here should read cute or pretty.
+
+```
+Sproutling (1) ─┬─ Regrowth 2 ── Regrowth 3                     (life; placeholder names)
+                └─ Moldling (2) ── Bog Giant (3) ─┬─ Deadwood (4)
+                                                  └─ Mulch Gorger (4)
+```
+
+Shared look (Claude): the Custodian's turnaround recipe (a 3D model sheet, front, side and back in a T-pose, flat
+light on light grey) with the Grove's materials (bark, wet moss, sodden wood, bone, sinew and rawhide) and its accent,
+a deep moss green glow from cracks and wounds. Prompts: `scripts/art/concepts.ts` (`GROVE`); images:
+`art/candidates/units/concepts/<unit>-<concept>-turnaround-<seed>.png`.
+
+## Sproutling (tier 1, `sproutling`)
+- **Play (user):** "some regen": the persistent front. Heals a share of its max HP at the start of its turns.
+  Recruited at 45 gold. Forks at tier 2 into Regrowth (life) or Decay (death).
+- **Numbers:** 121 HP, 24 damage, initiative 45, Regrowth 6%.
+- **Look concepts (Claude):** not a cute sprout: it's the raw material both branches grow from.
+  1. *Graft:* a gaunt, feral elf warrior whose ritual scars sprout pale shoots; wounds closed with bark scabs; a carved
+     war mask. The regeneration made visible.
+  2. *Husk:* a tall, thin wicker-like effigy of briars and dead roots around a hollow, with a carved tribal mask. The
+     tribe's thing, not a person.
+  3. *Sapling:* a hunched berserker with a young tree rooted in the spine, branches like antlers, roots under the
+     skin. The plant is using them as much as they use it.
+
+## Moldling (Decay tier 2, `moldling`)
+- **Play (user):** no regeneration; a share of the damage it takes rots in instead and is lost over its next turns.
+  Tankier than Regrowth, and it needs a support backline.
+- **Numbers:** 210 HP, 46 damage, initiative 45, Decay 40% over 3 turns.
+- **Look concepts (Claude):** the delayed damage is something soft that soaks the blow and spoils later.
+  1. *Bloom:* a broad brute under a thick coat of grey-white and green mold, puffballs on the shoulders, mold filling
+     its wounds.
+  2. *Litter:* an elf wrapped in damp rotting leaf litter like a ghillie cloak, shelf fungus pauldrons, a bracket
+     fungus mask.
+  3. *Mycelium:* black rotting wood held together by white mycelium threads like tendons and bandages.
+
+## Bog Giant (Decay tier 3, `bog_giant`)
+- **Play (user):** Decay, plus *withering*: an enemy that hits it deals less damage for the rest of combat.
+- **Numbers:** 390 HP, 76 damage, initiative 45, Decay 50%, Withering 5 per hit (up to 15).
+- **Look concepts (Claude):** the bog is where things go to rot slowly; whatever strikes it comes away weaker.
+  1. *Peat:* a hunched giant of black peat and bog oak, dripping, moss on the shoulders, bog-iron fetters, a
+     will-o'-the-wisp light in its chest.
+  2. *Idol:* a mound of roots and peat with an ancient carved wooden idol for a head, rawhide straps and bone fetishes.
+     The tribe's worship made giant.
+  3. *Troll:* a heavy moss-hided brute with root legs and a bog oak club. The most conventional of the three.
+
+## Deadwood (Decay tier 4, `deadwood`)
+- **Play (user):** "the more it suffers, the more it lashes back": *Lash out* (main action) deals the rot inside it
+  to the whole enemy front row; the rot stays and its countdown restarts. The melee line's win condition, late game;
+  it needs healers behind it. Keeps Decay and Withering.
+- **Numbers:** 376 HP, 72 damage, initiative 45, Decay 55%, Withering, Lash out 100%.
+- **Look concepts (Claude):** dead wood that has stored up everything done to it.
+  1. *Blasted:* split, lightning-struck grey wood, a charred hollow core glowing green, splinters like spikes, whip
+     branches for arms, sap running like blood.
+  2. *Knight:* bleached driftwood grown into the shape of gothic plate, a crown of broken branch spikes. The closest
+     to the Custodian's silhouette.
+  3. *Gaunt:* skeletal-thin twisted dead wood, bark peeling in strips, a cavity mouth. Starved and spiteful, not a
+     noble tree spirit.
+
+## Mulch Gorger (Decay tier 4, `mulch_gorger`)
+- **Play (user):** "whenever someone dies or a corpse gets interacted with (resurrection, corpse explosion, etc) it
+  heals and gains damage for the rest of combat, stacking indefinitely." End of the line.
+- **Numbers:** 376 HP, 66 damage, initiative 45, Decay 50%, Withering, *Gorge* (heals 25 and +6 damage per death or
+  spent corpse, either side, no cap). Claude's reading: it keeps the line's Decay and Withering.
+- **Look (user):** "a plant skeleton… the wood and plant matter receding into showing its nature parasitically
+  infesting a corpse with bark, vines, moss and other such related plant matter." Likely the only direct skeleton or
+  zombie in the faction.
+- **Look concepts (Claude, within the user's look):**
+  1. *Skeleton:* a human skeleton with bark grown over the bones like a cast, vines threaded through, moss in the
+     ribcage, the plant matter receding in places to show bone.
+  2. *Mound:* a hulking mass of mulch and roots with the skeleton showing where it slides away: a jaw of root teeth.
+  3. *Puppet:* a tall elf skeleton in bark splints, moved by vines like strings.
+
+## Open
+- The user's pick per unit (or a mix) before any of them goes to Tripo.
+- Scale on the battlefield: the Bog Giant and the Mulch Gorger "mound" read big; the Sproutling and Moldling read
+  person-sized.
