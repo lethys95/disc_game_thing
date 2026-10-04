@@ -11,10 +11,10 @@ Sproutling (1) ─┬─ Regrowth 2 ── Regrowth 3                     (life;
                                                   └─ Mulch Gorger (4)
 ```
 
-Shared look (Claude): the Custodian's turnaround recipe (a 3D model sheet, front, side and back in a T-pose, flat
-light on light grey) with the Grove's materials (bark, wet moss, sodden wood, bone, sinew and rawhide) and its accent,
-a deep moss green glow from cracks and wounds. Prompts: `scripts/art/concepts.ts` (`GROVE`); images:
-`art/candidates/units/concepts/<unit>-<concept>-turnaround-<seed>.png`.
+Shared look (Claude): the Custodian's turnaround recipe (a 3D model sheet, front, side and back, flat light on light
+grey) with the Grove's materials (bark, wet moss, rotting wood, fungus) and its accent, a deep moss green glow. The
+user (after round one): not humanoid by default, and never symmetrical. Prompts: `scripts/art/concepts.ts` (`GROVE`); images:
+`art/candidates/units/grove/` (round one in `round-1/`).
 
 ## Sproutling (tier 1, `sproutling`)
 - **Play (user):** "some regen": the persistent front. Heals a share of its max HP at the start of its turns.
@@ -83,7 +83,24 @@ friendly tree spirit). Across the set: the moss-green glow only showed on the Bo
 twice or a stray arm (graft 1000, sapling 1000, mycelium 1000, blasted 1000); the Mulch Gorger *skeleton* barely shows
 any plant matter.
 
+## The user's direction after round one (2026-10-04)
+- **Not everything humanoid.** "I don't think I had in mind that we'd have elves in this line." The skeleton at tier 4
+  is "more of a surprise type thing". "I might actually retry everything. But! We did learn."
+- **Asymmetry everywhere:** "We shouldn't have them be symmetrical. Symmetry is pleasing. We're not trying to please."
+- **Sproutling:** a redo. Less human, "probably closer to a small treant".
+- **Moldling:** *mycelium* "is pretty good, but make it skinnier. The face is great, the shrooms are probably too large
+  and too symmetrical."
+- **Bog Giant:** "more a hunk of bark, asymmetric sludge and basically whatever you associate with a swamp." The right
+  arm huge. Fog maybe later as a VFX, not in the 2D image (it won't render well).
+- **Deadwood:** "pretty much just an animated dead tree. I imagine the face being strange and ghostly. Nothing about it
+  looks humanoid. Both arms are massive stumps", and it would move "more like a gorilla than a human".
+- **Mulch Gorger:** a redo; *mound* was closest, "but I was not just looking for leaves and dirt. I'd imagine the mouth
+  being open, and the cranium lolling back. The host isn't really there. Bark, fungi, leaves and other plant matter,
+  try to be grotesque. Don't make it fat either. Feet are stumps. Think of t4 mulch as a corpse being possessed by the
+  worst nature has to offer."
+- Round two (`scripts/art/concepts.ts`, `GROVE`; images in `art/candidates/units/grove/`): two readings per unit,
+  three seeds, every subject told to be lopsided and uneven; the non-humanoid ones drop the T-pose for a neutral pose
+  with the limbs held clear (Deadwood leans on its arm stumps).
+
 ## Open
 - The user's pick per unit (or a mix) before any of them goes to Tripo.
-- Scale on the battlefield: the Bog Giant and the Mulch Gorger "mound" read big; the Sproutling and Moldling read
-  person-sized.

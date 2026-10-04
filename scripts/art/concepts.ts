@@ -58,55 +58,80 @@ const GOLEM =
   "faint electric teal lightning crackling in the cracks, a scrap of old cloth at its waist.";
 
 /** Several angles in one image (the user, 2026-09-30), for multi-view 3D: painted together, the views agree. */
-const turnaround = (subject: string, materials: string) =>
-  "A character turnaround sheet of a 3D game character model: the same figure shown three times side by side at the same size, in a front view, a side view from the left, and a back view, all standing in the same T-pose, " +
+const T_POSE = "all standing in the same T-pose";
+const turnaround = (subject: string, materials: string, pose = T_POSE) =>
+  `A character turnaround sheet of a 3D game character model: the same figure shown three times side by side at the same size, in a front view, a side view from the left, and a back view, ${pose}, ` +
   `like a sculpted and textured asset shown in a modelling program, each view whole from head to feet and fingertip to fingertip. ${subject} ${materials} ` +
   "Flat, even, shadowless lighting from all sides, like a texture reference: no cast or painted shadows, no dark recesses. A plain flat light grey background, no ground, no text, no labels.";
 
 const TURNAROUND = turnaround(GOLEM, GOTHIC_3D);
 
 /**
- * The Custodian's turnaround recipe for the Grove (the user, 2026-10-04: the Decay line and the Sproutling in the same
- * 3D style; still the dark gothic world, the Sproutling not cute). GOTHIC_3D with the Grove's materials in place of
- * stone and brass. The subjects are Claude's concepts (`docs/design/units/sylvan-decay-line.md`), three per unit.
+ * The Custodian's turnaround recipe for the Grove's Sproutling and Decay line (the user, 2026-10-04): still the dark
+ * gothic world. Round two, after the user's notes on round one (`docs/design/units/sylvan-decay-line.md`): not
+ * humanoid by default, never symmetrical ("symmetry is pleasing; we're not trying to please"). Two readings per unit
+ * of the user's own description; the subjects' details are Claude's.
  */
 const GROVE_3D =
-  "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: rough bark, wet moss, sodden dark wood, bone, frayed sinew and rawhide bindings. Serious, adult, not cartoonish, not cute.";
+  "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: rough bark, wet moss, rotting wood, fungus. Serious, adult, not cartoonish, not cute.";
 
-const GROVE_GLOW = "a faint deep moss green glow seeping from its cracks and wounds";
+const UNEVEN =
+  "Deliberately asymmetric and irregular: its left and right sides differ in size and shape, growths are scattered unevenly, nothing is mirrored. Unsettling, not pleasing.";
 
-const GROVE: Readonly<Record<string, string>> = {
-  "sproutling-graft":
-    `A gaunt, feral elf warrior with pointed ears, wiry and scarred, ritual scars on the skin where pale green shoots push out through the flesh, old wounds closed over with scabs of bark, crude armor of bark plates lashed on with sinew, a carved wooden war mask, ${GROVE_GLOW}. Fierce and wild, not noble.`,
-  "sproutling-husk":
-    `A tall, thin, menacing figure woven from thorny briars and dark dead roots around a hollow body, like a wicker effigy, a carved tribal wooden mask for a face with dark empty eye holes, pale new shoots and thorns sprouting from its joints, ${GROVE_GLOW}. Not a child, not cute.`,
-  "sproutling-sapling":
-    `A feral elf berserker with pointed ears, hunched and muscular, a young tree rooted into the spine growing out of the back and shoulders with branches like antlers, roots running under the skin of the arms like veins, tattered hide wraps, ${GROVE_GLOW}. Fierce and wild, not noble.`,
-  "moldling-bloom":
-    `A broad, hunched brute covered in a thick coat of grey-white and green mold, puffball and cup fungus growing in clusters on its shoulders, spongy mold filling its old wounds, armor of rotting bark plates, a blank face hidden under the mold, ${GROVE_GLOW}.`,
-  "moldling-litter":
-    `An elf warrior with pointed ears wrapped in heavy layers of damp rotting leaf litter and fungus like a ragged ghillie cloak, shelf fungus growing as pauldrons, the face hidden behind a mask of bracket fungus with dark eye slits, a rotten wooden club, ${GROVE_GLOW}.`,
-  "moldling-mycelium":
-    `A heavy humanoid body of wet black rotting wood bound together by thick white threads of mycelium like tendons and bandages, small grey mushroom caps along the arms and spine, a head like a split rotten log with a dark hollow face, ${GROVE_GLOW}.`,
-  "bog-giant-peat":
-    "A massive hunched giant of black peat and sodden bog oak, dripping marsh water, reeds and sphagnum moss growing over its huge shoulders, rusted bog-iron fetters and chains on its wrists, a pale green will-o'-the-wisp light glowing deep inside its chest, long arms reaching the knees.",
-  "bog-giant-idol":
-    "A massive giant whose body is a mound of matted roots, peat and moss, with an ancient weathered carved wooden idol for a head, bound with old rawhide straps and bone fetishes, rusted bog-iron chains wound around its torso, deep moss green light in the idol's eyes.",
-  "bog-giant-troll":
-    "A huge, heavy troll-like being with a hide of thick wet moss and lichen, a hanging beard of bog moss, legs like knotted roots, a great club of black bog oak, crude armor of bark and bone, tiny deep-set eyes glowing deep moss green.",
-  "deadwood-blasted":
-    "A towering figure of split, lightning-blasted dead grey wood, a hollow charred core glowing deep moss green from inside, jagged splinters and broken branches jutting from it like spikes, long whip-like dead branches for arms, dark sap running from its cracks like blood.",
-  "deadwood-knight":
-    "A tall warrior whose armor and body are grown from bleached silver-grey dead driftwood shaped like gothic plate armor, a crown of broken branch spikes, its cracks leaking a deep moss green rot light, long splintered wooden claws.",
-  "deadwood-gaunt":
-    "A gaunt, skeletal-thin creature of dead twisted wood, wind-blasted, bark peeling from it in long strips, a cavity mouth in a narrow head, thorned spiky limbs, hung with withered dry leaves and dead vines, deep moss green light in its eye hollows. Not a noble tree spirit: starved and spiteful.",
-  // The user's look (2026-10-04): the plant matter receding to show that it parasitically infests a corpse.
-  "mulch-gorger-skeleton":
-    "A plant skeleton: a human skeleton parasitically infested by plant matter, bark grown over the bones like a cast, vines wrapped and threaded through them, moss filling the ribcage, fungus caps along the spine, in places the plant matter receding to show the bone underneath, deep moss green light in the skull's eye sockets.",
-  "mulch-gorger-mound":
-    "A hulking shape of mulch, leaf litter, roots and moss, with a corpse's skeleton showing through where the mulch slides away from it: a ribcage, a skull with a jaw of root teeth, finger bones inside root claws, the plant matter infesting the bones like a parasite, deep moss green light inside it.",
-  "mulch-gorger-puppet":
-    "A tall elf skeleton with a long narrow skull, bound in bark like splints and moved by vines like a puppet's strings, roots grown through the bones of its arms and legs, moss and lichen on the skull, the plant matter receding from its face and chest to show the bone, deep moss green light in its eye sockets.",
+/** For bodies that aren't human: a T-pose means nothing to them, but the rig still needs every limb clear. */
+const CLEAR_POSE = "all in the same neutral standing pose with every limb held clear of the body";
+
+const GROVE: Readonly<Record<string, { readonly subject: string; readonly pose?: string }>> = {
+  "sproutling-stump": {
+    subject:
+      "A small treant, nothing human about it: a squat, gnarled young stump of dark bark walking on uneven root legs, one arm a long crooked branch and the other a short thick knot of wood, a face of knotholes with a ragged split in the bark for a mouth, pale new shoots and a few leaves sprouting from one side of its head and one shoulder, moss in its cracks. Feral and hostile, not childlike.",
+    pose: CLEAR_POSE,
+  },
+  "sproutling-sapling": {
+    subject:
+      "A small treant made from a young twisted sapling, nothing human about it: a thin trunk body bent to one side, splayed root feet, two branch arms of different lengths ending in twig claws, a sparse lopsided crown of shoots, a face of dark knotholes with a faint deep moss green glow deep inside. Hungry and wild, not cute.",
+    pose: CLEAR_POSE,
+  },
+  // The user liked round one's mycelium: "make it skinnier. The face is great, the shrooms are probably too large and too symmetrical."
+  "moldling-mycelium-lean": {
+    subject:
+      "A skinny, lean body of wet black rotting wood bound together by thick white threads of mycelium like tendons and bandages, a head like a split rotten log with a dark hollow face, a few small grey mushroom caps in uneven clusters: a crowd of them on one shoulder, a scattered line down part of the spine, a patch on one forearm, none on the other side.",
+  },
+  "moldling-mycelium-hunched": {
+    subject:
+      "A skinny, hunched body of wet black rotting wood bound together by white threads of mycelium like tendons and bandages, leaning to one side, one arm longer and thinner than the other, a head like a split rotten log with a dark hollow face, small grey mushroom caps scattered unevenly, mostly on one side, white mold furring one leg.",
+  },
+  // The user: "a hunk of bark, asymmetric sludge and basically whatever you associate with a swamp", the right arm huge. Fog later as VFX.
+  "bog-giant-hulk": {
+    subject:
+      "A massive hunched hulk with no human shape: a lump of black bark and sodden bog oak with swamp sludge, peat and mud oozing down it unevenly, reeds, cattails and hanging sphagnum moss, duckweed stuck to it, a rotting log and roots grown into its back, a small sunken face low in the bark. Its right arm is enormous, a huge club-like mass of bark, roots and mud hanging down to the ground; its left arm is small and withered. Two thick stumpy legs. No fog, no mist.",
+    pose: CLEAR_POSE,
+  },
+  "bog-giant-mire": {
+    subject:
+      "A massive lopsided swamp creature, no human shape: a heap of bark slabs, black mud and dripping sludge, stagnant water running off it, reeds, cattails, lily pads and a drowned branch sticking out of its shoulder, leeches and snails on its flanks, a dim deep moss green marsh light glowing in a hollow in its chest. Its right arm is huge, swollen with mud and roots, dragging on the ground; its left is a thin crooked root. Stumpy legs. No fog, no mist.",
+    pose: CLEAR_POSE,
+  },
+  // The user: "an animated dead tree… strange and ghostly face… both arms are massive stumps", moving more like a gorilla.
+  "deadwood-tree": {
+    subject:
+      "An animated dead tree, nothing humanoid about it: a thick hollow grey trunk with split, peeling bark, bare broken branches jutting from its top and back at odd angles, two massive arms that are thick dead stumps ending in blunt splintered ends, short gnarled root legs. In the trunk, a strange ghostly face: a pale stretched hollow like a face pressed through the wood from inside, dim moss green lights for eyes, a long dark split for a mouth.",
+    pose: "all in the same pose, hunched forward and leaning on its two massive arm stumps like a gorilla, every limb clear of the body",
+  },
+  "deadwood-blasted": {
+    subject:
+      "An animated dead tree, nothing humanoid about it: a lightning-split, charred grey trunk, one side burned black, the other bleached and peeling, a few dead branches clawing up from its top on one side only, two massive arms that are thick dead stumps of different lengths, short root legs. A ghostly face in the split of the trunk, smoky and faint, as if something trapped inside were looking out, with a faint deep moss green glow.",
+    pose: "all in the same pose, hunched forward and leaning on its two massive arm stumps like a gorilla, every limb clear of the body",
+  },
+  // The user: "a corpse being possessed by the worst nature has to offer": mouth open, cranium lolling back, the host barely there.
+  "mulch-gorger-possessed": {
+    subject:
+      "A grotesque thing: a corpse possessed and overgrown by the worst of nature, the body barely there under it, a lean skeleton frame with bark grown over and through the bones, bracket fungi, slime mold, rotting leaves, roots and thorny vines bursting out of the ribcage, the skull lolling back on a bent neck with its jaw hanging wide open and growth spilling out of the mouth. Lean, not fat. Its feet are stumps of rotten wood. Lopsided, diseased, repulsive.",
+  },
+  "mulch-gorger-host": {
+    subject:
+      "A grotesque, gaunt figure: rot and growth wearing a dead body like a frame, the host almost gone, ribs and a spine showing through a mass of bark, pale fungus, black mold, rotting leaves and tangled roots, one arm grown long and twisted with wood, the skull tipped back with the mouth gaping open and fungus growing from it. Thin, not fat. Its feet are rotten wooden stumps. Uneven and repulsive.",
+  },
 };
 const JOBS = [
   { id: "custodian-tpose", prompt: `A full-body character model reference of a single figure, the whole figure visible from head to feet. ${GOLEM} ${FOR_RIG}` },
@@ -126,16 +151,20 @@ const JOBS = [
   { id: "zealot-anchor", prompt: `${FIGURE} ${ZEALOT} ${ANCHOR("vivid blood red")}` },
   { id: "zealot-plain", prompt: `${FIGURE} ${ZEALOT} ${PLAIN("vivid blood red")}` },
   { id: "psychopomp-anchor", prompt: `${FIGURE} ${PSYCHOPOMP} ${ANCHOR("deep moss green")}` },
-  ...Object.entries(GROVE).map(([id, subject]) => ({ id: `${id}-turnaround`, prompt: turnaround(subject, GROVE_3D) })),
   { id: "psychopomp-plain", prompt: `${FIGURE} ${PSYCHOPOMP} ${PLAIN("deep moss green and spectral purple")}` },
 ];
+
+/** The Grove's turnarounds get their own folder, so a concept run doesn't overwrite their manifest. */
+const GROVE_JOBS = Object.entries(GROVE).map(([id, { subject, pose }]) => ({ id: `${id}-turnaround`, prompt: `${turnaround(subject, `${GROVE_3D} ${UNEVEN}`, pose)}` }));
 
 const args = process.argv.slice(2);
 const seeds = args.map(Number).filter((n) => !Number.isNaN(n));
 const ids = args.filter((a) => Number.isNaN(Number(a)));
+const grove = ids.length > 0 && ids.every((id) => GROVE_JOBS.some((j) => j.id === id));
+// A T-pose spans wider than it stands tall: the portrait frame cut the arms off.
+const frame = (id: string) => (id.includes("turnaround") ? { width: 2048, height: 832 } : id.includes("tpose") || id.includes("-3d") ? { width: 1344, height: 1024 } : { width: 896, height: 1152 });
 await runBatch(
-  "art/candidates/units/concepts",
-  // A T-pose spans wider than it stands tall: the portrait frame cut the arms off.
-  JOBS.filter((j) => ids.length === 0 || ids.includes(j.id)).map((j) => ({ ...j, ...(j.id.includes("turnaround") ? { width: 2048, height: 832 } : j.id.includes("tpose") || j.id.includes("-3d") ? { width: 1344, height: 1024 } : { width: 896, height: 1152 }) })),
+  grove ? "art/candidates/units/grove" : "art/candidates/units/concepts",
+  (grove ? GROVE_JOBS : JOBS).filter((j) => ids.length === 0 || ids.includes(j.id)).map((j) => ({ ...j, ...frame(j.id) })),
   seeds.length > 0 ? seeds : [1000, 1001, 1002, 1003],
 );
