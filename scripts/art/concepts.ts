@@ -296,9 +296,43 @@ const DRAWN_2: Readonly<Record<string, { readonly subject: string; readonly stan
   },
 };
 
+/**
+ * Round three (Claude): the Eyespot failed twice (its eyes came out as plain moth spots, grey like the Pale Mother's
+ * wings), so two new readings with human eyes set in coloured wings; and the Chrysalis, whose single views are a true
+ * cocoon while its turnarounds keep growing a figure, as an object with no limbs at all.
+ */
+const DRAWN_3: Readonly<Record<string, { readonly subject: string; readonly stance?: string; readonly pose?: string }>> = {
+  "eyespot-fan": {
+    subject:
+      "The Eyespot, a moth-folk: four huge wings raised behind it in a wide circle like a peacock's fan, the wing membrane dark wine red and set with dozens of human eyes, white eyeballs with irises and eyelids embedded in it, all staring; a thin body in a high-collared black velvet coat, its face hidden behind a black lace veil.",
+    stance: "its four wings raised in a wide circle behind it, every eye on them staring at the viewer",
+  },
+  "eyespot-blind": {
+    subject:
+      "The Eyespot, a moth-folk: its own head is smooth and eyeless, with only small mandibles; the eyes it sees with are on its wings: two broad pale wings set with dozens of bloodshot human eyes with lids and lashes, open and staring; a thin body wrapped in grey velvet and old lace.",
+    stance: "its wings spread wide and tilted toward the viewer, the eyeless head turned aside",
+  },
+  "chrysalis-object": {
+    subject:
+      "The Chrysalis: an object, not a figure, with no arms, no legs, no wings and no face: a tall upright cocoon of grey silk and old candle wax wrapped in burial cloth, bound with tarnished silver wire and hung with wax seals, split open down one side to a dark wet gap, a bulge pressing out from inside, on a short knot of silk at its base.",
+    pose: "all in the same upright position",
+  },
+};
+
 const DRAWN_JOBS = [
   ...Object.entries(DRAWN).map(([id, { subject, pose }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${MOTH} ${subject}`, DRAWN_3D, pose) })),
   ...Object.entries(DRAWN_2).map(([id, { subject, pose }]) => ({ id: `${id}-turnaround`, prompt: turnaround(subject, DRAWN_3D, pose) })),
+  ...Object.entries(DRAWN_3).map(([id, { subject, pose }]) => ({ id: `${id}-turnaround`, prompt: turnaround(subject, DRAWN_3D, pose) })),
+  ...Object.entries(DRAWN_3).flatMap(([id, { subject, stance }]) =>
+    stance
+      ? [{
+          id: `${id}-stance`,
+          prompt:
+            `A 3D render of a game character model in a three-quarter front view, ${stance}, the whole figure visible from head to feet with a margin around it, like a sculpted and textured asset shown in a modelling program. ` +
+            `${subject} ${DRAWN_3D} Flat, even, shadowless lighting from all sides, like a texture reference. A plain flat light grey background, no ground, no text.`,
+        }]
+      : [],
+  ),
   ...Object.entries(DRAWN_2).map(([id, { subject, stance }]) => ({
     id: `${id}-stance`,
     prompt:
