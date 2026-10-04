@@ -116,6 +116,9 @@ turnaround frame pull toward a clean, upright, even figure; a single front or th
 grotesque pose, then a turnaround from it.
 
 ## Round three: the Mulch Gorger (2026-10-04)
+**Picked (user):** `mulch-gorger-heap-turnaround-1000`: "is great. We're taking it." (The turnaround, not a single
+view.)
+
 The user on round two: "mulch gorger still fails. It looks like a human. Maybe not mention skeleton, maybe just say
 skull. It's too humanoid. I really don't need any flesh on this model at all. It's just skull and plant matter. More
 asymmetry, less human." Three readings, no "skeleton", no body under the plant matter, no T-pose; plus a single
@@ -127,6 +130,5 @@ off a long vine neck), then the *heap* front (the skull sunk into a hunched mass
 front view can go to it as is.
 
 ## Open
-- Picked: Sproutling, Moldling, Deadwood, Bog Giant (all `art/candidates/units/grove/`, prompts in `GROVE`). Open:
-  the Mulch Gorger (round three). The picks split into single views for Tripo: `shots/tripo/` (the user tries how
+- Picked: every unit of the Sproutling and Decay line (all `art/candidates/units/grove/`, prompts in `GROVE`). The picks split into single views for Tripo: `shots/tripo/` (index page) (the user tries how
   Tripo handles the more complex shapes).

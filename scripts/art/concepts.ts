@@ -113,20 +113,10 @@ const GROVE: Readonly<Record<string, { readonly subject: string; readonly pose?:
   },
   // The user: "a corpse being possessed by the worst nature has to offer": mouth open, cranium lolling back. Round three
   // (after "it looks like a human… just say skull… I really don't need any flesh on this model at all"): only a skull
-  // and plant matter.
-  "mulch-gorger-skull": {
-    subject:
-      "A grotesque creature made only of a human skull and rotting plant matter, nothing else: no flesh, no skin, no bones besides the skull. The skull sits crooked on top, lolling backwards on a twisted stalk of roots, its jaw hanging wide open, fungus, moss and wet leaves spilling out of the mouth. Below it a lopsided, hunched mass of rotting bark, bracket fungi, slime mold, dead leaves, thorny vines and tangled roots. One arm a long whip of roots and thorns trailing to the ground, the other a short thick knot of bark crusted with fungus. Its legs end in rotten wooden stumps. Not human in shape or proportion, not fat; repulsive, the worst of nature.",
-    pose: CLEAR_POSE,
-  },
+  // and plant matter. Picked: the turnaround, seed 1000.
   "mulch-gorger-heap": {
     subject:
       "A lurching heap of rot with a human skull half sunk into its top, tipped back so its jaw gapes open at the sky, moss and fungus growing from the mouth and eye sockets. The heap is black rotting bark, mulch, bracket fungi, pale mold, wet leaves, roots and briars, leaning to one side, with no flesh and no bones but the skull. Three uneven limbs of twisted roots and bark: two end in rotten wooden stumps it walks on, one is a long grasping root. Grotesque, not humanoid, not fat.",
-    pose: CLEAR_POSE,
-  },
-  "mulch-gorger-stalk": {
-    subject:
-      "A tall, stooped, spidery thing of roots, briars and rotting bark with a human skull hanging from the end of a long bent neck of twisted vines, the skull lolling backwards with the jaw hanging open and a bracket fungus growing out of one eye socket. Clusters of fungus, slime mold and dead leaves cling to it unevenly. Its two front limbs differ: one a long thin root, one a thick club of bark; its legs end in rotten wooden stumps. No flesh, no skin, no ribs, nothing human but the skull. Grotesque, not fat.",
     pose: CLEAR_POSE,
   },
 };
