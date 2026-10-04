@@ -16,6 +16,8 @@ gitignored (large, and every image can be remade from its folder's `manifest.jso
 |---|---|---|
 | `units/anchors/` | Early portrait and icon anchors (the Custodian and Punisher portraits come from here) | a past probe |
 | `units/concepts/` | Unit concepts: the Custodian for 3D (T-pose, turnarounds), Zealot and Psychopomp beyond ink | `scripts/art/concepts.ts` |
+| `units/grove/` | The Sproutling and Decay line: turnarounds and single views, all five picked (`round-1/` the first round) | `scripts/art/concepts.ts` (`GROVE`) |
+| `units/gnolls/` | The gnoll tribe: a T-pose turnaround and a stance view per unit | `scripts/art/concepts.ts` (`GNOLLS`) |
 | `units/zealot-probes/` | The style probes that settled the ink look (ink, mask, pairing with the Psychopomp, blends, sweep) | past probes |
 | `icons/abilities/` | Ability icons (seed 1000 of each is installed) | `scripts/art/icons.ts` |
 | `slots/` | Candidates for any art slot without art | `pnpm art generate <kind\|slot>` |

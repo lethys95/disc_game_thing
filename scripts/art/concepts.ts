@@ -153,14 +153,70 @@ const GROVE_JOBS = [
   })),
 ];
 
+/**
+ * The gnolls (the user, 2026-10-04): the gothic theme on gnolls, and each one recognizable at a glance. One reading
+ * per unit, each built around a silhouette feature of its own (Claude's, from the units' roles in
+ * `faction-stuff/neutrals/gnolls.md`): a T-pose turnaround for the model and rig, and a single view in its typical
+ * stance, since posture is where they'll differ most.
+ */
+const GNOLL =
+  "A gnoll: a hyena-headed humanoid with a long muzzle full of teeth, coarse spotted and striped fur, a bristling mane down the neck and back, long arms and digitigrade hyena legs.";
+
+const GNOLL_3D =
+  "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: matted fur, cracked leather and rawhide, tarnished bronze, bone, frayed dark cloth. Serious, adult, not cartoonish.";
+
+const GNOLLS: Readonly<Record<string, { readonly subject: string; readonly stance: string }>> = {
+  packstalker: {
+    subject:
+      "The Packstalker, the pack's spearhead: lean and long-legged, built to run, a narrow chest and a long neck, a long barbed hunting spear, a light leather harness hung with small bronze tokens and strips of cloth torn from what it has hunted.",
+    stance: "crouched low and forward with the spear levelled, about to sprint",
+  },
+  bonecracker: {
+    subject:
+      "The Bonecracker: heavy and broad with short legs, enormous forequarters and a thick neck, a massive jaw with iron-capped teeth, a heavy collar of bone plates and bronze rings around its neck, scarred bare arms, one fist in a spiked bronze gauntlet.",
+    stance: "hunched with its huge head thrust forward and its jaws wide open",
+  },
+  hamstringer: {
+    subject:
+      "The Hamstringer: small, wiry and quick, a hooded cloak of dark cloth, legs wrapped in rawhide, a quiver of short barbed javelins on its back and bolas of bone weights hanging from its belt.",
+    stance: "mid-throw, one arm drawn back with a javelin, its weight on one leg",
+  },
+  cackler: {
+    subject:
+      "The Cackler: scrawny and hunched, its mouth stretched in a wide manic grin, a ragged cloak of tattered cloth strips like a jester's motley gone to rot, bone rattles and small bronze bells hanging from it, a crooked staff topped with a hyena skull.",
+    stance: "head thrown back, laughing, its arms spread mockingly",
+  },
+  matriarch: {
+    subject:
+      "The Matriarch, leader of the pack: the largest and tallest gnoll, a female, upright and broad-shouldered, a great dark mane, a scarred muzzle, a mantle of bronze plates and trophy bones over her shoulders, a cloak of a great beast's hide, a crest of teeth and bronze on her brow, a heavy bronze glaive.",
+    stance: "standing tall with her glaive planted, chin raised, commanding",
+  },
+};
+
+const GNOLL_JOBS = [
+  ...Object.entries(GNOLLS).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${GNOLL} ${subject}`, GNOLL_3D) })),
+  ...Object.entries(GNOLLS).map(([id, { subject, stance }]) => ({
+    id: `${id}-stance`,
+    prompt:
+      `A 3D render of a game character model in a three-quarter front view, ${stance}, the whole figure visible from head to feet with a margin around it, like a sculpted and textured asset shown in a modelling program. ` +
+      `${GNOLL} ${subject} ${GNOLL_3D} Flat, even, shadowless lighting from all sides, like a texture reference. A plain flat light grey background, no ground, no text.`,
+  })),
+];
+
+/** Each group of jobs has its own folder, so one group's run doesn't mix into another's manifest. */
+const GROUPS = [
+  { dir: "art/candidates/units/grove", jobs: GROVE_JOBS },
+  { dir: "art/candidates/units/gnolls", jobs: GNOLL_JOBS },
+];
+
 const args = process.argv.slice(2);
 const seeds = args.map(Number).filter((n) => !Number.isNaN(n));
 const ids = args.filter((a) => Number.isNaN(Number(a)));
-const grove = ids.length > 0 && ids.every((id) => GROVE_JOBS.some((j) => j.id === id));
+const group = GROUPS.find((g) => ids.length > 0 && ids.every((id) => g.jobs.some((j) => j.id === id))) ?? { dir: "art/candidates/units/concepts", jobs: JOBS };
 // A T-pose spans wider than it stands tall: the portrait frame cut the arms off.
 const frame = (id: string) => (id.includes("turnaround") ? { width: 2048, height: 832 } : id.includes("tpose") || id.includes("-3d") ? { width: 1344, height: 1024 } : { width: 896, height: 1152 });
 await runBatch(
-  grove ? "art/candidates/units/grove" : "art/candidates/units/concepts",
-  (grove ? GROVE_JOBS : JOBS).filter((j) => ids.length === 0 || ids.includes(j.id)).map((j) => ({ ...j, ...frame(j.id) })),
+  group.dir,
+  group.jobs.filter((j) => ids.length === 0 || ids.includes(j.id)).map((j) => ({ ...j, ...frame(j.id) })),
   seeds.length > 0 ? seeds : [1000, 1001, 1002, 1003],
 );

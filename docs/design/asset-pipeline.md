@@ -131,3 +131,8 @@ References: screenshots of a Baldur's Gate 3 spellcast in `~/Pictures/ref/` (out
 
 ## Lead: image-blaster (user, 2026-10-04)
 https://github.com/neilsonnn/image-blaster (MIT): a set of Claude skills turning **one image into an explorable 3D scene** in minutes. Static surroundings become a **Gaussian splat** (World Labs' Marble 1.1, API key, `.spz`), movable objects become meshes (Hunyuan3D through fal.ai, `.glb/.obj`, 40k–1.5M faces, PBR), with ElevenLabs sound effects and an image-editing step (nano-banana or gpt-image-2). The user's idea: the scenes in each city (the Capitol screen). **Catches:** World Labs and fal are paid APIs; **Hunyuan3D's license excludes the EU**, so its object step would need Tripo swapped in; splats bake their light and aren't meshes (no rigging; see the splat lead above), so they suit a fixed backdrop like the city scenes more than units. Worth a spike when the Capitol screen comes back (`capitol-screen.md`): a splat backdrop may hold up closer than our generated meshes did.
+
+## Tripo on a complex unit (the user, 2026-10-04)
+The Bog Giant (`shots/tripo/bog-giant-*`, the asymmetric swamp hulk with reeds and cattails): "It worked really
+well, but I do need to upgrade to pro if we want to use these. Backside is entirely blank. Just black surface."
+Claude's guess at the black back: built from the front view alone; a multi-view upload with the back image may fill it.

@@ -78,7 +78,20 @@ Hyena-folk. What a hyena actually is, and what the old gnoll stories make of it:
 - **Bigger idea, not part of this pitch:** nomads that roam. Gnoll warbands could wander their territory on the map
   instead of sitting in a camp, a new kind of neutral. Larger work; only if you want it.
 
-## Look (Claude's notes, not prompts yet)
+## Look
+**The user (2026-10-04):** "there's some difficulty getting the gothic theme on gnolls, but also having each be
+different to some extent. Like it should be possible to see which one is which. A lot of that is probably also going
+to be posture and attack animation, but we need to think about the models too."
+
+**First concepts (Claude):** the Custodian's 3D recipe with the gothic materials (fur, leather, bronze, bone, dark
+cloth); each gnoll built around one silhouette feature: the Packstalker long-legged with a levelled spear; the
+Bonecracker all forequarters and jaw; the Hamstringer small, hooded, javelins and bolas; the Cackler a scrawny grin in
+a rotten jester's motley with bells and a skull staff; the Matriarch the tallest, a mantle of bronze and trophies, a
+glaive. Each as a T-pose turnaround (model, rig) and a single view in its stance (posture). `scripts/art/concepts.ts`
+(`GNOLLS`), images in `art/candidates/units/gnolls/`. No accent colour in the prompts (the neutral icons use ember;
+yours to say).
+
+### Earlier notes (Claude, before the concepts)
 Lean, long-legged runners with sloping backs and heavy shoulders; spotted and striped pelts; sun-bleached hide,
 beads and painted clan marks (territory, rank); bronze and rawhide gear, javelins and bolas. Accent: the neutral
 ember. The style words stay yours (no-silent-style); a concept probe only when you ask.
