@@ -11,7 +11,7 @@ import { maxHpOf } from "#rules/world/record";
 import { CITY_RESURRECTION_PREMIUM, RESEARCH } from "#rules/research";
 import { UPGRADES, upgradesFor } from "#rules/upgrades";
 import { FACTIONS } from "#rules/factions";
-import { playerOf, alive, banditGroup, capitolOf, cityById, cityOfNode, giftsOf, leaderAt, leaderById, leaderUnit, member, nodesHeldBy, nodesOf, tribeRecruitsOf } from "#rules/world/state";
+import { playerOf, alive, neutralGroup, capitolOf, cityById, cityOfNode, giftsOf, leaderAt, leaderById, leaderUnit, member, nodesHeldBy, nodesOf, tribeAt, tribeRecruitsOf } from "#rules/world/state";
 import type { Enchantment, PlayerId, City, Leader, MapNode, Mark, SquadMember, SquadRef, Strength, World, WorldEvent } from "#rules/world/state";
 import { capacityOf, cityOfSquad, ownerOf, squadAt } from "#rules/world/squads";
 import { hireCost, MERCHANT_RESTOCK_TURNS, merchantWares } from "#rules/structures";
@@ -298,7 +298,7 @@ export function startRound(world: World, events: WorldEvent[]): void {
   }
   for (const lair of world.lairs) {
     if (lair.kind !== "camp" || lair.regrowsOn === null || lair.regrowsOn > world.turn || leaderAt(world, lair.hex)) continue;
-    lair.guards = banditGroup(strength);
+    lair.guards = neutralGroup(tribeAt(world.map, lair.hex), strength);
     lair.regrowsOn = null;
     events.push({ type: "regrew", lairId: lair.id });
   }

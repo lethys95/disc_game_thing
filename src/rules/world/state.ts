@@ -2,7 +2,7 @@ import { levelBonus } from "#rules/balance";
 import type { Battle, EffectSeed, Side, Tile } from "#rules/battle/types";
 import type { Commitment } from "#rules/forks";
 import type { PlayerColor } from "#rules/world/colors";
-import { hexDistance, sameHex } from "#rules/hex";
+import { hexDistance, hexKey, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import type { WorldMap } from "#rules/map";
 import { NODES } from "#rules/nodes";
@@ -326,37 +326,73 @@ export const emptyMemory = (): Memory => ({ cities: [], lairs: [], nodes: [], st
 
 export type Strength = "weak" | "medium" | "strong";
 
+/** The neutral peoples who guard camps and dungeons (`design/tribes.md`). */
+export type Tribe = "bandits" | "gnolls";
+
+type Group = { readonly level: number; readonly units: readonly [string, Tile][] };
+
 /**
- * Provisional bandit groups (the user's bandit units; formations, sizes and levels are placeholders). The user:
- * neutrals should be a challenge from the start. Stronger groups are bigger and seasoned (levels, pillars.md).
+ * Provisional groups (the user's bandit units and the gnolls; formations, sizes and levels are placeholders). The
+ * user: neutrals should be a challenge from the start. Stronger groups are bigger and seasoned (levels, pillars.md).
+ * The gnolls' strong group has their tier-2 Matriarch (the pitch, accepted 2026-10-04).
  */
-const BANDIT_GROUPS: Readonly<Record<Strength, { readonly level: number; readonly units: readonly [string, Tile][] }>> = {
-  weak: {
-    level: 0,
-    units: [["brigand", { row: 0, col: 0 }], ["marauder", { row: 0, col: 1 }], ["bandit", { row: 1, col: 0 }], ["hedge_mage", { row: 1, col: 1 }]],
+const GROUPS: Readonly<Record<Tribe, Readonly<Record<Strength, Group>>>> = {
+  bandits: {
+    weak: {
+      level: 0,
+      units: [["brigand", { row: 0, col: 0 }], ["marauder", { row: 0, col: 1 }], ["bandit", { row: 1, col: 0 }], ["hedge_mage", { row: 1, col: 1 }]],
+    },
+    medium: {
+      level: 2,
+      units: [
+        ["brigand", { row: 0, col: 0 }], ["marauder", { row: 0, col: 1 }], ["brigand", { row: 0, col: 2 }],
+        ["bandit", { row: 1, col: 0 }], ["hedge_mage", { row: 1, col: 1 }],
+      ],
+    },
+    strong: {
+      level: 4,
+      units: [
+        ["marauder", { row: 0, col: 0 }], ["brigand", { row: 0, col: 1 }], ["marauder", { row: 0, col: 2 }],
+        ["bandit", { row: 1, col: 0 }], ["hedge_mage", { row: 1, col: 1 }], ["bandit", { row: 1, col: 2 }],
+      ],
+    },
   },
-  medium: {
-    level: 2,
-    units: [
-      ["brigand", { row: 0, col: 0 }], ["marauder", { row: 0, col: 1 }], ["brigand", { row: 0, col: 2 }],
-      ["bandit", { row: 1, col: 0 }], ["hedge_mage", { row: 1, col: 1 }],
-    ],
-  },
-  strong: {
-    level: 4,
-    units: [
-      ["marauder", { row: 0, col: 0 }], ["brigand", { row: 0, col: 1 }], ["marauder", { row: 0, col: 2 }],
-      ["bandit", { row: 1, col: 0 }], ["hedge_mage", { row: 1, col: 1 }], ["bandit", { row: 1, col: 2 }],
-    ],
+  gnolls: {
+    weak: {
+      level: 0,
+      units: [["packstalker", { row: 0, col: 0 }], ["bonecracker", { row: 0, col: 1 }], ["hamstringer", { row: 1, col: 0 }], ["cackler", { row: 1, col: 1 }]],
+    },
+    medium: {
+      level: 2,
+      units: [
+        ["packstalker", { row: 0, col: 0 }], ["bonecracker", { row: 0, col: 1 }], ["packstalker", { row: 0, col: 2 }],
+        ["hamstringer", { row: 1, col: 0 }], ["cackler", { row: 1, col: 1 }],
+      ],
+    },
+    strong: {
+      level: 4,
+      units: [
+        ["packstalker", { row: 0, col: 0 }], ["matriarch", { row: 0, col: 1 }], ["bonecracker", { row: 0, col: 2 }],
+        ["hamstringer", { row: 1, col: 0 }], ["cackler", { row: 1, col: 1 }], ["hamstringer", { row: 1, col: 2 }],
+      ],
+    },
   },
 };
 
-export function banditGroup(strength: Strength): SquadMember[] {
-  const { level, units } = BANDIT_GROUPS[strength];
+export function neutralGroup(tribe: Tribe, strength: Strength): SquadMember[] {
+  const { level, units } = GROUPS[tribe][strength];
   return units.map(([defId, tile]) => {
     const hp = fullHp(defId);
     return { ...member(defId, tile), level, hp: hp + levelBonus(hp, level) };
   });
+}
+
+/**
+ * Who guards a camp or dungeon here: gnolls in the desert, bandits elsewhere (provisional #63; the user's idea of a
+ * tribe per biome, questions #6). Neutral cities keep bandit garrisons.
+ */
+export function tribeAt(map: WorldMap, hex: Hex): Tribe {
+  return map.tiles[hexKey(hex)]?.biome === "desert" ? "gnolls" : "bandits";
 }
 
 /** Stronger the further from both Capitols: easy fights near home, harder ones in the middle. */

@@ -70,6 +70,12 @@ export const BANDIT_GROUP: readonly Placement[] = [
   at("bandit", 1, 0), at("hedge_mage", 1, 1), at("bandit", 1, 2),
 ];
 
+/** A gnoll pack with all five gnolls, led by the Matriarch (`?fight=gnolls`). The formation is not canon. */
+export const GNOLL_GROUP: readonly Placement[] = [
+  at("packstalker", 0, 0), at("matriarch", 0, 1), at("bonecracker", 0, 2),
+  at("hamstringer", 1, 0), at("cackler", 1, 1), at("hamstringer", 1, 2),
+];
+
 /** The setup screen's formation presets per faction, named after the branches they took. */
 export const FORMATIONS: Readonly<Record<Playable, readonly { readonly name: string; readonly squad: readonly Placement[] }[]>> = {
   jilliath: [

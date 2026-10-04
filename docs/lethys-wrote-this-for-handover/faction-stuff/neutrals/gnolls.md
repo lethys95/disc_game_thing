@@ -57,8 +57,8 @@ Hyena-folk. What a hyena actually is, and what the old gnoll stories make of it:
 - **Role:** support.
 - **Intent:** the laugh: the pack's voice and the enemy's nerves.
 - **Stats:** health very low · damage very low · armor none · initiative medium.
-- **Abilities:** *Cackle* (main action): every gnoll gains initiative for the round and every enemy loses some (the
-  pack moves first). *Run them down* (passive): while it lives, enemy units can't retreat.
+- **Abilities:** ~~*Cackle*: every gnoll gains initiative for the round and every enemy loses some~~ (the user: too
+  strong; redone below). *Run them down* (passive): while it lives, enemy units can't retreat.
 
 ## Tier 2 (strong camps)
 
@@ -88,4 +88,14 @@ ember. The style words stay yours (no-silent-style); a concept probe only when y
 - Desert tribe, or everywhere?
 - Roaming gnoll warbands: worth it later?
 
-**Status:** idea (Claude's pitch, second try).
+## The user's answer (2026-10-04)
+"I accept the gnolls, though be careful with cackle. Changing initiative is very strong. In fact I think I might have
+you try to do something else with cackle."
+- **Cackle, redone (Claude, for you to judge):** no initiative. The laugh **goads** one enemy: on its next turn it can
+  only attack (no spells, healing, defending or waiting; a unit without an attack is left alone). It takes a healer's
+  or caster's turn away from its spells. *Run them down* stays.
+- **Hamstring** still slows (−5 initiative, one target, until the end of the next round), kept small for the same
+  reason; say if it should do something else too.
+
+**Status:** in game as `packstalker`, `bonecracker`, `hamstringer`, `cackler`, `matriarch`: they guard camps and
+dungeons in the desert. Numbers `provisional.md` #63.

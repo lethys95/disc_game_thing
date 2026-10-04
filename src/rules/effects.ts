@@ -609,6 +609,68 @@ const effects: readonly EffectDef[] = [
       },
     },
   },
+  // The gnolls (`abilities/gnolls.ts`).
+  {
+    // A Packstalker's mark: the marker's side hits it harder until the end of the next round.
+    id: "prey",
+    name: "Prey",
+    describe: (e) => `The pack's prey: takes ${e.amount} more damage from the pack for ${e.stacks} more round start${e.stacks === 1 ? "" : "s"}.`,
+    stacking: { mode: "perSource" },
+    lifetime: "rounds",
+    visibility: "public",
+    hooks: {
+      incoming: (ctx, self, packet) => {
+        const marker = self.effect?.source;
+        if (!marker || !packet.source || packet.amount <= 0) return;
+        if (ctx.unit(packet.source).side === ctx.unit(marker).side) packet.amount += self.effect?.amount ?? 0;
+      },
+    },
+  },
+  flatStat({ id: "cracked", name: "Cracked", stat: "armor", sign: -1, stacking: { mode: "merge" }, describe: (e) => `−${e.amount} armor for the rest of combat (cracked by a gnoll's jaws).` }),
+  {
+    id: "hamstrung",
+    name: "Hamstrung",
+    describe: (e) => `−${e.amount} initiative for ${e.stacks} more round start${e.stacks === 1 ? "" : "s"}.`,
+    stacking: { mode: "perSource" },
+    lifetime: "rounds",
+    visibility: "public",
+    hooks: {
+      stats: (_ctx, self, subjectId, stats) => {
+        if (subjectId === self.unitId) stats.initiative -= self.effect?.amount ?? 0;
+      },
+    },
+  },
+  {
+    // A Cackler's laugh: on its next turn the bearer can only attack. A unit with no attack is left alone.
+    id: "goaded",
+    name: "Goaded",
+    describe: () => "On its next turn it can only attack.",
+    stacking: { mode: "unique" },
+    lifetime: "untilTurnEnd",
+    visibility: "public",
+    hooks: {
+      restrict: (ctx, self, subjectId, allowed) => {
+        if (subjectId !== self.unitId) return;
+        const attacks = [...allowed].filter((id) => ctx.hasTag(id, "attack"));
+        if (attacks.length === 0) return;
+        for (const id of [...allowed]) if (!attacks.includes(id)) allowed.delete(id);
+      },
+    },
+  },
+  {
+    // The Matriarch fell: the strongest gnoll left leads, at half her strength.
+    id: "next_in_line",
+    name: "Next in line",
+    describe: (e) => `Leads the pack now: its allies deal ${e.amount} more damage.`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      stats: (ctx, self, subjectId, stats) => {
+        if (subjectId !== self.unitId && ctx.unit(subjectId).side === ctx.unit(self.unitId).side) stats.damage += self.effect?.amount ?? 0;
+      },
+    },
+  },
 ];
 
 export const EFFECTS: ReadonlyMap<string, EffectDef> = new Map(effects.map((e) => [e.id, e]));

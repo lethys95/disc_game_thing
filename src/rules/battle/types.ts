@@ -257,7 +257,7 @@ export interface Hooks {
   afterAttack?(ctx: Ctx, self: TraitSelf, dealt: number, kills: number): void;
   /** When this unit would die; true keeps it at 1 HP. */
   preventDeath?(ctx: Ctx, self: TraitSelf): boolean;
-  /** When any unit dies, or a corpse is used or destroyed. Asked of every trait on the field. */
+  /** When any unit dies, or a corpse is used or destroyed. Asked of every trait on the field (and a dying unit's own). */
   remains?(ctx: Ctx, self: TraitSelf, unitId: string, change: RemainsChange): void;
   /**
    * When healing (or a shield restoration) is about to reach this unit: the traits may change `heal.amount`, down to

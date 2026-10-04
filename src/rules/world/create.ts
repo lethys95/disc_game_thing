@@ -14,7 +14,7 @@ import { startTurn } from "#rules/world/economy";
 import { noMana } from "#rules/factions";
 import { updateVision } from "#rules/world/vision";
 import type { PlayerColor } from "#rules/world/colors";
-import { banditGroup, DUNGEON_REWARDS, emptyMemory, member, strengthAt } from "#rules/world/state";
+import { DUNGEON_REWARDS, emptyMemory, member, neutralGroup, strengthAt, tribeAt } from "#rules/world/state";
 import type { City, Lair, Leader, Player, Structure, World } from "#rules/world/state";
 
 /** Setting up a new game on a generated map. */
@@ -56,7 +56,7 @@ export function createWorld(seed: number, setups: readonly PlayerSetup[], size: 
       kind: site.kind,
       hex: site.hex,
       owner,
-      garrison: site.kind === "capitol" ? [member(GUARDIAN_ID, { row: 0, col: 1 })] : banditGroup(strengthAt(map, site.hex, "medium")),
+      garrison: site.kind === "capitol" ? [member(GUARDIAN_ID, { row: 0, col: 1 })] : neutralGroup("bandits", strengthAt(map, site.hex, "medium")),
       tier: 1,
       enchantments: [],
     };
@@ -65,10 +65,10 @@ export function createWorld(seed: number, setups: readonly PlayerSetup[], size: 
   const dungeons = map.lairs.filter((l) => l.kind === "dungeon");
   const lairs = map.lairs.map((site): Lair => {
     const base = { id: site.id, hex: site.hex };
-    if (site.kind === "camp") return { ...base, kind: "camp", guards: banditGroup(strengthAt(map, site.hex, "weak")), regrowsOn: null };
+    if (site.kind === "camp") return { ...base, kind: "camp", guards: neutralGroup(tribeAt(map, site.hex), strengthAt(map, site.hex, "weak")), regrowsOn: null };
     const reward = DUNGEON_REWARDS[dungeons.indexOf(site) % DUNGEON_REWARDS.length];
     if (!reward) throw new Error("no dungeon rewards");
-    return { ...base, kind: "dungeon", guards: banditGroup(strengthAt(map, site.hex, "medium")), reward, looted: false };
+    return { ...base, kind: "dungeon", guards: neutralGroup(tribeAt(map, site.hex), strengthAt(map, site.hex, "medium")), reward, looted: false };
   });
   const players = setups.map(
     (setup): Player => ({

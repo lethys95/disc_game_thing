@@ -86,7 +86,7 @@ any plant matter.
 ## The user's direction after round one (2026-10-04)
 - **Not everything humanoid.** "I don't think I had in mind that we'd have elves in this line." The skeleton at tier 4
   is "more of a surprise type thing". "I might actually retry everything. But! We did learn."
-- **Asymmetry everywhere:** "We shouldn't have them be symmetrical. Symmetry is pleasing. We're not trying to please."
+- **Asymmetry, for this line (the user: "the melee line of sylvans here"; other factions will have plenty of symmetry):** "We shouldn't have them be symmetrical. Symmetry is pleasing. We're not trying to please."
 - **Sproutling:** a redo. Less human, "probably closer to a small treant".
 - **Moldling:** *mycelium* "is pretty good, but make it skinnier. The face is great, the shrooms are probably too large
   and too symmetrical."

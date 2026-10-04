@@ -11,7 +11,7 @@ import { concludeBattle, playersIn } from "#rules/world/battles";
 import { createWorld } from "#rules/world/create";
 import { income } from "#rules/world/economy";
 import { planMove } from "#rules/world/movement";
-import { playerOf, banditGroup, capitolOf, leaderById, nodesOf } from "#rules/world/state";
+import { playerOf, neutralGroup, tribeAt, capitolOf, leaderById, nodesOf } from "#rules/world/state";
 import type { World } from "#rules/world/state";
 import { startOf, twoPlayers, withLeader, beside } from "#tests/helpers";
 import { describe, expect, test } from "vitest";
@@ -177,7 +177,7 @@ describe("world", () => {
     later = { ...later, lairs: later.lairs.map((l) => (l.id === camp.id && l.kind === "camp" ? { ...l, regrowsOn: CAMP_STRONG_FROM + 1 } : l)) };
     const regrown = applyWorldAction(later, { type: "endTurn" });
     expect(regrown.events).toContainEqual({ type: "regrew", lairId: camp.id });
-    expect(regrown.world.lairs.find((l) => l.id === camp.id)?.guards.length).toBe(banditGroup("strong").length);
+    expect(regrown.world.lairs.find((l) => l.id === camp.id)?.guards.length).toBe(neutralGroup(tribeAt(later.map, camp.hex), "strong").length);
   });
 
   test("clearing a dungeon's guards claims its one-time reward", () => {

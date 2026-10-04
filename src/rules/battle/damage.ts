@@ -64,6 +64,7 @@ export function lose(ctx: Ctx, targetId: string, amount: number, sourceId: strin
   target.hp = 0;
   target.alive = false;
   ctx.emit({ type: "death", unitId: targetId });
-  for (const t of [...allTraits(ctx)]) t.hooks.remains?.(ctx, t.self, targetId, "died");
+  // Its own traits hear of its death too (a Matriarch's heir), then everyone still standing.
+  for (const t of [...traitsOn(ctx, targetId), ...allTraits(ctx)]) t.hooks.remains?.(ctx, t.self, targetId, "died");
   return removed;
 }
