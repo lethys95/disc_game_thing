@@ -76,6 +76,13 @@ a deep moss green glow from cracks and wounds. Prompts: `scripts/art/concepts.ts
   2. *Mound:* a hulking mass of mulch and roots with the skeleton showing where it slides away: a jaw of root teeth.
   3. *Puppet:* a tall elf skeleton in bark splints, moved by vines like strings.
 
+## First round (2026-10-04, seeds 1000 and 1001; Claude's read, awaiting the user's)
+Page: `shots/grove-decay.html`. Claude's picks: Sproutling *sapling*, Moldling *bloom*, Bog Giant *peat*, Mulch Gorger
+*mound*; Deadwood has no clear winner (*blasted* is closest, *knight* came out as metal plate, *gaunt* as a
+friendly tree spirit). Across the set: the moss-green glow only showed on the Bog Giant's peat; three sheets drew a view
+twice or a stray arm (graft 1000, sapling 1000, mycelium 1000, blasted 1000); the Mulch Gorger *skeleton* barely shows
+any plant matter.
+
 ## Open
 - The user's pick per unit (or a mix) before any of them goes to Tripo.
 - Scale on the battlefield: the Bog Giant and the Mulch Gorger "mound" read big; the Sproutling and Moldling read

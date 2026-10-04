@@ -44,7 +44,10 @@ Expected output folder: <e.g. art/candidates/units/concepts/>
    Don't describe or judge the images; the main session looks at them.
 ```
 
-Then carry on with other work. Don't poll; the notification arrives when the subagent is done.
+Then carry on with other work. Don't poll; the notification arrives when the subagent is done. If the subagent
+keeps waking you with interim reports anyway (a haiku run did, 2026-10-04): check that the generation runs detached
+(`ps` its parent chain up to `systemd --user`), stop the agent (TaskStop), and wait for the process yourself in a
+background `until ! pgrep …` loop.
 
 ## 3. When it reports
 Look at the contact sheet (or a sheet you compose with `magick … +append/-append` into the scratchpad) yourself
