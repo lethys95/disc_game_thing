@@ -265,8 +265,46 @@ const DRAWN: Readonly<Record<string, { readonly subject: string; readonly stance
   },
 };
 
+/**
+ * Round two (Claude's own direction after round one): every unit had the same fluffy round head, button eyes and grey
+ * eyespot wings: too uniform, and cute. Each unit now has its own moth and body, and a gaunt insect face; the shared
+ * `MOTH` line is dropped. The Pale Mother stays from round one.
+ */
+const INSECT_FACE = "a gaunt, elongated insect face with small mandibles and dark faceted eyes, not round, not fluffy, not cute";
+
+const DRAWN_2: Readonly<Record<string, { readonly subject: string; readonly stance: string; readonly pose?: string }>> = {
+  "dustwing-ragged": {
+    subject:
+      `The Dustwing, a moth-folk skirmisher: small and hunched, six thin hooked limbs, ${INSECT_FACE}, feathered antennae, narrow ragged wings of dull ash brown and grey like a clothes moth, eaten through with holes and frayed at the edges, a cloud of grey dust falling from them.`,
+    stance: "lunging forward through the air, wings blurred, four claws reaching out",
+  },
+  "chrysalis-cocoon": {
+    subject:
+      "The Chrysalis: a tall upright cocoon of grey silk, old candle wax and wrapped burial cloth, bound with tarnished silver wire and hung with wax seals, no wings or face outside it; the silk is split open down one side and only a dark wet gap shows, something pressing out from inside, its shape bulging the cocoon. It stands on a short knot of silk roots.",
+    stance: "standing, the split in its side widening",
+    pose: "all in the same upright standing pose",
+  },
+  "lightdrinker-deathshead": {
+    subject:
+      `The Lightdrinker, a moth-folk like a death's-head hawkmoth: a heavy, furred dark body with a pale skull marking on its thorax, ${INSECT_FACE}, a very long coiled proboscis hanging from its mouth, narrow dark wings folded down its back like a coat, thin arms with long fingers, small vials of faintly glowing light on a cord at its waist.`,
+    stance: "leaning forward with the long proboscis uncoiled toward its prey, hands raised",
+  },
+  "eyespot-eyes": {
+    subject:
+      `The Eyespot, a moth-folk: huge wings spread wide like a fan, far larger than its thin body, covered in dozens of eyes that look disturbingly real, with irises, wet lids and lashes, all staring; ${INSECT_FACE}, a high-collared dark velvet coat.`,
+    stance: "its wings raised and spread wide behind it, every eye on them staring at the viewer",
+  },
+};
+
 const DRAWN_JOBS = [
   ...Object.entries(DRAWN).map(([id, { subject, pose }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${MOTH} ${subject}`, DRAWN_3D, pose) })),
+  ...Object.entries(DRAWN_2).map(([id, { subject, pose }]) => ({ id: `${id}-turnaround`, prompt: turnaround(subject, DRAWN_3D, pose) })),
+  ...Object.entries(DRAWN_2).map(([id, { subject, stance }]) => ({
+    id: `${id}-stance`,
+    prompt:
+      `A 3D render of a game character model in a three-quarter front view, ${stance}, the whole figure visible from head to feet with a margin around it, like a sculpted and textured asset shown in a modelling program. ` +
+      `${subject} ${DRAWN_3D} Flat, even, shadowless lighting from all sides, like a texture reference. A plain flat light grey background, no ground, no text.`,
+  })),
   ...Object.entries(DRAWN).map(([id, { subject, stance }]) => ({
     id: `${id}-stance`,
     prompt:
