@@ -165,21 +165,29 @@ const GNOLL =
 const GNOLL_3D =
   "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: matted fur, cracked leather and rawhide, tarnished bronze, bone, frayed dark cloth. Serious, adult, not cartoonish.";
 
-const GNOLLS: Readonly<Record<string, { readonly subject: string; readonly stance: string }>> = {
-  packstalker: {
+/**
+ * Round two (the user, 2026-10-04): the Packstalker and Hamstringer "look too much alike", so clothing sets them apart;
+ * and weapons are better as separate models than in the body's mesh. These two hold no weapon in the turnaround; the
+ * stance view shows the weapon (`weapon`), and the weapons get prop sheets of their own (`GNOLL_WEAPONS`). Picked in
+ * round one: the Bonecracker 1002, the Cackler's turnaround 1002, the Matriarch's turnaround 1001.
+ */
+const GNOLLS: Readonly<Record<string, { readonly subject: string; readonly stance: string; readonly weapon?: string }>> = {
+  "packstalker-skullhelm": {
     subject:
-      "The Packstalker, the pack's spearhead: lean and long-legged, built to run, a narrow chest and a long neck, a long barbed hunting spear, a light leather harness hung with small bronze tokens and strips of cloth torn from what it has hunted.",
-    stance: "crouched low and forward with the spear levelled, about to sprint",
+      "The Packstalker, the pack's spearhead: lean and long-legged, built to run, a narrow chest and a long neck; on its head a helm made from a horned antelope skull, a brigandine harness of dark leather studded with bronze, strips of red-dyed cloth tied to its arms as tallies of its kills, bare clawed hands.",
+    stance: "crouched low and forward with a spear levelled in both hands, about to sprint",
+    weapon: "It holds a long barbed bronze hunting spear.",
+  },
+  "hamstringer-wraps": {
+    subject:
+      "The Hamstringer: small, wiry and quick, wrapped almost head to toe in dusty layered strips of dark cloth like a desert nomad, a deep cowl shading its muzzle so only its eyes and teeth show, a sash of bone bolas weights across its chest, rawhide-wrapped legs, bare clawed hands.",
+    stance: "mid-throw, one arm drawn back with a javelin, its weight on one leg",
+    weapon: "A bundle of short barbed javelins is slung on its back.",
   },
   bonecracker: {
     subject:
       "The Bonecracker: heavy and broad with short legs, enormous forequarters and a thick neck, a massive jaw with iron-capped teeth, a heavy collar of bone plates and bronze rings around its neck, scarred bare arms, one fist in a spiked bronze gauntlet.",
     stance: "hunched with its huge head thrust forward and its jaws wide open",
-  },
-  hamstringer: {
-    subject:
-      "The Hamstringer: small, wiry and quick, a hooded cloak of dark cloth, legs wrapped in rawhide, a quiver of short barbed javelins on its back and bolas of bone weights hanging from its belt.",
-    stance: "mid-throw, one arm drawn back with a javelin, its weight on one leg",
   },
   cackler: {
     subject:
@@ -193,13 +201,27 @@ const GNOLLS: Readonly<Record<string, { readonly subject: string; readonly stanc
   },
 };
 
+const GNOLL_WEAPONS: Readonly<Record<string, string>> = {
+  "packstalker-spear": "a long barbed hunting spear with a bronze head, a shaft of dark wood bound with rawhide, a tuft of fur and a red cloth strip below the head; and a shorter spare spear head beside it.",
+  "hamstringer-kit": "a bundle of four short barbed javelins with bronze heads tied with rawhide, and a bolas of three bone weights on braided leather cords.",
+};
+
 const GNOLL_JOBS = [
   ...Object.entries(GNOLLS).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${GNOLL} ${subject}`, GNOLL_3D) })),
-  ...Object.entries(GNOLLS).map(([id, { subject, stance }]) => ({
+  ...Object.entries(GNOLLS).map(([id, { subject, stance, weapon }]) => ({
     id: `${id}-stance`,
     prompt:
       `A 3D render of a game character model in a three-quarter front view, ${stance}, the whole figure visible from head to feet with a margin around it, like a sculpted and textured asset shown in a modelling program. ` +
-      `${GNOLL} ${subject} ${GNOLL_3D} Flat, even, shadowless lighting from all sides, like a texture reference. A plain flat light grey background, no ground, no text.`,
+      `${GNOLL} ${subject}${weapon ? ` ${weapon}` : ""} ${GNOLL_3D} Flat, even, shadowless lighting from all sides, like a texture reference. A plain flat light grey background, no ground, no text.`,
+  })),
+  // Weapons as separate models (the user): one prop sheet each, wide so a spear fits.
+  ...Object.entries(GNOLL_WEAPONS).map(([id, things]) => ({
+    id: `${id}-props`,
+    prompt:
+      `A 3D render of game prop models laid out side by side, like textured assets shown in a modelling program: ${things} ${GNOLL_3D} ` +
+      "Each object whole and separate, shown flat from the side. Flat, even, shadowless lighting from all sides, like a texture reference. A plain flat light grey background, no ground, no hands, no text.",
+    width: 2048,
+    height: 832,
   })),
 ];
 
@@ -217,6 +239,6 @@ const group = GROUPS.find((g) => ids.length > 0 && ids.every((id) => g.jobs.some
 const frame = (id: string) => (id.includes("turnaround") ? { width: 2048, height: 832 } : id.includes("tpose") || id.includes("-3d") ? { width: 1344, height: 1024 } : { width: 896, height: 1152 });
 await runBatch(
   group.dir,
-  group.jobs.filter((j) => ids.length === 0 || ids.includes(j.id)).map((j) => ({ ...j, ...frame(j.id) })),
+  group.jobs.filter((j) => ids.length === 0 || ids.includes(j.id)).map((j) => ({ ...frame(j.id), ...j })),
   seeds.length > 0 ? seeds : [1000, 1001, 1002, 1003],
 );

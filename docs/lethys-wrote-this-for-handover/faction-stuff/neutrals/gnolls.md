@@ -96,6 +96,16 @@ Matriarch (horned, ornate armour, glaive) are the most distinct and the most got
 and the Hamstringer (mid-throw, javelins, bolas) read well; the Packstalker lost its spear in every image and came out
 a near-naked werehyena, the weakest read and the least gothic.
 
+**The user (2026-10-04):** "Very good honestly." Picked: **Bonecracker 1002** (the stance and the turnaround share the
+seed; say which if it matters), **Cackler turnaround 1002**, **Matriarch turnaround 1001** (breasts show under the
+armour: "I think that's fine. It's intended to be for adults anyway. Doesn't mean it's sexual."). The Packstalker
+and Hamstringer "look too much alike… need some work to make them more distinct. Probably by clothing." Weapons:
+"there are some issues with adding weapons into the main model… better with a separate spear model."
+
+**Round two:** the Packstalker in an antelope-skull helm, a bronze-studded brigandine and red kill-tally strips; the
+Hamstringer wrapped head to toe in dusty nomad cloth under a deep cowl, bolas across its chest. No weapon in their
+turnarounds; the stance views show it; the spear and the javelins with bolas get prop sheets of their own.
+
 ### Earlier notes (Claude, before the concepts)
 Lean, long-legged runners with sloping backs and heavy shoulders; spotted and striped pelts; sun-bleached hide,
 beads and painted clan marks (territory, rank); bronze and rawhide gear, javelins and bolas. Accent: the neutral

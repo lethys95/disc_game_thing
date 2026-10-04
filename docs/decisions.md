@@ -202,3 +202,9 @@ Hiring artists for the roster (~$100k–300k for ~100 units, `design/asset-pipel
 
 **2026-10-03 — Music buckets and a tug-of-war battle score (the user's design).**
 A bucket (`view/bucket.ts`) is a shuffle bag: a set of entries, each take removes a random one, and an empty bucket refills with the same set; a refilled bucket never opens with the entry the last one ended on. Every faction's battle tracks come from one. In battle, both sides' themes play at once and the winning side's is heard (`view/battle-music.ts`, numbers #62): playing both all the time is what lets a theme resume mid-track instead of restarting. Music is view-only, so it may use real randomness; the rules stay deterministic.
+
+## Weapons are separate models (2026-10-04)
+The user, after the gnoll concepts: "in 3D models, there are some issues with adding weapons into the main model.
+Arguably it's probably better with a separate spear model." Unit concepts for 3D show the body without its weapon
+(the turnaround) and the weapon on a prop sheet of its own; a stance view may show it held. A weapon would attach to a
+hand bone once units are rigged.
