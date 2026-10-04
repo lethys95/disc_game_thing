@@ -36,8 +36,10 @@ Expected output folder: <e.g. art/candidates/units/concepts/>
 
 1. Check ComfyUI is up: `curl -s -m 5 http://127.0.0.1:8188/system_stats`. If it doesn't answer, stop and report
    that; don't start or restart it.
-2. Run the command (it can take ~15 s per image; use a long timeout, up to 10 minutes per call; for a big batch run
-   it in the background and wait for it).
+2. Run the command (it can take ~15-20 s per image; use a long timeout, up to 10 minutes per call; for a big batch run
+   it in the background). Don't report until the command has exited and every expected file exists: a report with
+   the batch half done is not done. Wait with a loop like
+   `until ! pgrep -f "<script name>" >/dev/null; do sleep 20; done` (in calls of up to 10 minutes, repeated).
 3. Report: the files written (paths), seconds per image, the contact sheet path, and any error output verbatim.
    Don't describe or judge the images; the main session looks at them.
 ```
