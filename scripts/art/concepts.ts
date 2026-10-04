@@ -225,10 +225,61 @@ const GNOLL_JOBS = [
   })),
 ];
 
+/**
+ * The Drawn (Claude's own tribe, 2026-10-04: the user invited a tribe of Claude's making, concept art included, with
+ * as many tries as needed and every try kept). Moth-folk drawn to light: the gnolls' recipe (a turnaround for the
+ * model, a stance view for posture), one silhouette per unit. `faction-stuff/neutrals/the-drawn.md`.
+ */
+const MOTH =
+  "A moth-folk creature: large dusty moth wings, pale fur on the thorax, feathered antennae, large dark compound eyes, thin clawed limbs.";
+
+const DRAWN_3D =
+  "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: dusty wing scales, pale fur, old lace, velvet and wax-stiffened cloth, tarnished silver, smoked glass, candle wax. Serious, adult, not cartoonish, not cute.";
+
+const DRAWN: Readonly<Record<string, { readonly subject: string; readonly stance: string; readonly pose?: string }>> = {
+  dustwing: {
+    subject:
+      "The Dustwing: small and light, mostly wings, a slender body hunched between two broad tattered wings dusted grey and brown with a pair of staring eyespots, long thin legs with hooked claws, a scrap of grey lace at its throat, dust falling from its wings.",
+    stance: "hovering just above the ground, wings beating wide, claws reaching forward to strike",
+  },
+  chrysalis: {
+    subject:
+      "The Chrysalis: a tall upright cocoon of grey silk, candle wax and wrapped burial cloth, bound with tarnished silver wire, the shape of a hunched figure pressing out from inside, one clawed limb and a crumpled wet wing breaking out through a split in its side, a faint light inside.",
+    stance: "standing, the cocoon splitting open as something emerges",
+    pose: "all in the same upright standing pose",
+  },
+  lightdrinker: {
+    subject:
+      "The Lightdrinker: gaunt and tall, a long coiled proboscis hanging from its face, its wings folded down its back like a tattered cloak, a collar of yellowed lace, thin hands with long fingers, small vials of faintly glowing light hung on a cord at its waist.",
+    stance: "leaning forward with the proboscis uncoiled toward its prey, hands raised",
+  },
+  eyespot: {
+    subject:
+      "The Eyespot: wings far larger than its body, spread wide like a fan and covered in many staring eyespots that look like real eyes, a small veiled body in a high-collared velvet coat between them.",
+    stance: "its wings raised and spread wide behind it, every eye on them staring",
+  },
+  "pale-mother": {
+    subject:
+      "The Pale Mother: large and tall, pale ivory fur and wings, her wings wrapped around her like a long veil and cloak, a lace veil over her compound eyes, a crown of melted candles with small flames on her head, tarnished silver jewelry; grief and command.",
+    stance: "standing tall, her wings beginning to open like a cloak",
+  },
+};
+
+const DRAWN_JOBS = [
+  ...Object.entries(DRAWN).map(([id, { subject, pose }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${MOTH} ${subject}`, DRAWN_3D, pose) })),
+  ...Object.entries(DRAWN).map(([id, { subject, stance }]) => ({
+    id: `${id}-stance`,
+    prompt:
+      `A 3D render of a game character model in a three-quarter front view, ${stance}, the whole figure visible from head to feet with a margin around it, like a sculpted and textured asset shown in a modelling program. ` +
+      `${MOTH} ${subject} ${DRAWN_3D} Flat, even, shadowless lighting from all sides, like a texture reference. A plain flat light grey background, no ground, no text.`,
+  })),
+];
+
 /** Each group of jobs has its own folder, so one group's run doesn't mix into another's manifest. */
 const GROUPS = [
   { dir: "art/candidates/units/grove", jobs: GROVE_JOBS },
   { dir: "art/candidates/units/gnolls", jobs: GNOLL_JOBS },
+  { dir: "art/candidates/units/drawn", jobs: DRAWN_JOBS },
 ];
 
 const args = process.argv.slice(2);
