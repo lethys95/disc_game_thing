@@ -102,5 +102,15 @@ any plant matter.
   three seeds, every subject told to be lopsided and uneven; the non-humanoid ones drop the T-pose for a neutral pose
   with the limbs held clear (Deadwood leans on its arm stumps).
 
+## Round two (2026-10-04, seeds 1000–1002; Claude's read, awaiting the user's)
+Page: `shots/grove-decay-2.html`. What worked: the Bog Giant *hulk* (the huge right arm came through, lopsided, reeds
+and cattails) and the Deadwood *blasted* (half charred, half bleached, a ghostly face in the split, gorilla hunch);
+the Moldling kept the user's face and lost the big symmetric shrooms (its two readings converged). What didn't: the
+Deadwood's arms end in hands, not stumps; the Sproutling *stump* is the closest to a small treant but still fairly
+even, the *sapling* reads tall and dryad-like; the Mulch Gorger missed in both readings (a tidy leaf-wrapped
+skeleton in a T-pose: no gaping mouth, no lolling skull, no stump feet). Claude's guess: the T-pose and the
+turnaround frame pull toward a clean, upright, even figure; a single front or three-quarter concept first may get the
+grotesque pose, then a turnaround from it.
+
 ## Open
 - The user's pick per unit (or a mix) before any of them goes to Tripo.
