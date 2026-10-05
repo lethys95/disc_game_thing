@@ -123,7 +123,7 @@ button.action .key { font: 600 9px var(--text); margin-left: 6px; padding: 0 3px
 .tarot-face.small .picture { width: 54px; }
 .tarot-face.small .arcana { display: none; }
 #tarot-icon { position: fixed; left: 12px; top: 64px; z-index: 3; }
-#tarot-panel { position: fixed; left: 12px; top: 110px; width: 300px; max-height: 60vh; overflow-y: auto; z-index: 3; font-size: 13px; display: flex; flex-direction: column; gap: 10px; }
+#tarot-panel { position: fixed; left: 118px; top: 64px; width: 300px; max-height: 50vh; overflow-y: auto; z-index: 3; font-size: 13px; display: flex; flex-direction: column; gap: 10px; }
 #tarot-panel .tarot-held { display: flex; gap: 10px; align-items: flex-start; }
 #tarot-panel .arcana { font: 700 16px var(--display); }
 #tarot-panel .reward { color: var(--muted); }

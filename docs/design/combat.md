@@ -47,7 +47,12 @@ mechanics." The user's words, then Claude's provisional reading (`provisional.md
   one. Generally speaking, the tarot cards regardless of being on a specific unit, are teamwide benefits/debuffs on
   enemies/etc if you succeed. These cards will mostly be randomly generated."
   Later (2026-10-05): "the player who plays against the tarot cards gets to see the card that was picked, without
-  actually getting to see what the card itself does. Just makes it more mysterious that way."
+  actually getting to see what the card itself does. Just makes it more mysterious that way." And: "If tarot 5
+  happens, the opponent sees 5 face down, tarot owner sees 5 face up. Owner picks 1. Opponent sees the card being
+  chosen. At any point, the owner will be able to see what the card does and anything else. At any point, the
+  opponent can only see the name and the image. We'll likely have a small icon somewhere in the hud which gets
+  visible if tarot gets activated, where the chosen cards are shown." Built: the pick screen, the enemy's hand face
+  down with its pick turned over, and a Tarot icon (top left) that opens the held cards.
 - **Crit and evasion:** "instead of chance, they'll simply do every x amount of hits. Crit means double damage."
 - **Explode:** "boomer type effects on melee line with units that have an explode ability which kills the unit using it
   and deals damage scaling with max hp."
