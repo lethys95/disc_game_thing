@@ -33,3 +33,8 @@
   brighter reds sit further from the game. Claude's critique of the oils: faithful but literal, classic paintings more
   than mysteries. Round three: a **nocturne** variant (the same palette sunk in shadow, one dim light, veiled or
   turned-away faces, mist, empty space), and card backs.
+- **Round three** (nocturne × 22 and its back; oil and gilded backs): the nocturne's mood is right but "faces veiled,
+  turned away or lost in shadow" became a subject: every card filled with the same hooded, candle-holding mourners. A
+  near miss, to retry without that phrase. Backs: the **oil back** (a closed eye ringed by crescent moons and stars in a
+  gothic frame) suits the oil deck: installed as the card back. The gilded back has haloed saints; the nocturne back
+  has the mourners again.
