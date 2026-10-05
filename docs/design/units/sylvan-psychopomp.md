@@ -97,3 +97,18 @@ to me."
 - **Round four** (`PSYCHOPOMPS_4`): *wrapped* with the user's changes; two readings for the hood's eyes, *pits* and
   *possessed-wolf*. Every thin word gone. Claude's: paler skin, ivory lining on the fur mantle, the slack face said as
   relaxed brows and parted lips.
+- **Round four, read:** closer to the game's look: more desaturated and grim, the same family as the gnolls.
+  - Came through:
+    - paler sage-green skin, near the ink trial;
+    - short fingerless ivory gloves, hand only;
+    - leather wraps and stacks of bronze bangles on the forearms, and less bone;
+    - her eyes pale, nearly white-teal under heavy lids, the most absent yet (mouth still closed).
+  - Missed:
+    - both hood readings ignored the hood clause (ordinary yellow or green wolf eyes in all six), so the two readings
+      are nearly alike;
+    - the fingers are bare green with dark nails, no red at all (the desaturated recipe plus the red sitting late in
+      the prompt);
+    - the body is still slender, only a little fuller.
+  - Seed 1000 of both readings draws a stray forearm floating by the side view.
+  - Guesses for a round five: give the hood's eyes a sentence of their own near the start; put the blood-red fingers
+    in the first sentence about her.
