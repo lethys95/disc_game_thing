@@ -142,3 +142,14 @@ All 43 abilities without art got icons in the recipe of the four the user liked 
     the materials, while in a painting it becomes ornament. That word is part of the user's gothic recipe, so it's
     the user's call.
   - **Lesson:** strengths are per unit. A T-pose needs 0.75+ to re-pose; a body already standing needs 0.3–0.4.
+- **The batch (2026-10-05; the user: "you can work in batches now"):** the card, bust and icon are installed for the
+  Punisher, Zealot, Psychopomp, Sproutling, Moldling, Deadwood, Bog Giant, Mulch Gorger, Bonecracker, Cackler and
+  Matriarch. The picks are Claude's, recorded in `scripts/art/portraits.ts`; the overview is `shots/portraits.html`.
+  - **Fixes on the way:**
+    - The gnolls came out brown and spotted until their pale grey striped fur was named.
+    - The Psychopomp's ears came back with "elven". The prompt dropped it and named the hood's fur around her face.
+    - Some crops needed placing by hand: the Cackler (its staff's skull is as high as its head), Deadwood (its face
+      is the split in its trunk) and the Bog Giant.
+  - **"Ornate" vs plain:** at 0.3–0.4 there's almost no difference, except on the Bog Giant, which uses plain.
+  - **The Custodian is not installed:** the user's favourite `custodian-1000` stays until the user chooses. The new
+    candidates are on the page.

@@ -9,6 +9,8 @@
 Custodian, the Grove's Decay line, the gnolls, the Drawn. "We can't really trust any art that is older than sylvans and
 custodian." Older picks (the Zealot's and Punisher's portraits) are stand-ins until portraits are made from the new concepts.
 
+Portraits (card, bust, icon) come from the picked concept: `scripts/art/portraits.ts`, `shots/portraits.html`.
+
 Legend: **Identity:** user = a look the user described; Claude = Claude's description (accepted or pending);
 thin = a word or two (gender, "golem"); — = none. **Concept:** picked = the user picked one; Claude = Claude picked,
 awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** ✓ installed.
@@ -16,18 +18,18 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 ## 1. Identity and a picked concept: ready for a portrait
 | Unit | Faction · tier | Identity | Concept | Portrait |
 |---|---|---|---|---|
-| Sproutling | Grove 1 | user (a small treant) | picked: `sproutling-stump-turnaround-1002` | — |
-| Moldling | Grove 2 | user (mycelium, skinny) | picked: `moldling-mycelium-hunched-turnaround-1000` | — |
-| Deadwood | Grove 3 | user (an animated dead tree) | picked: `deadwood-blasted-turnaround-1002` | — |
-| Bog Giant | Grove 4 | user (a swamp hulk, huge right arm) | picked: `bog-giant-hulk-turnaround-1002` | — |
-| Mulch Gorger | Grove 4 | user (a skull and plant matter) | picked: `mulch-gorger-heap-turnaround-1000` | — |
-| Psychopomp | Grove 3 | user (canon; rounds two to four, 2026-10-05) | picked: `psychopomp-short-turnaround-1002` (user, round six; backups short 1001, style-first 1000: the ears) | — |
-| Punisher | Jilliath 3 | the original executioner's hood, in iron grey (`punisher-concepts.md`) | picked: `punisher-iron-turnaround-1000` (user, round two); flail `punisher-flail-flanged-props-1001` | old portrait, to replace |
-| Zealot | Jilliath 2 | user (canon mask, palette; wild eyes, 2026-10-05) | picked: `zealot-pyre-turnaround-1000` (user, round one of seven) | old ink portrait, to replace |
+| Sproutling | Grove 1 | user (a small treant) | picked: `sproutling-stump-turnaround-1002` | ✓ |
+| Moldling | Grove 2 | user (mycelium, skinny) | picked: `moldling-mycelium-hunched-turnaround-1000` | ✓ |
+| Deadwood | Grove 3 | user (an animated dead tree) | picked: `deadwood-blasted-turnaround-1002` | ✓ |
+| Bog Giant | Grove 4 | user (a swamp hulk, huge right arm) | picked: `bog-giant-hulk-turnaround-1002` | ✓ |
+| Mulch Gorger | Grove 4 | user (a skull and plant matter) | picked: `mulch-gorger-heap-turnaround-1000` | ✓ |
+| Psychopomp | Grove 3 | user (canon; rounds two to four, 2026-10-05) | picked: `psychopomp-short-turnaround-1002` (user, round six; backups short 1001, style-first 1000: the ears) | ✓ |
+| Punisher | Jilliath 3 | the original executioner's hood, in iron grey (`punisher-concepts.md`) | picked: `punisher-iron-turnaround-1000` (user, round two); flail `punisher-flail-flanged-props-1001` | ✓ |
+| Zealot | Jilliath 2 | user (canon mask, palette; wild eyes, 2026-10-05) | picked: `zealot-pyre-turnaround-1000` (user, round one of seven) | ✓ |
 | Custodian | Nexus 1 | user ("a golem") + Claude's stone and brass | picked: `custodian-3d-1002` (3D), `custodian-1000` (portrait) | ✓ |
-| Bonecracker | gnolls 1 | Claude (accepted) | picked: 1002 | — |
-| Cackler | gnolls 1 | Claude (accepted) | picked: `cackler-turnaround-1002` | — |
-| Matriarch | gnolls 2 | Claude (accepted) | picked: `matriarch-turnaround-1001` | — |
+| Bonecracker | gnolls 1 | Claude (accepted) | picked: 1002 | ✓ |
+| Cackler | gnolls 1 | Claude (accepted) | picked: `cackler-turnaround-1002` | ✓ |
+| Matriarch | gnolls 2 | Claude (accepted) | picked: `matriarch-turnaround-1001` | ✓ |
 | Dustwing, Chrysalis, Lightdrinker, Eyespot, Pale Mother | the Drawn | Claude's own tribe | Claude: see `the-drawn.md` (the user liked the Lightdrinker) | — |
 
 ## 2. Identity, but no picked concept: needs concept art

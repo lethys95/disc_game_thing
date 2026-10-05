@@ -87,8 +87,8 @@ const UNITS: Readonly<Record<string, Unit>> = {
     // Round one gave her elf ears sticking out of the hood again (the user had them painted out of the concept): no
     // "elven", the hood's fur around her face, the bust lower.
     strengths: { card: [0.75, 0.9], bust: [0.3, 0.45] },
-    icon: { size: 0.42, x: 0.51, y: 0.32 },
-    picked: { card: "psychopomp-card-d90.png", bust: "psychopomp-bust-d45.png" },
+    icon: { size: 0.4, x: 0.49, y: 0.3 },
+    picked: { card: "psychopomp-card-d90.png", bust: "psychopomp-bust-d30.png" },
   },
   custodian: {
     front: "art/candidates/units/nexus/custodian/custodian-3d-1002.png",
