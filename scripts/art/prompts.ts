@@ -25,6 +25,11 @@ const LOOKS: Readonly<Record<string, string>> = {
     "A zealot whose whole head is covered by a smooth, completely featureless mask: no mouth, no nose, no expression, only two wide, staring round eye holes with pure black behind them. " +
     "Painted on the forehead of the mask is a burning outstretched hand with spread fingers. The mask is ominous, strange and inhuman, deranged and wrong. " +
     "He wears spiked, tattered armor and holds a huge serrated two-handed sword.",
+  // The user's carnival (2026-10-05, `faction-stuff/neutrals/carnival.md`).
+  "portrait/soothsayer":
+    "A soothsayer of a travelling carnival: a woman in loose, flowing robes, a veil over her mouth, a crystal ball hovering above one open hand and a fanned hand of tarot cards in the other.",
+  "portrait/omen":
+    "Omen, a gunslinger of a travelling carnival: his eyes blinded by cloth bands tied around his head, a flintlock pistol in each hand.",
 };
 
 const SIZE: Readonly<Record<Slot["kind"], { width: number; height: number }>> = {
