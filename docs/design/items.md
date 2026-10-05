@@ -40,3 +40,7 @@ Not yet read by the user: War drum, Mercenary's writ, Recruiter's cap, and the c
 ## The user's new ideas (same notes)
 - **Dungeon loot is visible before the fight** (no-RNG theme): hovering or peeking a dungeon shows what it rewards.
 - **Waystone node** (inspired by the Twin compasses): holding a city with a Waystone gives the spell "Way portal"; casting it teleports the leaders elevated in that city to it. If the city is taken, those leaders no longer count as elevated there. Recorded in `nodes.md`.
+
+## Deck of cards (user, 2026-10-05)
+"Deck of cards misc item - Adds tarot 4 to leader which executes at the beginning of turn." Claude's reading: a
+utility item; its leader carries Tarot 4, drawn as each fight begins like any Tarot (the user's "beginning of turn").

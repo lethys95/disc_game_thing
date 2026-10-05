@@ -82,3 +82,10 @@ mechanics." The user's words, then Claude's provisional reading (`provisional.md
 - **Surrender**: exits the unit from combat — what happens to it strategically?
 - Ranged / caster targeting shapes (any unit? AoE patterns?). No ranged unit is specced yet.
 - Unit size (2-cell units, D2 style)? Not specced.
+
+## Tarot stays niche; AI and biomes (user, 2026-10-05)
+- "Tarot is intended to be a niche mechanic": the Soothsayer, Omen, and a **Deck of cards** item ("adds tarot 4 to
+  leader which executes at the beginning of turn").
+- "We need to have AI be aware of all new mechanics we add."
+- "We might cut away some of the features after some playtesting." The user: the units aren't all filled out, RNG's
+  complexity is gone, and items are simple on purpose; more mechanics are welcome for now.

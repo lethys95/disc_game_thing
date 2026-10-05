@@ -89,3 +89,10 @@ Every map model and ground texture was generated with "stylized dark fantasy, ha
 
 ## Ability icons (2026-09-29)
 All 43 abilities without art got icons in the recipe of the four the user liked (gothic reliquary emblem on black, one accent by faction: Jilliath blood red, Nexus teal, Grove moss green, neutral ember): `scripts/art/icons.ts`, subjects are Claude's readings. Seed 1000 of each installed. **User (2026-09-30):** "The icons look awesome, and I wouldn't hesitate to use any of them."
+
+## Units: cards on the field and icons everywhere (user, 2026-10-05)
+- "We should probably use the 2D cards as placeholders for units when we have them": a unit with a portrait stands on
+  the battlefield as its painted card until its model exists.
+- "We actually need icons for each unit. They're relevant in all other situations than in the battlefield itself or
+  when moving around in the overworld": squad overviews in cities and the Capitol, unit views, and the battle's turn
+  order (now blocks of colour with initials).

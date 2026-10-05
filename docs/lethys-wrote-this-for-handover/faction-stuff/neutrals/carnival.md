@@ -34,3 +34,9 @@ Not on the map yet ("nomadic": maybe they roam). Groups for the sims and `?fight
 two Fire Eaters and the Soothsayer (medium, level 2); two Fire Eaters, the Soothsayer and Omen (strong, level 4).
 
 **Status:** in game as `soothsayer`, `omen`, `fire_eater` (`?fight=carnival`); numbers `provisional.md` #67.
+
+## More units (user, 2026-10-05)
+- **Cutpurse:** "very basic unit probably. Just high initiative and crit 4 I think."
+- **Snakeoiler:** "backline support unit. One-time use sleep potion which incapacitates for one turn. Unit wakes up if
+  it takes damage, and is put back into the queue. Otherwise just a moderate healing potion throw to allies, or a weak
+  one-target explosive (not aoe) on a single target enemy, also ranged any target."
