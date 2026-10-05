@@ -39,6 +39,19 @@ A pattern marks *which tiles can be chosen* (select one) or *which tiles are hit
 - **Turn-order ties** (equal initiative): the sides alternate unit by unit (front row to back, then column, within a side), and the side that leads the tie swaps every pass. Originally side 0 simply went first, but in a mirror match that let the player's whole squad act before the enemy every pass.
 - **Stun** skips the next turn slot; **Defend** ends when the unit's next slot starts; **bleed** ticks at the start of each of the victim's slots.
 
+## New mechanics (user, 2026-10-05)
+"We need to open up for more mechanics… we're just risking that things get stale if we don't introduce more
+mechanics." The user's words, then Claude's provisional reading (`provisional.md` #65):
+- **Tarot:** "shows a hand of cards at the beginning of the fight. Each indicates something that needs to be done for
+  the user in secret. Keyword is 'tarot x' where x is the amount of starting cards you draw to choose from. You pick
+  one. Generally speaking, the tarot cards regardless of being on a specific unit, are teamwide benefits/debuffs on
+  enemies/etc if you succeed. These cards will mostly be randomly generated."
+- **Crit and evasion:** "instead of chance, they'll simply do every x amount of hits. Crit means double damage."
+- **Explode:** "boomer type effects on melee line with units that have an explode ability which kills the unit using it
+  and deals damage scaling with max hp."
+- **Status effects:** "wet/electrocuted/burn etc which has effects based on which damage types and abilities they're
+  interacting with."
+
 ## Balance observations
 - A Punisher mirror grinds: Punishment stacks without limit, so front lines drop to 0 damage and trade 1-point hits (AI test: 95 rounds). This is canon working as written. Options to discuss: cap stacks, floor damage at a fraction of base, or accept that Punishers make fights long.
 - Every Jilliath unit has 50–60 initiative, so 3–4 actions per round; action count only differs through Punishment. Tempo differences will come from other factions.

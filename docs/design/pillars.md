@@ -15,7 +15,7 @@ Settled decisions that make DISC more than a Disciples II clone (inspirations: D
 Capitals are unnamed. (Names from the C# attempt, like "Burning Faith" and "Nexus Prime", were AI inventions and are rejected.)
 
 ## No RNG
-No hit chance, crits, damage rolls, or morale. Outcomes are deterministic. Depth comes from richer units instead: multiple mechanics, activated abilities. A healer can still attack (poorly). A tank can still use abilities. Units are not single-trick.
+No hit chance, damage rolls, or morale. Outcomes are deterministic. Crits and evasion exist only as counts, never chances (user, 2026-10-05: "instead of chance, they'll simply do every x amount of hits"); tarot hands are "randomly generated" by a seed, so the same battle always deals the same hand. Depth comes from richer units instead: multiple mechanics, activated abilities. A healer can still attack (poorly). A tank can still use abilities. Units are not single-trick.
 
 ## Leader elevation
 Leaders are not unique unit types. Any unit can be elevated to leader at any time, irreversibly. Elevation grants squad command, overworld movement, equipment slots, and leader upgrades — **no combat stat boost**. A tier-3 Paladin leader fights exactly like a tier-3 Paladin.
