@@ -96,3 +96,15 @@ All 43 abilities without art got icons in the recipe of the four the user liked 
 - "We actually need icons for each unit. They're relevant in all other situations than in the battlefield itself or
   when moving around in the overworld": squad overviews in cities and the Capitol, unit views, and the battle's turn
   order (now blocks of colour with initials).
+- **Consistency (user, 2026-10-05):** "We might actually have issues with consistency in portraits." Text-only
+  portraits would drift from each other (the three that exist already differ: Custodian and Punisher painterly, the
+  Zealot from the ink probes) and from the picked concepts. The user: "I think we can do an image to image workflow for
+  the krea model… insert our initial image, indicate that what we want is an icon/portrait of it, then generate a new
+  image from that… the current workflow is [not] going to be able to help us in that regard." Not to generate yet.
+- **What's possible (Claude, 2026-10-05):** Krea-2's text encoder is a vision model (Qwen3-VL), and ComfyUI ships an
+  *Image Style Reference (Krea-2 Turbo)* blueprint: reference images through `TextEncodeQwenImageEditPlus` and
+  Kontext-style reference latents, with a `krea2_style_reference` LoRA (not installed; a public file in Comfy-Org's
+  Krea-2 repo). It's trained for style, so whether it keeps a creature itself while reframing it is to be tested.
+  Simpler and needing nothing new: crop the head (icon) or the figure (card) from a picked concept, then Krea
+  image-to-image at moderate denoise with a portrait prompt. The proposed test: both routes on a few picked units, side
+  by side, once the user says go.
