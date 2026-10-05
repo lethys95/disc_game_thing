@@ -473,6 +473,20 @@ const ZEALOTS_6: Readonly<Record<string, { readonly subject: string }>> = {
   },
 };
 
+/**
+ * Round seven (Claude): round six put the hand back huge down the face ("a burning red outstretched hand" without a
+ * size), and the eyes never showed. Round five's size words are what hold the hand on the forehead; joined here with
+ * round six's wild eyes, and no "featureless" or "plain" (the user).
+ */
+const ZEALOTS_7: Readonly<Record<string, { readonly subject: string }>> = {
+  "zealot-wild": {
+    subject: `A religious zealot, gaunt and tall. A white porcelain mask covers his whole head, no skin showing. On the forehead only, above the eye holes, a small burning red handprint with spread fingers, no bigger than a coin, small flames licking from it. Two large round eye holes cut through the mask, and through them his wild, bulging, bloodshot eyes stare out, wide open, the whites showing all around, crazed and unblinking. No nose, no mouth. ${WOUND_BODY} ${NOT_A_KNIGHT}`,
+  },
+  "zealot-glare": {
+    subject: `A religious zealot, gaunt and tall, his whole head covered by a cracked white porcelain mask with no nose and no mouth. High on the forehead, a small smouldering red handprint, the size of a coin. Below it, two large round holes cut in the mask, and in each hole a wild, staring, bloodshot human eye, open far too wide, glaring out. ${WOUND_BODY} ${NOT_A_KNIGHT}`,
+  },
+};
+
 const ZEALOT_SWORD =
   "a huge serrated two-handed greatsword of blackened steel, its edge cut into jagged teeth, the grip bound in red cloth; beside it the same sword seen from its flat side.";
 
@@ -483,6 +497,7 @@ const ZEALOT_JOBS = [
   ...Object.entries(ZEALOTS_4).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, JILLIATH_3D) })),
   ...Object.entries(ZEALOTS_5).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, JILLIATH_3D) })),
   ...Object.entries(ZEALOTS_6).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, JILLIATH_3D) })),
+  ...Object.entries(ZEALOTS_7).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, JILLIATH_3D) })),
   {
     id: "zealot-sword-props",
     prompt: `A 3D render of a game prop model, like a textured asset shown in a modelling program: ${ZEALOT_SWORD} ${JILLIATH_3D} Each view whole and separate, laid flat. Flat, even, shadowless lighting from all sides. A plain flat light grey background, no ground, no hands, no text.`,

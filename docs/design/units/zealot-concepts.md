@@ -50,3 +50,8 @@
   holes, plain white below (the first look's layout). *Ordered* stretched the masks long and eerie, very "wrong".
   Misses: the hand is a bloody print, not burning (no flames); and the holes are black (the first look), not the
   user's wild eyes, which is round six.
+- **Round six, read:** worse. Without a size, "a burning red outstretched hand" ran huge down the face again, and the
+  eye holes shrank to slits behind it; the many words about wild eyes produced no visible eyes. Lesson: round five's
+  size words ("small, no bigger than a coin, on the forehead only") are what hold the hand in place.
+- **Round seven:** round five's layout with its size words, round six's wild eyes inside the holes; no "featureless"
+  or "plain" (two wordings, three seeds).
