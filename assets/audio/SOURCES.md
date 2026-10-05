@@ -50,7 +50,7 @@ at −18 LUFS. Candidates (four takes each, and variants) in `../sfx-candidates/
 |---|---|---|
 | `ui/card-flick` | **the user's pick:** s311_1, its first 90 ms with a quick fade (0.08 s) | "TrackType: SFX, one playing card flicked with a finger: a single short papery snap, then silence. Foley, close mic, quiet room" (2 s) |
 | `ui/card-pick` | **the user's pick:** s311_0 (the flick prompt), from 0.44 s: the rustle and the snap (0.38 s). Alternative kept: `s311_0_pick-alt` (only the first 20 ms cut) | as above |
-| `ui/card-flip` | Claude's first pick, not yet heard: s313_0 with s314_0 under it at 25% | "…one playing card turned over and slapped down onto a wooden table: a single crisp card slap, then silence…" + "…a single soft glassy chime with a short sparkling shimmer, then silence. Close mic" (2 s each) |
+| `ui/card-flip` | **the user (2026-10-05):** the pick sound for now ("The chime doesn't work super well… we need to find the chime elsewhere"); magic layers later. Tried: s313_0 with the s314_0 chime under it at 25% | "…one playing card turned over and slapped down onto a wooden table: a single crisp card slap, then silence…" + "…a single soft glassy chime with a short sparkling shimmer, then silence. Close mic" (2 s each) |
 
 The user (2026-10-05): "it actually worked okay this time, but usually you can't rely on this model." First attempts at 0.7–1.2 s (s301–s304) came out as broadband noise filling the whole clip: too short for the model to
 place an event. Flick s311_3 is broken (a near-silent sliver).
