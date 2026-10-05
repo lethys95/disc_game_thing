@@ -52,6 +52,12 @@ than the Custodian's 3D concepts is a stand-in to redo (the user, 2026-10-05).
 - **Every image is kept**, the misses too (the user wants to see the whole path).
 
 ### What we've learned (keep adding)
+- **Keep the subject short (about 100–150 words), in the faction's material words, not an outfit list.** The
+  Psychopomp drifted from the game's look over rounds two to five as her subject grew to ~280 words of garments,
+  colours and accessories: it read as a stylised game-hero sheet and buried the gothic line (the user: "staying
+  consistent style wise is pretty essential"). Cut to ~120 grim words, the same features came back dark, ornate and
+  worn; moving the gothic line first changed little. Size cues ("large eyes set wide apart", "wide and bulky") push
+  toward cartoon proportions. Each round's fixes go *into* a short description, not onto the end of a long one.
 - The turnaround frame pulls figures upright, even and human; single views escape it (the Mulch Gorger). For a body
   that must stay strange, a single view can go to Tripo alone.
 - A phrase meant as a mood can become the subject: "faces veiled, turned away" put hooded mourners on every card; "an

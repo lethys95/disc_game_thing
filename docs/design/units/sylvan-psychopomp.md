@@ -162,3 +162,11 @@ back? Maybe something like 'not anime'? Idk."
 - **Round six, the test** (the user: "staying consistent style wise is pretty essential"; `PSYCHOPOMPS_6`): pits 1001's
   features cut to about 120 words in grim terms (rags, matted, rough), without the stylised cues; *short* keeps the
   gothic line after her, *short-style-first* puts it before her. Seeds 1000–1002, so 1001 compares with the pick.
+- **Round six, read:** the length was the main cause.
+  - The ~120-word *short* comes out darker, more ornate and more worn than the pick. Matted fur, ragged layered
+    cloth and fur, an ornate bronze belt hung with charms, tattoos over her whole body, a fuller build. Nearer the
+    Matriarch and the Grove picks.
+  - *Style first* adds little over *short*: the order matters much less than the length.
+  - Still missing: the pits in the hood (the wolf keeps glowing eyes) and the red fingers (bare fingers, teal
+    nails). The gloves are short and fingerless as asked.
+  - Short 1000 and style-first 1000 draw the side view twice.
