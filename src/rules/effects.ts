@@ -611,6 +611,60 @@ const effects: readonly EffectDef[] = [
       },
     },
   },
+  // Keywords (`abilities/keywords.ts`): counters, and the statuses that react to damage types.
+  { id: "crit_count", quiet: true, name: "Crit count", describe: (e) => `${e.stacks} hits toward its next crit.`, stacking: { mode: "unique" }, lifetime: "battle", visibility: "public", hooks: {} },
+  { id: "evasion_count", quiet: true, name: "Evasion count", describe: (e) => `${e.stacks} hits toward its next evasion.`, stacking: { mode: "unique" }, lifetime: "battle", visibility: "public", hooks: {} },
+  {
+    // Ignite: damage at the start of each of the bearer's turns; water puts it out.
+    id: "burning",
+    name: "Burning",
+    describe: (e) => `Takes ${e.amount} at the start of each of its next ${e.stacks} turn${e.stacks === 1 ? "" : "s"}. Water puts it out.`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      turnStart: (ctx, self) => {
+        const burn = self.effect;
+        if (!burn) return null;
+        ctx.lose(self.unitId, burn.amount, burn.source);
+        burn.stacks -= 1;
+        if (burn.stacks <= 0 && ctx.unit(self.unitId).alive) ctx.removeEffect(self.unitId, burn);
+        return null;
+      },
+      incoming: (ctx, self, packet) => {
+        if (packet.type === "water" && self.effect) ctx.removeEffect(self.unitId, self.effect);
+      },
+      aiValue: (_ctx, self) => -((self.effect?.amount ?? 0) * (self.effect?.stacks ?? 0)),
+    },
+  },
+  {
+    // Soak: lightning hits a wet unit half again as hard and electrocutes it; fire dries it.
+    id: "wet",
+    name: "Wet",
+    describe: (e) => `Wet for ${e.stacks} more round start${e.stacks === 1 ? "" : "s"}: lightning hits it half again as hard and electrocutes it (it loses its next turn); fire dries it.`,
+    stacking: { mode: "unique" },
+    lifetime: "rounds",
+    visibility: "public",
+    hooks: {
+      incoming: (ctx, self, packet) => {
+        if (!self.effect || packet.amount <= 0) return;
+        if (packet.type === "lightning") {
+          packet.amount = Math.ceil(packet.amount * 1.5);
+          ctx.removeEffect(self.unitId, self.effect);
+          ctx.addEffect(self.unitId, { def: "electrocuted", source: packet.source });
+        } else if (packet.type === "fire") ctx.removeEffect(self.unitId, self.effect);
+      },
+    },
+  },
+  {
+    id: "electrocuted",
+    name: "Electrocuted",
+    describe: () => "Loses its next turn.",
+    stacking: { mode: "unique" },
+    lifetime: "untilOwnTurn",
+    visibility: "public",
+    hooks: { turnStart: () => "skip", aiValue: (ctx, self) => -ctx.stats(self.unitId).damage },
+  },
   // The gnolls (`abilities/gnolls.ts`).
   {
     // A Packstalker's mark: the marker's side hits it harder until the end of the next round.

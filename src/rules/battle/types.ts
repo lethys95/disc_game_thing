@@ -13,7 +13,8 @@ export interface Tile {
   readonly col: Col;
 }
 
-export type DamageType = "weapon" | "fire";
+/** Lightning and water (2026-10-05) exist for the statuses: wet units conduct lightning; water puts out burning. */
+export type DamageType = "weapon" | "fire" | "lightning" | "water";
 
 export interface Stats {
   maxHp: number;
@@ -173,6 +174,8 @@ export type BattleEvent =
   | { type: "absorbed"; unitId: string; amount: number; by: string }
   | { type: "death"; unitId: string }
   | { type: "deathPrevented"; unitId: string }
+  | { type: "crit"; unitId: string; target: string }
+  | { type: "evaded"; unitId: string }
   | { type: "effect"; unitId: string; effect: string; source: string | null }
   | { type: "effectEnded"; unitId: string; effect: string; source: string | null }
   | { type: "move"; unitId: string; from: Tile; to: Tile }

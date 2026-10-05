@@ -3,11 +3,12 @@ import { drawn } from "#rules/abilities/drawn";
 import { gnolls } from "#rules/abilities/gnolls";
 import { grove } from "#rules/abilities/grove";
 import { jilliath } from "#rules/abilities/jilliath";
+import { keywords } from "#rules/abilities/keywords";
 import { neutral } from "#rules/abilities/neutral";
 import { nexus } from "#rules/abilities/nexus";
 import type { AbilityRef, Behavior, Params } from "#rules/battle/types";
 
-const SETS: readonly Readonly<Record<string, Behavior>>[] = [core, jilliath, nexus, grove, neutral, gnolls, drawn];
+const SETS: readonly Readonly<Record<string, Behavior>>[] = [core, keywords, jilliath, nexus, grove, neutral, gnolls, drawn];
 
 /** Every ability by id. Two sets naming the same id would silently replace one (it happened: the Cleric's Mend). */
 export const BEHAVIORS: Readonly<Record<string, Behavior>> = Object.assign({}, ...SETS);

@@ -353,7 +353,7 @@ export class Setup {
       head.append(element("span", "name", def.name), element("span", "tier", `tier ${def.tier}`));
       card.appendChild(head);
       card.appendChild(
-        element("div", "stats", `${def.stats.maxHp} HP${def.stats.shield > 0 ? ` · ${def.stats.shield} shield` : ""} · ${def.stats.damage} dmg${def.damageType === "fire" ? " (fire)" : ""} · ${def.stats.armor} armor · ${def.stats.initiative} init`),
+        element("div", "stats", `${def.stats.maxHp} HP${def.stats.shield > 0 ? ` · ${def.stats.shield} shield` : ""} · ${def.stats.damage} dmg${def.damageType === "weapon" ? "" : ` (${def.damageType})`} · ${def.stats.armor} armor · ${def.stats.initiative} init`),
       );
       const special = def.abilities.filter((a) => {
         const b = BEHAVIORS[a.id];

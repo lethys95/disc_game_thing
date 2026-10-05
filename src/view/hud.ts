@@ -312,6 +312,10 @@ function describe(event: BattleEvent, name: (id: string) => string, playerSide: 
       return `${name(event.unitId)} falls`;
     case "deathPrevented":
       return `${name(event.unitId)} refuses to fall`;
+    case "crit":
+      return `${name(event.unitId)}: a critical hit on ${name(event.target)}`;
+    case "evaded":
+      return `${name(event.unitId)} evades the hit`;
     case "effect": {
       const def = effectDef(event.effect);
       return def.quiet ? null : `${name(event.unitId)}: ${def.name.toLowerCase()}`;

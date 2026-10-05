@@ -422,6 +422,12 @@ export class BattleScene {
         case "deathPrevented":
           this.float(event.unitId, "Spared", "spared");
           break;
+        case "crit":
+          this.float(event.target, "Crit!", "spared");
+          break;
+        case "evaded":
+          this.float(event.unitId, "Evaded", "effect");
+          break;
         case "effect":
           if (!effectDef(event.effect).quiet) this.float(event.unitId, effectDef(event.effect).name, "effect");
           break;

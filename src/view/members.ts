@@ -74,7 +74,7 @@ export function unitDefCard(defId: string): HTMLElement {
   card.appendChild(art({ kind: "portrait", id: defId }, "card-portrait"));
   card.append(element("div", "title", def.name), element("div", "subtitle", `Tier ${def.tier}`));
   const s = def.stats;
-  const facts = [`${s.maxHp} HP`, s.shield > 0 ? `${s.shield} shield` : "", `${s.damage} damage${def.damageType === "fire" ? " (fire)" : ""}`, `${s.armor} armor`, `${s.initiative} initiative`];
+  const facts = [`${s.maxHp} HP`, s.shield > 0 ? `${s.shield} shield` : "", `${s.damage} damage${def.damageType === "weapon" ? "" : ` (${def.damageType})`}`, `${s.armor} armor`, `${s.initiative} initiative`];
   if (def.spellCharges) facts.push(`${def.spellCharges} spell charges`);
   card.appendChild(element("div", "stats", facts.filter((f) => f).join(" · ")));
   for (const ref of def.abilities) {
@@ -95,7 +95,7 @@ export function memberCard(m: SquadMember, leader: Leader | undefined): HTMLElem
   const card = unitDefCard(m.defId);
   const def = UNITS[m.defId];
   const s = ownStats(placementOf(m, leader));
-  const facts = [`${m.hp} / ${maxHpOf(m, leader)} HP`, s.shield > 0 ? `${s.shield} shield` : "", `${s.damage} damage${def?.damageType === "fire" ? " (fire)" : ""}`, `${s.armor} armor`, `${s.initiative} initiative`];
+  const facts = [`${m.hp} / ${maxHpOf(m, leader)} HP`, s.shield > 0 ? `${s.shield} shield` : "", `${s.damage} damage${def && def.damageType !== "weapon" ? ` (${def.damageType})` : ""}`, `${s.armor} armor`, `${s.initiative} initiative`];
   if (def?.spellCharges) facts.push(`${def.spellCharges} spell charges`);
   card.querySelector(".stats")?.replaceWith(element("div", "stats", facts.filter((f) => f).join(" · ")));
   const title = card.querySelector(".title");
