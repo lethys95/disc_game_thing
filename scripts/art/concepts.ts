@@ -25,9 +25,14 @@ const ZEALOT =
   "Painted on the forehead of the mask is a burning outstretched hand with spread fingers. The mask is ominous, strange and inhuman, deranged and wrong. " +
   "He wears spiked, tattered armor and holds a huge serrated two-handed sword, in a menacing stance.";
 
+/**
+ * The user's refined look (2026-09-30, `docs/design/units/sylvan-psychopomp.md`): closer to the ink portrait, wild, possessed.
+ * Replaced the first look ("doesn't work very well", the user, 2026-10-05; it's in the git history and in the
+ * manifests of the images it made).
+ */
 const PSYCHOPOMP =
-  "A woman, an elf with pointed ears: a shamanistic druid. Psychedelic, sprawling with life, confusing. Hypnotic eyes. Several spectral, blurry shapes, barely visible, brush out from her face. " +
-  "Trinkets and baubles in her rough hair. Greens, roots and vines, with purple for pulses of spirit.";
+  "A woman, an elf with pointed ears: a wild shamanistic druid, not a pretty elf, possessed or haunted. Her eyes glow blue, her mouth hangs open and a ghastly smoke pours out of it; " +
+  "full-bodied, bluish, glitching ghostly figures skip out of her body as if trying to escape it. Trinkets and baubles in her rough hair; greens, roots and vines, with purple for pulses of spirit.";
 
 /** For image-to-3D: facing the viewer, limbs clear of the body, so the mesh and a later rig see every part. */
 const CUSTODIAN_3D =
