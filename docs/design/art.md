@@ -172,3 +172,13 @@ All 43 abilities without art got icons in the recipe of the four the user liked 
     pockets enclosed by the figure become ground.
   - **The Psychopomp:** two card poses, the user's casting reference (palms down, back arched) and a raised hand.
   - All cards were repainted from the cleaned sources.
+- **Round two of the portraits (2026-10-05):** all twelve repainted from the cleaned sources and installed, the
+  Custodian switched to its 3D design (the user).
+  - **Busts and icons:** cut from the card (centred on the face), except the Psychopomp's and the Bog Giant's, which
+    come from their painted busts.
+  - **The Psychopomp's card:** Claude's raised-hand pose. The user's arched casting pose didn't come through as an
+    arch.
+  - **The Zealot's card:** came out almost the same as the one the user liked.
+  - **Kept images:** the script now moves any earlier image of the same name to `earlier/`. Before that fix this run
+    overwrote round one's candidates of the same names; the installed round-one files are still in git.
+  - Overview: `shots/portraits.html`.

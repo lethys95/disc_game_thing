@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, rename, stat, writeFile } from "node:fs/promises";
 import sharp from "sharp";
 import { img2img, KREA2_TURBO } from "#scripts/art/comfy";
 import { record } from "#scripts/art/batch";
@@ -81,6 +81,10 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "a hooded executioner of a militant faith: a tall pointed hood with only black inside it, no face; a long cassock and a hooded mantle of dark iron-grey cloth; dented iron bracers, a heavy chain belt",
     poses: ["he stands upright, a heavy multi-headed flail resting over his shoulder"],
     strengths: T_POSED,
+    picked: {
+      card: "punisher-card-d75.png",
+      crops: { bust: { from: "card", size: 0.6, x: 0.5, y: 0.28 }, icon: { from: "card", size: 0.28, x: 0.48, y: 0.27 } },
+    },
   },
   zealot: {
     front: "shots/tripo/zealot-front.png",
@@ -88,6 +92,10 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "a religious zealot, a tall gaunt man: his whole head covered by a smooth white mask with two wide round black eye holes and a small burning red handprint on its forehead; spiked, tattered armor scorched black, singed white robes in rags stained blood red, chains with small hooks at his belt",
     poses: ["he stands tense and leaning forward, a huge serrated two-handed greatsword of blackened steel held low"],
     strengths: T_POSED,
+    picked: {
+      card: "zealot-card-d75.png",
+      crops: { bust: { from: "card", size: 0.5, x: 0.5, y: 0.26 }, icon: { from: "card", size: 0.2, x: 0.47, y: 0.18 } },
+    },
   },
   psychopomp: {
     front: "shots/tripo/psychopomp-earless-front.png",
@@ -103,6 +111,10 @@ const UNITS: Readonly<Record<string, Unit>> = {
     // Round one gave her elf ears sticking out of the hood again (the user had them painted out of the concept): no
     // "elven", the hood's fur around her face, the bust lower.
     strengths: { card: [0.75, 0.9], bust: [0.3] },
+    picked: {
+      card: "psychopomp-card-pose2-d90.png", bust: "psychopomp-bust-d30.png",
+      crops: { bust: { from: "bust", size: 1, x: 0.5, y: 0.5 }, icon: { from: "bust", size: 0.4, x: 0.49, y: 0.3 } },
+    },
   },
   custodian: {
     front: "art/candidates/units/nexus/custodian/custodian-3d-1002.png",
@@ -110,6 +122,10 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "a hulking golem guardian, not a person: a massive body of cracked grey stone blocks bound with dark brass bands, a blank stone head, thick stone arms and legs, faint electric teal lightning crackling in the cracks, a scrap of old cloth at its waist",
     poses: ["it stands guard, its heavy arms lowered"],
     strengths: T_POSED,
+    picked: {
+      card: "custodian-card-d90.png",
+      crops: { bust: { from: "card", size: 0.6, x: 0.55, y: 0.25 }, icon: { from: "card", size: 0.28, x: 0.64, y: 0.15 } },
+    },
   },
   bonecracker: {
     front: "shots/tripo/bonecracker-front.png",
@@ -117,6 +133,10 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "a gnoll, a hyena-headed brute: heavy and broad with short legs, enormous forequarters and a thick neck, pale grey fur with dark stripes and a bristling dark mane, a massive jaw with iron-capped teeth, a heavy collar of bone plates and bronze rings, scarred bare arms, one fist in a spiked bronze gauntlet",
     poses: ["it stands hunched forward, its fists ready"],
     strengths: T_POSED,
+    picked: {
+      card: "bonecracker-card-d90.png",
+      crops: { bust: { from: "card", size: 0.62, x: 0.6, y: 0.33 }, icon: { from: "card", size: 0.38, x: 0.7, y: 0.3 } },
+    },
   },
   cackler: {
     front: "shots/tripo/cackler-front.png",
@@ -124,6 +144,10 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "a gnoll, a scrawny hunched hyena-headed creature with pale grey fur, dark spots and a bristling dark mane, its mouth stretched in a wide manic grin, a ragged cloak of tattered cloth strips like rotten jester's motley, bone rattles and small bronze bells hanging from it",
     poses: ["it stands hunched, holding a crooked staff topped with a hyena skull"],
     strengths: T_POSED,
+    picked: {
+      card: "cackler-card-d90.png",
+      crops: { bust: { from: "card", size: 0.6, x: 0.55, y: 0.38 }, icon: { from: "card", size: 0.3, x: 0.6, y: 0.34 } },
+    },
   },
   matriarch: {
     front: "shots/tripo/matriarch-front.png",
@@ -131,6 +155,10 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "a gnoll matriarch, the largest of the pack: a tall, upright, broad-shouldered female hyena-headed warrior with pale grey fur, dark stripes, a great dark mane and a scarred muzzle, a mantle of bronze plates and trophy bones over her shoulders, a cloak of a great beast's hide, a crest of teeth and bronze on her brow",
     poses: ["she stands tall, holding a heavy bronze glaive"],
     strengths: T_POSED,
+    picked: {
+      card: "matriarch-card-d90.png",
+      crops: { bust: { from: "card", size: 0.6, x: 0.52, y: 0.3 }, icon: { from: "card", size: 0.3, x: 0.51, y: 0.21 } },
+    },
   },
   sproutling: {
     front: "shots/tripo/sproutling-front.png",
@@ -138,6 +166,10 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "a small treant, nothing human about it: a squat, gnarled young stump of dark bark on uneven root legs, one arm a long crooked branch and the other a short thick knot of wood, a face of knotholes with a ragged split in the bark for a mouth, pale new shoots and a few leaves sprouting from one side of its head",
     poses: ["it stands on its root legs"],
     strengths: STANDING,
+    picked: {
+      card: "sproutling-card-d40.png",
+      crops: { bust: { from: "card", size: 0.6, x: 0.52, y: 0.3 }, icon: { from: "card", size: 0.3, x: 0.52, y: 0.3 } },
+    },
   },
   moldling: {
     front: "shots/tripo/moldling-front.png",
@@ -146,6 +178,10 @@ const UNITS: Readonly<Record<string, Unit>> = {
     poses: ["it stands hunched, leaning to one side"],
     // Its concept stands in a T-pose, but it is a creature whose details drift: between the two.
     strengths: { card: [0.6, 0.75], bust: [] },
+    picked: {
+      card: "moldling-card-d75.png",
+      crops: { bust: { from: "card", size: 0.55, x: 0.55, y: 0.3 }, icon: { from: "card", size: 0.3, x: 0.6, y: 0.23 } },
+    },
   },
   deadwood: {
     front: "shots/tripo/deadwood-front.png",
@@ -153,6 +189,10 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "an animated dead tree, nothing humanoid about it: a lightning-split, charred grey trunk, one side burned black and the other bleached and peeling, dead branches clawing up from its top on one side, two massive arms of thick dead stumps, short root legs, a faint smoky ghostly face in the split of the trunk with a faint moss green glow",
     poses: ["it stands leaning forward on its stump arms"],
     strengths: STANDING,
+    picked: {
+      card: "deadwood-card-d40.png",
+      crops: { bust: { from: "card", size: 0.65, x: 0.5, y: 0.33 }, icon: { from: "card", size: 0.35, x: 0.48, y: 0.28 } },
+    },
   },
   // Round one (0.75/0.9 card, 0.45–0.75 bust) lost its pale face and grew gold filigree; round two: the bust holds at
   // 0.3–0.4, the card turned to carved filigree at 0.5 and "bone-white" made the face a skull; round three: carved
@@ -167,6 +207,10 @@ const UNITS: Readonly<Record<string, Unit>> = {
     styles: ["plain"],
     // Its face sits low in the bark, below the reeds on its top.
     head: { size: 0.42, x: 0.557, y: 0.33 },
+    picked: {
+      card: "bog_giant-card-plain-d30.png", bust: "bog_giant-bust-plain-d30.png",
+      crops: { bust: { from: "bust", size: 1, x: 0.5, y: 0.5 }, icon: { from: "bust", size: 0.42, x: 0.51, y: 0.44 } },
+    },
   },
   mulch_gorger: {
     front: "shots/tripo/mulch-gorger-front.png",
@@ -174,6 +218,10 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "a lurching heap of black rotting bark, mulch, bracket fungi, pale mold, wet leaves and roots with a human skull half sunk into its top, tipped back, its jaw gaping at the sky, moss and fungus growing from the skull's mouth and eye sockets; three uneven limbs of twisted roots, one a long grasping root",
     poses: ["it lurches forward"],
     strengths: STANDING,
+    picked: {
+      card: "mulch_gorger-card-d40.png",
+      crops: { bust: { from: "card", size: 0.55, x: 0.47, y: 0.22 }, icon: { from: "card", size: 0.25, x: 0.46, y: 0.12 } },
+    },
   },
 };
 
@@ -404,6 +452,12 @@ async function test(id: string, sourcesOnly: boolean): Promise<void> {
   const made: Candidate[] = [];
   for (const run of runs) {
     const started = Date.now();
+    // Every image is kept (the unit-concepts skill): an earlier one of the same name moves to earlier/, stamped.
+    const earlier = await stat(`${dir}/${run.file}`).catch(() => null);
+    if (earlier) {
+      await mkdir(`${dir}/earlier`, { recursive: true });
+      await rename(`${dir}/${run.file}`, `${dir}/earlier/${run.file.replace(/\.png$/, `-${earlier.mtime.toISOString().replace(/[:.]/g, "-")}.png`)}`);
+    }
     await writeFile(`${dir}/${run.file}`, await run.make());
     console.log(`${dir}/${run.file} (${((Date.now() - started) / 1000).toFixed(1)} s)`);
     made.push({ file: run.file, model: KREA2_TURBO.diffusionModel, ...run.entry });
