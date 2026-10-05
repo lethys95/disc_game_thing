@@ -71,6 +71,9 @@ than the Custodian's 3D concepts is a stand-in to redo (the user, 2026-10-05).
 - "No text" isn't reliable: numerals creep in.
 - Some ideas the model won't draw (wings covered in real eyes, after three tries): carry the idea by colour and
   silhouette instead, and say so.
+- Two readings that differ by one clause the model ignores come out as near-duplicates on the same seed (the
+  Psychopomp's *pits* and *possessed-wolf*: about 1% of pixels differ, the same stray limb in both). To test a single
+  detail, give each reading its own seeds; readings meant to differ should differ in more than one clause.
 - A colour said of one part can land on its neighbour: the Psychopomp's "ghostly teal" eyes went to the eyes of her
   wolf hood too (which also kept them, despite "empty cut-out holes"). Some details resist for rounds on end (her
   cornrows, her absent look): after three tries, say so and offer to carry them in the 3D model or the effects.

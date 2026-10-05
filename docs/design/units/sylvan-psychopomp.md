@@ -104,8 +104,9 @@ to me."
     - leather wraps and stacks of bronze bangles on the forearms, and less bone;
     - her eyes pale, nearly white-teal under heavy lids, the most absent yet (mouth still closed).
   - Missed:
-    - both hood readings ignored the hood clause (ordinary yellow or green wolf eyes in all six), so the two readings
-      are nearly alike;
+    - both hood readings ignored the hood clause (ordinary yellow or green wolf eyes in all six), so on the same seeds the two readings
+      are near-duplicates (checked at the user's ask: different files and prompts, but about 1% of pixels differ,
+      the same stray forearm in both);
     - the fingers are bare green with dark nails, no red at all (the desaturated recipe plus the red sitting late in
       the prompt);
     - the body is still slender, only a little fuller.
