@@ -91,7 +91,32 @@ function evaluate(battle: Battle, side: Side): number {
     // Shields are worth less than health: they return after battle, and lent ones perish.
     score += sign * (unit.hp + 0.5 * unit.shield + (traits[unit.id] ?? 0));
   }
-  return score;
+  return score + tarotWorth(battle, side);
+}
+
+/** What fulfilling a tarot card is worth beyond what its reward does to the board. Rough, provisional. */
+const TAROT_DONE = 40;
+
+/**
+ * The AI plays toward its tarot tasks (2026-10-05: the AI knows every mechanic): a fulfilled card counts, and an open
+ * one pulls toward its task: its marked target hurt, its healing done. Kills and losses already count on the board.
+ */
+function tarotWorth(battle: Battle, side: Side): number {
+  let worth = 0;
+  for (const hand of battle.tarot) {
+    const card = hand.chosen === null ? undefined : hand.cards[hand.chosen];
+    if (!card) continue;
+    const sign = hand.side === side ? 1 : -1;
+    if (hand.state === "fulfilled") worth += sign * TAROT_DONE;
+    if (hand.state !== "open") continue;
+    if (card.task.kind === "slay") {
+      const target = battle.units[card.task.target];
+      const max = UNITS[target?.defId ?? ""]?.stats.maxHp ?? 1;
+      if (target) worth += sign * (target.alive ? (1 - target.hp / max) * TAROT_DONE * 0.75 : 0);
+    }
+    if (card.task.kind === "heal") worth += sign * Math.min(1, hand.progress / card.task.amount) * TAROT_DONE * 0.5;
+  }
+  return worth;
 }
 
 /** Picks a card from every undecided tarot hand (of `side`, or of both): the one worth most by `cardValue`. */

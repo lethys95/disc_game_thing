@@ -17,6 +17,10 @@ The rules model is in `docs/design/architecture.md`; read it if you haven't this
 - Every ability and effect definition has a required `describe` (its rules text, written from its own params or numbers). Numbers shared by a rule and its text are constants next to the definition (e.g. `PUNISHED_PER_STACK`), never repeated.
 - **Active ability**: `src/rules/abilities/<faction>.ts` with `tags` (`attack`, `basic`, `melee`, `ranged`, `spell`, `damage`, `heal`, `area`), `defaults` (`power`, `charges`, amounts), `choices`, `resolve`. Deal damage with `ctx.hit(self.unitId, targets, ctx.hitSpec(self, tags))`. A variant of an existing ability is usually **params on the unit**, not new code.
 - **Passive ability**: `kind: "passive"` with `hooks` (see `Hooks` in `src/rules/battle/types.ts`).
+- **The AI must know every mechanic (user, 2026-10-05).** The greedy AI scores the board after each option: health,
+  shields, and each trait's `aiValue`. An effect without `aiValue` is invisible to it, so it will never choose to cause
+  it (a goad, a curse, a sleep). Give every effect that changes a fight an `aiValue` (flat stat effects get one from
+  `STAT_WORTH`), and check with a quick probe that the AI uses the new ability (count its picks across the formations).
 - **Effect**: `src/rules/effects.ts`: stacking (`unique` / `merge` with an optional cap / `perSource`), lifetime (`battle`, `untilOwnTurn`, `untilRoundEnd`, `untilSourceTurn`, `untilTurnEnd`), visibility (`secret`: only the side that applied it sees it), `quiet` for bookkeeping, `aiValue` if the AI should care. Apply it with `ctx.addEffect(target, { def, source, amount, stacks })`.
 - **City node**: `src/rules/nodes.ts` (income, battle effects) plus a model in `src/view/map.ts`.
 - **Something from the world that affects battles** (items, spells on a warband, upgrades): effects via `BattleContext.sideEffects` or `Placement.effects`, built in `src/rules/world/battles.ts`.

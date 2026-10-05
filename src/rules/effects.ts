@@ -1,6 +1,9 @@
 import { PUNISHMENT_MAX_STACKS } from "#rules/balance";
 import type { EffectDef, EffectInstance, Stacking, Stats } from "#rules/battle/types";
 
+/** What a point of each stat is worth to the AI, roughly in health. Rough, provisional. */
+const STAT_WORTH: Readonly<Record<keyof Stats, number>> = { maxHp: 0.5, shield: 0.5, damage: 2, armor: 3, initiative: 1 };
+
 /** Punishment's per-stack penalty to damage and initiative. */
 export const PUNISHED_PER_STACK = 10;
 /** Mutate's per-stack damage bonus. */
@@ -53,6 +56,8 @@ function flatStat(def: {
       stats: (_ctx, self, subjectId, stats) => {
         if (subjectId === self.unitId) stats[def.stat] += sign * (self.effect?.amount ?? 0);
       },
+      // The AI weighs a stat change by how much a point of it tends to matter (2026-10-05: the AI knows every mechanic).
+      aiValue: (_ctx, self) => sign * (self.effect?.amount ?? 0) * STAT_WORTH[def.stat],
     },
   };
 }
@@ -673,6 +678,8 @@ const effects: readonly EffectDef[] = [
           ctx.addEffect(self.unitId, { def: "electrocuted", source: packet.source });
         } else if (packet.type === "fire") ctx.removeEffect(self.unitId, self.effect);
       },
+      // Only worth something where lightning can reach it; a small nudge either way.
+      aiValue: () => -5,
     },
   },
   {
@@ -696,6 +703,7 @@ const effects: readonly EffectDef[] = [
       stats: (_ctx, self, subjectId, stats) => {
         if (subjectId === self.unitId) stats.damage += Math.round((stats.damage * (self.effect?.amount ?? 0)) / 100);
       },
+      aiValue: (ctx, self) => ((ctx.unit(self.unitId).base.damage * (self.effect?.amount ?? 0)) / 100) * STAT_WORTH.damage,
     },
   },
   flatStat({ id: "tarot_exposed", name: "Exposed", stat: "armor", sign: -1, stacking: { mode: "merge" }, describe: (e) => `−${e.amount} armor (an enemy's tarot card).` }),
@@ -734,7 +742,7 @@ const effects: readonly EffectDef[] = [
         else curse.stacks -= 1;
         return null;
       },
-      aiValue: (ctx, self) => -((ctx.stats(self.unitId).damage * (self.effect?.amount ?? 0)) / 100) * 2,
+      aiValue: (ctx, self) => -((ctx.stats(self.unitId).damage * (self.effect?.amount ?? 0)) / 100) * STAT_WORTH.damage * Math.max(1, self.effect?.stacks ?? 1),
     },
   },
   // The gnolls (`abilities/gnolls.ts`).
@@ -752,6 +760,7 @@ const effects: readonly EffectDef[] = [
         if (!marker || !packet.source || packet.amount <= 0) return;
         if (ctx.unit(packet.source).side === ctx.unit(marker).side) packet.amount += self.effect?.amount ?? 0;
       },
+      aiValue: (_ctx, self) => -(self.effect?.amount ?? 0) * 2,
     },
   },
   flatStat({ id: "cracked", name: "Cracked", stat: "armor", sign: -1, stacking: { mode: "merge" }, describe: (e) => `−${e.amount} armor for the rest of combat (cracked by a gnoll's jaws).` }),
@@ -766,6 +775,7 @@ const effects: readonly EffectDef[] = [
       stats: (_ctx, self, subjectId, stats) => {
         if (subjectId === self.unitId) stats.initiative -= self.effect?.amount ?? 0;
       },
+      aiValue: (_ctx, self) => -(self.effect?.amount ?? 0) * STAT_WORTH.initiative,
     },
   },
   {
