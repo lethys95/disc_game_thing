@@ -5,6 +5,10 @@
 > picked 2D image) → **portrait** (the card on the field and the icon everywhere else, made from the concept). Keep
 > this table current; it's the to-do list for unit art. Sources per unit are in its design doc.
 
+**Which art counts (user, 2026-10-05):** only art made in the 3D concept strategy, the Custodian's onward: the
+Custodian, the Grove's Decay line, the gnolls, the Drawn. "We can't really trust any art that is older than sylvans and
+custodian." Older picks (the Zealot's and Punisher's portraits, the Psychopomp's ink probe) are stand-ins to redo.
+
 Legend: **Identity:** user = a look the user described; Claude = Claude's description (accepted or pending);
 thin = a word or two (gender, "golem"); — = none. **Concept:** picked = the user picked one; Claude = Claude picked,
 awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** ✓ installed.
@@ -17,9 +21,6 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 | Deadwood | Grove 3 | user (an animated dead tree) | picked: `deadwood-blasted-turnaround-1002` | — |
 | Bog Giant | Grove 4 | user (a swamp hulk, huge right arm) | picked: `bog-giant-hulk-turnaround-1002` | — |
 | Mulch Gorger | Grove 4 | user (a skull and plant matter) | picked: `mulch-gorger-heap-turnaround-1000` | — |
-| Psychopomp | Grove 3 | user (canon, refined 2026-09-30) | picked: `psychopomp_inkBrush-1003` (an ink probe, before the refinement) | — |
-| Zealot | Jilliath 2 | user (canon mask) | picked: `zealot_inkBrush-1001` | ✓ (ink) |
-| Punisher | Jilliath 3 | thin (the user's flail) + Claude's executioner | picked: `punisher-1001` | ✓ (first-batch style) |
 | Custodian | Nexus 1 | user ("a golem") + Claude's stone and brass | picked: `custodian-3d-1002` (3D), `custodian-1000` (portrait) | ✓ |
 | Bonecracker | gnolls 1 | Claude (accepted) | picked: 1002 | — |
 | Cackler | gnolls 1 | Claude (accepted) | picked: `cackler-turnaround-1002` | — |
@@ -29,6 +30,9 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 ## 2. Identity, but no picked concept: needs concept art
 | Unit | Faction · tier | Identity | Concept |
 |---|---|---|---|
+| Zealot | Jilliath 2 | user (canon mask, palette) | old ink pick and portrait don't fit; **redoing in the 3D strategy (2026-10-05)** |
+| Psychopomp | Grove 3 | user (canon, refined 2026-09-30; the prompt now uses the refinement) | old ink pick doesn't fit; "needs more work" |
+| Punisher | Jilliath 3 | thin (the user's flail) + Claude's executioner | old portrait doesn't fit |
 | Congregant | Jilliath 1 | user: "an angry mob… not rugged knights" | cand. (anchors; "rather close": `baroque_congregant-1000`) |
 | Paladin | Jilliath 2 | Claude's holy knight; the user: "cool if a bit forgettable" | cand. (anchors) |
 | Apprentice | Nexus 1 | user: hooded and robed, gender ambiguous (semi placeholder) | cand. (rejected: "a depressed anime boy") |

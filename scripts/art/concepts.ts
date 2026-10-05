@@ -31,7 +31,7 @@ const ZEALOT =
  * manifests of the images it made).
  */
 const PSYCHOPOMP =
-  "A woman, an elf with pointed ears: a wild shamanistic druid, not a pretty elf, possessed or haunted. Her eyes glow blue, her mouth hangs open and a ghastly smoke pours out of it; " +
+  "A woman, an elf with pointed ears: a wild shamanistic druid, possessed or haunted. Her eyes glow blue, her mouth hangs open and a ghastly smoke pours out of it; " +
   "full-bodied, bluish, glitching ghostly figures skip out of her body as if trying to escape it. Trinkets and baubles in her rough hair; greens, roots and vines, with purple for pulses of spirit.";
 
 /** For image-to-3D: facing the viewer, limbs clear of the body, so the mesh and a later rig see every part. */
