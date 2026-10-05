@@ -127,6 +127,7 @@ export class App implements KeyLayer {
       },
       onAuto: () => this.toggleAuto(),
       onResolve: () => void this.resolveNow(),
+      onCue: (sound) => this.sound.play([sound]),
       onFocus: (unitId) => {
         this.focus = unitId;
         this.render();
@@ -148,6 +149,7 @@ export class App implements KeyLayer {
   }
 
   key(e: KeyboardEvent): boolean {
+    if (this.hud.tarotKey(e)) return true;
     if (e.key === "Escape") {
       this.cancel();
       return true;

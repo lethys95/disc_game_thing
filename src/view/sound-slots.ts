@@ -13,6 +13,8 @@ import { UNITS } from "#rules/units/index";
 /** Sounds that don't belong to one piece of content. */
 export const FIXED_SOUNDS = [
   "ui/click", "ui/coins",
+  // Tarot cards (the user, 2026-10-05): flicking through a hand, picking a card, turning one over.
+  "ui/card-flick", "ui/card-pick", "ui/card-flip",
   "battle/shield", "battle/fled",
   "map/march", "map/battle", "map/capture",
   "stinger/victory", "stinger/defeat",

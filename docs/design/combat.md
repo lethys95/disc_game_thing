@@ -52,7 +52,13 @@ mechanics." The user's words, then Claude's provisional reading (`provisional.md
   chosen. At any point, the owner will be able to see what the card does and anything else. At any point, the
   opponent can only see the name and the image. We'll likely have a small icon somewhere in the hud which gets
   visible if tarot gets activated, where the chosen cards are shown." Built: the pick screen, the enemy's hand face
-  down with its pick turned over, and a Tarot icon (top left) that opens the held cards.
+  down with its pick turned over, and a Tarot icon (top left) that opens the held cards. Then (2026-10-05): "it'd be
+  better if the cards are floating and centered around the middle, where you can flick through the cards. Like if you
+  were holding cards in your hand. When we flip through cards, we should have an appropriate sfx and also one for
+  picking and flipping the cards… if we just have a box called 'tarot', then I don't think we're selling that they're
+  tarot cards too well." Built: a fan of cards at the centre (wheel, arrows or hover to flick; Enter or a click on the
+  focused card to pick), the enemy's fan face down with its pick turning over, the HUD's held cards as a small fanned
+  stack that opens the same fan; sounds `ui/card-flick`, `ui/card-pick`, `ui/card-flip` (`assets/audio/SOURCES.md`).
 - **Crit and evasion:** "instead of chance, they'll simply do every x amount of hits. Crit means double damage."
 - **Explode:** "boomer type effects on melee line with units that have an explode ability which kills the unit using it
   and deals damage scaling with max hp."

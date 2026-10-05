@@ -97,38 +97,48 @@ button.action .key { font: 600 9px var(--text); margin-left: 6px; padding: 0 3px
 #banner .title { font: 700 54px var(--display); letter-spacing: 0.06em; }
 #banner .subtitle { color: var(--muted); margin-bottom: 16px; }
 
-/* Tarot (2026-10-05): the hand dealt as a fight begins, and the card held. */
+/* Tarot (the user, 2026-10-05): cards floating in a fan at the centre, to flick through like a hand of cards. */
 #tarot {
-  position: fixed; left: 50%; top: 46%; transform: translate(-50%, -50%); z-index: 6; text-align: center;
-  padding: 20px 28px; width: max-content; max-width: min(92vw, 980px); box-sizing: border-box;
-  border: 20px solid transparent; border-image: var(--ui-frame) 18% / 24px round; background: rgba(13, 11, 11, 0.96) padding-box;
+  position: fixed; inset: 0; z-index: 6; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+  background: radial-gradient(ellipse at 50% 55%, rgba(20, 14, 10, 0.55), rgba(5, 4, 4, 0.9) 70%);
 }
-#tarot .title { font: 700 34px var(--display); letter-spacing: 0.05em; }
-#tarot .subtitle { color: var(--muted); margin: 2px 0 14px; }
-#tarot .cards { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-#tarot button.tarot-card {
-  width: 190px; min-height: 200px; padding: 14px 12px; display: flex; flex-direction: column; gap: 10px; text-align: center;
-  background: linear-gradient(#1d1715, #120e0d); color: var(--ink); border: 1px solid var(--edge); cursor: pointer; font: inherit;
+#tarot .fan-heading { font: 600 20px var(--display); color: var(--gold-light); letter-spacing: 0.03em; text-align: center; max-width: min(90vw, 760px); text-shadow: 0 1px 6px #000; }
+#tarot .fan { position: relative; width: 190px; height: 340px; margin-top: 96px; }
+#tarot .fan-card {
+  position: absolute; inset: 0; transform-origin: 50% 120%; cursor: pointer;
+  transition: transform 0.28s cubic-bezier(.2,.8,.3,1.1), opacity 0.35s, filter 0.28s; perspective: 900px;
 }
-#tarot button.tarot-card:hover, #tarot button.tarot-card:focus-visible { border-color: var(--gold); transform: translateY(-3px); }
-#tarot .tarot-card.shown { cursor: default; }
-#tarot .tarot-card.picked { border-color: var(--gold); box-shadow: 0 0 18px rgba(217, 179, 106, 0.35); }
-#tarot .tarot-card .task { flex: 1; }
-#tarot .tarot-card .reward { color: var(--muted); font-size: 13px; }
-#tarot > button.action { margin-top: 14px; }
-.tarot-face { display: flex; flex-direction: column; gap: 6px; align-items: center; }
-.tarot-face .picture { width: 150px; aspect-ratio: 768 / 1344; background: center / cover no-repeat #120e0d; border: 1px solid var(--edge); border-radius: 4px; }
-.tarot-face .picture.missing { background: repeating-linear-gradient(45deg, #1b1513 0 8px, #15100e 8px 16px); }
-.tarot-face .arcana { font: 700 19px var(--display); letter-spacing: 0.04em; }
-.tarot-face.small .picture { width: 54px; }
-.tarot-face.small .arcana { display: none; }
-#tarot-icon { position: fixed; left: 12px; top: 64px; z-index: 3; }
-#tarot-panel { position: fixed; left: 118px; top: 64px; width: 300px; max-height: 50vh; overflow-y: auto; z-index: 3; font-size: 13px; display: flex; flex-direction: column; gap: 10px; }
-#tarot-panel .tarot-held { display: flex; gap: 10px; align-items: flex-start; }
-#tarot-panel .arcana { font: 700 16px var(--display); }
-#tarot-panel .reward { color: var(--muted); }
-#tarot-panel .state-fulfilled .task { color: var(--gold); }
-#tarot-panel .state-failed .task { color: var(--muted); text-decoration: line-through; }
+#tarot .fan-card:not(.focused) { filter: brightness(0.62); }
+#tarot .fan-card .flipper { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform 0.55s cubic-bezier(.3,.7,.3,1); }
+#tarot .fan-card.face-down .flipper { transform: rotateY(180deg); }
+#tarot .fan-card .side { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 9px; overflow: hidden; box-shadow: 0 10px 28px rgba(0, 0, 0, 0.75); }
+#tarot .fan-card .side.back { transform: rotateY(180deg); }
+#tarot .fan-card .picture { position: absolute; inset: 0; background: center / cover no-repeat #120e0d; }
+#tarot .fan-card .picture.missing { background: repeating-linear-gradient(45deg, #1b1513 0 8px, #15100e 8px 16px); }
+#tarot .fan-card .plate {
+  position: absolute; left: 50%; bottom: 7%; transform: translateX(-50%); padding: 2px 12px; white-space: nowrap;
+  font: 700 15px var(--display); letter-spacing: 0.05em; color: var(--gold-light); background: rgba(10, 8, 7, 0.82); border: 1px solid var(--gold-dim);
+}
+#tarot .fan-card.focused .side { box-shadow: 0 14px 34px rgba(0, 0, 0, 0.8), 0 0 22px rgba(217, 179, 106, 0.32); }
+#tarot .fan-card.chosen { transform: translateY(-90px) scale(1.25) !important; z-index: 200 !important; }
+#tarot .fan-card.dropped { transform: translateY(260px) !important; opacity: 0; }
+#tarot .fan-caption { min-height: 84px; max-width: 420px; text-align: center; margin-top: 22px; }
+#tarot .caption .arcana { font: 700 24px var(--display); letter-spacing: 0.04em; color: var(--gold-light); }
+#tarot .caption .task { color: var(--ink); margin-top: 2px; }
+#tarot .caption .reward { color: var(--muted); font-size: 13px; margin-top: 2px; }
+#tarot .caption.state-fulfilled .task { color: var(--gold); }
+#tarot .caption.state-failed .task { color: var(--muted); text-decoration: line-through; }
+#tarot .fan-footer:empty { display: none; }
+/* The HUD's held cards: a small fanned stack that opens them. */
+#tarot-icon {
+  position: fixed; left: 26px; top: 70px; z-index: 3; width: 74px; height: 62px; padding: 0; border: 0; background: none; cursor: pointer;
+  display: flex; justify-content: center; align-items: flex-end;
+}
+#tarot-icon .mini-card {
+  width: 30px; height: 52px; margin: 0 -9px; border-radius: 3px; border: 1px solid var(--gold-dim); background: center / cover #120e0d;
+  transform-origin: 50% 110%; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.7); transition: transform 0.2s;
+}
+#tarot-icon:hover .mini-card { border-color: var(--gold); }
 
 .hpbar { width: 54px; height: 5px; background: #1a1412; border: 1px solid #000; position: relative; }
 .hpbar .fill { position: absolute; inset: 0 auto 0 0; }

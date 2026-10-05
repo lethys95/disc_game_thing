@@ -162,7 +162,7 @@ export class TarotFan {
       el.style.zIndex = String(focused ? 100 : 50 - Math.round(Math.abs(i - open.focus)));
       el.classList.toggle("focused", focused);
     });
-    this.caption.replaceChildren(open.cards[open.focus]?.caption() ?? element("div"));
+    this.caption.replaceChildren(open.cards[open.focus]?.caption() ?? element("div", ""));
   }
 
   /** The picked card rises out of the fan; the others fall away. */

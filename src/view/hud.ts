@@ -1,11 +1,13 @@
-import { describeReward, describeTask, TASK_ARCANA, TASK_NAMES } from "#rules/battle/tarot";
+import { describeReward, describeTask, TASK_NAMES } from "#rules/battle/tarot";
 import type { TarotCard, TarotHand } from "#rules/battle/tarot";
 import { BEHAVIORS, describeAbility, paramsOf } from "#rules/abilities/index";
 import { effectDef } from "#rules/effects";
 import { abilityRef, actionsPerRound, effectiveStats, unitAbilities, upcomingSlots } from "#rules/battle/engine";
 import type { Battle, BattleEvent, BattleUnit, EffectInstance, Enhancement, LegalAbility, Side } from "#rules/battle/types";
 import { UNITS } from "#rules/units/index";
-import { art, tarotUrl } from "#view/art";
+import { art } from "#view/art";
+import { miniStack, TarotFan } from "#view/tarot-hand";
+import type { CardCue, FanCard } from "#view/tarot-hand";
 import { byId, element } from "#view/dom";
 import { sees } from "#view/secrecy";
 import type { Settings } from "#view/settings";
@@ -49,6 +51,8 @@ export interface HudHandlers {
   onAuto(): void;
   /** Play the rest of the battle at once, without animations (D2's auto-resolve). */
   onResolve(): void;
+  /** A tarot card is flicked through, picked or turned over. */
+  onCue(sound: CardCue): void;
 }
 
 export interface BannerButton {
@@ -80,7 +84,9 @@ export class Hud {
   private readonly resolve = byId("resolve");
   private readonly tarot = byId("tarot");
   private readonly tarotIcon = byId("tarot-icon");
-  private readonly tarotPanel = byId("tarot-panel");
+  private readonly fan: TarotFan;
+  private tarotEntries: FanCard[] = [];
+  private tarotKeyShown = "";
 
   constructor(
     private readonly settings: Settings,
@@ -88,8 +94,10 @@ export class Hud {
   ) {
     this.auto.addEventListener("click", () => handlers.onAuto());
     this.resolve.addEventListener("click", () => handlers.onResolve());
+    this.fan = new TarotFan(this.tarot, (sound) => handlers.onCue(sound));
     this.tarotIcon.addEventListener("click", () => {
-      this.tarotPanel.hidden = !this.tarotPanel.hidden;
+      if (this.fan.showing) return this.fan.close();
+      this.fan.browse(this.tarotEntries, "The cards in play.", () => this.fan.close());
     });
   }
 
@@ -105,87 +113,71 @@ export class Hud {
     if (!visible) {
       this.card.hidden = true;
       this.banner.hidden = true;
-      this.tarot.hidden = true;
+      this.hideTarot();
       this.tarotIcon.hidden = true;
-      this.tarotPanel.hidden = true;
     }
   }
 
   /**
    * Tarot, the user's way (2026-10-05): the owner sees a hand face up and picks one; the other side sees as many cards
-   * face down, then the picked one turned over: its name and picture, never what it asks or pays.
+   * face down, then the picked one turned over: its name and picture, never what it asks or pays. Cards float in a fan
+   * at the centre, to flick through (`view/tarot-hand.ts`).
    */
   showTarot(hand: TarotHand, battle: Battle, playerSide: Side | null, onPick: (card: number) => void): void {
     const name = unitNamer(battle, playerSide);
     const drawer = battle.units[hand.unitId];
-    const cards = element("div", "cards");
-    hand.cards.forEach((card, index) => {
-      const button = element("button", "tarot-card");
-      button.append(cardFace(card), element("div", "task", describeTask(card.task, name)), element("div", "reward", `Done: ${describeReward(card.reward)}.`));
-      button.addEventListener("click", () => onPick(index));
-      cards.append(button);
-    });
-    this.tarot.replaceChildren(
-      element("div", "title", "Tarot"),
-      element("div", "subtitle", `${drawer?.name ?? "Your unit"} draws ${hand.cards.length} cards. Pick one: the enemy will see which, never what it does.`),
-      cards,
+    this.fan.pick(
+      hand.cards.map((card) => ({ card, caption: () => ownCaption(card, name, "open") })),
+      `${drawer?.name ?? "Your unit"} draws ${hand.cards.length} cards. Pick one: the enemy will see which, never what it does.`,
+      onPick,
     );
-    this.tarot.hidden = false;
   }
 
   /** The enemy's hand as the other side sees it: face down, then the picked card turned over. */
   showEnemyTarot(hand: TarotHand, battle: Battle, onDone: () => void): void {
     const picked = hand.cards[hand.chosen ?? 0];
-    const cards = element("div", "cards");
-    hand.cards.forEach((_card, index) => {
-      const slot = element("div", "tarot-card shown");
-      slot.append(index === hand.chosen && picked ? cardFace(picked) : cardBack());
-      if (index === hand.chosen) slot.classList.add("picked");
-      cards.append(slot);
-    });
-    const done = element("button", "action", "Continue");
-    done.addEventListener("click", onDone);
-    this.tarot.replaceChildren(
-      element("div", "title", "Tarot"),
-      element("div", "subtitle", `The enemy ${battle.units[hand.unitId]?.name ?? "unit"} draws ${hand.cards.length} cards and turns one over${picked ? `: ${TASK_NAMES[picked.task.kind]}` : ""}. What it asks, and what it pays, only they know.`),
-      cards,
-      done,
+    if (!picked || hand.chosen === null) return onDone();
+    this.fan.reveal(
+      hand.cards.length,
+      hand.chosen,
+      picked,
+      () => theirCaption(picked),
+      `The enemy ${battle.units[hand.unitId]?.name ?? "unit"} draws ${hand.cards.length} cards and turns one over.`,
+      onDone,
     );
-    this.tarot.hidden = false;
   }
 
   hideTarot(): void {
-    this.tarot.hidden = true;
+    if (this.fan.showing) this.fan.close();
+  }
+
+  /** The fan's keys while it's open (arrows, Enter, Escape). */
+  tarotKey(e: KeyboardEvent): boolean {
+    return this.fan.key(e);
   }
 
   /**
-   * The tarot icon, once any card is in play, and the panel it opens: the player's cards in full (task, reward, state),
-   * the enemy's by name and picture only.
+   * The held cards as a small fanned stack in the HUD, once any card is in play; it opens them in the fan: the player's
+   * in full (task, reward, state), the enemy's by name and picture only.
    */
   renderTarotStatus(battle: Battle, playerSide: Side | null): void {
     const held = battle.tarot.filter((h) => h.chosen !== null);
     this.tarotIcon.hidden = held.length === 0;
-    if (held.length === 0) {
-      this.tarotPanel.hidden = true;
-      return;
-    }
-    this.tarotIcon.textContent = `Tarot ${held.length}`;
+    if (held.length === 0) return;
     const name = unitNamer(battle, playerSide);
-    this.tarotPanel.replaceChildren(
-      ...held.map((hand) => {
-        const card = hand.cards[hand.chosen ?? 0];
-        const ours = playerSide === null || hand.side === playerSide;
-        const row = element("div", `tarot-held ${ours ? `ours state-${hand.state}` : "theirs"}`);
-        if (!card) return row;
-        const text = element("div", "text");
-        if (ours) {
-          const state = hand.state === "open" ? "" : hand.state === "fulfilled" ? " Fulfilled." : " Failed.";
-          text.append(element("div", "arcana", TASK_NAMES[card.task.kind]), element("div", "task", `${describeTask(card.task, name)}${state}`), element("div", "reward", `Done: ${describeReward(card.reward)}.`));
-        } else text.append(element("div", "arcana", TASK_NAMES[card.task.kind]), element("div", "reward", "The enemy's card."));
-        row.append(cardFace(card, "small"), text);
-        return row;
-      }),
-    );
+    const entries = held.flatMap((hand) => {
+      const card = hand.cards[hand.chosen ?? 0];
+      if (!card) return [];
+      const ours = playerSide === null || hand.side === playerSide;
+      return [{ card, caption: () => (ours ? ownCaption(card, name, hand.state) : theirCaption(card)) }];
+    });
+    const key = held.map((h) => `${h.side}${h.chosen}${h.state}${h.cards.length}`).join("|");
+    if (key !== this.tarotKeyShown) {
+      this.tarotKeyShown = key;
+      this.tarotIcon.replaceChildren(...miniStack(entries.map((e) => e.card)));
+      this.tarotIcon.title = `Tarot: ${entries.length} card${entries.length === 1 ? "" : "s"} in play`;
+    }
+    this.tarotEntries = entries;
   }
 
   /**
@@ -459,23 +451,19 @@ function unitNamer(battle: Battle, playerSide: Side | null): (id: string) => str
   };
 }
 
-/** A card's face: its art (or a plain face with its name until the art exists) and its name. */
-function cardFace(card: TarotCard, size = ""): HTMLElement {
-  const face = element("div", `tarot-face ${size}`);
-  const url = tarotUrl(TASK_ARCANA[card.task.kind]);
-  const picture = element("div", url ? "picture" : "picture missing");
-  if (url) picture.style.backgroundImage = `url("${url}")`;
-  face.append(picture, element("div", "arcana", TASK_NAMES[card.task.kind]));
-  return face;
+/** What the owner reads under a card: its name, what it asks, what it pays, and how it stands. */
+function ownCaption(card: TarotCard, name: (id: string) => string, state: TarotHand["state"]): HTMLElement {
+  const box = element("div", `caption state-${state}`);
+  const standing = state === "open" ? "" : state === "fulfilled" ? " Fulfilled." : " Failed.";
+  box.append(element("div", "arcana", TASK_NAMES[card.task.kind]), element("div", "task", `${describeTask(card.task, name)}${standing}`), element("div", "reward", `Done: ${describeReward(card.reward)}.`));
+  return box;
 }
 
-function cardBack(): HTMLElement {
-  const back = element("div", "tarot-face back");
-  const url = tarotUrl("back");
-  const picture = element("div", url ? "picture" : "picture missing");
-  if (url) picture.style.backgroundImage = `url("${url}")`;
-  back.append(picture);
-  return back;
+/** What the other side reads under the enemy's card: its name, and nothing it does. */
+function theirCaption(card: TarotCard): HTMLElement {
+  const box = element("div", "caption");
+  box.append(element("div", "arcana", TASK_NAMES[card.task.kind]), element("div", "reward", "The enemy's card. What it asks, and what it pays, only they know."));
+  return box;
 }
 
 function capitalize(text: string): string {
