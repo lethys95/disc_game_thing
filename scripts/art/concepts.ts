@@ -387,6 +387,48 @@ const ZEALOT_JOBS = [
 ];
 
 /**
+ * The Punisher in the 3D concept strategy (the user, 2026-10-05: not tied to the Zealot's look, "distinct, memorable
+ * and readable"; less white, more metal; not the Torturer, who will lean on iron maidens). Claude's split, accepted:
+ * punishment is public and judicial, torture private, so he draws on the town square. Three readings, one standout
+ * feature each (Claude's): a scold's bridle, red-hot branding iron, a bell helm. The flail (canon: multi-headed,
+ * flanged) is its own prop.
+ */
+const PUNISHER_3D =
+  "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: tarnished riveted iron plate, blackened dented steel, heat-scorched metal, worn leather, a little blood-red cloth. Serious, adult, not cartoonish.";
+
+const PUNISHERS: Readonly<Record<string, { readonly subject: string }>> = {
+  "punisher-bridle": {
+    subject:
+      "A punisher of a militant faith, a broad, heavy, upright man in tarnished riveted iron plate, dented and blackened. His head is locked in a scold's bridle: an iron cage helmet of riveted bands crossing his face, a flat iron plate over his mouth, his eyes looking out between the bars. Padlocks hang from his belt and his chest strap; iron manacles with broken chain on both wrists. A blood-red sash at his waist. Calm, deliberate and merciless: a bailiff of the faith, not a madman.",
+  },
+  "punisher-brand": {
+    subject:
+      "A punisher of a militant faith, a broad, heavy, upright man in heat-blackened riveted iron plate. His forearms are bare and covered in raised burn-scar brands. An open-faced iron helmet with a heavy brow over a hard, scarred face. The seams and rivets of his armour glow a dull red-hot, as if the iron was just pulled from a forge. A scorched iron gorget, a blood-red hood lining. Calm, deliberate and merciless: a bailiff of the faith, not a madman.",
+  },
+  "punisher-bell": {
+    subject:
+      "A punisher of a militant faith, a broad, heavy, upright man in tarnished riveted iron plate, dented and blackened. His head is inside a closed iron helmet shaped like a church bell, wide at the bottom over his shoulders, with one narrow horizontal eye slit. Heavy iron shackles on both wrists, short broken chains hanging from them. A blood-red sash; an iron-bound book chained to his hip. Calm, deliberate and merciless: a bailiff of the faith, not a madman.",
+  },
+};
+
+const PUNISHER_FLAILS: Readonly<Record<string, string>> = {
+  "punisher-flail-props":
+    "a heavy multi-headed flanged flail: a long wooden haft bound in iron bands, from its end three chains, each ending in a heavy iron mace head with sharp radiating flanges; beside it the same flail seen from the side.",
+  "punisher-flail-hot-props":
+    "a heavy multi-headed flanged flail: a long wooden haft bound in iron bands, from its end three chains, each ending in a heavy iron mace head with sharp radiating flanges, the heads glowing red-hot like iron just pulled from a forge; beside it the same flail seen from the side.",
+};
+
+const PUNISHER_JOBS = [
+  ...Object.entries(PUNISHERS).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, PUNISHER_3D) })),
+  ...Object.entries(PUNISHER_FLAILS).map(([id, flail]) => ({
+    id,
+    prompt: `A 3D render of a game prop model, like a textured asset shown in a modelling program: ${flail} ${PUNISHER_3D} Each view whole and separate, laid flat. Flat, even, shadowless lighting from all sides. A plain flat light grey background, no ground, no hands, no text.`,
+    width: 2048,
+    height: 832,
+  })),
+];
+
+/**
  * The Psychopomp in the 3D concept strategy, picked by the user after six rounds (2026-10-05: "short 1002 is final").
  * Rounds two to five grew her description into a long outfit list that drowned the gothic line; this short one, in
  * the faction's material words, brought the game's look back. Every round's prompt is in the folder's manifest and
@@ -409,6 +451,7 @@ const GROUPS = [
   { dir: "art/candidates/units/neutrals/gnolls", jobs: GNOLL_JOBS },
   { dir: "art/candidates/units/neutrals/drawn", jobs: DRAWN_JOBS },
   { dir: "art/candidates/units/jilliath/zealot", jobs: ZEALOT_JOBS },
+  { dir: "art/candidates/units/jilliath/punisher", jobs: PUNISHER_JOBS },
   { dir: "art/candidates/units/grove/psychopomp", jobs: PSYCHOPOMP_JOBS },
 ];
 

@@ -32,7 +32,7 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 ## 2. Identity, but no picked concept: needs concept art
 | Unit | Faction · tier | Identity | Concept |
 |---|---|---|---|
-| Punisher | Jilliath 3 | thin (the user's flail) + Claude's executioner | old portrait doesn't fit |
+| Punisher | Jilliath 3 | Claude, accepted by the user (2026-10-05): public punishment in iron, `punisher-concepts.md` | round one |
 | Congregant | Jilliath 1 | user: "an angry mob… not rugged knights" | cand. (anchors; "rather close": `baroque_congregant-1000`) |
 | Paladin | Jilliath 2 | Claude's holy knight; the user: "cool if a bit forgettable" | cand. (anchors) |
 | Apprentice | Nexus 1 | user: hooded and robed, gender ambiguous (semi placeholder) | cand. (rejected: "a depressed anime boy") |
