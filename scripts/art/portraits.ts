@@ -35,6 +35,8 @@ interface Unit {
   readonly identity: string;
   /** How it stands on its card, and what it holds. */
   readonly pose: string;
+  /** Strengths to try: the card's must be high enough to re-pose a T-pose; a body already standing needs less. */
+  readonly strengths?: { readonly card: readonly number[]; readonly bust: readonly number[] };
   /** The bust's square within the front view, as fractions of its side, when the head isn't on top of the figure. */
   readonly bust?: { readonly size: number; readonly x: number; readonly y: number };
   /** The icon's square within the bust, as fractions of the bust's side: its size and centre (set after the test). */
@@ -55,8 +57,10 @@ const UNITS: Readonly<Record<string, Unit>> = {
     dir: "art/candidates/units/grove/portrait-test",
     front: "shots/tripo/bog-giant-front.png",
     identity:
-      "a massive hunched hulk with no human shape: a lump of black bark and sodden bog oak oozing swamp sludge, peat and mud, reeds, cattails and hanging moss, a small sunken face low in the bark; its right arm an enormous club of bark, roots and mud, its left arm small and withered",
+      "a massive hunched hulk with no human shape: a lump of black bark and sodden bog oak oozing swamp sludge, peat and mud, reeds, cattails and patches of moss; a small, pale, bone-white sunken face low in the bark and a pale, cracked chest; its right arm an enormous club of bark, roots and mud, its left arm small and withered",
     pose: "it stands hunched, its huge right arm dragging on the ground",
+    // Round one (0.75/0.9 card, 0.45–0.75 bust) lost its pale face and grew gold filigree: it already stands, so less.
+    strengths: { card: [0.5, 0.6, 0.7], bust: [0.3, 0.4, 0.5] },
     // Its face sits low in the bark, below the reeds on its top.
     bust: { size: 0.42, x: 0.557, y: 0.33 },
   },
@@ -189,12 +193,12 @@ const cardPrompt = `A painted full-body character card of ${unit.identity}; ${un
 
 type Run = { readonly file: string; readonly make: () => Promise<Uint8Array>; readonly entry: Omit<Candidate, "file" | "model"> };
 const runs: Run[] = [
-  ...[0.45, 0.6, 0.75].map((denoise): Run => ({
+  ...(unit.strengths?.bust ?? [0.45, 0.6, 0.75]).map((denoise): Run => ({
     file: `${unitId}-icon-img2img-d${Math.round(denoise * 100)}.png`,
     make: () => img2img({ prompt: iconPrompt, seed: 1000, source: iconSrc, denoise }, `disc/${unitId}-icon`),
     entry: { id: `${unitId}-icon-img2img`, seed: 1000, prompt: iconPrompt, source: iconSrc, denoise },
   })),
-  ...[0.75, 0.9].map((denoise): Run => ({
+  ...(unit.strengths?.card ?? [0.75, 0.9]).map((denoise): Run => ({
     file: `${unitId}-card-img2img-d${Math.round(denoise * 100)}.png`,
     make: () => img2img({ prompt: cardPrompt, seed: 1000, source: cardSrc, denoise }, `disc/${unitId}-card`),
     entry: { id: `${unitId}-card-img2img`, seed: 1000, prompt: cardPrompt, source: cardSrc, denoise },
