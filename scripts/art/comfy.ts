@@ -147,56 +147,6 @@ async function upload(path: string): Promise<string> {
   return uploaded.name;
 }
 
-/**
- * MiniMax Music 3 (ComfyUI's "Text to Music (MiniMax Music 3)" blueprint; the user, 2026-10-05: it replaces ACE-Step
- * as the local music model). A caption for style and instruments, lyrics with section tags; the model may end before
- * `seconds`. 32 kHz stereo, returned as FLAC.
- */
-export interface MusicJob {
-  readonly caption: string;
-  readonly lyrics: string;
-  readonly seed: number;
-  readonly seconds: number;
-}
-
-export const MUSIC3 = {
-  diffusionModel: "minimax_music3_dit_fp16.safetensors",
-  textEncoder: "minimax_music3_text_encoder_pruned_int8_convrot.safetensors",
-  vae: "minimax_music3_dav.safetensors",
-  steps: 30,
-  cfg: 1.7,
-  topK: 50,
-} as const;
-
-function music3Graph(job: MusicJob, prefix: string): Graph {
-  return {
-    unet: { class_type: "UNETLoader", inputs: { unet_name: MUSIC3.diffusionModel, weight_dtype: "default" } },
-    clip: { class_type: "CLIPLoader", inputs: { clip_name: MUSIC3.textEncoder, type: "minimax", device: "default" } },
-    vae: { class_type: "VAELoader", inputs: { vae_name: MUSIC3.vae } },
-    encode: {
-      class_type: "MiniMaxMusic3TextEncode",
-      inputs: { clip: ["clip", 0], caption: job.caption, lyrics: job.lyrics, seed: job.seed, max_duration: job.seconds, cfg_scale: MUSIC3.cfg, top_k: MUSIC3.topK },
-    },
-    negative: { class_type: "ConditioningZeroOut", inputs: { conditioning: ["encode", 0] } },
-    latent: { class_type: "EmptyMiniMaxMusic3LatentAudio", inputs: { seconds: ["encode", 1], batch_size: 1 } },
-    sample: {
-      class_type: "KSampler",
-      inputs: {
-        model: ["unet", 0], positive: ["encode", 0], negative: ["negative", 0], latent_image: ["latent", 0],
-        seed: job.seed, steps: MUSIC3.steps, cfg: MUSIC3.cfg, sampler_name: "euler", scheduler: "simple", denoise: 1,
-      },
-    },
-    // The tiled decoder keeps a long song's decode within one card's memory.
-    decode: { class_type: "VAEDecodeAudioTiled", inputs: { samples: ["sample", 0], vae: ["vae", 0], tile_size: 1536, overlap: 64 } },
-    save: { class_type: "SaveAudio", inputs: { audio: ["decode", 0], filename_prefix: prefix } },
-  };
-}
-
-/** Runs one song and returns the FLAC bytes. */
-export async function music3(job: MusicJob, prefix: string): Promise<Uint8Array> {
-  return run(music3Graph(job, prefix));
-}
-
 /** Runs one generation and returns the PNG bytes. */
 export async function generate(job: Job, prefix: string): Promise<Uint8Array> {
   return run(krea2Graph(job, prefix));

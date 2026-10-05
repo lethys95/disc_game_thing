@@ -4,7 +4,7 @@ The user wants sound and music made locally with open models, like the art. Rese
 read-only look at this machine); license claims carry their sources; recheck them before shipping anything.
 
 ## Recommendation
-- **Music: MiniMax Music 3** since 2026-10-05 (the user: ACE-Step "is not very good"; see the music note below).
+- **Music: Suno, made by the user** (2026-10-05). No local model is good enough: MiniMax Music 3 was tried and dropped (the note below), ACE-Step's tracks stay only as placeholders.
 - *(Earlier pick)* **Music: ACE-Step 1.5** (turbo; XL-SFT for quality). MIT code and weights, no revenue cap; trained on licensed,
   royalty-free and synthetic data (https://github.com/ace-step/ACE-Step-1.5). Fast (<10 s per song on a 3090),
   ~4 GB VRAM (XL ~20 GB). BPM, key and time signature are controllable, so loop points can be bar-aligned;
@@ -69,3 +69,14 @@ Generated SFX weren't good enough (the user's test); the first pass comes from t
   - All 1,000 of its reference templates have vocals, so instrumentals are outside what it was mostly trained on.
   - Round two: structured captions; a song form with no words for instrumentals; a wordless-choir variant (vowels
     only) for the Jilliath battle.
+- **MiniMax Music 3, round two, and the verdict (2026-10-05):** the user: "we almost can't use any of the minimax
+  ones. There's vocals in pretty much all of them. I'd go as far as to say the nexus ones in ace-step were actually
+  better. I wouldn't use any of these… [Suno is] night and day."
+  - **Dropped:** `scripts/audio/music3.ts` and its ComfyUI graph are removed (git keeps them). The model files are
+    still in ComfyUI, about 14 GB, the user's to delete.
+  - **Music is the user's, from Suno:** the Grove's seven battle tracks, and Jilliath's battle theme
+    (`inquisition_combat_theme`, more to come). ACE-Step's Nexus tracks and Jilliath map stay as placeholders.
+  - **Quality:** "a very significant amount of quality was lost when you converted to ogg." That was the listening
+    pages: dynamic loudnorm plus Opus at 128 kb/s. The game's tracks now use a static gain and Opus at 256 kb/s
+    (`scripts/audio/music-take.sh`). The Grove's seven were re-encoded from the user's WAVs in
+    `~/Music/theme_music/`, which is where the source WAVs live, outside the repo.
