@@ -408,7 +408,32 @@ const PSYCHOPOMPS: Readonly<Record<string, { readonly subject: string }>> = {
   },
 };
 
-const PSYCHOPOMP_JOBS = Object.entries(PSYCHOPOMPS).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are empty and open.`, PSYCHOPOMP_3D) }));
+/**
+ * Round two (the user's direction, 2026-10-05, `docs/design/units/sylvan-psychopomp.md`): no beauty words, no ghosts
+ * (a glitch effect later); a wolf-head hood, tribal tattoos, cornrow braids, thin; haunted, hypnotised, absent blue
+ * eyes and a slack mouth; white and ivory clothes against darker skin; ivory gloves with blood-red fingertips.
+ */
+const SHAMANESS =
+  "A thin elven woman with pointed ears, a shamaness of a wild forest people. Over her head a hood made from the upper half of a wolf's head: the wolf's snout, brow and ears above her face, its eye holes and its lower jaw cut away, so her face looks out from under the wolf's upper teeth. " +
+  "Her hair in tight cornrow braids running back under the hood. Tribal tattoos in dark green and black cover her bare arms, her neck and her face. " +
+  "Her eyes are pale, glowing, icy blue, unfocused and staring straight through everything: hypnotised, haunted, estranged. Her mouth hangs slightly open, slack. She is barely there; her mind is somewhere else. " +
+  "She wears layered robes of white and ivory cloth, ghost-pale against her darker skin, with moss, thin roots and small bones tied into them. On her hands, ivory white gloves, every fingertip stained scarlet to the first knuckle as if dipped in a jar of blood.";
+
+const SHAMANESS_3D =
+  "Dark gothic fantasy, rich and brooding, weathered and worn physically based materials: white and ivory cloth, grey wolf fur and bone, worn leather, moss and roots. " +
+  "Mostly white and ivory, with deep moss green, black and bone, and only her eyes an icy blue and her fingertips scarlet. Serious, adult, not cartoonish.";
+
+const PSYCHOPOMPS_2: Readonly<Record<string, { readonly subject: string }>> = {
+  "psychopomp-shamaness": { subject: SHAMANESS },
+  "psychopomp-shamaness-veiled": {
+    subject: `${SHAMANESS} Long torn strips of white cloth hang from her sleeves and hem like tattered veils, and a necklace of small skulls and teeth lies on her chest.`,
+  },
+};
+
+const PSYCHOPOMP_JOBS = [
+  ...Object.entries(PSYCHOPOMPS_2).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are open and empty.`, SHAMANESS_3D) })),
+  ...Object.entries(PSYCHOPOMPS).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are empty and open.`, PSYCHOPOMP_3D) })),
+];
 
 /** Each group of jobs has its own folder, so one group's run doesn't mix into another's manifest. */
 const GROUPS = [

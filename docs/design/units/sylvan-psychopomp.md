@@ -24,3 +24,17 @@ images: `art/candidates/units/grove/psychopomp/`.
   violet-blue eyes that don't glow, no smoke. *Possessed* (the full look) got no ghosts at all; *shaman* got them as
   separate translucent blue figures standing beside her; *vessel* is the cleanest body. Page: `shots/psychopomp.html`.
   Waiting on the user before round two.
+
+## The user's direction for round two (2026-10-05)
+"I think we need to remove the beauty stuff from the prompt entirely. Remove the ghosts, we'll add a glitch in effects
+instead. Style wise these are all way too boring, and we need to borrow more features from other concepts… I'm
+thinking shamaness from the original Disciples 2, psychopomp from Bloodline Champions, as well as some Golgari +
+Selesnya sprinkled in there. Add tribal tattoos over her body. Give her a hood which looks like the upper side of a
+wolf head with the eyes and lower jaw carved out (that's basically the shamaness headgear). More focus in the bluish
+haunted hypnotized estranged eyes and mouth. She's barely here, mentally. Let's have more whites on her clothes,
+contrasting further from her skin and the rest of the units, trying to reach that ghostly vibe. Let's give her gloves
+with red tipped fingers. The gloves themselves should be ivory white, except those blood like scarlet fingers (like she
+put the tips of her fingers in a jar of blood.) Hair wise: let's have cornrow braids. She should be thin."
+- **Claude's translation for the prompt:** the features as stated, without naming the games (a named reference pulls
+  toward an average of that game; the user's features are specific). Golgari and Selesnya become the palette and feel:
+  white, ivory and deep green, with rot and bone. The ghosts and the smoke are gone (effects later).
