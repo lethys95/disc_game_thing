@@ -484,16 +484,51 @@ const ETHERBORNS: Readonly<Record<string, { readonly subject: string }>> = {
   "etherborn-veil": { subject: `${ETHERBORN} A sheer black veil hangs over her blank face from a tall jewelled headdress, the stars showing through the veil.` },
 };
 
+/**
+ * Round two, from round one's read (`carnival-concepts.md`). Omen read as a generic grey gunslinger: the face carries
+ * him now (the painted eyes said up front, the grin, white greasepaint), the coat has colour, and the top hat stays.
+ * Soothsayer: the tent's striped canvas and the crone's white hair together, plus a motif of her own on the robe.
+ * Etherborn: the galaxies on her skin, not the robes: bare arms and shoulders, plain black silk.
+ */
+const OMEN_2 =
+  "A blind gunslinger-prophet of a nomadic swindlers' carnival, tall and gaunt. Over his eyes a band of dirty red cloth with two large wide-open eyes painted on it in white, staring. A wide, crooked grin full of gold teeth. " +
+  "A battered tall top hat. A long ragged trenchcoat of faded oxblood red to his ankles, a large black pentagram painted across its back; bandoliers of powder flasks across his chest, two empty holsters at his hips.";
+
+const OMENS_2: Readonly<Record<string, { readonly subject: string }>> = {
+  "omen-grin": { subject: `${OMEN_2} Old tarot cards tucked into the hat band.` },
+  "omen-crow": { subject: `${OMEN_2} Black crow feathers stuck in the hat band, and a short ragged mantle of black crow feathers over the coat's shoulders.` },
+  "omen-greasepaint": { subject: `${OMEN_2} His face is painted chalk white with cracked carnival greasepaint, the grin drawn wider in black paint at the corners of his mouth.` },
+};
+
+const SOOTHSAYER_2 =
+  "An ancient fortune teller of a nomadic swindlers' carnival, a hunched old woman with wild long white hair braided with charms and small bones. Over her mouth and chin hangs a veil of strung old gold coins. Heavy dark kohl around her eyes, one eye milky white. Rings on every long finger.";
+
+const SOOTHSAYERS_2: Readonly<Record<string, { readonly subject: string }>> = {
+  "soothsayer-striped": { subject: `${SOOTHSAYER_2} Loose layered robes cut from faded red and mustard striped carnival tent canvas, fringed with tassels and tiny bells.` },
+  "soothsayer-eyes": { subject: `${SOOTHSAYER_2} Loose layered robes of faded red and mustard striped tent canvas, with dozens of large open eyes painted on the cloth in white and black, staring in every direction.` },
+  "soothsayer-cards": { subject: `${SOOTHSAYER_2} Loose robes of faded red and mustard striped tent canvas under a long cloak covered in hundreds of old tarot cards sewn on like overlapping scales.` },
+};
+
+const ETHERBORN_2 =
+  "An arcane noblewoman, tall and slender. Her bare skin is deep space: dark blue-black filled with swirling galaxies, violet and blue nebulae and countless stars, as if her body were a window into the night sky. " +
+  "Her arms, shoulders, collarbones and neck are bare, showing the starfield. Her head is a smooth featureless oval with no eyes, no nose and no mouth, the same starfield across it. A long gown of plain black silk with fine gold filigree at the hems. Glowing magenta-violet arcane energy wreathes her open hands.";
+
+const ETHERBORNS_2: Readonly<Record<string, { readonly subject: string }>> = {
+  "etherborn-bare-orrery": { subject: `${ETHERBORN_2} Around her blank head turn the brass rings of a small orrery of orbiting golden bands and tiny planets.` },
+  "etherborn-bare-collar": { subject: `${ETHERBORN_2} A tall, stiff fan of a collar in black enamel and gold rises behind her head.` },
+  "etherborn-constellations": { subject: `${ETHERBORN_2} Fine glowing gold lines join the brightest stars on her skin into constellations, like a star chart drawn on her body.` },
+};
+
 const prop = (description: string, materials: string) =>
   `A 3D render of a game prop model, like a textured asset shown in a modelling program: ${description} ${materials} Each view whole and separate, laid flat. Flat, even, shadowless lighting from all sides. A plain flat light grey background, no ground, no hands, no text.`;
 
 const CARNIVAL_JOBS = [
-  ...Object.entries({ ...OMENS, ...SOOTHSAYERS }).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Hands empty and open, no weapon.`, CARNIVAL_3D) })),
+  ...Object.entries({ ...OMENS, ...SOOTHSAYERS, ...OMENS_2, ...SOOTHSAYERS_2 }).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Hands empty and open, no weapon.`, CARNIVAL_3D) })),
   { id: "omen-pistols-props", prompt: prop(OMEN_PISTOLS, CARNIVAL_3D), width: 2048, height: 832 },
   { id: "soothsayer-orb-props", prompt: prop(SOOTHSAYER_PROPS, CARNIVAL_3D), width: 2048, height: 832 },
 ];
 
-const ETHERBORN_JOBS = Object.entries(ETHERBORNS).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(subject, NEXUS_NOBLE_3D) }));
+const ETHERBORN_JOBS = Object.entries({ ...ETHERBORNS, ...ETHERBORNS_2 }).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(subject, NEXUS_NOBLE_3D) }));
 
 /** Each group of jobs has its own folder, so one group's run doesn't mix into another's manifest. */
 const GROUPS = [

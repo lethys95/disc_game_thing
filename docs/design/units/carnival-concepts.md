@@ -39,3 +39,23 @@
 - **Materials:** the gothic recipe word for word, with each unit's materials. For the Nexus, "weathered and worn" is
   "immaculate", by the user's own Nexus canon.
 - **Props:** the Omen's flintlocks and the Soothsayer's orb and cards are prop sheets. The figures' hands are empty.
+
+## Round one, read (Claude)
+- **Omen:** the trenchcoat and the red pentagram on its back came through in all nine. The coats are striped grey
+  canvas, ragged at the hem, with bandoliers and holsters. *Barker*'s top hat is the strongest silhouette.
+  - Missed: the eyes painted on the blindfold and the gold-toothed grin. Every face is a plain, stern man under a red
+    band.
+  - **Is it interesting? Not yet.** He reads as a generic gunslinger in a duster, and a grey one at that: the trap the
+    user warned about. Next: the face has to carry it, and the coat needs colour.
+- **Soothsayer:** the coin veil works in all nine and is a strong mark. *Tent*'s red and mustard striped canvas is
+  unmistakably carnival and the most distinctive. *Crone*'s wild white hair is good. *Stilts* didn't come out taller,
+  just a pointed hood. The orb prop works: an eye floating in smoky glass on a brass stand. The props sheet also
+  invented a striped canvas ball and a gloved hand holding the cards.
+  - **Is it interesting? Halfway.** Tent and crone together could be. Next: join them, and give the robe a motif of
+    its own.
+- **Etherborn:** coherent and noble: violet and black, gold filigree, the featureless starry head, magenta fire in her
+  hands. *Collar* has the strongest silhouette, *orrery* the most original idea.
+  - Missed: the galaxies are mostly on the robes. Her skin barely shows (head and hands only), so the user's "skin
+    should read as galaxies" isn't there.
+  - Next: bare arms, shoulders and collarbones, the robes plain black silk.
+- **Props:** the flintlocks are good: dark wood, brass, striped grips, skull studs.
