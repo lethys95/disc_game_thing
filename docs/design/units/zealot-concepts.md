@@ -15,3 +15,7 @@
   it reads as a Paladin. The three readings came out nearly alike. Some turnarounds drew a view twice or a stray arm.
 - **Round two:** the eye holes stated first and large; "not a knight, no cross symbols"; armour scavenged, broken and
   bolted on crooked; the frenzy pushed in the stance views; three new bodies.
+- **The user on stances (2026-10-05):** "We're creating models, not scenes… Right now we just want the t-pose. The
+  figure we're putting in the t-pose must fit the design spec though." Round two was stopped after its nine
+  turnarounds (on purpose; the run reports an interruption); no stance views from here on; the madness has to show in
+  the design, not a pose.

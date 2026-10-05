@@ -1,6 +1,6 @@
 ---
 name: unit-concepts
-description: Make 2D concept art for a disc unit (or a line, a tribe) in the 3D concept strategy that worked for the Custodian, the Grove's Decay line, the gnolls and the Drawn - turnaround sheets for 3D plus stance views for posture, iterated in rounds Claude reviews itself, every image kept, the user picks. Use whenever a unit needs concept art, a redo of old art, or a portrait/icon source.
+description: Make 2D concept art for a disc unit (or a line, a tribe) in the 3D concept strategy that worked for the Custodian, the Grove's Decay line, the gnolls and the Drawn - T-pose turnaround sheets for the 3D model (models, not scenes), weapons as separate prop sheets, iterated in rounds Claude reviews itself, every image kept, the user picks. Use whenever a unit needs concept art, a redo of old art, or a portrait/icon source.
 ---
 
 # Unit concepts, the way that works (user, 2026-10-05: "I think it works well")

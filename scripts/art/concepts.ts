@@ -192,14 +192,17 @@ const GNOLLS: Readonly<Record<string, { readonly subject: string; readonly stanc
   bonecracker: {
     subject:
       "The Bonecracker: heavy and broad with short legs, enormous forequarters and a thick neck, a massive jaw with iron-capped teeth, a heavy collar of bone plates and bronze rings around its neck, scarred bare arms, one fist in a spiked bronze gauntlet.",
+    stance: "hunched with its huge head thrust forward and its jaws wide open",
   },
   cackler: {
     subject:
       "The Cackler: scrawny and hunched, its mouth stretched in a wide manic grin, a ragged cloak of tattered cloth strips like a jester's motley gone to rot, bone rattles and small bronze bells hanging from it, a crooked staff topped with a hyena skull.",
+    stance: "head thrown back, laughing, its arms spread mockingly",
   },
   matriarch: {
     subject:
       "The Matriarch, leader of the pack: the largest and tallest gnoll, a female, upright and broad-shouldered, a great dark mane, a scarred muzzle, a mantle of bronze plates and trophy bones over her shoulders, a cloak of a great beast's hide, a crest of teeth and bronze on her brow, a heavy bronze glaive.",
+    stance: "standing tall with her glaive planted, chin raised, commanding",
   },
 };
 
@@ -242,6 +245,7 @@ const DRAWN: Readonly<Record<string, { readonly subject: string; readonly stance
   dustwing: {
     subject:
       "The Dustwing: small and light, mostly wings, a slender body hunched between two broad tattered wings dusted grey and brown with a pair of staring eyespots, long thin legs with hooked claws, a scrap of grey lace at its throat, dust falling from its wings.",
+    stance: "hovering just above the ground, wings beating wide, claws reaching forward to strike",
   },
   chrysalis: {
     subject:
@@ -252,14 +256,17 @@ const DRAWN: Readonly<Record<string, { readonly subject: string; readonly stance
   lightdrinker: {
     subject:
       "The Lightdrinker: gaunt and tall, a long coiled proboscis hanging from its face, its wings folded down its back like a tattered cloak, a collar of yellowed lace, thin hands with long fingers, small vials of faintly glowing light hung on a cord at its waist.",
+    stance: "leaning forward with the proboscis uncoiled toward its prey, hands raised",
   },
   eyespot: {
     subject:
       "The Eyespot: wings far larger than its body, spread wide like a fan and covered in many staring eyespots that look like real eyes, a small veiled body in a high-collared velvet coat between them.",
+    stance: "its wings raised and spread wide behind it, every eye on them staring",
   },
   "pale-mother": {
     subject:
       "The Pale Mother: large and tall, pale ivory fur and wings, her wings wrapped around her like a long veil and cloak, a lace veil over her compound eyes, a crown of melted candles with small flames on her head, tarnished silver jewelry; grief and command.",
+    stance: "standing tall, her wings beginning to open like a cloak",
   },
 };
 
@@ -274,6 +281,7 @@ const DRAWN_2: Readonly<Record<string, { readonly subject: string; readonly stan
   "dustwing-ragged": {
     subject:
       `The Dustwing, a moth-folk skirmisher: small and hunched, six thin hooked limbs, ${INSECT_FACE}, feathered antennae, narrow ragged wings of dull ash brown and grey like a clothes moth, eaten through with holes and frayed at the edges, a cloud of grey dust falling from them.`,
+    stance: "lunging forward through the air, wings blurred, four claws reaching out",
   },
   "chrysalis-cocoon": {
     subject:
@@ -284,10 +292,12 @@ const DRAWN_2: Readonly<Record<string, { readonly subject: string; readonly stan
   "lightdrinker-deathshead": {
     subject:
       `The Lightdrinker, a moth-folk like a death's-head hawkmoth: a heavy, furred dark body with a pale skull marking on its thorax, ${INSECT_FACE}, a very long coiled proboscis hanging from its mouth, narrow dark wings folded down its back like a coat, thin arms with long fingers, small vials of faintly glowing light on a cord at its waist.`,
+    stance: "leaning forward with the long proboscis uncoiled toward its prey, hands raised",
   },
   "eyespot-eyes": {
     subject:
       `The Eyespot, a moth-folk: huge wings spread wide like a fan, far larger than its thin body, covered in dozens of eyes that look disturbingly real, with irises, wet lids and lashes, all staring; ${INSECT_FACE}, a high-collared dark velvet coat.`,
+    stance: "its wings raised and spread wide behind it, every eye on them staring at the viewer",
   },
 };
 
@@ -300,10 +310,12 @@ const DRAWN_3: Readonly<Record<string, { readonly subject: string; readonly stan
   "eyespot-fan": {
     subject:
       "The Eyespot, a moth-folk: four huge wings raised behind it in a wide circle like a peacock's fan, the wing membrane dark wine red and set with dozens of human eyes, white eyeballs with irises and eyelids embedded in it, all staring; a thin body in a high-collared black velvet coat, its face hidden behind a black lace veil.",
+    stance: "its four wings raised in a wide circle behind it, every eye on them staring at the viewer",
   },
   "eyespot-blind": {
     subject:
       "The Eyespot, a moth-folk: its own head is smooth and eyeless, with only small mandibles; the eyes it sees with are on its wings: two broad pale wings set with dozens of bloodshot human eyes with lids and lashes, open and staring; a thin body wrapped in grey velvet and old lace.",
+    stance: "its wings spread wide and tilted toward the viewer, the eyeless head turned aside",
   },
   "chrysalis-object": {
     subject:
