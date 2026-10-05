@@ -10,12 +10,24 @@ import { UNITS } from "#rules/units/index";
  */
 export type SlotKind = "portrait" | "ability" | "effect";
 
+/**
+ * A unit's art comes framed three ways, each its own file (the user, 2026-10-05): the card, the whole figure (on the
+ * field); the bust, head and shoulders (the unit card); the icon, zoomed in on the face (the turn order, squad grids,
+ * lists). Each falls back to the wider framing when its own file is missing.
+ */
+export type Frame = "card" | "bust" | "icon";
+export const FRAMES: readonly Frame[] = ["card", "bust", "icon"];
+
 export interface Slot {
   readonly kind: SlotKind;
   readonly id: string;
+  /** Portraits only; the card when unset. */
+  readonly frame?: Frame;
 }
 
-export const slotKey = (slot: Slot): string => `${slot.kind}/${slot.id}`;
+const folder = (slot: Slot): string => (slot.kind === "portrait" && slot.frame && slot.frame !== "card" ? slot.frame : slot.kind);
+
+export const slotKey = (slot: Slot): string => `${folder(slot)}/${slot.id}`;
 
 
 /** What a slot shows, for placeholders, reports and prompts. */
@@ -54,8 +66,12 @@ export function slotInfo(slot: Slot): SlotInfo {
 export function fallbackKeys(slot: Slot): string[] {
   const own = slotKey(slot);
   switch (slot.kind) {
-    case "portrait":
-      return [own, `portrait/_${slotInfo(slot).faction}`];
+    case "portrait": {
+      const card = [`portrait/${slot.id}`, `portrait/_${slotInfo(slot).faction}`];
+      if (slot.frame === "icon") return [own, `bust/${slot.id}`, ...card];
+      if (slot.frame === "bust") return [own, ...card];
+      return card;
+    }
     case "ability": {
       const behavior = BEHAVIORS[slot.id];
       const tags = behavior?.kind === "active" ? behavior.tags : [];

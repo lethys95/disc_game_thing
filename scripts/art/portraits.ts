@@ -11,7 +11,11 @@ import type { Candidate } from "#scripts/art/batch";
  * model re-poses the T-pose by itself (tested on the Punisher, 2026-10-05). ComfyUI's Krea-2 reference blueprint,
  * tried without its style LoRA, gave a dotted halftone mess and was dropped.
  *
- *     pnpm exec tsx scripts/art/portraits.ts <unit> [--sources]   (--sources: only write the source images)
+ * Three framings per unit (`Frame` in `src/view/art-slots.ts`): the card and the bust are generated; the icon is cut
+ * from the bust, zoomed in on the face, so it is the same painting.
+ *
+ *     pnpm exec tsx scripts/art/portraits.ts <unit> [--sources]          the test images (--sources: only their sources)
+ *     pnpm exec tsx scripts/art/portraits.ts <unit> --install <card> <bust>   picked files (in the unit's dir) into the game
  */
 
 // The first batch's portraits the user liked were painted with chiaroscuro and a rim light on dark grey.
@@ -31,6 +35,8 @@ interface Unit {
   readonly identity: string;
   /** What it holds on its card. */
   readonly holding: string;
+  /** The icon's square within the bust, as fractions of the bust's side: its size and centre. */
+  readonly icon: { readonly size: number; readonly x: number; readonly y: number };
 }
 
 const UNITS: Readonly<Record<string, Unit>> = {
@@ -40,6 +46,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     identity:
       "a hooded executioner of a militant faith: a tall pointed hood with only black inside it, no face; a long cassock and a hooded mantle of dark iron-grey cloth; dented iron bracers, a heavy chain belt",
     holding: "a heavy multi-headed flail resting over his shoulder",
+    icon: { size: 0.51, x: 0.52, y: 0.49 },
   },
 };
 
@@ -125,6 +132,30 @@ async function cardSource(front: string, out: string): Promise<void> {
 const unitId = process.argv[2] ?? "";
 const unit = UNITS[unitId];
 if (!unit) throw new Error(`unknown unit "${unitId}"; known: ${Object.keys(UNITS).join(", ")}`);
+
+/** Sizes in the game: the card as the old portraits, the bust and icon square. */
+const INSTALLED = { card: 384, bust: 384, icon: 192 };
+
+async function install(unit: Unit, card: string, bust: string): Promise<void> {
+  await sharp(`${unit.dir}/${card}`).resize({ width: INSTALLED.card }).webp({ quality: 88 }).toFile(`assets/art/portrait/${unitId}.webp`);
+  await mkdir("assets/art/bust", { recursive: true });
+  await sharp(`${unit.dir}/${bust}`).resize(INSTALLED.bust, INSTALLED.bust).webp({ quality: 88 }).toFile(`assets/art/bust/${unitId}.webp`);
+  const { width } = await sharp(`${unit.dir}/${bust}`).metadata();
+  const side = Math.round((width ?? ICON) * unit.icon.size);
+  const left = Math.round((width ?? ICON) * unit.icon.x - side / 2);
+  const top = Math.round((width ?? ICON) * unit.icon.y - side / 2);
+  await mkdir("assets/art/icon", { recursive: true });
+  await sharp(`${unit.dir}/${bust}`).extract({ left, top, width: side, height: side }).resize(INSTALLED.icon, INSTALLED.icon).webp({ quality: 88 }).toFile(`assets/art/icon/${unitId}.webp`);
+}
+
+const installAt = process.argv.indexOf("--install");
+if (installAt >= 0) {
+  const [card, bust] = process.argv.slice(installAt + 1);
+  if (!card || !bust) throw new Error("--install needs the card and the bust file names");
+  await install(unit, card, bust);
+  console.log(`installed assets/art/{portrait,bust,icon}/${unitId}.webp`);
+  process.exit(0);
+}
 await mkdir(unit.dir, { recursive: true });
 const iconSrc = `${unit.dir}/${unitId}-icon-source.png`;
 const cardSrc = `${unit.dir}/${unitId}-card-source.png`;

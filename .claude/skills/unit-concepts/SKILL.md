@@ -110,5 +110,9 @@ than the Custodian's 3D concepts is a stand-in to redo (the user, 2026-10-05).
   Outside the mask every pixel stays the pick's. Masks live in the unit's folder under `masks/`; build one from colour
   or shape inside a box (numpy/scipy, a few pixels wider), and overlay it in red to check before running. Then split
   the repaired sheet like a pick.
-- **Portrait and icon:** come from the concept (image-to-image, roster step 3), never from text alone, so the card,
-  the icon and the 3D model are the same creature.
+- **Portrait and icon:** come from the concept, never from text alone, so the card, the icon and the 3D model are the
+  same creature: `scripts/art/portraits.ts` (add the unit to `UNITS`: its split front view, a one-sentence identity,
+  what it holds, where its face sits in the bust). Image-to-image: the card at 0.75–0.9 re-poses the T-pose by
+  itself, the bust (a head-and-shoulders crop) at 0.45–0.75 keeps it. `--install <card> <bust>` puts the card, the
+  bust and an icon cut from the bust (zoomed on the face) into `assets/art/{portrait,bust,icon}/`. One unit at a
+  time; look at each in a battle shot.

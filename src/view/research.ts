@@ -93,7 +93,7 @@ export class ResearchPanel {
     const def = UNITS[defId];
     const node = element("div", `node${open ? "" : " closed"}`);
     const head = element("div", "head");
-    head.append(art({ kind: "portrait", id: defId }, "thumb"), element("div", "name", `${unitName(defId)}${count > 0 ? ` ×${count}` : ""}`));
+    head.append(art({ kind: "portrait", id: defId, frame: "icon" }, "thumb"), element("div", "name", `${unitName(defId)}${count > 0 ? ` ×${count}` : ""}`));
     node.appendChild(head);
     if (def) node.appendChild(element("div", "stats", `Tier ${def.tier} · ${def.stats.maxHp} HP · ${def.stats.damage} dmg · ${def.stats.armor} armor`));
     const commitment = playerOf(world, side).commitment;

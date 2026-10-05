@@ -101,7 +101,7 @@ export function squadGrid(side: GridSquad, options: GridOptions): HTMLElement {
       const isSelected = options.selected !== null && sameRef(options.selected.ref, side.ref) && sameTile(options.selected.tile, tile);
       const cell = element("div", `cell${member ? " filled" : ""}${isSelected ? " selected" : ""}`);
       if (member) {
-        cell.appendChild(art({ kind: "portrait", id: member.defId }, "thumb"));
+        cell.appendChild(art({ kind: "portrait", id: member.defId, frame: "icon" }, "thumb"));
         const lead = isLeaderOf(member, side.leader);
         cell.appendChild(element("div", "name", `${lead ? "♛ " : ""}${unitName(member.defId)}${member.level > 0 ? ` ${member.level}` : ""}`));
         const bar = element("div", "hp");

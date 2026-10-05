@@ -124,3 +124,11 @@ All 43 abilities without art got icons in the recipe of the four the user liked 
     - the portrait style (painted, after the liked first batch) is the user's call;
     - the card's flail came out as balls, not the picked flanged heads;
     - nothing is installed yet.
+- **Three framings (the user, 2026-10-05):** "for the icon in grid in squad view and the battlefield queue, we need
+  smaller more zoomed in versions. This one [the head-and-shoulders] works on holding right click menu." So:
+  - the **card** (the whole figure): the standee on the field;
+  - the **bust** (head and shoulders): the unit card;
+  - the **icon**, cut from the bust and zoomed on the face: the turn order, squad grids and lists.
+
+  The Punisher's are installed: card 0.75, bust 0.6, and the icon cut from that bust. Seen in a battle (`?fight`):
+  the icon in the turn order and the card on his standee. The unit card wasn't opened in the shot.

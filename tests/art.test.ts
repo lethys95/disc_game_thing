@@ -4,7 +4,7 @@ import { BEHAVIORS } from "#rules/abilities/index";
 import { EFFECTS } from "#rules/effects";
 import { UNITS } from "#rules/units/index";
 import { promptFor } from "#scripts/art/prompts";
-import { allSlots, fallbackKeys, slotKey } from "#view/art-slots";
+import { allSlots, fallbackKeys, FRAMES, slotKey } from "#view/art-slots";
 import { describe, expect, test } from "vitest";
 
 const ART = "assets/art";
@@ -22,7 +22,8 @@ describe("art slots", () => {
   });
 
   test("every art file belongs to a slot or a family default, so a rename can't orphan art silently", () => {
-    const known = new Set(allSlots().flatMap(fallbackKeys));
+    const framed = allSlots().flatMap((slot) => (slot.kind === "portrait" ? FRAMES.map((frame) => ({ ...slot, frame })) : [slot]));
+    const known = new Set(framed.flatMap(fallbackKeys));
     const orphans = files(ART)
       .filter((f) => f.endsWith(".webp"))
       .map((f) => relative(ART, f).replace(/\.webp$/, ""))
@@ -33,6 +34,7 @@ describe("art slots", () => {
   test("an ability falls back through its tags, a portrait through its faction", () => {
     expect(fallbackKeys({ kind: "ability", id: "flail" })).toEqual(["ability/flail", "ability/_attack", "ability/_melee", "ability/_damage", "ability/_area", "ability/_active"]);
     expect(fallbackKeys({ kind: "portrait", id: "zealot" })).toEqual(["portrait/zealot", "portrait/_jilliath"]);
+    expect(fallbackKeys({ kind: "portrait", id: "zealot", frame: "icon" })).toEqual(["icon/zealot", "bust/zealot", "portrait/zealot", "portrait/_jilliath"]);
   });
 
   test("every slot has a prompt, and the user's own looks are used", () => {

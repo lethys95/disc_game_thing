@@ -320,6 +320,9 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 .art.portrait { background-size: 100%; background-position: 50% 0; }
 .art.portrait.tiny, .art.portrait.small, .art.portrait.thumb { background-size: 260%; background-position: 50% 4%; }
 .art.portrait.card-portrait { background-size: 170%; background-position: 50% 4%; }
+/* A bust or icon fills its box; a bust standing in for a missing icon zooms toward the face. */
+.art.bust, .art.icon { background-size: cover; background-position: 50% 40%; }
+.art.bust.tiny, .art.bust.small, .art.bust.thumb, .art.bust.queue, .art.bust.queue-now { background-size: 170%; background-position: 50% 45%; }
 .art.placeholder { display: inline-flex; align-items: center; justify-content: center; font: 700 11px var(--display); color: #f1eadb; background: #2a2522; border: 1px solid #4a3f36; }
 .art.placeholder.faction-jilliath { background: #5a1a14; border-color: #8e2a1e; }
 .art.placeholder.faction-nexus { background: #0f4a4a; border-color: #1f7a78; }

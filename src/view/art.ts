@@ -5,13 +5,17 @@ import { element } from "#view/dom";
 /** The art that exists, found at build time: adding a file under assets/art/ is all it takes to use it. */
 const FILES = import.meta.glob<string>("/assets/art/**/*.webp", { eager: true, query: "?url", import: "default" });
 
-/** The first existing file along the slot's fallback chain, or null. */
-export function artUrl(slot: Slot): string | null {
+/** The first existing file along the slot's fallback chain, and its key, or null. */
+function found(slot: Slot): { readonly url: string; readonly key: string } | null {
   for (const key of fallbackKeys(slot)) {
     const url = FILES[`/assets/art/${key}.webp`];
-    if (url) return url;
+    if (url) return { url, key };
   }
   return null;
+}
+
+export function artUrl(slot: Slot): string | null {
+  return found(slot)?.url ?? null;
 }
 
 const initials = (name: string) =>
@@ -27,12 +31,12 @@ const initials = (name: string) =>
  * shows art works before the art exists. `className` sizes it.
  */
 export function art(slot: Slot, className: string): HTMLElement {
-  const url = artUrl(slot);
+  const file = found(slot);
   const info = slotInfo(slot);
-  if (url) {
-    // A background, not an <img>: each size crops differently (a thumbnail zooms into a portrait's head).
-    const image = element("span", `art ${slot.kind} ${className}`);
-    image.style.backgroundImage = `url("${url}")`;
+  if (file) {
+    // A background, not an <img>, classed by the framing actually found: a size zooms into a wider framing's head.
+    const image = element("span", `art ${file.key.split("/")[0] ?? slot.kind} ${className}`);
+    image.style.backgroundImage = `url("${file.url}")`;
     image.title = info.name;
     return image;
   }

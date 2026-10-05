@@ -71,7 +71,7 @@ export function unitDefCard(defId: string): HTMLElement {
   const def = UNITS[defId];
   const card = element("div", "def-card");
   if (!def) return card;
-  card.appendChild(art({ kind: "portrait", id: defId }, "card-portrait"));
+  card.appendChild(art({ kind: "portrait", id: defId, frame: "bust" }, "card-portrait"));
   card.append(element("div", "title", def.name), element("div", "subtitle", `Tier ${def.tier}`));
   const s = def.stats;
   const facts = [`${s.maxHp} HP`, s.shield > 0 ? `${s.shield} shield` : "", `${s.damage} damage${def.damageType === "weapon" ? "" : ` (${def.damageType})`}`, `${s.armor} armor`, `${s.initiative} initiative`];

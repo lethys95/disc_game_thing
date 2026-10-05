@@ -198,7 +198,7 @@ export class Hud {
     this.turns.appendChild(element("div", "round", `Round ${battle.round}`));
     upcoming.forEach((unit, index) => {
       const chip = element("div", `chip side${unit.side}${index === 0 ? " now" : index === 1 ? " next" : ""}`);
-      chip.appendChild(art({ kind: "portrait", id: unit.defId }, index === 0 ? "queue-now" : "queue"));
+      chip.appendChild(art({ kind: "portrait", id: unit.defId, frame: "icon" }, index === 0 ? "queue-now" : "queue"));
       if (index < 2) chip.appendChild(element("span", "when", index === 0 ? "now" : "next"));
       chip.title = `${unitLabel(unit, playerSide)} (${place(unit)})`;
       chip.addEventListener("mouseenter", () => this.handlers.onFocus(unit.id));
@@ -215,7 +215,7 @@ export class Hud {
     const def = UNITS[unit.defId];
     this.card.replaceChildren();
     this.card.className = `panel side${unit.side}`;
-    this.card.appendChild(art({ kind: "portrait", id: unit.defId }, "card-portrait"));
+    this.card.appendChild(art({ kind: "portrait", id: unit.defId, frame: "bust" }, "card-portrait"));
     this.card.appendChild(element("div", "title", unit.name));
     if (pinned) this.card.appendChild(element("div", "pin", "Pinned · click it again to release"));
     this.card.appendChild(element("div", "subtitle", `${unitLabel(unit, playerSide).split(" ")[0]}${unit.leader ? " leader" : ""} · tier ${def?.tier ?? "?"} · ${place(unit)}`));
