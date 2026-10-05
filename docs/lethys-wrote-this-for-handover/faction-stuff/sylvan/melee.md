@@ -37,7 +37,7 @@
 
 ## Names and the second tier 4 (user, 2026-10-04)
 - **Names:** tier 1 **Sproutling**; Decay tier 2 **Moldling**, tier 3 **Bog Giant**, tier 4 **Deadwood** (the Lash out unit). The Regrowth side keeps placeholder names.
-- **Decay branches again, tier 3 → 4:** the Bog Giant becomes either Deadwood or the **Mulch Gorger**. End of the line; no tier 5.
+- **Decay branches again, tier 3 → 4:** the Bog Giant becomes either Deadwood or the **Mulch Gorger**. End of the line; no tier 5. (Since the swap below: tier 3 is Deadwood, which becomes the Bog Giant or the Mulch Gorger.)
 - **Mulch Gorger (user):** "a plant skeleton. Whenever someone dies or a corpse gets interacted with (resurrection, corpse explosion, etc) it heals and gains damage for the rest of combat stacking indefinitely."
 - **Look (user):** "the wood and plant matter receding into showing its nature, parasitically infesting a corpse with bark, vines, moss and other such related plant matter." Likely the only direct skeleton or zombie in the faction (an exception to "no zombies" the user made here).
 - **Built:** `sproutling`, `moldling`, `bog_giant`, `deadwood`, `mulch_gorger` (`rules/units/grove.ts`). Claude's reading, for you to overrule: "someone" is any unit, either side; the Gorger keeps the line's Decay and Withering; its passive is called *Gorge*. Numbers `provisional.md` #57.

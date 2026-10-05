@@ -59,7 +59,7 @@ What's new for the game (each as data, no engine names):
 ## Tier 2 (strong camps)
 
 ### Pale Mother
-- **Role:** the brood's centre. A big pale moth with her wings full of eyes.
+- **Role:** the brood's centre. A big pale moth, veiled, her wings folded like a cloak; opening them is her gaze.
 - **Stats:** health high · damage medium · armor low · initiative medium.
 - **Abilities:** *Dust veil* (aura): her side has +5 armor (doesn't stack). *Open the eyes* (main action, once per
   fight): the whole enemy front row is mesmerized. *Flit*.

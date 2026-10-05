@@ -1,6 +1,6 @@
 # Sylvan: Psychopomp
 
-> User, 2026-09-25. The Grove's first unit. **Tier, stats and skills are postponed** (user); only the name and the look are set.
+> User, 2026-09-25: the Grove's first unit, then only a name and a look. Since 2026-09-29 she is the Spiritess line's tier 3 with Spiritwalk (`faction-stuff/sylvan/support.md`); stats `provisional.md` #59.
 
 **Look (user, canon):** a woman, an elf with pointed ears. Shamanistic, druidism. Psychedelic: life, sprawling with life, confusion. Hypnotic eyes. Multiple different spectral, blurry shapes, barely visible, brush out from her face. Trinkets and baubles in her hair; a rough hairstyle. Greens, roots and vines; purples for pulses.
 

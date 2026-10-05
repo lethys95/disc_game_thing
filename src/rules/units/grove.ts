@@ -54,7 +54,7 @@ export const GROVE_UNITS: Readonly<Record<string, UnitDef>> = {
     stats: { maxHp: 70, shield: 0, damage: 10, armor: 0, initiative: 45 },
     abilities: kit("bloom", "water", "defend", "wait"),
   },
-  // The Decay branch: weaker healing, corpses. (The Spiritess branch, crowd control, awaits the user's design.)
+  // The Decay branch: weaker healing, corpses.
   decay_support_2: {
     id: "decay_support_2", name: "Decay support 2", faction: "grove", tier: 2, damageType: "weapon",
     stats: { maxHp: 95, shield: 0, damage: 12, armor: 0, initiative: 45 },
