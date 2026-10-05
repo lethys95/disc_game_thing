@@ -53,6 +53,12 @@ than the Custodian's 3D concepts is a stand-in to redo (the user, 2026-10-05).
   that must stay strange, a single view can go to Tripo alone.
 - A phrase meant as a mood can become the subject: "faces veiled, turned away" put hooded mourners on every card; "an
   object with no limbs" gave gothic women in dresses.
+- **No similes for shapes or surfaces**: the model takes the named thing literally ("a doll's face" grew a nose and a
+  mouth; "blank as an egg" erased the Zealot's eye holes; the user called it beforehand). Say the thing itself.
+- Some words summon whole genres: "tabard" brought a crusader's red cross back twice, even with "no cross" in the
+  prompt. Drop the word, not just add a negation.
+- When two wordings each get half right, join their working halves (the Zealot: one wording's eye holes, the other's
+  small hand).
 - Turnarounds sometimes draw a view twice or a stray limb: say so when picking; split views skip duplicates.
 - "No text" isn't reliable: numerals creep in.
 - Some ideas the model won't draw (wings covered in real eyes, after three tries): carry the idea by colour and

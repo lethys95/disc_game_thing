@@ -33,3 +33,9 @@
   despite "no cross": the word "tabard" seems to summon it.
 - **Round four:** the wound body, no tabard; the mask "blank as an egg", the hand a small burning print on the forehead
   (two wordings, three seeds).
+- **Round four, read** (the user, beforehand: "'blank as an egg' means it'll actually draw an egg"): no eggs, but the
+  word made the mask too blank: *egg* lost its eye holes entirely, though its hand came out right (a small bloody
+  print high on the forehead). *Brand* kept two big black eye holes, but its hand sprawled down the face again. The
+  wound body is consistent across all six: settled.
+- **Round five:** no similes; *joined* takes brand's eye holes and egg's hand; *ordered* describes the mask from top to
+  bottom (three seeds each).
