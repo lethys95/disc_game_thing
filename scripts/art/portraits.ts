@@ -94,7 +94,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     strengths: T_POSED,
     picked: {
       card: "zealot-card-d75.png",
-      crops: { bust: { from: "card", size: 0.5, x: 0.5, y: 0.26 }, icon: { from: "card", size: 0.2, x: 0.47, y: 0.18 } },
+      crops: { bust: { from: "card", size: 0.5, x: 0.5, y: 0.26 }, icon: { from: "card", size: 0.2, x: 0.485, y: 0.195 } },
     },
   },
   psychopomp: {
@@ -220,7 +220,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     strengths: STANDING,
     picked: {
       card: "mulch_gorger-card-d40.png",
-      crops: { bust: { from: "card", size: 0.55, x: 0.47, y: 0.22 }, icon: { from: "card", size: 0.25, x: 0.48, y: 0.12 } },
+      crops: { bust: { from: "card", size: 0.55, x: 0.47, y: 0.22 }, icon: { from: "card", size: 0.25, x: 0.49, y: 0.135 } },
     },
   },
 };
