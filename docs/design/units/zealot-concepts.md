@@ -55,3 +55,9 @@
   size words ("small, no bigger than a coin, on the forehead only") are what hold the hand in place.
 - **Round seven:** round five's layout with its size words, round six's wild eyes inside the holes; no "featureless"
   or "plain" (two wordings, three seeds).
+- **Round seven, read:** the small hand and the eye holes hold; red streaks run from some holes, like bloody tears;
+  the eyes still don't show: at full-body turnaround size the head is too small for eyes inside the holes. A close-up
+  study of the mask (or the 3D texture) is the way to the wild eyes. A mouth crept back in two of six.
+- **Claude's suggested picks:** `zealot-joined-turnaround-1001` (the cleanest mask), `zealot-ordered-turnaround-1001`
+  (long and eerie), `zealot-wild-turnaround-1002` (the holes with red streaks); the sword `zealot-sword-props-1000`.
+  Page: `shots/zealot.html`.
