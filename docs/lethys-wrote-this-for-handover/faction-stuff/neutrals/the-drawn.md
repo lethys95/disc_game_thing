@@ -111,3 +111,10 @@ times).
   `chrysalis-cocoon-stance-1002`, a single view for 3D; Lightdrinker `lightdrinker-deathshead-turnaround-1001`
   (stance 1000); Eyespot `eyespot-fan-turnaround-1000` (stance 1001); Pale Mother `pale-mother-turnaround-1002`
   (stance 1000). Page with every round: `shots/drawn.html`.
+
+## The user on the concepts (2026-10-05)
+"Not everything has to be grotesque. The cuteness here is fine." (Claude had called round one's fluffy moths too cute;
+that was Claude's call, and it's overruled.) "The models did generally come out fine. I might veto some of it. Death's
+head works well, and the wings of each look very intricate. I think it's interesting that moths would essentially
+steal the light away from the enemy, maybe blinding them? Either way, it gives us some wiggle room to play around with
+lighting."

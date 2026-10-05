@@ -23,8 +23,10 @@ script before the hand-off:
   seed, model) and `contact-sheet.png`.
 
 ## 2. Hand it to a background subagent
-Call the Agent tool with `run_in_background: true`, `subagent_type: "general-purpose"`, `model: "haiku"` (running a
-command and reporting needs no more), and this prompt, filled in:
+Call the Agent tool with `run_in_background: true`, `subagent_type: "general-purpose"`, no `model` (it inherits the
+main session's; the user, 2026-10-05: Haiku "has no use case anymore", and using it reads as not taking the work
+seriously), and this prompt, filled in. The prompts and every creative choice are the main session's; the subagent
+only runs the command:
 
 ```
 Run this image generation for the disc project, exactly as given. Do not edit any file, prompt or parameter, and do
