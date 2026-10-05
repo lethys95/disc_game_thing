@@ -19,3 +19,10 @@
   figure we're putting in the t-pose must fit the design spec though." Round two was stopped after its nine
   turnarounds (on purpose; the run reports an interruption); no stance views from here on; the madness has to show in
   the design, not a pose.
+- **Round two, read** (turnarounds only): the eye holes came through on 2 of 9 (`ecstatic-1001`, `howling-1002`); the
+  model keeps painting the hand big, down the whole face and over the eyes, where the user's is on the forehead.
+  *Ecstatic* and *howling* still read as rough knights; *twitching* came out bandage-wrapped like a mummy: the least
+  knightly, but it lost the spiked armour the spec asks for.
+- **Round three:** the mask's layout spelled out (a blank porcelain doll face; two large round black holes at eye level;
+  a small burning hand high on the forehead only; blank below), and a body joining the scrap spiked armour and the
+  wrappings. Two readings, three seeds, turnarounds only.
