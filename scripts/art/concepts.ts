@@ -386,12 +386,37 @@ const ZEALOT_JOBS = [
   },
 ];
 
+/**
+ * The Psychopomp in the 3D concept strategy (the user, 2026-10-05: "not done art wise… I'm probably going to be fairly
+ * picky with her"; one round, then the user looks). Her refined look held fixed (`PSYCHOPOMP`, the user's words; the
+ * user removed "not a pretty elf": "beauty is just not the point"). The readings vary how much of the ghosts and smoke
+ * sit on the body, since in the game they're likely effects rather than mesh (Claude's).
+ */
+const PSYCHOPOMP_3D =
+  "Dark gothic fantasy, rich and brooding, desaturated colors with dark accents, weathered and worn physically based materials: rough bark, wet moss, roots and vines, worn leather and homespun cloth, bone and wooden trinkets. " +
+  "Deep moss green with violet glows for pulses of spirit, and an icy blue for her eyes and the ghosts. Serious, adult, not cartoonish.";
+
+const PSYCHOPOMPS: Readonly<Record<string, { readonly subject: string }>> = {
+  "psychopomp-possessed": {
+    subject: `A shamanistic druid of a wild elven people. ${PSYCHOPOMP}`,
+  },
+  "psychopomp-shaman": {
+    subject: `A shamanistic druid of a wild elven people: a woman, an elf with pointed ears, rough wild hair braided with roots, small bones, beads and wooden trinkets; layered garments of moss, bark, leather and roots, vines winding around her limbs. Her eyes glow blue and her mouth hangs open, a thin ghastly smoke spilling from it. Faint, bluish, glitching after-images of ghostly figures flicker at the edges of her body, as if something is trying to get out of her. Greens, roots and vines, with violet pulses of spirit.`,
+  },
+  "psychopomp-vessel": {
+    subject: `A shamanistic druid of a wild elven people, possessed: a woman, an elf with pointed ears, rough hair hung with trinkets and baubles, a garment of moss, bark and roots. Her eyes glow an icy blue and her mouth hangs open. Only the faintest bluish shimmer of ghostly figures clings to her outline; she herself is solid and clear. Greens, roots and vines, with violet pulses of spirit.`,
+  },
+};
+
+const PSYCHOPOMP_JOBS = Object.entries(PSYCHOPOMPS).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are empty and open.`, PSYCHOPOMP_3D) }));
+
 /** Each group of jobs has its own folder, so one group's run doesn't mix into another's manifest. */
 const GROUPS = [
   { dir: "art/candidates/units/grove", jobs: GROVE_JOBS },
   { dir: "art/candidates/units/neutrals/gnolls", jobs: GNOLL_JOBS },
   { dir: "art/candidates/units/neutrals/drawn", jobs: DRAWN_JOBS },
   { dir: "art/candidates/units/jilliath/zealot", jobs: ZEALOT_JOBS },
+  { dir: "art/candidates/units/grove/psychopomp", jobs: PSYCHOPOMP_JOBS },
 ];
 
 const args = process.argv.slice(2);

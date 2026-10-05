@@ -69,5 +69,5 @@ supposed to be an inquisition faction. He's meant to be crazy, but still the ant
 actually going to go for round 1: zealot-pyre-turnaround-1000. I think it works really well."
 - Claude's lesson: in pushing him away from the Paladin ("not a knight"), the later rounds pushed him out of his
   faction (bandages read as the Wastes' mummies). Fix one trait without leaving the faction's visual language.
-- The sword: `zealot-sword-props-1000` is Claude's suggestion, not yet picked. Split for Tripo: `shots/tripo/zealot-*`
+- The sword: `zealot-sword-props-1000`, picked (the user: "good. We can keep it."). Split for Tripo: `shots/tripo/zealot-*`
   (four views: the sheet draws the side twice).
