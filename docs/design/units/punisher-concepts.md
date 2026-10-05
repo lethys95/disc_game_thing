@@ -33,3 +33,15 @@ will be heavily inspired by iron maidens."
   - Bell 1000 draws a stray forearm by the side view.
   - Next, if wanted: the bell as the base, and a body that isn't a knight's (heavy plate pieces over leather, mail and
     a gambeson, a bailiff's coat); describe flanged heads as ridged blades round a core, not spikes.
+
+## Round two (2026-10-05)
+The user: "sorry to say, but they're all very very bland. Can you look at the original punisher drawings?" There are
+no ink Punishers; the originals are the first batch's two painted ones (`anchors/punisher-1000/1001`,
+`shots/punisher-originals.html`). Claude's read of 1001: a faceless hood (only black inside); cloth, not armour (a
+long stained cassock with blood red, a stiff pitted hooded mantle), the iron only accents; the flail over the shoulder
+makes the silhouette. Its subject was one line ("an executioner of a militant faith carrying a heavy multi-headed
+flanged flail, standing in a neutral pose") and the model designed the rest: round one told it exactly what to draw,
+and it drew exactly that, blandly. The user: "try. Still need gothic fantasy, we can never drop that."
+- **Round two** (`PUNISHERS_2`): *executioner* (the original's line alone), *hood* (its features in ~40 words),
+  *iron* (the same in dark iron-grey cloth and more iron, the user's "less white, more metal"); the gothic recipe word
+  for word with the original's materials. The flail again with flanged heads described as blades round a core.
