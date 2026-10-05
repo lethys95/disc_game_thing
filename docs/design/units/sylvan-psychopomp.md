@@ -82,3 +82,18 @@ physics, I agree. Add that, modify things a bit, add in your own suggestions her
 
   Seed 1000 of each reading draws the side twice. *Wrapped* is the cleanest model; *pelted* the darkest; *overgrown*
   has the Golgari touch in the moss and lichen.
+
+## The user's direction for round four (2026-10-05)
+"I noticed that you're not using the prompt that includes the gothic fantasy style and it shows. It doesn't fit in
+style wise with the rest of the game right now. Anyway, gloves are too large. They should be for only the hands, think
+short fingerless gloves, but where the fingerlessness is just red soaked. Tattoos are much better. Let's continue from
+wrapped, I agree. The wolf having eyes isn't a problem as long as the eyes it has aren't regular wolf eyes. They either
+need to be dark gouged out pits, or completely wide blue as if possessed. Maybe less bone on the model, more bangles,
+leather wraps. I think she's too skinny here too, so maybe try removing that one too. See what happens, then come back
+to me."
+- The miss behind the style: rounds two and three wrote their own materials line and dropped half the shared gothic
+  recipe ("ornate, desaturated colors with dark accents, grim") for a palette sentence. Round four uses the recipe word
+  for word with her materials, as the other groups do (lesson in the `unit-concepts` skill).
+- **Round four** (`PSYCHOPOMPS_4`): *wrapped* with the user's changes; two readings for the hood's eyes, *pits* and
+  *possessed-wolf*. Every thin word gone. Claude's: paler skin, ivory lining on the fur mantle, the slack face said as
+  relaxed brows and parted lips.

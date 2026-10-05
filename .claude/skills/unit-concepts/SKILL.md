@@ -18,8 +18,11 @@ than the Custodian's 3D concepts is a stand-in to redo (the user, 2026-10-05).
   rule only (memory: creature-art-asymmetric). Cute is fine when it fits.
 
 ## 2. Prompts in `scripts/art/concepts.ts`, one group per line or tribe
-- Each group: a materials line in the gothic recipe (`GOTHIC_3D` with the line's own materials and palette, e.g.
-  `GROVE_3D`, `GNOLL_3D`, `JILLIATH_3D`), a record of subjects (`{ subject, stance, pose? }`), and jobs:
+- Each group: a materials line in the gothic recipe **word for word** ("Dark gothic fantasy, rich, brooding and ornate,
+  desaturated colors with dark accents, grim, weathered and worn physically based materials: <the unit's materials>.
+  Serious, adult, not cartoonish."), only the materials swapped; a home-made line drifts out of the game's style
+  (the Psychopomp's rounds two and three, the user: "it doesn't fit in style wise"). Examples: `GROVE_3D`,
+  `GNOLL_3D`, `DRAWN_3D`. Then a record of subjects (`{ subject, stance, pose? }`), and jobs:
   - **Turnaround** (`turnaround(subject, materials, pose)`, 2048×832): front, side and back of a 3D model asset, flat
     shadowless light, light grey background. The model and rig reference. T-pose for humanoids; `CLEAR_POSE` (or a
     pose of its own, like Deadwood's gorilla lean) for bodies that aren't human.
