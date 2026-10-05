@@ -103,6 +103,8 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "a gnoll, a hyena-headed brute: heavy and broad with short legs, enormous forequarters and a thick neck, pale grey fur with dark stripes and a bristling dark mane, a massive jaw with iron-capped teeth, a heavy collar of bone plates and bronze rings, scarred bare arms, one fist in a spiked bronze gauntlet",
     pose: "it stands hunched forward, its fists ready",
     strengths: T_POSED,
+    icon: { size: 0.5, x: 0.5, y: 0.38 },
+    picked: { card: "bonecracker-card-d75.png", bust: "bonecracker-bust-d45.png" },
   },
   cackler: {
     front: "shots/tripo/cackler-front.png",
@@ -112,6 +114,8 @@ const UNITS: Readonly<Record<string, Unit>> = {
     strengths: T_POSED,
     // Its staff's skull is as high as its head, which pulled the default crop off its face.
     bust: { size: 0.42, x: 0.5, y: 0.27 },
+    icon: { size: 0.45, x: 0.5, y: 0.33 },
+    picked: { card: "cackler-card-d90.png", bust: "cackler-bust-d45.png" },
   },
   matriarch: {
     front: "shots/tripo/matriarch-front.png",
@@ -119,6 +123,8 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "a gnoll matriarch, the largest of the pack: a tall, upright, broad-shouldered female hyena-headed warrior with pale grey fur, dark stripes, a great dark mane and a scarred muzzle, a mantle of bronze plates and trophy bones over her shoulders, a cloak of a great beast's hide, a crest of teeth and bronze on her brow",
     pose: "she stands tall, holding a heavy bronze glaive",
     strengths: T_POSED,
+    icon: { size: 0.45, x: 0.5, y: 0.38 },
+    picked: { card: "matriarch-card-d90.png", bust: "matriarch-bust-d45.png" },
   },
   sproutling: {
     front: "shots/tripo/sproutling-front.png",
