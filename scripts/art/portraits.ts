@@ -113,7 +113,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     strengths: { card: [0.75, 0.9], bust: [] },
     picked: {
       card: "psychopomp-card-pose2-d90.png",
-      crops: { bust: { from: "card", size: 0.6, x: 0.5, y: 0.25 }, icon: { from: "card", size: 0.28, x: 0.47, y: 0.165 } },
+      crops: { bust: { from: "card", size: 0.6, x: 0.5, y: 0.25 }, icon: { from: "card", size: 0.3, x: 0.511, y: 0.16 } },
     },
   },
   custodian: {
@@ -146,7 +146,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     strengths: T_POSED,
     picked: {
       card: "cackler-card-d90.png",
-      crops: { bust: { from: "card", size: 0.6, x: 0.55, y: 0.38 }, icon: { from: "card", size: 0.3, x: 0.6, y: 0.34 } },
+      crops: { bust: { from: "card", size: 0.6, x: 0.55, y: 0.38 }, icon: { from: "card", size: 0.3, x: 0.6, y: 0.365 } },
     },
   },
   matriarch: {

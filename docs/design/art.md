@@ -185,3 +185,10 @@ All 43 abilities without art got icons in the recipe of the four the user liked 
 - **Touch-ups (the user, 2026-10-05):** the Psychopomp's bust and icon now come from her card too ("for
   consistency"), so every unit's three framings are one painting except the Bog Giant's. The Bonecracker's and
   Moldling's icons were widened so the mouth isn't cut off, and the Mulch Gorger's was centred.
+- **Photon (2026-10-05):** the user installed Tenzen's Photon (proprietary, free, local), which added an MCP server
+  (`photon` in `~/.claude.json`) and six `photon-*` skills. The MCP tools load only in a session started after that.
+  The CLI (`~/.photon/bin/photon`) works anyway.
+  - **First job:** the Psychopomp's icon, centred on her face. Photon rendered the head region to measure it, then
+    cropped, resized and exported. The game's file comes from `portraits.ts` with the same crop, so it stays
+    reproducible; the two match within resampling.
+  - **Cackler:** its icon was lowered a little so the chin isn't cut off.
