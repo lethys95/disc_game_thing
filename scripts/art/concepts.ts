@@ -387,151 +387,21 @@ const ZEALOT_JOBS = [
 ];
 
 /**
- * The Psychopomp in the 3D concept strategy (the user, 2026-10-05: "not done art wise… I'm probably going to be fairly
- * picky with her"; one round, then the user looks). Her refined look held fixed (`PSYCHOPOMP`, the user's words; the
- * user removed "not a pretty elf": "beauty is just not the point"). The readings vary how much of the ghosts and smoke
- * sit on the body, since in the game they're likely effects rather than mesh (Claude's).
+ * The Psychopomp in the 3D concept strategy, picked by the user after six rounds (2026-10-05: "short 1002 is final").
+ * Rounds two to five grew her description into a long outfit list that drowned the gothic line; this short one, in
+ * the faction's material words, brought the game's look back. Every round's prompt is in the folder's manifest and
+ * `docs/design/units/sylvan-psychopomp.md`.
  */
-const PSYCHOPOMP_3D =
-  "Dark gothic fantasy, rich and brooding, desaturated colors with dark accents, weathered and worn physically based materials: rough bark, wet moss, roots and vines, worn leather and homespun cloth, bone and wooden trinkets. " +
-  "Deep moss green with violet glows for pulses of spirit, and an icy blue for her eyes and the ghosts. Serious, adult, not cartoonish.";
-
-const PSYCHOPOMPS: Readonly<Record<string, { readonly subject: string }>> = {
-  "psychopomp-possessed": {
-    subject: `A shamanistic druid of a wild elven people. ${PSYCHOPOMP}`,
-  },
-  "psychopomp-shaman": {
-    subject: `A shamanistic druid of a wild elven people: a woman, an elf with pointed ears, rough wild hair braided with roots, small bones, beads and wooden trinkets; layered garments of moss, bark, leather and roots, vines winding around her limbs. Her eyes glow blue and her mouth hangs open, a thin ghastly smoke spilling from it. Faint, bluish, glitching after-images of ghostly figures flicker at the edges of her body, as if something is trying to get out of her. Greens, roots and vines, with violet pulses of spirit.`,
-  },
-  "psychopomp-vessel": {
-    subject: `A shamanistic druid of a wild elven people, possessed: a woman, an elf with pointed ears, rough hair hung with trinkets and baubles, a garment of moss, bark and roots. Her eyes glow an icy blue and her mouth hangs open. Only the faintest bluish shimmer of ghostly figures clings to her outline; she herself is solid and clear. Greens, roots and vines, with violet pulses of spirit.`,
-  },
-};
-
-/**
- * Round two (the user's direction, 2026-10-05, `docs/design/units/sylvan-psychopomp.md`): no beauty words, no ghosts
- * (a glitch effect later); a wolf-head hood, tribal tattoos, cornrow braids, thin; haunted, hypnotised, absent blue
- * eyes and a slack mouth; white and ivory clothes against darker skin; ivory gloves with blood-red fingertips.
- */
-const SHAMANESS =
-  "A thin elven woman with pointed ears, a shamaness of a wild forest people. Over her head a hood made from the upper half of a wolf's head: the wolf's snout, brow and ears above her face, its eye holes and its lower jaw cut away, so her face looks out from under the wolf's upper teeth. " +
-  "Her hair in tight cornrow braids running back under the hood. Tribal tattoos in dark green and black cover her bare arms, her neck and her face. " +
-  "Her eyes are pale, glowing, icy blue, unfocused and staring straight through everything: hypnotised, haunted, estranged. Her mouth hangs slightly open, slack. She is barely there; her mind is somewhere else. " +
-  "She wears layered robes of white and ivory cloth, ghost-pale against her darker skin, with moss, thin roots and small bones tied into them. On her hands, ivory white gloves, every fingertip stained scarlet to the first knuckle as if dipped in a jar of blood.";
-
-const SHAMANESS_3D =
-  "Dark gothic fantasy, rich and brooding, weathered and worn physically based materials: white and ivory cloth, grey wolf fur and bone, worn leather, moss and roots. " +
-  "Mostly white and ivory, with deep moss green, black and bone, and only her eyes an icy blue and her fingertips scarlet. Serious, adult, not cartoonish.";
-
-const PSYCHOPOMPS_2: Readonly<Record<string, { readonly subject: string }>> = {
-  "psychopomp-shamaness": { subject: SHAMANESS },
-  "psychopomp-shamaness-veiled": {
-    subject: `${SHAMANESS} Long torn strips of white cloth hang from her sleeves and hem like tattered veils, and a necklace of small skulls and teeth lies on her chest.`,
-  },
-};
-
-/**
- * Round three (the user, 2026-10-05: too human, the closed robe too civilized, too much white; the ink trial's pale
- * greenish skin, face tattoos, large fluffy shoes, ghostly teal eyes and mouth; no strips, for the 3D cloth). Claude's:
- * the elven features named one by one (ears through the hood, gaunt face, wide eyes, long fingers), the hood's eyes as
- * empty holes, the gloves before the clothes, and three ways of wearing clothes that aren't tailored.
- */
-const SHAMANESS_3 =
-  "An elven shamaness of a wild forest people, not human: pale greenish-grey skin, very long pointed ears sweeping out sideways through slits in her hood, a narrow gaunt face with sharp cheekbones and a small pointed chin, large eyes set wide apart, a long thin neck, thin long limbs and long thin fingers. " +
-  "Over her head a hood made from a wolf's head pelt with no lower jaw: the wolf's snout, brow and ears above her face, and where the wolf's eyes were, two empty cut-out holes with nothing inside them; her face looks out from under the wolf's upper teeth. " +
-  "Her dark hair in tight cornrows flat against her scalp. Dark green and black tribal tattoos cover her face (lines across her brow, her cheeks and her chin), her neck, her arms and her legs. " +
-  "Her irises are a pale ghostly teal and faintly glowing, her stare empty and unfocused, looking through everything; her lips are parted, her mouth slightly open and slack. She is absent, hypnotised, barely there. " +
-  "On her hands, ivory white gloves with scarlet red fingertips, each finger red to the first knuckle. On her feet, large shaggy boots of grey wolf fur, wide and bulky, bound to the knee with cord.";
-
-const SHAMANESS_3_3D =
-  "Dark gothic fantasy, rich and brooding, weathered and worn physically based materials: grey wolf fur, dark hide and worn leather, ivory cloth, bone, moss and roots. " +
-  "Deep moss green, dark brown, grey and black, ivory only as an accent; her skin a pale greenish grey; only her eyes a ghostly teal and her fingertips scarlet. Serious, adult, not cartoonish.";
-
-const PSYCHOPOMPS_3: Readonly<Record<string, { readonly subject: string }>> = {
-  "psychopomp-wrapped": {
-    subject: `${SHAMANESS_3} Her clothes are not sewn: a few pieces of ivory cloth wrapped and knotted around her chest and hips, her shoulders, arms and midriff bare, under a short shaggy mantle of grey wolf fur over her shoulders; a dark leather belt hung with bones and small pouches. Every cloth end is short and close to the body.`,
-  },
-  "psychopomp-pelted": {
-    subject: `${SHAMANESS_3} She is dressed mostly in furs and hide: a grey wolf pelt slung over one shoulder and across her chest, a knee-length skirt of dark hide panels with a little ivory cloth showing between them, bone toggles and leather cords, moss growing in the seams. Every end is short and close to the body.`,
-  },
-  "psychopomp-overgrown": {
-    subject: `${SHAMANESS_3} Her clothes are dark hide and a little ivory cloth bound to her body by living roots and vines that wind around her arms and legs, open at the front over a dark leather band across her chest, her thin stomach bare; patches of moss and pale lichen grow on her shoulders and on the cloth. Every end is short and close to the body.`,
-  },
-};
-
-/**
- * Round four, from round three's *wrapped* (the user, 2026-10-05): back to the gothic recipe every other unit uses;
- * short fingerless gloves with bare fingers soaked red; the hood's eyes either dark gouged pits or wide possessed blue
- * (a reading each); less bone, more bangles and leather wraps; not so skinny. Claude's, from round three's read: paler
- * skin, ivory lining on the mantle, the slack face said as relaxed brows and parted lips.
- */
-const SHAMANESS_4 = (hoodEyes: string) =>
-  "An elven shamaness of a wild forest people, not human: pale greenish skin, very long pointed ears sweeping out sideways through slits in her hood, a narrow angular face with sharp cheekbones and a small pointed chin, large eyes set wide apart, a long neck. " +
-  `Over her head a hood made from a wolf's head pelt with no lower jaw: the wolf's snout, brow and ears above her face, ${hoodEyes}; her face looks out from under the wolf's upper teeth. ` +
-  "Her dark hair in tight cornrows flat against her scalp. Dark green and black tribal tattoos cover her face (lines across her brow, her cheeks and her chin), her neck, her arms and her legs. " +
-  "Her irises are a pale ghostly teal and faintly glowing. Her face is empty and slack: brows relaxed, lips parted, mouth slightly open, staring through everything. She is absent, hypnotised, barely there. " +
-  "On her hands, short fingerless gloves of ivory leather that cover only her palms and the backs of her hands, from the wrist to the knuckles; her bare fingers below them are soaked scarlet red, as if dipped in blood. On her feet, large shaggy boots of grey wolf fur, wide and bulky, bound to the knee with cord. " +
-  "Her clothes are not sewn: a few pieces of ivory cloth wrapped and knotted around her chest and hips, her shoulders, arms and midriff bare, under a short shaggy mantle of grey wolf fur lined with ivory cloth; a dark leather belt with small pouches. " +
-  "Worn leather wraps around her forearms and upper arms, and stacks of tarnished bronze and copper bangles on her wrists and arms. Every cloth end is short and close to the body.";
-
-const SHAMANESS_4_3D =
-  "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: grey wolf fur, worn leather wraps, ivory cloth, tarnished bronze bangles, moss and roots. Serious, adult, not cartoonish.";
-
-// Picked by the user as the likely final: seed 1001.
-const PITS = SHAMANESS_4("and where the wolf's eyes were, two dark gouged-out pits, black and empty");
-
-const PSYCHOPOMPS_4: Readonly<Record<string, { readonly subject: string }>> = {
-  "psychopomp-pits": { subject: PITS },
-  "psychopomp-possessed-wolf": { subject: SHAMANESS_4("and the wolf's eyes wide, round and solid glowing blue from edge to edge, no pupils, as if the wolf is possessed") },
-};
-
-/**
- * Round five (the user, 2026-10-05: tempted by `psychopomp-pits-turnaround-1001`, "a last shot at getting closer to the
- * gothic/fantasy vibe… afraid of this character not fitting in with the other units in the faction"). The pick's
- * prompt held fixed and one change added, so seed 1001 of each reading shows that change on the pick: the user's words
- * ("pretty, but beauty isn't the point", "not anime"), Claude's (*grim*: grime, wear, matted fur and the Grove's wet
- * moss and roots, beside its dark, filthy bark creatures), and both.
- */
-const PITS_HANDS = `${PITS} Her hands are open and empty.`;
-const PRETTY = "Pretty, but beauty is not the point. Not anime.";
-const GRIM =
-  "She is weathered and grimy from living in the wild: dirt ground into her skin and her gloves, her ivory cloth stained grey-brown with mud and moss, her fur matted, wet and clumped, mud caked on her boots, wet moss and small roots growing on her mantle and her belt.";
-const GRIM_3D =
-  "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: matted wet wolf fur, stained cloth, worn leather wraps, tarnished bronze bangles, wet moss and roots. Serious, adult, not cartoonish.";
-
-const PSYCHOPOMPS_5: Readonly<Record<string, { readonly prompt: string }>> = {
-  "psychopomp-pits-pretty": { prompt: turnaround(`${PITS_HANDS} ${PRETTY}`, SHAMANESS_4_3D) },
-  "psychopomp-pits-grim": { prompt: turnaround(`${PITS_HANDS} ${GRIM}`, GRIM_3D) },
-  "psychopomp-pits-grim-pretty": { prompt: turnaround(`${PITS_HANDS} ${GRIM} ${PRETTY}`, GRIM_3D) },
-};
-
-/**
- * Round six, a test (the user, 2026-10-05: "staying consistent style wise is pretty essential"). From round two on her
- * subject grew into a long outfit list that buries the gothic line (word 366 of 434; the Bog Giant's is at 162 of 249).
- * Pits 1001's features cut to essentials, without the stylised cues ("large eyes set wide apart", "wide and bulky"),
- * and in grim words; once with the gothic line in its usual place, once in front of her, to tell length from order.
- */
-const SHAMANESS_6 =
+const PSYCHOPOMP_SUBJECT =
   "An elven shamaness of a wild forest people, possessed and absent: pale greenish skin, long pointed ears, dark green and black tribal tattoos across her face and arms, her hair in tight cornrows. " +
   "A hood of a wolf's head pelt with no lower jaw, two dark gouged-out pits where its eyes were; her face looks out under its upper teeth. Pale ghostly teal eyes staring through everything, lips parted. " +
   "Short fingerless ivory gloves, her bare fingers soaked scarlet red. Rough boots of matted grey wolf fur bound to the knee. Knotted ivory rags tied on at her chest and hips, a ragged fur mantle, leather wraps and tarnished bronze bangles on her arms. Her hands are open and empty.";
 
-const SHAMANESS_6_3D =
+const PSYCHOPOMP_3D =
   "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: matted wolf fur, stained ivory rags, worn leather, tarnished bronze, wet moss and roots. Serious, adult, not cartoonish.";
 
-const PSYCHOPOMPS_6: Readonly<Record<string, { readonly prompt: string }>> = {
-  "psychopomp-short": { prompt: turnaround(SHAMANESS_6, SHAMANESS_6_3D) },
-  "psychopomp-short-style-first": { prompt: turnaround(SHAMANESS_6_3D, SHAMANESS_6) },
-};
-
-const PSYCHOPOMP_JOBS = [
-  ...Object.entries(PSYCHOPOMPS_6).map(([id, { prompt }]) => ({ id: `${id}-turnaround`, prompt })),
-  ...Object.entries(PSYCHOPOMPS_5).map(([id, { prompt }]) => ({ id: `${id}-turnaround`, prompt })),
-  ...Object.entries(PSYCHOPOMPS_4).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are open and empty.`, SHAMANESS_4_3D) })),
-  ...Object.entries(PSYCHOPOMPS_3).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are open and empty.`, SHAMANESS_3_3D) })),
-  ...Object.entries(PSYCHOPOMPS_2).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are open and empty.`, SHAMANESS_3D) })),
-  ...Object.entries(PSYCHOPOMPS).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are empty and open.`, PSYCHOPOMP_3D) })),
-];
+// Picked: seed 1002.
+const PSYCHOPOMP_JOBS = [{ id: "psychopomp-short-turnaround", prompt: turnaround(PSYCHOPOMP_SUBJECT, PSYCHOPOMP_3D) }];
 
 /** Each group of jobs has its own folder, so one group's run doesn't mix into another's manifest. */
 const GROUPS = [

@@ -170,3 +170,11 @@ back? Maybe something like 'not anime'? Idk."
   - Still missing: the pits in the hood (the wolf keeps glowing eyes) and the red fingers (bare fingers, teal
     nails). The gloves are short and fingerless as asked.
   - Short 1000 and style-first 1000 draw the side view twice.
+
+## Picked (2026-10-05)
+The user: "Much much much better. Thank you. Both style first and short are better. short 1002 is final, good job."
+**Concept: `psychopomp-short-turnaround-1002`** (round six). Prompt in code as `PSYCHOPOMP_SUBJECT` / `PSYCHOPOMP_3D`,
+byte-identical to the manifest; the other rounds' prompts were removed from code (they live in the manifest and git).
+Split for Tripo: `shots/tripo/psychopomp-{front,side,back}.png`. Not in the image, for the 3D model, textures and
+effects: the hood's gouged-out pits (the wolf has glowing eyes), her scarlet fingers (teal nails), the glitching ghosts
+and the eye glow (vfx).
