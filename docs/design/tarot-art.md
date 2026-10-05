@@ -27,3 +27,9 @@
   question; **gilded** (an illuminated manuscript, deep reds and gold leaf) is striking and strange but less dark, worth
   carrying as a second look (it also made a numeral). The two seeds of each card came out nearly identical: Krea-2
   Turbo varies by prompt, not by seed. Round two: all 22 in oil and gilded, one seed each.
+- **Round two, the full deck** (all 22 in oil and gilded, seed 2000, the mystery-only prompts): **oil** is a coherent,
+  handsome deck: one carved gilt frame, browns, red and old gold, every card reads as its arcana, one stray numeral
+  (the High Priestess's "V"). **Gilded** is gorgeous and strange but garbled numerals crept into most headers, and its
+  brighter reds sit further from the game. Claude's critique of the oils: faithful but literal, classic paintings more
+  than mysteries. Round three: a **nocturne** variant (the same palette sunk in shadow, one dim light, veiled or
+  turned-away faces, mist, empty space), and card backs.

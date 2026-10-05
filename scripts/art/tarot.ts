@@ -22,6 +22,10 @@ const STYLES: Readonly<Record<string, string>> = {
     "In the manner of an old hand-tinted woodcut engraving: fine black linework and crosshatching, coloured with faded washes of umber, sepia, ochre and rust brown on aged, stained parchment; the border a thorny gothic filigree. Enigmatic and symbolic.",
   oil:
     "Painted in dark oils like an old master: rich browns, burnt sienna, umber and old gold, deep shadows and warm candlelit highlights, cracked varnish; the border carved dark wood and tarnished gilt in gothic tracery. Mysterious and enigmatic.",
+  // Round three (Claude, after the full deck): the oils read as their arcana but literally, classic paintings more than
+  // mysteries. The same palette, pushed into shadow and quiet.
+  nocturne:
+    "Painted in dark oils, a nocturne: almost everything sunk in deep brown-black shadow, a single dim light picking out a few forms, faces veiled, turned away or lost in shadow, drifting mist, more empty space than figures; muted browns, umber and old gold; the border carved dark wood with tarnished gilt in gothic tracery. Hushed, uncanny and enigmatic.",
   gilded:
     "Like a page of a medieval illuminated manuscript and a church reliquary icon: a ground of dark brown and black, tarnished gold leaf with tooled patterns and halos, deep oxblood red and muted ochre, flat stylized figures; the border gilded gothic tracery. Sacred, strange and enigmatic.",
 };
