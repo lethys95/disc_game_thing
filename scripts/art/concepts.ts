@@ -519,16 +519,40 @@ const ETHERBORNS_2: Readonly<Record<string, { readonly subject: string }>> = {
   "etherborn-constellations": { subject: `${ETHERBORN_2} Fine glowing gold lines join the brightest stars on her skin into constellations, like a star chart drawn on her body.` },
 };
 
+/** Round three: each unit's best features from round two joined (`carnival-concepts.md`). */
+const OMENS_3: Readonly<Record<string, { readonly subject: string }>> = {
+  "omen-crowgrin": {
+    subject:
+      "A blind gunslinger-prophet of a nomadic swindlers' carnival, tall and gaunt, with a wide, leering grin full of gold teeth. His eyes are covered by a red blindfold, and on the blindfold a second pair of eyes is painted in white, wide open and staring. " +
+      "A battered tall top hat with black crow feathers and old tarot cards in its band. A long ragged trenchcoat of faded oxblood red to his ankles, a short ragged mantle of black crow feathers over its shoulders, a large black pentagram painted across its back; bandoliers of powder flasks, two empty holsters.",
+  },
+};
+
+const SOOTHSAYERS_3: Readonly<Record<string, { readonly subject: string }>> = {
+  "soothsayer-seer": {
+    subject: `${SOOTHSAYER_2} Loose layered robes of faded red and mustard striped tent canvas with dozens of large open eyes painted on the cloth in white and black, staring in every direction; on her back a short cape of old tarot cards sewn on like overlapping scales.`,
+  },
+};
+
+const ETHERBORN_3 =
+  "An arcane noblewoman, tall and slender. Her bare skin is deep space: dark blue-black filled with swirling galaxies, violet and blue nebulae and countless stars, as if her body were a window into the night sky. " +
+  "Her arms, shoulders and neck are bare, showing the starfield. Her head is a smooth featureless oval with no eyes, no nose and no mouth, the same starfield across it. A tall, stiff fan of a collar in black enamel and gold rises behind her head. Glowing magenta-violet arcane energy wreathes her open hands.";
+
+const ETHERBORNS_3: Readonly<Record<string, { readonly subject: string }>> = {
+  "etherborn-regal": { subject: `${ETHERBORN_3} A rich noble gown of deep violet and black silk, heavy gold filigree on the bodice, a jewelled gold girdle and a long train.` },
+  "etherborn-lined": { subject: `${ETHERBORN_3} An immaculate black silk gown with gold filigree and a long open overcoat whose lining is the same starfield as her skin.` },
+};
+
 const prop = (description: string, materials: string) =>
   `A 3D render of a game prop model, like a textured asset shown in a modelling program: ${description} ${materials} Each view whole and separate, laid flat. Flat, even, shadowless lighting from all sides. A plain flat light grey background, no ground, no hands, no text.`;
 
 const CARNIVAL_JOBS = [
-  ...Object.entries({ ...OMENS, ...SOOTHSAYERS, ...OMENS_2, ...SOOTHSAYERS_2 }).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Hands empty and open, no weapon.`, CARNIVAL_3D) })),
+  ...Object.entries({ ...OMENS, ...SOOTHSAYERS, ...OMENS_2, ...SOOTHSAYERS_2, ...OMENS_3, ...SOOTHSAYERS_3 }).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Hands empty and open, no weapon.`, CARNIVAL_3D) })),
   { id: "omen-pistols-props", prompt: prop(OMEN_PISTOLS, CARNIVAL_3D), width: 2048, height: 832 },
   { id: "soothsayer-orb-props", prompt: prop(SOOTHSAYER_PROPS, CARNIVAL_3D), width: 2048, height: 832 },
 ];
 
-const ETHERBORN_JOBS = Object.entries({ ...ETHERBORNS, ...ETHERBORNS_2 }).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(subject, NEXUS_NOBLE_3D) }));
+const ETHERBORN_JOBS = Object.entries({ ...ETHERBORNS, ...ETHERBORNS_2, ...ETHERBORNS_3 }).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(subject, NEXUS_NOBLE_3D) }));
 
 /** Each group of jobs has its own folder, so one group's run doesn't mix into another's manifest. */
 const GROUPS = [

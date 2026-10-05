@@ -59,3 +59,20 @@
     should read as galaxies" isn't there.
   - Next: bare arms, shoulders and collarbones, the robes plain black silk.
 - **Props:** the flintlocks are good: dark wood, brass, striped grips, skull studs.
+
+## Round two, read (Claude)
+- **Omen: the trap is escaped.** The oxblood coat, the black pentagram and the top hat make a figure unlike anything
+  else on the roster.
+  - *Grin*: a wide gold-toothed leer, the most character.
+  - *Crow*: a black feather mantle and feathers in the hat band, the strongest silhouette.
+  - *Greasepaint*: a white face, but the grin got lost.
+  - Still weak: the painted eyes on the blindfold, only faint white marks.
+  - Next: crow and grin together, the painted eyes said once more, plainly.
+- **Soothsayer: all three work.** The ancient crone with wild white hair, the coin veil and the red and mustard
+  striped tent canvas is unmistakable. *Eyes* (dozens of painted eyes staring off the robe) is the most distinctive and
+  fits a seer. *Cards* has a cloak of tarot cards sewn on like scales, striking from the back.
+  - Next: eyes on the robe, the card cloak on her back.
+- **Etherborn: the galaxies are on her skin now** (arms, shoulders, neck and head), but the gown went plain black and
+  she lost round one's nobility. *Bare-collar* is the best: the fan collar, starry skin, a starfield panel down the
+  front. *Constellations*' gold lines barely show.
+  - Next: the collar and the bare starry skin, with round one's rich noble gown back.
