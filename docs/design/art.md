@@ -132,3 +132,13 @@ All 43 abilities without art got icons in the recipe of the four the user liked 
 
   The Punisher's are installed: card 0.75, bust 0.6, and the icon cut from that bust. Seen in a battle (`?fight`):
   the icon in the turn order and the card on his standee. The unit card wasn't opened in the shot.
+- **The Bog Giant test (2026-10-05):** a body with nothing human about it. Its identity is a small pale face low in
+  black bark, not a silhouette, and that's what repainting loses first.
+  - **The bust** holds at 0.3–0.4 (the pale face and chest kept, now painted). From 0.5 up, gold filigree grows over
+    the bark and the face changes.
+  - **The card** drifts even at 0.3: the bark turns into swirling carved roots and the face reads as a skull-mask.
+    The silhouette, the arm, the reeds and the pale chest hold. "Bone-white" made a plain skull.
+  - **Likely cause:** the painted line's "ornate". The concept prompts had it too, but in a 3D render it stays in
+    the materials, while in a painting it becomes ornament. That word is part of the user's gothic recipe, so it's
+    the user's call.
+  - **Lesson:** strengths are per unit. A T-pose needs 0.75+ to re-pose; a body already standing needs 0.3–0.4.
