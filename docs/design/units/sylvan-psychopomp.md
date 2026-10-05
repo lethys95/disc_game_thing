@@ -38,3 +38,15 @@ put the tips of her fingers in a jar of blood.) Hair wise: let's have cornrow br
 - **Claude's translation for the prompt:** the features as stated, without naming the games (a named reference pulls
   toward an average of that game; the user's features are specific). Golgari and Selesnya become the palette and feel:
   white, ivory and deep green, with rot and bone. The ghosts and the smoke are gone (effects later).
+- **Round two** (`PSYCHOPOMPS_2`, materials `SHAMANESS_3D`): two readings, *shamaness* (the direction as stated) and
+  *shamaness-veiled* (plus torn white strips from the sleeves and a necklace of small skulls), seeds 1000–1002.
+- **Round two, read:** much closer, and no longer boring: a thin tattooed shamaness in white and ivory with moss, roots
+  and a dark sash, under a wolf-head hood with the upper teeth over her brow. The tattoos (green and black, arms, neck,
+  face) and the whites came through in all six; the veiled strips read ghostly in silhouette. Misses: the hood is a
+  whole wolf head, its own yellow eyes still in, nothing carved out; her eyes are brown and stern with the mouth closed,
+  so the absent, hypnotised look didn't come through (the third round in a row where the eyes ignore the prompt); the
+  braids are long loose braids, not cornrows; the gloves are ivory but no fingertip is scarlet (no red pixels in any
+  sheet); her skin is mid-tan rather than dark. Seed 1000 of both readings draws the side view twice. Guesses for a
+  round three, if wanted: describe the hood's eye sockets as "empty holes" with nothing in them; say "her irises are
+  pale ice blue" as a plain colour fact; describe cornrows as rows "flat against the scalp"; name the red as "scarlet
+  red fingertips on the white gloves" up front, not at the end of the prompt. Waiting on the user.
