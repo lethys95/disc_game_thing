@@ -422,6 +422,23 @@ const ZEALOTS_3: Readonly<Record<string, { readonly subject: string }>> = {
   },
 };
 
+/**
+ * Round four (Claude): round three's *wound* body works (wrapped in red-stained bandages, spiked dark plates, no knight);
+ * "tabard" summons a crusader's cross, so none. Its best mask (scrap-1002) put the hand small on the forehead, but "a doll's
+ * face" gave it a nose and mouth: "blank as an egg" instead, and the hand as a small burning print.
+ */
+const WOUND_BODY =
+  "Torn, spiked black armor on the shoulders, forearms and shins only, the rest of him wrapped tight in dirty white cloth and red-stained bandages, nails and hooks hanging from leather straps, a ragged blood-red sash at the waist; no tabard, no cross.";
+
+const ZEALOTS_4: Readonly<Record<string, { readonly subject: string }>> = {
+  "zealot-egg": {
+    subject: `A religious zealot, gaunt and tall. His whole head is hidden under a mask of smooth white porcelain, blank as an egg: no nose, no mouth, no features at all, no skin showing. Two large round eye holes, black and empty. On the forehead only, above the eye holes, a small burning red handprint with spread fingers, no bigger than a coin, small flames licking from it. ${WOUND_BODY} ${NOT_A_KNIGHT}`,
+  },
+  "zealot-brand": {
+    subject: `A religious zealot, gaunt and tall. A smooth, featureless oval mask of white porcelain covers his whole head, as plain as an egg except for two large round black eye holes. Branded small into the forehead, above the eyes, a red outstretched hand with spread fingers, smouldering. The lower half of the mask is perfectly plain. ${WOUND_BODY} ${NOT_A_KNIGHT}`,
+  },
+};
+
 const ZEALOT_SWORD =
   "a huge serrated two-handed greatsword of blackened steel, its edge cut into jagged teeth, the grip bound in red cloth; beside it the same sword seen from its flat side.";
 
@@ -429,6 +446,7 @@ const ZEALOT_JOBS = [
   ...Object.entries(ZEALOTS).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, JILLIATH_3D) })),
   ...Object.entries(ZEALOTS_2).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, JILLIATH_3D) })),
   ...Object.entries(ZEALOTS_3).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, JILLIATH_3D) })),
+  ...Object.entries(ZEALOTS_4).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, JILLIATH_3D) })),
   {
     id: "zealot-sword-props",
     prompt: `A 3D render of a game prop model, like a textured asset shown in a modelling program: ${ZEALOT_SWORD} ${JILLIATH_3D} Each view whole and separate, laid flat. Flat, even, shadowless lighting from all sides. A plain flat light grey background, no ground, no hands, no text.`,

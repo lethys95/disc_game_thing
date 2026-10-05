@@ -26,3 +26,10 @@
 - **Round three:** the mask's layout spelled out (a blank porcelain doll face; two large round black holes at eye level;
   a small burning hand high on the forehead only; blank below), and a body joining the scrap spiked armour and the
   wrappings. Two readings, three seeds, turnarounds only.
+- **Round three, read:** *scrap-1002* is the nearest mask yet (a pale porcelain face, two black eye holes, the hand
+  finally small on the forehead), but "a doll's face" gave it a faint nose and mouth, and it added red tears. The
+  *wound* body works: bandage-wrapped, spiked dark plates on the shoulders and limbs, a ragged red sash; no knight, and
+  the spiked armour is back: the best Zealot body so far. *Scrap* put a crusader's red cross on the tabard again
+  despite "no cross": the word "tabard" seems to summon it.
+- **Round four:** the wound body, no tabard; the mask "blank as an egg", the hand a small burning print on the forehead
+  (two wordings, three seeds).
