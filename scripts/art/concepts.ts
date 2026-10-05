@@ -352,11 +352,62 @@ const DRAWN_JOBS = [
   })),
 ];
 
+/**
+ * The Zealot in the 3D concept strategy (the user, 2026-10-05: the old ink portrait doesn't fit; "try out what works and
+ * what doesn't, but just keep it within the same 3D concept art strategy we've done with custodian, bog giant, etc.").
+ * The user's look (`faction-stuff/jilliath/melee.md`) held fixed in every reading; the readings vary the body and
+ * the armour (Claude's). The user once rejected "a depressed tired old man": zealots are "batshit insane", which the
+ * stance view carries. No sword in the turnaround (weapons are separate models); the stance view holds it, and it gets a
+ * prop sheet of its own.
+ */
+const ZEALOT_MASK =
+  "His whole head is covered by a smooth, completely featureless mask, no skin showing anywhere: no mouth, no nose, no expression, only two wide, staring round eye holes with pure black behind them. " +
+  "Painted crisply on the forehead of the mask, a burning outstretched hand with spread fingers.";
+
+const JILLIATH_3D =
+  "Dark gothic fantasy, grim, weathered and worn physically based materials: bone-white lacquer and porcelain, blackened scorched steel, frayed white and blood-red cloth, old leather. " +
+  "Pale colors with a strong contrast of black, white and blood red. Ominous, strange, inhuman: wrong, grotesque, deranged and twisted. Serious, adult, not cartoonish.";
+
+const ZEALOTS: Readonly<Record<string, { readonly subject: string; readonly stance: string }>> = {
+  "zealot-flagellant": {
+    subject: `A religious zealot, a lean, wiry man. ${ZEALOT_MASK} Spiked, tattered armor of blackened plates over bare, scarred arms wound with red prayer cloth and barbed cord; a torn white tabard hanging in strips; bare feet.`,
+    stance: "lurching forward in a frenzy, shoulders hunched, head tilted at a wrong angle",
+  },
+  "zealot-pyre": {
+    subject: `A religious zealot, a tall gaunt man. ${ZEALOT_MASK} The painted hand smoulders with real embers. Spiked, tattered armor scorched black at the edges, singed white robes in rags, chains with small hooks hanging from the belt.`,
+    stance: "arms flung wide, the whole body straining forward as if about to charge",
+  },
+  "zealot-penitent": {
+    subject: `A religious zealot, a broad, heavy man. ${ZEALOT_MASK} Spiked armor on one side only, the other side bare and scarred; a long tattered blood-red tabard; spikes driven through the pauldrons; a crack running down the mask past one eye hole.`,
+    stance: "crouched low, twitching, head jerked sideways",
+  },
+};
+
+const ZEALOT_SWORD =
+  "a huge serrated two-handed greatsword of blackened steel, its edge cut into jagged teeth, the grip bound in red cloth; beside it the same sword seen from its flat side.";
+
+const ZEALOT_JOBS = [
+  ...Object.entries(ZEALOTS).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, JILLIATH_3D) })),
+  ...Object.entries(ZEALOTS).map(([id, { subject, stance }]) => ({
+    id: `${id}-stance`,
+    prompt:
+      `A 3D render of a game character model in a three-quarter front view, ${stance}, holding a huge serrated two-handed greatsword, the whole figure visible from head to feet with a margin around it, like a sculpted and textured asset shown in a modelling program. ` +
+      `${subject} ${JILLIATH_3D} Flat, even, shadowless lighting from all sides, like a texture reference. A plain flat light grey background, no ground, no text.`,
+  })),
+  {
+    id: "zealot-sword-props",
+    prompt: `A 3D render of a game prop model, like a textured asset shown in a modelling program: ${ZEALOT_SWORD} ${JILLIATH_3D} Each view whole and separate, laid flat. Flat, even, shadowless lighting from all sides. A plain flat light grey background, no ground, no hands, no text.`,
+    width: 2048,
+    height: 832,
+  },
+];
+
 /** Each group of jobs has its own folder, so one group's run doesn't mix into another's manifest. */
 const GROUPS = [
   { dir: "art/candidates/units/grove", jobs: GROVE_JOBS },
   { dir: "art/candidates/units/neutrals/gnolls", jobs: GNOLL_JOBS },
   { dir: "art/candidates/units/neutrals/drawn", jobs: DRAWN_JOBS },
+  { dir: "art/candidates/units/jilliath/zealot", jobs: ZEALOT_JOBS },
 ];
 
 const args = process.argv.slice(2);
