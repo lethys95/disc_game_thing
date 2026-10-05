@@ -93,3 +93,8 @@ the same thing: redistributing the raw files as a sound library. Sonniss and Ova
   them but wasn't compared.
 - **Keep a license manifest from day one:** source, pack, original filename, license URL and date downloaded, per
   shipped file. That is the only defense if a claim ever arrives, and it makes credits automatic.
+
+## Stable Audio 3 on notice (the user, 2026-10-05)
+After the tarot card sounds: "This sfx model here isn't very good by the way… this particular skill and model might be
+something we'll remove from the equation entirely." Until the user decides, its takes stay provisional
+(`assets/audio/SOURCES.md`); ElevenLabs is the decided route for SFX (above).
