@@ -20,3 +20,10 @@
 - Prompts: `scripts/art/tarot.ts`; images: `art/candidates/ui/tarot/` (every round kept).
 
 ## Log
+- **Round one, the colour probe** (Fool, Death, Lovers, Moon × grey, engraving, oil, gilded × seeds 1000/1001; still
+  with unit motifs): **grey** is atmospheric but flat and monotone; **engraving** is lovely and readable but bright and
+  storybook, a classic deck reprinted, and it slipped Roman numerals in despite "no text"; **oil** (browns, umber,
+  old gold, a carved gilt frame) is mysterious, gothic and warm: Claude's lead, and the answer to the user's browns
+  question; **gilded** (an illuminated manuscript, deep reds and gold leaf) is striking and strange but less dark, worth
+  carrying as a second look (it also made a numeral). The two seeds of each card came out nearly identical: Krea-2
+  Turbo varies by prompt, not by seed. Round two: all 22 in oil and gilded, one seed each.
