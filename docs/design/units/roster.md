@@ -22,7 +22,7 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 | Bog Giant | Grove 4 | user (a swamp hulk, huge right arm) | picked: `bog-giant-hulk-turnaround-1002` | — |
 | Mulch Gorger | Grove 4 | user (a skull and plant matter) | picked: `mulch-gorger-heap-turnaround-1000` | — |
 | Psychopomp | Grove 3 | user (canon; rounds two to four, 2026-10-05) | picked: `psychopomp-short-turnaround-1002` (user, round six; backups short 1001, style-first 1000: the ears) | — |
-| Punisher | Jilliath 3 | the original executioner's hood, in iron grey (`punisher-concepts.md`) | picked: `punisher-iron-turnaround-1000` (user, round two); flail not picked | old portrait, to replace |
+| Punisher | Jilliath 3 | the original executioner's hood, in iron grey (`punisher-concepts.md`) | picked: `punisher-iron-turnaround-1000` (user, round two); flail `punisher-flail-flanged-props-1001` | old portrait, to replace |
 | Zealot | Jilliath 2 | user (canon mask, palette; wild eyes, 2026-10-05) | picked: `zealot-pyre-turnaround-1000` (user, round one of seven) | old ink portrait, to replace |
 | Custodian | Nexus 1 | user ("a golem") + Claude's stone and brass | picked: `custodian-3d-1002` (3D), `custodian-1000` (portrait) | ✓ |
 | Bonecracker | gnolls 1 | Claude (accepted) | picked: 1002 | — |

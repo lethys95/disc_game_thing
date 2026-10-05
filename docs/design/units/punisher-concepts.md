@@ -64,3 +64,6 @@ is terrifying… Dark Souls also have hoods like these… I'd totally go with ir
 byte-identical to the manifest; the other readings were removed from code (manifest and git keep them). Split for
 Tripo: `shots/tripo/punisher-{front,side,back}.png`. **The flail is not picked:** the heads keep coming out as spiked
 balls, not the canon's flanged heads (`PUNISHER_FLAIL`, still in code).
+- **Flail (the user, 2026-10-05):** "we can do punisher-flail-flanged-props-1001 on the last one, but I'm pretty sure
+  we'd need to do some magic because of the weird stuff with flails and physics anyway. Might take some creativity."
+  **Picked: `punisher-flail-flanged-props-1001`**; the chains in 3D (physics, or a rigid pose) are an open problem.

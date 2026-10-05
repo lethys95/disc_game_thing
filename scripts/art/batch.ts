@@ -15,6 +15,8 @@ export interface Candidate {
   readonly source?: string;
   readonly mask?: string;
   readonly denoise?: number;
+  /** A reference-guided image: the images it was given. */
+  readonly references?: readonly string[];
 }
 
 /** Adds this run's images to the folder's manifest (replacing any it regenerated). */

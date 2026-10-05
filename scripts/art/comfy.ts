@@ -36,6 +36,27 @@ export interface InpaintJob {
   readonly denoise: number;
 }
 
+/** Repaints all of `source` (a PNG path, already at the output size) toward the prompt; lower denoise keeps more. */
+export interface Img2ImgJob {
+  readonly prompt: string;
+  readonly seed: number;
+  readonly source: string;
+  readonly denoise: number;
+}
+
+/**
+ * A new image guided by one to three reference images (PNG paths) as well as the prompt: ComfyUI's "Image Style
+ * Reference (Krea-2 Turbo)" blueprint, without its style LoRA unless `lora` names one.
+ */
+export interface ReferenceJob {
+  readonly prompt: string;
+  readonly seed: number;
+  readonly references: readonly string[];
+  readonly width: number;
+  readonly height: number;
+  readonly lora?: string;
+}
+
 type Input = string | number | boolean | readonly [string, number];
 type Graph = Record<string, { class_type: string; inputs: Record<string, Input> }>;
 
@@ -94,6 +115,47 @@ function inpaintGraph(job: InpaintJob, source: string, mask: string, prefix: str
   };
 }
 
+function img2imgGraph(job: Img2ImgJob, source: string, prefix: string): Graph {
+  return {
+    ...loaders(job.prompt),
+    negative: { class_type: "ConditioningZeroOut", inputs: { conditioning: ["positive", 0] } },
+    image: { class_type: "LoadImage", inputs: { image: source } },
+    encode: { class_type: "VAEEncode", inputs: { pixels: ["image", 0], vae: ["vae", 0] } },
+    sample: {
+      class_type: "KSampler",
+      inputs: {
+        model: ["unet", 0], positive: ["positive", 0], negative: ["negative", 0], latent_image: ["encode", 0],
+        seed: job.seed, steps: KREA2_TURBO.steps, cfg: KREA2_TURBO.cfg, sampler_name: "euler", scheduler: "simple", denoise: job.denoise,
+      },
+    },
+    decode: { class_type: "VAEDecode", inputs: { samples: ["sample", 0], vae: ["vae", 0] } },
+    save: { class_type: "SaveImage", inputs: { images: ["decode", 0], filename_prefix: prefix } },
+  };
+}
+
+function referenceGraph(job: ReferenceJob, references: readonly string[], prefix: string): Graph {
+  const images: Graph = Object.fromEntries(references.map((name, i) => [`ref${i + 1}`, { class_type: "LoadImage", inputs: { image: name } }]));
+  const slots = Object.fromEntries(references.map((_name, i): [string, Input] => [`image${i + 1}`, [`ref${i + 1}`, 0]]));
+  const model: Input = job.lora ? ["lora", 0] : ["unet", 0];
+  return {
+    ...loaders(job.prompt),
+    ...images,
+    ...(job.lora ? { lora: { class_type: "LoraLoaderModelOnly", inputs: { model: ["unet", 0], lora_name: job.lora, strength_model: 1 } } } : {}),
+    edit: { class_type: "TextEncodeQwenImageEditPlus", inputs: { clip: ["clip", 0], vae: ["vae", 0], prompt: job.prompt, ...slots } },
+    method: { class_type: "FluxKontextMultiReferenceLatentMethod", inputs: { conditioning: ["edit", 0], reference_latents_method: "index_timestep_zero" } },
+    negative: { class_type: "ConditioningZeroOut", inputs: { conditioning: ["method", 0] } },
+    shift: { class_type: "ModelSamplingFlux", inputs: { model, max_shift: 1.15, base_shift: 0.5, width: job.width, height: job.height } },
+    guider: { class_type: "CFGGuider", inputs: { model: ["shift", 0], positive: ["method", 0], negative: ["negative", 0], cfg: KREA2_TURBO.cfg } },
+    noise: { class_type: "RandomNoise", inputs: { noise_seed: job.seed } },
+    sampler: { class_type: "KSamplerSelect", inputs: { sampler_name: "euler" } },
+    sigmas: { class_type: "BasicScheduler", inputs: { model: ["shift", 0], scheduler: "simple", steps: KREA2_TURBO.steps, denoise: 1 } },
+    latent: { class_type: "EmptyLatentImage", inputs: { width: job.width, height: job.height, batch_size: 1 } },
+    sample: { class_type: "SamplerCustomAdvanced", inputs: { noise: ["noise", 0], guider: ["guider", 0], sampler: ["sampler", 0], sigmas: ["sigmas", 0], latent_image: ["latent", 0] } },
+    decode: { class_type: "VAEDecode", inputs: { samples: ["sample", 0], vae: ["vae", 0] } },
+    save: { class_type: "SaveImage", inputs: { images: ["decode", 0], filename_prefix: prefix } },
+  };
+}
+
 interface HistoryEntry {
   readonly status?: { readonly completed?: boolean; readonly status_str?: string };
   readonly outputs?: Record<string, { readonly images?: readonly { filename: string; subfolder: string; type: string }[] }>;
@@ -122,6 +184,17 @@ export async function generate(job: Job, prefix: string): Promise<Uint8Array> {
 /** Runs one inpainting and returns the PNG bytes. */
 export async function inpaint(job: InpaintJob, prefix: string): Promise<Uint8Array> {
   return run(inpaintGraph(job, await upload(job.source), await upload(job.mask), prefix));
+}
+
+/** Runs one image-to-image and returns the PNG bytes. */
+export async function img2img(job: Img2ImgJob, prefix: string): Promise<Uint8Array> {
+  return run(img2imgGraph(job, await upload(job.source), prefix));
+}
+
+/** Runs one reference-guided generation and returns the PNG bytes. */
+export async function fromReferences(job: ReferenceJob, prefix: string): Promise<Uint8Array> {
+  const names = await Promise.all(job.references.map(upload));
+  return run(referenceGraph(job, names, prefix));
 }
 
 async function run(graph: Graph): Promise<Uint8Array> {
