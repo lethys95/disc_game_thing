@@ -477,12 +477,36 @@ const SHAMANESS_4 = (hoodEyes: string) =>
 const SHAMANESS_4_3D =
   "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: grey wolf fur, worn leather wraps, ivory cloth, tarnished bronze bangles, moss and roots. Serious, adult, not cartoonish.";
 
+// Picked by the user as the likely final: seed 1001.
+const PITS = SHAMANESS_4("and where the wolf's eyes were, two dark gouged-out pits, black and empty");
+
 const PSYCHOPOMPS_4: Readonly<Record<string, { readonly subject: string }>> = {
-  "psychopomp-pits": { subject: SHAMANESS_4("and where the wolf's eyes were, two dark gouged-out pits, black and empty") },
+  "psychopomp-pits": { subject: PITS },
   "psychopomp-possessed-wolf": { subject: SHAMANESS_4("and the wolf's eyes wide, round and solid glowing blue from edge to edge, no pupils, as if the wolf is possessed") },
 };
 
+/**
+ * Round five (the user, 2026-10-05: tempted by `psychopomp-pits-turnaround-1001`, "a last shot at getting closer to the
+ * gothic/fantasy vibe… afraid of this character not fitting in with the other units in the faction"). The pick's
+ * prompt held fixed and one change added, so seed 1001 of each reading shows that change on the pick: the user's words
+ * ("pretty, but beauty isn't the point", "not anime"), Claude's (*grim*: grime, wear, matted fur and the Grove's wet
+ * moss and roots, beside its dark, filthy bark creatures), and both.
+ */
+const PITS_HANDS = `${PITS} Her hands are open and empty.`;
+const PRETTY = "Pretty, but beauty is not the point. Not anime.";
+const GRIM =
+  "She is weathered and grimy from living in the wild: dirt ground into her skin and her gloves, her ivory cloth stained grey-brown with mud and moss, her fur matted, wet and clumped, mud caked on her boots, wet moss and small roots growing on her mantle and her belt.";
+const GRIM_3D =
+  "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: matted wet wolf fur, stained cloth, worn leather wraps, tarnished bronze bangles, wet moss and roots. Serious, adult, not cartoonish.";
+
+const PSYCHOPOMPS_5: Readonly<Record<string, { readonly prompt: string }>> = {
+  "psychopomp-pits-pretty": { prompt: turnaround(`${PITS_HANDS} ${PRETTY}`, SHAMANESS_4_3D) },
+  "psychopomp-pits-grim": { prompt: turnaround(`${PITS_HANDS} ${GRIM}`, GRIM_3D) },
+  "psychopomp-pits-grim-pretty": { prompt: turnaround(`${PITS_HANDS} ${GRIM} ${PRETTY}`, GRIM_3D) },
+};
+
 const PSYCHOPOMP_JOBS = [
+  ...Object.entries(PSYCHOPOMPS_5).map(([id, { prompt }]) => ({ id: `${id}-turnaround`, prompt })),
   ...Object.entries(PSYCHOPOMPS_4).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are open and empty.`, SHAMANESS_4_3D) })),
   ...Object.entries(PSYCHOPOMPS_3).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are open and empty.`, SHAMANESS_3_3D) })),
   ...Object.entries(PSYCHOPOMPS_2).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are open and empty.`, SHAMANESS_3D) })),

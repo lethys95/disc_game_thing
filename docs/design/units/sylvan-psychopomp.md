@@ -113,3 +113,15 @@ to me."
   - Seed 1000 of both readings draws a stray forearm floating by the side view.
   - Guesses for a round five: give the hood's eyes a sentence of their own near the start; put the blood-red fingers
     in the first sentence about her.
+
+## Round five: a last shot at the vibe (2026-10-05)
+The user: "I think I'm tempted to call Pits: psychopomp-pits-turnaround-1001 the final one here, however, I think I want
+to see a last shot at getting closer to the gothic/fantasy vibe we're trying to reach. I'm just afraid of this
+character here not fitting in with the other units in the faction. Maybe adding 'pretty, but beauty isn't the point'
+back? Maybe something like 'not anime'? Idk."
+- Claude's read of the gap, beside the Grove's picks and the Matriarch: those are dark, filthy, weathered and dense
+  with detail; she is clean, smooth and tidy (neat fur tufts, spotless skin), closer to a stylised game character.
+- **Round five** (`PSYCHOPOMPS_5`): the pick's prompt held fixed plus one change, so each reading's seed 1001 shows the
+  change on the pick: *pits-pretty* (the user's words: "Pretty, but beauty is not the point. Not anime."),
+  *pits-grim* (Claude's: grime, mud-stained cloth, matted wet fur, the Grove's wet moss and roots growing on her, the
+  same gothic recipe with those materials), *pits-grim-pretty* (both).
