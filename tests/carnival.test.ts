@@ -1,0 +1,82 @@
+import { chooseTarot, effectiveStatsOf } from "#rules/battle/engine";
+import type { TarotHand } from "#rules/battle/tarot";
+import type { Battle } from "#rules/battle/types";
+import { UNITS } from "#rules/units/index";
+import { act, affectedBy, p, start, unit, until } from "#tests/helpers";
+import { describe, expect, test } from "vitest";
+
+/** The user's designs of 2026-10-05: the Grove's water primary fire, and the carnival. Numbers provisional (#67). */
+const holding = (battle: Battle, hand: Omit<TarotHand, "chosen" | "state" | "progress">): Battle => ({ ...battle, tarot: [{ ...hand, chosen: 0, state: "open", progress: 0 }] });
+
+describe("Water: the Grove's healing support's primary fire", () => {
+  test("on an enemy: its damage as water, and it's wet", () => {
+    const battle = until(start([p("grove_support_1", 2, 1)], [p("congregant", 0, 1)]), "0.2.1");
+    const after = act(battle, "water", "1.0.1").battle;
+    expect(unit(after, "1.0.1").hp).toBe(90 - (UNITS["grove_support_1"]?.stats.damage ?? 0));
+    expect(unit(after, "1.0.1").effects.some((e) => e.def === "wet")).toBe(true);
+  });
+
+  test("on an ally: a much bigger heal, and no wet unless it was burning", () => {
+    const damage = UNITS["grove_support_1"]?.stats.damage ?? 0;
+    const battle = until(start([p("grove_support_1", 2, 1), { ...p("sproutling", 0, 1), hp: 30 }], [p("congregant", 0, 1)]), "0.2.1");
+    const healed = act(battle, "water", "0.0.1").battle;
+    expect(unit(healed, "0.0.1").hp - unit(battle, "0.0.1").hp).toBe(damage * 3);
+    expect(unit(healed, "0.0.1").effects.some((e) => e.def === "wet")).toBe(false);
+    const burning = until(start([p("grove_support_1", 2, 1), { ...p("sproutling", 0, 1, [{ def: "burning", amount: 8, stacks: 3 }]), hp: 30 }], [p("congregant", 0, 1)]), "0.2.1");
+    const doused = act(burning, "water", "0.0.1").battle;
+    expect(unit(doused, "0.0.1").effects.some((e) => e.def === "burning")).toBe(false);
+    expect(unit(doused, "0.0.1").effects.some((e) => e.def === "wet")).toBe(true);
+  });
+});
+
+describe("the carnival", () => {
+  test("Soothsayer: Tarot 5 as the fight begins", () => {
+    const battle = start([p("soothsayer", 1, 1)], [p("congregant", 0, 1)]);
+    expect(battle.tarot[0]?.cards).toHaveLength(5);
+  });
+
+  test("Foretell: the hit lands at the start of her next turn, not now", () => {
+    let battle = until(start([p("soothsayer", 1, 1)], [p("congregant", 0, 1)]), "0.1.1");
+    battle = act(battle, "foretell", "1.0.1").battle;
+    expect(unit(battle, "1.0.1").hp).toBe(90);
+    expect(unit(battle, "1.0.1").effects.some((e) => e.def === "foretold")).toBe(true);
+    battle = until(battle, "0.1.1");
+    expect(unit(battle, "1.0.1").hp).toBe(90 - (UNITS["soothsayer"]?.stats.damage ?? 0));
+  });
+
+  test("Curse: the target deals 35% less for its next three turns, then recovers", () => {
+    let battle = until(start([p("soothsayer", 1, 1)], [p("congregant", 0, 1)]), "0.1.1");
+    battle = act(battle, "curse", "1.0.1").battle;
+    expect(effectiveStatsOf(battle)["1.0.1"]?.damage).toBe(20 - 7);
+    for (let turn = 0; turn < 3; turn++) {
+      battle = until(battle, "1.0.1");
+      expect(effectiveStatsOf(battle)["1.0.1"]?.damage).toBe(13);
+      battle = act(battle, "defend").battle;
+    }
+    battle = until(battle, "1.0.1");
+    expect(effectiveStatsOf(battle)["1.0.1"]?.damage).toBe(20);
+  });
+
+  test("Spit fire: three front tiles across and the middle one behind the centre; from a side, the far front tile is spared", () => {
+    const enemies = [p("congregant", 0, 0), p("congregant", 0, 1), p("congregant", 0, 2), p("congregant", 1, 0), p("congregant", 1, 1), p("congregant", 1, 2)];
+    const centre = until(start([p("fire_eater", 0, 1)], enemies), "0.0.1");
+    expect([...(affectedBy(centre, "spit_fire", "1.0.1") ?? [])].sort()).toEqual(["1.0.0", "1.0.1", "1.0.2", "1.1.1"]);
+    const side = until(start([p("fire_eater", 0, 0)], enemies), "0.0.0");
+    expect([...(affectedBy(side, "spit_fire", "1.0.0") ?? [])].sort()).toEqual(["1.0.0", "1.0.1", "1.1.0"]);
+    const after = act(centre, "spit_fire", "1.0.1").battle;
+    expect(unit(after, "1.1.1").effects.some((e) => e.def === "burning")).toBe(true);
+  });
+
+  test("Omen: a card his action fulfils pays twice, and each kill draws three more cards", () => {
+    let battle = until(start([p("omen", 1, 1), p("congregant", 0, 1)], [{ ...p("congregant", 0, 1), hp: 1 }, p("congregant", 0, 2)]), "0.1.1");
+    battle = holding(battle, { side: 0, unitId: "0.0.1", cards: [{ task: { kind: "killBefore", round: 2 }, reward: { kind: "smite", damage: 15 } }] });
+    const { battle: after, events } = act(battle, "shoot", "1.0.1");
+    expect(events).toContainEqual({ type: "tarot", side: 0, hand: 0, state: "fulfilled", payouts: 2 });
+    expect(unit(after, "1.0.2").hp).toBe(90 - 30);
+    // One kill: a new hand of three for his side, waiting for a pick.
+    expect(after.tarot).toHaveLength(2);
+    expect(after.tarot[1]).toMatchObject({ side: 0, unitId: "0.1.1", chosen: null });
+    expect(after.tarot[1]?.cards).toHaveLength(3);
+    expect(chooseTarot(after, 1, 0).battle.tarot[1]?.chosen).toBe(0);
+  });
+});

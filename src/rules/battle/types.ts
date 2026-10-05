@@ -116,8 +116,10 @@ export interface Slot {
 
 export interface Battle {
   units: Record<string, BattleUnit>;
-  /** Tarot hands drawn as the fight began (`battle/tarot.ts`); each side sees only its own. */
+  /** Tarot hands drawn as the fight began, or later (`battle/tarot.ts`); each side sees only its own. */
   tarot: TarotHand[];
+  /** What tarot hands are dealt from: the same seed deals the same hands. */
+  readonly seed: number;
   round: number;
   pass: number;
   actionsThisRound: Record<string, number>;
@@ -178,8 +180,10 @@ export type BattleEvent =
   | { type: "death"; unitId: string }
   | { type: "deathPrevented"; unitId: string }
   | { type: "crit"; unitId: string; target: string }
-  | { type: "tarotChosen"; side: Side; unitId: string }
-  | { type: "tarot"; side: Side; unitId: string; card: number; state: "fulfilled" | "failed" }
+  | { type: "tarotDrawn"; side: Side; hand: number }
+  | { type: "tarotChosen"; side: Side; hand: number }
+  | { type: "tarot"; side: Side; hand: number; state: "failed" }
+  | { type: "tarot"; side: Side; hand: number; state: "fulfilled"; payouts: number }
   | { type: "evaded"; unitId: string }
   | { type: "effect"; unitId: string; effect: string; source: string | null }
   | { type: "effectEnded"; unitId: string; effect: string; source: string | null }
@@ -280,6 +284,10 @@ export interface Hooks {
   aiValue?(ctx: Ctx, self: TraitSelf): number;
   /** As the fight begins: how many tarot cards this trait draws for its unit's side (Tarot x). */
   tarotCards?(ctx: Ctx, self: TraitSelf): number;
+  /** How many times a tarot card this unit's action fulfils pays out (Omen: twice). The most of its traits counts. */
+  tarotPayouts?(ctx: Ctx, self: TraitSelf): number;
+  /** For each enemy that dies during this unit's action, its side draws a hand this big (Omen: 3). */
+  drawsOnKill?(ctx: Ctx, self: TraitSelf): number;
 }
 
 /** What happened to a unit's remains: it died (leaving a corpse), or its corpse was used or destroyed. */

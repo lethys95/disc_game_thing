@@ -97,11 +97,11 @@ function evaluate(battle: Battle, side: Side): number {
 /** Picks a card from every undecided tarot hand (of `side`, or of both): the one worth most by `cardValue`. */
 export function chooseTarotCards(start: Battle, side?: Side): Battle {
   let battle = start;
-  for (const hand of start.tarot) {
-    if (hand.chosen !== null || (side !== undefined && hand.side !== side)) continue;
+  start.tarot.forEach((hand, index) => {
+    if (hand.chosen !== null || (side !== undefined && hand.side !== side)) return;
     const best = hand.cards.map((card, i) => ({ i, value: cardValue(card) })).sort((a, b) => b.value - a.value || a.i - b.i)[0];
-    if (best) battle = chooseTarot(battle, hand.unitId, best.i).battle;
-  }
+    if (best) battle = chooseTarot(battle, index, best.i).battle;
+  });
   return battle;
 }
 
@@ -111,7 +111,8 @@ export function autoplay(start: Battle, limit = 5000): Battle {
   for (let i = 0; i < limit && !battle.outcome; i++) {
     const action = chooseAction(battle);
     if (!action) break;
-    battle = applyAction(battle, action).battle;
+    // Hands drawn mid-fight (Omen) are picked at once.
+    battle = chooseTarotCards(applyAction(battle, action).battle);
   }
   return battle;
 }

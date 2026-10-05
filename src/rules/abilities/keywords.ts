@@ -107,17 +107,20 @@ export const keywords: Readonly<Record<string, Behavior>> = {
     defaults: { rounds: 2 },
     describe: (p) => `Its hits leave the target wet for ${p["rounds"]} rounds (it stops burning; lightning hits it harder).`,
     hooks: {
-      afterHit: (ctx, self, targetId) => {
-        const target = ctx.unit(targetId);
-        if (!target.alive) return;
-        for (const fire of target.effects.filter((e) => e.def === "burning")) ctx.removeEffect(targetId, fire);
-        const wet = target.effects.find((e) => e.def === "wet");
-        if (wet) wet.stacks = Math.max(wet.stacks, self.params["rounds"] ?? 2);
-        else ctx.addEffect(targetId, { def: "wet", stacks: self.params["rounds"] ?? 2, source: self.unitId });
-      },
+      afterHit: (ctx, self, targetId) => wetten(ctx, targetId, self.params["rounds"] ?? 2, self.unitId),
     },
   },
 };
+
+/** A unit gets wet for `rounds` (or longer, if it already was), and stops burning. */
+export function wetten(ctx: Ctx, targetId: string, rounds: number, source: string): void {
+  const target = ctx.unit(targetId);
+  if (!target.alive) return;
+  for (const fire of target.effects.filter((e) => e.def === "burning")) ctx.removeEffect(targetId, fire);
+  const wet = target.effects.find((e) => e.def === "wet");
+  if (wet) wet.stacks = Math.max(wet.stacks, rounds);
+  else ctx.addEffect(targetId, { def: "wet", stacks: rounds, source });
+}
 
 /** "3rd " for 3, nothing for 1: "every 3rd hit", "every hit". */
 function ordinal(n: number): string {

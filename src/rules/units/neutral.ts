@@ -88,4 +88,21 @@ export const NEUTRAL_UNITS: Readonly<Record<string, UnitDef>> = {
     stats: { maxHp: 240, shield: 0, damage: 34, armor: 3, initiative: 45 },
     abilities: [{ id: "dust_veil" }, ...kit("flit", "open_the_eyes", "defend", "wait")],
   },
+  // The carnival: the user's nomadic swindler tribe (2026-10-05, `faction-stuff/neutrals/carnival.md`). Not on the
+  // map yet. Numbers provisional (#67).
+  soothsayer: {
+    id: "soothsayer", name: "Soothsayer", faction: "neutral", tier: 2, damageType: "weapon",
+    stats: { maxHp: 150, shield: 0, damage: 55, armor: 0, initiative: 45 },
+    abilities: [{ id: "tarot", params: { cards: 5 } }, ...kit("foretell", "curse", "defend", "wait")],
+  },
+  omen: {
+    id: "omen", name: "Omen", faction: "neutral", tier: 2, damageType: "weapon",
+    stats: { maxHp: 130, shield: 0, damage: 40, armor: 0, initiative: 55 },
+    abilities: [{ id: "omen" }, ...kit("shoot", "defend", "wait")],
+  },
+  fire_eater: {
+    id: "fire_eater", name: "Fire Eater", faction: "neutral", tier: 1, damageType: "fire",
+    stats: { maxHp: 105, shield: 0, damage: 18, armor: 0, initiative: 45 },
+    abilities: [{ id: "ignite" }, ...kit("spit_fire", "defend", "wait")],
+  },
 };

@@ -52,7 +52,7 @@ export const GROVE_UNITS: Readonly<Record<string, UnitDef>> = {
   grove_support_1: {
     id: "grove_support_1", name: "Grove support 1", faction: "grove", tier: 1, damageType: "weapon",
     stats: { maxHp: 70, shield: 0, damage: 10, armor: 0, initiative: 45 },
-    abilities: kit("bloom", "shoot", "defend", "wait"),
+    abilities: kit("bloom", "water", "defend", "wait"),
   },
   // The Decay branch: weaker healing, corpses. (The Spiritess branch, crowd control, awaits the user's design.)
   decay_support_2: {
@@ -64,12 +64,12 @@ export const GROVE_UNITS: Readonly<Record<string, UnitDef>> = {
   spiritess_2: {
     id: "spiritess_2", name: "Spiritess 2", faction: "grove", tier: 2, damageType: "weapon",
     stats: { maxHp: 95, shield: 0, damage: 10, armor: 0, initiative: 45 },
-    abilities: [{ id: "spirit_bloom", params: { heal: 35 } }, ...kit("burst_mend", "shoot", "defend", "wait")],
+    abilities: [{ id: "spirit_bloom", params: { heal: 35 } }, ...kit("burst_mend", "water", "defend", "wait")],
   },
   psychopomp: {
     id: "psychopomp", name: "Psychopomp", faction: "grove", tier: 3, damageType: "weapon",
     stats: { maxHp: 130, shield: 0, damage: 14, armor: 0, initiative: 50 },
-    abilities: [{ id: "spirit_bloom", params: { heal: 40, amount: 15 } }, ...kit("burst_mend", "spiritwalk", "shoot", "defend", "wait")],
+    abilities: [{ id: "spirit_bloom", params: { heal: 40, amount: 15 } }, ...kit("burst_mend", "spiritwalk", "water", "defend", "wait")],
   },
   grove_mage_1: {
     id: "grove_mage_1", name: "Grove mage 1", faction: "grove", tier: 1, damageType: "weapon",

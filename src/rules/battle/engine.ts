@@ -1,7 +1,7 @@
 import { behavior, paramsOf } from "#rules/abilities/index";
 import { BATTLE_ROUND_LIMIT, INITIATIVE_PER_ACTION } from "#rules/balance";
 import { hit, lose } from "#rules/battle/damage";
-import { checkTarot, dealHand } from "#rules/battle/tarot";
+import { checkTarot, dealHand, drawHand } from "#rules/battle/tarot";
 import { allTraits, buildTraits, traitsOn } from "#rules/battle/traits";
 import type {
   AbilityRef,
@@ -100,6 +100,7 @@ export function createBattle(sides: readonly [readonly Placement[], readonly Pla
     current: null,
     outcome: null,
     tarot: [],
+    seed: context.seed ?? 0,
   };
   const events: BattleEvent[] = [];
   const ctx = makeCtx(battle, events);
@@ -119,13 +120,13 @@ export function createBattle(sides: readonly [readonly Placement[], readonly Pla
   return { battle, events };
 }
 
-/** A side picks a card from a tarot hand, in secret. Only before it has picked; the hand is `unitId`'s. */
-export function chooseTarot(battle: Battle, unitId: string, card: number): Step {
+/** A side picks a card from a tarot hand (`hand`: its index in `battle.tarot`), in secret, once. */
+export function chooseTarot(battle: Battle, hand: number, card: number): Step {
   const draft = cloneBattle(battle);
-  const hand = draft.tarot.find((h) => h.unitId === unitId);
-  if (!hand || hand.chosen !== null || !hand.cards[card]) throw new Error(`cannot choose tarot card ${card} for ${unitId}`);
-  hand.chosen = card;
-  return { battle: draft, events: [{ type: "tarotChosen", side: hand.side, unitId }] };
+  const held = draft.tarot[hand];
+  if (!held || held.chosen !== null || !held.cards[card]) throw new Error(`cannot choose tarot card ${card} from hand ${hand}`);
+  held.chosen = card;
+  return { battle: draft, events: [{ type: "tarotChosen", side: held.side, hand }] };
 }
 
 /** Every living unit's effective stats, from one context. */
@@ -221,7 +222,14 @@ export function applyAction(battle: Battle, action: Action): Step {
     draft.waitedThisPass.push(unitId);
   }
 
-  checkTarot(ctx, draft.tarot, events);
+  checkTarot(ctx, draft.tarot, events, unitId);
+  // Kills during this action, by the actor or a card it set off, may draw more cards (Omen).
+  const draws = Math.max(0, ...traitsOn(ctx, unitId).map((t) => t.hooks.drawsOnKill?.(ctx, t.self) ?? 0));
+  if (draws > 0) {
+    const side = ctx.unit(unitId).side;
+    const kills = events.filter((e) => e.type === "death" && ctx.unit(e.unitId).side !== side).length;
+    for (let i = 0; i < kills; i++) drawHand(ctx, draft.tarot, unitId, draws, draft.seed);
+  }
   checkOutcome(ctx);
   if (draft.current && slotIsOver(ctx, slot)) {
     draft.current = null;
@@ -231,7 +239,7 @@ export function applyAction(battle: Battle, action: Action): Step {
   advance(ctx);
   // What advancing brought (a new round, a turn's damage over time) can finish a card too, and a card's reward can
   // end the fight or the turn that just began.
-  checkTarot(ctx, draft.tarot, events.slice(before));
+  checkTarot(ctx, draft.tarot, events.slice(before), null);
   checkOutcome(ctx);
   if (draft.current && !ctx.unit(draft.current.unitId).alive) {
     draft.current = null;

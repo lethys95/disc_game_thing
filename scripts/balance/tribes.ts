@@ -15,7 +15,7 @@ import type { Outcome } from "#rules/battle/types";
 const won = (outcome: Outcome | null, side: 0 | 1) => outcome !== null && outcome.winner === side && !("withdrew" in outcome && outcome.withdrew);
 
 const strengths: readonly Strength[] = ["weak", "medium", "strong"];
-const tribes: readonly Tribe[] = ["bandits", "gnolls", "drawn"];
+const tribes: readonly Tribe[] = ["bandits", "gnolls", "drawn", "carnival"];
 const squads = Object.values(FORMATIONS).flatMap((list) => list.map((preset) => preset.squad));
 for (const strength of strengths) {
   const row = tribes.map((tribe) => {

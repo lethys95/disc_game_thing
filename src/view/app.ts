@@ -206,7 +206,8 @@ export class App implements KeyLayer {
   /** The player's next undecided tarot hand, shown until a card is picked; the fight waits for it. */
   private offerTarot(): void {
     const battle = this.battle;
-    const hand = battle?.tarot.find((h) => h.side === this.playerSide && h.chosen === null);
+    const index = battle ? battle.tarot.findIndex((h) => h.side === this.playerSide && h.chosen === null) : -1;
+    const hand = battle?.tarot[index];
     this.pickingTarot = hand !== undefined;
     if (!battle || !hand) {
       this.hud.hideTarot();
@@ -214,7 +215,7 @@ export class App implements KeyLayer {
     }
     this.hud.showTarot(hand, battle, this.playerSide, (card) => {
       if (!this.battle) return;
-      const step = chooseTarot(this.battle, hand.unitId, card);
+      const step = chooseTarot(this.battle, index, card);
       this.battle = step.battle;
       this.hud.appendLog(masked(step.events, step.battle, this.playerSide), step.battle, this.playerSide);
       this.offerTarot();
@@ -413,12 +414,14 @@ export class App implements KeyLayer {
     const visible = masked(step.events, step.battle, this.playerSide);
     for (const cue of battleCues(visible, step.battle, this.playerSide)) this.sound.play(cue.chain, cue.delay * this.stage.timeScale, cue.duration);
     this.hud.appendLog(visible, step.battle, this.playerSide);
-    this.battle = step.battle;
+    // Hands drawn mid-fight (Omen): the AI's are picked at once, the player's wait for the player.
+    this.battle = chooseTarotCards(step.battle, this.auto || this.playerSide === null ? undefined : this.playerSide === 0 ? 1 : 0);
     this.followLead();
     await this.scene.play(visible, step.battle);
     if (generation !== this.generation) return;
     this.busy = false;
     this.selectDefault();
+    this.offerTarot();
     this.render();
     this.schedule();
   }

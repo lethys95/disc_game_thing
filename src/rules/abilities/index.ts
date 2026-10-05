@@ -1,3 +1,4 @@
+import { carnival } from "#rules/abilities/carnival";
 import { core } from "#rules/abilities/core";
 import { drawn } from "#rules/abilities/drawn";
 import { gnolls } from "#rules/abilities/gnolls";
@@ -8,7 +9,7 @@ import { neutral } from "#rules/abilities/neutral";
 import { nexus } from "#rules/abilities/nexus";
 import type { AbilityRef, Behavior, Params } from "#rules/battle/types";
 
-const SETS: readonly Readonly<Record<string, Behavior>>[] = [core, keywords, jilliath, nexus, grove, neutral, gnolls, drawn];
+const SETS: readonly Readonly<Record<string, Behavior>>[] = [core, keywords, jilliath, nexus, grove, neutral, gnolls, drawn, carnival];
 
 /** Every ability by id. Two sets naming the same id would silently replace one (it happened: the Cleric's Mend). */
 export const BEHAVIORS: Readonly<Record<string, Behavior>> = Object.assign({}, ...SETS);

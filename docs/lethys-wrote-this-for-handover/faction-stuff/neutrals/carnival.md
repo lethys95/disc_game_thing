@@ -32,3 +32,5 @@
 ## Camps (Claude)
 Not on the map yet ("nomadic": maybe they roam). Groups for the sims and `?fight=carnival`: two Fire Eaters (weak);
 two Fire Eaters and the Soothsayer (medium, level 2); two Fire Eaters, the Soothsayer and Omen (strong, level 4).
+
+**Status:** in game as `soothsayer`, `omen`, `fire_eater` (`?fight=carnival`); numbers `provisional.md` #67.

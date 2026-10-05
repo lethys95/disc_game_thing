@@ -680,6 +680,44 @@ const effects: readonly EffectDef[] = [
     },
   },
   flatStat({ id: "tarot_exposed", name: "Exposed", stat: "armor", sign: -1, stacking: { mode: "merge" }, describe: (e) => `−${e.amount} armor (an enemy's tarot card).` }),
+  // The carnival (`abilities/carnival.ts`).
+  {
+    // A Soothsayer's attack, waiting to land: at the start of her next turn it hits.
+    id: "foretold",
+    name: "Foretold",
+    describe: (e) => `Takes ${e.amount} at the start of the Soothsayer's next turn.`,
+    stacking: { mode: "each" },
+    lifetime: "untilSourceTurn",
+    visibility: "public",
+    hooks: { aiValue: (_ctx, self) => -(self.effect?.amount ?? 0) },
+    onExpire: (ctx, self) => {
+      const source = self.effect?.source;
+      if (!source || !ctx.unit(source).alive) return;
+      ctx.hit(source, [self.unitId], { power: self.effect?.amount ?? 0, type: ctx.unit(source).damageType, tags: ["attack", "ranged", "damage"] });
+    },
+  },
+  {
+    // A Soothsayer's curse: less damage for the bearer's next few turns (counted down as each starts).
+    id: "cursed",
+    name: "Cursed",
+    describe: (e) => `Deals ${e.amount}% less damage for ${e.stacks} more turn${e.stacks === 1 ? "" : "s"}.`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      stats: (_ctx, self, subjectId, stats) => {
+        if (subjectId === self.unitId) stats.damage -= Math.round((stats.damage * (self.effect?.amount ?? 0)) / 100);
+      },
+      turnStart: (ctx, self) => {
+        const curse = self.effect;
+        if (!curse) return null;
+        if (curse.stacks <= 0) ctx.removeEffect(self.unitId, curse);
+        else curse.stacks -= 1;
+        return null;
+      },
+      aiValue: (ctx, self) => -((ctx.stats(self.unitId).damage * (self.effect?.amount ?? 0)) / 100) * 2,
+    },
+  },
   // The gnolls (`abilities/gnolls.ts`).
   {
     // A Packstalker's mark: the marker's side hits it harder until the end of the next round.

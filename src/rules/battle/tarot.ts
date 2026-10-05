@@ -138,11 +138,14 @@ export function cardValue(card: TarotCard): number {
   return odds[card.task.kind] * worth * (card.task.kind === "killBefore" ? round / 3 : 1);
 }
 
-/** Checks every chosen, open card against what just happened; pays the ones done, fails the ones lost. */
-export function checkTarot(ctx: Ctx, hands: readonly TarotHand[], events: readonly BattleEvent[]): void {
-  for (const hand of hands) {
+/**
+ * Checks every chosen, open card against what just happened; pays the ones done, fails the ones lost. `actor`: the unit
+ * whose action it was (null between actions): its traits say how many times a card it fulfils pays (Omen: twice).
+ */
+export function checkTarot(ctx: Ctx, hands: readonly TarotHand[], events: readonly BattleEvent[], actor: string | null): void {
+  hands.forEach((hand, index) => {
     const card = hand.chosen === null ? undefined : hand.cards[hand.chosen];
-    if (!card || hand.state !== "open") continue;
+    if (!card || hand.state !== "open") return;
     const enemy: Side = hand.side === 0 ? 1 : 0;
     const sideOf = (id: string) => ctx.unit(id).side;
     let done = false;
@@ -173,13 +176,24 @@ export function checkTarot(ctx: Ctx, hands: readonly TarotHand[], events: readon
     if (card.task.kind === "slay" && !done && !ctx.unit(card.task.target).alive) lost = true;
     if (lost && !done) {
       hand.state = "failed";
-      ctx.emit({ type: "tarot", side: hand.side, unitId: hand.unitId, card: hand.chosen ?? 0, state: "failed" });
+      ctx.emit({ type: "tarot", side: hand.side, hand: index, state: "failed" });
     } else if (done) {
       hand.state = "fulfilled";
-      ctx.emit({ type: "tarot", side: hand.side, unitId: hand.unitId, card: hand.chosen ?? 0, state: "fulfilled" });
-      pay(ctx, hand.side, hand.unitId, card.reward);
+      const payouts = actor === null || ctx.unit(actor).side !== hand.side ? 1 : Math.max(1, ...ctx.traits(actor).map((t) => t.hooks.tarotPayouts?.(ctx, t.self) ?? 1));
+      ctx.emit({ type: "tarot", side: hand.side, hand: index, state: "fulfilled", payouts });
+      for (let i = 0; i < payouts; i++) pay(ctx, hand.side, actor ?? hand.unitId, card.reward);
     }
-  }
+  });
+}
+
+/**
+ * A fresh hand mid-fight (Omen: kills during his action draw more): dealt from the battle's seed and the number of hands
+ * so far, so it's as fixed as the first.
+ */
+export function drawHand(ctx: Ctx, hands: TarotHand[], unitId: string, count: number, seed: number): void {
+  const side = ctx.unit(unitId).side;
+  hands.push({ side, unitId, cards: dealHand(ctx, unitId, count, seedOf(seed, `hand ${hands.length}`)), chosen: null, state: "open", progress: 0 });
+  ctx.emit({ type: "tarotDrawn", side, hand: hands.length - 1 });
 }
 
 function pay(ctx: Ctx, side: Side, source: string, reward: TarotReward): void {

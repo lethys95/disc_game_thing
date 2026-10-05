@@ -1,4 +1,5 @@
 import { at, rangedChoices, single } from "#rules/abilities/core";
+import { wetten } from "#rules/abilities/keywords";
 import { adjacent, frontLine, meleeTargets, opponent } from "#rules/battle/grid";
 import type { BattleUnit, Ctx } from "#rules/battle/types";
 import type { Behavior } from "#rules/battle/types";
@@ -202,6 +203,32 @@ export const grove: Readonly<Record<string, Behavior>> = {
         } else {
           ctx.heal(id, self.params["heal"] ?? 0);
           addRot(ctx, id, self.params["rot"] ?? 0);
+        }
+      }
+    },
+  },
+
+  /**
+   * The healing support's primary fire (the user, 2026-10-05): water. An enemy is hurt and left wet; an ally is healed
+   * much more than an enemy is hurt, and wet only if it was burning (else Nexus lightning would punish the healing).
+   */
+  water: {
+    kind: "active",
+    name: "Water",
+    describe: (p) => `Ranged, water. An enemy takes this unit's damage and is wet for ${p["rounds"]} rounds. An ally (or itself) heals ${p["heal"]}× this unit's damage; a burning one is put out (and wet).`,
+    tags: ["attack", "ranged", "damage", "heal"],
+    defaults: { heal: 3, rounds: 2 },
+    choices: (ctx, self) => [...rangedChoices(ctx, self), ...ctx.living(ctx.unit(self.unitId).side).map((u) => single(u, "main"))],
+    resolve: (ctx, self, choice) => {
+      const me = ctx.unit(self.unitId);
+      for (const id of choice.affected) {
+        const rounds = self.params["rounds"] ?? 2;
+        if (ctx.unit(id).side !== me.side) {
+          ctx.hit(self.unitId, [id], ctx.hitSpec(self, "water"));
+          wetten(ctx, id, rounds, self.unitId);
+        } else {
+          ctx.heal(id, ctx.stats(self.unitId).damage * (self.params["heal"] ?? 0));
+          if (ctx.unit(id).effects.some((e) => e.def === "burning")) wetten(ctx, id, rounds, self.unitId);
         }
       }
     },

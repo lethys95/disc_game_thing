@@ -326,8 +326,8 @@ export const emptyMemory = (): Memory => ({ cities: [], lairs: [], nodes: [], st
 
 export type Strength = "weak" | "medium" | "strong";
 
-/** The neutral peoples who guard camps and dungeons (`design/tribes.md`). The Drawn aren't placed on the map yet. */
-export type Tribe = "bandits" | "gnolls" | "drawn";
+/** The neutral peoples who guard camps and dungeons (`design/tribes.md`). The Drawn and the carnival aren't placed on the map yet. */
+export type Tribe = "bandits" | "gnolls" | "drawn" | "carnival";
 
 type Group = { readonly level: number; readonly units: readonly [string, Tile][] };
 
@@ -396,6 +396,15 @@ const GROUPS: Readonly<Record<Tribe, Readonly<Record<Strength, Group>>>> = {
         ["chrysalis", { row: 0, col: 0 }], ["pale_mother", { row: 0, col: 1 }], ["dustwing", { row: 0, col: 2 }],
         ["eyespot", { row: 1, col: 0 }], ["lightdrinker", { row: 1, col: 1 }], ["eyespot", { row: 1, col: 2 }],
       ],
+    },
+  },
+  // The user's carnival (2026-10-05): three units so far, two of them strong (provisional #67).
+  carnival: {
+    weak: { level: 0, units: [["fire_eater", { row: 0, col: 0 }], ["fire_eater", { row: 0, col: 2 }]] },
+    medium: { level: 2, units: [["fire_eater", { row: 0, col: 0 }], ["fire_eater", { row: 0, col: 2 }], ["soothsayer", { row: 1, col: 1 }]] },
+    strong: {
+      level: 4,
+      units: [["fire_eater", { row: 0, col: 0 }], ["fire_eater", { row: 0, col: 2 }], ["soothsayer", { row: 1, col: 0 }], ["omen", { row: 1, col: 2 }]],
     },
   },
 };

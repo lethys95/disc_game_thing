@@ -12,7 +12,7 @@ import { isMood, MapView, MOODS } from "#view/map";
 import { BattleScene } from "#view/scene";
 import { Setup } from "#view/setup";
 import type { Placement } from "#rules/battle/engine";
-import { BANDIT_GROUP, DRAWN_GROUP, GNOLL_GROUP, GROVE_PRESETS, NEXUS_PRESETS, PRESETS } from "#rules/units/presets";
+import { BANDIT_GROUP, CARNIVAL_GROUP, DRAWN_GROUP, GNOLL_GROUP, GROVE_PRESETS, NEXUS_PRESETS, PRESETS } from "#rules/units/presets";
 import { ANIMATION_SPEEDS, Settings } from "#view/settings";
 import { Sound } from "#view/sound";
 import { Stage } from "#view/stage";
@@ -128,7 +128,7 @@ if (params.has("map")) {
     ? nexusKey === "scheme" || nexusKey === "overload" ? NEXUS_PRESETS[nexusKey] : NEXUS_PRESETS.uncommitted
     : fight.startsWith("grove")
       ? groveKey === "regrowth" || groveKey === "decay" ? GROVE_PRESETS[groveKey] : GROVE_PRESETS.uncommitted
-      : fight === "bandits" ? BANDIT_GROUP : fight === "gnolls" ? GNOLL_GROUP : fight === "drawn" ? DRAWN_GROUP : presets[1];
+      : fight === "bandits" ? BANDIT_GROUP : fight === "gnolls" ? GNOLL_GROUP : fight === "drawn" ? DRAWN_GROUP : fight === "carnival" ? CARNIVAL_GROUP : presets[1];
   // `terrain=forest`, `biome=desert`, `backdrop=capitol|city|dungeon`: fight somewhere other than open plains (screenshots).
   const terrain = params.get("terrain") ?? "plain";
   const backdrop = params.get("backdrop");

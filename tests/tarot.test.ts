@@ -28,10 +28,10 @@ describe("tarot", () => {
 
   test("a side picks one card, once", () => {
     const battle = createBattle([[p("congregant", 0, 1, [tarot(3)])], [p("congregant", 0, 1)]]).battle;
-    const { battle: picked, events } = chooseTarot(battle, "0.0.1", 2);
+    const { battle: picked, events } = chooseTarot(battle, 0, 2);
     expect(picked.tarot[0]?.chosen).toBe(2);
-    expect(events).toEqual([{ type: "tarotChosen", side: 0, unitId: "0.0.1" }]);
-    expect(() => chooseTarot(picked, "0.0.1", 0)).toThrow();
+    expect(events).toEqual([{ type: "tarotChosen", side: 0, hand: 0 }]);
+    expect(() => chooseTarot(picked, 0, 0)).toThrow();
   });
 
   test("Death: kill an enemy in time, and the reward pays the whole side", () => {
@@ -39,7 +39,7 @@ describe("tarot", () => {
     battle = holding(battle, { side: 0, unitId: "0.0.0", cards: [{ task: { kind: "killBefore", round: 2 }, reward: { kind: "might", percent: 25 } }] });
     const before = effectiveStatsOf(battle)["0.0.0"]?.damage ?? 0;
     const { battle: after, events } = act(battle, "attack", "1.0.1");
-    expect(events).toContainEqual({ type: "tarot", side: 0, unitId: "0.0.0", card: 0, state: "fulfilled" });
+    expect(events).toContainEqual({ type: "tarot", side: 0, hand: 0, state: "fulfilled", payouts: 1 });
     expect(after.tarot[0]?.state).toBe("fulfilled");
     expect(effectiveStatsOf(after)["0.0.0"]?.damage).toBe(Math.round(before * 1.25));
   });
@@ -48,7 +48,7 @@ describe("tarot", () => {
     let battle = until(start([{ ...p("congregant", 0, 1), hp: 1 }, p("congregant", 0, 0)], [p("zealot", 0, 1)]), "1.0.1");
     battle = holding(battle, { side: 0, unitId: "0.0.0", cards: [{ task: { kind: "noLossBefore", round: 3 }, reward: { kind: "smite", damage: 25 } }] });
     const { battle: after, events } = act(battle, "attack", "0.0.1");
-    expect(events).toContainEqual({ type: "tarot", side: 0, unitId: "0.0.0", card: 0, state: "failed" });
+    expect(events).toContainEqual({ type: "tarot", side: 0, hand: 0, state: "failed" });
     expect(unit(after, "1.0.1").hp).toBe(unit(battle, "1.0.1").hp - 35);
   });
 

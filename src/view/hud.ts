@@ -379,14 +379,20 @@ function describe(event: BattleEvent, name: (id: string) => string, playerSide: 
       return `${name(event.unitId)}: a critical hit on ${name(event.target)}`;
     case "evaded":
       return `${name(event.unitId)} evades the hit`;
+    case "tarotDrawn": {
+      const hand = battle.tarot[event.hand];
+      return hand ? `${name(hand.unitId)} draws ${hand.cards.length} more tarot cards.` : null;
+    }
     case "tarotChosen":
-      return event.side === playerSide ? null : "The enemy draws a tarot card and keeps it hidden.";
+      return event.side === playerSide ? null : "The enemy picks a tarot card and keeps it hidden.";
     case "tarot": {
-      const card = battle.tarot.find((h) => h.unitId === event.unitId)?.cards[event.card];
+      const hand = battle.tarot[event.hand];
+      const card = hand?.cards[hand.chosen ?? 0];
       const ours = playerSide === null || event.side === playerSide;
       if (!card) return null;
       if (event.state === "failed") return ours ? `Your tarot card fails: ${TASK_NAMES[card.task.kind]}.` : null;
-      return `${ours ? "Your" : "The enemy's"} tarot card is fulfilled: ${TASK_NAMES[card.task.kind]}. ${capitalize(describeReward(card.reward))}.`;
+      const twice = event.payouts > 1 ? ` (${event.payouts} times)` : "";
+      return `${ours ? "Your" : "The enemy's"} tarot card is fulfilled: ${TASK_NAMES[card.task.kind]}. ${capitalize(describeReward(card.reward))}${twice}.`;
     }
     case "effect": {
       const def = effectDef(event.effect);
