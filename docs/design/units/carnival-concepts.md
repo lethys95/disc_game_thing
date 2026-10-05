@@ -76,3 +76,15 @@
   she lost round one's nobility. *Bare-collar* is the best: the fan collar, starry skin, a starfield panel down the
   front. *Constellations*' gold lines barely show.
   - Next: the collar and the bare starry skin, with round one's rich noble gown back.
+
+## Round three, read (Claude), and the picks for the user
+- **Omen (*crowgrin*):** a top hat with feathers and tarot cards, the crow mantle, the red coat and the pentagram:
+  the strongest silhouette. But joining the two cost the grin (only seed 1002 smiles), and the painted eyes on the
+  blindfold never came through in any round: a job for the model's texture. Claude's picks: *grin* 1001 for the face,
+  *crow* 1001 or *crowgrin* 1002 for the silhouette.
+- **Soothsayer (*seer*):** the painted eyes on the striped canvas robe and the tarot-card cape both landed, in all
+  three seeds. Claude's pick: *seer* 1001 (or 1000).
+- **Etherborn:** *regal* is the noblest (a violet silk gown with gold filigree), but her arms are sleeved and the
+  galaxies drift onto the gown. *Lined* puts the starfield in a coat lining. The trade-off: *bare-collar* 1001 (round
+  two) shows the galaxy skin best; *regal* 1000 is the most noble.
+- Page: `shots/carnival.html`. **Stopped here for the user's picks;** portraits follow from the picked concepts.
