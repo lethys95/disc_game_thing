@@ -100,6 +100,16 @@ export const TASK_NAMES: Readonly<Record<TarotTask["kind"], string>> = {
   doubleKill: "Wheel of Fortune",
 };
 
+/** The card art each task is shown with (`assets/tarot/<slug>.webp`, the user's 2026-10-05 deck art). */
+export const TASK_ARCANA: Readonly<Record<TarotTask["kind"], string>> = {
+  killBefore: "death",
+  bigHit: "tower",
+  noLossBefore: "strength",
+  slay: "judgement",
+  heal: "temperance",
+  doubleKill: "wheel-of-fortune",
+};
+
 export function describeTask(task: TarotTask, name: (id: string) => string): string {
   switch (task.kind) {
     case "killBefore":

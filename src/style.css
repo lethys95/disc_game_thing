@@ -111,13 +111,24 @@ button.action .key { font: 600 9px var(--text); margin-left: 6px; padding: 0 3px
   background: linear-gradient(#1d1715, #120e0d); color: var(--ink); border: 1px solid var(--edge); cursor: pointer; font: inherit;
 }
 #tarot button.tarot-card:hover, #tarot button.tarot-card:focus-visible { border-color: var(--gold); transform: translateY(-3px); }
-#tarot .tarot-card .arcana { font: 700 20px var(--display); letter-spacing: 0.04em; }
+#tarot .tarot-card.shown { cursor: default; }
+#tarot .tarot-card.picked { border-color: var(--gold); box-shadow: 0 0 18px rgba(217, 179, 106, 0.35); }
 #tarot .tarot-card .task { flex: 1; }
 #tarot .tarot-card .reward { color: var(--muted); font-size: 13px; }
-#tarot-status { position: fixed; left: 12px; top: 64px; max-width: 280px; font-size: 13px; z-index: 3; }
-#tarot-status .arcana { font: 700 15px var(--display); }
-#tarot-status .state-fulfilled { color: #e8c877; }
-#tarot-status .state-failed { color: var(--muted); text-decoration: line-through; }
+#tarot > button.action { margin-top: 14px; }
+.tarot-face { display: flex; flex-direction: column; gap: 6px; align-items: center; }
+.tarot-face .picture { width: 150px; aspect-ratio: 768 / 1344; background: center / cover no-repeat #120e0d; border: 1px solid var(--edge); border-radius: 4px; }
+.tarot-face .picture.missing { background: repeating-linear-gradient(45deg, #1b1513 0 8px, #15100e 8px 16px); }
+.tarot-face .arcana { font: 700 19px var(--display); letter-spacing: 0.04em; }
+.tarot-face.small .picture { width: 54px; }
+.tarot-face.small .arcana { display: none; }
+#tarot-icon { position: fixed; left: 12px; top: 64px; z-index: 3; }
+#tarot-panel { position: fixed; left: 12px; top: 110px; width: 300px; max-height: 60vh; overflow-y: auto; z-index: 3; font-size: 13px; display: flex; flex-direction: column; gap: 10px; }
+#tarot-panel .tarot-held { display: flex; gap: 10px; align-items: flex-start; }
+#tarot-panel .arcana { font: 700 16px var(--display); }
+#tarot-panel .reward { color: var(--muted); }
+#tarot-panel .state-fulfilled .task { color: var(--gold); }
+#tarot-panel .state-failed .task { color: var(--muted); text-decoration: line-through; }
 
 .hpbar { width: 54px; height: 5px; background: #1a1412; border: 1px solid #000; position: relative; }
 .hpbar .fill { position: absolute; inset: 0 auto 0 0; }

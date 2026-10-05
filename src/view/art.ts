@@ -61,3 +61,10 @@ export function cityViewUrl(chain: readonly string[]): string | null {
   return null;
 }
 
+
+/** Tarot card faces (`assets/tarot/<arcana>.webp`) and their back (`back.webp`), found at build time. */
+const TAROT = import.meta.glob<string>("/assets/tarot/*.webp", { eager: true, query: "?url", import: "default" });
+
+export function tarotUrl(name: string): string | null {
+  return TAROT[`/assets/tarot/${name}.webp`] ?? null;
+}

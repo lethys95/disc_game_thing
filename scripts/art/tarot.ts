@@ -57,9 +57,14 @@ const ARCANA: Readonly<Record<string, string>> = {
   world: "The World: a dancer wrapped in a sash floats inside a great oval wreath of dark leaves, holding a wand in each hand; in the four corners a winged man, an eagle, a bull and a lion look on.",
 };
 
-const JOBS = Object.entries(STYLES).flatMap(([style, look]) =>
-  Object.entries(ARCANA).map(([arcana, subject]) => ({ id: `${style}-${arcana}`, prompt: `${CARD} ${subject} ${look} ${NO_TEXT}`, width: 768, height: 1344 })),
-);
+/** The back every card shares: what the other side sees of a hand (the user, 2026-10-05: five face down, one turned). */
+const BACK =
+  "The back of a single tarot card, the whole card visible with a narrow margin, upright: no figures, a symmetrical ornate design of a closed eye at the centre, crescent moons and small stars around it, interlaced thorny filigree in the corners.";
+
+const JOBS = Object.entries(STYLES).flatMap(([style, look]) => [
+  ...Object.entries(ARCANA).map(([arcana, subject]) => ({ id: `${style}-${arcana}`, prompt: `${CARD} ${subject} ${look} ${NO_TEXT}`, width: 768, height: 1344 })),
+  { id: `${style}-back`, prompt: `${BACK} ${look} ${NO_TEXT}`, width: 768, height: 1344 },
+]);
 
 const args = process.argv.slice(2);
 const seeds = args.map(Number).filter((n) => !Number.isNaN(n));

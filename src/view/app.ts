@@ -87,8 +87,10 @@ export class App implements KeyLayer {
   /** Every target's preview for one ability, cached per battle state and ability. */
   private sweep: { readonly key: string; readonly marks: readonly PreviewMark[] } | null = null;
   private busy = false;
-  /** A tarot hand of the player's waits for a pick; the fight doesn't start until then. */
+  /** A tarot hand of the player's waits for a pick, or an enemy's pick is being shown; the fight waits. */
   private pickingTarot = false;
+  /** Enemy hands the AI has picked from that the player hasn't been shown yet (their indices in `battle.tarot`). */
+  private reveals: number[] = [];
   /** The AI plays the player's side too, until switched off. */
   private auto = false;
   /** Bumped on every start/stop so a turn still animating from an old battle can't touch the new one. */
@@ -181,7 +183,8 @@ export class App implements KeyLayer {
     this.sound.ambience(null);
     // The AI's tarot hands are picked at once; the player's wait for the player (`offerTarot`). Fast-forwarded and
     // watched battles pick for everyone.
-    let battle = chooseTarotCards(start, playerSide === null || fastForward > 0 ? undefined : playerSide === 0 ? 1 : 0);
+    this.reveals = [];
+    let battle = this.aiPicks(start, playerSide === null || fastForward > 0 ? undefined : playerSide === 0 ? 1 : 0, playerSide !== null && fastForward === 0);
     this.scene.show();
     this.hud.setVisible(true);
     this.hud.clearLog();
@@ -203,12 +206,34 @@ export class App implements KeyLayer {
     this.schedule();
   }
 
-  /** The player's next undecided tarot hand, shown until a card is picked; the fight waits for it. */
+  /** The AI picks from its undecided hands (of `side`, or all); with `show`, the player is shown each enemy pick. */
+  private aiPicks(battle: Battle, side: Side | undefined, show: boolean): Battle {
+    const open = battle.tarot.flatMap((h, i) => (h.chosen === null && (side === undefined || h.side === side) ? [i] : []));
+    const picked = chooseTarotCards(battle, side);
+    if (show) this.reveals.push(...open.filter((i) => picked.tarot[i]?.side !== this.playerSide));
+    return picked;
+  }
+
+  /**
+   * The player's next undecided tarot hand, shown until a card is picked; then each enemy pick, face down but for the
+   * picked card. The fight waits for both.
+   */
   private offerTarot(): void {
     const battle = this.battle;
     const index = battle ? battle.tarot.findIndex((h) => h.side === this.playerSide && h.chosen === null) : -1;
     const hand = battle?.tarot[index];
-    this.pickingTarot = hand !== undefined;
+    const reveal = this.reveals[0];
+    const enemyHand = reveal === undefined ? undefined : battle?.tarot[reveal];
+    this.pickingTarot = hand !== undefined || enemyHand !== undefined;
+    if (battle && !hand && enemyHand) {
+      this.hud.showEnemyTarot(enemyHand, battle, () => {
+        this.reveals.shift();
+        this.offerTarot();
+        this.render();
+        this.schedule();
+      });
+      return;
+    }
     if (!battle || !hand) {
       this.hud.hideTarot();
       return;
@@ -271,6 +296,7 @@ export class App implements KeyLayer {
     // Handing the fight to the AI hands it the tarot pick too.
     if (this.auto && this.pickingTarot) {
       this.battle = chooseTarotCards(this.battle, this.playerSide);
+      this.reveals = [];
       this.offerTarot();
     }
     this.render();
@@ -415,7 +441,7 @@ export class App implements KeyLayer {
     for (const cue of battleCues(visible, step.battle, this.playerSide)) this.sound.play(cue.chain, cue.delay * this.stage.timeScale, cue.duration);
     this.hud.appendLog(visible, step.battle, this.playerSide);
     // Hands drawn mid-fight (Omen): the AI's are picked at once, the player's wait for the player.
-    this.battle = chooseTarotCards(step.battle, this.auto || this.playerSide === null ? undefined : this.playerSide === 0 ? 1 : 0);
+    this.battle = this.aiPicks(step.battle, this.auto || this.playerSide === null ? undefined : this.playerSide === 0 ? 1 : 0, !this.auto && this.playerSide !== null);
     this.followLead();
     await this.scene.play(visible, step.battle);
     if (generation !== this.generation) return;
