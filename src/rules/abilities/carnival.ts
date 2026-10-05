@@ -1,4 +1,4 @@
-import { at, rangedChoices } from "#rules/abilities/core";
+import { at, rangedChoices, single } from "#rules/abilities/core";
 import { frontLine, meleeTargets, opponent } from "#rules/battle/grid";
 import type { Behavior } from "#rules/battle/types";
 
@@ -33,6 +33,47 @@ export const carnival: Readonly<Record<string, Behavior>> = {
         if (cursed) cursed.stacks = Math.max(cursed.stacks, self.params["turns"] ?? 3);
         else ctx.addEffect(id, { def: "cursed", amount: self.params["percent"] ?? 0, stacks: self.params["turns"] ?? 3, source: self.unitId });
       }
+    },
+  },
+
+  /** Snakeoiler (the user, 2026-10-05): "a moderate healing potion throw to allies", ranged, any ally. */
+  healing_draught: {
+    kind: "active",
+    name: "Healing draught",
+    describe: (p) => `Main action, thrown: an ally (or itself) heals ${p["heal"]}.`,
+    tags: ["heal"],
+    defaults: { heal: 30 },
+    choices: (ctx, self) => ctx.living(ctx.unit(self.unitId).side).map((u) => single(u, "main")),
+    resolve: (ctx, self, choice) => {
+      for (const id of choice.affected) ctx.heal(id, self.params["heal"] ?? 0);
+    },
+  },
+
+  /** Snakeoiler: "a weak one-target explosive (not aoe) on a single target enemy, also ranged any target". */
+  explosive_flask: {
+    kind: "active",
+    name: "Explosive flask",
+    describe: (p) => `Its attack, thrown: one enemy anywhere takes ${p["power"]} fire.`,
+    tags: ["attack", "ranged", "damage"],
+    defaults: { power: 18 },
+    choices: rangedChoices,
+    resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self, "fire")),
+  },
+
+  /** Snakeoiler: "one-time use sleep potion which incapacitates for one turn"; it wakes if hurt, keeping its place. */
+  sleep_potion: {
+    kind: "active",
+    name: "Sleep potion",
+    describe: (p) => `Main action, thrown, ${p["charges"]} per combat: one enemy anywhere falls asleep and loses its next turn, unless it's hurt first.`,
+    tags: ["spell"],
+    defaults: { charges: 1 },
+    choices: (ctx, self) =>
+      ctx
+        .living(opponent(ctx.unit(self.unitId).side))
+        .filter((u) => !u.effects.some((e) => e.def === "asleep"))
+        .map((u) => single(u, "main")),
+    resolve: (ctx, self, choice) => {
+      for (const id of choice.affected) ctx.addEffect(id, { def: "asleep", source: self.unitId });
     },
   },
 

@@ -82,9 +82,9 @@ export const DRAWN_GROUP: readonly Placement[] = [
   at("eyespot", 1, 0), at("lightdrinker", 1, 1), at("eyespot", 1, 2),
 ];
 
-/** The user's carnival: two Fire Eaters, the Soothsayer and Omen (`?fight=carnival`). The formation is not canon. */
+/** The user's carnival, all five (`?fight=carnival`). The formation is not canon. */
 export const CARNIVAL_GROUP: readonly Placement[] = [
-  at("fire_eater", 0, 0), at("fire_eater", 0, 2), at("soothsayer", 1, 0), at("omen", 1, 2),
+  at("cutpurse", 0, 0), at("fire_eater", 0, 1), at("cutpurse", 0, 2), at("snakeoiler", 1, 0), at("soothsayer", 1, 1), at("omen", 1, 2),
 ];
 
 /** The setup screen's formation presets per faction, named after the branches they took. */

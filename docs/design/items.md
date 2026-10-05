@@ -44,3 +44,4 @@ Not yet read by the user: War drum, Mercenary's writ, Recruiter's cap, and the c
 ## Deck of cards (user, 2026-10-05)
 "Deck of cards misc item - Adds tarot 4 to leader which executes at the beginning of turn." Claude's reading: a
 utility item; its leader carries Tarot 4, drawn as each fight begins like any Tarot (the user's "beginning of turn").
+Built as `deck_of_cards` (utility, 150 gold, provisional).

@@ -39,6 +39,17 @@ export interface ItemDef {
 }
 
 export const ITEMS: readonly ItemDef[] = [
+  // The user's (2026-10-05): "adds tarot 4 to leader". A utility item (Claude's reading of "misc"); price provisional.
+  {
+    id: "deck_of_cards",
+    name: "Deck of cards",
+    slot: "utility",
+    price: 150,
+    worn: [{ def: "carries", ability: { id: "tarot", params: { cards: 4 } } }],
+    banner: [],
+    revivesFree: false,
+    describe: "The leader carries Tarot 4: as each fight begins, its side draws four tarot cards and picks one in secret.",
+  },
   // The user's (2026-09-27); prices provisional.
   {
     id: "hatchet",

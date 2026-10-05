@@ -33,10 +33,15 @@
 Not on the map yet ("nomadic": maybe they roam). Groups for the sims and `?fight=carnival`: two Fire Eaters (weak);
 two Fire Eaters and the Soothsayer (medium, level 2); two Fire Eaters, the Soothsayer and Omen (strong, level 4).
 
-**Status:** in game as `soothsayer`, `omen`, `fire_eater` (`?fight=carnival`); numbers `provisional.md` #67.
+**Status:** in game as `soothsayer`, `omen`, `fire_eater`, `cutpurse`, `snakeoiler` (`?fight=carnival`); numbers `provisional.md` #67.
 
 ## More units (user, 2026-10-05)
 - **Cutpurse:** "very basic unit probably. Just high initiative and crit 4 I think."
 - **Snakeoiler:** "backline support unit. One-time use sleep potion which incapacitates for one turn. Unit wakes up if
   it takes damage, and is put back into the queue. Otherwise just a moderate healing potion throw to allies, or a weak
   one-target explosive (not aoe) on a single target enemy, also ranged any target."
+- **Built (Claude's numbers):** Cutpurse (tier 1) 75 HP, 18, initiative 70, Crit 4. Snakeoiler (tier 1) 65 HP,
+  initiative 45: *Healing draught* (an ally heals 30), *Explosive flask* (its attack: one enemy anywhere takes 18 fire),
+  *Sleep potion* (once: one enemy loses its next turn unless hurt first; woken, it keeps its place in the queue; the same
+  rule as the Drawn's Mesmerize, under its own name). Groups now: weak Cutpurse, Fire Eater, Snakeoiler; medium two
+  Cutpurses, Fire Eater, Snakeoiler, Soothsayer; strong Cutpurse, two Fire Eaters, Snakeoiler, Soothsayer, Omen.

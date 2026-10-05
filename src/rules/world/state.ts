@@ -400,11 +400,17 @@ const GROUPS: Readonly<Record<Tribe, Readonly<Record<Strength, Group>>>> = {
   },
   // The user's carnival (2026-10-05): three units so far, two of them strong (provisional #67).
   carnival: {
-    weak: { level: 0, units: [["fire_eater", { row: 0, col: 0 }], ["fire_eater", { row: 0, col: 2 }]] },
-    medium: { level: 2, units: [["fire_eater", { row: 0, col: 0 }], ["fire_eater", { row: 0, col: 2 }], ["soothsayer", { row: 1, col: 1 }]] },
+    weak: { level: 0, units: [["cutpurse", { row: 0, col: 0 }], ["fire_eater", { row: 0, col: 1 }], ["snakeoiler", { row: 1, col: 1 }]] },
+    medium: {
+      level: 2,
+      units: [["cutpurse", { row: 0, col: 0 }], ["fire_eater", { row: 0, col: 1 }], ["cutpurse", { row: 0, col: 2 }], ["snakeoiler", { row: 1, col: 0 }], ["soothsayer", { row: 1, col: 2 }]],
+    },
     strong: {
       level: 4,
-      units: [["fire_eater", { row: 0, col: 0 }], ["fire_eater", { row: 0, col: 2 }], ["soothsayer", { row: 1, col: 0 }], ["omen", { row: 1, col: 2 }]],
+      units: [
+        ["cutpurse", { row: 0, col: 0 }], ["fire_eater", { row: 0, col: 1 }], ["fire_eater", { row: 0, col: 2 }],
+        ["snakeoiler", { row: 1, col: 0 }], ["soothsayer", { row: 1, col: 1 }], ["omen", { row: 1, col: 2 }],
+      ],
     },
   },
 };

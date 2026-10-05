@@ -1,4 +1,5 @@
-import { chooseTarot, effectiveStatsOf } from "#rules/battle/engine";
+import { chooseTarot, createBattle, effectiveStatsOf } from "#rules/battle/engine";
+import { itemById } from "#rules/items";
 import type { TarotHand } from "#rules/battle/tarot";
 import type { Battle } from "#rules/battle/types";
 import { UNITS } from "#rules/units/index";
@@ -78,5 +79,34 @@ describe("the carnival", () => {
     expect(after.tarot[1]).toMatchObject({ side: 0, unitId: "0.1.1", chosen: null });
     expect(after.tarot[1]?.cards).toHaveLength(3);
     expect(chooseTarot(after, 1, 0).battle.tarot[1]?.chosen).toBe(0);
+  });
+
+  test("Cutpurse: every fourth hit it lands is a crit", () => {
+    expect(UNITS["cutpurse"]?.abilities.find((a) => a.id === "crit")?.params).toEqual({ every: 4 });
+    expect(UNITS["cutpurse"]?.stats.initiative).toBeGreaterThanOrEqual(65);
+  });
+
+  test("Snakeoiler: a healing draught for an ally, a small explosive for one enemy anywhere", () => {
+    let battle = until(start([p("snakeoiler", 1, 1), { ...p("congregant", 0, 1), hp: 30 }], [p("congregant", 0, 1), p("cleric", 2, 1)]), "0.1.1");
+    const healed = act(battle, "healing_draught", "0.0.1").battle;
+    expect(unit(healed, "0.0.1").hp - unit(battle, "0.0.1").hp).toBe(30);
+    battle = act(battle, "explosive_flask", "1.2.1").battle;
+    expect(unit(battle, "1.2.1").hp).toBe(70 - 18);
+  });
+
+  test("Snakeoiler: the sleep potion, once: asleep, the target loses its next turn; hurt first, it wakes and acts", () => {
+    const battle = until(start([p("snakeoiler", 1, 1)], [p("congregant", 0, 1)]), "0.1.1");
+    const { battle: after, events } = act(battle, "sleep_potion", "1.0.1");
+    expect(events).toContainEqual({ type: "skipped", unitId: "1.0.1", reason: "lostTurn" });
+    expect(after.units["0.1.1"]?.chargesUsed["sleep_potion"]).toBe(1);
+    const asleep = until(start([p("snakeoiler", 1, 1), p("congregant", 0, 1)], [p("congregant", 0, 1, [{ def: "asleep", source: "0.1.1" }])]), "0.0.1");
+    const woken = act(asleep, "attack", "1.0.1").battle;
+    expect(unit(woken, "1.0.1").effects.some((e) => e.def === "asleep")).toBe(false);
+  });
+
+  test("Deck of cards: the leader wearing it carries Tarot 4", () => {
+    const deck = itemById("deck_of_cards");
+    const battle = createBattle([[p("congregant", 0, 1, [...deck.worn])], [p("congregant", 0, 1)]]).battle;
+    expect(battle.tarot[0]?.cards).toHaveLength(4);
   });
 });

@@ -100,6 +100,18 @@ export const NEUTRAL_UNITS: Readonly<Record<string, UnitDef>> = {
     stats: { maxHp: 130, shield: 0, damage: 40, armor: 0, initiative: 55 },
     abilities: [{ id: "omen" }, ...kit("shoot", "defend", "wait")],
   },
+  // The user, 2026-10-05: "very basic… Just high initiative and crit 4".
+  cutpurse: {
+    id: "cutpurse", name: "Cutpurse", faction: "neutral", tier: 1, damageType: "weapon",
+    stats: { maxHp: 75, shield: 0, damage: 18, armor: 0, initiative: 70 },
+    abilities: [{ id: "crit", params: { every: 4 } }, ...kit("attack", "defend", "wait")],
+  },
+  // The user, 2026-10-05: a backline support with potions.
+  snakeoiler: {
+    id: "snakeoiler", name: "Snakeoiler", faction: "neutral", tier: 1, damageType: "weapon",
+    stats: { maxHp: 65, shield: 0, damage: 14, armor: 0, initiative: 45 },
+    abilities: kit("healing_draught", "explosive_flask", "sleep_potion", "defend", "wait"),
+  },
   fire_eater: {
     id: "fire_eater", name: "Fire Eater", faction: "neutral", tier: 1, damageType: "fire",
     stats: { maxHp: 105, shield: 0, damage: 18, armor: 0, initiative: 45 },

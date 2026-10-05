@@ -8,6 +8,25 @@ export const MUTATED_PER_STACK = 10;
 /** What the AI thinks a goaded healer or caster is worth to the other side: about one heal (provisional #63). */
 const GOADED_AI_VALUE = 25;
 
+/** The bearer loses its next turn, unless something hurts it first: then it wakes and keeps its place in the queue. */
+function lostUntilHurt(id: string, name: string): EffectDef {
+  return {
+    id,
+    name,
+    describe: () => "Loses its next turn, unless it is hurt before then.",
+    stacking: { mode: "unique" },
+    lifetime: "untilOwnTurn",
+    visibility: "public",
+    hooks: {
+      turnStart: () => "skip",
+      incoming: (ctx, self, packet) => {
+        if (packet.amount > 0 && self.effect) ctx.removeEffect(self.unitId, self.effect);
+      },
+      aiValue: (ctx, self) => -ctx.stats(self.unitId).damage,
+    },
+  };
+}
+
 /**
  * An effect that adds its `amount` (or with `sign` -1, takes it away) to one stat of its bearer for the battle: the
  * shape of most world-made bonuses (items, upgrades, walls, spells).
@@ -814,22 +833,11 @@ const effects: readonly EffectDef[] = [
       grants: (_ctx, self, subjectId) => (subjectId === self.unitId ? [{ id: "flit" }] : []),
     },
   },
-  {
-    // An Eyespot's or the Pale Mother's gaze: the bearer loses its next turn, unless it's hurt first.
-    id: "mesmerized",
-    name: "Mesmerized",
-    describe: () => "Loses its next turn, unless it is hurt before then.",
-    stacking: { mode: "unique" },
-    lifetime: "untilOwnTurn",
-    visibility: "public",
-    hooks: {
-      turnStart: () => "skip",
-      incoming: (ctx, self, packet) => {
-        if (packet.amount > 0 && self.effect) ctx.removeEffect(self.unitId, self.effect);
-      },
-      aiValue: (ctx, self) => -ctx.stats(self.unitId).damage,
-    },
-  },
+  // An Eyespot's or the Pale Mother's gaze.
+  lostUntilHurt("mesmerized", "Mesmerized"),
+  // A Snakeoiler's sleep potion (the user, 2026-10-05: "wakes up if it takes damage, and is put back into the queue":
+  // its turn is lost only if nothing hurts it first, so it keeps its place).
+  lostUntilHurt("asleep", "Asleep"),
   {
     // The Matriarch fell: the strongest gnoll left leads, at half her strength.
     id: "next_in_line",
