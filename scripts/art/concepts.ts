@@ -383,12 +383,45 @@ const ZEALOTS: Readonly<Record<string, { readonly subject: string; readonly stan
   },
 };
 
+/**
+ * Round two (Claude, after round one: smooth domed masks without their eye holes, and an orderly crusader knight, calm
+ * and dignified): the eye holes first and large; no knight, no cross; armour scavenged and bolted on crooked; madness
+ * in the body.
+ */
+const ZEALOT_MASK_2 =
+  "His whole head is covered by a smooth, featureless mask of cracked white porcelain, no skin showing anywhere, with two large, perfectly round eye holes, wide and staring, deep black inside, no eyes visible. " +
+  "No mouth, no nose. Above the eye holes, painted crisply on the forehead, a burning outstretched hand with spread fingers, in red.";
+
+const NOT_A_KNIGHT = "Not a knight, not a crusader, no cross or holy symbols: a frenzied fanatic, deranged and twisted.";
+
+const ZEALOTS_2: Readonly<Record<string, { readonly subject: string; readonly stance: string }>> = {
+  "zealot-ecstatic": {
+    subject: `A religious zealot, emaciated and sinewy. ${ZEALOT_MASK_2} Spiked plates of blackened scrap armor bolted on crookedly at odd angles, a ragged white shift stained red beneath, strips of red cloth knotted around his arms and throat. ${NOT_A_KNIGHT}`,
+    stance: "contorted in ecstatic agony, back arched, one arm clawing at the sky, the sword dragged behind him",
+  },
+  "zealot-twitching": {
+    subject: `A religious zealot, hunched and wiry. ${ZEALOT_MASK_2} Wrapped in torn white bandages and rags stained red, a spiked iron collar, mismatched spiked plates on one shoulder and one shin, nails and hooks hanging from straps. ${NOT_A_KNIGHT}`,
+    stance: "hunched low, head tilted sideways at an impossible angle, twitching, the sword held in one hand like a cleaver",
+  },
+  "zealot-howling": {
+    subject: `A religious zealot, tall and gaunt. ${ZEALOT_MASK_2} Broken spiked armor, black and dented, half falling off him, tied on with rope; a long tattered blood-red cloth hanging from the belt; his bare arms scarred with burns in the shape of hands. ${NOT_A_KNIGHT}`,
+    stance: "charging headlong, leaning far forward, sword raised high in both hands, the body twisted in mid-stride",
+  },
+};
+
 const ZEALOT_SWORD =
   "a huge serrated two-handed greatsword of blackened steel, its edge cut into jagged teeth, the grip bound in red cloth; beside it the same sword seen from its flat side.";
 
 const ZEALOT_JOBS = [
   ...Object.entries(ZEALOTS).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, JILLIATH_3D) })),
   ...Object.entries(ZEALOTS).map(([id, { subject, stance }]) => ({
+    id: `${id}-stance`,
+    prompt:
+      `A 3D render of a game character model in a three-quarter front view, ${stance}, holding a huge serrated two-handed greatsword, the whole figure visible from head to feet with a margin around it, like a sculpted and textured asset shown in a modelling program. ` +
+      `${subject} ${JILLIATH_3D} Flat, even, shadowless lighting from all sides, like a texture reference. A plain flat light grey background, no ground, no text.`,
+  })),
+  ...Object.entries(ZEALOTS_2).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, JILLIATH_3D) })),
+  ...Object.entries(ZEALOTS_2).map(([id, { subject, stance }]) => ({
     id: `${id}-stance`,
     prompt:
       `A 3D render of a game character model in a three-quarter front view, ${stance}, holding a huge serrated two-handed greatsword, the whole figure visible from head to feet with a margin around it, like a sculpted and textured asset shown in a modelling program. ` +
