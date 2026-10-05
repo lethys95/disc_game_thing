@@ -505,7 +505,27 @@ const PSYCHOPOMPS_5: Readonly<Record<string, { readonly prompt: string }>> = {
   "psychopomp-pits-grim-pretty": { prompt: turnaround(`${PITS_HANDS} ${GRIM} ${PRETTY}`, GRIM_3D) },
 };
 
+/**
+ * Round six, a test (the user, 2026-10-05: "staying consistent style wise is pretty essential"). From round two on her
+ * subject grew into a long outfit list that buries the gothic line (word 366 of 434; the Bog Giant's is at 162 of 249).
+ * Pits 1001's features cut to essentials, without the stylised cues ("large eyes set wide apart", "wide and bulky"),
+ * and in grim words; once with the gothic line in its usual place, once in front of her, to tell length from order.
+ */
+const SHAMANESS_6 =
+  "An elven shamaness of a wild forest people, possessed and absent: pale greenish skin, long pointed ears, dark green and black tribal tattoos across her face and arms, her hair in tight cornrows. " +
+  "A hood of a wolf's head pelt with no lower jaw, two dark gouged-out pits where its eyes were; her face looks out under its upper teeth. Pale ghostly teal eyes staring through everything, lips parted. " +
+  "Short fingerless ivory gloves, her bare fingers soaked scarlet red. Rough boots of matted grey wolf fur bound to the knee. Knotted ivory rags tied on at her chest and hips, a ragged fur mantle, leather wraps and tarnished bronze bangles on her arms. Her hands are open and empty.";
+
+const SHAMANESS_6_3D =
+  "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: matted wolf fur, stained ivory rags, worn leather, tarnished bronze, wet moss and roots. Serious, adult, not cartoonish.";
+
+const PSYCHOPOMPS_6: Readonly<Record<string, { readonly prompt: string }>> = {
+  "psychopomp-short": { prompt: turnaround(SHAMANESS_6, SHAMANESS_6_3D) },
+  "psychopomp-short-style-first": { prompt: turnaround(SHAMANESS_6_3D, SHAMANESS_6) },
+};
+
 const PSYCHOPOMP_JOBS = [
+  ...Object.entries(PSYCHOPOMPS_6).map(([id, { prompt }]) => ({ id: `${id}-turnaround`, prompt })),
   ...Object.entries(PSYCHOPOMPS_5).map(([id, { prompt }]) => ({ id: `${id}-turnaround`, prompt })),
   ...Object.entries(PSYCHOPOMPS_4).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are open and empty.`, SHAMANESS_4_3D) })),
   ...Object.entries(PSYCHOPOMPS_3).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are open and empty.`, SHAMANESS_3_3D) })),

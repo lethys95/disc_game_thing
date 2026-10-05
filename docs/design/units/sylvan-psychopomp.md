@@ -159,3 +159,6 @@ back? Maybe something like 'not anime'? Idk."
 - The Bog Giant's subject is itself grim material (sludge, peat, rot), so its subject and style agree. Hers don't.
 - A test that would settle it: pits 1001's features with the style line first and the subject cut to essentials
   (same seed).
+- **Round six, the test** (the user: "staying consistent style wise is pretty essential"; `PSYCHOPOMPS_6`): pits 1001's
+  features cut to about 120 words in grim terms (rags, matted, rough), without the stylised cues; *short* keeps the
+  gothic line after her, *short-style-first* puts it before her. Seeds 1000–1002, so 1001 compares with the pick.
