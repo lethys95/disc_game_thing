@@ -50,3 +50,18 @@ put the tips of her fingers in a jar of blood.) Hair wise: let's have cornrow br
   round three, if wanted: describe the hood's eye sockets as "empty holes" with nothing in them; say "her irises are
   pale ice blue" as a plain colour fact; describe cornrows as rows "flat against the scalp"; name the red as "scarlet
   red fingertips on the white gloves" up front, not at the end of the prompt. Waiting on the user.
+
+## The user's direction for round three (2026-10-05)
+"I think she looks too much like a human right now. Also her closed off robe makes her look too civilized… Not sure how
+to word that though. I think we're closer, but we might actually have too much white now. Also her skin should probably
+have that same woodelf type color as in the first ink trial. Pale greenish. Give her face tattoos too in the next one.
+Shoes should be some pretty large fluffy things, burrowing a bit from shamaness there. Mouth and eyes still aren't that
+ghostly teal though. Should have that glow, though that can probably be added in vfx. Strips are problematic due to 3D
+physics, I agree. Add that, modify things a bit, add in your own suggestions here, and try again."
+- **Round three** (`PSYCHOPOMPS_3`, materials `SHAMANESS_3_3D`), Claude's choices: the elven features named one by one
+  (long ears out through slits in the hood, gaunt narrow face, wide-set large eyes, long neck, long fingers); the hood's
+  eyes as "empty cut-out holes with nothing inside them"; cornrows "flat against her scalp"; teal irises as a plain
+  colour fact; the gloves and the fur boots named before the clothes; white down to an accent. Three ways of wearing
+  clothes that aren't tailored: *wrapped* (knotted ivory cloth, bare shoulders and midriff, a fur mantle), *pelted*
+  (mostly furs and hide, a pelt over one shoulder), *overgrown* (hide and cloth bound on by living roots, moss and
+  lichen growing on her: a touch of the Golgari rot). Every cloth end short and close to the body (3D cloth).

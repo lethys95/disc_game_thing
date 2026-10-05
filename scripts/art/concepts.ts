@@ -430,7 +430,37 @@ const PSYCHOPOMPS_2: Readonly<Record<string, { readonly subject: string }>> = {
   },
 };
 
+/**
+ * Round three (the user, 2026-10-05: too human, the closed robe too civilized, too much white; the ink trial's pale
+ * greenish skin, face tattoos, large fluffy shoes, ghostly teal eyes and mouth; no strips, for the 3D cloth). Claude's:
+ * the elven features named one by one (ears through the hood, gaunt face, wide eyes, long fingers), the hood's eyes as
+ * empty holes, the gloves before the clothes, and three ways of wearing clothes that aren't tailored.
+ */
+const SHAMANESS_3 =
+  "An elven shamaness of a wild forest people, not human: pale greenish-grey skin, very long pointed ears sweeping out sideways through slits in her hood, a narrow gaunt face with sharp cheekbones and a small pointed chin, large eyes set wide apart, a long thin neck, thin long limbs and long thin fingers. " +
+  "Over her head a hood made from a wolf's head pelt with no lower jaw: the wolf's snout, brow and ears above her face, and where the wolf's eyes were, two empty cut-out holes with nothing inside them; her face looks out from under the wolf's upper teeth. " +
+  "Her dark hair in tight cornrows flat against her scalp. Dark green and black tribal tattoos cover her face (lines across her brow, her cheeks and her chin), her neck, her arms and her legs. " +
+  "Her irises are a pale ghostly teal and faintly glowing, her stare empty and unfocused, looking through everything; her lips are parted, her mouth slightly open and slack. She is absent, hypnotised, barely there. " +
+  "On her hands, ivory white gloves with scarlet red fingertips, each finger red to the first knuckle. On her feet, large shaggy boots of grey wolf fur, wide and bulky, bound to the knee with cord.";
+
+const SHAMANESS_3_3D =
+  "Dark gothic fantasy, rich and brooding, weathered and worn physically based materials: grey wolf fur, dark hide and worn leather, ivory cloth, bone, moss and roots. " +
+  "Deep moss green, dark brown, grey and black, ivory only as an accent; her skin a pale greenish grey; only her eyes a ghostly teal and her fingertips scarlet. Serious, adult, not cartoonish.";
+
+const PSYCHOPOMPS_3: Readonly<Record<string, { readonly subject: string }>> = {
+  "psychopomp-wrapped": {
+    subject: `${SHAMANESS_3} Her clothes are not sewn: a few pieces of ivory cloth wrapped and knotted around her chest and hips, her shoulders, arms and midriff bare, under a short shaggy mantle of grey wolf fur over her shoulders; a dark leather belt hung with bones and small pouches. Every cloth end is short and close to the body.`,
+  },
+  "psychopomp-pelted": {
+    subject: `${SHAMANESS_3} She is dressed mostly in furs and hide: a grey wolf pelt slung over one shoulder and across her chest, a knee-length skirt of dark hide panels with a little ivory cloth showing between them, bone toggles and leather cords, moss growing in the seams. Every end is short and close to the body.`,
+  },
+  "psychopomp-overgrown": {
+    subject: `${SHAMANESS_3} Her clothes are dark hide and a little ivory cloth bound to her body by living roots and vines that wind around her arms and legs, open at the front over a dark leather band across her chest, her thin stomach bare; patches of moss and pale lichen grow on her shoulders and on the cloth. Every end is short and close to the body.`,
+  },
+};
+
 const PSYCHOPOMP_JOBS = [
+  ...Object.entries(PSYCHOPOMPS_3).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are open and empty.`, SHAMANESS_3_3D) })),
   ...Object.entries(PSYCHOPOMPS_2).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are open and empty.`, SHAMANESS_3D) })),
   ...Object.entries(PSYCHOPOMPS).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are empty and open.`, PSYCHOPOMP_3D) })),
 ];
