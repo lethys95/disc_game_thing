@@ -102,18 +102,18 @@ const UNITS: Readonly<Record<string, Unit>> = {
     identity:
       "a shamaness of a wild forest people: pale greenish skin, dark green and black tribal tattoos across her face and body, dark hair in cornrows, a hood of a wolf's head pelt with its upper teeth over her brow and its grey fur close around the sides of her face, pale ghostly teal eyes staring through everything, short fingerless ivory gloves, boots of matted grey wolf fur, knotted ivory rags, a ragged fur mantle, leather wraps and bronze bangles on her arms",
     // "Could really use a pose of some sort in the card… she just looks sort of bland" (the user). The first is the
-    // user's casting reference (`docs/design/units/sylvan-psychopomp.md`); the second is Claude's. Her icon is better
-    // from a painted bust (the user).
+    // user's casting reference (`docs/design/units/sylvan-psychopomp.md`); the second is Claude's, picked. Bust and
+    // icon from the card too, for consistency (the user).
     poses: [
       "she stands with her palms turned down at her sides and her back bowed backwards in a strange arch, her head tilted back, staring",
       "she stands absent and swaying, one hand raised before her face with its blood-red fingers spread, the other hand hanging low",
     ],
     // Round one gave her elf ears sticking out of the hood again (the user had them painted out of the concept): no
     // "elven", the hood's fur around her face, the bust lower.
-    strengths: { card: [0.75, 0.9], bust: [0.3] },
+    strengths: { card: [0.75, 0.9], bust: [] },
     picked: {
-      card: "psychopomp-card-pose2-d90.png", bust: "psychopomp-bust-d30.png",
-      crops: { bust: { from: "bust", size: 1, x: 0.5, y: 0.5 }, icon: { from: "bust", size: 0.4, x: 0.49, y: 0.3 } },
+      card: "psychopomp-card-pose2-d90.png",
+      crops: { bust: { from: "card", size: 0.6, x: 0.5, y: 0.25 }, icon: { from: "card", size: 0.28, x: 0.47, y: 0.165 } },
     },
   },
   custodian: {
@@ -135,7 +135,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     strengths: T_POSED,
     picked: {
       card: "bonecracker-card-d90.png",
-      crops: { bust: { from: "card", size: 0.62, x: 0.6, y: 0.33 }, icon: { from: "card", size: 0.38, x: 0.7, y: 0.3 } },
+      crops: { bust: { from: "card", size: 0.62, x: 0.6, y: 0.33 }, icon: { from: "card", size: 0.44, x: 0.7, y: 0.32 } },
     },
   },
   cackler: {
@@ -180,7 +180,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     strengths: { card: [0.6, 0.75], bust: [] },
     picked: {
       card: "moldling-card-d75.png",
-      crops: { bust: { from: "card", size: 0.55, x: 0.55, y: 0.3 }, icon: { from: "card", size: 0.3, x: 0.6, y: 0.23 } },
+      crops: { bust: { from: "card", size: 0.55, x: 0.55, y: 0.3 }, icon: { from: "card", size: 0.34, x: 0.62, y: 0.24 } },
     },
   },
   deadwood: {
@@ -220,7 +220,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     strengths: STANDING,
     picked: {
       card: "mulch_gorger-card-d40.png",
-      crops: { bust: { from: "card", size: 0.55, x: 0.47, y: 0.22 }, icon: { from: "card", size: 0.25, x: 0.46, y: 0.12 } },
+      crops: { bust: { from: "card", size: 0.55, x: 0.47, y: 0.22 }, icon: { from: "card", size: 0.25, x: 0.48, y: 0.12 } },
     },
   },
 };

@@ -182,3 +182,6 @@ All 43 abilities without art got icons in the recipe of the four the user liked 
   - **Kept images:** the script now moves any earlier image of the same name to `earlier/`. Before that fix this run
     overwrote round one's candidates of the same names; the installed round-one files are still in git.
   - Overview: `shots/portraits.html`.
+- **Touch-ups (the user, 2026-10-05):** the Psychopomp's bust and icon now come from her card too ("for
+  consistency"), so every unit's three framings are one painting except the Bog Giant's. The Bonecracker's and
+  Moldling's icons were widened so the mouth isn't cut off, and the Mulch Gorger's was centred.
