@@ -178,3 +178,8 @@ byte-identical to the manifest; the other rounds' prompts were removed from code
 Split for Tripo: `shots/tripo/psychopomp-{front,side,back}.png`. Not in the image, for the 3D model, textures and
 effects: the hood's gouged-out pits (the wolf has glowing eyes), her scarlet fingers (teal nails), the glitching ghosts
 and the eye glow (vfx).
+- **The ears (the user, 2026-10-05):** "1002 short has a problem with the ears… the ears are sticking out from the
+  front, but not from the side, which doesn't make sense logically." Backups if Tripo doesn't go well: short 1001 or
+  style-first 1000. Checked per view: short 1001 keeps the ears inside the hood in both views (consistent);
+  style-first 1000 has small tips at the front and none at the side (the same mismatch, milder) and draws the side
+  twice. All three are split in `shots/tripo/` (`psychopomp-*`, `psychopomp-backup-1-*`, `psychopomp-backup-2-*`).

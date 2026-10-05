@@ -21,7 +21,7 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 | Deadwood | Grove 3 | user (an animated dead tree) | picked: `deadwood-blasted-turnaround-1002` | — |
 | Bog Giant | Grove 4 | user (a swamp hulk, huge right arm) | picked: `bog-giant-hulk-turnaround-1002` | — |
 | Mulch Gorger | Grove 4 | user (a skull and plant matter) | picked: `mulch-gorger-heap-turnaround-1000` | — |
-| Psychopomp | Grove 3 | user (canon; rounds two to four, 2026-10-05) | picked: `psychopomp-short-turnaround-1002` (user, round six) | — |
+| Psychopomp | Grove 3 | user (canon; rounds two to four, 2026-10-05) | picked: `psychopomp-short-turnaround-1002` (user, round six; backups short 1001, style-first 1000: the ears) | — |
 | Zealot | Jilliath 2 | user (canon mask, palette; wild eyes, 2026-10-05) | picked: `zealot-pyre-turnaround-1000` (user, round one of seven) | old ink portrait, to replace |
 | Custodian | Nexus 1 | user ("a golem") + Claude's stone and brass | picked: `custodian-3d-1002` (3D), `custodian-1000` (portrait) | ✓ |
 | Bonecracker | gnolls 1 | Claude (accepted) | picked: 1002 | — |
