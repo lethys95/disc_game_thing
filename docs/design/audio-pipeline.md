@@ -4,7 +4,8 @@ The user wants sound and music made locally with open models, like the art. Rese
 read-only look at this machine); license claims carry their sources; recheck them before shipping anything.
 
 ## Recommendation
-- **Music: ACE-Step 1.5** (turbo; XL-SFT for quality). MIT code and weights, no revenue cap; trained on licensed,
+- **Music: MiniMax Music 3** since 2026-10-05 (the user: ACE-Step "is not very good"; see the music note below).
+- *(Earlier pick)* **Music: ACE-Step 1.5** (turbo; XL-SFT for quality). MIT code and weights, no revenue cap; trained on licensed,
   royalty-free and synthetic data (https://github.com/ace-step/ACE-Step-1.5). Fast (<10 s per song on a 3090),
   ~4 GB VRAM (XL ~20 GB). BPM, key and time signature are controllable, so loop points can be bar-aligned;
   instrumental works; repaint/extend. Native in ComfyUI 0.37. **Already installed** as a standalone app
@@ -46,3 +47,17 @@ Generated SFX weren't good enough (the user's test); the first pass comes from t
 - **Music (2026-09-27):** `scripts/audio/music.py` generates candidates with ACE-Step 1.5 in its own environment (`CUDA_VISIBLE_DEVICES=1 ~/boot_launching_applications/acestep/ACE-Step-1.5/.venv/bin/python scripts/audio/music.py [map battle]`; its API server's port 8001 is taken by another service, so it runs in-process). Takes land in `../music-candidates/<track>/`; one is finished (`sfx.sh finish … -20 96k`, fades at both ends) into `assets/audio/music/<track>.ogg`. Playback loops one track at a time, crossfading, by faction (user's idea, 2026-09-27): on the map your faction's `music/<faction>/map`, in battle the attacker's `battle-<n>` tracks in rotation; its own volume in Settings. The first takes were "very upbeat and weird" (user); the second round asks for slower tempi, keeps the caption as written (ACE-Step's language model otherwise rewrites it) and adds a negative prompt. Licensing options beyond ACE-Step: `music-sources.md`.
 - **Ambience:** a looping bed under the music (`ambience/map`, wind in trees), on the map only, at the effects volume.
 - Placeholders are fine for now (user, 2026-09-27): the point is the system; final sounds and music wait for a style direction (and, for final AI music, likely Suno, `music-sources.md`).
+
+- **Music, MiniMax Music 3 (2026-10-05):** the user's new local music model, replacing ACE-Step ("it's not very
+  good"; `scripts/audio/music.py` removed, its tracks stay in the game until replaced).
+  - **Setup:** it runs in the local ComfyUI on the second GPU, through ComfyUI's own nodes and its "Text to Music
+    (MiniMax Music 3)" blueprint. The model files are Comfy-Org's repacks, about 14 GB, in `models/diffusion_models`,
+    `text_encoders` and `vae`. Free ComfyUI's image models first.
+  - **Generating:** `pnpm exec tsx scripts/audio/music3.ts <track…> [seed…] [--lyrics=sections]` writes to
+    `../music-candidates/minimax/<track>/` with a manifest. About 2–2.5 minutes for a 2-minute take.
+  - **Instrumentals:** the model is made for songs with lyrics. Asking for an instrumental with `[Instrumental]`
+    alone, or with empty lyrics, ends the take after 16–65 s. A whole song form with `[Instrumental]` in every
+    section fills the length.
+  - **Licence:** the "MiniMax-Music3 Community License", not open source. A commercial product must show
+    "MiniMax-Music3" prominently, and needs MiniMax's written permission above $20M yearly revenue. It doesn't
+    clearly grant ownership of outputs. Fine for placeholders; weigh it before shipping a track.
