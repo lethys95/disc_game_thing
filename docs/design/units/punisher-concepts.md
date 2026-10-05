@@ -21,3 +21,15 @@ will be heavily inspired by iron maidens."
   *bridle* (a scold's bridle cage-helm, padlocks, manacles), *brand* (red-hot glowing seams, bare branded forearms,
   open helm), *bell* (a bell-shaped closed helm with one eye slit, shackles, a chained book). The flail as two prop
   sheets: cold iron and red-hot heads.
+- **Round one, read:**
+  - All nine came out as the same stocky knight in ornate engraved plate, with a mail skirt and a red sash. It's
+    metal and has no white, but it's knightly: it risks reading as a Paladin. "Riveted iron plate" summons a knight.
+  - *Bell* is the one that works, in all three: the bell helm with one eye slit is an odd, readable silhouette.
+    Shackles with broken chains hang from both wrists, and the book is chained at his hip.
+  - *Bridle* gave ordinary visored helms (no cage, no mouth plate). *Brand* gave a red hood, but no glow and no bare
+    branded arms.
+  - The flail: three chains on an iron-banded haft, drawn twice mirrored. The heads came out as spiked balls, not
+    flanged. The hot version has no glow.
+  - Bell 1000 draws a stray forearm by the side view.
+  - Next, if wanted: the bell as the base, and a body that isn't a knight's (heavy plate pieces over leather, mail and
+    a gambeson, a bailiff's coat); describe flanged heads as ridged blades round a core, not spikes.
