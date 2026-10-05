@@ -11,10 +11,14 @@ export interface Candidate {
   readonly model: string;
   readonly negative?: string;
   readonly cfg?: number;
+  /** An inpainted repair: the image it repaints, the mask of what was repainted and how strongly. */
+  readonly source?: string;
+  readonly mask?: string;
+  readonly denoise?: number;
 }
 
 /** Adds this run's images to the folder's manifest (replacing any it regenerated). */
-async function record(dir: string, manifest: readonly Candidate[]): Promise<void> {
+export async function record(dir: string, manifest: readonly Candidate[]): Promise<void> {
   const earlier = await readFile(`${dir}/manifest.json`, "utf8").then((text): Candidate[] => JSON.parse(text), () => []);
   const kept = earlier.filter((old) => !manifest.some((m) => m.file === old.file));
   await writeFile(`${dir}/manifest.json`, JSON.stringify([...kept, ...manifest], null, 2));
