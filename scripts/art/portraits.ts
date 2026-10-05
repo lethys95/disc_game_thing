@@ -1,15 +1,15 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import sharp from "sharp";
-import { fromReferences, img2img, KREA2_TURBO } from "#scripts/art/comfy";
+import { img2img, KREA2_TURBO } from "#scripts/art/comfy";
 import { record } from "#scripts/art/batch";
 import type { Candidate } from "#scripts/art/batch";
 
 /**
  * Portraits from picked concepts (questions #13; the user, 2026-10-05: "try out the workflow first and see if it works
- * to your liking"), so the card on the field, the icon and the 3D model are the same creature. A test of routes on
- * one unit before any other: image-to-image from the concept's front view (a head crop for the icon, the figure on a
- * card for the card), and reference-guided generation (ComfyUI's Krea-2 reference blueprint, without its style LoRA),
- * which can re-pose the figure.
+ * to your liking"), so the card on the field, the icon and the 3D model are the same creature: image-to-image from the
+ * picked concept's front view, a head crop for the icon and the figure on a card for the card. At 0.75 and above the
+ * model re-poses the T-pose by itself (tested on the Punisher, 2026-10-05). ComfyUI's Krea-2 reference blueprint,
+ * tried without its style LoRA, gave a dotted halftone mess and was dropped.
  *
  *     pnpm exec tsx scripts/art/portraits.ts <unit> [--sources]   (--sources: only write the source images)
  */
@@ -27,8 +27,6 @@ interface Unit {
   readonly dir: string;
   /** The picked concept's front view, split from its turnaround sheet. */
   readonly front: string;
-  /** Picked prop sheets to hand the reference route (its weapon). */
-  readonly props: readonly string[];
   /** Who it is, in a sentence, for every prompt. */
   readonly identity: string;
   /** What it holds on its card. */
@@ -39,7 +37,6 @@ const UNITS: Readonly<Record<string, Unit>> = {
   punisher: {
     dir: "art/candidates/units/jilliath/punisher/portrait-test",
     front: "shots/tripo/punisher-front.png",
-    props: ["art/candidates/units/jilliath/punisher/punisher-flail-flanged-props-1001.png"],
     identity:
       "a hooded executioner of a militant faith: a tall pointed hood with only black inside it, no face; a long cassock and a hooded mantle of dark iron-grey cloth; dented iron bracers, a heavy chain belt",
     holding: "a heavy multi-headed flail resting over his shoulder",
@@ -137,8 +134,6 @@ if (process.argv.includes("--sources")) process.exit(0);
 
 const iconPrompt = `A painted head-and-shoulders portrait of ${unit.identity}. ${PAINTED}`;
 const cardPrompt = `A painted full-body character card of ${unit.identity}; he stands upright, ${unit.holding}. ${PAINTED}`;
-const refIconPrompt = `The character from the first image, painted as a head-and-shoulders portrait: ${unit.identity}. Keep his design exactly as in the first image. ${PAINTED}`;
-const refCardPrompt = `The character from the first image, painted as a full-body character card: ${unit.identity}. He stands in a relaxed, natural pose with his arms lowered, ${unit.holding}, the weapon from the second image. Keep his design exactly as in the first image. ${PAINTED}`;
 
 type Run = { readonly file: string; readonly make: () => Promise<Uint8Array>; readonly entry: Omit<Candidate, "file" | "model"> };
 const runs: Run[] = [
@@ -151,16 +146,6 @@ const runs: Run[] = [
     file: `${unitId}-card-img2img-d${Math.round(denoise * 100)}.png`,
     make: () => img2img({ prompt: cardPrompt, seed: 1000, source: cardSrc, denoise }, `disc/${unitId}-card`),
     entry: { id: `${unitId}-card-img2img`, seed: 1000, prompt: cardPrompt, source: cardSrc, denoise },
-  })),
-  ...[1000, 1001, 1002].map((seed): Run => ({
-    file: `${unitId}-card-ref-${seed}.png`,
-    make: () => fromReferences({ prompt: refCardPrompt, seed, references: [unit.front, ...unit.props], ...CARD }, `disc/${unitId}-card-ref`),
-    entry: { id: `${unitId}-card-ref`, seed, prompt: refCardPrompt, references: [unit.front, ...unit.props] },
-  })),
-  ...[1000, 1001].map((seed): Run => ({
-    file: `${unitId}-icon-ref-${seed}.png`,
-    make: () => fromReferences({ prompt: refIconPrompt, seed, references: [unit.front], width: ICON, height: ICON }, `disc/${unitId}-icon-ref`),
-    entry: { id: `${unitId}-icon-ref`, seed, prompt: refIconPrompt, references: [unit.front] },
   })),
 ];
 const made: Candidate[] = [];

@@ -108,3 +108,19 @@ All 43 abilities without art got icons in the recipe of the four the user liked 
   Simpler and needing nothing new: crop the head (icon) or the figure (card) from a picked concept, then Krea
   image-to-image at moderate denoise with a portrait prompt. The proposed test: both routes on a few picked units, side
   by side, once the user says go.
+- **The test (2026-10-05; the user: "You can begin 1. Don't just start everyone at once. Try out the workflow first"):**
+  on the Punisher only (`scripts/art/portraits.ts`, `shots/portrait-test.html`).
+  - **Image-to-image works.** The source is the picked concept's front view, with its grey turned to the old
+    portraits' dark grey. It's repainted with a short prompt (who he is, what he holds) and the painted gothic line
+    plus the first batch's chiaroscuro and rim light.
+  - **The card:** at 0.75 and 0.9 the model re-poses the T-pose by itself (arms down, the flail over his shoulder)
+    and keeps the hood, cassock, mantle, chain belt and bracers. It's the old portrait's look with the picked design.
+    At 0.6 the T-pose still shows.
+  - **The icon:** a head-and-shoulders crop at 0.45–0.75 keeps him, and still reads at 64 px.
+  - **About 14 s an image.**
+  - **The reference blueprint, without its LoRA, failed:** a dotted halftone mess, with the flail sheet pasted in
+    beside him. It was dropped from the code (git keeps it).
+  - **Not settled:**
+    - the portrait style (painted, after the liked first batch) is the user's call;
+    - the card's flail came out as balls, not the picked flanged heads;
+    - nothing is installed yet.
