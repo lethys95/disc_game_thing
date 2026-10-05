@@ -430,6 +430,71 @@ const PSYCHOPOMP_3D =
 // Picked: seed 1002.
 const PSYCHOPOMP_JOBS = [{ id: "psychopomp-short-turnaround", prompt: turnaround(PSYCHOPOMP_SUBJECT, PSYCHOPOMP_3D) }];
 
+/**
+ * The carnival's Omen and Soothsayer and the Nexus Etherborn (the user, 2026-10-05: "how to not make this boring…
+ * we need to be creative"; `docs/design/units/carnival-concepts.md`). The user's looks held fixed; the twists, one per
+ * reading, are Claude's. Short subjects of defining features, the gothic recipe word for word.
+ */
+const CARNIVAL_3D =
+  "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: faded striped canvas, patched velvet, cracked leather, tarnished brass and gold, bone. Serious, adult, not cartoonish.";
+
+// The Nexus "definitely are not worn, weathered and repaired" (the user, `factions/ral-vitahl.md`): "immaculate" in
+// that one place of the recipe.
+const NEXUS_NOBLE_3D =
+  "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, immaculate physically based materials: dark silk and velvet, polished gold and brass filigree, enamel, skin of deep starlit space. Serious, adult, not cartoonish.";
+
+const OMEN =
+  "A blind gunslinger-prophet of a nomadic swindlers' carnival: a tall, gaunt man with a wide crooked grin of gold teeth. His eyes are bound by a band of dirty red cloth with a pair of wide, staring eyes painted on it in white. " +
+  "A long ragged trenchcoat to his ankles with a large faded red pentagram painted across its back; bandoliers of powder flasks and bullet pouches across his chest, two empty holsters at his hips.";
+
+const OMENS: Readonly<Record<string, { readonly subject: string }>> = {
+  "omen-barker": { subject: `${OMEN} A battered tall top hat with old tarot cards tucked into its band.` },
+  "omen-preacher": { subject: `${OMEN} A wide, flat-brimmed preacher's hat, long lank hair, and a stole of strung finger bones around his neck.` },
+  "omen-hanged": { subject: `${OMEN} Bare-headed and shaven, a frayed hangman's noose still knotted around his neck, its cut end hanging down his chest.` },
+};
+
+const OMEN_PISTOLS =
+  "a pair of long ornate flintlock pistols of dark wood and tarnished brass, their barrels engraved with small skulls and stars, each grip capped with a brass raven's head; each pistol drawn twice, from the side and from above.";
+
+const SOOTHSAYER =
+  "A fortune teller of a nomadic swindlers' carnival, a woman. Over her mouth and chin hangs a veil of strung old coins. Heavy dark kohl around her eyes, one eye milky white and blind. Rings on every long finger, bangles up her wrists.";
+
+const SOOTHSAYERS: Readonly<Record<string, { readonly subject: string }>> = {
+  "soothsayer-tent": {
+    subject: `${SOOTHSAYER} Her loose layered robes are cut from faded red and mustard striped carnival tent canvas, patched and fringed with tassels; a tall headdress of tarnished brass charms and tiny bells.`,
+  },
+  "soothsayer-crone": {
+    subject: `${SOOTHSAYER} She is ancient and hunched, her wild white hair braided with charms, coins and small bones; loose patchwork robes of faded velvet and layered shawls.`,
+  },
+  "soothsayer-stilts": {
+    subject: `${SOOTHSAYER} She stands unnaturally tall on hidden stilts, her long dark robes falling straight to the ground and hiding them, towering twice a man's height: a narrow, swaying silhouette under a tall pointed hood.`,
+  },
+};
+
+const SOOTHSAYER_PROPS =
+  "a glass orb the size of a head with a single living eye floating inside it, veined and staring, wisps of smoke inside the glass; beside it a fanned hand of five worn tarot cards with dark painted faces. Each object separate.";
+
+const ETHERBORN =
+  "An arcane noblewoman, tall and slender. Her skin is not skin but deep space: dark blue-black filled with swirling galaxies, violet and blue nebulae and countless stars, as if her body were a window into the night sky. " +
+  "Her head is a smooth featureless oval with no eyes, no nose and no mouth, the same starfield across it. Immaculate noble robes of deep violet and black silk with fine gold filigree. Glowing magenta-violet arcane energy wreathes her open hands.";
+
+const ETHERBORNS: Readonly<Record<string, { readonly subject: string }>> = {
+  "etherborn-orrery": { subject: `${ETHERBORN} Around her blank head turn the brass rings of an armillary sphere: a small orrery of orbiting golden bands and tiny planets.` },
+  "etherborn-collar": { subject: `${ETHERBORN} A tall, stiff fan of a collar in black enamel and gold rises behind her head like a cathedral window.` },
+  "etherborn-veil": { subject: `${ETHERBORN} A sheer black veil hangs over her blank face from a tall jewelled headdress, the stars showing through the veil.` },
+};
+
+const prop = (description: string, materials: string) =>
+  `A 3D render of a game prop model, like a textured asset shown in a modelling program: ${description} ${materials} Each view whole and separate, laid flat. Flat, even, shadowless lighting from all sides. A plain flat light grey background, no ground, no hands, no text.`;
+
+const CARNIVAL_JOBS = [
+  ...Object.entries({ ...OMENS, ...SOOTHSAYERS }).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Hands empty and open, no weapon.`, CARNIVAL_3D) })),
+  { id: "omen-pistols-props", prompt: prop(OMEN_PISTOLS, CARNIVAL_3D), width: 2048, height: 832 },
+  { id: "soothsayer-orb-props", prompt: prop(SOOTHSAYER_PROPS, CARNIVAL_3D), width: 2048, height: 832 },
+];
+
+const ETHERBORN_JOBS = Object.entries(ETHERBORNS).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(subject, NEXUS_NOBLE_3D) }));
+
 /** Each group of jobs has its own folder, so one group's run doesn't mix into another's manifest. */
 const GROUPS = [
   { dir: "art/candidates/units/grove", jobs: GROVE_JOBS },
@@ -438,6 +503,8 @@ const GROUPS = [
   { dir: "art/candidates/units/jilliath/zealot", jobs: ZEALOT_JOBS },
   { dir: "art/candidates/units/jilliath/punisher", jobs: PUNISHER_JOBS },
   { dir: "art/candidates/units/grove/psychopomp", jobs: PSYCHOPOMP_JOBS },
+  { dir: "art/candidates/units/neutrals/carnival", jobs: CARNIVAL_JOBS },
+  { dir: "art/candidates/units/nexus/etherborn", jobs: ETHERBORN_JOBS },
 ];
 
 const args = process.argv.slice(2);
