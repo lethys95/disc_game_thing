@@ -183,3 +183,10 @@ and the eye glow (vfx).
   style-first 1000. Checked per view: short 1001 keeps the ears inside the hood in both views (consistent);
   style-first 1000 has small tips at the front and none at the side (the same mismatch, milder) and draws the side
   twice. All three are split in `shots/tripo/` (`psychopomp-*`, `psychopomp-backup-1-*`, `psychopomp-backup-2-*`).
+- **The ears inpainted (2026-10-05, the user: "try it out"):** the first repair with the new inpainting
+  (`scripts/art/fixes.ts`, fix `psychopomp-short-1002-earless`). The mask (`masks/psychopomp-short-1002-ears.png`)
+  was picked out by the ears' pink skin within two boxes and widened 7 px. The prompt is the pick's, without "long
+  pointed ears", plus the hood's fur close around her face. Strengths 0.7, 0.85 and 1.0 all replace the ears with
+  hood fur; small pointed ear tips stay tucked inside the hood. Outside the mask the pixels are the pick's, checked:
+  a difference of 0. Claude's choice for Tripo: 0.85 (`shots/tripo/psychopomp-earless-front.png`, with the pick's
+  side and back).

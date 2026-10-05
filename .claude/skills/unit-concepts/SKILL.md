@@ -98,5 +98,11 @@ than the Custodian's 3D concepts is a stand-in to redo (the user, 2026-10-05).
   `uv run scripts/art/split-turnaround.py <sheet.png> shots/tripo <unit>` (views named front, side, back, then
   view-4 for a duplicate; check the result, since a sheet can draw the same view twice), and add them to
   `shots/tripo/index.html`.
+- **Repairs by inpainting** (a flaw in a pick, like views that disagree: the Psychopomp's ears stuck out at the front
+  only): add a fix to `FIXES` in `scripts/art/fixes.ts` (the source, a mask, edits to the pick's own prompt, the seed,
+  two or three strengths) and run `pnpm exec tsx scripts/art/fixes.ts <fix id>` through the `krea-images` subagent.
+  Outside the mask every pixel stays the pick's. Masks live in the unit's folder under `masks/`; build one from colour
+  or shape inside a box (numpy/scipy, a few pixels wider), and overlay it in red to check before running. Then split
+  the repaired sheet like a pick.
 - **Portrait and icon:** come from the concept (image-to-image, roster step 3), never from text alone, so the card,
   the icon and the 3D model are the same creature.
