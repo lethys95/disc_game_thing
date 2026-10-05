@@ -151,8 +151,10 @@ export class Hud {
         const ours = playerSide === null || hand.side === playerSide;
         const line = element("div", `state-${hand.state}`);
         if (!card) return line;
-        if (!ours && hand.state !== "fulfilled") {
-          line.append(element("span", "arcana", "A hidden card"), ` · the enemy's tarot`);
+        // The enemy's card: its name, never what it asks or pays (the user, 2026-10-05: more mysterious that way).
+        if (!ours) {
+          const state = hand.state === "open" ? "" : hand.state === "fulfilled" ? " · fulfilled" : " · failed";
+          line.append(element("span", "arcana", TASK_NAMES[card.task.kind]), ` · the enemy's tarot${state}`);
           return line;
         }
         const state = hand.state === "open" ? "" : hand.state === "fulfilled" ? " · fulfilled" : " · failed";
@@ -383,8 +385,13 @@ function describe(event: BattleEvent, name: (id: string) => string, playerSide: 
       const hand = battle.tarot[event.hand];
       return hand ? `${name(hand.unitId)} draws ${hand.cards.length} more tarot cards.` : null;
     }
-    case "tarotChosen":
-      return event.side === playerSide ? null : "The enemy picks a tarot card and keeps it hidden.";
+    case "tarotChosen": {
+      if (playerSide === null || event.side === playerSide) return null;
+      // The user (2026-10-05): the other side sees which card was picked, never what it asks or pays.
+      const hand = battle.tarot[event.hand];
+      const card = hand?.cards[hand.chosen ?? 0];
+      return card ? `The enemy turns over a tarot card: ${TASK_NAMES[card.task.kind]}.` : null;
+    }
     case "tarot": {
       const hand = battle.tarot[event.hand];
       const card = hand?.cards[hand.chosen ?? 0];

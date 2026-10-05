@@ -2,7 +2,7 @@ import type { Playtest } from "#scripts/playtests/harness";
 
 const tarot: Playtest = {
   name: "tarot",
-  about: "a fight with Tarot 3 on both sides: the hand shows before anyone acts, a pick hides it, and the held card shows with the enemy's face down",
+  about: "a fight with Tarot 3 on both sides: the hand shows before anyone acts, a pick hides it, the held card shows, and the enemy's shows by name only",
   async run(t) {
     await t.open("/?fight=bandits&tarot=3&seed=4");
     await t.page.waitForSelector("#tarot:not([hidden]) .tarot-card");
@@ -22,7 +22,9 @@ const tarot: Playtest = {
     const held = await t.page.locator("#tarot-status").innerText();
     t.log(`held: ${held.replace(/\n/g, " / ")}`);
     if (!cards[0] || !held.includes(cards[0])) t.fail(`the held card should be ${cards[0]}`);
-    if (!held.includes("A hidden card")) t.fail("the enemy's card should show face down");
+    // The enemy's card shows its name, never its task (the user, 2026-10-05).
+    if (!held.includes("the enemy's tarot")) t.fail("the enemy's card should show by name");
+    if ((held.match(/Kill|Land|Lose|Heal/g) ?? []).length > 1) t.fail("the enemy's task should stay hidden");
     await t.shot("playtest-tarot-held");
   },
 };
