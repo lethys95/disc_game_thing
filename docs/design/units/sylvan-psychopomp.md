@@ -19,3 +19,8 @@ images: `art/candidates/units/grove/psychopomp/`.
   they vary how much of the ghosts and smoke sits on the body, since those are likely effects in the game rather than
   mesh: *possessed* (the look at full strength), *shaman* (the druid first, the ghosts faint after-images), *vessel*
   (a clean body for the model, the ghosts barely there).
+- **Round one, read:** the druid herself is consistent and of the Grove in all nine (wild hair braided with roots,
+  bones and beads; moss, bark and leather; vines). But nothing reads as possessed: calm faces, mouths closed, pale
+  violet-blue eyes that don't glow, no smoke. *Possessed* (the full look) got no ghosts at all; *shaman* got them as
+  separate translucent blue figures standing beside her; *vessel* is the cleanest body. Page: `shots/psychopomp.html`.
+  Waiting on the user before round two.
