@@ -353,13 +353,11 @@ const DRAWN_JOBS = [
 ];
 
 /**
- * The Zealot in the 3D concept strategy (the user, 2026-10-05: the old ink portrait doesn't fit; "try out what works and
- * what doesn't, but just keep it within the same 3D concept art strategy we've done with custodian, bog giant, etc.").
- * The user's look (`faction-stuff/jilliath/melee.md`) held fixed in every reading; the readings vary the body and
- * the armour (Claude's). The user once rejected "a depressed tired old man": zealots are "batshit insane", which the
- * design (mask, armour, body) has to carry, not a pose: the user (2026-10-05): "We're creating models, not scenes… Right
- * now we just want the t-pose. The figure we're putting in the t-pose must fit the design spec." (Round one also made
- * stance views; their prompts are in its manifest.) No sword on the figure; it gets a prop sheet of its own.
+ * The Zealot in the 3D concept strategy (the user, 2026-10-05: the old ink portrait doesn't fit). The user's look
+ * (`faction-stuff/jilliath/melee.md`), seven rounds (`docs/design/units/zealot-concepts.md`). **Picked (user):** round
+ * one's *pyre*, turnaround 1000: "I think it works really well." The other readings (and the later rounds: bandages
+ * that read as the Wastes' mummies, the user: "It's still supposed to be an inquisition faction… the antithesis to the
+ * paladin unit") live on in the folder's manifest. No sword on the figure; it has its own prop sheet.
  */
 const ZEALOT_MASK =
   "His whole head is covered by a smooth, completely featureless mask, no skin showing anywhere: no mouth, no nose, no expression, only two wide, staring round eye holes with pure black behind them. " +
@@ -370,120 +368,8 @@ const JILLIATH_3D =
   "Pale colors with a strong contrast of black, white and blood red. Ominous, strange, inhuman: wrong, grotesque, deranged and twisted. Serious, adult, not cartoonish.";
 
 const ZEALOTS: Readonly<Record<string, { readonly subject: string }>> = {
-  "zealot-flagellant": {
-    subject: `A religious zealot, a lean, wiry man. ${ZEALOT_MASK} Spiked, tattered armor of blackened plates over bare, scarred arms wound with red prayer cloth and barbed cord; a torn white tabard hanging in strips; bare feet.`,
-  },
   "zealot-pyre": {
     subject: `A religious zealot, a tall gaunt man. ${ZEALOT_MASK} The painted hand smoulders with real embers. Spiked, tattered armor scorched black at the edges, singed white robes in rags, chains with small hooks hanging from the belt.`,
-  },
-  "zealot-penitent": {
-    subject: `A religious zealot, a broad, heavy man. ${ZEALOT_MASK} Spiked armor on one side only, the other side bare and scarred; a long tattered blood-red tabard; spikes driven through the pauldrons; a crack running down the mask past one eye hole.`,
-  },
-};
-
-/**
- * Round two (Claude, after round one: smooth domed masks without their eye holes, and an orderly crusader knight, calm
- * and dignified): the eye holes first and large; no knight, no cross; armour scavenged and bolted on crooked; madness
- * in the body.
- */
-const ZEALOT_MASK_2 =
-  "His whole head is covered by a smooth, featureless mask of cracked white porcelain, no skin showing anywhere, with two large, perfectly round eye holes, wide and staring, deep black inside, no eyes visible. " +
-  "No mouth, no nose. Above the eye holes, painted crisply on the forehead, a burning outstretched hand with spread fingers, in red.";
-
-const NOT_A_KNIGHT = "Not a knight, not a crusader, no cross or holy symbols: a frenzied fanatic, deranged and twisted.";
-
-const ZEALOTS_2: Readonly<Record<string, { readonly subject: string }>> = {
-  "zealot-ecstatic": {
-    subject: `A religious zealot, emaciated and sinewy. ${ZEALOT_MASK_2} Spiked plates of blackened scrap armor bolted on crookedly at odd angles, a ragged white shift stained red beneath, strips of red cloth knotted around his arms and throat. ${NOT_A_KNIGHT}`,
-  },
-  "zealot-twitching": {
-    subject: `A religious zealot, hunched and wiry. ${ZEALOT_MASK_2} Wrapped in torn white bandages and rags stained red, a spiked iron collar, mismatched spiked plates on one shoulder and one shin, nails and hooks hanging from straps. ${NOT_A_KNIGHT}`,
-  },
-  "zealot-howling": {
-    subject: `A religious zealot, tall and gaunt. ${ZEALOT_MASK_2} Broken spiked armor, black and dented, half falling off him, tied on with rope; a long tattered blood-red cloth hanging from the belt; his bare arms scarred with burns in the shape of hands. ${NOT_A_KNIGHT}`,
-  },
-};
-
-/**
- * Round three (Claude): the eye holes came through on 2 of 9, but the model paints the hand big, down the whole face
- * and over the eyes. The mask's layout spelled out; the body joins round two's scrap spiked armour and the wrappings.
- */
-const ZEALOT_MASK_3 =
-  "His whole head is hidden under a smooth, blank, featureless mask of white porcelain, shaped like a doll's face with no features, no skin showing anywhere. " +
-  "At eye level, two large perfectly round holes, wide apart, black and empty inside. High on the forehead only, above the eye holes and small, the size of a palm: a red painted outstretched hand with spread fingers, wreathed in small flames. " +
-  "Below the eye holes the mask is blank white: no mouth, no nose, no paint.";
-
-const ZEALOTS_3: Readonly<Record<string, { readonly subject: string }>> = {
-  "zealot-scrap": {
-    subject: `A religious zealot, lean and wiry. ${ZEALOT_MASK_3} Spiked plates of blackened scrap armor bolted on crookedly over limbs wound in dirty white wrappings stained red, a spiked iron collar, a tattered white and blood-red tabard hanging in strips. ${NOT_A_KNIGHT}`,
-  },
-  "zealot-wound": {
-    subject: `A religious zealot, gaunt and tall. ${ZEALOT_MASK_3} Torn, spiked black armor on the shoulders, forearms and shins only, the rest of him wrapped tight in white cloth and red-stained bandages, nails and hooks hanging from leather straps, a ragged blood-red sash. ${NOT_A_KNIGHT}`,
-  },
-};
-
-/**
- * Round four (Claude): round three's *wound* body works (wrapped in red-stained bandages, spiked dark plates, no knight);
- * "tabard" summons a crusader's cross, so none. Its best mask (scrap-1002) put the hand small on the forehead, but "a doll's
- * face" gave it a nose and mouth: "blank as an egg" instead, and the hand as a small burning print.
- */
-const WOUND_BODY =
-  "Torn, spiked black armor on the shoulders, forearms and shins only, the rest of him wrapped tight in dirty white cloth and red-stained bandages, nails and hooks hanging from leather straps, a ragged blood-red sash at the waist; no tabard, no cross.";
-
-const ZEALOTS_4: Readonly<Record<string, { readonly subject: string }>> = {
-  "zealot-egg": {
-    subject: `A religious zealot, gaunt and tall. His whole head is hidden under a mask of smooth white porcelain, blank as an egg: no nose, no mouth, no features at all, no skin showing. Two large round eye holes, black and empty. On the forehead only, above the eye holes, a small burning red handprint with spread fingers, no bigger than a coin, small flames licking from it. ${WOUND_BODY} ${NOT_A_KNIGHT}`,
-  },
-  "zealot-brand": {
-    subject: `A religious zealot, gaunt and tall. A smooth, featureless oval mask of white porcelain covers his whole head, as plain as an egg except for two large round black eye holes. Branded small into the forehead, above the eyes, a red outstretched hand with spread fingers, smouldering. The lower half of the mask is perfectly plain. ${WOUND_BODY} ${NOT_A_KNIGHT}`,
-  },
-};
-
-/**
- * Round five (Claude): "egg" made the mask too blank (the eye holes vanished, though the hand came out small and right);
- * "brand" kept the eye holes but let the hand sprawl again. No similes (the user, predicting "an egg": the model draws
- * what's named); the two halves joined, and the mask described top to bottom.
- */
-const ZEALOTS_5: Readonly<Record<string, { readonly subject: string }>> = {
-  "zealot-joined": {
-    subject: `A religious zealot, gaunt and tall. A smooth, featureless mask of white porcelain covers his whole head, no skin showing, plain except for two large round black eye holes. On the forehead only, above the eye holes, a small burning red handprint with spread fingers, no bigger than a coin, small flames licking from it. No nose, no mouth. ${WOUND_BODY} ${NOT_A_KNIGHT}`,
-  },
-  "zealot-ordered": {
-    subject: `A religious zealot, gaunt and tall, his whole head covered by a mask of smooth white porcelain, no skin showing. The mask from top to bottom: high on the forehead, a small red handprint with spread fingers, smouldering; below it, at eye level, two large round black eye holes, empty and staring; below them, plain white porcelain with no nose and no mouth. ${WOUND_BODY} ${NOT_A_KNIGHT}`,
-  },
-};
-
-/**
- * Round six (the user's direction, 2026-10-05): "instead of removing features by making the mask blank and porcelain
- * white, you should instead write more notes on how there are eyeholes in it, and how wild his eyes are… by making it
- * featureless, arguably we might lose the burning hand… keep adding more and more notes on the holes in the mask and how
- * wild his eyes are until it becomes impossible to ignore." Wild eyes in the holes are the user's update to the first
- * look, which had black behind them.
- */
-const WILD_EYES =
-  "The eye holes are the most striking thing about him: two large round holes cut right through the mask, ragged at the edges, and through each hole a wild, bulging, bloodshot eye stares out, wide open, the whites showing all around the iris. " +
-  "His eyes are crazed, unblinking, frantic, staring out of the holes in the mask. Big eye holes, wild eyes, impossible to miss.";
-
-const ZEALOTS_6: Readonly<Record<string, { readonly subject: string }>> = {
-  "zealot-eyes": {
-    subject: `A religious zealot, gaunt and tall. A white mask covers his whole head, no skin showing, with two big eye holes cut into it. ${WILD_EYES} On the forehead of the mask, above the eye holes, a burning red outstretched hand with spread fingers, flames licking from it. ${WOUND_BODY} ${NOT_A_KNIGHT}`,
-  },
-  "zealot-stare": {
-    subject: `A religious zealot, gaunt and tall, his whole head covered by a cracked white mask with a burning red outstretched hand painted on the forehead and two big eye holes cut beneath it. ${WILD_EYES} Through the two holes in the mask his wild, staring, bloodshot eyes glare out, mad and wide. ${WOUND_BODY} ${NOT_A_KNIGHT}`,
-  },
-};
-
-/**
- * Round seven (Claude): round six put the hand back huge down the face ("a burning red outstretched hand" without a
- * size), and the eyes never showed. Round five's size words are what hold the hand on the forehead; joined here with
- * round six's wild eyes, and no "featureless" or "plain" (the user).
- */
-const ZEALOTS_7: Readonly<Record<string, { readonly subject: string }>> = {
-  "zealot-wild": {
-    subject: `A religious zealot, gaunt and tall. A white porcelain mask covers his whole head, no skin showing. On the forehead only, above the eye holes, a small burning red handprint with spread fingers, no bigger than a coin, small flames licking from it. Two large round eye holes cut through the mask, and through them his wild, bulging, bloodshot eyes stare out, wide open, the whites showing all around, crazed and unblinking. No nose, no mouth. ${WOUND_BODY} ${NOT_A_KNIGHT}`,
-  },
-  "zealot-glare": {
-    subject: `A religious zealot, gaunt and tall, his whole head covered by a cracked white porcelain mask with no nose and no mouth. High on the forehead, a small smouldering red handprint, the size of a coin. Below it, two large round holes cut in the mask, and in each hole a wild, staring, bloodshot human eye, open far too wide, glaring out. ${WOUND_BODY} ${NOT_A_KNIGHT}`,
   },
 };
 
@@ -492,12 +378,6 @@ const ZEALOT_SWORD =
 
 const ZEALOT_JOBS = [
   ...Object.entries(ZEALOTS).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, JILLIATH_3D) })),
-  ...Object.entries(ZEALOTS_2).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, JILLIATH_3D) })),
-  ...Object.entries(ZEALOTS_3).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, JILLIATH_3D) })),
-  ...Object.entries(ZEALOTS_4).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, JILLIATH_3D) })),
-  ...Object.entries(ZEALOTS_5).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, JILLIATH_3D) })),
-  ...Object.entries(ZEALOTS_6).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, JILLIATH_3D) })),
-  ...Object.entries(ZEALOTS_7).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, JILLIATH_3D) })),
   {
     id: "zealot-sword-props",
     prompt: `A 3D render of a game prop model, like a textured asset shown in a modelling program: ${ZEALOT_SWORD} ${JILLIATH_3D} Each view whole and separate, laid flat. Flat, even, shadowless lighting from all sides. A plain flat light grey background, no ground, no hands, no text.`,

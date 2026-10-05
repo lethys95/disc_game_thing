@@ -57,6 +57,11 @@ than the Custodian's 3D concepts is a stand-in to redo (the user, 2026-10-05).
   mouth; "blank as an egg" erased the Zealot's eye holes; the user called it beforehand). Say the thing itself.
 - Some words summon whole genres: "tabard" brought a crusader's red cross back twice, even with "no cross" in the
   prompt. Drop the word, not just add a negation.
+- **Stay inside the faction's visual language.** Fixing one trait can carry a unit out of its faction: pushing the
+  Zealot away from the Paladin ("not a knight") wrapped him in bandages, which read as the Wastes' mummies; the user
+  picked round one's crusader-ish zealot instead ("still supposed to be an inquisition faction… the antithesis to the
+  paladin"). Check each round against the faction, not only the trait.
+- An early round can be the pick: keep every round in view when the user chooses.
 - When two wordings each get half right, join their working halves (the Zealot: one wording's eye holes, the other's
   small hand).
 - Turnarounds sometimes draw a view twice or a stray limb: say so when picking; split views skip duplicates.

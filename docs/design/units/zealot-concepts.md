@@ -61,3 +61,13 @@
 - **Claude's suggested picks:** `zealot-joined-turnaround-1001` (the cleanest mask), `zealot-ordered-turnaround-1001`
   (long and eerie), `zealot-wild-turnaround-1002` (the holes with red streaks); the sword `zealot-sword-props-1000`.
   Page: `shots/zealot.html`.
+
+## Picked (user, 2026-10-05): round one's `zealot-pyre-turnaround-1000`
+"I think there are too many bandages. There's a risk of the user being confused since if we're going to draw from
+ethereals with wastes, then having this guy be all bandages means there's potential overlap even if slight. It's still
+supposed to be an inquisition faction. He's meant to be crazy, but still the antithesis to the paladin unit. I'm
+actually going to go for round 1: zealot-pyre-turnaround-1000. I think it works really well."
+- Claude's lesson: in pushing him away from the Paladin ("not a knight"), the later rounds pushed him out of his
+  faction (bandages read as the Wastes' mummies). Fix one trait without leaving the faction's visual language.
+- The sword: `zealot-sword-props-1000` is Claude's suggestion, not yet picked. Split for Tripo: `shots/tripo/zealot-*`
+  (four views: the sheet draws the side twice).
