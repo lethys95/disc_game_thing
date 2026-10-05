@@ -13,7 +13,7 @@ import type { Candidate } from "#scripts/art/batch";
  * reference blueprint, tried without its style LoRA, gave a dotted halftone mess and was dropped.
  *
  *     pnpm exec tsx scripts/art/portraits.ts <unit…> [--sources]           test images (--sources: only their sources)
- *     pnpm exec tsx scripts/art/portraits.ts --install <unit> <card> <bust>  picked files (in its dir) into the game
+ *     pnpm exec tsx scripts/art/portraits.ts --install <unit…>               its picks into the game
  */
 
 // The first batch's portraits the user liked were painted with chiaroscuro and a rim light on dark grey. "Ornate" in
@@ -56,6 +56,8 @@ interface Unit {
   readonly bust?: Square;
   /** The icon's square within the bust, as fractions of the bust's side, centred on the face (set after the test). */
   readonly icon?: Square;
+  /** Claude's picks from the test, installed by `--install`. */
+  readonly picked?: { readonly card: string; readonly bust: string };
 }
 
 const UNITS: Readonly<Record<string, Unit>> = {
@@ -66,6 +68,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     pose: "he stands upright, a heavy multi-headed flail resting over his shoulder",
     strengths: T_POSED,
     icon: { size: 0.46, x: 0.515, y: 0.56 },
+    picked: { card: "punisher-card-img2img-d75.png", bust: "punisher-icon-img2img-d60.png" },
   },
   zealot: {
     front: "shots/tripo/zealot-front.png",
@@ -73,13 +76,19 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "a religious zealot, a tall gaunt man: his whole head covered by a smooth white mask with two wide round black eye holes and a small burning red handprint on its forehead; spiked, tattered armor scorched black, singed white robes in rags stained blood red, chains with small hooks at his belt",
     pose: "he stands tense and leaning forward, a huge serrated two-handed greatsword of blackened steel held low",
     strengths: T_POSED,
+    icon: { size: 0.32, x: 0.51, y: 0.17 },
+    picked: { card: "zealot-card-d75.png", bust: "zealot-bust-d45.png" },
   },
   psychopomp: {
     front: "shots/tripo/psychopomp-earless-front.png",
     identity:
-      "an elven shamaness of a wild forest people: pale greenish skin, dark green and black tribal tattoos across her face and body, dark hair in cornrows, a hood of a wolf's head pelt with its upper teeth over her brow, pale ghostly teal eyes staring through everything, short fingerless ivory gloves, boots of matted grey wolf fur, knotted ivory rags, a ragged fur mantle, leather wraps and bronze bangles on her arms",
+      "a shamaness of a wild forest people: pale greenish skin, dark green and black tribal tattoos across her face and body, dark hair in cornrows, a hood of a wolf's head pelt with its upper teeth over her brow and its grey fur close around the sides of her face, pale ghostly teal eyes staring through everything, short fingerless ivory gloves, boots of matted grey wolf fur, knotted ivory rags, a ragged fur mantle, leather wraps and bronze bangles on her arms",
     pose: "she stands still and absent, her arms lowered, her hands open",
-    strengths: T_POSED,
+    // Round one gave her elf ears sticking out of the hood again (the user had them painted out of the concept): no
+    // "elven", the hood's fur around her face, the bust lower.
+    strengths: { card: [0.75, 0.9], bust: [0.3, 0.45] },
+    icon: { size: 0.42, x: 0.51, y: 0.32 },
+    picked: { card: "psychopomp-card-d90.png", bust: "psychopomp-bust-d45.png" },
   },
   custodian: {
     front: "art/candidates/units/nexus/custodian/custodian-3d-1002.png",
@@ -118,6 +127,8 @@ const UNITS: Readonly<Record<string, Unit>> = {
     pose: "it stands on its root legs",
     strengths: STANDING,
     styles: ["ornate", "plain"],
+    icon: { size: 0.45, x: 0.49, y: 0.66 },
+    picked: { card: "sproutling-card-d40.png", bust: "sproutling-bust-d40.png" },
   },
   moldling: {
     front: "shots/tripo/moldling-front.png",
@@ -127,6 +138,8 @@ const UNITS: Readonly<Record<string, Unit>> = {
     // Its concept stands in a T-pose, but it is a creature whose details drift: between the two.
     strengths: { card: [0.6, 0.75], bust: [0.3, 0.45] },
     styles: ["ornate", "plain"],
+    icon: { size: 0.45, x: 0.5, y: 0.29 },
+    picked: { card: "moldling-card-d75.png", bust: "moldling-bust-d30.png" },
   },
   deadwood: {
     front: "shots/tripo/deadwood-front.png",
@@ -137,6 +150,8 @@ const UNITS: Readonly<Record<string, Unit>> = {
     // Its face is the split in the trunk, under the branches on one side.
     bust: { size: 0.45, x: 0.5, y: 0.32 },
     styles: ["ornate", "plain"],
+    icon: { size: 0.45, x: 0.5, y: 0.48 },
+    picked: { card: "deadwood-card-d40.png", bust: "deadwood-bust-d40.png" },
   },
   // Round one (0.75/0.9 card, 0.45–0.75 bust) lost its pale face and grew gold filigree; round two: the bust holds at
   // 0.3–0.4, the card turned to carved filigree at 0.5 and "bone-white" made the face a skull; round three: carved
@@ -150,6 +165,8 @@ const UNITS: Readonly<Record<string, Unit>> = {
     styles: ["plain"],
     // Its face sits low in the bark, below the reeds on its top.
     bust: { size: 0.42, x: 0.557, y: 0.33 },
+    icon: { size: 0.42, x: 0.51, y: 0.44 },
+    picked: { card: "bog_giant-card-plain-d30.png", bust: "bog_giant-bust-plain-d30.png" },
   },
   mulch_gorger: {
     front: "shots/tripo/mulch-gorger-front.png",
@@ -158,6 +175,8 @@ const UNITS: Readonly<Record<string, Unit>> = {
     pose: "it lurches forward",
     strengths: STANDING,
     styles: ["ornate", "plain"],
+    icon: { size: 0.4, x: 0.5, y: 0.28 },
+    picked: { card: "mulch_gorger-card-d40.png", bust: "mulch_gorger-bust-d40.png" },
   },
 };
 
@@ -252,11 +271,12 @@ async function cardSource(front: string, out: string): Promise<void> {
 /** Sizes in the game: the card as the old portraits, the bust and icon square. */
 const INSTALLED = { card: 384, bust: 384, icon: 192 };
 
-async function install(id: string, card: string, bust: string): Promise<void> {
+async function install(id: string): Promise<void> {
   const unit = UNITS[id];
   if (!unit) throw new Error(`unknown unit "${id}"`);
-  const icon = unit.icon;
-  if (!icon) throw new Error(`${id} has no icon square yet: measure the face in the bust first`);
+  const { icon, picked } = unit;
+  if (!icon || !picked) throw new Error(`${id} has no picks or icon square yet: test it, pick, measure the face in the bust`);
+  const { card, bust } = picked;
   const dir = dirOf(id);
   await sharp(`${dir}/${card}`).resize({ width: INSTALLED.card }).webp({ quality: 88 }).toFile(`assets/art/portrait/${id}.webp`);
   await mkdir("assets/art/bust", { recursive: true });
@@ -311,9 +331,7 @@ async function test(id: string, sourcesOnly: boolean): Promise<void> {
 
 const args = process.argv.slice(2);
 if (args[0] === "--install") {
-  const [, id, card, bust] = args;
-  if (!id || !card || !bust) throw new Error("--install needs the unit, the card and the bust file names");
-  await install(id, card, bust);
+  for (const id of args.slice(1)) await install(id);
 } else {
   const sourcesOnly = args.includes("--sources");
   for (const id of args.filter((a) => !a.startsWith("--"))) await test(id, sourcesOnly);
