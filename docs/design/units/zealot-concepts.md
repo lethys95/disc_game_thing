@@ -39,3 +39,10 @@
   wound body is consistent across all six: settled.
 - **Round five:** no similes; *joined* takes brand's eye holes and egg's hand; *ordered* describes the mask from top to
   bottom (three seeds each).
+- **The user on the mask (2026-10-05):** "instead of removing features by making the mask blank and porcelain white,
+  you should instead write more notes on how there are eyeholes in it, and how wild his eyes are. Because by making it
+  featureless, arguably we might lose the burning hand on the mask now… keep adding more and more notes on the holes
+  in the mask and how wild his eyes are until it becomes impossible to ignore." **Wild eyes showing in the holes** are
+  an update to the first look (which had black behind them): recorded as the user's.
+- **Round six:** the eye holes and wild, bloodshot, staring eyes described again and again; the burning hand kept; no
+  "featureless" or "blank" (two wordings, three seeds).

@@ -45,7 +45,7 @@
   - *Zeal* (passive): every attack also hurts the Zealot for half the damage it deals.
   - *Must attack* (passive): has to attack every turn; can't wait or defend.
 - **Strong against / weak against (Claude):** anything that can't kill it first / armor-less trades it can't win in time, and being stalled.
-- **Look (user):** a mask covers the whole head, featureless except two wide, staring eye holes with black behind them (no skin shows). On the forehead, a burning outstretched hand with spread fingers. Ominous, strange, inhuman: "this is wrong, grotesque, deranged and twisted". Spiked, tattered armor. A serrated two-handed sword. Pale colors, strong contrast of black, white and red.
+- **Look (user):** a mask covers the whole head, featureless except two wide, staring eye holes with black behind them (no skin shows). On the forehead, a burning outstretched hand with spread fingers. Ominous, strange, inhuman: "this is wrong, grotesque, deranged and twisted". Spiked, tattered armor. A serrated two-handed sword. Pale colors, strong contrast of black, white and red. **Update (user, 2026-10-05):** the eye holes show his eyes, wild and staring ("how wild his eyes are"), rather than black behind them.
 - **Status:** in game as `zealot`.
 
 ## Tier 3

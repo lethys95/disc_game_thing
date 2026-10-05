@@ -453,6 +453,26 @@ const ZEALOTS_5: Readonly<Record<string, { readonly subject: string }>> = {
   },
 };
 
+/**
+ * Round six (the user's direction, 2026-10-05): "instead of removing features by making the mask blank and porcelain
+ * white, you should instead write more notes on how there are eyeholes in it, and how wild his eyes are… by making it
+ * featureless, arguably we might lose the burning hand… keep adding more and more notes on the holes in the mask and how
+ * wild his eyes are until it becomes impossible to ignore." Wild eyes in the holes are the user's update to the first
+ * look, which had black behind them.
+ */
+const WILD_EYES =
+  "The eye holes are the most striking thing about him: two large round holes cut right through the mask, ragged at the edges, and through each hole a wild, bulging, bloodshot eye stares out, wide open, the whites showing all around the iris. " +
+  "His eyes are crazed, unblinking, frantic, staring out of the holes in the mask. Big eye holes, wild eyes, impossible to miss.";
+
+const ZEALOTS_6: Readonly<Record<string, { readonly subject: string }>> = {
+  "zealot-eyes": {
+    subject: `A religious zealot, gaunt and tall. A white mask covers his whole head, no skin showing, with two big eye holes cut into it. ${WILD_EYES} On the forehead of the mask, above the eye holes, a burning red outstretched hand with spread fingers, flames licking from it. ${WOUND_BODY} ${NOT_A_KNIGHT}`,
+  },
+  "zealot-stare": {
+    subject: `A religious zealot, gaunt and tall, his whole head covered by a cracked white mask with a burning red outstretched hand painted on the forehead and two big eye holes cut beneath it. ${WILD_EYES} Through the two holes in the mask his wild, staring, bloodshot eyes glare out, mad and wide. ${WOUND_BODY} ${NOT_A_KNIGHT}`,
+  },
+};
+
 const ZEALOT_SWORD =
   "a huge serrated two-handed greatsword of blackened steel, its edge cut into jagged teeth, the grip bound in red cloth; beside it the same sword seen from its flat side.";
 
@@ -462,6 +482,7 @@ const ZEALOT_JOBS = [
   ...Object.entries(ZEALOTS_3).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, JILLIATH_3D) })),
   ...Object.entries(ZEALOTS_4).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, JILLIATH_3D) })),
   ...Object.entries(ZEALOTS_5).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, JILLIATH_3D) })),
+  ...Object.entries(ZEALOTS_6).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, JILLIATH_3D) })),
   {
     id: "zealot-sword-props",
     prompt: `A 3D render of a game prop model, like a textured asset shown in a modelling program: ${ZEALOT_SWORD} ${JILLIATH_3D} Each view whole and separate, laid flat. Flat, even, shadowless lighting from all sides. A plain flat light grey background, no ground, no hands, no text.`,
