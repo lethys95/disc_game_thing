@@ -52,6 +52,14 @@ than the Custodian's 3D concepts is a stand-in to redo (the user, 2026-10-05).
 - **Every image is kept**, the misses too (the user wants to see the whole path).
 
 ### What we've learned (keep adding)
+- **Interesting before correct (the user, 2026-10-05):** "on each iteration, you shouldn't just think about whether or
+  not it works, you need to think about whether or not it's interesting and easy to differentiate… If you just make
+  Soothsayer into a woman with a crystal ball, then she's just… a very boring lady with a crystal ball." Disciples'
+  characters are easy to tell apart, and ours can be too. The literal reading of a role (a blindfolded gunman, a
+  fortune teller with a ball) is the boring baseline: give each unit a twist the role doesn't predict (the user's own
+  for Omen: a ragged trenchcoat with a pentagram on its back). The trap caught the Punisher's first round. Judge every
+  round on three questions: does it match the design, is it interesting, is it unmistakable next to the rest of the
+  roster in silhouette and colour.
 - **Name the identity, not the inventory.** The Punisher's first round described three designs in full (a cage-helm,
   glowing seams, a bell helm, padlocks, books) and got three bland knights; the user: "very very bland". Round two
   named only what makes him him (a faceless pointed executioner's hood, a cassock, iron grey) and let the model
