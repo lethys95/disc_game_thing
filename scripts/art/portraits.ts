@@ -33,10 +33,12 @@ interface Unit {
   readonly front: string;
   /** Who it is, in a sentence, for every prompt. */
   readonly identity: string;
-  /** What it holds on its card. */
-  readonly holding: string;
-  /** The icon's square within the bust, as fractions of the bust's side: its size and centre. */
-  readonly icon: { readonly size: number; readonly x: number; readonly y: number };
+  /** How it stands on its card, and what it holds. */
+  readonly pose: string;
+  /** The bust's square within the front view, as fractions of its side, when the head isn't on top of the figure. */
+  readonly bust?: { readonly size: number; readonly x: number; readonly y: number };
+  /** The icon's square within the bust, as fractions of the bust's side: its size and centre (set after the test). */
+  readonly icon?: { readonly size: number; readonly x: number; readonly y: number };
 }
 
 const UNITS: Readonly<Record<string, Unit>> = {
@@ -45,8 +47,18 @@ const UNITS: Readonly<Record<string, Unit>> = {
     front: "shots/tripo/punisher-front.png",
     identity:
       "a hooded executioner of a militant faith: a tall pointed hood with only black inside it, no face; a long cassock and a hooded mantle of dark iron-grey cloth; dented iron bracers, a heavy chain belt",
-    holding: "a heavy multi-headed flail resting over his shoulder",
-    icon: { size: 0.51, x: 0.52, y: 0.49 },
+    pose: "he stands upright, a heavy multi-headed flail resting over his shoulder",
+    icon: { size: 0.46, x: 0.515, y: 0.56 },
+  },
+  // Nothing human about it: does the card re-pose a body like this, and is there a face for the icon?
+  bog_giant: {
+    dir: "art/candidates/units/grove/portrait-test",
+    front: "shots/tripo/bog-giant-front.png",
+    identity:
+      "a massive hunched hulk with no human shape: a lump of black bark and sodden bog oak oozing swamp sludge, peat and mud, reeds, cattails and hanging moss, a small sunken face low in the bark; its right arm an enormous club of bark, roots and mud, its left arm small and withered",
+    pose: "it stands hunched, its huge right arm dragging on the ground",
+    // Its face sits low in the bark, below the reeds on its top.
+    bust: { size: 0.42, x: 0.557, y: 0.33 },
   },
 };
 
@@ -92,9 +104,16 @@ async function figure(path: string): Promise<{ data: Buffer; width: number; heig
   return { data, width, height, box };
 }
 
-/** The head and shoulders, square: centred on the top of the figure. */
-async function iconSource(front: string, out: string): Promise<void> {
+/** The head and shoulders, square: where the unit says, or centred on the top of the figure. */
+async function iconSource(front: string, out: string, square: Unit["bust"]): Promise<void> {
   const { data, width, height, box } = await figure(front);
+  if (square) {
+    const side = Math.round(width * square.size);
+    const left = Math.max(0, Math.min(width - side, Math.round(width * square.x - side / 2)));
+    const top = Math.max(0, Math.min(height - side, Math.round(height * square.y - side / 2)));
+    await sharp(data, { raw: { width, height, channels: 3 } }).extract({ left, top, width: side, height: side }).resize(ICON, ICON).png().toFile(out);
+    return;
+  }
   const side = Math.round((box.bottom - box.top) * 0.46);
   const band = Math.round((box.bottom - box.top) * 0.08);
   let sum = 0;
@@ -137,13 +156,15 @@ if (!unit) throw new Error(`unknown unit "${unitId}"; known: ${Object.keys(UNITS
 const INSTALLED = { card: 384, bust: 384, icon: 192 };
 
 async function install(unit: Unit, card: string, bust: string): Promise<void> {
+  const icon = unit.icon;
+  if (!icon) throw new Error(`${unitId} has no icon square yet: measure the face in the bust first`);
   await sharp(`${unit.dir}/${card}`).resize({ width: INSTALLED.card }).webp({ quality: 88 }).toFile(`assets/art/portrait/${unitId}.webp`);
   await mkdir("assets/art/bust", { recursive: true });
   await sharp(`${unit.dir}/${bust}`).resize(INSTALLED.bust, INSTALLED.bust).webp({ quality: 88 }).toFile(`assets/art/bust/${unitId}.webp`);
   const { width } = await sharp(`${unit.dir}/${bust}`).metadata();
-  const side = Math.round((width ?? ICON) * unit.icon.size);
-  const left = Math.round((width ?? ICON) * unit.icon.x - side / 2);
-  const top = Math.round((width ?? ICON) * unit.icon.y - side / 2);
+  const side = Math.round((width ?? ICON) * icon.size);
+  const left = Math.round((width ?? ICON) * icon.x - side / 2);
+  const top = Math.round((width ?? ICON) * icon.y - side / 2);
   await mkdir("assets/art/icon", { recursive: true });
   await sharp(`${unit.dir}/${bust}`).extract({ left, top, width: side, height: side }).resize(INSTALLED.icon, INSTALLED.icon).webp({ quality: 88 }).toFile(`assets/art/icon/${unitId}.webp`);
 }
@@ -159,12 +180,12 @@ if (installAt >= 0) {
 await mkdir(unit.dir, { recursive: true });
 const iconSrc = `${unit.dir}/${unitId}-icon-source.png`;
 const cardSrc = `${unit.dir}/${unitId}-card-source.png`;
-await iconSource(unit.front, iconSrc);
+await iconSource(unit.front, iconSrc, unit.bust);
 await cardSource(unit.front, cardSrc);
 if (process.argv.includes("--sources")) process.exit(0);
 
 const iconPrompt = `A painted head-and-shoulders portrait of ${unit.identity}. ${PAINTED}`;
-const cardPrompt = `A painted full-body character card of ${unit.identity}; he stands upright, ${unit.holding}. ${PAINTED}`;
+const cardPrompt = `A painted full-body character card of ${unit.identity}; ${unit.pose}. ${PAINTED}`;
 
 type Run = { readonly file: string; readonly make: () => Promise<Uint8Array>; readonly entry: Omit<Candidate, "file" | "model"> };
 const runs: Run[] = [
@@ -173,7 +194,7 @@ const runs: Run[] = [
     make: () => img2img({ prompt: iconPrompt, seed: 1000, source: iconSrc, denoise }, `disc/${unitId}-icon`),
     entry: { id: `${unitId}-icon-img2img`, seed: 1000, prompt: iconPrompt, source: iconSrc, denoise },
   })),
-  ...[0.6, 0.75, 0.9].map((denoise): Run => ({
+  ...[0.75, 0.9].map((denoise): Run => ({
     file: `${unitId}-card-img2img-d${Math.round(denoise * 100)}.png`,
     make: () => img2img({ prompt: cardPrompt, seed: 1000, source: cardSrc, denoise }, `disc/${unitId}-card`),
     entry: { id: `${unitId}-card-img2img`, seed: 1000, prompt: cardPrompt, source: cardSrc, denoise },

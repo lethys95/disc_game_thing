@@ -321,7 +321,8 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 .art.portrait.tiny, .art.portrait.small, .art.portrait.thumb { background-size: 260%; background-position: 50% 4%; }
 .art.portrait.card-portrait { background-size: 170%; background-position: 50% 4%; }
 /* A bust or icon fills its box; a bust standing in for a missing icon zooms toward the face. */
-.art.bust, .art.icon { background-size: cover; background-position: 50% 40%; }
+.art.bust { background-size: cover; background-position: 50% 40%; }
+.art.icon { background-size: cover; background-position: 50% 50%; }
 .art.bust.tiny, .art.bust.small, .art.bust.thumb, .art.bust.queue, .art.bust.queue-now { background-size: 170%; background-position: 50% 45%; }
 .art.placeholder { display: inline-flex; align-items: center; justify-content: center; font: 700 11px var(--display); color: #f1eadb; background: #2a2522; border: 1px solid #4a3f36; }
 .art.placeholder.faction-jilliath { background: #5a1a14; border-color: #8e2a1e; }
@@ -355,8 +356,9 @@ button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }
 
 /* The turn order as portraits (view/hud.ts). */
 #turns .chip { position: relative; padding: 0; border-width: 1px 1px 3px; cursor: default; line-height: 0; }
-#turns .chip .art.queue { width: 34px; height: 42px; background-size: 200%; background-position: 50% 4%; }
-#turns .chip .art.queue-now { width: 46px; height: 56px; background-size: 200%; background-position: 50% 4%; }
+#turns .chip .art.queue { width: 34px; height: 42px; }
+#turns .chip .art.queue-now { width: 46px; height: 56px; }
+#turns .chip .art.portrait { background-size: 200%; background-position: 50% 4%; }
 #turns .chip .art.placeholder { font-size: 11px; }
 #turns .chip .when { position: absolute; left: 0; right: 0; bottom: -15px; font: 600 9px var(--text); line-height: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); text-align: center; }
 #turns .chip.now .when { color: var(--gold); }
