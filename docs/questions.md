@@ -8,6 +8,7 @@ Kept short: only what is the user's to decide, most blocking first. Answer inlin
 3. **The joker line** per faction (`design/pillars.md`): whenever an idea comes.
 
 10. **The Regrowth line's damage (the composition matrix, 2026-09-30, `provisional.md` #61):** Regrowth 3 "supports and attacks weakly" (your design), and the Grove has no damage dealer past its tier-1 mage. So Regrowth squads win 0–17% against Jilliath's tier 3 (Templars' 20 armor turn its 32 into 12) while Decay squads win 92%. A tier-2 Grove mage would give it a partner; or Regrowth 3 hits harder; or it stays the Grove's weak matchup. Your call.
+11. **Who gets the new keywords (2026-10-05, `provisional.md` #65, #66):** Tarot x, Crit x, Evasion x, Explode (your "boomer… on melee line": which faction's?), Ignite and Soak, and which units deal lightning or water damage. All exist and are tested; no unit carries them yet. More statuses beyond wet, burn and electrocuted whenever you have them.
 
 ## Look and sound
 4. **The map's look:** "actual grass", and which way terrain goes (`design/map-look.md`). Reference images or games whose map look you like would help most.
