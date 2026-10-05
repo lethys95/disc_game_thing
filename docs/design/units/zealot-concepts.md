@@ -46,3 +46,7 @@
   an update to the first look (which had black behind them): recorded as the user's.
 - **Round six:** the eye holes and wild, bloodshot, staring eyes described again and again; the burning hand kept; no
   "featureless" or "blank" (two wordings, three seeds).
+- **Round five, read:** the mask is right on all six: a small handprint high on the forehead, two clean round black eye
+  holes, plain white below (the first look's layout). *Ordered* stretched the masks long and eerie, very "wrong".
+  Misses: the hand is a bloody print, not burning (no flames); and the holes are black (the first look), not the
+  user's wild eyes, which is round six.
