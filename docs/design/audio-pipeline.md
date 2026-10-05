@@ -61,3 +61,11 @@ Generated SFX weren't good enough (the user's test); the first pass comes from t
   - **Licence:** the "MiniMax-Music3 Community License", not open source. A commercial product must show
     "MiniMax-Music3" prominently, and needs MiniMax's written permission above $20M yearly revenue. It doesn't
     clearly grant ownership of outputs. Fine for placeholders; weigh it before shipping a track.
+- **MiniMax Music 3, round one (2026-10-05):** the user: "I wouldn't call them good, but they're better than
+  acestep… it might be a prompting issue… Suno is still king here."
+  - MiniMax's own prompt guide (the music-caption-rewriter skill in its GitHub repo) asks for a structured caption of
+    about 250–450 words under three headings: Global Metadata (genre, BPM, key, emotional progression, scenario,
+    production), Vocal Details, and a section-by-section Arrangement. Round one used one paragraph.
+  - All 1,000 of its reference templates have vocals, so instrumentals are outside what it was mostly trained on.
+  - Round two: structured captions; a song form with no words for instrumentals; a wordless-choir variant (vowels
+    only) for the Jilliath battle.
