@@ -65,3 +65,20 @@ physics, I agree. Add that, modify things a bit, add in your own suggestions her
   clothes that aren't tailored: *wrapped* (knotted ivory cloth, bare shoulders and midriff, a fur mantle), *pelted*
   (mostly furs and hide, a pelt over one shoulder), *overgrown* (hide and cloth bound on by living roots, moss and
   lichen growing on her: a touch of the Golgari rot). Every cloth end short and close to the body (3D cloth).
+- **Round three, read:** the biggest step yet. She no longer reads as a human woman in a costume:
+  - green-grey skin, long ears out through the hood, a gaunt face with tattoos across brow, cheeks and chin;
+  - big shaggy fur boots;
+  - open, tied-on clothes with bare midriff and shoulders;
+  - white down to scraps.
+
+  Misses:
+  - The skin came out a mid green-grey, not pale. With fur everywhere she now risks reading as an orc or a dark-elf
+    huntress, and the overall figure is dark. The white may now be too little (the user's "too much white" swung far).
+  - The wolf's eyes are still in the hood, and now they glow teal: the colour went to the nearest eyes it found.
+  - Her eyes are pale teal-grey with a slight glow, but her face is stern with the mouth closed, not absent and slack.
+  - Still loose braids, not cornrows (three rounds).
+  - The gloves are the nearest yet: ivory fingers darkening into pointed dark-red tips, a dip but dark blood, not
+    scarlet.
+
+  Seed 1000 of each reading draws the side twice. *Wrapped* is the cleanest model; *pelted* the darkest; *overgrown*
+  has the Golgari touch in the moss and lichen.

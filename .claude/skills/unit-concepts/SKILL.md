@@ -68,6 +68,9 @@ than the Custodian's 3D concepts is a stand-in to redo (the user, 2026-10-05).
 - "No text" isn't reliable: numerals creep in.
 - Some ideas the model won't draw (wings covered in real eyes, after three tries): carry the idea by colour and
   silhouette instead, and say so.
+- A colour said of one part can land on its neighbour: the Psychopomp's "ghostly teal" eyes went to the eyes of her
+  wolf hood too (which also kept them, despite "empty cut-out holes"). Some details resist for rounds on end (her
+  cornrows, her absent look): after three tries, say so and offer to carry them in the 3D model or the effects.
 - Symbolic or world art (tarot, UI) shouldn't feature our units (memory: mystery-over-cameos).
 
 ## 5. Show the user
