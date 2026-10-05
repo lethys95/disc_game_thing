@@ -2,9 +2,10 @@ import { readFile } from "node:fs/promises";
 import { basename } from "node:path";
 
 /**
- * A minimal client for a local ComfyUI's HTTP API: queue a graph, wait for it, fetch the images. The graph mirrors
- * ComfyUI's own "Text to Image (Krea-2 Turbo)" blueprint (8 steps, cfg 1, euler/simple, zeroed negative). At cfg 1 the
- * sampler ignores the negative; a job with a negative prompt must also raise `cfg` for it to have any effect.
+ * A minimal client for a local ComfyUI's HTTP API: queue a graph, wait for it, fetch the image or audio it saved. The
+ * image graph mirrors ComfyUI's own "Text to Image (Krea-2 Turbo)" blueprint (8 steps, cfg 1, euler/simple, zeroed
+ * negative). At cfg 1 the sampler ignores the negative; a job with a negative prompt must also raise `cfg` for it to
+ * have any effect.
  */
 
 export const COMFY_URL = process.env["COMFY_URL"] ?? "http://127.0.0.1:8188";
@@ -120,9 +121,15 @@ function img2imgGraph(job: Img2ImgJob, source: string, prefix: string): Graph {
   };
 }
 
+interface OutputFile {
+  readonly filename: string;
+  readonly subfolder: string;
+  readonly type: string;
+}
+
 interface HistoryEntry {
   readonly status?: { readonly completed?: boolean; readonly status_str?: string };
-  readonly outputs?: Record<string, { readonly images?: readonly { filename: string; subfolder: string; type: string }[] }>;
+  readonly outputs?: Record<string, { readonly images?: readonly OutputFile[]; readonly audio?: readonly OutputFile[] }>;
 }
 
 async function json<T>(response: Response): Promise<T> {
@@ -138,6 +145,56 @@ async function upload(path: string): Promise<string> {
   form.append("overwrite", "true");
   const uploaded = await json<{ name: string }>(await fetch(`${COMFY_URL}/upload/image`, { method: "POST", body: form }));
   return uploaded.name;
+}
+
+/**
+ * MiniMax Music 3 (ComfyUI's "Text to Music (MiniMax Music 3)" blueprint; the user, 2026-10-05: it replaces ACE-Step
+ * as the local music model). A caption for style and instruments, lyrics with section tags; the model may end before
+ * `seconds`. 32 kHz stereo, returned as FLAC.
+ */
+export interface MusicJob {
+  readonly caption: string;
+  readonly lyrics: string;
+  readonly seed: number;
+  readonly seconds: number;
+}
+
+export const MUSIC3 = {
+  diffusionModel: "minimax_music3_dit_fp16.safetensors",
+  textEncoder: "minimax_music3_text_encoder_pruned_int8_convrot.safetensors",
+  vae: "minimax_music3_dav.safetensors",
+  steps: 30,
+  cfg: 1.7,
+  topK: 50,
+} as const;
+
+function music3Graph(job: MusicJob, prefix: string): Graph {
+  return {
+    unet: { class_type: "UNETLoader", inputs: { unet_name: MUSIC3.diffusionModel, weight_dtype: "default" } },
+    clip: { class_type: "CLIPLoader", inputs: { clip_name: MUSIC3.textEncoder, type: "minimax", device: "default" } },
+    vae: { class_type: "VAELoader", inputs: { vae_name: MUSIC3.vae } },
+    encode: {
+      class_type: "MiniMaxMusic3TextEncode",
+      inputs: { clip: ["clip", 0], caption: job.caption, lyrics: job.lyrics, seed: job.seed, max_duration: job.seconds, cfg_scale: MUSIC3.cfg, top_k: MUSIC3.topK },
+    },
+    negative: { class_type: "ConditioningZeroOut", inputs: { conditioning: ["encode", 0] } },
+    latent: { class_type: "EmptyMiniMaxMusic3LatentAudio", inputs: { seconds: ["encode", 1], batch_size: 1 } },
+    sample: {
+      class_type: "KSampler",
+      inputs: {
+        model: ["unet", 0], positive: ["encode", 0], negative: ["negative", 0], latent_image: ["latent", 0],
+        seed: job.seed, steps: MUSIC3.steps, cfg: MUSIC3.cfg, sampler_name: "euler", scheduler: "simple", denoise: 1,
+      },
+    },
+    // The tiled decoder keeps a long song's decode within one card's memory.
+    decode: { class_type: "VAEDecodeAudioTiled", inputs: { samples: ["sample", 0], vae: ["vae", 0], tile_size: 1536, overlap: 64 } },
+    save: { class_type: "SaveAudio", inputs: { audio: ["decode", 0], filename_prefix: prefix } },
+  };
+}
+
+/** Runs one song and returns the FLAC bytes. */
+export async function music3(job: MusicJob, prefix: string): Promise<Uint8Array> {
+  return run(music3Graph(job, prefix));
 }
 
 /** Runs one generation and returns the PNG bytes. */
@@ -163,11 +220,11 @@ async function run(graph: Graph): Promise<Uint8Array> {
     const history = await json<Record<string, HistoryEntry>>(await fetch(`${COMFY_URL}/history/${queued.prompt_id}`));
     const entry = history[queued.prompt_id];
     if (entry?.status?.status_str === "error") throw new Error(`generation failed: ${JSON.stringify(entry.status)}`);
-    const image = entry?.status?.completed ? Object.values(entry.outputs ?? {}).flatMap((o) => o.images ?? [])[0] : undefined;
-    if (image) {
-      const query = new URLSearchParams({ filename: image.filename, subfolder: image.subfolder, type: image.type });
+    const file = entry?.status?.completed ? Object.values(entry.outputs ?? {}).flatMap((o) => [...(o.images ?? []), ...(o.audio ?? [])])[0] : undefined;
+    if (file) {
+      const query = new URLSearchParams({ filename: file.filename, subfolder: file.subfolder, type: file.type });
       const response = await fetch(`${COMFY_URL}/view?${query}`);
-      if (!response.ok) throw new Error(`ComfyUI ${response.status} fetching ${image.filename}`);
+      if (!response.ok) throw new Error(`ComfyUI ${response.status} fetching ${file.filename}`);
       return new Uint8Array(await response.arrayBuffer());
     }
     await new Promise((resolve) => setTimeout(resolve, 500));
