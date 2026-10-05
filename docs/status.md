@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines._
 
-**Updated:** 2026-10-05 (Psychopomp concepts, round four)
+**Updated:** 2026-10-05 (Psychopomp concepts, round five)
 
 ## Where we are
 A playable map game for 2–6 players (hotseat viewer vs AIs): two factions (**Jilliath**, **Ral-Vitahl**) with tier-1 melee/support/mage and Nexus mages to tier 3; bandit camps, dungeons with rewards, neutral cities; gold, mana and spells; nodes (gold, Blacksmith, mana, Cathedral); items on leaders; fog of war; retreat and a battle round limit; sound slots with placeholder SFX and music. The AI plays both the map (a list of planners in `world/ai.ts`) and battles, in a web worker.
@@ -10,7 +10,7 @@ A playable map game for 2–6 players (hotseat viewer vs AIs): two factions (**J
 Architecture: `design/architecture.md`; recipes and gotchas: `engineering.md`. `pnpm verify` before calling anything done. Sims: `pnpm sim:many --seeds 1-16 "p1,p2"` (smoke tests only until factions have their lines).
 
 ## Now
-**Unit concepts (2026-10-05, `unit-concepts` skill):** Zealot picked (`zealot-pyre-turnaround-1000` and its sword prop); **Psychopomp round four** done (the gothic recipe restored; gloves, wraps and bangles right; the hood's eyes and red fingers missed), waiting on the user (`shots/psychopomp.html`, read in `design/units/sylvan-psychopomp.md`). Punisher redo next.
+**Unit concepts (2026-10-05, `unit-concepts` skill):** Zealot picked (`zealot-pyre-turnaround-1000` and its sword prop); **Psychopomp:** the user's likely pick is `psychopomp-pits-turnaround-1001` (round four); round five (the pick plus the user's "pretty… not anime" or Claude's grime) barely moved it, waiting on the user (`shots/psychopomp.html`, read in `design/units/sylvan-psychopomp.md`). Punisher redo next.
 **2026-10-05 (the user's list):** carnival Cutpurse and Snakeoiler, the Deck of cards item, the AI weighs every new mechanic (#68), cards on the field and icons need only portraits (the standee and the turn order already use them; portrait consistency via image-to-image awaits the user, questions #13); environments postponed by the user (biomes differ by content; a parked list of simple effects); focus on core gameplay.
 **Tarot as cards (2026-10-05):** a fan to flick through and pick, the enemy's fan face down with its pick turning over, held cards as a small stack in the HUD; oil card art (Claude's provisional picks, `shots/tarot-art.html`); card sounds: the user's picks from the flick takes (pick doubles as flip until a chime is found elsewhere; magic layers later).
 **The user's designs (2026-10-05):** the Grove's healing support shoots *Water* (hurts and wets enemies, heals allies 3× and douses burning ones); the **carnival** tribe (Soothsayer with Tarot 5, Foretell and Curse; Omen, whose cards pay twice and whose kills draw new hands mid-fight; Fire Eater's cone of fire). `?fight=carnival`, not on the map. Save 27 (battles carry their seed). #67.

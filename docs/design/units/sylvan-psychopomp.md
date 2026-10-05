@@ -125,3 +125,13 @@ back? Maybe something like 'not anime'? Idk."
   change on the pick: *pits-pretty* (the user's words: "Pretty, but beauty is not the point. Not anime."),
   *pits-grim* (Claude's: grime, mud-stained cloth, matted wet fur, the Grove's wet moss and roots growing on her, the
   same gothic recipe with those materials), *pits-grim-pretty* (both).
+- **Round five, read:** none of the three changes moved her much.
+  - Against the same seed of the pick, 1–3% of pixels differ on seed 1001 and up to 7% on seed 1000.
+  - *Pretty* changed nothing visible.
+  - *Grim* gave a slightly darker belt and a little staining on the cloth, but no mud, moss or matted fur.
+  - The look is held by the long subject: words added at the end weigh little.
+  - The cleanness comes from the subject, not the frame (the Grove's bark creatures are grimy in the same frame).
+  - Options for the user: take pits 1001 and put the grime into the 3D model's textures and the portrait (made from
+    the concept, painted in the game's style); or one more round with the grime and the faction's materials at the
+    very start of her description.
+  - Seeds 1000 again draw stray or doubled side views.
