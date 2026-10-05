@@ -23,9 +23,13 @@ than the Custodian's 3D concepts is a stand-in to redo (the user, 2026-10-05).
   - **Turnaround** (`turnaround(subject, materials, pose)`, 2048×832): front, side and back of a 3D model asset, flat
     shadowless light, light grey background. The model and rig reference. T-pose for humanoids; `CLEAR_POSE` (or a
     pose of its own, like Deadwood's gorilla lean) for bodies that aren't human.
-  - **Stance** (896×1152): one three-quarter view in the unit's typical posture. Where identity and attitude show.
-  - **Weapons are separate models** (decision 2026-10-04): no weapon in the turnaround ("hands empty and open"), the
-    stance holds it, and it gets a prop sheet of its own (`-props`, 2048×832).
+  - **No stance or action views** (the user, 2026-10-05: "We're creating models, not scenes. If we want one in a
+    frenzied stance, we'll likely put them in one later. Right now we just want the t-pose. The figure we're putting in
+    the t-pose must fit the design spec"). The design itself (face, armour, body, materials) carries the unit's
+    identity and attitude, not a pose. (The gnolls and the Drawn had stance views; that's past practice.) Fallback when
+    the turnaround frame keeps failing the design (the Mulch Gorger): a single front view, still in the model's pose.
+  - **Weapons are separate models** (decision 2026-10-04): no weapon on the figure ("hands empty and open"), and the
+    weapon gets a prop sheet of its own (`-props`, 2048×832).
 - **Two or three readings per unit**, each a different body or silhouette around the user's fixed words. In a group,
   give every unit **one standout feature** so they're told apart at a glance (the gnolls: a skull helm, the jaw, nomad
   wraps, jester's rags, the matriarch's mantle). Clothing is a good separator.
@@ -57,7 +61,7 @@ than the Custodian's 3D concepts is a stand-in to redo (the user, 2026-10-05).
 
 ## 5. Show the user
 - A page in `shots/<unit-or-line>.html` (served over Tailscale at `http://<host>:5173/shots/…`): JPEG-compressed images
-  embedded, the stance views first, then turnarounds, then props; Claude's read above each concept; every round,
+  embedded, turnarounds, then props; Claude's read above each concept; every round,
   rejects included.
 - The user picks. Record each pick (file id, the user's words) in the unit's doc and the roster. Keep the picked
   prompt in code **byte-identical** (check it against the manifest's prompt for that file); remove unpicked readings

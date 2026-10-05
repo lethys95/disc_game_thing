@@ -192,17 +192,14 @@ const GNOLLS: Readonly<Record<string, { readonly subject: string; readonly stanc
   bonecracker: {
     subject:
       "The Bonecracker: heavy and broad with short legs, enormous forequarters and a thick neck, a massive jaw with iron-capped teeth, a heavy collar of bone plates and bronze rings around its neck, scarred bare arms, one fist in a spiked bronze gauntlet.",
-    stance: "hunched with its huge head thrust forward and its jaws wide open",
   },
   cackler: {
     subject:
       "The Cackler: scrawny and hunched, its mouth stretched in a wide manic grin, a ragged cloak of tattered cloth strips like a jester's motley gone to rot, bone rattles and small bronze bells hanging from it, a crooked staff topped with a hyena skull.",
-    stance: "head thrown back, laughing, its arms spread mockingly",
   },
   matriarch: {
     subject:
       "The Matriarch, leader of the pack: the largest and tallest gnoll, a female, upright and broad-shouldered, a great dark mane, a scarred muzzle, a mantle of bronze plates and trophy bones over her shoulders, a cloak of a great beast's hide, a crest of teeth and bronze on her brow, a heavy bronze glaive.",
-    stance: "standing tall with her glaive planted, chin raised, commanding",
   },
 };
 
@@ -245,7 +242,6 @@ const DRAWN: Readonly<Record<string, { readonly subject: string; readonly stance
   dustwing: {
     subject:
       "The Dustwing: small and light, mostly wings, a slender body hunched between two broad tattered wings dusted grey and brown with a pair of staring eyespots, long thin legs with hooked claws, a scrap of grey lace at its throat, dust falling from its wings.",
-    stance: "hovering just above the ground, wings beating wide, claws reaching forward to strike",
   },
   chrysalis: {
     subject:
@@ -256,17 +252,14 @@ const DRAWN: Readonly<Record<string, { readonly subject: string; readonly stance
   lightdrinker: {
     subject:
       "The Lightdrinker: gaunt and tall, a long coiled proboscis hanging from its face, its wings folded down its back like a tattered cloak, a collar of yellowed lace, thin hands with long fingers, small vials of faintly glowing light hung on a cord at its waist.",
-    stance: "leaning forward with the proboscis uncoiled toward its prey, hands raised",
   },
   eyespot: {
     subject:
       "The Eyespot: wings far larger than its body, spread wide like a fan and covered in many staring eyespots that look like real eyes, a small veiled body in a high-collared velvet coat between them.",
-    stance: "its wings raised and spread wide behind it, every eye on them staring",
   },
   "pale-mother": {
     subject:
       "The Pale Mother: large and tall, pale ivory fur and wings, her wings wrapped around her like a long veil and cloak, a lace veil over her compound eyes, a crown of melted candles with small flames on her head, tarnished silver jewelry; grief and command.",
-    stance: "standing tall, her wings beginning to open like a cloak",
   },
 };
 
@@ -281,7 +274,6 @@ const DRAWN_2: Readonly<Record<string, { readonly subject: string; readonly stan
   "dustwing-ragged": {
     subject:
       `The Dustwing, a moth-folk skirmisher: small and hunched, six thin hooked limbs, ${INSECT_FACE}, feathered antennae, narrow ragged wings of dull ash brown and grey like a clothes moth, eaten through with holes and frayed at the edges, a cloud of grey dust falling from them.`,
-    stance: "lunging forward through the air, wings blurred, four claws reaching out",
   },
   "chrysalis-cocoon": {
     subject:
@@ -292,12 +284,10 @@ const DRAWN_2: Readonly<Record<string, { readonly subject: string; readonly stan
   "lightdrinker-deathshead": {
     subject:
       `The Lightdrinker, a moth-folk like a death's-head hawkmoth: a heavy, furred dark body with a pale skull marking on its thorax, ${INSECT_FACE}, a very long coiled proboscis hanging from its mouth, narrow dark wings folded down its back like a coat, thin arms with long fingers, small vials of faintly glowing light on a cord at its waist.`,
-    stance: "leaning forward with the long proboscis uncoiled toward its prey, hands raised",
   },
   "eyespot-eyes": {
     subject:
       `The Eyespot, a moth-folk: huge wings spread wide like a fan, far larger than its thin body, covered in dozens of eyes that look disturbingly real, with irises, wet lids and lashes, all staring; ${INSECT_FACE}, a high-collared dark velvet coat.`,
-    stance: "its wings raised and spread wide behind it, every eye on them staring at the viewer",
   },
 };
 
@@ -310,12 +300,10 @@ const DRAWN_3: Readonly<Record<string, { readonly subject: string; readonly stan
   "eyespot-fan": {
     subject:
       "The Eyespot, a moth-folk: four huge wings raised behind it in a wide circle like a peacock's fan, the wing membrane dark wine red and set with dozens of human eyes, white eyeballs with irises and eyelids embedded in it, all staring; a thin body in a high-collared black velvet coat, its face hidden behind a black lace veil.",
-    stance: "its four wings raised in a wide circle behind it, every eye on them staring at the viewer",
   },
   "eyespot-blind": {
     subject:
       "The Eyespot, a moth-folk: its own head is smooth and eyeless, with only small mandibles; the eyes it sees with are on its wings: two broad pale wings set with dozens of bloodshot human eyes with lids and lashes, open and staring; a thin body wrapped in grey velvet and old lace.",
-    stance: "its wings spread wide and tilted toward the viewer, the eyeless head turned aside",
   },
   "chrysalis-object": {
     subject:
@@ -357,8 +345,9 @@ const DRAWN_JOBS = [
  * what doesn't, but just keep it within the same 3D concept art strategy we've done with custodian, bog giant, etc.").
  * The user's look (`faction-stuff/jilliath/melee.md`) held fixed in every reading; the readings vary the body and
  * the armour (Claude's). The user once rejected "a depressed tired old man": zealots are "batshit insane", which the
- * stance view carries. No sword in the turnaround (weapons are separate models); the stance view holds it, and it gets a
- * prop sheet of its own.
+ * design (mask, armour, body) has to carry, not a pose: the user (2026-10-05): "We're creating models, not scenes… Right
+ * now we just want the t-pose. The figure we're putting in the t-pose must fit the design spec." (Round one also made
+ * stance views; their prompts are in its manifest.) No sword on the figure; it gets a prop sheet of its own.
  */
 const ZEALOT_MASK =
   "His whole head is covered by a smooth, completely featureless mask, no skin showing anywhere: no mouth, no nose, no expression, only two wide, staring round eye holes with pure black behind them. " +
@@ -368,18 +357,15 @@ const JILLIATH_3D =
   "Dark gothic fantasy, grim, weathered and worn physically based materials: bone-white lacquer and porcelain, blackened scorched steel, frayed white and blood-red cloth, old leather. " +
   "Pale colors with a strong contrast of black, white and blood red. Ominous, strange, inhuman: wrong, grotesque, deranged and twisted. Serious, adult, not cartoonish.";
 
-const ZEALOTS: Readonly<Record<string, { readonly subject: string; readonly stance: string }>> = {
+const ZEALOTS: Readonly<Record<string, { readonly subject: string }>> = {
   "zealot-flagellant": {
     subject: `A religious zealot, a lean, wiry man. ${ZEALOT_MASK} Spiked, tattered armor of blackened plates over bare, scarred arms wound with red prayer cloth and barbed cord; a torn white tabard hanging in strips; bare feet.`,
-    stance: "lurching forward in a frenzy, shoulders hunched, head tilted at a wrong angle",
   },
   "zealot-pyre": {
     subject: `A religious zealot, a tall gaunt man. ${ZEALOT_MASK} The painted hand smoulders with real embers. Spiked, tattered armor scorched black at the edges, singed white robes in rags, chains with small hooks hanging from the belt.`,
-    stance: "arms flung wide, the whole body straining forward as if about to charge",
   },
   "zealot-penitent": {
     subject: `A religious zealot, a broad, heavy man. ${ZEALOT_MASK} Spiked armor on one side only, the other side bare and scarred; a long tattered blood-red tabard; spikes driven through the pauldrons; a crack running down the mask past one eye hole.`,
-    stance: "crouched low, twitching, head jerked sideways",
   },
 };
 
@@ -394,18 +380,15 @@ const ZEALOT_MASK_2 =
 
 const NOT_A_KNIGHT = "Not a knight, not a crusader, no cross or holy symbols: a frenzied fanatic, deranged and twisted.";
 
-const ZEALOTS_2: Readonly<Record<string, { readonly subject: string; readonly stance: string }>> = {
+const ZEALOTS_2: Readonly<Record<string, { readonly subject: string }>> = {
   "zealot-ecstatic": {
     subject: `A religious zealot, emaciated and sinewy. ${ZEALOT_MASK_2} Spiked plates of blackened scrap armor bolted on crookedly at odd angles, a ragged white shift stained red beneath, strips of red cloth knotted around his arms and throat. ${NOT_A_KNIGHT}`,
-    stance: "contorted in ecstatic agony, back arched, one arm clawing at the sky, the sword dragged behind him",
   },
   "zealot-twitching": {
     subject: `A religious zealot, hunched and wiry. ${ZEALOT_MASK_2} Wrapped in torn white bandages and rags stained red, a spiked iron collar, mismatched spiked plates on one shoulder and one shin, nails and hooks hanging from straps. ${NOT_A_KNIGHT}`,
-    stance: "hunched low, head tilted sideways at an impossible angle, twitching, the sword held in one hand like a cleaver",
   },
   "zealot-howling": {
     subject: `A religious zealot, tall and gaunt. ${ZEALOT_MASK_2} Broken spiked armor, black and dented, half falling off him, tied on with rope; a long tattered blood-red cloth hanging from the belt; his bare arms scarred with burns in the shape of hands. ${NOT_A_KNIGHT}`,
-    stance: "charging headlong, leaning far forward, sword raised high in both hands, the body twisted in mid-stride",
   },
 };
 
@@ -414,19 +397,7 @@ const ZEALOT_SWORD =
 
 const ZEALOT_JOBS = [
   ...Object.entries(ZEALOTS).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, JILLIATH_3D) })),
-  ...Object.entries(ZEALOTS).map(([id, { subject, stance }]) => ({
-    id: `${id}-stance`,
-    prompt:
-      `A 3D render of a game character model in a three-quarter front view, ${stance}, holding a huge serrated two-handed greatsword, the whole figure visible from head to feet with a margin around it, like a sculpted and textured asset shown in a modelling program. ` +
-      `${subject} ${JILLIATH_3D} Flat, even, shadowless lighting from all sides, like a texture reference. A plain flat light grey background, no ground, no text.`,
-  })),
   ...Object.entries(ZEALOTS_2).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, JILLIATH_3D) })),
-  ...Object.entries(ZEALOTS_2).map(([id, { subject, stance }]) => ({
-    id: `${id}-stance`,
-    prompt:
-      `A 3D render of a game character model in a three-quarter front view, ${stance}, holding a huge serrated two-handed greatsword, the whole figure visible from head to feet with a margin around it, like a sculpted and textured asset shown in a modelling program. ` +
-      `${subject} ${JILLIATH_3D} Flat, even, shadowless lighting from all sides, like a texture reference. A plain flat light grey background, no ground, no text.`,
-  })),
   {
     id: "zealot-sword-props",
     prompt: `A 3D render of a game prop model, like a textured asset shown in a modelling program: ${ZEALOT_SWORD} ${JILLIATH_3D} Each view whole and separate, laid flat. Flat, even, shadowless lighting from all sides. A plain flat light grey background, no ground, no hands, no text.`,

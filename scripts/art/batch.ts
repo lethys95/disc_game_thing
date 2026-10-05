@@ -13,6 +13,13 @@ export interface Candidate {
   readonly cfg?: number;
 }
 
+/** Adds this run's images to the folder's manifest (replacing any it regenerated). */
+async function record(dir: string, manifest: readonly Candidate[]): Promise<void> {
+  const earlier = await readFile(`${dir}/manifest.json`, "utf8").then((text): Candidate[] => JSON.parse(text), () => []);
+  const kept = earlier.filter((old) => !manifest.some((m) => m.file === old.file));
+  await writeFile(`${dir}/manifest.json`, JSON.stringify([...kept, ...manifest], null, 2));
+}
+
 /**
  * Every job once per seed into `dir`, with a manifest (prompt, seed, model: enough to regenerate any image exactly)
  * and a contact sheet of this run to judge the lot at a glance. The manifest is the folder's: a run adds its images to
@@ -28,11 +35,10 @@ export async function runBatch(dir: string, jobs: readonly (Omit<Job, "seed"> & 
       await writeFile(`${dir}/${file}`, await generate({ ...job, seed }, `disc/${job.id}`));
       console.log(`${dir}/${file} (${((Date.now() - started) / 1000).toFixed(1)} s)`);
       manifest.push({ file, id: job.id, seed, prompt: job.prompt, model: KREA2_TURBO.diffusionModel, ...(job.negative ? { negative: job.negative, cfg: job.cfg ?? KREA2_TURBO.cfg } : {}) });
+      // Recorded as each image lands, so a run stopped halfway leaves no image without its prompt.
+      await record(dir, manifest);
     }
   }
-  const earlier = await readFile(`${dir}/manifest.json`, "utf8").then((text): Candidate[] => JSON.parse(text), () => []);
-  const kept = earlier.filter((old) => !manifest.some((m) => m.file === old.file));
-  await writeFile(`${dir}/manifest.json`, JSON.stringify([...kept, ...manifest], null, 2));
   const cells = manifest.map((m) => `<figure><img src="${m.file}"><figcaption>${m.id} · ${m.seed}</figcaption></figure>`).join("");
   const html = `<!doctype html><meta charset="utf-8"><title>${dir}</title><style>
 body{margin:0;padding:12px;background:#0b0a0c;color:#d9cfbd;font:12px sans-serif;display:grid;grid-template-columns:repeat(${Math.max(4, seeds.length * 2)},1fr);gap:8px}
