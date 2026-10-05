@@ -30,12 +30,18 @@ const PAINTED: Readonly<Record<Style, string>> = {
 };
 
 const BACKGROUND = { r: 58, g: 58, b: 60 };
+/** How many pixels in from the ground the fringe is cleaned. */
+const FRINGE = 2;
+/** An enclosed patch this close to the grey (summed RGB) is ground when its surroundings average this far from it. */
+const POCKET = 16;
+const POCKET_RIM = 90;
+const POCKET_FLAT = 5.5;
 const CARD = { width: 832, height: 1216 };
 const ICON = 1024;
 
 /** Strengths that worked: a T-pose re-posed on the card; a body that already stands, kept. */
-const T_POSED = { card: [0.75, 0.9], bust: [0.45, 0.6] } as const;
-const STANDING = { card: [0.3, 0.4], bust: [0.3, 0.4] } as const;
+const T_POSED = { card: [0.75, 0.9], bust: [] } as const;
+const STANDING = { card: [0.3, 0.4], bust: [] } as const;
 
 interface Square {
   readonly size: number;
@@ -43,21 +49,29 @@ interface Square {
   readonly y: number;
 }
 
+/**
+ * Where the bust and icon are cut from (the user, 2026-10-05: a bust painted on its own "rarely makes for good icon
+ * material", and the Zealot came out three different ways): the card, so all three framings are one painting; a
+ * separately painted bust only where it's better (the Psychopomp, the Bog Giant). Fractions: `size` and `x` of the
+ * source's width, `y` of its height.
+ */
+interface Crop extends Square {
+  readonly from: "card" | "bust";
+}
+
 interface Unit {
   /** The picked concept's front view, split from its turnaround sheet. */
   readonly front: string;
   /** Who it is, in a sentence, for every prompt. */
   readonly identity: string;
-  /** How it stands on its card, and what it holds. */
-  readonly pose: string;
+  /** How it stands on its card, and what it holds; several to try more than one. */
+  readonly poses: readonly string[];
   readonly strengths: { readonly card: readonly number[]; readonly bust: readonly number[] };
   readonly styles?: readonly Style[];
-  /** The bust's square within the front view, as fractions of its side, when the head isn't on top of the figure. */
-  readonly bust?: Square;
-  /** The icon's square within the bust, as fractions of the bust's side, centred on the face (set after the test). */
-  readonly icon?: Square;
-  /** Claude's picks from the test, installed by `--install`. */
-  readonly picked?: { readonly card: string; readonly bust: string };
+  /** The head's square within the front view, for a painted bust, when the head isn't on top of the figure. */
+  readonly head?: Square;
+  /** Claude's picks from the test, and where the bust and icon are cut from, installed by `--install`. */
+  readonly picked?: { readonly card: string; readonly bust?: string; readonly crops: { readonly bust: Crop; readonly icon: Crop } };
 }
 
 const UNITS: Readonly<Record<string, Unit>> = {
@@ -65,99 +79,80 @@ const UNITS: Readonly<Record<string, Unit>> = {
     front: "shots/tripo/punisher-front.png",
     identity:
       "a hooded executioner of a militant faith: a tall pointed hood with only black inside it, no face; a long cassock and a hooded mantle of dark iron-grey cloth; dented iron bracers, a heavy chain belt",
-    pose: "he stands upright, a heavy multi-headed flail resting over his shoulder",
+    poses: ["he stands upright, a heavy multi-headed flail resting over his shoulder"],
     strengths: T_POSED,
-    icon: { size: 0.46, x: 0.515, y: 0.56 },
-    picked: { card: "punisher-card-img2img-d75.png", bust: "punisher-icon-img2img-d60.png" },
   },
   zealot: {
     front: "shots/tripo/zealot-front.png",
     identity:
       "a religious zealot, a tall gaunt man: his whole head covered by a smooth white mask with two wide round black eye holes and a small burning red handprint on its forehead; spiked, tattered armor scorched black, singed white robes in rags stained blood red, chains with small hooks at his belt",
-    pose: "he stands tense and leaning forward, a huge serrated two-handed greatsword of blackened steel held low",
+    poses: ["he stands tense and leaning forward, a huge serrated two-handed greatsword of blackened steel held low"],
     strengths: T_POSED,
-    icon: { size: 0.32, x: 0.51, y: 0.17 },
-    picked: { card: "zealot-card-d75.png", bust: "zealot-bust-d45.png" },
   },
   psychopomp: {
     front: "shots/tripo/psychopomp-earless-front.png",
     identity:
       "a shamaness of a wild forest people: pale greenish skin, dark green and black tribal tattoos across her face and body, dark hair in cornrows, a hood of a wolf's head pelt with its upper teeth over her brow and its grey fur close around the sides of her face, pale ghostly teal eyes staring through everything, short fingerless ivory gloves, boots of matted grey wolf fur, knotted ivory rags, a ragged fur mantle, leather wraps and bronze bangles on her arms",
-    pose: "she stands still and absent, her arms lowered, her hands open",
+    // "Could really use a pose of some sort in the card… she just looks sort of bland" (the user). The first is the
+    // user's casting reference (`docs/design/units/sylvan-psychopomp.md`); the second is Claude's. Her icon is better
+    // from a painted bust (the user).
+    poses: [
+      "she stands with her palms turned down at her sides and her back bowed backwards in a strange arch, her head tilted back, staring",
+      "she stands absent and swaying, one hand raised before her face with its blood-red fingers spread, the other hand hanging low",
+    ],
     // Round one gave her elf ears sticking out of the hood again (the user had them painted out of the concept): no
     // "elven", the hood's fur around her face, the bust lower.
-    strengths: { card: [0.75, 0.9], bust: [0.3, 0.45] },
-    icon: { size: 0.4, x: 0.49, y: 0.3 },
-    picked: { card: "psychopomp-card-d90.png", bust: "psychopomp-bust-d30.png" },
+    strengths: { card: [0.75, 0.9], bust: [0.3] },
   },
   custodian: {
     front: "art/candidates/units/nexus/custodian/custodian-3d-1002.png",
     identity:
       "a hulking golem guardian, not a person: a massive body of cracked grey stone blocks bound with dark brass bands, a blank stone head, thick stone arms and legs, faint electric teal lightning crackling in the cracks, a scrap of old cloth at its waist",
-    pose: "it stands guard, its heavy arms lowered",
+    poses: ["it stands guard, its heavy arms lowered"],
     strengths: T_POSED,
   },
   bonecracker: {
     front: "shots/tripo/bonecracker-front.png",
     identity:
       "a gnoll, a hyena-headed brute: heavy and broad with short legs, enormous forequarters and a thick neck, pale grey fur with dark stripes and a bristling dark mane, a massive jaw with iron-capped teeth, a heavy collar of bone plates and bronze rings, scarred bare arms, one fist in a spiked bronze gauntlet",
-    pose: "it stands hunched forward, its fists ready",
+    poses: ["it stands hunched forward, its fists ready"],
     strengths: T_POSED,
-    icon: { size: 0.5, x: 0.5, y: 0.38 },
-    picked: { card: "bonecracker-card-d75.png", bust: "bonecracker-bust-d45.png" },
   },
   cackler: {
     front: "shots/tripo/cackler-front.png",
     identity:
       "a gnoll, a scrawny hunched hyena-headed creature with pale grey fur, dark spots and a bristling dark mane, its mouth stretched in a wide manic grin, a ragged cloak of tattered cloth strips like rotten jester's motley, bone rattles and small bronze bells hanging from it",
-    pose: "it stands hunched, holding a crooked staff topped with a hyena skull",
+    poses: ["it stands hunched, holding a crooked staff topped with a hyena skull"],
     strengths: T_POSED,
-    // Its staff's skull is as high as its head, which pulled the default crop off its face.
-    bust: { size: 0.42, x: 0.5, y: 0.27 },
-    icon: { size: 0.45, x: 0.5, y: 0.33 },
-    picked: { card: "cackler-card-d90.png", bust: "cackler-bust-d45.png" },
   },
   matriarch: {
     front: "shots/tripo/matriarch-front.png",
     identity:
       "a gnoll matriarch, the largest of the pack: a tall, upright, broad-shouldered female hyena-headed warrior with pale grey fur, dark stripes, a great dark mane and a scarred muzzle, a mantle of bronze plates and trophy bones over her shoulders, a cloak of a great beast's hide, a crest of teeth and bronze on her brow",
-    pose: "she stands tall, holding a heavy bronze glaive",
+    poses: ["she stands tall, holding a heavy bronze glaive"],
     strengths: T_POSED,
-    icon: { size: 0.45, x: 0.5, y: 0.38 },
-    picked: { card: "matriarch-card-d90.png", bust: "matriarch-bust-d45.png" },
   },
   sproutling: {
     front: "shots/tripo/sproutling-front.png",
     identity:
       "a small treant, nothing human about it: a squat, gnarled young stump of dark bark on uneven root legs, one arm a long crooked branch and the other a short thick knot of wood, a face of knotholes with a ragged split in the bark for a mouth, pale new shoots and a few leaves sprouting from one side of its head",
-    pose: "it stands on its root legs",
+    poses: ["it stands on its root legs"],
     strengths: STANDING,
-    styles: ["ornate", "plain"],
-    icon: { size: 0.45, x: 0.49, y: 0.66 },
-    picked: { card: "sproutling-card-d40.png", bust: "sproutling-bust-d40.png" },
   },
   moldling: {
     front: "shots/tripo/moldling-front.png",
     identity:
       "a skinny, hunched body of wet black rotting wood bound together by white threads of mycelium, leaning to one side, one arm longer and thinner than the other, a head like a split rotten log with a dark hollow face, small grey mushroom caps on one side, white mold furring one leg",
-    pose: "it stands hunched, leaning to one side",
+    poses: ["it stands hunched, leaning to one side"],
     // Its concept stands in a T-pose, but it is a creature whose details drift: between the two.
-    strengths: { card: [0.6, 0.75], bust: [0.3, 0.45] },
-    styles: ["ornate", "plain"],
-    icon: { size: 0.45, x: 0.5, y: 0.29 },
-    picked: { card: "moldling-card-d75.png", bust: "moldling-bust-d30.png" },
+    strengths: { card: [0.6, 0.75], bust: [] },
   },
   deadwood: {
     front: "shots/tripo/deadwood-front.png",
     identity:
       "an animated dead tree, nothing humanoid about it: a lightning-split, charred grey trunk, one side burned black and the other bleached and peeling, dead branches clawing up from its top on one side, two massive arms of thick dead stumps, short root legs, a faint smoky ghostly face in the split of the trunk with a faint moss green glow",
-    pose: "it stands leaning forward on its stump arms",
+    poses: ["it stands leaning forward on its stump arms"],
     strengths: STANDING,
-    // Its face is the split in the trunk, under the branches on one side.
-    bust: { size: 0.45, x: 0.5, y: 0.32 },
-    styles: ["ornate", "plain"],
-    icon: { size: 0.45, x: 0.5, y: 0.48 },
-    picked: { card: "deadwood-card-d40.png", bust: "deadwood-bust-d40.png" },
   },
   // Round one (0.75/0.9 card, 0.45–0.75 bust) lost its pale face and grew gold filigree; round two: the bust holds at
   // 0.3–0.4, the card turned to carved filigree at 0.5 and "bone-white" made the face a skull; round three: carved
@@ -166,23 +161,19 @@ const UNITS: Readonly<Record<string, Unit>> = {
     front: "shots/tripo/bog-giant-front.png",
     identity:
       "a massive hunched hulk with no human shape: a lump of black bark and sodden bog oak oozing swamp sludge, peat and mud, reeds, cattails and patches of moss; a small, pale grey-white sunken face low in the bark and a pale, cracked chest; its right arm an enormous club of bark, roots and mud, its left arm small and withered",
-    pose: "it stands hunched, its huge right arm dragging on the ground",
-    strengths: { card: [0.3, 0.4], bust: [0.3, 0.4] },
+    poses: ["it stands hunched, its huge right arm dragging on the ground"],
+    // Its icon works best from a painted bust (the user).
+    strengths: { card: [0.3, 0.4], bust: [0.3] },
     styles: ["plain"],
     // Its face sits low in the bark, below the reeds on its top.
-    bust: { size: 0.42, x: 0.557, y: 0.33 },
-    icon: { size: 0.42, x: 0.51, y: 0.44 },
-    picked: { card: "bog_giant-card-plain-d30.png", bust: "bog_giant-bust-plain-d30.png" },
+    head: { size: 0.42, x: 0.557, y: 0.33 },
   },
   mulch_gorger: {
     front: "shots/tripo/mulch-gorger-front.png",
     identity:
       "a lurching heap of black rotting bark, mulch, bracket fungi, pale mold, wet leaves and roots with a human skull half sunk into its top, tipped back, its jaw gaping at the sky, moss and fungus growing from the skull's mouth and eye sockets; three uneven limbs of twisted roots, one a long grasping root",
-    pose: "it lurches forward",
+    poses: ["it lurches forward"],
     strengths: STANDING,
-    styles: ["ornate", "plain"],
-    icon: { size: 0.4, x: 0.5, y: 0.28 },
-    picked: { card: "mulch_gorger-card-d40.png", bust: "mulch_gorger-bust-d40.png" },
   },
 };
 
@@ -211,6 +202,84 @@ async function figure(path: string): Promise<{ data: Buffer; width: number; heig
     if (x < width - 1) stack.push(i + 1);
     if (i >= width) stack.push(i - width);
     if (i < width * (height - 1)) stack.push(i + width);
+  }
+  // Ground enclosed by the figure (between reeds, under an arm) is ground too: a flat patch of the grey's own colour
+  // whose surroundings are clearly not grey. A pale highlight on a pale face has pale surroundings and stays.
+  const near = (i: number) => {
+    const [r, g, b] = at(i);
+    return Math.abs(r - r0) + Math.abs(g - g0) + Math.abs(b - b0);
+  };
+  const seen = new Uint8Array(width * height);
+  for (let start = 0; start < width * height; start++) {
+    if (ground[start] || seen[start] || near(start) > POCKET) continue;
+    const patch: number[] = [];
+    const queue = [start];
+    seen[start] = 1;
+    while (queue.length > 0) {
+      const i = queue.pop() ?? 0;
+      patch.push(i);
+      const x = i % width;
+      for (const j of [x > 0 ? i - 1 : -1, x < width - 1 ? i + 1 : -1, i - width, i + width]) {
+        if (j < 0 || j >= width * height || seen[j] || ground[j] || near(j) > POCKET) continue;
+        seen[j] = 1;
+        queue.push(j);
+      }
+    }
+    const inside = new Set(patch);
+    let sum = 0;
+    let count = 0;
+    for (const i of patch) {
+      const x = i % width;
+      for (const j of [x > 2 ? i - 3 : -1, x < width - 3 ? i + 3 : -1, i - 3 * width, i + 3 * width]) {
+        if (j < 0 || j >= width * height || inside.has(j)) continue;
+        sum += near(j);
+        count += 1;
+      }
+    }
+    const mean = patch.reduce((total, i) => total + near(i), 0) / patch.length;
+    const spread = Math.sqrt(patch.reduce((total, i) => total + (near(i) - mean) ** 2, 0) / patch.length);
+    if (count > 0 && sum / count > POCKET_RIM && spread <= POCKET_FLAT) for (const i of patch) ground[i] = 1;
+  }
+  // The concept's edges are anti-aliased against its light grey: left alone, that fringe becomes a thin white outline
+  // the repaint keeps or turns into rim light (the user, 2026-10-05). Defringe: the pixels within FRINGE of the ground
+  // take the colour of the figure just inside them, filled from the inside out.
+  const depth = new Uint8Array(width * height);
+  let ring = [...ground.keys()].filter((i) => ground[i]);
+  for (let step = 1; step <= FRINGE; step++) {
+    const next: number[] = [];
+    for (const i of ring) {
+      const x = i % width;
+      for (const j of [x > 0 ? i - 1 : -1, x < width - 1 ? i + 1 : -1, i - width, i + width]) {
+        if (j < 0 || j >= width * height || ground[j] || depth[j]) continue;
+        depth[j] = step;
+        next.push(j);
+      }
+    }
+    ring = next;
+  }
+  for (let step = FRINGE; step >= 1; step--) {
+    for (let i = 0; i < width * height; i++) {
+      if (depth[i] !== step) continue;
+      const x = i % width;
+      let r = 0;
+      let g = 0;
+      let b = 0;
+      let n = 0;
+      for (const j of [x > 0 ? i - 1 : -1, x < width - 1 ? i + 1 : -1, i - width, i + width, x > 0 ? i - width - 1 : -1, x < width - 1 ? i - width + 1 : -1, x > 0 ? i + width - 1 : -1, x < width - 1 ? i + width + 1 : -1]) {
+        if (j < 0 || j >= width * height || ground[j]) continue;
+        const inner = depth[j] ?? 0;
+        if (inner !== 0 && inner <= step) continue;
+        r += data[j * 3] ?? 0;
+        g += data[j * 3 + 1] ?? 0;
+        b += data[j * 3 + 2] ?? 0;
+        n += 1;
+      }
+      if (n === 0) continue;
+      data[i * 3] = Math.round(r / n);
+      data[i * 3 + 1] = Math.round(g / n);
+      data[i * 3 + 2] = Math.round(b / n);
+      depth[i] = 0;
+    }
   }
   const box = { top: height, bottom: 0, left: width, right: 0 };
   for (let i = 0; i < width * height; i++) {
@@ -280,19 +349,23 @@ const INSTALLED = { card: 384, bust: 384, icon: 192 };
 async function install(id: string): Promise<void> {
   const unit = UNITS[id];
   if (!unit) throw new Error(`unknown unit "${id}"`);
-  const { icon, picked } = unit;
-  if (!icon || !picked) throw new Error(`${id} has no picks or icon square yet: test it, pick, measure the face in the bust`);
-  const { card, bust } = picked;
+  const picked = unit.picked;
+  if (!picked) throw new Error(`${id} has no picks yet: test it, pick, and place its crops`);
   const dir = dirOf(id);
-  await sharp(`${dir}/${card}`).resize({ width: INSTALLED.card }).webp({ quality: 88 }).toFile(`assets/art/portrait/${id}.webp`);
+  const cut = async (crop: Crop, size: number, out: string) => {
+    const file = crop.from === "card" ? picked.card : picked.bust;
+    if (!file) throw new Error(`${id} crops from a bust it hasn't picked`);
+    const { width = 0, height = 0 } = await sharp(`${dir}/${file}`).metadata();
+    const side = Math.round(width * crop.size);
+    const left = Math.max(0, Math.min(width - side, Math.round(width * crop.x - side / 2)));
+    const top = Math.max(0, Math.min(height - side, Math.round(height * crop.y - side / 2)));
+    await sharp(`${dir}/${file}`).extract({ left, top, width: side, height: side }).resize(size, size).webp({ quality: 88 }).toFile(out);
+  };
+  await sharp(`${dir}/${picked.card}`).resize({ width: INSTALLED.card }).webp({ quality: 88 }).toFile(`assets/art/portrait/${id}.webp`);
   await mkdir("assets/art/bust", { recursive: true });
-  await sharp(`${dir}/${bust}`).resize(INSTALLED.bust, INSTALLED.bust).webp({ quality: 88 }).toFile(`assets/art/bust/${id}.webp`);
-  const { width } = await sharp(`${dir}/${bust}`).metadata();
-  const side = Math.round((width ?? ICON) * icon.size);
-  const left = Math.round((width ?? ICON) * icon.x - side / 2);
-  const top = Math.round((width ?? ICON) * icon.y - side / 2);
   await mkdir("assets/art/icon", { recursive: true });
-  await sharp(`${dir}/${bust}`).extract({ left, top, width: side, height: side }).resize(INSTALLED.icon, INSTALLED.icon).webp({ quality: 88 }).toFile(`assets/art/icon/${id}.webp`);
+  await cut(picked.crops.bust, INSTALLED.bust, `assets/art/bust/${id}.webp`);
+  await cut(picked.crops.icon, INSTALLED.icon, `assets/art/icon/${id}.webp`);
   console.log(`installed assets/art/{portrait,bust,icon}/${id}.webp`);
 }
 
@@ -305,24 +378,27 @@ async function test(id: string, sourcesOnly: boolean): Promise<void> {
   await mkdir(dir, { recursive: true });
   const bustSrc = `${dir}/${id}-bust-source.png`;
   const cardSrc = `${dir}/${id}-card-source.png`;
-  await bustSource(unit.front, bustSrc, unit.bust);
+  await bustSource(unit.front, bustSrc, unit.head);
   await cardSource(unit.front, cardSrc);
   if (sourcesOnly) return;
   const runs: Run[] = (unit.styles ?? ["ornate"]).flatMap((style): Run[] => {
     const suffix = style === "ornate" ? "" : `-${style}`;
     const bustPrompt = `A painted head-and-shoulders portrait of ${unit.identity}. ${PAINTED[style]}`;
-    const cardPrompt = `A painted full-body character card of ${unit.identity}; ${unit.pose}. ${PAINTED[style]}`;
     return [
       ...unit.strengths.bust.map((denoise): Run => ({
         file: `${id}-bust${suffix}-d${Math.round(denoise * 100)}.png`,
         make: () => img2img({ prompt: bustPrompt, seed: 1000, source: bustSrc, denoise }, `disc/${id}-bust`),
         entry: { id: `${id}-bust${suffix}`, seed: 1000, prompt: bustPrompt, source: bustSrc, denoise },
       })),
-      ...unit.strengths.card.map((denoise): Run => ({
-        file: `${id}-card${suffix}-d${Math.round(denoise * 100)}.png`,
-        make: () => img2img({ prompt: cardPrompt, seed: 1000, source: cardSrc, denoise }, `disc/${id}-card`),
-        entry: { id: `${id}-card${suffix}`, seed: 1000, prompt: cardPrompt, source: cardSrc, denoise },
-      })),
+      ...unit.poses.flatMap((pose, p) => {
+        const cardPrompt = `A painted full-body character card of ${unit.identity}; ${pose}. ${PAINTED[style]}`;
+        const posed = unit.poses.length > 1 ? `-pose${p + 1}` : "";
+        return unit.strengths.card.map((denoise): Run => ({
+          file: `${id}-card${suffix}${posed}-d${Math.round(denoise * 100)}.png`,
+          make: () => img2img({ prompt: cardPrompt, seed: 1000, source: cardSrc, denoise }, `disc/${id}-card`),
+          entry: { id: `${id}-card${suffix}${posed}`, seed: 1000, prompt: cardPrompt, source: cardSrc, denoise },
+        }));
+      }),
     ];
   });
   const made: Candidate[] = [];
