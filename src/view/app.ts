@@ -1,6 +1,6 @@
-import { chooseAction } from "#rules/ai";
+import { chooseAction, chooseTarotCards } from "#rules/ai";
 import { UNITS } from "#rules/units/index";
-import { applyAction, createBattle, legalActions } from "#rules/battle/engine";
+import { applyAction, chooseTarot, createBattle, legalActions, NO_CONTEXT } from "#rules/battle/engine";
 import { sameTile } from "#rules/battle/grid";
 import type { Action, Battle, BattleEvent, BattleUnit, Enhancement, LegalAbility, Side, TargetChoice } from "#rules/battle/types";
 import { PLAIN } from "#rules/battle/types";
@@ -87,6 +87,8 @@ export class App implements KeyLayer {
   /** Every target's preview for one ability, cached per battle state and ability. */
   private sweep: { readonly key: string; readonly marks: readonly PreviewMark[] } | null = null;
   private busy = false;
+  /** A tarot hand of the player's waits for a pick; the fight doesn't start until then. */
+  private pickingTarot = false;
   /** The AI plays the player's side too, until switched off. */
   private auto = false;
   /** Bumped on every start/stop so a turn still animating from an old battle can't touch the new one. */
@@ -152,8 +154,8 @@ export class App implements KeyLayer {
   }
 
   /** A standalone battle between two squads. */
-  start(squads: Squads, playerSide: Side | null, colors: Colors, fastForward = 0, setting: BattleSetting = OPEN_FIELD): void {
-    const step = createBattle(squads);
+  start(squads: Squads, playerSide: Side | null, colors: Colors, fastForward = 0, setting: BattleSetting = OPEN_FIELD, seed = 0): void {
+    const step = createBattle(squads, { ...NO_CONTEXT, seed });
     this.run(step.battle, step.events, playerSide, colors, setting, { kind: "skirmish", squads, colors }, fastForward);
   }
 
@@ -177,7 +179,9 @@ export class App implements KeyLayer {
     this.tug = new Tug(opening, performance.now());
     this.sound.battleMusic([factionOf(0), factionOf(1)], opening);
     this.sound.ambience(null);
-    let battle = start;
+    // The AI's tarot hands are picked at once; the player's wait for the player (`offerTarot`). Fast-forwarded and
+    // watched battles pick for everyone.
+    let battle = chooseTarotCards(start, playerSide === null || fastForward > 0 ? undefined : playerSide === 0 ? 1 : 0);
     this.scene.show();
     this.hud.setVisible(true);
     this.hud.clearLog();
@@ -194,8 +198,29 @@ export class App implements KeyLayer {
     this.scene.reset();
     this.scene.sync(battle);
     this.selectDefault();
+    this.offerTarot();
     this.render();
     this.schedule();
+  }
+
+  /** The player's next undecided tarot hand, shown until a card is picked; the fight waits for it. */
+  private offerTarot(): void {
+    const battle = this.battle;
+    const hand = battle?.tarot.find((h) => h.side === this.playerSide && h.chosen === null);
+    this.pickingTarot = hand !== undefined;
+    if (!battle || !hand) {
+      this.hud.hideTarot();
+      return;
+    }
+    this.hud.showTarot(hand, battle, this.playerSide, (card) => {
+      if (!this.battle) return;
+      const step = chooseTarot(this.battle, hand.unitId, card);
+      this.battle = step.battle;
+      this.hud.appendLog(masked(step.events, step.battle, this.playerSide), step.battle, this.playerSide);
+      this.offerTarot();
+      this.render();
+      this.schedule();
+    });
   }
 
   stop(): void {
@@ -213,7 +238,7 @@ export class App implements KeyLayer {
     const battle = this.battle;
     const id = battle?.current?.unitId;
     const unit = id ? battle?.units[id] : undefined;
-    return !this.busy && !this.auto && unit !== undefined && unit.side === this.playerSide;
+    return !this.busy && !this.auto && !this.pickingTarot && unit !== undefined && unit.side === this.playerSide;
   }
 
   /** The rest of the battle played at once by the AI on both sides, in the worker; only the result is shown. */
@@ -242,6 +267,11 @@ export class App implements KeyLayer {
   toggleAuto(): void {
     if (!this.battle || this.playerSide === null) return;
     this.auto = !this.auto;
+    // Handing the fight to the AI hands it the tarot pick too.
+    if (this.auto && this.pickingTarot) {
+      this.battle = chooseTarotCards(this.battle, this.playerSide);
+      this.offerTarot();
+    }
     this.render();
     this.schedule();
   }
@@ -400,7 +430,7 @@ export class App implements KeyLayer {
 
   private schedule(): void {
     const battle = this.battle;
-    if (!battle || battle.outcome || this.busy) return;
+    if (!battle || battle.outcome || this.busy || this.pickingTarot) return;
     const id = battle.current?.unitId;
     const unit = id ? battle.units[id] : undefined;
     if (!unit || (unit.side === this.playerSide && !this.auto)) return;
@@ -497,6 +527,7 @@ export class App implements KeyLayer {
     const inspected = focused ?? this.unitAt(this.hovered);
     const pinned = this.pinned && battle.units[this.pinned]?.alive ? this.pinned : null;
     this.hud.renderTurns(battle, playerSide);
+    this.hud.renderTarotStatus(battle, playerSide);
     this.hud.renderCard(battle, inspected?.id ?? pinned ?? currentId, playerSide, pinned !== null && !inspected);
     this.hud.renderActions(battle, this.playerOptions(), this.selected, this.playersTurn(), this.overloaded);
     this.hud.renderAuto(this.playerSide !== null && !battle.outcome, this.auto);
@@ -520,6 +551,7 @@ export class App implements KeyLayer {
     const battle = this.battle;
     if (!battle || battle.outcome || this.busy) return "";
     if (this.auto) return "Auto-battle: the AI is playing your side.";
+    if (this.pickingTarot) return "Pick a tarot card to begin.";
     if (!this.playersTurn()) return this.playerSide === null ? "The AI plays both sides." : "The enemy is acting…";
     const name = battle.current ? battle.units[battle.current.unitId]?.name : undefined;
     if (!option) return `${name}: choose an action.`;

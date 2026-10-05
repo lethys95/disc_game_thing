@@ -1,5 +1,6 @@
 import { AI_CHARGE_VALUE } from "#rules/balance";
-import { applyAction, effectiveStatsOf, legalActions, traitValues } from "#rules/battle/engine";
+import { applyAction, chooseTarot, effectiveStatsOf, legalActions, traitValues } from "#rules/battle/engine";
+import { cardValue } from "#rules/battle/tarot";
 import { UNITS } from "#rules/units/index";
 import type { Action, Battle, Side } from "#rules/battle/types";
 
@@ -93,9 +94,20 @@ function evaluate(battle: Battle, side: Side): number {
   return score;
 }
 
+/** Picks a card from every undecided tarot hand (of `side`, or of both): the one worth most by `cardValue`. */
+export function chooseTarotCards(start: Battle, side?: Side): Battle {
+  let battle = start;
+  for (const hand of start.tarot) {
+    if (hand.chosen !== null || (side !== undefined && hand.side !== side)) continue;
+    const best = hand.cards.map((card, i) => ({ i, value: cardValue(card) })).sort((a, b) => b.value - a.value || a.i - b.i)[0];
+    if (best) battle = chooseTarot(battle, hand.unitId, best.i).battle;
+  }
+  return battle;
+}
+
 /** Plays a battle to its end with the greedy AI on both sides: the deterministic forecast of a fight. */
 export function autoplay(start: Battle, limit = 5000): Battle {
-  let battle = start;
+  let battle = chooseTarotCards(start);
   for (let i = 0; i < limit && !battle.outcome; i++) {
     const action = chooseAction(battle);
     if (!action) break;

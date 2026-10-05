@@ -1,7 +1,8 @@
 import { autoplay } from "#rules/ai";
 import { CITY_ARMOR_PER_TIER } from "#rules/balance";
 import { sameHex } from "#rules/hex";
-import { createBattle } from "#rules/battle/engine";
+import { createBattle, NO_CONTEXT } from "#rules/battle/engine";
+import { seedOf } from "#rules/battle/tarot";
 import type { Placement } from "#rules/battle/engine";
 import type { Battle, EffectSeed, Side } from "#rules/battle/types";
 import { NODES } from "#rules/nodes";
@@ -84,7 +85,9 @@ function engagementBattle(world: World, attacker: Leader, defender: Defender): B
     return { ...placement, effects };
   });
   const squads: [Placement[], Placement[]] = [ours, theirs];
-  return createBattle(squads).battle;
+  // The fight's own seed (tarot hands): the same fight on the same turn deals the same cards.
+  const seed = seedOf(world.turn, `${attacker.id}:${JSON.stringify(defender)}`);
+  return createBattle(squads, { ...NO_CONTEXT, seed }).battle;
 }
 
 /** The squad after a battle: survivors keep their wounds, and a fallen leader stays while anyone else stands. */

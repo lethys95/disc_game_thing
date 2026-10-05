@@ -1,3 +1,4 @@
+import type { TarotHand } from "#rules/battle/tarot";
 /**
  * Battle data and the vocabulary rules are written in. See docs/design/architecture.md: passive abilities and
  * effects are both *traits* (bundles of hooks); damage is a typed packet through an ordered pipeline.
@@ -115,6 +116,8 @@ export interface Slot {
 
 export interface Battle {
   units: Record<string, BattleUnit>;
+  /** Tarot hands drawn as the fight began (`battle/tarot.ts`); each side sees only its own. */
+  tarot: TarotHand[];
   round: number;
   pass: number;
   actionsThisRound: Record<string, number>;
@@ -175,6 +178,8 @@ export type BattleEvent =
   | { type: "death"; unitId: string }
   | { type: "deathPrevented"; unitId: string }
   | { type: "crit"; unitId: string; target: string }
+  | { type: "tarotChosen"; side: Side; unitId: string }
+  | { type: "tarot"; side: Side; unitId: string; card: number; state: "fulfilled" | "failed" }
   | { type: "evaded"; unitId: string }
   | { type: "effect"; unitId: string; effect: string; source: string | null }
   | { type: "effectEnded"; unitId: string; effect: string; source: string | null }
@@ -273,6 +278,8 @@ export interface Hooks {
   restored?(ctx: Ctx, self: TraitSelf, restored: number, overflow: number): void;
   /** What this trait is worth to its unit's side, for the AI's valuation. */
   aiValue?(ctx: Ctx, self: TraitSelf): number;
+  /** As the fight begins: how many tarot cards this trait draws for its unit's side (Tarot x). */
+  tarotCards?(ctx: Ctx, self: TraitSelf): number;
 }
 
 /** What happened to a unit's remains: it died (leaving a corpse), or its corpse was used or destroyed. */

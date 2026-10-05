@@ -11,6 +11,7 @@ import { Campaign } from "#view/campaign";
 import { isMood, MapView, MOODS } from "#view/map";
 import { BattleScene } from "#view/scene";
 import { Setup } from "#view/setup";
+import type { Placement } from "#rules/battle/engine";
 import { BANDIT_GROUP, DRAWN_GROUP, GNOLL_GROUP, GROVE_PRESETS, NEXUS_PRESETS, PRESETS } from "#rules/units/presets";
 import { ANIMATION_SPEEDS, Settings } from "#view/settings";
 import { Sound } from "#view/sound";
@@ -136,7 +137,11 @@ if (params.has("map")) {
     biome: params.get("biome") === "desert" ? "desert" : "temperate",
     backdrop: backdrop === "capitol" ? MODEL_CHAINS.capitol("jilliath") : backdrop === "city" ? MODEL_CHAINS.city() : backdrop === "dungeon" ? MODEL_CHAINS.dungeon() : null,
   };
-  app.start([presets[0], enemy], params.get("auto") === "1" ? null : params.get("side") === "1" ? 1 : 0, colorPair(["jilliath", fight.startsWith("nexus") ? "nexus" : fight.startsWith("grove") ? "grove" : "jilliath"]), Number(params.get("steps") ?? 0), setting);
+  // `tarot=3`: each side's first unit carries Tarot 3; `seed=N` picks the hands (the user's tarot, 2026-10-05).
+  const tarot = Number(params.get("tarot") ?? 0);
+  const withTarot = (squad: readonly Placement[]): Placement[] =>
+    squad.map((p, i) => (i === 0 && tarot > 0 ? { ...p, effects: [...(p.effects ?? []), { def: "carries", ability: { id: "tarot", params: { cards: tarot } } }] } : p));
+  app.start([withTarot(presets[0]), withTarot(enemy)], params.get("auto") === "1" ? null : params.get("side") === "1" ? 1 : 0, colorPair(["jilliath", fight.startsWith("nexus") ? "nexus" : fight.startsWith("grove") ? "grove" : "jilliath"]), Number(params.get("steps") ?? 0), setting, Number(params.get("seed") ?? 0));
 } else {
   showSetup();
 }

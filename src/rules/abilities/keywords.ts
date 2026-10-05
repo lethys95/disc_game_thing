@@ -21,6 +21,15 @@ function countTo(ctx: Ctx, unitId: string, counter: string, every: number): bool
 }
 
 export const keywords: Readonly<Record<string, Behavior>> = {
+  /** Tarot x (the user): as the fight begins, its side draws x cards and picks one in secret (`battle/tarot.ts`). */
+  tarot: {
+    kind: "passive",
+    name: "Tarot",
+    defaults: { cards: 3 },
+    describe: (p) => `As the fight begins, its side draws ${p["cards"]} tarot cards and picks one in secret: a task that, done, pays the whole side.`,
+    hooks: { tarotCards: (_ctx, self) => self.params["cards"] ?? 0 },
+  },
+
   /** Crit x: every x-th hit it lands deals double damage. */
   crit: {
     kind: "passive",

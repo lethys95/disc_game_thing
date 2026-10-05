@@ -97,6 +97,28 @@ button.action .key { font: 600 9px var(--text); margin-left: 6px; padding: 0 3px
 #banner .title { font: 700 54px var(--display); letter-spacing: 0.06em; }
 #banner .subtitle { color: var(--muted); margin-bottom: 16px; }
 
+/* Tarot (2026-10-05): the hand dealt as a fight begins, and the card held. */
+#tarot {
+  position: fixed; left: 50%; top: 46%; transform: translate(-50%, -50%); z-index: 6; text-align: center;
+  padding: 20px 28px; width: max-content; max-width: min(92vw, 980px); box-sizing: border-box;
+  border: 20px solid transparent; border-image: var(--ui-frame) 18% / 24px round; background: rgba(13, 11, 11, 0.96) padding-box;
+}
+#tarot .title { font: 700 34px var(--display); letter-spacing: 0.05em; }
+#tarot .subtitle { color: var(--muted); margin: 2px 0 14px; }
+#tarot .cards { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+#tarot button.tarot-card {
+  width: 190px; min-height: 200px; padding: 14px 12px; display: flex; flex-direction: column; gap: 10px; text-align: center;
+  background: linear-gradient(#1d1715, #120e0d); color: var(--ink); border: 1px solid var(--edge); cursor: pointer; font: inherit;
+}
+#tarot button.tarot-card:hover, #tarot button.tarot-card:focus-visible { border-color: var(--gold); transform: translateY(-3px); }
+#tarot .tarot-card .arcana { font: 700 20px var(--display); letter-spacing: 0.04em; }
+#tarot .tarot-card .task { flex: 1; }
+#tarot .tarot-card .reward { color: var(--muted); font-size: 13px; }
+#tarot-status { position: fixed; left: 12px; top: 64px; max-width: 280px; font-size: 13px; z-index: 3; }
+#tarot-status .arcana { font: 700 15px var(--display); }
+#tarot-status .state-fulfilled { color: #e8c877; }
+#tarot-status .state-failed { color: var(--muted); text-decoration: line-through; }
+
 .hpbar { width: 54px; height: 5px; background: #1a1412; border: 1px solid #000; position: relative; }
 .hpbar .fill { position: absolute; inset: 0 auto 0 0; }
 .hpbar.side0 .fill { background: var(--side0); }

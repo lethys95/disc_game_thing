@@ -1,3 +1,5 @@
+import { describeReward, describeTask, TASK_NAMES } from "#rules/battle/tarot";
+import type { TarotHand } from "#rules/battle/tarot";
 import { BEHAVIORS, describeAbility, paramsOf } from "#rules/abilities/index";
 import { effectDef } from "#rules/effects";
 import { abilityRef, actionsPerRound, effectiveStats, unitAbilities, upcomingSlots } from "#rules/battle/engine";
@@ -76,6 +78,8 @@ export class Hud {
   private readonly banner = byId("banner");
   private readonly auto = byId("auto");
   private readonly resolve = byId("resolve");
+  private readonly tarot = byId("tarot");
+  private readonly tarotStatus = byId("tarot-status");
 
   constructor(
     private readonly settings: Settings,
@@ -97,7 +101,66 @@ export class Hud {
     if (!visible) {
       this.card.hidden = true;
       this.banner.hidden = true;
+      this.tarot.hidden = true;
+      this.tarotStatus.hidden = true;
     }
+  }
+
+  /** A tarot hand to pick from, as the fight begins (the user's tarot): one card, kept from the enemy. */
+  showTarot(hand: TarotHand, battle: Battle, playerSide: Side | null, onPick: (card: number) => void): void {
+    const name = (id: string) => {
+      const unit = battle.units[id];
+      return unit ? unitLabel(unit, playerSide).replace(/^Enemy /, "the enemy ") : id;
+    };
+    const drawer = battle.units[hand.unitId];
+    const cards = element("div", "cards");
+    hand.cards.forEach((card, index) => {
+      const button = element("button", "tarot-card");
+      button.append(
+        element("div", "arcana", TASK_NAMES[card.task.kind]),
+        element("div", "task", describeTask(card.task, name)),
+        element("div", "reward", `Done: ${describeReward(card.reward)}.`),
+      );
+      button.addEventListener("click", () => onPick(index));
+      cards.append(button);
+    });
+    this.tarot.replaceChildren(
+      element("div", "title", "Tarot"),
+      element("div", "subtitle", `${drawer?.name ?? "Your unit"} draws ${hand.cards.length} cards. Pick one; the enemy won't see it.`),
+      cards,
+    );
+    this.tarot.hidden = false;
+  }
+
+  hideTarot(): void {
+    this.tarot.hidden = true;
+  }
+
+  /** The cards in play: the player's own with its task and state; the enemy's face down until it's fulfilled. */
+  renderTarotStatus(battle: Battle, playerSide: Side | null): void {
+    const held = battle.tarot.filter((h) => h.chosen !== null);
+    this.tarotStatus.hidden = held.length === 0;
+    if (held.length === 0) return;
+    const name = (id: string) => {
+      const unit = battle.units[id];
+      return unit ? unitLabel(unit, playerSide).replace(/^Enemy /, "the enemy ") : id;
+    };
+    this.tarotStatus.replaceChildren(
+      ...held.map((hand) => {
+        const card = hand.cards[hand.chosen ?? 0];
+        const ours = playerSide === null || hand.side === playerSide;
+        const line = element("div", `state-${hand.state}`);
+        if (!card) return line;
+        if (!ours && hand.state !== "fulfilled") {
+          line.append(element("span", "arcana", "A hidden card"), ` · the enemy's tarot`);
+          return line;
+        }
+        const state = hand.state === "open" ? "" : hand.state === "fulfilled" ? " · fulfilled" : " · failed";
+        line.append(element("span", "arcana", TASK_NAMES[card.task.kind]), ` · ${ours ? "" : "the enemy's · "}${describeTask(card.task, name)}${state}`);
+        line.title = `Done: ${describeReward(card.reward)}.`;
+        return line;
+      }),
+    );
   }
 
   /**
@@ -248,7 +311,7 @@ export class Hud {
       return unit ? unitLabel(unit, playerSide) : id;
     };
     for (const event of events) {
-      const line = describe(event, name, playerSide);
+      const line = describe(event, name, playerSide, battle);
       if (!line) continue;
       const entry = element("div", `entry ${event.type}`, line);
       this.log.appendChild(entry);
@@ -291,7 +354,7 @@ function effectLabel(effect: EffectInstance): string {
   return `${effectDef(effect.def).name}${stacks}${amount}`;
 }
 
-function describe(event: BattleEvent, name: (id: string) => string, playerSide: Side | null): string | null {
+function describe(event: BattleEvent, name: (id: string) => string, playerSide: Side | null, battle: Battle): string | null {
   switch (event.type) {
     case "roundStart":
       return `Round ${event.round}`;
@@ -316,6 +379,15 @@ function describe(event: BattleEvent, name: (id: string) => string, playerSide: 
       return `${name(event.unitId)}: a critical hit on ${name(event.target)}`;
     case "evaded":
       return `${name(event.unitId)} evades the hit`;
+    case "tarotChosen":
+      return event.side === playerSide ? null : "The enemy draws a tarot card and keeps it hidden.";
+    case "tarot": {
+      const card = battle.tarot.find((h) => h.unitId === event.unitId)?.cards[event.card];
+      const ours = playerSide === null || event.side === playerSide;
+      if (!card) return null;
+      if (event.state === "failed") return ours ? `Your tarot card fails: ${TASK_NAMES[card.task.kind]}.` : null;
+      return `${ours ? "Your" : "The enemy's"} tarot card is fulfilled: ${TASK_NAMES[card.task.kind]}. ${capitalize(describeReward(card.reward))}.`;
+    }
     case "effect": {
       const def = effectDef(event.effect);
       return def.quiet ? null : `${name(event.unitId)}: ${def.name.toLowerCase()}`;
@@ -339,4 +411,8 @@ function describe(event: BattleEvent, name: (id: string) => string, playerSide: 
     case "turnStart":
       return null;
   }
+}
+
+function capitalize(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }

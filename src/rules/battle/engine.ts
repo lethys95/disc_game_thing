@@ -1,6 +1,7 @@
 import { behavior, paramsOf } from "#rules/abilities/index";
 import { BATTLE_ROUND_LIMIT, INITIATIVE_PER_ACTION } from "#rules/balance";
 import { hit, lose } from "#rules/battle/damage";
+import { checkTarot, dealHand } from "#rules/battle/tarot";
 import { allTraits, buildTraits, traitsOn } from "#rules/battle/traits";
 import type {
   AbilityRef,
@@ -40,6 +41,8 @@ export interface Placement {
 /** What the world brings into a battle beyond the units: effects on every unit of a side (a Blacksmith node). */
 export interface BattleContext {
   readonly sideEffects: readonly [readonly EffectSeed[], readonly EffectSeed[]];
+  /** What tarot hands are dealt from: the same seed deals the same hands. */
+  readonly seed?: number;
 }
 
 export const NO_CONTEXT: BattleContext = { sideEffects: [[], []] };
@@ -96,6 +99,7 @@ export function createBattle(sides: readonly [readonly Placement[], readonly Pla
     waitedThisPass: [],
     current: null,
     outcome: null,
+    tarot: [],
   };
   const events: BattleEvent[] = [];
   const ctx = makeCtx(battle, events);
@@ -106,9 +110,22 @@ export function createBattle(sides: readonly [readonly Placement[], readonly Pla
     unit.hp = Math.min(unit.hp, stats.maxHp);
     unit.shield = stats.shield;
   }
+  for (const unit of Object.values(units).sort((a, b) => (a.id < b.id ? -1 : 1))) {
+    const count = traitsOn(ctx, unit.id).reduce((sum, t) => sum + (t.hooks.tarotCards?.(ctx, t.self) ?? 0), 0);
+    if (count > 0) battle.tarot.push({ side: unit.side, unitId: unit.id, cards: dealHand(ctx, unit.id, count, context.seed ?? 0), chosen: null, state: "open", progress: 0 });
+  }
   checkOutcome(ctx);
   advance(ctx);
   return { battle, events };
+}
+
+/** A side picks a card from a tarot hand, in secret. Only before it has picked; the hand is `unitId`'s. */
+export function chooseTarot(battle: Battle, unitId: string, card: number): Step {
+  const draft = cloneBattle(battle);
+  const hand = draft.tarot.find((h) => h.unitId === unitId);
+  if (!hand || hand.chosen !== null || !hand.cards[card]) throw new Error(`cannot choose tarot card ${card} for ${unitId}`);
+  hand.chosen = card;
+  return { battle: draft, events: [{ type: "tarotChosen", side: hand.side, unitId }] };
 }
 
 /** Every living unit's effective stats, from one context. */
@@ -204,12 +221,22 @@ export function applyAction(battle: Battle, action: Action): Step {
     draft.waitedThisPass.push(unitId);
   }
 
+  checkTarot(ctx, draft.tarot, events);
   checkOutcome(ctx);
   if (draft.current && slotIsOver(ctx, slot)) {
     draft.current = null;
     expire(ctx, "untilTurnEnd", (u) => u.id === unitId);
   }
+  const before = events.length;
   advance(ctx);
+  // What advancing brought (a new round, a turn's damage over time) can finish a card too, and a card's reward can
+  // end the fight or the turn that just began.
+  checkTarot(ctx, draft.tarot, events.slice(before));
+  checkOutcome(ctx);
+  if (draft.current && !ctx.unit(draft.current.unitId).alive) {
+    draft.current = null;
+    advance(ctx);
+  }
   return { battle: draft, events };
 }
 
@@ -231,6 +258,7 @@ function cloneBattle(battle: Battle): Battle {
     queue: [...battle.queue],
     waitedThisPass: [...battle.waitedThisPass],
     current: slot ? { ...slot, freeUsed: [...slot.freeUsed], bonusAttacks: [...slot.bonusAttacks] } : null,
+    tarot: battle.tarot.map((h) => ({ ...h })),
   };
 }
 

@@ -665,6 +665,21 @@ const effects: readonly EffectDef[] = [
     visibility: "public",
     hooks: { turnStart: () => "skip", aiValue: (ctx, self) => -ctx.stats(self.unitId).damage },
   },
+  // Tarot rewards (`battle/tarot.ts`).
+  {
+    id: "tarot_might",
+    name: "The cards' might",
+    describe: (e) => `Deals ${e.amount}% more damage (a tarot card fulfilled).`,
+    stacking: { mode: "merge" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      stats: (_ctx, self, subjectId, stats) => {
+        if (subjectId === self.unitId) stats.damage += Math.round((stats.damage * (self.effect?.amount ?? 0)) / 100);
+      },
+    },
+  },
+  flatStat({ id: "tarot_exposed", name: "Exposed", stat: "armor", sign: -1, stacking: { mode: "merge" }, describe: (e) => `−${e.amount} armor (an enemy's tarot card).` }),
   // The gnolls (`abilities/gnolls.ts`).
   {
     // A Packstalker's mark: the marker's side hits it harder until the end of the next round.
