@@ -45,3 +45,14 @@ and it drew exactly that, blandly. The user: "try. Still need gothic fantasy, we
 - **Round two** (`PUNISHERS_2`): *executioner* (the original's line alone), *hood* (its features in ~40 words),
   *iron* (the same in dark iron-grey cloth and more iron, the user's "less white, more metal"); the gothic recipe word
   for word with the original's materials. The flail again with flanged heads described as blades round a core.
+- **Round two, read:**
+  - *Hood* and *iron* work: the tall pointed executioner's hood with only black inside, faceless in all six. It's a
+    strong, unmistakable silhouette.
+  - Both have a long dark cassock under a hooded mantle, clawed iron gauntlets and a chain belt. *Hood* has a pale
+    stained apron down the front, or pale shoulders. *Iron* is all dark iron-grey: the most metal and the darkest.
+  - The blood red came through in none of them.
+  - *Executioner* (the one line alone) gave an ornate hooded rogue with his face showing: in the turnaround frame the
+    one line isn't enough.
+  - The flail heads are still spiked balls, not flanged.
+  - Worth weighing: the tall pointed hood (a capirote) is the Spanish Inquisition's, fitting the faction, but it also
+    calls up the Klan; in black, and on a figure this dark, the second reading is weaker.
