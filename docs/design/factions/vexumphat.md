@@ -47,7 +47,7 @@ The Ton'Arilliet story (`../lore/ton-arilliet.md`) is the user's and establishes
 ## The Capitol's look (user, 2026-09-29)
 Inspiration: **the castle in Scorn** (the user's screenshot, kept outside the repo): "sort of ghostly too". What it shows: a towering, pale, bone- or porcelain-like cathedral-palace, ornate yet organic in its curves; vertical, symmetrical, crowned with spires; wrapped in mist under a lavender sky. It matches the canon above ("bleeding porcelain horror", "almost right but wrong", ethereals, phantasmagoria).
 - Claude's reading: take the pale ornate silhouette and the ghostliness for this faction's architecture; the game's overall look stays fantasy, not biomechanical (`art.md`: the user ruled biomechanical out as a style).
-- Concepts: `scripts/art/wastes.ts` (candidates in `art/candidates/models/wastes/`, not committed). Best so far: "solid" seed 1, meshed with TRELLIS.2 (`art/candidates/models/wastes/meshes/capitol-solid-1-clean.glb`); it goes into the game with the faction.
+- Concepts: `scripts/art/wastes.ts` (candidates in `art/candidates/models/capitols/wastes/`, not committed). Best so far: "solid" seed 1, meshed with TRELLIS.2 (`art/candidates/models/capitols/wastes/meshes/capitol-solid-1-clean.glb`); it goes into the game with the faction.
 
 ## User, 2026-09-29
 - Flavor of its death: ghosts, shades, phantasmagoria, mystery, spooky (the Grove's is rot and the cycle). No clear MTG color pair.

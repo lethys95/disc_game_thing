@@ -5,7 +5,7 @@
     "seed": 1001,
     "prompt": "A full-body illustration of a single figure in a menacing stance, on a pale off-white background. A zealot whose whole head is covered by a smooth, completely featureless mask: no mouth, no nose, no expression, only two wide, staring round eye holes with pure black behind them. Painted on the forehead of the mask is a burning outstretched hand with spread fingers. The mask is ominous, strange and inhuman, deranged and wrong. He wears spiked, tattered armor and holds a huge serrated two-handed sword. A pale, washed-out palette of bone white and ash grey with hard contrasting black and vivid blood red as the only strong colors. No text, no watermark. Bold black ink brushstrokes and washes, expressive dry-brush edges, large areas of untouched pale paper.",
     "model": "krea2_turbo_fp8_scaled.safetensors",
-    "from": "art/candidates/units/zealot-probes/ink/zealot_inkBrush-1001.png"
+    "from": "art/candidates/units/jilliath/zealot-probes/ink/zealot_inkBrush-1001.png"
   },
   "portrait/custodian": {
     "file": "custodian-1000.png",

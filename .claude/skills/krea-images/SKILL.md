@@ -34,7 +34,7 @@ not retry with changes.
 
 Working directory: /home/lethys/projects/all_disc/new_disc
 Command: <e.g. pnpm exec tsx scripts/art/concepts.ts custodian-3d 1000 1001 1002 1003>
-Expected output folder: <e.g. art/candidates/units/concepts/>
+Expected output folder: <e.g. art/candidates/units/grove/>
 
 1. Check ComfyUI is up: `curl -s -m 5 http://127.0.0.1:8188/system_stats`. If it doesn't answer, stop and report
    that; don't start or restart it.

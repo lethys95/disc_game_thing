@@ -88,7 +88,7 @@ cloth); each gnoll built around one silhouette feature: the Packstalker long-leg
 Bonecracker all forequarters and jaw; the Hamstringer small, hooded, javelins and bolas; the Cackler a scrawny grin in
 a rotten jester's motley with bells and a skull staff; the Matriarch the tallest, a mantle of bronze and trophies, a
 glaive. Each as a T-pose turnaround (model, rig) and a single view in its stance (posture). `scripts/art/concepts.ts`
-(`GNOLLS`), images in `art/candidates/units/gnolls/`. No accent colour in the prompts (the neutral icons use ember;
+(`GNOLLS`), images in `art/candidates/units/neutrals/gnolls/`. No accent colour in the prompts (the neutral icons use ember;
 yours to say).
 
 **Round one (Claude's read; page `shots/gnolls.html`):** the Cackler (rotten jester, bells, skull staff) and the

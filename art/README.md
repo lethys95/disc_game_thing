@@ -15,14 +15,17 @@ gitignored (large, and every image can be remade from its folder's `manifest.jso
 | Folder | What | Made by |
 |---|---|---|
 | `units/anchors/` | Early portrait and icon anchors (the Custodian and Punisher portraits come from here) | a past probe |
-| `units/concepts/` | Unit concepts: the Custodian for 3D (T-pose, turnarounds), Zealot and Psychopomp beyond ink | `scripts/art/concepts.ts` |
-| `units/grove/` | The Sproutling and Decay line: turnarounds and single views, all five picked (`round-1/` the first round) | `scripts/art/concepts.ts` (`GROVE`) |
-| `units/gnolls/` | The gnoll tribe: a T-pose turnaround and a stance view per unit | `scripts/art/concepts.ts` (`GNOLLS`) |
-| `units/zealot-probes/` | The style probes that settled the ink look (ink, mask, pairing with the Psychopomp, blends, sweep) | past probes |
+| `units/jilliath/zealot/`, `units/jilliath/zealot-probes/` | The Zealot's concepts, and the style probes that settled the ink look (ink, mask, pairing with the Psychopomp, blends, sweep) | `scripts/art/concepts.ts`, past probes |
+| `units/nexus/custodian/` | The Custodian for 3D: T-poses, 3D renders, turnarounds (the Tripo reference is `custodian-3d-1002`) | `scripts/art/concepts.ts` |
+| `units/grove/` | The Sproutling and Decay line, all five picked (`round-1/` the first round); `psychopomp/` her non-ink tries | `scripts/art/concepts.ts` (`GROVE`) |
+| `units/neutrals/gnolls/`, `units/neutrals/drawn/` | The gnoll tribe and the Drawn (Claude's moth-folk): turnarounds and stance views | `scripts/art/concepts.ts` (`GNOLLS`, `DRAWN`) |
 | `icons/abilities/` | Ability icons (seed 1000 of each is installed) | `scripts/art/icons.ts` |
+| `ui/tarot/` | Tarot card art: four looks probed, full decks in oil, gilded and nocturne, card backs | `scripts/art/tarot.ts` |
 | `slots/` | Candidates for any art slot without art | `pnpm art generate <kind\|slot>` |
 | `models/props/` | Concepts for map models, and `meshes/` from TRELLIS.2 | `scripts/art/props.ts`, `rebuild-props.sh` |
-| `models/props-buildings/`, `models/trellis2/`, `models/wastes/`, `models/blender-tree/`, `models/style-probe/` | Earlier model rounds and probes (the gothic style probe, the Wastes capitol) | past rounds, `wastes.ts`, `style-probe.ts` |
+| `models/props-buildings/`, `models/trellis2/` | Earlier rounds of map models | past rounds |
+| `models/capitols/wastes/` | Concepts for the Wastes' (Vexumphat) Capitol, for image-to-3D | `scripts/art/wastes.ts` |
+| `models/probes/style-probe/`, `models/probes/blender-tree/` | The gothic style probe; the agent-built Grove tree's iterations | `style-probe.ts`, past spike |
 | `terrain/ground/` | Ground textures (the desert's too) | `scripts/art/ground.ts` |
 | `terrain/sky/`, `terrain/terrain-probe/` | The map's sky; the terrain style probe | `sky.ts`, `terrain-probe.ts` |
 | `ui/kit/`, `ui/city-views/` | UI kit pieces; painted city views | `ui.ts`, `city-views.ts` |

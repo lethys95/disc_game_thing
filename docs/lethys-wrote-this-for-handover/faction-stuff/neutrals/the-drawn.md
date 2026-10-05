@@ -76,7 +76,7 @@ large dark compound eyes, thin clawed limbs; clothing scraps of old lace, velvet
 tarnished silver, candle wax. Each unit has its own silhouette: the Dustwing small and all wings; the Chrysalis a
 cocoon of silk, wax and wrapped cloth with something moving inside; the Lightdrinker gaunt with a long coiled
 proboscis; the Eyespot with huge wings spread like a fan of eyes; the Pale Mother large and veiled, wings folded like a
-cloak. Concepts: `scripts/art/concepts.ts` (`DRAWN`), `art/candidates/units/drawn/`. The user (2026-10-04): keep every image, the rejected ones too ("I'd like to see what you made afterwards, even what you decided not to go with"); the code and prompts change freely. The final page shows every round.
+cloak. Concepts: `scripts/art/concepts.ts` (`DRAWN`), `art/candidates/units/neutrals/drawn/`. The user (2026-10-04): keep every image, the rejected ones too ("I'd like to see what you made afterwards, even what you decided not to go with"); the code and prompts change freely. The final page shows every round.
 
 **Status:** in game as `dustwing`, `chrysalis`, `lightdrinker`, `eyespot`, `pale_mother` (`?fight=drawn`); numbers
 `provisional.md` #64. `scripts/balance/tribes.ts`: against the 14 setup formations they win 0% weak, 11% medium, 43%
@@ -84,7 +84,7 @@ strong (bandits and gnolls 0 / 0 / 36%); head to head they lose to bandits at we
 AI uses everything (across the formations: 20 Mesmerize, 8 Open the eyes, 10 Drink the light; Chrysalises emerged 14
 times).
 
-## Concept log (Claude's art direction; every image kept in `art/candidates/units/drawn/`)
+## Concept log (Claude's art direction; every image kept in `art/candidates/units/neutrals/drawn/`)
 - **Round one** (`<unit>-stance|turnaround-1000…1002`): one shared moth body for all five. The tribe reads as one
   people, and the **Pale Mother** (veiled, ivory, a crown of lit candles) is a keeper. But the rest are one creature in
   different clothes: the same fluffy round head and button eyes (cute, which the world isn't), the same grey eyespot

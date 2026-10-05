@@ -350,18 +350,26 @@ const DRAWN_JOBS = [
 /** Each group of jobs has its own folder, so one group's run doesn't mix into another's manifest. */
 const GROUPS = [
   { dir: "art/candidates/units/grove", jobs: GROVE_JOBS },
-  { dir: "art/candidates/units/gnolls", jobs: GNOLL_JOBS },
-  { dir: "art/candidates/units/drawn", jobs: DRAWN_JOBS },
+  { dir: "art/candidates/units/neutrals/gnolls", jobs: GNOLL_JOBS },
+  { dir: "art/candidates/units/neutrals/drawn", jobs: DRAWN_JOBS },
 ];
 
 const args = process.argv.slice(2);
 const seeds = args.map(Number).filter((n) => !Number.isNaN(n));
 const ids = args.filter((a) => Number.isNaN(Number(a)));
-const group = GROUPS.find((g) => ids.length > 0 && ids.every((id) => g.jobs.some((j) => j.id === id))) ?? { dir: "art/candidates/units/concepts", jobs: JOBS };
+// The early concepts (no group) go to their unit's folder, by the id's first word.
+const EARLY: Readonly<Record<string, string>> = {
+  custodian: "art/candidates/units/nexus/custodian",
+  zealot: "art/candidates/units/jilliath/zealot",
+  psychopomp: "art/candidates/units/grove/psychopomp",
+};
 // A T-pose spans wider than it stands tall: the portrait frame cut the arms off.
 const frame = (id: string) => (id.includes("turnaround") ? { width: 2048, height: 832 } : id.includes("tpose") || id.includes("-3d") ? { width: 1344, height: 1024 } : { width: 896, height: 1152 });
-await runBatch(
-  group.dir,
-  group.jobs.filter((j) => ids.length === 0 || ids.includes(j.id)).map((j) => ({ ...frame(j.id), ...j })),
-  seeds.length > 0 ? seeds : [1000, 1001, 1002, 1003],
-);
+const wanted = <T extends { readonly id: string }>(jobs: readonly T[]) => jobs.filter((j) => ids.length === 0 || ids.includes(j.id));
+const group = GROUPS.find((g) => ids.length > 0 && ids.every((id) => g.jobs.some((j) => j.id === id)));
+const runs = group
+  ? [{ dir: group.dir, jobs: wanted(group.jobs) }]
+  : Object.entries(EARLY).map(([unit, dir]) => ({ dir, jobs: wanted(JOBS).filter((j) => j.id.startsWith(`${unit}-`)) }));
+for (const run of runs) {
+  if (run.jobs.length > 0) await runBatch(run.dir, run.jobs.map((j) => ({ ...frame(j.id), ...j })), seeds.length > 0 ? seeds : [1000, 1001, 1002, 1003]);
+}
