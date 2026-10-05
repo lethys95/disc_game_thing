@@ -91,21 +91,23 @@ const UNITS: Readonly<Record<string, Unit>> = {
   bonecracker: {
     front: "shots/tripo/bonecracker-front.png",
     identity:
-      "a gnoll, a hyena-headed brute: heavy and broad with short legs, enormous forequarters and a thick neck, coarse spotted fur and a bristling mane, a massive jaw with iron-capped teeth, a heavy collar of bone plates and bronze rings, scarred bare arms, one fist in a spiked bronze gauntlet",
+      "a gnoll, a hyena-headed brute: heavy and broad with short legs, enormous forequarters and a thick neck, pale grey fur with dark stripes and a bristling dark mane, a massive jaw with iron-capped teeth, a heavy collar of bone plates and bronze rings, scarred bare arms, one fist in a spiked bronze gauntlet",
     pose: "it stands hunched forward, its fists ready",
     strengths: T_POSED,
   },
   cackler: {
     front: "shots/tripo/cackler-front.png",
     identity:
-      "a gnoll, a scrawny hunched hyena-headed creature with spotted fur and a bristling mane, its mouth stretched in a wide manic grin, a ragged cloak of tattered cloth strips like rotten jester's motley, bone rattles and small bronze bells hanging from it",
+      "a gnoll, a scrawny hunched hyena-headed creature with pale grey fur, dark spots and a bristling dark mane, its mouth stretched in a wide manic grin, a ragged cloak of tattered cloth strips like rotten jester's motley, bone rattles and small bronze bells hanging from it",
     pose: "it stands hunched, holding a crooked staff topped with a hyena skull",
     strengths: T_POSED,
+    // Its staff's skull is as high as its head, which pulled the default crop off its face.
+    bust: { size: 0.42, x: 0.5, y: 0.27 },
   },
   matriarch: {
     front: "shots/tripo/matriarch-front.png",
     identity:
-      "a gnoll matriarch, the largest of the pack: a tall, upright, broad-shouldered female hyena-headed warrior with a great dark mane and a scarred muzzle, a mantle of bronze plates and trophy bones over her shoulders, a cloak of a great beast's hide, a crest of teeth and bronze on her brow",
+      "a gnoll matriarch, the largest of the pack: a tall, upright, broad-shouldered female hyena-headed warrior with pale grey fur, dark stripes, a great dark mane and a scarred muzzle, a mantle of bronze plates and trophy bones over her shoulders, a cloak of a great beast's hide, a crest of teeth and bronze on her brow",
     pose: "she stands tall, holding a heavy bronze glaive",
     strengths: T_POSED,
   },
