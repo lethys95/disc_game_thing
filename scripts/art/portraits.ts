@@ -57,10 +57,12 @@ const UNITS: Readonly<Record<string, Unit>> = {
     dir: "art/candidates/units/grove/portrait-test",
     front: "shots/tripo/bog-giant-front.png",
     identity:
-      "a massive hunched hulk with no human shape: a lump of black bark and sodden bog oak oozing swamp sludge, peat and mud, reeds, cattails and patches of moss; a small, pale, bone-white sunken face low in the bark and a pale, cracked chest; its right arm an enormous club of bark, roots and mud, its left arm small and withered",
+      "a massive hunched hulk with no human shape: a lump of black bark and sodden bog oak oozing swamp sludge, peat and mud, reeds, cattails and patches of moss; a small, pale grey-white sunken face low in the bark and a pale, cracked chest; its right arm an enormous club of bark, roots and mud, its left arm small and withered",
     pose: "it stands hunched, its huge right arm dragging on the ground",
     // Round one (0.75/0.9 card, 0.45–0.75 bust) lost its pale face and grew gold filigree: it already stands, so less.
-    strengths: { card: [0.5, 0.6, 0.7], bust: [0.3, 0.4, 0.5] },
+    // Round two: the bust holds at 0.3–0.4; the card (a small figure in its frame) still turned to carved filigree at
+    // 0.5, and "bone-white" made the face a skull. Round three: the card only, lower.
+    strengths: { card: [0.3, 0.4, 0.5], bust: [] },
     // Its face sits low in the bark, below the reeds on its top.
     bust: { size: 0.42, x: 0.557, y: 0.33 },
   },
