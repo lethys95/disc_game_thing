@@ -387,77 +387,30 @@ const ZEALOT_JOBS = [
 ];
 
 /**
- * The Punisher in the 3D concept strategy (the user, 2026-10-05: not tied to the Zealot's look, "distinct, memorable
- * and readable"; less white, more metal; not the Torturer, who will lean on iron maidens). Claude's split, accepted:
- * punishment is public and judicial, torture private, so he draws on the town square. Three readings, one standout
- * feature each (Claude's): a scold's bridle, red-hot branding iron, a bell helm. The flail (canon: multi-headed,
- * flanged) is its own prop.
+ * The Punisher in the 3D concept strategy, picked by the user after two rounds (2026-10-05: "I'd totally go with iron
+ * 1000. He's terrifying"). Round one's three detailed readings came out "very very bland"; this goes back to the
+ * first batch's favourite (`anchors/punisher-1001`): a faceless executioner's hood, a cassock, a mantle, in dark iron
+ * grey (the user: "less white colors, more towards metal"). Every round's prompt is in the folder's manifest and
+ * `docs/design/units/punisher-concepts.md`. The flail is not picked yet.
  */
 const PUNISHER_3D =
-  "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: tarnished riveted iron plate, blackened dented steel, heat-scorched metal, worn leather, a little blood-red cloth. Serious, adult, not cartoonish.";
-
-const PUNISHERS: Readonly<Record<string, { readonly subject: string }>> = {
-  "punisher-bridle": {
-    subject:
-      "A punisher of a militant faith, a broad, heavy, upright man in tarnished riveted iron plate, dented and blackened. His head is locked in a scold's bridle: an iron cage helmet of riveted bands crossing his face, a flat iron plate over his mouth, his eyes looking out between the bars. Padlocks hang from his belt and his chest strap; iron manacles with broken chain on both wrists. A blood-red sash at his waist. Calm, deliberate and merciless: a bailiff of the faith, not a madman.",
-  },
-  "punisher-brand": {
-    subject:
-      "A punisher of a militant faith, a broad, heavy, upright man in heat-blackened riveted iron plate. His forearms are bare and covered in raised burn-scar brands. An open-faced iron helmet with a heavy brow over a hard, scarred face. The seams and rivets of his armour glow a dull red-hot, as if the iron was just pulled from a forge. A scorched iron gorget, a blood-red hood lining. Calm, deliberate and merciless: a bailiff of the faith, not a madman.",
-  },
-  "punisher-bell": {
-    subject:
-      "A punisher of a militant faith, a broad, heavy, upright man in tarnished riveted iron plate, dented and blackened. His head is inside a closed iron helmet shaped like a church bell, wide at the bottom over his shoulders, with one narrow horizontal eye slit. Heavy iron shackles on both wrists, short broken chains hanging from them. A blood-red sash; an iron-bound book chained to his hip. Calm, deliberate and merciless: a bailiff of the faith, not a madman.",
-  },
-};
-
-const PUNISHER_FLAILS: Readonly<Record<string, string>> = {
-  "punisher-flail-props":
-    "a heavy multi-headed flanged flail: a long wooden haft bound in iron bands, from its end three chains, each ending in a heavy iron mace head with sharp radiating flanges; beside it the same flail seen from the side.",
-  "punisher-flail-hot-props":
-    "a heavy multi-headed flanged flail: a long wooden haft bound in iron bands, from its end three chains, each ending in a heavy iron mace head with sharp radiating flanges, the heads glowing red-hot like iron just pulled from a forge; beside it the same flail seen from the side.",
-};
-
-/**
- * Round two (the user, 2026-10-05: round one was "very very bland"; look at the original Punishers). The first batch's
- * `anchors/punisher-1001`, the user's favourite, had a one-line subject and let the model design: a faceless
- * executioner's hood, a long stained cassock, a hooded mantle, a flail over the shoulder. Its few words again, in the
- * 3D turnaround and the gothic recipe ("we can never drop that"): *executioner* the original line alone, *hood* the
- * original's features, *iron* those in the user's "less white, more metal".
- */
-const PUNISHER_2_3D =
   "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: heavy aged cloth worn thin by use, tarnished iron, old leather, bone. Serious, adult, not cartoonish.";
 
-const PUNISHERS_2: Readonly<Record<string, { readonly subject: string }>> = {
-  "punisher-executioner": { subject: "An executioner of a militant faith." },
-  "punisher-hood": {
-    subject:
-      "An executioner of a militant faith: a tall pointed executioner's hood with only black shadow inside it, no face; a long stained cassock under a stiff hooded mantle; iron bracers, a heavy chain belt, blood red soaked into the cloth.",
-  },
-  "punisher-iron": {
-    subject:
-      "An executioner of a militant faith: a tall pointed executioner's hood with only black shadow inside it, no face; a long cassock and a stiff hooded mantle of dark iron-grey cloth; dented iron bracers, an iron gorget, a heavy chain belt, blood red soaked into the cloth.",
-  },
-};
+const PUNISHER_SUBJECT =
+  "An executioner of a militant faith: a tall pointed executioner's hood with only black shadow inside it, no face; a long cassock and a stiff hooded mantle of dark iron-grey cloth; dented iron bracers, an iron gorget, a heavy chain belt, blood red soaked into the cloth.";
 
-const PUNISHER_FLAIL_2 =
+const PUNISHER_FLAIL =
   "a heavy multi-headed flail: a long wooden haft bound in iron bands, from its end three chains, each ending in a flanged mace head of six flat iron blades standing out around a round core; drawn twice, once from the front and once turned sideways.";
 
 const PUNISHER_JOBS = [
-  ...Object.entries(PUNISHERS_2).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, PUNISHER_2_3D) })),
+  // Picked: seed 1000.
+  { id: "punisher-iron-turnaround", prompt: turnaround(`${PUNISHER_SUBJECT} His hands are empty and open, no weapon.`, PUNISHER_3D) },
   {
     id: "punisher-flail-flanged-props",
-    prompt: `A 3D render of a game prop model, like a textured asset shown in a modelling program: ${PUNISHER_FLAIL_2} ${PUNISHER_2_3D} Each view whole and separate, laid flat. Flat, even, shadowless lighting from all sides. A plain flat light grey background, no ground, no hands, no text.`,
+    prompt: `A 3D render of a game prop model, like a textured asset shown in a modelling program: ${PUNISHER_FLAIL} ${PUNISHER_3D} Each view whole and separate, laid flat. Flat, even, shadowless lighting from all sides. A plain flat light grey background, no ground, no hands, no text.`,
     width: 2048,
     height: 832,
   },
-  ...Object.entries(PUNISHERS).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, PUNISHER_3D) })),
-  ...Object.entries(PUNISHER_FLAILS).map(([id, flail]) => ({
-    id,
-    prompt: `A 3D render of a game prop model, like a textured asset shown in a modelling program: ${flail} ${PUNISHER_3D} Each view whole and separate, laid flat. Flat, even, shadowless lighting from all sides. A plain flat light grey background, no ground, no hands, no text.`,
-    width: 2048,
-    height: 832,
-  })),
 ];
 
 /**

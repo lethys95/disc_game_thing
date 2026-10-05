@@ -52,6 +52,12 @@ than the Custodian's 3D concepts is a stand-in to redo (the user, 2026-10-05).
 - **Every image is kept**, the misses too (the user wants to see the whole path).
 
 ### What we've learned (keep adding)
+- **Name the identity, not the inventory.** The Punisher's first round described three designs in full (a cage-helm,
+  glowing seams, a bell helm, padlocks, books) and got three bland knights; the user: "very very bland". Round two
+  named only what makes him him (a faceless pointed executioner's hood, a cassock, iron grey) and let the model
+  design the rest: "he's terrifying". One line alone is too little in the turnaround frame (a hooded rogue with a
+  face); a sentence of the identity's two or three defining features is the sweet spot. Old art the user liked is the
+  best source for those features.
 - **Keep the subject short (about 100–150 words), in the faction's material words, not an outfit list.** The
   Psychopomp drifted from the game's look over rounds two to five as her subject grew to ~280 words of garments,
   colours and accessories: it read as a stylised game-hero sheet and buried the gothic line (the user: "staying
