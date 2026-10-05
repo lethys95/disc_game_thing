@@ -135,3 +135,27 @@ back? Maybe something like 'not anime'? Idk."
     the concept, painted in the game's style); or one more round with the grime and the faction's materials at the
     very start of her description.
   - Seeds 1000 again draw stray or doubled side views.
+
+## Why round two turned cartoonish (checked against the manifests, 2026-10-05; the user asked)
+- The same model, the same turnaround frame and the gothic line in every round.
+- The gothic line: rounds two and three had cut it short ("ornate, desaturated colors with dark accents, grim" gone).
+  From round four it is the Bog Giant's word for word, apart from the materials and "not cute".
+- The change from round one to two is the subject. Round one's was short and moody: possessed, ghastly smoke, rough
+  wild hair, roots and vines. From round two on it is a long outfit list: exact garments, colours, gloves, boots,
+  bangles.
+- Prompt lengths:
+
+  | Prompt | Words in total | The gothic line starts at word |
+  |---|---|---|
+  | Bog Giant | 249 | 162 |
+  | Round one | 230 | 142 |
+  | Round two | 315 | 232 |
+  | Round three | 424 | 334 |
+  | Round four | 434 | 366 |
+
+  Round five showed that words at the end weigh little, so the style line is drowned by the outfit.
+- The outfit list reads as a game-hero design sheet. Some of its words are stylised cues in themselves: "large eyes
+  set wide apart", "large shaggy boots, wide and bulky", green skin with big ears.
+- The Bog Giant's subject is itself grim material (sludge, peat, rot), so its subject and style agree. Hers don't.
+- A test that would settle it: pits 1001's features with the style line first and the subject cut to essentials
+  (same seed).
