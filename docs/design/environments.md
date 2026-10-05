@@ -7,7 +7,7 @@ will probably use these too." And on biomes: "we need to tie them [tribes] to bi
 plane.) How environments should work here (battle or map, when they change, what triggers them) is the user's to
 shape; Claude's pitch, when written, goes below, marked.
 
-## Claude's pitch (2026-10-05; for the user to cut, rename or reshape)
+## Claude's first pitch (2026-10-05; set aside, see the decision below)
 **Environments are battle cards, drawn from the biome's deck.** Like a Planechase plane: one is face up for the whole
 battle and bends a rule for both sides; at a fixed moment it can give way to the next card ("the weather turns").
 - **When:** a battle starts with an environment drawn (seeded, like tarot) from the deck of the biome it's fought in.
@@ -36,3 +36,21 @@ pilgrim's plains, beside the temperate land and the desert. Tribe fits: the Draw
 drawn to light); the carnival on the roads (pilgrim's plains), or roaming; trolls (the user's earlier idea) in the
 highlands; bandits stay in the temperate land. Each new biome costs ground textures and a handful of props (TRELLIS),
 like the desert did.
+
+## Decision (user, 2026-10-05): postponed; biomes differ by content
+"I'd go with something simpler than actual cards for the biomes… I don't really intend for cards to be an actual
+mechanic outside of tarots… I'm just afraid of making the game too complicated… maybe it's the wrong alley to use
+complex environment effects. I might actually defer simple ones too, and just think about which map structures
+differentiate the different environments. Like how you might find carnival in the desert, but not bandits… Maybe
+strengthening core gameplay is a better idea, and that environment is a darling we must kill or at least postpone until
+game testing beckons it once more."
+- **Now:** biomes differ by what's in them: tribes, map structures, node pools, look and light. No rule changes.
+- **Parked, a lever for later** (if playtesting finds fights samey): one simple, physical effect per biome, never
+  random-seeming, never a card. Candidates (Claude's), each one line:
+  - Desert: water damage is halved.
+  - Fen: fire damage is halved.
+  - Highlands: ranged attacks against the front row deal less.
+  - Haunted woods: the dead can't be raised during the battle.
+  - Tundra: burning ends early.
+  - Storm scar: lightning damage is a little higher.
+  - Temperate land: nothing (the baseline).

@@ -9,7 +9,7 @@ Kept short: only what is the user's to decide, most blocking first. Answer inlin
 
 10. **The Regrowth line's damage (the composition matrix, 2026-09-30, `provisional.md` #61):** Regrowth 3 "supports and attacks weakly" (your design), and the Grove has no damage dealer past its tier-1 mage. So Regrowth squads win 0–17% against Jilliath's tier 3 (Templars' 20 armor turn its 32 into 12) while Decay squads win 92%. A tier-2 Grove mage would give it a partner; or Regrowth 3 hits harder; or it stays the Grove's weak matchup. Your call.
 11. **Who gets the new keywords (2026-10-05, `provisional.md` #65, #66):** Tarot x, Crit x, Evasion x, Explode (your "boomer… on melee line": which faction's?), Ignite and Soak, and which units deal lightning or water damage. All exist and are tested; no unit carries them yet. More statuses beyond wet, burn and electrocuted whenever you have them.
-12. **Environments and biomes (`design/environments.md`, your Planechase idea, 2026-10-05):** Claude's pitch is there: battle cards drawn from the biome's deck, one face up, turning over at round 4, shown like tarot. Which shape do you want, and which biomes first (and which tribe in each)?
+12. **Biomes by content (2026-10-05, your decision: environments postponed):** which structures and tribes belong in which biome (your example: the carnival in the desert, not bandits). Claude's tribe fits are in `design/environments.md`; the biomes to add are the brainstorm's list. Your call when you get to it.
 13. **Unit portraits for cards and icons:** test image-to-image from the picked concepts (crop and repaint; and the Krea-2 reference workflow, which needs the public `krea2_style_reference` LoRA in your ComfyUI)? Not generating until you say so.
 
 ## Look and sound

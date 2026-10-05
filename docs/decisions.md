@@ -208,3 +208,9 @@ The user, after the gnoll concepts: "in 3D models, there are some issues with ad
 Arguably it's probably better with a separate spear model." Unit concepts for 3D show the body without its weapon
 (the turnaround) and the weapon on a prop sheet of its own; a stance view may show it held. A weapon would attach to a
 hand bone once units are rigged.
+
+## Environments postponed; biomes differ by content (2026-10-05)
+The user, after Claude's Planechase-like pitch: cards stay a tarot-only oddity; environment rules are "a darling we must
+kill or at least postpone until game testing beckons it once more". Biomes differ by what they contain (tribes, map
+structures, node pools, look); a short list of simple per-biome effects is parked in `design/environments.md` as a lever
+if fights grow samey. Focus: core gameplay.
