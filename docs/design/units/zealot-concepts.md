@@ -71,3 +71,7 @@ actually going to go for round 1: zealot-pyre-turnaround-1000. I think it works 
   faction (bandages read as the Wastes' mummies). Fix one trait without leaving the faction's visual language.
 - The sword: `zealot-sword-props-1000`, picked (the user: "good. We can keep it."). Split for Tripo: `shots/tripo/zealot-*`
   (four views: the sheet draws the side twice).
+- **The user on the Zealot's portrait card (2026-10-05):** "zealot's card is actually very close to the version I
+  actually wanted of zealot and not the one we ended up with. So that's interesting… He looks sick though." (The card
+  re-posed him at 0.75 from `zealot-pyre-turnaround-1000`: a smaller bloody handprint over two wide black eye holes,
+  a lean, tattered, blood-soaked figure with the serrated greatsword.)

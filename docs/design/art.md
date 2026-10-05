@@ -153,3 +153,22 @@ All 43 abilities without art got icons in the recipe of the four the user liked 
   - **"Ornate" vs plain:** at 0.3–0.4 there's almost no difference, except on the Bog Giant, which uses plain.
   - **The Custodian is not installed:** the user's favourite `custodian-1000` stays until the user chooses. The new
     candidates are on the page.
+- **The user on the batch (2026-10-05):** "well done =)".
+  - **The bust:** "what the point of the bust actually is… the bust rarely makes for good icon material." The icons of
+    the Zealot, Sproutling, Moldling, Deadwood, Cackler and Matriarch would be better from the card ("especially
+    matriarch, she looks incredibly cool in the card"). The Psychopomp's icon is better from the bust; the Bog
+    Giant's bust icon "works really well".
+  - **White outlines:** "it basically comes from how (assuming) a magic wand type tool was selected for colors… most
+    visible with the bog giant… In some of the pictures AI has… turned [it] into highlights instead" (the
+    Bonecracker); the Mulch Gorger has "a strange outline".
+  - **The Psychopomp's card** "could really use a pose of some sort… she just looks sort of bland in the card, which
+    goes against her costume."
+  - **The Custodian:** switch to the new one ("we've moved away from that design into something slightly less
+    humanoid").
+- **Changes (Claude):**
+  - **One painting per unit:** the bust (the unit card) and the icon are cut from the card by default; a separately
+    painted bust only for the Psychopomp and the Bog Giant.
+  - **No white outline:** the cutout's edge pixels take the colour of the figure just inside them, and flat grey
+    pockets enclosed by the figure become ground.
+  - **The Psychopomp:** two card poses, the user's casting reference (palms down, back arched) and a raised hand.
+  - All cards were repainted from the cleaned sources.
