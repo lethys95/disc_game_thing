@@ -22,8 +22,8 @@ import { buyItemProblem, buySpellProblem, forSale, hireProblem } from "#rules/wo
 import { useItemProblem } from "#rules/world/items";
 import { destination, planMove } from "#rules/world/movement";
 import type { MovePlan, MoveTarget } from "#rules/world/movement";
-import { playerOf, capitolOf, fullHp, lairAt, leaderAt, tribeRecruitsOf } from "#rules/world/state";
-import type { City, Leader, PlayerId, SquadMember, SquadRef, Structure, World, WorldAction } from "#rules/world/state";
+import { playerOf, capitolOf, cityOfNode, fullHp, lairAt, leaderAt, tribeRecruitsOf } from "#rules/world/state";
+import type { City, Leader, MapNode, PlayerId, SquadMember, SquadRef, Structure, World, WorldAction } from "#rules/world/state";
 
 /** The map AI. */
 
@@ -390,12 +390,27 @@ const tribalGuards: Planner = ({ world, side, rich, spareFor }) => {
   return null;
 };
 
-/** Nodes that pay gold pay for themselves: invest with spare gold, cheapest first. */
+/**
+ * What investing in a node is worth to the AI: gold pays for itself first; then mana, the gifts a node gives its
+ * city, and the marks of a node whose recruits are the AI's (it recruits at its Capitol). The audit (2026-10-06)
+ * found the AI only ever raised gold mines, leaving ten kinds of node at level 1 all game.
+ */
+function investWorth(world: World, node: MapNode): number {
+  const def = NODES[node.kind];
+  if (def.income(node.level + 1) > def.income(node.level)) return 3;
+  if (def.mana(node.level + 1) > def.mana(node.level)) return 2;
+  if (def.city) return 1;
+  const recruitsHere = cityOfNode(world, node)?.kind === "capitol";
+  return recruitsHere && def.recruitEffects(node.level + 1).length > 0 ? 1 : 0;
+}
+
+/** Invest with spare gold: the worthiest node first, then the cheapest. */
 const invest: Planner = ({ world, capitol, rich, spareFor }) => {
   if (!capitol || !rich) return null;
   const node = world.nodes
-    .filter((n) => NODES[n.kind].income(n.level + 1) > NODES[n.kind].income(n.level) && !investNodeProblem(world, n.id) && spareFor(nodeInvestCost(n)))
-    .sort((a, b) => nodeInvestCost(a) - nodeInvestCost(b))[0];
+    .map((n) => ({ n, worth: investWorth(world, n) }))
+    .filter(({ n, worth }) => worth > 0 && !investNodeProblem(world, n.id) && spareFor(nodeInvestCost(n)))
+    .sort((a, b) => b.worth - a.worth || nodeInvestCost(a.n) - nodeInvestCost(b.n))[0]?.n;
   return node ? { type: "investNode", nodeId: node.id } : null;
 };
 
