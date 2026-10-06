@@ -41,3 +41,16 @@ The tree as it stands (names and numbers open):
     the other brings in *transfusion* (healing paid with its own health). Self-damage sparingly: "not everything
     under fanaticism needs to use this mechanic."
   - Penance (Claude's): cut.
+
+## Round two of the brainstorm (the user, 2026-10-06)
+- **Atonement** (fanaticism): keep, "probably not 1 to 1. Should damage less than it heals." Its tier-3 subline with
+  wider atonement: keep. The **transfusion** subline: keep. A tier 4 for one subline: not the capstones Claude offered
+  ("I think we can do better. Atonement at t3 already has more targets. What else can we do with this. Maybe this is
+  where deflection palm kicks in?").
+- **Faith:** inner fire and the beacon cut ("too cut and paste from wow"); its tier 2 and 3 are open again.
+  **Resurrection** (tier 4): keep, "at 50% health to begin with. It's possible we go up to 100%." **The unit is an
+  angel** ("we should have the final side of faith support (resurrection) be an angel").
+- **A secret on the holy side** (the user): "we can actually have an off branch on the holy side of either support or
+  damage use a secret which has deflecting palm […] It's neat and kind of cheeky to put a single secret in there when
+  it's otherwise a nexus mechanic. Just maybe don't call it deflecting palm." The secret: the next hit on a chosen
+  ally is prevented and dealt back to whoever struck.

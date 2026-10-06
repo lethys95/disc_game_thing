@@ -54,3 +54,15 @@ The tree as it stands:
     - **Tier 4 forks:** the regular branch plays further with fire; a separate branch is the **martyrdom caster**
       (the beam through a line of three that backfires on every shot).
   - Inspiration for the fire side: Boros (red-white) instants and sorceries in Magic.
+
+## Round two of the brainstorm (the user, 2026-10-06)
+- **Faith (holy):** castigation and judgement (all enemies who dealt damage last turn) keep. **Repentance:** keep,
+  "incapacitate for three turns. Free action. Unit wakes up early if damaged or healed by anyone or anything." Cut as
+  copies or too strong: Hammer of Wrath, the exposed mark, Conversion, Swords to Plowshares ("OP"), dazzling light,
+  holy nova.
+- **Fanaticism (fire):** Doomsayer's burn at the stake keep ("very thematically pleasing and also useful"); tier 3's
+  fire on all with burn keep; tier 4 regular branch: **detonate the burn** keep; the fire spreading on death maybe;
+  the martyrdom caster keep. Justice Strike (burned by its own strength) and Arrows of Justice (only the aggressors)
+  maybe. Cut: Lightning Helix ("the mage line having both damage and healing is owned by sylvans"), Boros Charm ("too
+  much complexity").
+- The deflecting secret may live on a holy off-branch here or in the support tree (see support.md).
