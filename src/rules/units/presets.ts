@@ -4,15 +4,20 @@ import type { Playable } from "#rules/units/index";
 
 const at = (defId: string, row: Row, col: Col): Placement => ({ defId, tile: { row, col } });
 
-/** Starting formations, made only of canon units. The formations themselves are not canon. */
-export const PRESETS: Readonly<Record<"uncommitted" | "backline" | "preserve" | "punishment" | "sacrifice", readonly Placement[]>> = {
+/**
+ * Starting formations, made only of canon units. The formations themselves are not canon. `uncommitted` is the squad
+ * a map game starts with: like the other factions', three melee, a support and a mage. Five Congregants (two of them
+ * unable to reach the enemy from the back row) lost to every other opening squad and made Jilliath the weakest
+ * faction in whole AI games (the audit, 2026-10-06; provisional #70).
+ */
+export const PRESETS: Readonly<Record<"uncommitted" | "congregants" | "preserve" | "punishment" | "sacrifice", readonly Placement[]>> = {
   uncommitted: [
     at("congregant", 0, 0), at("congregant", 0, 1), at("congregant", 0, 2),
-    at("congregant", 1, 0), at("congregant", 1, 2),
-  ],
-  backline: [
-    at("congregant", 0, 0), at("congregant", 0, 1), at("congregant", 0, 2),
     at("cleric", 2, 0), at("jilliath_mage_1", 2, 1),
+  ],
+  congregants: [
+    at("congregant", 0, 0), at("congregant", 0, 1), at("congregant", 0, 2),
+    at("congregant", 1, 0), at("congregant", 1, 2),
   ],
   preserve: [
     at("paladin", 0, 0), at("templar", 0, 1), at("paladin", 0, 2),
@@ -90,8 +95,8 @@ export const CARNIVAL_GROUP: readonly Placement[] = [
 /** The setup screen's formation presets per faction, named after the branches they took. */
 export const FORMATIONS: Readonly<Record<Playable, readonly { readonly name: string; readonly squad: readonly Placement[] }[]>> = {
   jilliath: [
-    { name: "Congregants", squad: PRESETS.uncommitted },
-    { name: "Congregants with a Cleric and a mage", squad: PRESETS.backline },
+    { name: "Congregants with a Cleric and a mage", squad: PRESETS.uncommitted },
+    { name: "Congregants", squad: PRESETS.congregants },
     { name: "Faith preserves", squad: PRESETS.preserve },
     { name: "Faith consumes: Punisher", squad: PRESETS.punishment },
     { name: "Faith consumes: Fanatic", squad: PRESETS.sacrifice },

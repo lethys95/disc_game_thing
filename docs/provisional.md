@@ -73,3 +73,8 @@ Placeholders Claude picked so the game runs: numbers and rules the design doesn'
 - The default opponent is Ral-Vitahl; added opponents cycle the factions.
 - Credits: "lethys95" (the git name) for the user, and the sources and licences as recorded in the assets' `SOURCES.md`. The user names themselves and checks every licence before shipping.
 - The codex lists the tribes under placeholder names ("the Drawn", "the carnival").
+
+## 70. Jilliath's opening squad (2026-10-06, the audit)
+A map game starts Jilliath with three Congregants, a Cleric and its tier-1 mage (`PRESETS.uncommitted`), like the
+other factions' three melee, support and mage. Five Congregants (now the formation "Congregants") lost to every other
+opening and left Jilliath 3–12 against Ral-Vitahl in whole AI games; now 6–9 (`design/audit-2026-10-06.md`).
