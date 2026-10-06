@@ -47,10 +47,14 @@ for (const seed of seeds.length > 0 ? seeds : [1, 2, 3, 4, 5]) {
   let world = createWorld(seed, setups, isMapSize(SIZE) ? SIZE : defaultMapSize(setups.length));
   const memo: BattleMemo = new Map();
   const tally: Record<string, number> = {};
+  // Per player: actions by kind, and battles fought and won as attacker (the audit, 2026-10-06).
+  const byPlayer = setups.map(() => ({ actions: {} as Record<string, number>, attacks: 0, won: 0 }));
   const timeline: string[] = [];
   let battles = 0;
   const count = (action: WorldAction) => {
     tally[action.type] = (tally[action.type] ?? 0) + 1;
+    const mine = byPlayer[world.activePlayer]?.actions;
+    if (mine) mine[action.type] = (mine[action.type] ?? 0) + 1;
   };
   // Past 150 turns it's a cold war: no side can win a fight its forecast allows.
   for (let i = 0; world.turn <= 150 && !world.outcome && i < 20000; i++) {
@@ -60,6 +64,11 @@ for (const seed of seeds.length > 0 ? seeds : [1, 2, 3, 4, 5]) {
       const defender = world.engagement?.defender.kind ?? "?";
       const attacker = world.leaders.find((l) => l.id === world.engagement?.attackerId)?.player;
       const done = autoplay(battle);
+      const record = attacker === undefined ? undefined : byPlayer[attacker];
+      if (record) {
+        record.attacks += 1;
+        if (done.outcome?.winner === 0) record.won += 1;
+      }
       if (verbose) timeline.push(`t${world.turn}:${attacker}>${defender}${done.outcome?.winner === 0 ? "" : "(lost)"}`);
       world = concludeBattle(world, done).world;
       continue;
@@ -75,6 +84,6 @@ for (const seed of seeds.length > 0 ? seeds : [1, 2, 3, 4, 5]) {
     console.log(`  battles ${timeline.join(" ")}\n  lairs left ${world.lairs.filter((l) => l.guards.length > 0).length}\n  armies ${armies}\n  capitols ${garrisons}`);
   }
   // For `sim-many`: the result as data, on a line of its own.
-  console.log(`RESULT ${JSON.stringify({ winner: world.outcome?.winner ?? null, turn: world.turn, battles })}`);
+  console.log(`RESULT ${JSON.stringify({ winner: world.outcome?.winner ?? null, turn: world.turn, battles, players: byPlayer, gold: world.players.map((p) => p.gold) })}`);
   console.log(`seed ${seed}: ${world.outcome ? `player ${world.outcome.winner} wins` : "cold war"} on turn ${world.turn}, ${battles} battles, gold ${world.players.map((p) => p.gold).join("/")}, leaders ${world.leaders.length} | ${owners} | ${JSON.stringify(tally)}`);
 }
