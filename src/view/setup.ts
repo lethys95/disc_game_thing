@@ -42,7 +42,7 @@ const PROBLEM_TEXT: Readonly<Record<SquadProblem, string>> = {
  */
 export class Setup {
   private squads: [Placement[], Placement[]] = [[...PRESETS.preserve], [...PRESETS.punishment]];
-  private formations: [string, string] = ["Faith preserves", "Faith consumes: Punisher"];
+  private formations: [string, string] = ["Faith", "Fanaticism: Punisher"];
   private factions: [Playable, Playable] = ["jilliath", "jilliath"];
   private colors: [PlayerColor, PlayerColor] = colorPair(["jilliath", "jilliath"]);
   /** Colors the player picked stay; the others follow the factions' defaults. */

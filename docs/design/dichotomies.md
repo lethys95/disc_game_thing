@@ -1,11 +1,11 @@
 # Faction dichotomies
 
-Each faction has one central tension that drives its theme, its unit splits (tree forks), and its lore. Jilliath's is the model: **faith preserves vs faith consumes** (faith vs fanaticism), which is exactly its tier-2 fork.
+Each faction has one central tension that drives its theme, its unit splits (tree forks), and its lore. Jilliath's is the model: **faith vs fanaticism**, which is exactly its tier-2 fork. (The user, 2026-10-06: "faith versus fanaticism. Not sure how we got to preserve versus consume": the July redesign doc's wording, "faith preserves vs faith consumes", is retired; the game's labels say Faith and Fanaticism.)
 
 > Provenance: recovered from the C# attempt's card `.kanban/maybe/faction-dichotomy-themes.md` (AI-written during a session with the user, 2026-07-30). Only passages marked there as "User direction" count as the user's; the rest was AI analysis (it even cites AI-invented units like a Druid→Shaman line). Pointed to by the user on 2026-09-25 as the source for splits.
 
 ## Jilliath: faith vs fanaticism (canon)
-Faith preserves (Paladin line) vs faith consumes (Zealot line). See `units/jilliath-melee-line.md`.
+Faith (Paladin line) vs fanaticism (Zealot line). See `units/jilliath-melee-line.md`.
 
 ## Vexumphat (user direction, 2026-07-30; dichotomy NOT locked)
 - **Not** raising the dead, not necromancers, not zombies. The raising happened once, via Nexus's spirit bomb. They are **spirits possessing things**.

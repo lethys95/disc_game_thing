@@ -97,9 +97,9 @@ export const FORMATIONS: Readonly<Record<Playable, readonly { readonly name: str
   jilliath: [
     { name: "Congregants with a Cleric and a mage", squad: PRESETS.uncommitted },
     { name: "Congregants", squad: PRESETS.congregants },
-    { name: "Faith preserves", squad: PRESETS.preserve },
-    { name: "Faith consumes: Punisher", squad: PRESETS.punishment },
-    { name: "Faith consumes: Fanatic", squad: PRESETS.sacrifice },
+    { name: "Faith", squad: PRESETS.preserve },
+    { name: "Fanaticism: Punisher", squad: PRESETS.punishment },
+    { name: "Fanaticism: Fanatic", squad: PRESETS.sacrifice },
   ],
   nexus: [
     { name: "Tier 1", squad: NEXUS_PRESETS.uncommitted },

@@ -57,7 +57,7 @@ export interface Evolution {
  */
 export const EVOLUTIONS: Readonly<Record<string, readonly Evolution[]>> = {
   // The canon Jilliath melee tree (docs/design/units/jilliath-melee-line.md).
-  congregant: [{ to: "paladin", label: "Faith preserves" }, { to: "zealot", label: "Faith consumes" }],
+  congregant: [{ to: "paladin", label: "Faith" }, { to: "zealot", label: "Fanaticism" }],
   paladin: [{ to: "templar" }],
   templar: [{ to: "immortal" }],
   zealot: [{ to: "punisher" }, { to: "fanatic" }],

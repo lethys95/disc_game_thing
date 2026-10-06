@@ -6,7 +6,7 @@ import type { Playable } from "#rules/units/index";
 /**
  * Branch choices (docs/design/pillars.md). A fork is a unit with more than one evolution; a commitment records,
  * per fork, which branch its owner chose. Choosing is free and permanent, and forks are independent: going
- * "Faith preserves" in one line says nothing about another line.
+ * "Faith" in one line says nothing about another line.
  */
 export type Commitment = Readonly<Record<string, string>>;
 

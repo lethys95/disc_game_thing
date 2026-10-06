@@ -214,3 +214,8 @@ The user, after Claude's Planechase-like pitch: cards stay a tarot-only oddity; 
 kill or at least postpone until game testing beckons it once more". Biomes differ by what they contain (tribes, map
 structures, node pools, look); a short list of simple per-biome effects is parked in `design/environments.md` as a lever
 if fights grow samey. Focus: core gameplay.
+
+## Faith vs fanaticism (2026-10-06)
+Jilliath's duality is **faith vs fanaticism** (the user). "Faith preserves / faith consumes" came in with the July
+redesign doc on 2026-09-25 and spread into labels and notes; the user didn't recognise it. The fork's labels, the
+formations and the dichotomies doc now say Faith and Fanaticism. Older notes keep the old words where they quote that doc.

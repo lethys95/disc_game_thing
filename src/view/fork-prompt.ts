@@ -6,7 +6,7 @@ import { element } from "#view/dom";
 import { unitDefCard, unitName } from "#view/members";
 import { showPeek } from "#view/peek";
 
-/** "Paladin (Faith preserves)": a branch by the unit it leads to and the dichotomy it stands for. */
+/** "Paladin (Faith)": a branch by the unit it leads to and the dichotomy it stands for. */
 function branchName(fork: string, to: string): string {
   const label = EVOLUTIONS[fork]?.find((e) => e.to === to)?.label;
   return label ? `${unitName(to)} (${label})` : unitName(to);
