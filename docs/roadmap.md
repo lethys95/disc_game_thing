@@ -115,6 +115,15 @@ Arenas dressed from the terrain and place fought over.
 ## M45 — UI kit pilot (done)
 Generated frame, plaque, buttons, medallions and a gargoyle on the city screen.
 
+## M80 — A proper front door (user, 2026-10-06; done)
+"The start screen right now could use a regular start screen instead […] a proper start screen into faction select,
+settings, credits […] Maybe some sort of guide book/bestiary where you can look at the units and mechanics in the
+game?" A title screen (Continue, New game, Skirmish, Load game, Codex, Settings, Credits) with the painted units behind
+it; New game picks your faction (cards with the user's own words for each), color, opponents and map size, every side
+starting with its tier-1 formation; the old setup screen is the Skirmish (one battle); the Codex shows every unit
+(stats, abilities, evolution links), ability and effect straight from the rules; Credits name the sources. The game's
+name on the title ("disc") is a placeholder.
+
 ## Next up
 - **Engine bake-off** (built M53, `spikes/engine/`; awaiting the user's verdict) (user, 2026-09-28: can three.js reach the quality we want, or Godot?): one small scene built to its best in both, the same assets: a forest hex with foliage and wind, sky lighting and shadows, and a rigged unit that aims its upper body at a target off to the side while its feet stay planted. Compare the pictures (the user judges) and how hard each was to build and test. Decides the engine before the art and asset push.
 - Spread the UI kit (map HUD, battle HUD, setup, menus) once the user has judged the pilot.

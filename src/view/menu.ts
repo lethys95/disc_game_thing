@@ -27,6 +27,7 @@ const describe = (save: Save) => {
 export class GameMenu implements KeyLayer {
   private message = "";
   private page: "game" | "settings" = "game";
+  private settingsOnly = false;
   /** The ability whose new key the menu is waiting for. */
   private capturing: string | null = null;
 
@@ -52,10 +53,18 @@ export class GameMenu implements KeyLayer {
     this.render();
   }
 
+  /** Straight to the settings, from the title: Back closes the menu. */
+  showSettings(): void {
+    this.page = "settings";
+    this.settingsOnly = true;
+    this.show();
+  }
+
   hide(): void {
     this.root.hidden = true;
     this.message = "";
     this.page = "game";
+    this.settingsOnly = false;
     this.capturing = null;
   }
 
@@ -175,6 +184,10 @@ export class GameMenu implements KeyLayer {
     });
     const back = element("button", "action", "Back");
     back.addEventListener("click", () => {
+      if (this.settingsOnly) {
+        this.hide();
+        return;
+      }
       this.page = "game";
       this.capturing = null;
       this.render();

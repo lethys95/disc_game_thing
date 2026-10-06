@@ -29,7 +29,7 @@ pnpm dev --host   # vite dev server; the user connects over Tailscale
 pnpm verify       # everything: tsc + vitest + screenshot + all playtests
 pnpm check        # tsc + vitest
 pnpm shot [out.png] [route]      # headless render (routes/params: see the verify skill)
-pnpm playtest [name…]            # scripted clicks: battle, map, save, city, settings, setup, spells
+pnpm playtest [name…]            # scripted clicks: battle, map, save, city, settings, setup (title → new game), spells
 pnpm sim          # AI-vs-AI matrix of the preset squads (balance)
 ```
 Image generation (Krea-2 in the local ComfyUI, on the second GPU) always runs in a background subagent with exact parameters: the `krea-images` skill. Unit concept art follows the `unit-concepts` skill (identity → concept → portrait; turnarounds and stance views in rounds).

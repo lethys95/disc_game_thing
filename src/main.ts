@@ -11,7 +11,12 @@ import { Campaign } from "#view/campaign";
 import { isMood, MapView, MOODS } from "#view/map";
 import { BattleScene } from "#view/scene";
 import { Setup } from "#view/setup";
+import { TitleScreen } from "#view/title";
+import { NewGame } from "#view/new-game";
+import { Codex } from "#view/codex";
+import { Credits } from "#view/credits";
 import type { Placement } from "#rules/battle/engine";
+import type { Save } from "#rules/save";
 import { BANDIT_GROUP, CARNIVAL_GROUP, DRAWN_GROUP, GNOLL_GROUP, GROVE_PRESETS, NEXUS_PRESETS, PRESETS } from "#rules/units/presets";
 import { ANIMATION_SPEEDS, Settings } from "#view/settings";
 import { Sound } from "#view/sound";
@@ -44,10 +49,10 @@ const mapView = new MapView(stage);
 const mood = params.get("mood");
 if (mood && isMood(mood)) mapView.setMood(MOODS[mood]);
 const ai = new AiClient();
-const app: App = new App(stage, battleScene, ai, settings, sound, { onSetup: () => showSetup() });
+const app: App = new App(stage, battleScene, ai, settings, sound, { onSetup: () => showTitle() });
 const saves = new LocalSaveStore();
 const campaign: Campaign = new Campaign(stage, mapView, app, ai, sound, {
-  onSetup: () => showSetup(),
+  onSetup: () => showTitle(),
   onAutosave: (save) => saves.write(AUTOSAVE_ID, save),
   onMenu: () => menu.show(),
 });
@@ -55,16 +60,12 @@ const menu: GameMenu = new GameMenu(byId("menu"), {
   store: saves,
   settings,
   current: () => {
-    if (setup.visible) return null;
+    if ([title, setup, newGame, codex, credits].some((screen) => screen.visible)) return null;
     if (!campaign.running) return "Skirmishes aren't saved; march onto a map for a game you can save.";
     return campaign.snapshot() ?? "Finish the battle first: saves hold the map.";
   },
-  load: (save) => {
-    setup.hide();
-    app.stop();
-    campaign.resume(save);
-  },
-  newGame: () => showSetup(),
+  load: (save) => resume(save),
+  newGame: () => showTitle(),
 });
 routeKeys([menu, app, campaign]);
 const setup = new Setup(byId("setup"), {
@@ -79,18 +80,53 @@ const setup = new Setup(byId("setup"), {
     setup.hide();
     app.start(squads, playerSide, colors);
   },
+  onBack: () => showTitle(),
+});
+const newGame = new NewGame(byId("newgame"), {
   onMarch: (players, size) => {
-    setup.hide();
+    hideScreens();
     const seed = Number(params.get("seed") ?? Math.floor(Date.now() % 100000));
     campaign.start(players, seed, size);
   },
-  onLoad: () => menu.show(),
+  onBack: () => showTitle(),
 });
+const codex = new Codex(byId("codex"), { onBack: () => showTitle() });
+const credits = new Credits(byId("credits"), { onBack: () => showTitle() });
+const title = new TitleScreen(byId("title"));
 
-function showSetup(): void {
+function hideScreens(): void {
+  for (const screen of [title, setup, newGame, codex, credits]) screen.hide();
+}
+
+function resume(save: Save): void {
+  hideScreens();
+  app.stop();
+  campaign.resume(save);
+}
+
+/** One of the screens reached from the title: the game behind stops, the title's music plays on. */
+function open(screen: { show(): void }): void {
+  hideScreens();
   app.stop();
   campaign.stop();
-  setup.show();
+  screen.show();
+}
+
+function showTitle(): void {
+  open({
+    show: () => {
+      const autosave = saves.read(AUTOSAVE_ID);
+      title.show({
+        ...(autosave.ok ? { resume: () => resume(autosave.save) } : {}),
+        newGame: () => open(newGame),
+        skirmish: () => open(setup),
+        load: () => menu.show(),
+        codex: () => open(codex),
+        settings: () => menu.showSettings(),
+        credits: () => open(credits),
+      });
+    },
+  });
   sound.mapMusic("jilliath");
   sound.ambience(null);
 }
@@ -98,7 +134,6 @@ function showSetup(): void {
 const presets = [PRESETS.preserve, PRESETS.punishment] as const;
 // Screenshots and playtests skip the setup screen.
 if (params.has("map")) {
-  setup.hide();
   // `map=nexus|grove`: the first enemy's faction.
   const enemyFaction: Playable = params.get("map") === "nexus" ? "nexus" : params.get("map") === "grove" ? "grove" : "jilliath";
   // `players=N`: more AI opponents, alternating factions after the first two.
@@ -120,7 +155,6 @@ if (params.has("map")) {
   const structure = params.get("structure");
   if (structure) campaign.openStructure(structure);
 } else if (params.has("steps") || params.has("auto") || params.has("fight")) {
-  setup.hide();
   const fight = params.get("fight") ?? "";
   const nexusKey = fight.startsWith("nexus:") ? fight.slice(6) : "uncommitted";
   const groveKey = fight.startsWith("grove:") ? fight.slice(6) : "uncommitted";
@@ -142,8 +176,16 @@ if (params.has("map")) {
   const withTarot = (squad: readonly Placement[]): Placement[] =>
     squad.map((p, i) => (i === 0 && tarot > 0 ? { ...p, effects: [...(p.effects ?? []), { def: "carries", ability: { id: "tarot", params: { cards: tarot } } }] } : p));
   app.start([withTarot(presets[0]), withTarot(enemy)], params.get("auto") === "1" ? null : params.get("side") === "1" ? 1 : 0, colorPair(["jilliath", fight.startsWith("nexus") ? "nexus" : fight.startsWith("grove") ? "grove" : "jilliath"]), Number(params.get("steps") ?? 0), setting, Number(params.get("seed") ?? 0));
+} else if (params.has("skirmish")) {
+  open(setup);
+} else if (params.has("newgame")) {
+  open(newGame);
+} else if (params.has("codex")) {
+  open(codex);
+} else if (params.has("credits")) {
+  open(credits);
 } else {
-  showSetup();
+  showTitle();
 }
 
 if (params.has("debug")) {

@@ -11,14 +11,15 @@ Tests prove the rules; only a rendered frame proves the view. Always look at the
 0. `pnpm verify` runs 1–4 in one go. Use it before calling anything done.
 1. `pnpm check`: typecheck + unit tests. Must be green first.
 2. `pnpm shot <out.png> "<route>"`: headless render. Exits non-zero on any console error or page error.
-3. `pnpm playtest [name…]`: every click-through playtest (battle, map, save, city, settings, setup, spells) against one server and browser, each in a fresh context; name some to run only those (`shots/playtest-*.png`, `shots/map-*.png`, `shots/failed-<name>.png` on a failure).
+3. `pnpm playtest [name…]`: every click-through playtest (battle, map, save, city, settings, setup, spells; setup now goes title → new game → march, then the codex and credits) against one server and browser, each in a fresh context; name some to run only those (`shots/playtest-*.png`, `shots/map-*.png`, `shots/failed-<name>.png` on a failure).
 5. `pnpm sim`: AI-vs-AI matchup matrix of the presets, for balance changes.
 6. `PLAYERS=<preset|nexus[:scheme|overload]>,… pnpm sim:world [seeds…]` (two or more players): whole AI-vs-AI games (winner, turns, battles, gold); a "cold war" means neither side could win a fight its forecast allows.
 
 ## Routes (URL params, combinable)
 | Param | Effect |
 |---|---|
-| (none) | setup screen |
+| (none) | title screen |
+| `?newgame`, `?skirmish`, `?codex`, `?credits` | that screen of the title's (the skirmish is the old setup screen: build two squads, fight one battle) |
 | `?fight` | skip setup, battle with the preserve vs punishment presets (`?fight=nexus`, `?fight=nexus:scheme`, `?fight=nexus:overload`, `?fight=bandits` for other enemies; `&side=1` plays the defending side, drawn on the left; `&terrain=forest|hills|mountain` and `&backdrop=capitol|city|dungeon` set where it's fought) |
 | `?steps=N` | fast-forward N AI actions before the first frame (no animation) |
 | `?auto=1` | AI plays both sides |

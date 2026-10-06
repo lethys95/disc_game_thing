@@ -2,7 +2,7 @@ import type { Playtest } from "#scripts/playtests/harness";
 
 const save: Playtest = {
   name: "save",
-  about: "save a map game through the menu, reload the page, load it from the setup screen, and compare",
+  about: "save a map game through the menu, reload the page, load it from the title screen, and compare",
   async run(t) {
     await t.open("/?map&seed=2");
     await t.awaiting("map");
@@ -18,7 +18,7 @@ const save: Playtest = {
     await t.shot("save-menu");
 
     await t.open("/");
-    await t.page.click("#setup >> text=Load game");
+    await t.page.click("#title >> text=Load game");
     await t.page.locator("#menu .save-row", { hasText: "Saved game" }).first().locator("text=Load").click();
     await t.page.waitForFunction(() => !document.getElementById("maphud")?.hidden, null, { timeout: 10000 });
     const after = await t.page.textContent("#mapturn");

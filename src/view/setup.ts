@@ -1,8 +1,8 @@
 import { BEHAVIORS, describeAbility } from "#rules/abilities/index";
 import type { Placement } from "#rules/battle/engine";
 import { STARTING_LEADERSHIP } from "#rules/balance";
-import { allowedUnits, commitmentOf, squadProblems } from "#rules/forks";
-import type { Commitment, SquadProblem } from "#rules/forks";
+import { allowedUnits, squadProblems } from "#rules/forks";
+import type { SquadProblem } from "#rules/forks";
 import { COLS, ROWS, sameTile } from "#rules/battle/grid";
 import type { Side, Tile } from "#rules/battle/types";
 import { UNITS } from "#rules/units/index";
@@ -11,29 +11,21 @@ import { FACTIONS } from "#rules/factions";
 /** Every playable faction, in the order the setup offers them. */
 const PLAYABLE = Object.keys(FACTIONS).filter((f): f is Playable => f in FACTIONS);
 import type { Playable } from "#rules/units/index";
-import { defaultColors, fallbackColor, freeColor, PLAYER_COLORS } from "#rules/world/colors";
+import { fallbackColor, PLAYER_COLORS } from "#rules/world/colors";
 import type { PlayerColor } from "#rules/world/colors";
-import type { PlayerSetup } from "#rules/world/create";
 import { art } from "#view/art";
 import { colorPair, COLOR_HEX, COLOR_NAMES } from "#view/colors";
 import { FORMATIONS, PRESETS } from "#rules/units/presets";
-import { button, element } from "#view/dom";
-import { defaultMapSize, isMapSize, MAP_SIZES } from "#rules/map";
-import type { MapSize } from "#rules/map";
+import { element } from "#view/dom";
 
 export type Squads = readonly [readonly Placement[], readonly Placement[]];
 
 type Colors = readonly [PlayerColor, PlayerColor];
 
-/** Maps have room for six Capitols (the ring's corners): you, the enemy squad and four more. */
-const MAX_EXTRA_OPPONENTS = 4;
-
 export interface SetupHandlers {
   onChange(squads: Squads, colors: Colors): void;
   onFight(squads: Squads, playerSide: Side | null, colors: Colors): void;
-  /** Onto a map: you (player 0) against the enemy squad (player 1) and any extra AI opponents. */
-  onMarch(players: readonly PlayerSetup[], size: MapSize): void;
-  onLoad(): void;
+  onBack(): void;
 }
 
 
@@ -45,14 +37,12 @@ const PROBLEM_TEXT: Readonly<Record<SquadProblem, string>> = {
 };
 
 /**
- * Skirmish setup: pick a faction and a formation for both squads. The branches the placed units took become that
- * side's choices on the map. The arena behind previews them live.
+ * Skirmish: pick a faction and a formation for both squads, or build them unit by unit, and fight one battle. The
+ * arena behind previews them live. Map games start from the new-game screen.
  */
 export class Setup {
   private squads: [Placement[], Placement[]] = [[...PRESETS.preserve], [...PRESETS.punishment]];
   private formations: [string, string] = ["Faith preserves", "Faith consumes: Punisher"];
-  /** More AI opponents for the map, beyond the enemy squad (a skirmish stays two-sided). */
-  private extras: { faction: Playable; formation: string }[] = [];
   private factions: [Playable, Playable] = ["jilliath", "jilliath"];
   private colors: [PlayerColor, PlayerColor] = colorPair(["jilliath", "jilliath"]);
   /** Colors the player picked stay; the others follow the factions' defaults. */
@@ -60,8 +50,6 @@ export class Setup {
   private active: Side = 0;
   private brush: string | null = null;
   private watch = false;
-  /** The map size picked; null: the default for the number of players. */
-  private size: MapSize | null = null;
 
   constructor(
     private readonly root: HTMLElement,
@@ -103,11 +91,6 @@ export class Setup {
     this.changed();
   }
 
-  /** What the placed units imply; an empty commitment while they conflict (the Fight button is off then). */
-  private commitmentOf(side: Side): Commitment {
-    return commitmentOf(this.squads[side].map((p) => p.defId)) ?? {};
-  }
-
   private setFormation(side: Side, name: string): void {
     this.formations[side] = name;
     this.squads[side] = [...(FORMATIONS[this.factions[side]].find((f) => f.name === name)?.squad ?? [])];
@@ -138,7 +121,7 @@ export class Setup {
     this.root.replaceChildren();
     const header = element("div", "setup-header");
     header.appendChild(element("div", "title", "Skirmish"));
-    header.appendChild(element("div", "subtitle", "Pick each side's faction and formation. The branches your units took are your choices on the map."));
+    header.appendChild(element("div", "subtitle", "One battle: pick each side's faction and formation, or place units yourself."));
     this.root.appendChild(header);
 
     const body = element("div", "setup-body");
@@ -146,7 +129,6 @@ export class Setup {
     body.appendChild(this.palette());
     body.appendChild(this.squadPanel(1));
     this.root.appendChild(body);
-    this.root.appendChild(this.extrasPanel());
 
     const footer = element("div", "setup-footer");
     const mode = element("label", "mode");
@@ -163,106 +145,10 @@ export class Setup {
     const fight = element("button", "action fight", "Fight");
     fight.disabled = !ready;
     fight.addEventListener("click", () => this.handlers.onFight(this.squads, this.watch ? null : 0, this.colors));
-    const march = element("button", "action fight", "March");
-    march.title = this.extras.length === 0 ? "Take both squads onto a map: your leader against the enemy's" : `Onto a map: you against ${this.extras.length + 1} AI opponents`;
-    march.disabled = !ready;
-    march.addEventListener("click", () => this.handlers.onMarch(this.players(), this.mapSize()));
-    const load = element("button", "action", "Load game");
-    load.addEventListener("click", () => this.handlers.onLoad());
-    footer.append(mode, fight, march, load);
+    const back = element("button", "action", "Back");
+    back.addEventListener("click", () => this.handlers.onBack());
+    footer.append(back, mode, fight);
     this.root.appendChild(footer);
-  }
-
-  private mapSize(): MapSize {
-    return this.size ?? defaultMapSize(this.extras.length + 2);
-  }
-
-  /** Everyone on the map: you, the enemy squad, then the extra opponents, each with a color of its own. */
-  private players(): PlayerSetup[] {
-    const main = ([0, 1] as const).map((side): PlayerSetup => ({ squad: this.squads[side], faction: this.factions[side], commitment: this.commitmentOf(side), color: this.colors[side] }));
-    const colors = this.extraColors();
-    const extras = this.extras.map((extra, i): PlayerSetup => {
-      const squad = this.extraSquad(extra);
-      return { squad, faction: extra.faction, commitment: commitmentOf(squad.map((p) => p.defId)) ?? {}, color: colors[i] ?? "white" };
-    });
-    return [...main, ...extras];
-  }
-
-  private extraSquad(extra: { faction: Playable; formation: string }): Placement[] {
-    const formations = FORMATIONS[extra.faction];
-    return [...(formations.find((f) => f.name === extra.formation) ?? formations[0])?.squad ?? []];
-  }
-
-  /** Extra opponents take their faction's color if it's free, else the next free one. */
-  private extraColors(): PlayerColor[] {
-    const taken: PlayerColor[] = [...this.colors];
-    return this.extras.map((extra) => {
-      const own = defaultColors([extra.faction])[0];
-      const color = own && !taken.includes(own) ? own : freeColor(taken);
-      taken.push(color);
-      return color;
-    });
-  }
-
-  /** Map games only: more AI opponents, each with a faction and a formation. */
-  private extrasPanel(): HTMLElement {
-    const panel = element("div", "setup-extras");
-    panel.appendChild(element("div", "note", "On the map, more AI opponents can join (skirmishes stay one against one):"));
-    const colors = this.extraColors();
-    this.extras.forEach((extra, i) => {
-      const row = element("div", "extra");
-      const dot = element("span", "dot");
-      dot.style.background = COLOR_HEX[colors[i] ?? "white"];
-      row.appendChild(dot);
-      for (const faction of PLAYABLE) {
-        const button = element("button", `doctrine faction small${extra.faction === faction ? " selected" : ""}`, FACTIONS[faction].name);
-        button.addEventListener("click", () => {
-          this.extras[i] = { faction, formation: FORMATIONS[faction][0]?.name ?? "" };
-          this.render();
-        });
-        row.appendChild(button);
-      }
-      const formation = element("select", "formation");
-      for (const option of FORMATIONS[extra.faction]) {
-        const item = element("option", "", option.name);
-        item.value = option.name;
-        item.selected = option.name === extra.formation;
-        formation.appendChild(item);
-      }
-      formation.addEventListener("change", () => {
-        this.extras[i] = { ...extra, formation: formation.value };
-      });
-      const remove = element("button", "small", "Remove");
-      remove.addEventListener("click", () => {
-        this.extras.splice(i, 1);
-        this.render();
-      });
-      row.append(formation, remove);
-      panel.appendChild(row);
-    });
-    const add = element("button", "small", "Add an AI opponent");
-    add.disabled = this.extras.length >= MAX_EXTRA_OPPONENTS;
-    add.title = add.disabled ? `At most ${MAX_EXTRA_OPPONENTS + 2} players on a map.` : "";
-    add.addEventListener("click", () => {
-      this.extras.push({ faction: "jilliath", formation: FORMATIONS.jilliath[0]?.name ?? "" });
-      this.render();
-    });
-    // Map size (user, 2026-09-27): the default grows with the number of players until one is picked.
-    const sizes = element("div", "extra map-size");
-    sizes.appendChild(element("span", "note", "Map size:"));
-    for (const [size, { name, radius }] of Object.entries(MAP_SIZES)) {
-      if (!isMapSize(size)) continue;
-      const chosen = this.mapSize() === size;
-      const option = button(`doctrine small${chosen ? " selected" : ""}`, name, () => {
-        this.size = size;
-        this.render();
-      });
-      option.title = `${3 * radius * (radius + 1) + 1} hexes${this.size === null && chosen ? " (the default for this many players)" : ""}`;
-      sizes.appendChild(option);
-    }
-    sizes.prepend(add);
-    panel.appendChild(sizes);
-    return panel;
   }
 
   private squadPanel(side: Side): HTMLElement {

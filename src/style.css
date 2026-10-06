@@ -446,12 +446,6 @@ button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }
 #actions button.ability .tag { position: absolute; top: 20px; right: 4px; margin: 0; background: rgba(0, 0, 0, 0.6); padding: 0 3px; }
 #actions button.overload { font: 600 10px var(--text); padding: 2px 4px; background: var(--field-dark); color: var(--muted); border: 1px solid var(--line); cursor: pointer; }
 #actions button.overload.on { color: #7fe0d8; border-color: #2bb8ad; box-shadow: 0 0 8px rgba(43, 184, 173, 0.45); }
-.setup-extras { pointer-events: auto; align-self: center; display: flex; flex-direction: column; align-items: center; gap: 4px; margin: 8px 0; }
-.setup-extras .note { color: var(--muted); text-shadow: 0 1px 4px #000; }
-.setup-extras .extra { display: flex; align-items: center; gap: 6px; background: var(--panel); border: 1px solid var(--edge); padding: 4px 8px; }
-.setup-extras .extra button.doctrine { width: auto; margin: 0; }
-.setup-extras .dot { width: 14px; height: 14px; border-radius: 50%; border: 1px solid #000; }
-.setup-extras select { background: var(--field); color: var(--ink); border: 1px solid var(--rule); font: 500 14px var(--display); padding: 3px 6px; }
 .gem { display: inline-block; width: 0.95em; height: 0.95em; vertical-align: -0.12em; margin-right: 1px; }
 .gem svg { width: 100%; height: 100%; display: block; }
 .spells-tab { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; max-width: 720px; margin: 0 auto; }
@@ -465,8 +459,6 @@ button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }
 .equipment .slot-name { width: 84px; color: var(--muted); font-size: 12px; }
 .offer-row { display: flex; align-items: flex-start; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--rule); }
 .offer-row > :first-child { flex: 1; }
-.setup-extras .map-size { gap: 6px; align-items: center; }
-.setup-extras .map-size .note { margin-left: 14px; }
 
 /* The city screen: content on the left, the tab rail on the right (user's layout, design/capitol-screen.md). */
 .city-layout { display: flex; gap: 16px; flex: 1; min-height: 0; }
@@ -568,8 +560,6 @@ button.action.selected:not(.ability), button.small.selected, button.doctrine.sel
 #setup { padding: 8px 18px; gap: 6px; }
 #setup .setup-header .title { font-size: 30px; line-height: 1.1; }
 #setup button.action.fight { font-size: 19px; padding: 0 30px; }
-#setup .setup-extras { gap: 4px; }
-#setup .setup-extras > .note { margin: 0; }
 #setup button.doctrine { border-width: 6px; border-image-width: 6px 14px; padding: 0 10px; }
 /* Tab emblems (assets/ui/icon-*.webp) in the medallions; the text glyph shows only if an emblem is missing. */
 #capitol .rail-tab .glyph[class*="icon-"] { width: 40px; height: 40px; background-position: center; background-size: contain; background-repeat: no-repeat; color: transparent; font-size: 0; margin-top: 0; }
@@ -593,3 +583,87 @@ button.action.selected:not(.ability), button.small.selected, button.doctrine.sel
   font: 12px/1.6 ui-monospace, monospace;
   pointer-events: none;
 }
+
+/* The title and the screens reached from it (M80, the user, 2026-10-06): carved stone behind, opaque over the stage. */
+#title, #newgame, #codex, #credits { position: fixed; inset: 0; background: #0a0909 var(--ui-backdrop, none) repeat; background-size: 256px; }
+#title { display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.title-parade { position: absolute; inset: auto 0 0 0; height: 78vh; display: flex; justify-content: center; align-items: flex-end; gap: 0; pointer-events: none; }
+.title-parade .art.parade {
+  width: 15vw; max-width: 230px; height: 100%; background-size: contain; background-position: 50% 100%; background-color: transparent;
+  margin: 0 -2.5vw; opacity: 0.6; filter: saturate(0.85);
+  /* The cards' grey ground fades out on every side, so only the figures show against the stone. */
+  -webkit-mask-image: radial-gradient(ellipse 46% 52% at 50% 52%, #000 45%, transparent 100%);
+  mask-image: radial-gradient(ellipse 46% 52% at 50% 52%, #000 45%, transparent 100%);
+}
+.title-parade .art.parade:nth-child(odd) { transform: translateY(-4vh); }
+#title::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.75) 70%); pointer-events: none; }
+.title-panel { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 18px; }
+.title-name { font: 700 96px var(--display); letter-spacing: 0.2em; text-transform: lowercase; color: var(--gold-light); text-shadow: 0 4px 18px #000, 0 0 40px rgba(192, 40, 28, 0.35); }
+.title-menu { display: flex; flex-direction: column; gap: 6px; width: 240px; }
+.title-menu button.action { font-size: 20px; padding: 8px 16px; background: rgba(20, 16, 14, 0.92); }
+
+#newgame { display: flex; flex-direction: column; gap: 12px; padding: 14px 24px; overflow-y: auto; }
+.faction-cards { display: flex; gap: 16px; justify-content: center; }
+button.faction-card { width: 300px; text-align: left; color: var(--ink); cursor: pointer; display: flex; flex-direction: column; gap: 4px; opacity: 0.7; font: 13px var(--text); }
+button.faction-card.selected { opacity: 1; box-shadow: 0 0 22px rgba(192, 40, 28, 0.45); }
+button.faction-card:hover { opacity: 1; }
+.faction-card .faces { display: flex; justify-content: center; height: 220px; margin-bottom: 4px; }
+.faction-card .art.face {
+  width: 50%; height: 100%; background-size: contain; background-position: 50% 100%; background-color: transparent;
+  -webkit-mask-image: radial-gradient(ellipse 50% 54% at 50% 52%, #000 50%, transparent 100%);
+  mask-image: radial-gradient(ellipse 50% 54% at 50% 52%, #000 50%, transparent 100%);
+}
+.faction-card .name { font: 700 28px var(--display); }
+.faction-card .epithet { font: 600 16px var(--display); color: var(--gold); }
+.faction-card .traits { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+.faction-card .about { color: #b9a98c; }
+.newgame-options { align-self: center; display: flex; flex-direction: column; gap: 6px; padding: 10px 16px; min-width: 560px; }
+.newgame-options .row { display: flex; align-items: center; gap: 6px; }
+.newgame-options .label { width: 100px; color: var(--muted); }
+.newgame-options .swatch { width: 22px; height: 22px; min-width: 0; padding: 0; border: 2px solid #1a1614; cursor: pointer; }
+.newgame-options .swatch.selected { border-color: #f1eadb; box-shadow: 0 0 0 1px #000; }
+.newgame-options .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+.newgame-options > button.small { align-self: flex-start; }
+
+#codex { display: flex; flex-direction: column; gap: 10px; padding: 16px 24px; }
+.codex-header { display: flex; align-items: center; gap: 20px; }
+.codex-header .title { font: 700 36px var(--display); letter-spacing: 0.06em; }
+.codex-header .tabs { display: flex; gap: 6px; flex: 1; }
+.codex-shelves { display: flex; gap: 4px; flex-wrap: wrap; }
+.codex-body { display: grid; grid-template-columns: 300px 1fr; gap: 14px; flex: 1; min-height: 0; }
+.codex-list { overflow-y: auto; padding: 8px; }
+button.codex-row { display: flex; align-items: center; gap: 8px; width: 100%; padding: 4px 6px; margin-bottom: 3px; background: var(--field); border: 1px solid var(--rule); color: var(--ink); cursor: pointer; text-align: left; }
+button.codex-row.selected { border-color: var(--blood); }
+button.codex-row .name { font: 700 16px var(--display); flex: 1; }
+button.codex-row .tier { color: var(--muted); font-size: 11px; }
+.codex-page { overflow-y: auto; padding: 14px 18px; }
+.codex-top { display: flex; gap: 18px; }
+.art.codex-bust { width: 220px; height: 220px; flex: none; background-size: cover; }
+.codex-top .name { font: 700 34px var(--display); }
+.codex-top .subtitle { color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-size: 11px; margin-bottom: 10px; }
+.codex-top .stats { display: grid; grid-template-columns: auto auto; gap: 2px 18px; justify-content: start; }
+.codex-top .stats .name { font: 13px var(--text); color: var(--muted); }
+.codex-page .abilities { list-style: none; padding: 0; margin: 14px 0 0; border-top: 1px solid var(--rule); }
+.codex-page .abilities li { padding: 6px 0; border-bottom: 1px solid #221d1a; }
+.codex-page .abilities .name { font: 700 17px var(--display); }
+.codex-page .abilities .passive .name { color: #b9a98c; }
+.codex-page .abilities .text { color: var(--muted); }
+.codex-lines { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+.codex-lines .links { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.codex-lines .label { color: var(--muted); width: 110px; }
+.codex-entries { overflow-y: auto; padding: 12px 16px; flex: 1; display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 8px 16px; align-content: start; }
+.codex-entry { border-bottom: 1px solid #221d1a; padding: 6px 0; }
+.codex-entry .head { display: flex; align-items: center; gap: 6px; }
+.codex-entry .name { font: 700 17px var(--display); flex: 1; }
+.codex-entry .kind { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
+.codex-entry .text { color: #b9a98c; }
+.codex-entry .users { color: var(--muted); font-size: 11px; margin-top: 2px; }
+
+#credits { display: flex; align-items: center; justify-content: center; }
+.credits-page { width: min(640px, 92vw); max-height: 86vh; overflow-y: auto; padding: 16px 22px; display: flex; flex-direction: column; gap: 4px; }
+.credits-page .title { font: 700 34px var(--display); letter-spacing: 0.06em; }
+.credits-page .section { font: 700 18px var(--display); color: var(--gold); margin-top: 10px; }
+.credits-page .credit { display: grid; grid-template-columns: 1fr 1.3fr; gap: 12px; padding: 3px 0; border-bottom: 1px solid #221d1a; }
+.credits-page .what { color: var(--muted); }
+.credits-page button.action { align-self: flex-end; margin-top: 12px; }
+.codex-page .note { color: var(--muted); font-size: 11px; margin-top: 6px; }

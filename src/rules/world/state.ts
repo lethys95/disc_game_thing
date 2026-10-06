@@ -415,6 +415,13 @@ const GROUPS: Readonly<Record<Tribe, Readonly<Record<Strength, Group>>>> = {
   },
 };
 
+export const TRIBES: readonly Tribe[] = ["bandits", "gnolls", "drawn", "carnival"];
+
+/** Every unit a tribe fields, in any of its groups, in order of first appearance. */
+export function tribeUnits(tribe: Tribe): string[] {
+  return [...new Set(Object.values(GROUPS[tribe]).flatMap((group) => group.units.map(([defId]) => defId)))];
+}
+
 export function neutralGroup(tribe: Tribe, strength: Strength): SquadMember[] {
   const { level, units } = GROUPS[tribe][strength];
   return units.map(([defId, tile]) => {

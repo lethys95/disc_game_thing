@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines._
 
-**Updated:** 2026-10-05 (Omen, Soothsayer, Etherborn picked and portrayed)
+**Updated:** 2026-10-05 (M80: title, new game, codex, credits)
 
 ## Where we are
 A playable map game for 2–6 players (hotseat viewer vs AIs): two factions (**Jilliath**, **Ral-Vitahl**) with tier-1 melee/support/mage and Nexus mages to tier 3; bandit camps, dungeons with rewards, neutral cities; gold, mana and spells; nodes (gold, Blacksmith, mana, Cathedral); items on leaders; fog of war; retreat and a battle round limit; sound slots with placeholder SFX and music. The AI plays both the map (a list of planners in `world/ai.ts`) and battles, in a web worker.
@@ -10,6 +10,7 @@ A playable map game for 2–6 players (hotseat viewer vs AIs): two factions (**J
 Architecture: `design/architecture.md`; recipes and gotchas: `engineering.md`. `pnpm verify` before calling anything done. Sims: `pnpm sim:many --seeds 1-16 "p1,p2"` (smoke tests only until factions have their lines).
 
 ## Now
+**M80 the front door (2026-10-06, the user's ask):** a title screen (Continue, New game, Skirmish, Load, Codex, Settings, Credits); New game picks faction, color, opponents and map size; the old setup is the Skirmish; the Codex reads every unit, ability and effect from the rules; Credits name the sources (#69). Routes: `/`, `?newgame`, `?skirmish`, `?codex`, `?credits`. Next: the gameplay audit (whole-game sims, the Grove now included), map AI scouting, research connectors.
 **Omen, Soothsayer, Etherborn (2026-10-05/06):** concepts picked by the user after three to six rounds under their "don't make it boring" rule (`shots/carnival.html`, `design/units/carnival-concepts.md`); split for Tripo; portraits installed (`shots/portraits.html`, fifteen units).
 **Music (2026-10-05):** the user's Suno tracks are the music: the Grove's seven battle tracks and Jilliath's Inquisition battle theme (more to come); ACE-Step's Nexus tracks and Jilliath map are placeholders. MiniMax Music 3 was tried and dropped (vocals). Music is Opus 256 kb/s from WAVs in `~/Music/theme_music/` (`scripts/audio/music-take.sh`).
 **Unit concepts (2026-10-05, `unit-concepts` skill):** Zealot picked (`zealot-pyre-turnaround-1000` and its sword prop); **Psychopomp picked:** `psychopomp-short-turnaround-1002` (round six; split for Tripo); its ears, which disagreed between views, repainted with the new inpainting (`scripts/art/fixes.ts`; backups short 1001, style-first 1000). The style drift's cause, a long outfit-list prompt, is now a rule in the skill (`design/units/sylvan-psychopomp.md`). **Punisher picked:** `punisher-iron-turnaround-1000` (round two, the original's faceless executioner's hood in iron grey; split for Tripo; flail `punisher-flail-flanged-props-1001`). **Portraits from concepts (#13), the user: "try out the workflow first":** `scripts/art/portraits.ts`, image-to-image and reference-guided routes, tested on the Punisher only: image-to-image works, the card re-poses itself at 0.75+, `shots/portrait-test.html`; questions #13). Units' art now has three framings (card, bust, icon: the user's ask); **twelve units' portraits are installed** (`shots/portraits.html`; round two: one painting per unit, icons cut from the card, no white outlines).
