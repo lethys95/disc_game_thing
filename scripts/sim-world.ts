@@ -10,21 +10,27 @@ import type { WorldAction } from "#rules/world/state";
 import { commitmentOf } from "#rules/forks";
 import { UNITS } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
-import { NEXUS_PRESETS, PRESETS } from "#rules/units/presets";
+import { GROVE_PRESETS, NEXUS_PRESETS, PRESETS } from "#rules/units/presets";
 import { defaultMapSize, isMapSize } from "#rules/map";
 
 /**
  * Whole games with the map AI on every side: `PLAYERS=punishment,nexus:overload [SIZE=large] pnpm sim:world [seeds...]`.
- * Each player is a Jilliath preset key or `nexus[:preset]`; two or more players; default two `uncommitted` Jilliath.
+ * Each player is a Jilliath preset key, `nexus[:preset]` or `grove[:preset]`; two or more players; default two
+ * `uncommitted` Jilliath.
  */
 const parse = (spec: string): { faction: Playable; key: string } => {
   const [head = "uncommitted", tail] = spec.split(":");
-  return head === "nexus" ? { faction: "nexus", key: tail ?? "uncommitted" } : { faction: "jilliath", key: head };
+  if (head === "nexus" || head === "grove") return { faction: head, key: tail ?? "uncommitted" };
+  return { faction: "jilliath", key: head };
 };
 const isJilliathPreset = (key: string): key is keyof typeof PRESETS => key in PRESETS;
 const isNexusPreset = (key: string): key is keyof typeof NEXUS_PRESETS => key in NEXUS_PRESETS;
-const squadOf = (s: { faction: Playable; key: string }) =>
-  s.faction === "nexus" ? (isNexusPreset(s.key) ? NEXUS_PRESETS[s.key] : NEXUS_PRESETS.uncommitted) : isJilliathPreset(s.key) ? PRESETS[s.key] : PRESETS.uncommitted;
+const isGrovePreset = (key: string): key is keyof typeof GROVE_PRESETS => key in GROVE_PRESETS;
+const squadOf = (s: { faction: Playable; key: string }) => {
+  if (s.faction === "nexus") return isNexusPreset(s.key) ? NEXUS_PRESETS[s.key] : NEXUS_PRESETS.uncommitted;
+  if (s.faction === "grove") return isGrovePreset(s.key) ? GROVE_PRESETS[s.key] : GROVE_PRESETS.uncommitted;
+  return isJilliathPreset(s.key) ? PRESETS[s.key] : PRESETS.uncommitted;
+};
 
 const seeds = process.argv.slice(2).map(Number);
 const verbose = process.env["VERBOSE"] === "1";
