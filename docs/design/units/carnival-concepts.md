@@ -113,3 +113,16 @@ that one is cool […] shuffle the bag a bit. Try things out."
     most mystery) and *dancer* 1000 (a coin headband, long braids, gathered trousers: the most character).
   - The card prop: framed cards striped like her coat, with an eye on the back, held in gloved hands. Not the
     razor-edged metal asked for, but they belong to her.
+
+## The user on round four (2026-10-06)
+"I really enjoy […] soothsayer-hooded-turnaround-1000. I'm completely sold on it, I think we should just go for it.
+Though I actually thought soothsayer-dancer-turnaround-1001 was interesting too. Made her skin black. Could you go for
+one iteration where we take the hooded soothsayer and try to see what happens if we try to make her skin black too?
+Just because a traveling group of people would likely have people from far and wide, I'd imagine. Though maybe make an
+extra point in actually giving her african descent […] it's kinda noticeable when you just slap a black skin tone over a
+white person usually […] Otherwise I'm perfectly willing to go with soothsayer-hooded-turnaround-1000. It'd just be
+interesting having different types of people in this faction here."
+- **Fallback pick:** `soothsayer-hooded-turnaround-1000`.
+- **Round five** (`SOOTHSAYERS_5`): the hooded Soothsayer as a Black woman of West African descent, her features
+  named (her face is mostly veiled: dark brown skin, a broad nose, high cheekbones, coiled braids from under the hood).
+  A second reading with a half-veil over the chin only shows more of her face.

@@ -563,11 +563,30 @@ const SOOTHSAYERS_4: Readonly<Record<string, { readonly subject: string }>> = {
   "soothsayer-dancer": {
     subject: `A fortune teller of a nomadic swindlers' carnival, a young, wiry, barefoot woman with long black hair in many thin braids threaded with coins. A veil of strung gold coins over her mouth, heavy kohl around her eyes. A short cropped jacket version of ${EYE_JACKET}, over wrapped dark sashes and loose trousers gathered at the ankle; stacks of bangles on both arms.`,
   },
+  // The user's likely pick: seed 1000 ("completely sold on it").
   "soothsayer-hooded": {
     subject: `A fortune teller of a nomadic swindlers' carnival, a tall woman whose face is hidden: a deep hood, and below it a veil of strung gold coins, so only her eyes show, one of them milky white and glowing faintly. She wears ${EYE_JACKET}, its hood part of the same striped canvas, over a dark wrapped dress and boots.`,
   },
   "soothsayer-gambler": {
     subject: `A fortune teller and cardsharp of a nomadic swindlers' carnival, a woman in her thirties with a crooked, knowing smile and a scar across one cheek, a single gold coin hanging over her forehead from a chain in her dark hair, a half-veil of coins over her chin. She wears ${EYE_JACKET}, open over a black corset and a long split skirt, rings on every finger.`,
+  },
+};
+
+/**
+ * Round five (the user, 2026-10-06): the hooded Soothsayer as a Black woman of African descent, "because a traveling
+ * group of people would likely have people from far and wide… maybe make an extra point in actually giving her african
+ * descent… it's kinda noticeable when you just slap a black skin tone over a white person". Her face is mostly veiled,
+ * so the features that show are named (Claude's); a half-veil reading shows more of the face.
+ */
+const SOOTHSAYER_AFRICAN =
+  "A fortune teller of a nomadic swindlers' carnival, a tall Black woman of West African descent: deep dark brown skin, a broad nose, high cheekbones and full brows, tightly coiled black hair in thin braids falling from under her hood.";
+
+const SOOTHSAYERS_5: Readonly<Record<string, { readonly subject: string }>> = {
+  "soothsayer-hooded-african": {
+    subject: `${SOOTHSAYER_AFRICAN} A deep hood, and below it a veil of strung gold coins over her mouth and chin, so mostly her eyes show, one of them milky white and glowing faintly. She wears ${EYE_JACKET}, its hood part of the same striped canvas, over a dark wrapped dress and boots.`,
+  },
+  "soothsayer-hooded-african-halfveil": {
+    subject: `${SOOTHSAYER_AFRICAN} A deep hood, and a short veil of strung gold coins hanging only over her chin, her face showing, one eye milky white and glowing faintly, a gold ring through her nose. She wears ${EYE_JACKET}, its hood part of the same striped canvas, over a dark wrapped dress and boots.`,
   },
 };
 
@@ -578,7 +597,7 @@ const prop = (description: string, materials: string) =>
   `A 3D render of a game prop model, like a textured asset shown in a modelling program: ${description} ${materials} Each view whole and separate, laid flat. Flat, even, shadowless lighting from all sides. A plain flat light grey background, no ground, no hands, no text.`;
 
 const CARNIVAL_JOBS = [
-  ...Object.entries({ ...OMENS, ...SOOTHSAYERS, ...OMENS_2, ...SOOTHSAYERS_2, ...OMENS_3, ...SOOTHSAYERS_3, ...SOOTHSAYERS_4 }).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Hands empty and open, no weapon.`, CARNIVAL_3D) })),
+  ...Object.entries({ ...OMENS, ...SOOTHSAYERS, ...OMENS_2, ...SOOTHSAYERS_2, ...OMENS_3, ...SOOTHSAYERS_3, ...SOOTHSAYERS_4, ...SOOTHSAYERS_5 }).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Hands empty and open, no weapon.`, CARNIVAL_3D) })),
   { id: "omen-pistols-props", prompt: prop(OMEN_PISTOLS, CARNIVAL_3D), width: 2048, height: 832 },
   { id: "soothsayer-orb-props", prompt: prop(SOOTHSAYER_PROPS, CARNIVAL_3D), width: 2048, height: 832 },
   { id: "soothsayer-cards-props", prompt: prop(SOOTHSAYER_CARDS, CARNIVAL_3D), width: 2048, height: 832 },
