@@ -105,3 +105,11 @@ that one is cool […] shuffle the bag a bit. Try things out."
   - *hooded*: a deep hood of the same canvas, only her eyes showing, one milky and glowing;
   - *gambler*: a scarred cardsharp with a knowing smile, the jacket open over a corset.
 - The cards she wields get a prop sheet: oversized metal tarot cards with gilded razor edges, an eye on each back.
+- **Round four, read (Claude):** the eye coat and the coin veil came through in all twelve, and every one reads as
+  someone who belongs in a fight.
+  - The coat is so dominant that the four look alike; the differences are in head and legs. *Duelist* and *gambler*
+    are close to each other. The *dancer*'s jacket came out full-length, not cropped.
+  - Claude's picks: *hooded* 1001 (a deep striped hood, the coin veil, only her eyes: the strongest silhouette and the
+    most mystery) and *dancer* 1000 (a coin headband, long braids, gathered trousers: the most character).
+  - The card prop: framed cards striped like her coat, with an eye on the back, held in gloved hands. Not the
+    razor-edged metal asked for, but they belong to her.
