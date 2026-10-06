@@ -474,12 +474,13 @@ button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }
 .rail-tab:hover { border-color: var(--gold-dim); color: var(--ink); }
 .rail-tab.selected { background: var(--line); border-color: var(--gold); color: var(--gold-light); box-shadow: inset 3px 0 0 var(--gold); }
 .rail-tab.selected .glyph { color: var(--gold); }
-/* Research trees top-down: tier 1 at the top, branches spreading below; a connector rises from each node to its parent. */
-.screen .tree.down { gap: 22px 10px; align-items: start; }
+/* Research trees top-down: tier 1 at the top, branches spreading below; elbow lines join each node to its parent. */
+.screen .tree.down { gap: 26px 10px; align-items: start; position: relative; }
+.screen .tree.down svg.connectors { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.screen .tree.down svg.connectors path { fill: none; stroke: var(--gold-dim); stroke-width: 2; opacity: 0.7; }
 .screen .tree.down .node { position: relative; align-items: center; text-align: center; }
 .screen .tree.down .node .head { flex-direction: column; align-items: center; }
 .screen .tree.down .node .head .thumb { width: 52px; height: 52px; }
-.screen .tree.down .node:not(.root)::before { content: ""; position: absolute; top: -22px; left: 50%; height: 22px; border-left: 2px solid var(--line); }
 .screen .tree.down .node { justify-self: center; width: min(100%, 230px); box-sizing: border-box; }
 
 /* UI kit pilot on the city screen (user's reference: design/references/disciples2-city.png; pieces in assets/ui/). */

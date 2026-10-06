@@ -18,6 +18,36 @@ function routes(defId: string): string[][] {
   return next.length === 0 ? [[defId]] : next.flatMap((e) => routes(e.to).map((route) => [defId, ...route]));
 }
 
+const SVG = "http://www.w3.org/2000/svg";
+
+/**
+ * Elbow lines from each parent's bottom to its children's tops: down, across, down. Drawn once the grid has its size
+ * (and again when it changes), since the cells' places come from the layout.
+ */
+function connectors(grid: HTMLElement, links: readonly (readonly [HTMLElement, HTMLElement])[]): SVGSVGElement {
+  const svg = document.createElementNS(SVG, "svg");
+  svg.classList.add("connectors");
+  const draw = () => {
+    const box = grid.getBoundingClientRect();
+    svg.setAttribute("viewBox", `0 0 ${box.width} ${box.height}`);
+    svg.replaceChildren();
+    for (const [child, parent] of links) {
+      const from = parent.getBoundingClientRect();
+      const to = child.getBoundingClientRect();
+      const x1 = from.left + from.width / 2 - box.left;
+      const y1 = from.bottom - box.top;
+      const x2 = to.left + to.width / 2 - box.left;
+      const y2 = to.top - box.top;
+      const mid = (y1 + y2) / 2;
+      const path = document.createElementNS(SVG, "path");
+      path.setAttribute("d", `M ${x1} ${y1} V ${mid} H ${x2} V ${y2}`);
+      svg.appendChild(path);
+    }
+  };
+  new ResizeObserver(draw).observe(grid);
+  return svg;
+}
+
 /**
  * The Capitol's Research tab (HoMM-style, docs/design/pillars.md): each line's evolution tree, in archetype tabs,
  * with its fork choices and unit-type upgrades.
@@ -71,11 +101,17 @@ export class ResearchPanel {
     for (const lines of trees) {
       const grid = element("div", "tree down");
       grid.style.gridTemplateColumns = `repeat(${lines.length}, minmax(0, 1fr))`;
+      // Each node by its route from the root, so a child finds the cell its parent was drawn in.
+      const cells = new Map<string, HTMLElement>();
+      const links: [child: HTMLElement, parent: HTMLElement][] = [];
       lines.forEach((route, col) => {
         route.forEach((defId, tier) => {
           const shared = col > 0 && lines[col - 1]?.slice(0, tier + 1).join() === route.slice(0, tier + 1).join();
           if (shared) return;
           const cell = this.node(world, side, defId, route[tier - 1], allowed.includes(defId), owned.filter((m) => m.defId === defId).length, mayAct);
+          cells.set(route.slice(0, tier + 1).join(), cell);
+          const parent = cells.get(route.slice(0, tier).join());
+          if (tier > 0 && parent) links.push([cell, parent]);
           // A unit shared by the routes to its right spans them.
           const span = lines.slice(col).findIndex((other) => other.slice(0, tier + 1).join() !== route.slice(0, tier + 1).join());
           if (tier === 0) cell.classList.add("root");
@@ -84,6 +120,7 @@ export class ResearchPanel {
           grid.appendChild(cell);
         });
       });
+      grid.appendChild(connectors(grid, links));
       column.appendChild(grid);
     }
     return column;
