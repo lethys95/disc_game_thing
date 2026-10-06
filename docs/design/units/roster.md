@@ -38,9 +38,9 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 | Congregant | Jilliath 1 | user: "an angry mob […] not rugged knights" | cand. (anchors; "rather close": `baroque_congregant-1000`) |
 | Paladin | Jilliath 2 | Claude's holy knight; the user: "cool if a bit forgettable" | cand. (anchors) |
 | Apprentice | Nexus 1 | user: hooded and robed, gender ambiguous (semi placeholder) | cand. (rejected: "a depressed anime boy") |
-| Etherborn | Nexus 3 | user: galaxy skin, noble robes, no face, hands in purple-pink arcane energy, female-shaped | picked: `etherborn-lined-turnaround-1001` |
-| Soothsayer | carnival 2 | user, plus Claude's eye coat and coin veil; fully veiled, dark skin (user) | picked: `soothsayer-hooded-dark-turnaround-1000` |
-| Omen | carnival 2 | user: twin flintlocks, blindfold, ragged trenchcoat with a pentagram; Claude's: top hat, gold grin | picked: `omen-grin-turnaround-1001`, pistols `omen-pistols-props-1000` |
+| Etherborn | Nexus 3 | user: galaxy skin, noble robes, no face, hands in purple-pink arcane energy, female-shaped | picked: `etherborn-lined-turnaround-1001` | ✓ |
+| Soothsayer | carnival 2 | user, plus Claude's eye coat and coin veil; fully veiled, dark skin (user) | picked: `soothsayer-hooded-dark-turnaround-1000` | ✓ |
+| Omen | carnival 2 | user: twin flintlocks, blindfold, ragged trenchcoat with a pentagram; Claude's: top hat, gold grin | picked: `omen-grin-turnaround-1001`, pistols `omen-pistols-props-1000` | ✓ |
 | Fire Eater | carnival 1 | Claude: a carnival fire-breather, torch and flask, soot on worn motley | — |
 | Packstalker, Hamstringer | gnolls 1 | Claude (round two: an antelope-skull helm; nomad wraps) | cand. (round two, not picked) |
 

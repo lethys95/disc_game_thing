@@ -192,3 +192,6 @@ All 43 abilities without art got icons in the recipe of the four the user liked 
     cropped, resized and exported. The game's file comes from `portraits.ts` with the same crop, so it stays
     reproducible; the two match within resampling.
   - **Cackler:** its icon was lowered a little so the chin isn't cut off.
+- **The Omen, Soothsayer and Etherborn (2026-10-06):** portraits from their picked concepts (cards at 0.9, posed:
+  the Omen with a flintlock, the Soothsayer with the eye orb hovering over one hand and cards in the other, the
+  Etherborn with arcane fire). Bust and icon cut from the card; installed. Fifteen units have portraits now.

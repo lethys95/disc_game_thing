@@ -229,6 +229,10 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "a blind gunslinger-prophet of a nomadic swindlers' carnival, tall and gaunt: a red blindfold with two staring eyes painted on it in white, a wide crooked grin of gold teeth, a battered top hat with old tarot cards in its band, a long ragged oxblood-red trenchcoat with a black pentagram on its back, bandoliers of powder flasks",
     poses: ["he stands with a long ornate flintlock pistol of dark wood and brass in each hand, one raised and one low"],
     strengths: T_POSED,
+    picked: {
+      card: "omen-card-d90.png",
+      crops: { bust: { from: "card", size: 0.6, x: 0.5, y: 0.27 }, icon: { from: "card", size: 0.25, x: 0.5, y: 0.185 } },
+    },
   },
   soothsayer: {
     front: "shots/tripo/soothsayer-front.png",
@@ -236,6 +240,10 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "a fortune teller of a nomadic swindlers' carnival, a tall woman with deep dark brown skin, her face completely hidden behind a veil of strung gold coins under a deep hood, a long coat of faded red and mustard striped tent canvas covered in painted staring eyes, over a dark wrapped dress",
     poses: ["she stands still, a glass orb with a living eye floating inside it hovering above one open hand, a fan of tarot cards in the other"],
     strengths: T_POSED,
+    picked: {
+      card: "soothsayer-card-d90.png",
+      crops: { bust: { from: "card", size: 0.66, x: 0.5, y: 0.23 }, icon: { from: "card", size: 0.25, x: 0.5, y: 0.13 } },
+    },
   },
   etherborn: {
     front: "shots/tripo/etherborn-front.png",
@@ -243,6 +251,10 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "an arcane noblewoman whose skin is deep space, dark blue-black with swirling galaxies, violet nebulae and stars; a smooth featureless head with no face; a tall fan collar of black enamel and gold; an immaculate black silk gown with gold filigree and a long open overcoat lined with the same starfield; magenta-violet arcane energy wreathing her hands",
     poses: ["she stands tall and composed, her hands raised slightly at her sides, wreathed in magenta-violet arcane fire"],
     strengths: T_POSED,
+    picked: {
+      card: "etherborn-card-d90.png",
+      crops: { bust: { from: "card", size: 0.6, x: 0.5, y: 0.21 }, icon: { from: "card", size: 0.24, x: 0.535, y: 0.09 } },
+    },
   },
 };
 
