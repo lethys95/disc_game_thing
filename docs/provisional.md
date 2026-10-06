@@ -112,3 +112,7 @@ abilities instead of flat numbers."
   Unchanged, with a unit's own number kept on purpose: the Maelstrom's Homing Lightning (70 at 100 → 105; the curve
   alone gives 66) and Decay support 2's Bloom (6 → 8, a weak Bloom beside its corpse abilities). Every other
   ability's number is the same as before.
+- **What it did to the sims:** the composition matrix (all squads, win %) at tier 2 is Jilliath 52 → 51, Ral-Vitahl
+  46 → 50 (Burst +4 on the Justiciar and Thaumaturge; two Thaumaturges 90 → 95), Sylvan 52 → 49; at tier 3 Jilliath
+  73 → 72, Ral-Vitahl 29 → 27, Sylvan 51 → 54 (the Psychopomp; its best squad 84 → 91). Whole games (8 seeds per
+  pairing) moved within noise. Not tuned back: balance waits for the units.
