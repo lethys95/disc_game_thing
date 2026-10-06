@@ -1,0 +1,6 @@
+# The Wastes (Vexumphat)
+
+- **What:** The fourth faction: death and numbers, yellow mana, ancient Egypt, animated armour, ethereals. Claude's tier-1 pitches in `faction-stuff/wastes/`.
+- **Why:** Four factions is the canon.
+- **Done when:** Designed and playable.
+- **Who:** The user designs.

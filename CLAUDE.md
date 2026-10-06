@@ -3,7 +3,9 @@
 A deterministic, Disciples II–inspired turn-based strategy game: squads on 3x3 grids, a small 3D hex overworld, four asymmetric factions. Built mostly by Claude across many short sessions. The user suggests; Claude drives.
 
 ## Every session
-1. Read `docs/status.md` first. It says where things are and what's next.
+1. Look at the board: `ls .kanban/*/` (conventions in `.kanban/README.md`; `pnpm board` renders it to
+   `shots/board.html`). It says where we're going (the alpha) and what's next. Then `docs/status.md` for where
+   things stand.
 2. Read other docs only when the task touches them:
    - `docs/roadmap.md` — milestones, each ending in something playable
    - `docs/design/` — the game design canon (pillars, combat, abilities, art, factions, units, lore)
@@ -13,7 +15,8 @@ A deterministic, Disciples II–inspired turn-based strategy game: squads on 3x3
    - `docs/decisions.md` — why things are the way they are
    - `docs/engineering.md` — code map, engine conventions, gotchas that cost time before
    - `docs/prior-attempts.md` — why this repo works the way it does (read once)
-3. **Take notes as you go, not at the end.** A session can end at any moment. Update `docs/status.md` with each commit (rewrite it; keep it short), record a decision in `docs/decisions.md` when you make one, a placeholder in `docs/provisional.md` when you pick one, and a question in `docs/questions.md` only when you're blocked or the choice is clearly the user's. The repo is the only memory that survives between sessions.
+3. **Take notes as you go, not at the end.** A session can end at any moment. Move board stories as their status
+   changes and capture every new idea of the user's as a `maybe/` story the moment it comes up. Update `docs/status.md` with each commit (rewrite it; keep it short), record a decision in `docs/decisions.md` when you make one, a placeholder in `docs/provisional.md` when you pick one, and a question in `docs/questions.md` only when you're blocked or the choice is clearly the user's. The repo is the only memory that survives between sessions.
 
 ## Rules
 - **Playable first.** Build only what the current milestone needs. No speculative systems: no save framework, event bus, plugin registry, or catalog loader until a milestone requires one.
@@ -31,6 +34,7 @@ pnpm check        # tsc + vitest
 pnpm shot [out.png] [route]      # headless render (routes/params: see the verify skill)
 pnpm playtest [name…]            # scripted clicks: battle, map, save, city, settings, setup (title → new game), spells
 pnpm sim          # AI-vs-AI matrix of the preset squads (balance)
+pnpm board        # the board (.kanban/) as shots/board.html
 ```
 Image generation (Krea-2 in the local ComfyUI, on the second GPU) always runs in a background subagent with exact parameters: the `krea-images` skill. Unit concept art follows the `unit-concepts` skill (identity → concept → portrait; T-pose turnarounds in rounds, then `scripts/art/portraits.ts`).
 Package manager is pnpm; build scripts need approval (`pnpm approve-builds <pkg>`).
