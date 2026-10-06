@@ -32,7 +32,7 @@ pnpm shot [out.png] [route]      # headless render (routes/params: see the verif
 pnpm playtest [name…]            # scripted clicks: battle, map, save, city, settings, setup (title → new game), spells
 pnpm sim          # AI-vs-AI matrix of the preset squads (balance)
 ```
-Image generation (Krea-2 in the local ComfyUI, on the second GPU) always runs in a background subagent with exact parameters: the `krea-images` skill. Unit concept art follows the `unit-concepts` skill (identity → concept → portrait; turnarounds and stance views in rounds).
+Image generation (Krea-2 in the local ComfyUI, on the second GPU) always runs in a background subagent with exact parameters: the `krea-images` skill. Unit concept art follows the `unit-concepts` skill (identity → concept → portrait; T-pose turnarounds in rounds, then `scripts/art/portraits.ts`).
 Package manager is pnpm; build scripts need approval (`pnpm approve-builds <pkg>`).
 
 ## TypeScript style
