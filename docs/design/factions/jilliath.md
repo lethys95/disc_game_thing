@@ -33,5 +33,5 @@ Healing: most healing of any faction, with side effects (martyrdom).
 ## Backline brainstorm (2026-10-06)
 The user: "we can help each other with some theorycrafting / brainstorming on jilliath's other lines." Claude's page
 `shots/jilliath-backline.html` places the user's directions (inner fire, a beacon, resurrection, martyrdom healing,
-castigation, fire and burning, the martyrdom beam) into two trees forking on faith preserves vs faith consumes, with
+castigation, fire and burning, the martyrdom beam) into two trees forking on faith vs fanaticism, with
 Claude's fillers marked; the user marks keep, maybe or cut. Nothing is designed until the user says so.
