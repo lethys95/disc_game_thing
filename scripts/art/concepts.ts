@@ -431,9 +431,10 @@ const PSYCHOPOMP_3D =
 const PSYCHOPOMP_JOBS = [{ id: "psychopomp-short-turnaround", prompt: turnaround(PSYCHOPOMP_SUBJECT, PSYCHOPOMP_3D) }];
 
 /**
- * The carnival's Omen and Soothsayer and the Nexus Etherborn (the user, 2026-10-05: "how to not make this boring…
- * we need to be creative"; `docs/design/units/carnival-concepts.md`). The user's looks held fixed; the twists, one per
- * reading, are Claude's. Short subjects of defining features, the gothic recipe word for word.
+ * The carnival's Omen and Soothsayer and the Nexus Etherborn, picked by the user (2026-10-06) after three to six
+ * rounds under the user's rule "how to not make this boring" (`docs/design/units/carnival-concepts.md`; every round's
+ * prompt is in the folders' manifests and git). The user's looks held, the twists Claude's: the Omen's top hat and
+ * gold grin, the Soothsayer's eye coat and fully veiled face, the Etherborn's galaxy skin and fan collar.
  */
 const CARNIVAL_3D =
   "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: faded striped canvas, patched velvet, cracked leather, tarnished brass and gold, bone. Serious, adult, not cartoonish.";
@@ -443,178 +444,42 @@ const CARNIVAL_3D =
 const NEXUS_NOBLE_3D =
   "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, immaculate physically based materials: dark silk and velvet, polished gold and brass filigree, enamel, skin of deep starlit space. Serious, adult, not cartoonish.";
 
+// Picked: seed 1001.
 const OMEN =
-  "A blind gunslinger-prophet of a nomadic swindlers' carnival: a tall, gaunt man with a wide crooked grin of gold teeth. His eyes are bound by a band of dirty red cloth with a pair of wide, staring eyes painted on it in white. " +
-  "A long ragged trenchcoat to his ankles with a large faded red pentagram painted across its back; bandoliers of powder flasks and bullet pouches across his chest, two empty holsters at his hips.";
+  "A blind gunslinger-prophet of a nomadic swindlers' carnival, tall and gaunt. Over his eyes a band of dirty red cloth with two large wide-open eyes painted on it in white, staring. A wide, crooked grin full of gold teeth. " +
+  "A battered tall top hat. A long ragged trenchcoat of faded oxblood red to his ankles, a large black pentagram painted across its back; bandoliers of powder flasks across his chest, two empty holsters at his hips. Old tarot cards tucked into the hat band.";
 
-const OMENS: Readonly<Record<string, { readonly subject: string }>> = {
-  "omen-barker": { subject: `${OMEN} A battered tall top hat with old tarot cards tucked into its band.` },
-  "omen-preacher": { subject: `${OMEN} A wide, flat-brimmed preacher's hat, long lank hair, and a stole of strung finger bones around his neck.` },
-  "omen-hanged": { subject: `${OMEN} Bare-headed and shaven, a frayed hangman's noose still knotted around his neck, its cut end hanging down his chest.` },
-};
-
-// Picked by the user: seed 1000.
+// Picked: seed 1000.
 const OMEN_PISTOLS =
   "a pair of long ornate flintlock pistols of dark wood and tarnished brass, their barrels engraved with small skulls and stars, each grip capped with a brass raven's head; each pistol drawn twice, from the side and from above.";
 
+// Picked: seed 1000 ("the fully veiled one… very spooky").
 const SOOTHSAYER =
-  "A fortune teller of a nomadic swindlers' carnival, a woman. Over her mouth and chin hangs a veil of strung old coins. Heavy dark kohl around her eyes, one eye milky white and blind. Rings on every long finger, bangles up her wrists.";
+  "A fortune teller of a nomadic swindlers' carnival, a tall woman with deep dark brown skin whose face is hidden: a deep hood, and below it a veil of strung gold coins, so only her eyes show, one of them milky white and glowing faintly. She wears a long coat of faded red and mustard striped carnival tent canvas with dozens of large open eyes painted on it in white and black, staring in every direction, its hood part of the same striped canvas, over a dark wrapped dress and boots.";
 
-const SOOTHSAYERS: Readonly<Record<string, { readonly subject: string }>> = {
-  "soothsayer-tent": {
-    subject: `${SOOTHSAYER} Her loose layered robes are cut from faded red and mustard striped carnival tent canvas, patched and fringed with tassels; a tall headdress of tarnished brass charms and tiny bells.`,
-  },
-  "soothsayer-crone": {
-    subject: `${SOOTHSAYER} She is ancient and hunched, her wild white hair braided with charms, coins and small bones; loose patchwork robes of faded velvet and layered shawls.`,
-  },
-  "soothsayer-stilts": {
-    subject: `${SOOTHSAYER} She stands unnaturally tall on hidden stilts, her long dark robes falling straight to the ground and hiding them, towering twice a man's height: a narrow, swaying silhouette under a tall pointed hood.`,
-  },
-};
-
-const SOOTHSAYER_PROPS =
+// Her orb and the cards she wields; neither picked yet.
+const SOOTHSAYER_ORB =
   "a glass orb the size of a head with a single living eye floating inside it, veined and staring, wisps of smoke inside the glass; beside it a fanned hand of five worn tarot cards with dark painted faces. Each object separate.";
-
-const ETHERBORN =
-  "An arcane noblewoman, tall and slender. Her skin is not skin but deep space: dark blue-black filled with swirling galaxies, violet and blue nebulae and countless stars, as if her body were a window into the night sky. " +
-  "Her head is a smooth featureless oval with no eyes, no nose and no mouth, the same starfield across it. Immaculate noble robes of deep violet and black silk with fine gold filigree. Glowing magenta-violet arcane energy wreathes her open hands.";
-
-const ETHERBORNS: Readonly<Record<string, { readonly subject: string }>> = {
-  "etherborn-orrery": { subject: `${ETHERBORN} Around her blank head turn the brass rings of an armillary sphere: a small orrery of orbiting golden bands and tiny planets.` },
-  "etherborn-collar": { subject: `${ETHERBORN} A tall, stiff fan of a collar in black enamel and gold rises behind her head like a cathedral window.` },
-  "etherborn-veil": { subject: `${ETHERBORN} A sheer black veil hangs over her blank face from a tall jewelled headdress, the stars showing through the veil.` },
-};
-
-/**
- * Round two, from round one's read (`carnival-concepts.md`). Omen read as a generic grey gunslinger: the face carries
- * him now (the painted eyes said up front, the grin, white greasepaint), the coat has colour, and the top hat stays.
- * Soothsayer: the tent's striped canvas and the crone's white hair together, plus a motif of her own on the robe.
- * Etherborn: the galaxies on her skin, not the robes: bare arms and shoulders, plain black silk.
- */
-const OMEN_2 =
-  "A blind gunslinger-prophet of a nomadic swindlers' carnival, tall and gaunt. Over his eyes a band of dirty red cloth with two large wide-open eyes painted on it in white, staring. A wide, crooked grin full of gold teeth. " +
-  "A battered tall top hat. A long ragged trenchcoat of faded oxblood red to his ankles, a large black pentagram painted across its back; bandoliers of powder flasks across his chest, two empty holsters at his hips.";
-
-const OMENS_2: Readonly<Record<string, { readonly subject: string }>> = {
-  // Picked by the user: seed 1001.
-  "omen-grin": { subject: `${OMEN_2} Old tarot cards tucked into the hat band.` },
-  "omen-crow": { subject: `${OMEN_2} Black crow feathers stuck in the hat band, and a short ragged mantle of black crow feathers over the coat's shoulders.` },
-  "omen-greasepaint": { subject: `${OMEN_2} His face is painted chalk white with cracked carnival greasepaint, the grin drawn wider in black paint at the corners of his mouth.` },
-};
-
-const SOOTHSAYER_2 =
-  "An ancient fortune teller of a nomadic swindlers' carnival, a hunched old woman with wild long white hair braided with charms and small bones. Over her mouth and chin hangs a veil of strung old gold coins. Heavy dark kohl around her eyes, one eye milky white. Rings on every long finger.";
-
-const SOOTHSAYERS_2: Readonly<Record<string, { readonly subject: string }>> = {
-  "soothsayer-striped": { subject: `${SOOTHSAYER_2} Loose layered robes cut from faded red and mustard striped carnival tent canvas, fringed with tassels and tiny bells.` },
-  "soothsayer-eyes": { subject: `${SOOTHSAYER_2} Loose layered robes of faded red and mustard striped tent canvas, with dozens of large open eyes painted on the cloth in white and black, staring in every direction.` },
-  "soothsayer-cards": { subject: `${SOOTHSAYER_2} Loose robes of faded red and mustard striped tent canvas under a long cloak covered in hundreds of old tarot cards sewn on like overlapping scales.` },
-};
-
-const ETHERBORN_2 =
-  "An arcane noblewoman, tall and slender. Her bare skin is deep space: dark blue-black filled with swirling galaxies, violet and blue nebulae and countless stars, as if her body were a window into the night sky. " +
-  "Her arms, shoulders, collarbones and neck are bare, showing the starfield. Her head is a smooth featureless oval with no eyes, no nose and no mouth, the same starfield across it. A long gown of plain black silk with fine gold filigree at the hems. Glowing magenta-violet arcane energy wreathes her open hands.";
-
-const ETHERBORNS_2: Readonly<Record<string, { readonly subject: string }>> = {
-  "etherborn-bare-orrery": { subject: `${ETHERBORN_2} Around her blank head turn the brass rings of a small orrery of orbiting golden bands and tiny planets.` },
-  "etherborn-bare-collar": { subject: `${ETHERBORN_2} A tall, stiff fan of a collar in black enamel and gold rises behind her head.` },
-  "etherborn-constellations": { subject: `${ETHERBORN_2} Fine glowing gold lines join the brightest stars on her skin into constellations, like a star chart drawn on her body.` },
-};
-
-/** Round three: each unit's best features from round two joined (`carnival-concepts.md`). */
-const OMENS_3: Readonly<Record<string, { readonly subject: string }>> = {
-  "omen-crowgrin": {
-    subject:
-      "A blind gunslinger-prophet of a nomadic swindlers' carnival, tall and gaunt, with a wide, leering grin full of gold teeth. His eyes are covered by a red blindfold, and on the blindfold a second pair of eyes is painted in white, wide open and staring. " +
-      "A battered tall top hat with black crow feathers and old tarot cards in its band. A long ragged trenchcoat of faded oxblood red to his ankles, a short ragged mantle of black crow feathers over its shoulders, a large black pentagram painted across its back; bandoliers of powder flasks, two empty holsters.",
-  },
-};
-
-const SOOTHSAYERS_3: Readonly<Record<string, { readonly subject: string }>> = {
-  "soothsayer-seer": {
-    subject: `${SOOTHSAYER_2} Loose layered robes of faded red and mustard striped tent canvas with dozens of large open eyes painted on the cloth in white and black, staring in every direction; on her back a short cape of old tarot cards sewn on like overlapping scales.`,
-  },
-};
-
-const ETHERBORN_3 =
-  "An arcane noblewoman, tall and slender. Her bare skin is deep space: dark blue-black filled with swirling galaxies, violet and blue nebulae and countless stars, as if her body were a window into the night sky. " +
-  "Her arms, shoulders and neck are bare, showing the starfield. Her head is a smooth featureless oval with no eyes, no nose and no mouth, the same starfield across it. A tall, stiff fan of a collar in black enamel and gold rises behind her head. Glowing magenta-violet arcane energy wreathes her open hands.";
-
-const ETHERBORNS_3: Readonly<Record<string, { readonly subject: string }>> = {
-  "etherborn-regal": { subject: `${ETHERBORN_3} A rich noble gown of deep violet and black silk, heavy gold filigree on the bodice, a jewelled gold girdle and a long train.` },
-  // Picked by the user: seed 1001 ("the sleeved one… feels more noble").
-  "etherborn-lined": { subject: `${ETHERBORN_3} An immaculate black silk gown with gold filigree and a long open overcoat whose lining is the same starfield as her skin.` },
-};
-
-/**
- * The Soothsayer, round four (the user, 2026-10-06): "seeing old ladies on a battlefield just doesn't make much sense
- * to me… I like her eye jacket a lot… I'd rather see the cards as something she wields rather than a mantle she wears…
- * make her younger, less decrepit… Keep the eye jacket… shuffle the bag a bit. Try things out." The eye jacket and the
- * coin veil held; four different women around them (Claude's), each someone who belongs in a fight. No hat (the Omen
- * owns the top hat). The cards she wields get a prop sheet of their own.
- */
-const EYE_JACKET =
-  "a long coat of faded red and mustard striped carnival tent canvas with dozens of large open eyes painted on it in white and black, staring in every direction";
-
-const SOOTHSAYERS_4: Readonly<Record<string, { readonly subject: string }>> = {
-  "soothsayer-duelist": {
-    subject: `A fortune teller and card-duelist of a nomadic swindlers' carnival, a lean, upright woman in her prime with a sharp, cold stare. A veil of strung gold coins over her mouth, heavy dark kohl around her eyes. She wears ${EYE_JACKET}, fitted at the waist, over dark leather breeches, tall boots and leather bracers. Short black hair.`,
-  },
-  "soothsayer-dancer": {
-    subject: `A fortune teller of a nomadic swindlers' carnival, a young, wiry, barefoot woman with long black hair in many thin braids threaded with coins. A veil of strung gold coins over her mouth, heavy kohl around her eyes. A short cropped jacket version of ${EYE_JACKET}, over wrapped dark sashes and loose trousers gathered at the ankle; stacks of bangles on both arms.`,
-  },
-  // The user's likely pick: seed 1000 ("completely sold on it").
-  "soothsayer-hooded": {
-    subject: `A fortune teller of a nomadic swindlers' carnival, a tall woman whose face is hidden: a deep hood, and below it a veil of strung gold coins, so only her eyes show, one of them milky white and glowing faintly. She wears ${EYE_JACKET}, its hood part of the same striped canvas, over a dark wrapped dress and boots.`,
-  },
-  "soothsayer-gambler": {
-    subject: `A fortune teller and cardsharp of a nomadic swindlers' carnival, a woman in her thirties with a crooked, knowing smile and a scar across one cheek, a single gold coin hanging over her forehead from a chain in her dark hair, a half-veil of coins over her chin. She wears ${EYE_JACKET}, open over a black corset and a long split skirt, rings on every finger.`,
-  },
-};
-
-/**
- * Round five (the user, 2026-10-06): the hooded Soothsayer as a Black woman of African descent, "because a traveling
- * group of people would likely have people from far and wide… maybe make an extra point in actually giving her african
- * descent… it's kinda noticeable when you just slap a black skin tone over a white person". Her face is mostly veiled,
- * so the features that show are named (Claude's); a half-veil reading shows more of the face.
- */
-const SOOTHSAYER_AFRICAN =
-  "A fortune teller of a nomadic swindlers' carnival, a tall Black woman of West African descent: deep dark brown skin, a broad nose, high cheekbones and full brows, tightly coiled black hair in thin braids falling from under her hood.";
-
-const SOOTHSAYERS_5: Readonly<Record<string, { readonly subject: string }>> = {
-  "soothsayer-hooded-african": {
-    subject: `${SOOTHSAYER_AFRICAN} A deep hood, and below it a veil of strung gold coins over her mouth and chin, so mostly her eyes show, one of them milky white and glowing faintly. She wears ${EYE_JACKET}, its hood part of the same striped canvas, over a dark wrapped dress and boots.`,
-  },
-  "soothsayer-hooded-african-halfveil": {
-    subject: `${SOOTHSAYER_AFRICAN} A deep hood, and a short veil of strung gold coins hanging only over her chin, her face showing, one eye milky white and glowing faintly, a gold ring through her nose. She wears ${EYE_JACKET}, its hood part of the same striped canvas, over a dark wrapped dress and boots.`,
-  },
-};
-
-/**
- * Round six (the user, 2026-10-06): describing her face was "a red herring". Hooded 1000's fully veiled face is the
- * point ("more mysterious – she can't actually see anything. Very spooky"); that prompt word for word with dark skin
- * added, so seed 1000 keeps its composition.
- */
-const SOOTHSAYERS_6: Readonly<Record<string, { readonly subject: string }>> = {
-  "soothsayer-hooded-dark": {
-    subject: `A fortune teller of a nomadic swindlers' carnival, a tall woman with deep dark brown skin whose face is hidden: a deep hood, and below it a veil of strung gold coins, so only her eyes show, one of them milky white and glowing faintly. She wears ${EYE_JACKET}, its hood part of the same striped canvas, over a dark wrapped dress and boots.`,
-  },
-};
-
 const SOOTHSAYER_CARDS =
   "a fan of five oversized tarot cards made as weapons: plates of thin dark metal with gilded razor edges, their faces painted with dark arcana and a single staring eye on each back; beside them one card seen edge-on, and a single card held between two gloved fingers.";
+
+// Picked: seed 1001 ("the sleeved one. It feels more noble").
+const ETHERBORN =
+  "An arcane noblewoman, tall and slender. Her bare skin is deep space: dark blue-black filled with swirling galaxies, violet and blue nebulae and countless stars, as if her body were a window into the night sky. " +
+  "Her arms, shoulders and neck are bare, showing the starfield. Her head is a smooth featureless oval with no eyes, no nose and no mouth, the same starfield across it. A tall, stiff fan of a collar in black enamel and gold rises behind her head. Glowing magenta-violet arcane energy wreathes her open hands. An immaculate black silk gown with gold filigree and a long open overcoat whose lining is the same starfield as her skin.";
 
 const prop = (description: string, materials: string) =>
   `A 3D render of a game prop model, like a textured asset shown in a modelling program: ${description} ${materials} Each view whole and separate, laid flat. Flat, even, shadowless lighting from all sides. A plain flat light grey background, no ground, no hands, no text.`;
 
 const CARNIVAL_JOBS = [
-  ...Object.entries({ ...OMENS, ...SOOTHSAYERS, ...OMENS_2, ...SOOTHSAYERS_2, ...OMENS_3, ...SOOTHSAYERS_3, ...SOOTHSAYERS_4, ...SOOTHSAYERS_5, ...SOOTHSAYERS_6 }).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Hands empty and open, no weapon.`, CARNIVAL_3D) })),
+  { id: "omen-grin-turnaround", prompt: turnaround(`${OMEN} Hands empty and open, no weapon.`, CARNIVAL_3D) },
+  { id: "soothsayer-hooded-dark-turnaround", prompt: turnaround(`${SOOTHSAYER} Hands empty and open, no weapon.`, CARNIVAL_3D) },
   { id: "omen-pistols-props", prompt: prop(OMEN_PISTOLS, CARNIVAL_3D), width: 2048, height: 832 },
-  { id: "soothsayer-orb-props", prompt: prop(SOOTHSAYER_PROPS, CARNIVAL_3D), width: 2048, height: 832 },
+  { id: "soothsayer-orb-props", prompt: prop(SOOTHSAYER_ORB, CARNIVAL_3D), width: 2048, height: 832 },
   { id: "soothsayer-cards-props", prompt: prop(SOOTHSAYER_CARDS, CARNIVAL_3D), width: 2048, height: 832 },
 ];
 
-const ETHERBORN_JOBS = Object.entries({ ...ETHERBORNS, ...ETHERBORNS_2, ...ETHERBORNS_3 }).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(subject, NEXUS_NOBLE_3D) }));
+const ETHERBORN_JOBS = [{ id: "etherborn-lined-turnaround", prompt: turnaround(ETHERBORN, NEXUS_NOBLE_3D) }];
 
 /** Each group of jobs has its own folder, so one group's run doesn't mix into another's manifest. */
 const GROUPS = [
@@ -631,6 +496,8 @@ const GROUPS = [
 const args = process.argv.slice(2);
 const seeds = args.map(Number).filter((n) => !Number.isNaN(n));
 const ids = args.filter((a) => Number.isNaN(Number(a)));
+// No ids would run every job there is (it happened once by accident, regenerating old candidates over themselves).
+if (ids.length === 0) throw new Error("name the jobs to run: pnpm exec tsx scripts/art/concepts.ts <job id…> [seed…]");
 // The early concepts (no group) go to their unit's folder, by the id's first word.
 const EARLY: Readonly<Record<string, string>> = {
   custodian: "art/candidates/units/nexus/custodian",

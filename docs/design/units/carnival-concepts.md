@@ -142,3 +142,10 @@ Because I did enjoy the fully veiled one with the odd metal piece veil."
   the hood, the coat. Her skin shows only at the hands. In 1000 they came out a cool dark grey that could read as a
   glove; 1002's hands are darker and warmer. The veil hides her face fully in 1000 and 1002; 1001 shows a little of
   her eyes. If the hands are the only skin that shows, the model's texture can set them.
+
+## Picked (2026-10-06)
+The user: "I'll say we're locking in 1000. I think this look works really well. Very cool."
+**Soothsayer: `soothsayer-hooded-dark-turnaround-1000`.** All three are picked: Omen `omen-grin-turnaround-1001`
+(pistols `omen-pistols-props-1000`), Soothsayer `soothsayer-hooded-dark-turnaround-1000`, Etherborn
+`etherborn-lined-turnaround-1001`. In code byte-identical to the manifests; the other readings were removed from code.
+Split for Tripo in `shots/tripo/`. The Soothsayer's orb and card props are not picked yet.
