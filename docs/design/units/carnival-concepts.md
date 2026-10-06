@@ -149,3 +149,4 @@ The user: "I'll say we're locking in 1000. I think this look works really well. 
 (pistols `omen-pistols-props-1000`), Soothsayer `soothsayer-hooded-dark-turnaround-1000`, Etherborn
 `etherborn-lined-turnaround-1001`. In code byte-identical to the manifests; the other readings were removed from code.
 Split for Tripo in `shots/tripo/`. The Soothsayer's orb and card props are not picked yet.
+- **Props picked (the user, 2026-10-06):** the orb `soothsayer-orb-props-1000`, the cards `soothsayer-cards-props-1001`.

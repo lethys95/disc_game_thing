@@ -118,3 +118,8 @@ that was Claude's call, and it's overruled.) "The models did generally come out 
 head works well, and the wings of each look very intricate. I think it's interesting that moths would essentially
 steal the light away from the enemy, maybe blinding them? Either way, it gives us some wiggle room to play around with
 lighting."
+
+**Picked (the user, 2026-10-06, `shots/picks-owed.html`):** Dustwing `dustwing-turnaround-1000` ("I like the wings
+better in this one. Also three arms might be difficult to animate."), Chrysalis `chrysalis-cocoon-stance-1002`,
+Lightdrinker `lightdrinker-deathshead-turnaround-1001`, Eyespot `eyespot-fan-turnaround-1000`, Pale Mother
+`pale-mother-turnaround-1002`. Split for Tripo (the Chrysalis as a single front view).

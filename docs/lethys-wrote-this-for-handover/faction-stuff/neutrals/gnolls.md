@@ -131,3 +131,8 @@ you try to do something else with cackle."
 
 **Status:** in game as `packstalker`, `bonecracker`, `hamstringer`, `cackler`, `matriarch`: they guard camps and
 dungeons in the desert. Numbers `provisional.md` #63.
+
+**Picked (the user, 2026-10-06, `shots/picks-owed.html`):** Packstalker `packstalker-skullhelm-turnaround-1001`
+("Skull on 1000 looks like it's the actual skull of the gnoll. 1001 makes it clearer that it's headwear at the mouth
+area. Overall these look great."), its spear `packstalker-spear-props-1001`; Hamstringer
+`hamstringer-wraps-turnaround-1000`, its javelins and bolas `hamstringer-kit-props-1000`. Split for Tripo.

@@ -30,7 +30,13 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 | Bonecracker | gnolls 1 | Claude (accepted) | picked: 1002 | ✓ |
 | Cackler | gnolls 1 | Claude (accepted) | picked: `cackler-turnaround-1002` | ✓ |
 | Matriarch | gnolls 2 | Claude (accepted) | picked: `matriarch-turnaround-1001` | ✓ |
-| Dustwing, Chrysalis, Lightdrinker, Eyespot, Pale Mother | the Drawn | Claude's own tribe | Claude: see `the-drawn.md` (the user liked the Lightdrinker) | — |
+| Packstalker | gnolls 1 | Claude (accepted) | picked: `packstalker-skullhelm-turnaround-1001`, spear `packstalker-spear-props-1001` | — |
+| Hamstringer | gnolls 1 | Claude (accepted) | picked: `hamstringer-wraps-turnaround-1000`, kit `hamstringer-kit-props-1000` | — |
+| Dustwing | the Drawn | Claude's own tribe | picked: `dustwing-turnaround-1000` | — |
+| Chrysalis | the Drawn | Claude's own tribe | picked: `chrysalis-cocoon-stance-1002` (a single view) | — |
+| Lightdrinker | the Drawn | Claude's own tribe | picked: `lightdrinker-deathshead-turnaround-1001` | — |
+| Eyespot | the Drawn | Claude's own tribe | picked: `eyespot-fan-turnaround-1000` | — |
+| Pale Mother | the Drawn | Claude's own tribe | picked: `pale-mother-turnaround-1002` | — |
 
 ## 2. Identity, but no picked concept: needs concept art
 | Unit | Faction · tier | Identity | Concept |
@@ -42,7 +48,6 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 | Soothsayer | carnival 2 | user, plus Claude's eye coat and coin veil; fully veiled, dark skin (user) | picked: `soothsayer-hooded-dark-turnaround-1000` | ✓ |
 | Omen | carnival 2 | user: twin flintlocks, blindfold, ragged trenchcoat with a pentagram; Claude's: top hat, gold grin | picked: `omen-grin-turnaround-1001`, pistols `omen-pistols-props-1000` | ✓ |
 | Fire Eater | carnival 1 | Claude: a carnival fire-breather, torch and flask, soot on worn motley | — |
-| Packstalker, Hamstringer | gnolls 1 | Claude (round two: an antelope-skull helm; nomad wraps) | cand. (round two, not picked) |
 
 ## 3. No identity yet: needs a look in words first (the user's, or Claude's to propose)
 | Unit | Faction · tier | What exists |
