@@ -138,3 +138,7 @@ mystery by making some of her face visible […] maybe we should try just adding
 Because I did enjoy the fully veiled one with the odd metal piece veil."
 - **Round six** (`SOOTHSAYERS_6`): hooded 1000's prompt word for word, with "deep dark brown skin" added, so seed
   1000 keeps its composition.
+- **Round six, read (Claude):** seed 1000 kept hooded 1000's composition: the fully veiled face, the coin curtain,
+  the hood, the coat. Her skin shows only at the hands. In 1000 they came out a cool dark grey that could read as a
+  glove; 1002's hands are darker and warmer. The veil hides her face fully in 1000 and 1002; 1001 shows a little of
+  her eyes. If the hands are the only skin that shows, the model's texture can set them.
