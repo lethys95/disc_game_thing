@@ -29,3 +29,9 @@ Healing: most healing of any faction, with side effects (martyrdom).
 - **Mage line:** at least partly about self-sacrifice: using their own health as a resource, "if done correctly". A later unit: a *martyrdom mage* shooting a beam (a line, up to three in a row), hitting very hard but backfiring on every shot. Early units stay basic.
 - The other mage branch might be about absorbing damage dealt: *castigation*, less damage but it prevents damage from the units it hits; or damage over time (burning). An inquisition fits fire and holy: the two mage branches might be holy and fire damage (or both).
 - **Support line:** buffs as well as healing. One should have "inner fire": e.g. extra armor against the next hit taken.
+
+## Backline brainstorm (2026-10-06)
+The user: "we can help each other with some theorycrafting / brainstorming on jilliath's other lines." Claude's page
+`shots/jilliath-backline.html` places the user's directions (inner fire, a beacon, resurrection, martyrdom healing,
+castigation, fire and burning, the martyrdom beam) into two trees forking on faith preserves vs faith consumes, with
+Claude's fillers marked; the user marks keep, maybe or cut. Nothing is designed until the user says so.
