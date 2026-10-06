@@ -30,7 +30,7 @@ The user's verdicts on Claude's brainstorm (`brainstorm/items.md`, notes written
 | Hollow plate | armor | stands in a free grid tile as a unit (60 HP, 10 armor, weak attack, no XP); **no city visit to restore it** |
 
 ## Maybe
-- **Mask of many faces**: "if you can add it… something tells me it makes things too complicated." Later, if at all.
+- **Mask of many faces**: "if you can add it […] something tells me it makes things too complicated." Later, if at all.
 
 ## Passed
 Glass cuirass (temporary), Debt-collector's ledger (obscure), Hungering blade (cursed; regeneration undoes the punishment), Martyr's shroud and Tithe knife (faction-specific), Ossuary lantern (the graveyard is core), Pendulum flail (overhead), Mirror shield (too strong), Lodestone, Smoke powder.

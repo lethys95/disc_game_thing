@@ -38,7 +38,7 @@ the same thing: redistributing the raw files as a sound library. Sonniss and Ova
 
 | Source | Cost | License summary | Attribution | In a shipped game (extractable files) | AI training | Seats | Fantasy-RPG fit / quality |
 |---|---|---|---|---|---|---|---|
-| **Sonniss GDC bundles** ([license](https://sonniss.com/gdc-bundle-license/), [archive](https://sonniss.com/gameaudiogdc/), [2026](https://gdc.sonniss.com/)) | Free | Worldwide, non-exclusive, royalty-free, lifetime, unlimited projects | Not required | Yes: "finished projects … may be shared, published and sold". Not allowed: supplying them "as sound effects" or selling them as they come | **Prohibited** | Per licensee; anyone can download their own copy | Pro quality, huge; fantasy content varies by year; raw files that need editing |
+| **Sonniss GDC bundles** ([license](https://sonniss.com/gdc-bundle-license/), [archive](https://sonniss.com/gameaudiogdc/), [2026](https://gdc.sonniss.com/)) | Free | Worldwide, non-exclusive, royalty-free, lifetime, unlimited projects | Not required | Yes: "finished projects […] may be shared, published and sold". Not allowed: supplying them "as sound effects" or selling them as they come | **Prohibited** | Per licensee; anyone can download their own copy | Pro quality, huge; fantasy content varies by year; raw files that need editing |
 | **Kenney** ([support/license](https://kenney.nl/support), [audio](https://kenney.nl/assets/category:Audio)) | Free | CC0 | No | Yes | No restriction | n/a | Small (50–130 per pack), clean, game-ready; strong for UI, light on combat/magic |
 | **OpenGameArt** ([FAQ](https://opengameart.org/content/faq)) | Free | Per asset: CC0, CC-BY, CC-BY-SA, OGA-BY, GPL | Unless CC0 | CC-BY(-SA) forbids DRM ("technical measures"); OGA-BY allows it | Varies | n/a | Uneven. Good ones: [80 CC0 RPG SFX](https://opengameart.org/content/80-cc0-rpg-sfx), [RPG Sound Pack](https://opengameart.org/content/rpg-sound-pack) (CC0), [Little Robot Fantasy SFX](https://opengameart.org/content/fantasy-sound-effects-library) (CC-BY 3.0), [CC0 fantasy music](https://opengameart.org/content/cc0-fantasy-music-sounds) |
 | **Freesound** ([FAQ](https://freesound.org/help/faq/)) | Free | Per sound: CC0, CC-BY 4.0, CC-BY-NC 4.0, legacy Sampling+ | CC-BY: title, author, link, license per sound | Yes for CC0/CC-BY | Allowed by the license; uploaders can set extra AI preferences | n/a | Enormous, from pro to junk; filter by license |
@@ -65,7 +65,7 @@ the same thing: redistributing the raw files as a sound library. Sonniss and Ova
   a production" side:
   - ship edited, re-encoded (Opus), loudness-normalized derivatives, never the source WAVs;
   - don't offer a sound-test download or a "soundpack" mod export.
-- **Zapsplat's wording** bans redistribution "in any form (… physical media such as hard drives, DVDs, ROMS etc)",
+- **Zapsplat's wording** bans redistribution "in any form ( […] physical media such as hard drives, DVDs, ROMS etc)",
   and in the same document allows "Games, apps, and software". The obvious reading is that files embedded in a game
   are fine and loose libraries are not, but the wording is loose. Its free tier also needs credit and is MP3 only.
 - **AI clauses matter to this project.** Sonniss (GDC and store), Zapsplat, Ovani, Imphenzia, Unity and Soundly
@@ -95,6 +95,6 @@ the same thing: redistributing the raw files as a sound library. Sonniss and Ova
   shipped file. That is the only defense if a claim ever arrives, and it makes credits automatic.
 
 ## Stable Audio 3 on notice (the user, 2026-10-05)
-After the tarot card sounds: "This sfx model here isn't very good by the way… this particular skill and model might be
+After the tarot card sounds: "This sfx model here isn't very good by the way […] this particular skill and model might be
 something we'll remove from the equation entirely." Until the user decides, its takes stay provisional
 (`assets/audio/SOURCES.md`); ElevenLabs is the decided route for SFX (above).

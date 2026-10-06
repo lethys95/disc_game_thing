@@ -15,7 +15,7 @@
   it reads as a Paladin. The three readings came out nearly alike. Some turnarounds drew a view twice or a stray arm.
 - **Round two:** the eye holes stated first and large; "not a knight, no cross symbols"; armour scavenged, broken and
   bolted on crooked; the frenzy pushed in the stance views; three new bodies.
-- **The user on stances (2026-10-05):** "We're creating models, not scenes… Right now we just want the t-pose. The
+- **The user on stances (2026-10-05):** "We're creating models, not scenes […] Right now we just want the t-pose. The
   figure we're putting in the t-pose must fit the design spec though." Round two was stopped after its nine
   turnarounds (on purpose; the run reports an interruption); no stance views from here on; the madness has to show in
   the design, not a pose.
@@ -41,7 +41,7 @@
   bottom (three seeds each).
 - **The user on the mask (2026-10-05):** "instead of removing features by making the mask blank and porcelain white,
   you should instead write more notes on how there are eyeholes in it, and how wild his eyes are. Because by making it
-  featureless, arguably we might lose the burning hand on the mask now… keep adding more and more notes on the holes
+  featureless, arguably we might lose the burning hand on the mask now […] keep adding more and more notes on the holes
   in the mask and how wild his eyes are until it becomes impossible to ignore." **Wild eyes showing in the holes** are
   an update to the first look (which had black behind them): recorded as the user's.
 - **Round six:** the eye holes and wild, bloodshot, staring eyes described again and again; the burning hand kept; no
@@ -72,6 +72,6 @@ actually going to go for round 1: zealot-pyre-turnaround-1000. I think it works 
 - The sword: `zealot-sword-props-1000`, picked (the user: "good. We can keep it."). Split for Tripo: `shots/tripo/zealot-*`
   (four views: the sheet draws the side twice).
 - **The user on the Zealot's portrait card (2026-10-05):** "zealot's card is actually very close to the version I
-  actually wanted of zealot and not the one we ended up with. So that's interesting… He looks sick though." (The card
+  actually wanted of zealot and not the one we ended up with. So that's interesting […] He looks sick though." (The card
   re-posed him at 0.75 from `zealot-pyre-turnaround-1000`: a smaller bloody handprint over two wide black eye holes,
   a lean, tattered, blood-soaked figure with the serrated greatsword.)

@@ -40,7 +40,7 @@ A pattern marks *which tiles can be chosen* (select one) or *which tiles are hit
 - **Stun** skips the next turn slot; **Defend** ends when the unit's next slot starts; **bleed** ticks at the start of each of the victim's slots.
 
 ## New mechanics (user, 2026-10-05)
-"We need to open up for more mechanics… we're just risking that things get stale if we don't introduce more
+"We need to open up for more mechanics […] we're just risking that things get stale if we don't introduce more
 mechanics." The user's words, then Claude's provisional reading (`provisional.md` #65):
 - **Tarot:** "shows a hand of cards at the beginning of the fight. Each indicates something that needs to be done for
   the user in secret. Keyword is 'tarot x' where x is the amount of starting cards you draw to choose from. You pick
@@ -55,7 +55,7 @@ mechanics." The user's words, then Claude's provisional reading (`provisional.md
   down with its pick turned over, and a Tarot icon (top left) that opens the held cards. Then (2026-10-05): "it'd be
   better if the cards are floating and centered around the middle, where you can flick through the cards. Like if you
   were holding cards in your hand. When we flip through cards, we should have an appropriate sfx and also one for
-  picking and flipping the cards… if we just have a box called 'tarot', then I don't think we're selling that they're
+  picking and flipping the cards […] if we just have a box called 'tarot', then I don't think we're selling that they're
   tarot cards too well." Built: a fan of cards at the centre (wheel, arrows or hover to flick; Enter or a click on the
   focused card to pick), the enemy's fan face down with its pick turning over, the HUD's held cards as a small fanned
   stack that opens the same fan; sounds `ui/card-flick`, `ui/card-pick`, `ui/card-flip` (`assets/audio/SOURCES.md`).

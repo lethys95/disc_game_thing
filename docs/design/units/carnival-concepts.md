@@ -1,8 +1,8 @@
 # Carnival and Etherborn: concepts in the 3D strategy
 
-> The user (2026-10-05, going to sleep): "You can try out the three units… if you could self iterate. The main thing
+> The user (2026-10-05, going to sleep): "You can try out the three units […] if you could self iterate. The main thing
 > I'd worry about from your angle is how to not make this boring. It's been a trap a couple of times, especially when
-> we tried out the punisher. Disciples characters were very easy to differentiate, and ours can be too… We need to be
+> we tried out the punisher. Disciples characters were very easy to differentiate, and ours can be too […] We need to be
 > creative. So on each iteration, you shouldn't just think about whether or not it works, you need to think about
 > whether or not it's interesting and easy to differentiate. The three characters can have plenty of soul and
 > contrast. But they're also very easy to make boring." Prompts: `scripts/art/concepts.ts` (`OMENS`, `SOOTHSAYERS`,
@@ -94,10 +94,10 @@
 - **Omen:** `omen-grin-turnaround-1001` with the pistols `omen-pistols-props-1000`.
 - **Etherborn:** `etherborn-lined-turnaround-1001`, "the sleeved one. It feels more noble to me."
 
-**Soothsayer, not yet:** "seeing old ladies on a battlefield just doesn't make much sense to me… she doesn't look like
+**Soothsayer, not yet:** "seeing old ladies on a battlefield just doesn't make much sense to me […] she doesn't look like
 she belongs on a battlefield, but rather in a nursing home. Also, I'd rather see the cards as something she wields
-rather than a mantle she wears. That's a bit too much. So try to make her younger, less decrepit… Keep the eye jacket,
-that one is cool… shuffle the bag a bit. Try things out."
+rather than a mantle she wears. That's a bit too much. So try to make her younger, less decrepit […] Keep the eye jacket,
+that one is cool […] shuffle the bag a bit. Try things out."
 - **Round four** (`SOOTHSAYERS_4`): the eye jacket and the coin veil held; four different women around them, each
   someone who belongs in a fight, no hat (the Omen owns the top hat):
   - *duelist*: a lean card-duelist in her prime, the jacket fitted, leather breeches, boots, bracers;

@@ -50,7 +50,7 @@ user (after round one): not humanoid by default, and never symmetrical. Prompts:
 ## Deadwood (Decay tier 3, `deadwood`)
 - **Play (user):** Decay, plus *withering*: an enemy that hits it deals less damage for the rest of combat.
 - **Numbers:** 390 HP, 76 damage, initiative 45, Decay 50%, Withering 5 per hit (up to 15).
-- **Look (user):** "pretty much just an animated dead tree… the face being strange and ghostly. Nothing about it looks
+- **Look (user):** "pretty much just an animated dead tree […] the face being strange and ghostly. Nothing about it looks
   humanoid. Both arms are massive stumps", moving "more like a gorilla than a human". **Picked:**
   `deadwood-blasted-turnaround-1002` ("a bit too literal with the gorilla, but we'll just take it anyway. It's good
   enough"). Its half-human face makes it "a decent transition to both bog giant and mulch gorger".
@@ -70,7 +70,7 @@ user (after round one): not humanoid by default, and never symmetrical. Prompts:
   heals and gains damage for the rest of combat, stacking indefinitely." End of the line.
 - **Numbers:** 376 HP, 66 damage, initiative 45, Decay 50%, Withering, *Gorge* (heals 25 and +6 damage per death or
   spent corpse, either side, no cap). Claude's reading: it keeps the line's Decay and Withering.
-- **Look (user):** "a plant skeleton… the wood and plant matter receding into showing its nature parasitically
+- **Look (user):** "a plant skeleton […] the wood and plant matter receding into showing its nature parasitically
   infesting a corpse with bark, vines, moss and other such related plant matter." Likely the only direct skeleton or
   zombie in the faction.
 - **Look concepts (Claude, within the user's look):**

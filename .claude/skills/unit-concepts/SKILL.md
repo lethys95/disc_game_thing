@@ -53,7 +53,7 @@ than the Custodian's 3D concepts is a stand-in to redo (the user, 2026-10-05).
 
 ### What we've learned (keep adding)
 - **Interesting before correct (the user, 2026-10-05):** "on each iteration, you shouldn't just think about whether or
-  not it works, you need to think about whether or not it's interesting and easy to differentiate… If you just make
+  not it works, you need to think about whether or not it's interesting and easy to differentiate […] If you just make
   Soothsayer into a woman with a crystal ball, then she's just… a very boring lady with a crystal ball." Disciples'
   characters are easy to tell apart, and ours can be too. The literal reading of a role (a blindfolded gunman, a
   fortune teller with a ball) is the boring baseline: give each unit a twist the role doesn't predict (the user's own
@@ -82,7 +82,7 @@ than the Custodian's 3D concepts is a stand-in to redo (the user, 2026-10-05).
   prompt. Drop the word, not just add a negation.
 - **Stay inside the faction's visual language.** Fixing one trait can carry a unit out of its faction: pushing the
   Zealot away from the Paladin ("not a knight") wrapped him in bandages, which read as the Wastes' mummies; the user
-  picked round one's crusader-ish zealot instead ("still supposed to be an inquisition faction… the antithesis to the
+  picked round one's crusader-ish zealot instead ("still supposed to be an inquisition faction […] the antithesis to the
   paladin"). Check each round against the faction, not only the trait.
 - An early round can be the pick: keep every round in view when the user chooses.
 - When two wordings each get half right, join their working halves (the Zealot: one wording's eye holes, the other's

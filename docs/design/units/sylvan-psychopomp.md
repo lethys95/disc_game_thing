@@ -12,7 +12,7 @@
 
 ## Concepts in the 3D strategy (2026-10-05)
 The user: "psychopomp is not done art wise. It needs more work"; the old ink pick predates the strategy. "I'm probably
-going to be fairly picky with her… Give it a whirl for first round, then let's have a look after first round. I'm
+going to be fairly picky with her […] Give it a whirl for first round, then let's have a look after first round. I'm
 curious to see what it produces before you iterate further." Prompts: `scripts/art/concepts.ts` (`PSYCHOPOMPS`);
 images: `art/candidates/units/grove/psychopomp/`.
 - **Round one** (Claude): three readings, T-pose turnarounds, the Grove's materials, her refined look fixed in each;
@@ -27,7 +27,7 @@ images: `art/candidates/units/grove/psychopomp/`.
 
 ## The user's direction for round two (2026-10-05)
 "I think we need to remove the beauty stuff from the prompt entirely. Remove the ghosts, we'll add a glitch in effects
-instead. Style wise these are all way too boring, and we need to borrow more features from other concepts… I'm
+instead. Style wise these are all way too boring, and we need to borrow more features from other concepts […] I'm
 thinking shamaness from the original Disciples 2, psychopomp from Bloodline Champions, as well as some Golgari +
 Selesnya sprinkled in there. Add tribal tattoos over her body. Give her a hood which looks like the upper side of a
 wolf head with the eyes and lower jaw carved out (that's basically the shamaness headgear). More focus in the bluish
@@ -52,7 +52,7 @@ put the tips of her fingers in a jar of blood.) Hair wise: let's have cornrow br
   red fingertips on the white gloves" up front, not at the end of the prompt. Waiting on the user.
 
 ## The user's direction for round three (2026-10-05)
-"I think she looks too much like a human right now. Also her closed off robe makes her look too civilized… Not sure how
+"I think she looks too much like a human right now. Also her closed off robe makes her look too civilized […] Not sure how
 to word that though. I think we're closer, but we might actually have too much white now. Also her skin should probably
 have that same woodelf type color as in the first ink trial. Pale greenish. Give her face tattoos too in the next one.
 Shoes should be some pretty large fluffy things, burrowing a bit from shamaness there. Mouth and eyes still aren't that
@@ -178,7 +178,7 @@ byte-identical to the manifest; the other rounds' prompts were removed from code
 Split for Tripo: `shots/tripo/psychopomp-{front,side,back}.png`. Not in the image, for the 3D model, textures and
 effects: the hood's gouged-out pits (the wolf has glowing eyes), her scarlet fingers (teal nails), the glitching ghosts
 and the eye glow (vfx).
-- **The ears (the user, 2026-10-05):** "1002 short has a problem with the ears… the ears are sticking out from the
+- **The ears (the user, 2026-10-05):** "1002 short has a problem with the ears […] the ears are sticking out from the
   front, but not from the side, which doesn't make sense logically." Backups if Tripo doesn't go well: short 1001 or
   style-first 1000. Checked per view: short 1001 keeps the ears inside the hood in both views (consistent);
   style-first 1000 has small tips at the front and none at the side (the same mismatch, milder) and draws the side

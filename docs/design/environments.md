@@ -1,7 +1,7 @@
 # Environments (user, 2026-10-05)
 
 "We might want to add environments as a mechanic. They'll work a bit like planechase does in that one MTG mode. Biomes
-will probably use these too." And on biomes: "we need to tie them [tribes] to biomes… We need more biomes."
+will probably use these too." And on biomes: "we need to tie them [tribes] to biomes […] We need more biomes."
 
 (Planechase: a face-up plane card applies a rule to everyone while it's in play, and the game can move on to the next
 plane.) How environments should work here (battle or map, when they change, what triggers them) is the user's to
@@ -38,10 +38,10 @@ highlands; bandits stay in the temperate land. Each new biome costs ground textu
 like the desert did.
 
 ## Decision (user, 2026-10-05): postponed; biomes differ by content
-"I'd go with something simpler than actual cards for the biomes… I don't really intend for cards to be an actual
-mechanic outside of tarots… I'm just afraid of making the game too complicated… maybe it's the wrong alley to use
+"I'd go with something simpler than actual cards for the biomes […] I don't really intend for cards to be an actual
+mechanic outside of tarots […] I'm just afraid of making the game too complicated […] maybe it's the wrong alley to use
 complex environment effects. I might actually defer simple ones too, and just think about which map structures
-differentiate the different environments. Like how you might find carnival in the desert, but not bandits… Maybe
+differentiate the different environments. Like how you might find carnival in the desert, but not bandits […] Maybe
 strengthening core gameplay is a better idea, and that environment is a darling we must kill or at least postpone until
 game testing beckons it once more."
 - **Now:** biomes differ by what's in them: tribes, map structures, node pools, look and light. No rule changes.

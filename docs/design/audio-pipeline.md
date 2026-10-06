@@ -62,7 +62,7 @@ Generated SFX weren't good enough (the user's test); the first pass comes from t
     "MiniMax-Music3" prominently, and needs MiniMax's written permission above $20M yearly revenue. It doesn't
     clearly grant ownership of outputs. Fine for placeholders; weigh it before shipping a track.
 - **MiniMax Music 3, round one (2026-10-05):** the user: "I wouldn't call them good, but they're better than
-  acestep… it might be a prompting issue… Suno is still king here."
+  acestep […] it might be a prompting issue […] Suno is still king here."
   - MiniMax's own prompt guide (the music-caption-rewriter skill in its GitHub repo) asks for a structured caption of
     about 250–450 words under three headings: Global Metadata (genre, BPM, key, emotional progression, scenario,
     production), Vocal Details, and a section-by-section Arrangement. Round one used one paragraph.
@@ -71,7 +71,7 @@ Generated SFX weren't good enough (the user's test); the first pass comes from t
     only) for the Jilliath battle.
 - **MiniMax Music 3, round two, and the verdict (2026-10-05):** the user: "we almost can't use any of the minimax
   ones. There's vocals in pretty much all of them. I'd go as far as to say the nexus ones in ace-step were actually
-  better. I wouldn't use any of these… [Suno is] night and day."
+  better. I wouldn't use any of these […] [Suno is] night and day."
   - **Dropped:** `scripts/audio/music3.ts` and its ComfyUI graph are removed (git keeps them). The model files are
     still in ComfyUI, about 14 GB, the user's to delete.
   - **Music is the user's, from Suno:** the Grove's seven battle tracks, and Jilliath's battle theme
