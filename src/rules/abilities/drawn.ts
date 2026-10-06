@@ -70,6 +70,7 @@ export const drawn: Readonly<Record<string, Behavior>> = {
     describe: (p) => `Main action, ranged: an enemy loses every effect its own side gave it (heals over time, blessings, lent shields) and its shield. The Lightdrinker heals ${p["heal"]} for each effect drunk, and half the shield.`,
     tags: ["spell"],
     defaults: { heal: 10 },
+    scales: ["heal"],
     choices: (ctx, self) =>
       ctx
         .living(opponent(ctx.unit(self.unitId).side))

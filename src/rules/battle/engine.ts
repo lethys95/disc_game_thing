@@ -1,4 +1,4 @@
-import { behavior, paramsOf } from "#rules/abilities/index";
+import { behavior, chargesOf, paramsOf } from "#rules/abilities/index";
 import { BATTLE_ROUND_LIMIT, INITIATIVE_PER_ACTION } from "#rules/balance";
 import { hit, lose } from "#rules/battle/damage";
 import { checkTarot, dealHand, drawHand } from "#rules/battle/tarot";
@@ -172,7 +172,7 @@ export function abilityRef(battle: Battle, unitId: string, abilityId: string): A
 }
 
 function activeSelf(ctx: Ctx, unitId: string, abilityId: string): ActiveSelf {
-  return { unitId, params: paramsOf(ctx.abilityRef(unitId, abilityId)), effect: null, tags: active(abilityId).tags };
+  return { unitId, params: paramsOf(ctx.abilityRef(unitId, abilityId), ctx.abilityPower(unitId)), effect: null, tags: active(abilityId).tags };
 }
 
 function active(abilityId: string): ActiveBehavior {
@@ -283,7 +283,7 @@ function hasMainAction(options: readonly LegalAbility[]): boolean {
 
 /** Uses left of an ability with `charges`, own or granted. */
 function chargesLeft(ctx: Ctx, unitId: string, abilityId: string): number {
-  const max = paramsOf(ctx.abilityRef(unitId, abilityId))["charges"];
+  const max = chargesOf(ctx.abilityRef(unitId, abilityId));
   return max === undefined ? Infinity : max - (ctx.unit(unitId).chargesUsed[abilityId] ?? 0);
 }
 
@@ -488,11 +488,11 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
    * lengthens it, and stacking changes an effect in place, which its trait already sees.
    */
   const units = Object.values(battle.units);
-  let cached: { alive: boolean[]; effects: EffectInstance[][]; lengths: number[]; traits: Map<string, readonly Trait[]>; ids: Map<string, string[]>; grants: Map<string, AbilityRef[]>; all: readonly Trait[] | null } | null = null;
+  let cached: { alive: boolean[]; effects: EffectInstance[][]; lengths: number[]; traits: Map<string, readonly Trait[]>; ids: Map<string, string[]>; grants: Map<string, AbilityRef[]>; power: Map<string, number>; all: readonly Trait[] | null } | null = null;
   const memo = () => {
     const valid = cached !== null && units.every((u, i) => u.alive === cached?.alive[i] && u.effects === cached.effects[i] && u.effects.length === cached.lengths[i]);
     if (!valid || !cached) {
-      cached = { alive: units.map((u) => u.alive), effects: units.map((u) => u.effects), lengths: units.map((u) => u.effects.length), traits: new Map(), ids: new Map(), grants: new Map(), all: null };
+      cached = { alive: units.map((u) => u.alive), effects: units.map((u) => u.effects), lengths: units.map((u) => u.effects.length), traits: new Map(), ids: new Map(), grants: new Map(), power: new Map(), all: null };
     }
     return cached;
   };
@@ -509,7 +509,7 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
       for (const ref of owner.abilities) {
         const b = behavior(ref.id);
         if (b.kind !== "passive" || !b.hooks.grants) continue;
-        for (const granted of b.hooks.grants(ctx, { unitId: owner.id, params: paramsOf(ref), effect: null }, id)) {
+        for (const granted of b.hooks.grants(ctx, { unitId: owner.id, params: paramsOf(ref, abilityPower(owner.id)), effect: null }, id)) {
           if (fromOthers.has(granted.id)) continue;
           fromOthers.add(granted.id);
           refs.push(granted);
@@ -533,9 +533,26 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
   const abilityRef = (unitId: string, abilityId: string): AbilityRef =>
     unit(unitId).abilities.find((r) => r.id === abilityId) ?? grantedTo(unitId).find((r) => r.id === abilityId) ?? { id: abilityId };
 
+  /**
+   * Passive abilities' params scale with ability power, and their traits feed `stats`; so ability power comes from
+   * the unit and the effects on the field alone (levels, items, other units' buffs), never from a passive ability.
+   */
+  const abilityPower = (id: string): number => {
+    const store = memo().power;
+    const known = store.get(id);
+    if (known !== undefined) return known;
+    const result = { ...unit(id).base };
+    for (const owner of living()) for (const effect of owner.effects) effectDef(effect.def).hooks.stats?.(ctx, { unitId: owner.id, params: {}, effect }, id, result);
+    const power = Math.max(0, result.abilityPower);
+    store.set(id, power);
+    return power;
+  };
+
   const stats = (id: string): Stats => {
     const result = { ...unit(id).base };
     for (const t of allTraits(ctx)) t.hooks.stats?.(ctx, t.self, id, result);
+    if (Math.max(0, result.abilityPower) !== abilityPower(id)) throw new Error(`a passive ability changed ${id}'s ability power: give it an effect instead`);
+    result.abilityPower = abilityPower(id);
     result.damage = Math.max(0, result.damage);
     result.initiative = Math.max(0, result.initiative);
     result.armor = Math.max(0, result.armor);
@@ -569,6 +586,7 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
     battle,
     unit,
     stats,
+    abilityPower,
     living,
     hit: (sourceId, targetIds, spec) => hit(ctx, sourceId, targetIds, spec),
     hitSpec: (self, type) => ({

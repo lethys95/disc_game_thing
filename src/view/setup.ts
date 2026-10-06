@@ -247,7 +247,7 @@ export class Setup {
       });
       const label = (a: (typeof special)[number]) => a.name ?? BEHAVIORS[a.id]?.name ?? a.id;
       card.appendChild(element("div", "abilities", special.map(label).join(" · ")));
-      card.title = special.map((a) => `${label(a)}: ${describeAbility(a)}`).join("\n");
+      card.title = special.map((a) => `${label(a)}: ${describeAbility(a, def.stats.abilityPower)}`).join("\n");
       card.addEventListener("click", (e) => {
         e.stopPropagation();
         this.brush = this.brush === defId ? null : defId;

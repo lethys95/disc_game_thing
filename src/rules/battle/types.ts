@@ -24,6 +24,11 @@ export interface Stats {
   damage: number;
   armor: number;
   initiative: number;
+  /**
+   * How strong its abilities are, in percent: the magnitudes each behavior lists in `scales` (heals, ability damage,
+   * shields, burns) are multiplied by it. 100 is the numbers as written. Its weapon damage is `damage`, not this.
+   */
+  abilityPower: number;
 }
 
 /** Numeric tuning for one use of a behavior: power, charges, amounts. */
@@ -340,6 +345,8 @@ export interface ActiveBehavior {
    * that many spell charges; `overload` and `replicate` (extra cost, per copy for replicate) allow those enhancements.
    */
   readonly defaults?: Params;
+  /** The params that are magnitudes, grown or shrunk by the unit's ability power (`Stats.abilityPower`). */
+  readonly scales?: readonly string[];
   /** Uses the damage type given here instead of the unit's. */
   readonly damageType?: DamageType;
   /** Wait: puts the unit back in the queue instead of acting. Not an ability a Counter can cancel. */
@@ -360,6 +367,8 @@ export interface PassiveBehavior {
   readonly kind: "passive";
   readonly name: string;
   readonly defaults?: Params;
+  /** As on active behaviors: the params that grow with ability power. */
+  readonly scales?: readonly string[];
   /** Rules text, written from the ability's effective params. */
   describe(params: Params): string;
   readonly hooks: Hooks;
@@ -375,6 +384,11 @@ export interface Ctx {
   readonly battle: Battle;
   unit(id: string): BattleUnit;
   stats(id: string): Stats;
+  /**
+   * The unit's ability power: the same as `stats(id).abilityPower`, but safe to ask while traits are being built
+   * (passive abilities' params scale with it, and they feed `stats`).
+   */
+  abilityPower(id: string): number;
   living(side?: Side): BattleUnit[];
   /** The damage pipeline: power → outgoing → conversion → incoming → armor → pools → mitigation → HP, then reactions. */
   hit(sourceId: string, targetIds: readonly string[], spec: HitSpec): void;

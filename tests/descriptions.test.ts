@@ -8,9 +8,9 @@ const readable = (text: string) => text.length > 0 && !/undefined|NaN/.test(text
 
 describe("rules text", () => {
   test("every ability describes itself with its default params, and as each unit uses it", () => {
-    for (const id of Object.keys(BEHAVIORS)) expect(readable(describeAbility({ id })), id).toBe(true);
+    for (const id of Object.keys(BEHAVIORS)) expect(readable(describeAbility({ id }, 100)), id).toBe(true);
     for (const unit of Object.values(UNITS)) {
-      for (const ref of unit.abilities) expect(readable(describeAbility(ref)), `${unit.id}: ${ref.id}`).toBe(true);
+      for (const ref of unit.abilities) expect(readable(describeAbility(ref, unit.stats.abilityPower)), `${unit.id}: ${ref.id}`).toBe(true);
     }
   });
 

@@ -83,6 +83,7 @@ export const core: Readonly<Record<string, Behavior>> = {
     describe: (p) => `${uses(p)}: an ally (or this unit) heals ${p["amount"]}.`,
     tags: ["heal"],
     defaults: { charges: 1, amount: 30 },
+    scales: ["amount"],
     choices: (ctx, self) =>
       ctx
         .living(ctx.unit(self.unitId).side)
@@ -99,6 +100,7 @@ export const core: Readonly<Record<string, Behavior>> = {
     describe: (p) => `${uses(p)}: throw it at any enemy for ${p["power"]}.`,
     tags: ["attack", "ranged", "damage"],
     defaults: { charges: 1, power: 30 },
+    scales: ["power"],
     choices: rangedChoices,
     resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self)),
   },

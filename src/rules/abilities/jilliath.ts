@@ -13,6 +13,7 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
     describe: (p) => `Heal a wounded ally for ${p["amount"]}, plus ${p["missing"]}% of the health it is missing.`,
     tags: ["heal"],
     defaults: { amount: 20, missing: 30 },
+    scales: ["amount"],
     choices: (ctx, self) =>
       ctx
         .living(ctx.unit(self.unitId).side)

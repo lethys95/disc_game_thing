@@ -88,6 +88,7 @@ export const keywords: Readonly<Record<string, Behavior>> = {
     kind: "passive",
     name: "Ignite",
     defaults: { burn: 8, turns: 3 },
+    scales: ["burn"],
     describe: (p) => `Its hits set the target burning: ${p["burn"]} damage at the start of each of its next ${p["turns"]} turns. A wet target doesn't catch.`,
     hooks: {
       afterHit: (ctx, self, targetId) => {

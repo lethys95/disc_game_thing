@@ -17,7 +17,7 @@ export function buildTraits(ctx: Ctx, unitId: string): Trait[] {
     const b = behavior(id);
     if (b.kind !== "passive") continue;
     const ref = ctx.abilityRef(unitId, id);
-    traits.push({ hooks: b.hooks, self: { unitId, params: paramsOf(ref), effect: null }, absorbPriority: 0 });
+    traits.push({ hooks: b.hooks, self: { unitId, params: paramsOf(ref, ctx.abilityPower(unitId)), effect: null }, absorbPriority: 0 });
   }
   return traits;
 }

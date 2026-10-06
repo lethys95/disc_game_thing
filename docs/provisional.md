@@ -80,3 +80,19 @@ other factions' three melee, support and mage. Five Congregants (now the formati
 opening and left Jilliath 3–12 against Ral-Vitahl in whole AI games; now 6–9 (`design/audit-2026-10-06.md`). The user
 (2026-10-06): "5 congregants isn't a good composition. You have two units which are virtually just dead on the board
 most of the fight. It's okay for it to lose." So the fix is the starting squad, not the Congregant.
+
+## 71. Ability power (2026-10-06, the user's stat; Claude's rules and numbers)
+The user: "I think we need ability power or something similar. A stat which controls the power level of these
+abilities instead of flat numbers."
+- `Stats.abilityPower`, in percent. Each behavior lists its magnitudes in `scales` (ability hits, heals, shields,
+  burns, Absorb's prevention, Backlash), and they're multiplied by it, rounded. Not scaled: charges, turns, costs,
+  percentages (Heal's share of missing health, Regrowth, Decay), stat buffs and debuffs (auras, Prey, Crack,
+  Withering), and anything already tied to the unit's damage (Condemn, Water's heal, Lay on Hands, a mage's bolt).
+  A unit's weapon damage stays its `damage`.
+- Levels raise it like health and damage: the veteran effect adds its share of base ability power too (+5% per
+  level, the Grove's ramp for the Grove).
+- It comes from the unit and effects (levels, items, buffs), never from a passive ability: passives' own numbers
+  scale with it. A buff to it must be an effect.
+- Shown on unit cards, the battle card and the codex only for units with an ability that scales.
+- The AI values a point of it at 0.5 (`STAT_WORTH`), like a point of health.
+- With every unit at 100, battle sims are unchanged; whole games differ only through veterans.

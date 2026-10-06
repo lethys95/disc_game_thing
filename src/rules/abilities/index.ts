@@ -26,12 +26,27 @@ export function behavior(id: string): Behavior {
   return found;
 }
 
-/** An ability's rules text for this unit's use of it. */
-export function describeAbility(ref: AbilityRef): string {
-  return behavior(ref.id).describe(paramsOf(ref));
+/** An ability's rules text for this unit's use of it, at the unit's ability power. */
+export function describeAbility(ref: AbilityRef, abilityPower: number): string {
+  return behavior(ref.id).describe(paramsOf(ref, abilityPower));
 }
 
-/** An ability's effective params: its behavior's defaults, overridden by the unit's own. */
-export function paramsOf(ref: AbilityRef): Params {
-  return { ...behavior(ref.id).defaults, ...ref.params };
+/**
+ * An ability's effective params: its behavior's defaults, overridden by the unit's own, with the magnitudes it
+ * `scales` multiplied by the unit's ability power (percent).
+ */
+export function paramsOf(ref: AbilityRef, abilityPower: number): Params {
+  const b = behavior(ref.id);
+  const params: Record<string, number> = { ...b.defaults, ...ref.params };
+  for (const key of b.scales ?? []) {
+    const value = params[key];
+    if (value !== undefined) params[key] = Math.round((value * abilityPower) / 100);
+  }
+  return params;
 }
+
+/** Uses per combat, if the ability is limited: not a magnitude, so ability power never changes it. */
+export const chargesOf = (ref: AbilityRef): number | undefined => ref.params?.["charges"] ?? behavior(ref.id).defaults?.["charges"];
+
+/** Whether any of these abilities grows with ability power: the views show the stat only where it does something. */
+export const usesAbilityPower = (refs: readonly AbilityRef[]): boolean => refs.some((ref) => (behavior(ref.id).scales?.length ?? 0) > 0);

@@ -118,6 +118,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
     kind: "passive",
     name: "Gorge",
     defaults: { heal: 25, damage: 6 },
+    scales: ["heal"],
     describe: (p) => `Whenever any unit dies, or a corpse is used up or destroyed, it heals ${p["heal"]} and deals ${p["damage"]} more damage for the rest of combat (no limit).`,
     hooks: {
       remains: (ctx, self, unitId) => {
@@ -136,6 +137,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
     describe: (p) => `Main action: an ally (or itself) regrows ${p["amount"]} HP at the start of each of its next ${p["turns"]} turns.`,
     tags: ["heal"],
     defaults: { amount: 12, turns: 3 },
+    scales: ["amount"],
     choices: (ctx, self) => ctx.living(ctx.unit(self.unitId).side).map((u) => single(u, "main")),
     resolve: (ctx, self, choice) => {
       for (const id of choice.affected) ctx.addEffect(id, { def: "mending", amount: self.params["amount"] ?? 0, stacks: self.params["turns"] ?? 3, source: self.unitId });
@@ -149,6 +151,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
     describe: (p) => `Main action: growth springs from a corpse (either side's); every living ally heals ${p["amount"]}. The corpse is used up.`,
     tags: ["heal"],
     defaults: { amount: 25 },
+    scales: ["amount"],
     choices: (ctx) => corpses(ctx, null).map((c) => at(c, [c.id], "main")),
     resolve: (ctx, self, choice) => {
       const corpse = choice.affected[0] ? ctx.unit(choice.affected[0]) : null;
@@ -169,6 +172,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
     describe: (p) => `Main action: an enemy corpse bursts. The enemies next to it take ${p["power"]} now and ${p["infest"]} at the start of each of their next ${p["turns"]} turns. The dead can't be raised.`,
     tags: ["damage", "area"],
     defaults: { power: 30, infest: 10, turns: 3 },
+    scales: ["power", "infest"],
     choices: (ctx, self) => {
       const enemy = opponent(ctx.unit(self.unitId).side);
       return corpses(ctx, enemy).map((c) => at(c, [c.id, ...ctx.living(enemy).filter((u) => adjacent(u.tile, c.tile)).map((u) => u.id)], "main"));
@@ -193,6 +197,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
     describe: (p) => `Main action, ranged. An enemy takes ${p["power"]}, and heals back a third at the start of its next turn. An ally heals ${p["heal"]}, and ${p["rot"]} rots in over its next 3 turns (feeding a Decay unit's rot).`,
     tags: ["damage"],
     defaults: { power: 40, heal: 35, rot: 12 },
+    scales: ["power", "heal", "rot"],
     choices: (ctx, self) => [...rangedChoices(ctx, self), ...ctx.living(ctx.unit(self.unitId).side).map((u) => single(u, "main"))],
     resolve: (ctx, self, choice) => {
       const me = ctx.unit(self.unitId);
@@ -241,6 +246,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
     describe: (p) => `Main action: an ally (or itself) heals ${p["heal"]} now, and regrows ${p["amount"]} at the start of each of its next ${p["turns"]} turns.`,
     tags: ["heal"],
     defaults: { heal: 25, amount: 12, turns: 3 },
+    scales: ["heal", "amount"],
     choices: (ctx, self) => ctx.living(ctx.unit(self.unitId).side).map((u) => single(u, "main")),
     resolve: (ctx, self, choice) => {
       for (const id of choice.affected) {
@@ -288,6 +294,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
     describe: (p) => `Main action, ${p["charges"]} per combat: any other unit, ally or enemy, leaves the field for ${p["rounds"]} round starts: it can't act or be hit, and doesn't hold its line. It returns healed ${p["heal"]}% of its max HP.`,
     tags: [],
     defaults: { charges: 1, rounds: 2, heal: 40 },
+    scales: ["heal"],
     choices: (ctx, self) => ctx.living().filter((u) => u.id !== self.unitId).map((u) => single(u, "main")),
     resolve: (ctx, self, choice) => {
       for (const id of choice.affected) ctx.addEffect(id, { def: "spiritwalking", stacks: self.params["rounds"] ?? 2, amount: self.params["heal"] ?? 0, source: self.unitId });
@@ -300,6 +307,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
     describe: (p) => `Main action: an ally (or itself) regrows ${p["amount"]} HP at the start of each of its next ${p["turns"]} turns.`,
     tags: ["heal"],
     defaults: { amount: 15, turns: 3 },
+    scales: ["amount"],
     choices: (ctx, self) => ctx.living(ctx.unit(self.unitId).side).map((u) => single(u, "main")),
     resolve: (ctx, self, choice) => {
       for (const id of choice.affected) ctx.addEffect(id, { def: "mending", amount: self.params["amount"] ?? 0, stacks: self.params["turns"] ?? 3, source: self.unitId });

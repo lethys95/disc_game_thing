@@ -24,6 +24,7 @@ export const nexus: Readonly<Record<string, Behavior>> = {
       `A burst of ${p["power"]} hitting every enemy in a plus shape. ${spellCost(p, "every enemy is hit")}`,
     tags: ["attack", "ranged", "spell", "damage", "area"],
     defaults: { power: 40, cost: 1 },
+    scales: ["power"],
     choices: (ctx, self) =>
       areaChoices(ctx, self, (row, col) => [{ row, col }, { row: row - 1, col }, { row: row + 1, col }, { row, col: col - 1 }, { row, col: col + 1 }]),
     overloadChoices: (ctx, self) => {
@@ -41,6 +42,7 @@ export const nexus: Readonly<Record<string, Behavior>> = {
       `Restore ${p["amount"]} of an ally's shield. Healing can't restore shields.`,
     tags: [],
     defaults: { amount: 40 },
+    scales: ["amount"],
     choices: (ctx, self) =>
       ctx
         .living(ctx.unit(self.unitId).side)
@@ -62,6 +64,7 @@ export const nexus: Readonly<Record<string, Behavior>> = {
       `Free action: secretly mark an enemy; the next ability it uses is cancelled${p["backlash"] ? `, and the backlash hits it for ${p["backlash"]}` : ""}. ${spellCost(p)}`,
     tags: ["spell"],
     defaults: { cost: 1 },
+    scales: ["backlash"],
     secretTarget: true,
     choices: (ctx, self) =>
       ctx
@@ -103,6 +106,7 @@ export const nexus: Readonly<Record<string, Behavior>> = {
       `On an enemy: a very weak ranged hit, and its next hit deals ${p["prevent"]} less. On an ally: the next hit on it deals ${p["prevent"]} less. This unit heals by what is prevented. Unlimited.`,
     tags: ["attack", "ranged", "spell", "damage"],
     defaults: { prevent: 15 },
+    scales: ["prevent"],
     choices: (ctx, self) =>
       ctx
         .living()
@@ -148,6 +152,7 @@ export const nexus: Readonly<Record<string, Behavior>> = {
       `Lightning (${p["power"]}) strikes an enemy. ${spellCost(p, "it strikes every unit with the target's name, friend and foe alike")}`,
     tags: ["attack", "ranged", "spell", "damage", "area"],
     defaults: { power: 45, cost: 1 },
+    scales: ["power"],
     choices: (ctx, self) => ctx.living(opponent(ctx.unit(self.unitId).side)).map((target) => single(target, "main")),
     overloadChoices: (ctx, self) => {
       const everyone = ctx.living();

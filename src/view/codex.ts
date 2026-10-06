@@ -1,4 +1,4 @@
-import { BEHAVIORS, describeAbility } from "#rules/abilities/index";
+import { BEHAVIORS, describeAbility, usesAbilityPower } from "#rules/abilities/index";
 import type { UnitDef } from "#rules/battle/types";
 import { EFFECTS } from "#rules/effects";
 import { FACTIONS } from "#rules/factions";
@@ -127,6 +127,7 @@ export class Codex {
       ["Damage", `${def.stats.damage}${def.damageType === "weapon" ? "" : ` ${def.damageType}`}`],
       ["Armor", String(def.stats.armor)],
       ["Initiative", String(def.stats.initiative)],
+      ...(usesAbilityPower(def.abilities) ? [["Ability power", String(def.stats.abilityPower)] satisfies [string, string]] : []),
       ...(def.spellCharges ? [["Spell charges", String(def.spellCharges)] satisfies [string, string]] : []),
       ...(RECRUIT_COST[def.id] ? [["Recruit", `${RECRUIT_COST[def.id]} gold`] satisfies [string, string]] : []),
     ];
@@ -139,7 +140,7 @@ export class Codex {
     for (const ref of def.abilities.filter((a) => !COMMON.includes(a.id))) {
       const behavior = BEHAVIORS[ref.id];
       const item = element("li", behavior?.kind === "passive" ? "passive" : "");
-      item.append(element("span", "name", ref.name ?? behavior?.name ?? ref.id), element("div", "text", describeAbility(ref)));
+      item.append(element("span", "name", ref.name ?? behavior?.name ?? ref.id), element("div", "text", describeAbility(ref, def.stats.abilityPower)));
       abilities.appendChild(item);
     }
     page.appendChild(abilities);
@@ -180,7 +181,7 @@ export class Codex {
       const entry = element("div", "codex-entry");
       const head = element("div", "head");
       head.append(art({ kind: "ability", id }, "small"), element("span", "name", behavior.name), element("span", "kind", behavior.kind === "passive" ? "trait" : "ability"));
-      entry.append(head, element("div", "text", behavior.describe(behavior.defaults ?? {})), element("div", "users", users.map((u) => u.name).join(" · ")));
+      entry.append(head, element("div", "text", describeAbility({ id }, 100)), element("div", "users", users.map((u) => u.name).join(" · ")));
       page.appendChild(entry);
     }
     this.root.appendChild(page);

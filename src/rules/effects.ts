@@ -2,7 +2,7 @@ import { PUNISHMENT_MAX_STACKS } from "#rules/balance";
 import type { EffectDef, EffectInstance, Stacking, Stats } from "#rules/battle/types";
 
 /** What a point of each stat is worth to the AI, roughly in health. Rough, provisional. */
-const STAT_WORTH: Readonly<Record<keyof Stats, number>> = { maxHp: 0.5, shield: 0.5, damage: 2, armor: 3, initiative: 1 };
+const STAT_WORTH: Readonly<Record<keyof Stats, number>> = { maxHp: 0.5, shield: 0.5, damage: 2, armor: 3, initiative: 1, abilityPower: 0.5 };
 
 /** Punishment's per-stack penalty to damage and initiative. */
 export const PUNISHED_PER_STACK = 10;
@@ -589,7 +589,7 @@ const effects: readonly EffectDef[] = [
     id: "veteran",
     quiet: true,
     name: "Veteran",
-    describe: (e) => `+${e.amount}% of its base max HP and damage.`,
+    describe: (e) => `+${e.amount}% of its base max HP, damage and ability power.`,
     stacking: { mode: "merge" },
     lifetime: "battle",
     visibility: "public",
@@ -600,6 +600,7 @@ const effects: readonly EffectDef[] = [
         const share = (self.effect?.amount ?? 0) / 100;
         stats.maxHp += Math.round(base.maxHp * share);
         stats.damage += Math.round(base.damage * share);
+        stats.abilityPower += Math.round(base.abilityPower * share);
       },
     },
   },

@@ -1,6 +1,6 @@
 import { describeReward, describeTask, TASK_NAMES } from "#rules/battle/tarot";
 import type { TarotCard, TarotHand } from "#rules/battle/tarot";
-import { BEHAVIORS, describeAbility, paramsOf } from "#rules/abilities/index";
+import { BEHAVIORS, chargesOf, describeAbility, usesAbilityPower } from "#rules/abilities/index";
 import { effectDef } from "#rules/effects";
 import { abilityRef, actionsPerRound, effectiveStats, unitAbilities, upcomingSlots } from "#rules/battle/engine";
 import type { Battle, BattleEvent, BattleUnit, EffectInstance, Enhancement, LegalAbility, Side } from "#rules/battle/types";
@@ -240,6 +240,7 @@ export class Hud {
     row("Damage", stats.damage, unit.base.damage);
     row("Armor", stats.armor, unit.base.armor);
     row("Initiative", stats.initiative, unit.base.initiative);
+    if (usesAbilityPower(unitAbilities(battle, unit.id))) row("Ability power", stats.abilityPower, unit.base.abilityPower);
     const battery = def?.spellCharges;
     if (battery !== undefined) {
       table.appendChild(element("span", "name", "Spell charges"));
@@ -269,9 +270,9 @@ export class Hud {
       const item = element("li", behavior.kind);
       item.appendChild(art({ kind: "ability", id: ref.id }, "small"));
       item.appendChild(element("span", "name", ref.name ?? behavior.name));
-      const charges = paramsOf(ref)["charges"];
+      const charges = chargesOf(ref);
       if (charges !== undefined) item.appendChild(element("span", "charges", ` ${charges - (unit.chargesUsed[ref.id] ?? 0)}/${charges}`));
-      item.appendChild(element("div", "text", describeAbility(ref)));
+      item.appendChild(element("div", "text", describeAbility(ref, stats.abilityPower)));
       abilities.appendChild(item);
     }
     this.card.appendChild(abilities);
@@ -298,10 +299,10 @@ export class Hud {
       const key = option.enhancement.kind === "none" ? this.settings.keyFor(option.abilityId) : undefined;
       if (key) button.appendChild(element("span", "key", key.toUpperCase()));
       const ref = abilityRef(battle, unit.id, option.abilityId);
-      const charges = paramsOf(ref)["charges"];
+      const charges = chargesOf(ref);
       const used = unit.chargesUsed[option.abilityId] ?? 0;
       if (charges !== undefined) button.appendChild(element("span", "tag", `${charges - used}/${charges}`));
-      button.title = `${describeAbility(ref)}${key ? ` (${key.toUpperCase()})` : ""}`;
+      button.title = `${describeAbility(ref, effectiveStats(battle, unit.id).abilityPower)}${key ? ` (${key.toUpperCase()})` : ""}`;
       button.addEventListener("click", () => this.handlers.onAbility(optionKey(option)));
       button.addEventListener("mouseenter", () => this.handlers.onAbilityHover(optionKey(option)));
       button.addEventListener("mouseleave", () => this.handlers.onAbilityHover(null));

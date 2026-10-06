@@ -1,6 +1,6 @@
 import { itemById } from "#rules/items";
 import { NODES } from "#rules/nodes";
-import { BEHAVIORS, describeAbility } from "#rules/abilities/index";
+import { BEHAVIORS, describeAbility, usesAbilityPower } from "#rules/abilities/index";
 import { effectDef } from "#rules/effects";
 import type { Commitment } from "#rules/forks";
 import { nextForm, xpToEvolve, xpToLevel } from "#rules/progression";
@@ -67,7 +67,8 @@ export function memberRow(m: SquadMember, leader: Leader | undefined, commitment
 }
 
 /** What a unit type is, before you have one: portrait, stats and abilities (for choosing a branch). */
-export function unitDefCard(defId: string): HTMLElement {
+/** `abilityPower`: what its abilities are described at (a veteran's is higher than its type's). */
+export function unitDefCard(defId: string, abilityPower?: number): HTMLElement {
   const def = UNITS[defId];
   const card = element("div", "def-card");
   if (!def) return card;
@@ -75,13 +76,14 @@ export function unitDefCard(defId: string): HTMLElement {
   card.append(element("div", "title", def.name), element("div", "subtitle", `Tier ${def.tier}`));
   const s = def.stats;
   const facts = [`${s.maxHp} HP`, s.shield > 0 ? `${s.shield} shield` : "", `${s.damage} damage${def.damageType === "weapon" ? "" : ` (${def.damageType})`}`, `${s.armor} armor`, `${s.initiative} initiative`];
+  if (usesAbilityPower(def.abilities)) facts.push(`${s.abilityPower} ability power`);
   if (def.spellCharges) facts.push(`${def.spellCharges} spell charges`);
   card.appendChild(element("div", "stats", facts.filter((f) => f).join(" · ")));
   for (const ref of def.abilities) {
     const behavior = BEHAVIORS[ref.id];
     if (!behavior || (behavior.kind === "active" && behavior.tags.includes("basic"))) continue;
     const item = element("div", "ability");
-    item.append(element("span", "name", ref.name ?? behavior.name), element("div", "text", describeAbility(ref)));
+    item.append(element("span", "name", ref.name ?? behavior.name), element("div", "text", describeAbility(ref, abilityPower ?? s.abilityPower)));
     card.appendChild(item);
   }
   return card;
@@ -92,10 +94,11 @@ export function unitDefCard(defId: string): HTMLElement {
  * (marks, levels and the leader tree included), its health, and its track record.
  */
 export function memberCard(m: SquadMember, leader: Leader | undefined): HTMLElement {
-  const card = unitDefCard(m.defId);
-  const def = UNITS[m.defId];
   const s = ownStats(placementOf(m, leader));
+  const card = unitDefCard(m.defId, s.abilityPower);
+  const def = UNITS[m.defId];
   const facts = [`${m.hp} / ${maxHpOf(m, leader)} HP`, s.shield > 0 ? `${s.shield} shield` : "", `${s.damage} damage${def && def.damageType !== "weapon" ? ` (${def.damageType})` : ""}`, `${s.armor} armor`, `${s.initiative} initiative`];
+  if (def && usesAbilityPower(def.abilities)) facts.push(`${s.abilityPower} ability power`);
   if (def?.spellCharges) facts.push(`${def.spellCharges} spell charges`);
   card.querySelector(".stats")?.replaceWith(element("div", "stats", facts.filter((f) => f).join(" · ")));
   const title = card.querySelector(".title");

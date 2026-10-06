@@ -43,6 +43,7 @@ export const carnival: Readonly<Record<string, Behavior>> = {
     describe: (p) => `Main action, thrown: an ally (or itself) heals ${p["heal"]}.`,
     tags: ["heal"],
     defaults: { heal: 30 },
+    scales: ["heal"],
     choices: (ctx, self) => ctx.living(ctx.unit(self.unitId).side).map((u) => single(u, "main")),
     resolve: (ctx, self, choice) => {
       for (const id of choice.affected) ctx.heal(id, self.params["heal"] ?? 0);
@@ -56,6 +57,7 @@ export const carnival: Readonly<Record<string, Behavior>> = {
     describe: (p) => `Its attack, thrown: one enemy anywhere takes ${p["power"]} fire.`,
     tags: ["attack", "ranged", "damage"],
     defaults: { power: 18 },
+    scales: ["power"],
     choices: rangedChoices,
     resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self, "fire")),
   },
