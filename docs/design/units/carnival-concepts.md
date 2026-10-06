@@ -130,3 +130,11 @@ interesting having different types of people in this faction here."
   darkened face, with hooded 1000's silhouette and eye coat. Dark skin, coiled braids under the hood, a gold
   medallion headband. The half-veil didn't take: the coins still cover her mouth in all three. Claude's pick:
   *hooded-african* 1001 (eyes and brows clear, the eye on her sleeve); *halfveil* 1000 shows the most face.
+
+## The user on round five (2026-10-06)
+"I just realized describing how her face needs to be accurate is actually a red herring. I enjoyed the fully veiled
+one the most […] It was more mysterious - She can't actually see anything. Very spooky. I think we lost some of the
+mystery by making some of her face visible […] maybe we should try just adding black or brown skin to the other entry.
+Because I did enjoy the fully veiled one with the odd metal piece veil."
+- **Round six** (`SOOTHSAYERS_6`): hooded 1000's prompt word for word, with "deep dark brown skin" added, so seed
+  1000 keeps its composition.

@@ -590,6 +590,17 @@ const SOOTHSAYERS_5: Readonly<Record<string, { readonly subject: string }>> = {
   },
 };
 
+/**
+ * Round six (the user, 2026-10-06): describing her face was "a red herring". Hooded 1000's fully veiled face is the
+ * point ("more mysterious – she can't actually see anything. Very spooky"); that prompt word for word with dark skin
+ * added, so seed 1000 keeps its composition.
+ */
+const SOOTHSAYERS_6: Readonly<Record<string, { readonly subject: string }>> = {
+  "soothsayer-hooded-dark": {
+    subject: `A fortune teller of a nomadic swindlers' carnival, a tall woman with deep dark brown skin whose face is hidden: a deep hood, and below it a veil of strung gold coins, so only her eyes show, one of them milky white and glowing faintly. She wears ${EYE_JACKET}, its hood part of the same striped canvas, over a dark wrapped dress and boots.`,
+  },
+};
+
 const SOOTHSAYER_CARDS =
   "a fan of five oversized tarot cards made as weapons: plates of thin dark metal with gilded razor edges, their faces painted with dark arcana and a single staring eye on each back; beside them one card seen edge-on, and a single card held between two gloved fingers.";
 
@@ -597,7 +608,7 @@ const prop = (description: string, materials: string) =>
   `A 3D render of a game prop model, like a textured asset shown in a modelling program: ${description} ${materials} Each view whole and separate, laid flat. Flat, even, shadowless lighting from all sides. A plain flat light grey background, no ground, no hands, no text.`;
 
 const CARNIVAL_JOBS = [
-  ...Object.entries({ ...OMENS, ...SOOTHSAYERS, ...OMENS_2, ...SOOTHSAYERS_2, ...OMENS_3, ...SOOTHSAYERS_3, ...SOOTHSAYERS_4, ...SOOTHSAYERS_5 }).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Hands empty and open, no weapon.`, CARNIVAL_3D) })),
+  ...Object.entries({ ...OMENS, ...SOOTHSAYERS, ...OMENS_2, ...SOOTHSAYERS_2, ...OMENS_3, ...SOOTHSAYERS_3, ...SOOTHSAYERS_4, ...SOOTHSAYERS_5, ...SOOTHSAYERS_6 }).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Hands empty and open, no weapon.`, CARNIVAL_3D) })),
   { id: "omen-pistols-props", prompt: prop(OMEN_PISTOLS, CARNIVAL_3D), width: 2048, height: 832 },
   { id: "soothsayer-orb-props", prompt: prop(SOOTHSAYER_PROPS, CARNIVAL_3D), width: 2048, height: 832 },
   { id: "soothsayer-cards-props", prompt: prop(SOOTHSAYER_CARDS, CARNIVAL_3D), width: 2048, height: 832 },
