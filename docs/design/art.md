@@ -195,3 +195,17 @@ All 43 abilities without art got icons in the recipe of the four the user liked 
 - **The Omen, Soothsayer and Etherborn (2026-10-06):** portraits from their picked concepts (cards at 0.9, posed:
   the Omen with a flintlock, the Soothsayer with the eye orb hovering over one hand and cards in the other, the
   Etherborn with arcane fire). Bust and icon cut from the card; installed. Fifteen units have portraits now.
+
+## HUD and UI elements: more, and more creative (the user, 2026-10-06; for when ComfyUI is free)
+"We need more UI elements for HUD and more. Maybe some more creative bits. Like maybe a gargoyle of an angel or
+something baked into the corner of the hud in a natural way. The current gargoyle you see in the capitol hud is too
+literal. Think 'grotesque'. Stone part of a building shaped like an angel, but built into the hud instead, in the same
+gothic/fantasy type vibe we're looking for. Right now the hud elements we have are arguably limiting us design wise by
+quite a bit, and we don't really need to be restrained at all."
+- The direction: architectural sculpture grown into the interface, not ornaments set on it. A stone angel, a
+  grotesque, carved into a HUD corner as if the panel were part of a cathedral. The current gargoyle (a standalone
+  figure on the Capitol's rail) reads as a sticker.
+- The kit (`assets/ui/`: frame, plaque, button, medallion, gargoyle, backdrop, plate, icons) is too small to design
+  with. A broader set: corner pieces that wrap two panel edges, finials and spires for tops, a keystone for headers,
+  carved caps for the battle's ability bar and turn order, per-faction variants.
+- Generated in the `krea-images` flow once ComfyUI is free, then cut out (`scripts/art/ui_cut.py`). Not started.

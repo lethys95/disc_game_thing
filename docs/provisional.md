@@ -77,4 +77,6 @@ Placeholders Claude picked so the game runs: numbers and rules the design doesn'
 ## 70. Jilliath's opening squad (2026-10-06, the audit)
 A map game starts Jilliath with three Congregants, a Cleric and its tier-1 mage (`PRESETS.uncommitted`), like the
 other factions' three melee, support and mage. Five Congregants (now the formation "Congregants") lost to every other
-opening and left Jilliath 3–12 against Ral-Vitahl in whole AI games; now 6–9 (`design/audit-2026-10-06.md`).
+opening and left Jilliath 3–12 against Ral-Vitahl in whole AI games; now 6–9 (`design/audit-2026-10-06.md`). The user
+(2026-10-06): "5 congregants isn't a good composition. You have two units which are virtually just dead on the board
+most of the fight. It's okay for it to lose." So the fix is the starting squad, not the Congregant.

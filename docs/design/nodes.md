@@ -34,3 +34,8 @@ All of the above, with provisional numbers (`provisional.md` #56). Each neutral 
 
 ## The user's own idea: the Waystone (2026-09-29, from the items notes)
 "Could add like a waystone node for cities. Gain spell 'way portal' if controlled. Units elevated to leader in the city get teleported to the city when cast. All units stop counting as having been elevated there if the city is taken." Not built yet.
+
+## Idea (the user, 2026-10-06): an offensive Cathedral
+"The only way for 5 congregants to work, would be if somehow you attached it to a city which provided them with ranged
+attacks, which we'll get later probably. Like cathedral but offensive." A node whose recruits get a ranged attack (or
+one that lets back-row melee strike), making all-melee squads viable. Not designed yet; for later.

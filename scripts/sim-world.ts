@@ -81,7 +81,10 @@ for (const seed of seeds.length > 0 ? seeds : [1, 2, 3, 4, 5]) {
   if (verbose) {
     const armies = world.leaders.map((l) => `${l.player}[${l.squad.map((m) => `${m.defId}:${UNITS[m.defId]?.tier ?? 0}`).join(",")}]`).join(" ");
     const garrisons = world.cities.filter((c) => c.kind === "capitol").map((c) => `${c.owner}{${c.garrison.map((m) => m.defId).join(",")}}`).join(" ");
-    console.log(`  battles ${timeline.join(" ")}\n  lairs left ${world.lairs.filter((l) => l.guards.length > 0).length}\n  armies ${armies}\n  capitols ${garrisons}`);
+    const nodes = world.nodes.map((n) => `${n.kind}:${n.level}`).join(" ");
+    const walls = world.cities.map((c) => `${c.id}:${c.tier}`).join(" ");
+    const spells = world.players.map((p, i) => `${i}[${p.spells.join(",")}]`).join(" ");
+    console.log(`  battles ${timeline.join(" ")}\n  lairs left ${world.lairs.filter((l) => l.guards.length > 0).length}\n  armies ${armies}\n  capitols ${garrisons}\n  nodes ${nodes}\n  city levels ${walls}\n  spells ${spells}`);
   }
   // For `sim-many`: the result as data, on a line of its own.
   console.log(`RESULT ${JSON.stringify({ winner: world.outcome?.winner ?? null, turn: world.turn, battles, players: byPlayer, gold: world.players.map((p) => p.gold) })}`);

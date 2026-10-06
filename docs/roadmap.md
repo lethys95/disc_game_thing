@@ -130,6 +130,9 @@ name on the title ("disc") is a placeholder.
 - The user's map notes: foliage, lighting, props sitting into the ground; TRELLIS.2 when access arrives.
 
 ## Then
+- **A bigger UI kit (user, 2026-10-06):** grotesques carved into the HUD's corners (a stone angel, not a literal
+  gargoyle sticker), corner pieces, finials, keystones, carved caps for the ability bar and turn order; when ComfyUI
+  is free (`design/art.md`).
 - Faction content as the user designs it (Nexus trees first; Grove and Wastes later). The user owns unit designs and looks.
 - A spell tree in the Capitol, and the real spells (#51).
 - Leader experience (#33), the economy question.
