@@ -126,3 +126,7 @@ interesting having different types of people in this faction here."
 - **Round five** (`SOOTHSAYERS_5`): the hooded Soothsayer as a Black woman of West African descent, her features
   named (her face is mostly veiled: dark brown skin, a broad nose, high cheekbones, coiled braids from under the hood).
   A second reading with a half-veil over the chin only shows more of her face.
+- **Round five, read (Claude):** it took in all six: she reads as a Black woman of African descent rather than a
+  darkened face, with hooded 1000's silhouette and eye coat. Dark skin, coiled braids under the hood, a gold
+  medallion headband. The half-veil didn't take: the coins still cover her mouth in all three. Claude's pick:
+  *hooded-african* 1001 (eyes and brows clear, the eye on her sleeve); *halfveil* 1000 shows the most face.
