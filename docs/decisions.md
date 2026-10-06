@@ -219,3 +219,11 @@ if fights grow samey. Focus: core gameplay.
 Jilliath's duality is **faith vs fanaticism** (the user). "Faith preserves / faith consumes" came in with the July
 redesign doc on 2026-09-25 and spread into labels and notes; the user didn't recognise it. The fork's labels, the
 formations and the dichotomies doc now say Faith and Fanaticism. Older notes keep the old words where they quote that doc.
+
+## Ability power multiplies; units differ by the stat, not by their own numbers (2026-10-06)
+The user asked for "a stat which controls the power level of these abilities instead of flat numbers". It is a
+percentage that multiplies the magnitudes each behavior lists in `scales`, so an ability is written once at strength
+100 and a unit's tier, levels and buffs decide how hard it lands. Additive spell power (WoW-style coefficients) was the
+alternative; a multiplier needs no per-ability coefficient and keeps today's numbers readable as "at 100". It comes
+from the unit and effects only: passive abilities' own numbers scale with it, so a passive feeding it would be a
+cycle. Units keep their own number only where they're meant to break the curve (`provisional.md` #71).

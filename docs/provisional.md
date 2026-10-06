@@ -95,4 +95,20 @@ abilities instead of flat numbers."
   scale with it. A buff to it must be an effect.
 - Shown on unit cards, the battle card and the codex only for units with an ability that scales.
 - The AI values a point of it at 0.5 (`STAT_WORTH`), like a point of health.
-- With every unit at 100, battle sims are unchanged; whole games differ only through veterans.
+- With every unit at 100, battle sims were unchanged; whole games differed only through veterans.
+- **By tier (the fold, second step):** each unit's ability power is 100 at tier 1, then +25 a tier (125, 150, 175,
+  200), set on the unit so any one can be tuned alone. Abilities' defaults are now their strength at 100, and units'
+  own flat numbers were removed wherever the curve gives the same number. What moved (before → after):
+  | Unit (tier) | Ability | Before | After |
+  |---|---|---|---|
+  | Justiciar, Thaumaturge (2) | Burst | 40 | 44 |
+  | Backlasher, Maelstrom (3) | Burst | 55 | 53 |
+  | Backlasher (3) | Backlash | 40 | 41 |
+  | Spiritess 2 (2) | Spirit bloom's regrowth | 12 | 13 |
+  | Psychopomp (3) | Spirit bloom's heal | 40 | 42 |
+  | Psychopomp (3) | Spiritwalk's heal | 40 | 41 |
+  | Regrowth 3 (3) | Grove mend | 40 | 41 |
+
+  Unchanged, with a unit's own number kept on purpose: the Maelstrom's Homing Lightning (70 at 100 → 105; the curve
+  alone gives 66) and Decay support 2's Bloom (6 → 8, a weak Bloom beside its corpse abilities). Every other
+  ability's number is the same as before.

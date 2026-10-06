@@ -57,7 +57,7 @@ export const NEUTRAL_UNITS: Readonly<Record<string, UnitDef>> = {
   // Strong camps only: the pack's leader.
   matriarch: {
     id: "matriarch", name: "Matriarch", faction: "neutral", tier: 2, damageType: "weapon",
-    stats: { maxHp: 260, shield: 0, damage: 42, armor: 5, initiative: 50, abilityPower: 100 },
+    stats: { maxHp: 260, shield: 0, damage: 42, armor: 5, initiative: 50, abilityPower: 125 },
     abilities: [{ id: "pecking_order" }, { id: "run_them_down" }, ...kit("attack", "defend", "wait")],
   },
   // The Drawn: moth-folk, Claude's own tribe (the user asked for one, 2026-10-04: `faction-stuff/neutrals/the-drawn.md`).
@@ -85,19 +85,19 @@ export const NEUTRAL_UNITS: Readonly<Record<string, UnitDef>> = {
   // Strong camps: the brood's mother.
   pale_mother: {
     id: "pale_mother", name: "Pale Mother", faction: "neutral", tier: 2, damageType: "weapon",
-    stats: { maxHp: 240, shield: 0, damage: 34, armor: 3, initiative: 45, abilityPower: 100 },
+    stats: { maxHp: 240, shield: 0, damage: 34, armor: 3, initiative: 45, abilityPower: 125 },
     abilities: [{ id: "dust_veil" }, ...kit("flit", "open_the_eyes", "defend", "wait")],
   },
   // The carnival: the user's nomadic swindler tribe (2026-10-05, `faction-stuff/neutrals/carnival.md`). Not on the
   // map yet. Numbers provisional (#67).
   soothsayer: {
     id: "soothsayer", name: "Soothsayer", faction: "neutral", tier: 2, damageType: "weapon",
-    stats: { maxHp: 150, shield: 0, damage: 55, armor: 0, initiative: 45, abilityPower: 100 },
+    stats: { maxHp: 150, shield: 0, damage: 55, armor: 0, initiative: 45, abilityPower: 125 },
     abilities: [{ id: "tarot", params: { cards: 5 } }, ...kit("foretell", "curse", "defend", "wait")],
   },
   omen: {
     id: "omen", name: "Omen", faction: "neutral", tier: 2, damageType: "weapon",
-    stats: { maxHp: 130, shield: 0, damage: 40, armor: 0, initiative: 55, abilityPower: 100 },
+    stats: { maxHp: 130, shield: 0, damage: 40, armor: 0, initiative: 55, abilityPower: 125 },
     abilities: [{ id: "omen" }, ...kit("shoot", "defend", "wait")],
   },
   // The user, 2026-10-05: "very basic… Just high initiative and crit 4".

@@ -1,14 +1,16 @@
 import { BEHAVIORS, describeAbility } from "#rules/abilities/index";
 import { effectiveStats, legalActions } from "#rules/battle/engine";
-import { UNITS } from "#rules/units/index";
+import { EVOLUTIONS, UNITS } from "#rules/units/index";
 import { act, p, start, unit, until } from "#tests/helpers";
 import { describe, expect, test } from "vitest";
 
 const veteran = (percent: number) => [{ def: "veteran", amount: percent }];
 
 describe("ability power", () => {
-  test("every unit starts at 100: the numbers as written", () => {
-    for (const def of Object.values(UNITS)) expect(def.stats.abilityPower, def.id).toBe(100);
+  test("a unit never loses ability power by evolving", () => {
+    for (const [from, steps] of Object.entries(EVOLUTIONS)) {
+      for (const step of steps) expect(UNITS[step.to]?.stats.abilityPower ?? 0, `${from} → ${step.to}`).toBeGreaterThanOrEqual(UNITS[from]?.stats.abilityPower ?? 0);
+    }
   });
 
   test("levels raise it like the other stats, and an active ability's magnitudes grow with it", () => {

@@ -23,7 +23,7 @@ export const nexus: Readonly<Record<string, Behavior>> = {
     describe: (p) =>
       `A burst of ${p["power"]} hitting every enemy in a plus shape. ${spellCost(p, "every enemy is hit")}`,
     tags: ["attack", "ranged", "spell", "damage", "area"],
-    defaults: { power: 40, cost: 1 },
+    defaults: { power: 35, cost: 1 },
     scales: ["power"],
     choices: (ctx, self) =>
       areaChoices(ctx, self, (row, col) => [{ row, col }, { row: row - 1, col }, { row: row + 1, col }, { row, col: col - 1 }, { row, col: col + 1 }]),
@@ -105,7 +105,7 @@ export const nexus: Readonly<Record<string, Behavior>> = {
     describe: (p) =>
       `On an enemy: a very weak ranged hit, and its next hit deals ${p["prevent"]} less. On an ally: the next hit on it deals ${p["prevent"]} less. This unit heals by what is prevented. Unlimited.`,
     tags: ["attack", "ranged", "spell", "damage"],
-    defaults: { prevent: 15 },
+    defaults: { prevent: 10 },
     scales: ["prevent"],
     choices: (ctx, self) =>
       ctx
@@ -151,7 +151,7 @@ export const nexus: Readonly<Record<string, Behavior>> = {
     describe: (p) =>
       `Lightning (${p["power"]}) strikes an enemy. ${spellCost(p, "it strikes every unit with the target's name, friend and foe alike")}`,
     tags: ["attack", "ranged", "spell", "damage", "area"],
-    defaults: { power: 45, cost: 1 },
+    defaults: { power: 44, cost: 1 },
     scales: ["power"],
     choices: (ctx, self) => ctx.living(opponent(ctx.unit(self.unitId).side)).map((target) => single(target, "main")),
     overloadChoices: (ctx, self) => {
