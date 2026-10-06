@@ -453,6 +453,7 @@ const OMENS: Readonly<Record<string, { readonly subject: string }>> = {
   "omen-hanged": { subject: `${OMEN} Bare-headed and shaven, a frayed hangman's noose still knotted around his neck, its cut end hanging down his chest.` },
 };
 
+// Picked by the user: seed 1000.
 const OMEN_PISTOLS =
   "a pair of long ornate flintlock pistols of dark wood and tarnished brass, their barrels engraved with small skulls and stars, each grip capped with a brass raven's head; each pistol drawn twice, from the side and from above.";
 
@@ -495,6 +496,7 @@ const OMEN_2 =
   "A battered tall top hat. A long ragged trenchcoat of faded oxblood red to his ankles, a large black pentagram painted across its back; bandoliers of powder flasks across his chest, two empty holsters at his hips.";
 
 const OMENS_2: Readonly<Record<string, { readonly subject: string }>> = {
+  // Picked by the user: seed 1001.
   "omen-grin": { subject: `${OMEN_2} Old tarot cards tucked into the hat band.` },
   "omen-crow": { subject: `${OMEN_2} Black crow feathers stuck in the hat band, and a short ragged mantle of black crow feathers over the coat's shoulders.` },
   "omen-greasepaint": { subject: `${OMEN_2} His face is painted chalk white with cracked carnival greasepaint, the grin drawn wider in black paint at the corners of his mouth.` },
@@ -540,16 +542,46 @@ const ETHERBORN_3 =
 
 const ETHERBORNS_3: Readonly<Record<string, { readonly subject: string }>> = {
   "etherborn-regal": { subject: `${ETHERBORN_3} A rich noble gown of deep violet and black silk, heavy gold filigree on the bodice, a jewelled gold girdle and a long train.` },
+  // Picked by the user: seed 1001 ("the sleeved one… feels more noble").
   "etherborn-lined": { subject: `${ETHERBORN_3} An immaculate black silk gown with gold filigree and a long open overcoat whose lining is the same starfield as her skin.` },
 };
+
+/**
+ * The Soothsayer, round four (the user, 2026-10-06): "seeing old ladies on a battlefield just doesn't make much sense
+ * to me… I like her eye jacket a lot… I'd rather see the cards as something she wields rather than a mantle she wears…
+ * make her younger, less decrepit… Keep the eye jacket… shuffle the bag a bit. Try things out." The eye jacket and the
+ * coin veil held; four different women around them (Claude's), each someone who belongs in a fight. No hat (the Omen
+ * owns the top hat). The cards she wields get a prop sheet of their own.
+ */
+const EYE_JACKET =
+  "a long coat of faded red and mustard striped carnival tent canvas with dozens of large open eyes painted on it in white and black, staring in every direction";
+
+const SOOTHSAYERS_4: Readonly<Record<string, { readonly subject: string }>> = {
+  "soothsayer-duelist": {
+    subject: `A fortune teller and card-duelist of a nomadic swindlers' carnival, a lean, upright woman in her prime with a sharp, cold stare. A veil of strung gold coins over her mouth, heavy dark kohl around her eyes. She wears ${EYE_JACKET}, fitted at the waist, over dark leather breeches, tall boots and leather bracers. Short black hair.`,
+  },
+  "soothsayer-dancer": {
+    subject: `A fortune teller of a nomadic swindlers' carnival, a young, wiry, barefoot woman with long black hair in many thin braids threaded with coins. A veil of strung gold coins over her mouth, heavy kohl around her eyes. A short cropped jacket version of ${EYE_JACKET}, over wrapped dark sashes and loose trousers gathered at the ankle; stacks of bangles on both arms.`,
+  },
+  "soothsayer-hooded": {
+    subject: `A fortune teller of a nomadic swindlers' carnival, a tall woman whose face is hidden: a deep hood, and below it a veil of strung gold coins, so only her eyes show, one of them milky white and glowing faintly. She wears ${EYE_JACKET}, its hood part of the same striped canvas, over a dark wrapped dress and boots.`,
+  },
+  "soothsayer-gambler": {
+    subject: `A fortune teller and cardsharp of a nomadic swindlers' carnival, a woman in her thirties with a crooked, knowing smile and a scar across one cheek, a single gold coin hanging over her forehead from a chain in her dark hair, a half-veil of coins over her chin. She wears ${EYE_JACKET}, open over a black corset and a long split skirt, rings on every finger.`,
+  },
+};
+
+const SOOTHSAYER_CARDS =
+  "a fan of five oversized tarot cards made as weapons: plates of thin dark metal with gilded razor edges, their faces painted with dark arcana and a single staring eye on each back; beside them one card seen edge-on, and a single card held between two gloved fingers.";
 
 const prop = (description: string, materials: string) =>
   `A 3D render of a game prop model, like a textured asset shown in a modelling program: ${description} ${materials} Each view whole and separate, laid flat. Flat, even, shadowless lighting from all sides. A plain flat light grey background, no ground, no hands, no text.`;
 
 const CARNIVAL_JOBS = [
-  ...Object.entries({ ...OMENS, ...SOOTHSAYERS, ...OMENS_2, ...SOOTHSAYERS_2, ...OMENS_3, ...SOOTHSAYERS_3 }).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Hands empty and open, no weapon.`, CARNIVAL_3D) })),
+  ...Object.entries({ ...OMENS, ...SOOTHSAYERS, ...OMENS_2, ...SOOTHSAYERS_2, ...OMENS_3, ...SOOTHSAYERS_3, ...SOOTHSAYERS_4 }).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Hands empty and open, no weapon.`, CARNIVAL_3D) })),
   { id: "omen-pistols-props", prompt: prop(OMEN_PISTOLS, CARNIVAL_3D), width: 2048, height: 832 },
   { id: "soothsayer-orb-props", prompt: prop(SOOTHSAYER_PROPS, CARNIVAL_3D), width: 2048, height: 832 },
+  { id: "soothsayer-cards-props", prompt: prop(SOOTHSAYER_CARDS, CARNIVAL_3D), width: 2048, height: 832 },
 ];
 
 const ETHERBORN_JOBS = Object.entries({ ...ETHERBORNS, ...ETHERBORNS_2, ...ETHERBORNS_3 }).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(subject, NEXUS_NOBLE_3D) }));

@@ -88,3 +88,20 @@
   galaxies drift onto the gown. *Lined* puts the starfield in a coat lining. The trade-off: *bare-collar* 1001 (round
   two) shows the galaxy skin best; *regal* 1000 is the most noble.
 - Page: `shots/carnival.html`. **Stopped here for the user's picks;** portraits follow from the picked concepts.
+
+## The user's verdict (2026-10-06)
+"Generally I'd say this went rather well actually!" **Picked:**
+- **Omen:** `omen-grin-turnaround-1001` with the pistols `omen-pistols-props-1000`.
+- **Etherborn:** `etherborn-lined-turnaround-1001`, "the sleeved one. It feels more noble to me."
+
+**Soothsayer, not yet:** "seeing old ladies on a battlefield just doesn't make much sense to me… she doesn't look like
+she belongs on a battlefield, but rather in a nursing home. Also, I'd rather see the cards as something she wields
+rather than a mantle she wears. That's a bit too much. So try to make her younger, less decrepit… Keep the eye jacket,
+that one is cool… shuffle the bag a bit. Try things out."
+- **Round four** (`SOOTHSAYERS_4`): the eye jacket and the coin veil held; four different women around them, each
+  someone who belongs in a fight, no hat (the Omen owns the top hat):
+  - *duelist*: a lean card-duelist in her prime, the jacket fitted, leather breeches, boots, bracers;
+  - *dancer*: young, wiry, barefoot, coin-threaded braids, the jacket cropped short;
+  - *hooded*: a deep hood of the same canvas, only her eyes showing, one milky and glowing;
+  - *gambler*: a scarred cardsharp with a knowing smile, the jacket open over a corset.
+- The cards she wields get a prop sheet: oversized metal tarot cards with gilded razor edges, an eye on each back.
