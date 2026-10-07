@@ -5,8 +5,11 @@ import { describe, expect, test } from "vitest";
 /** Keywords any unit can carry (the user, 2026-10-05). Granted here through the `carries` effect. Provisional #65. */
 const carries = (id: string, params: Record<string, number> = {}): EffectSeed => ({ def: "carries", ability: { id, params } });
 
-/** The same battle with one unit's damage type changed (no unit deals lightning or water yet). */
-const dealing = (battle: Battle, id: string, type: "lightning" | "water"): Battle => ({ ...battle, units: { ...battle.units, [id]: { ...unit(battle, id), damageType: type } } });
+/** The same battle with one unit's abilities dealing another damage type. */
+const dealing = (battle: Battle, id: string, type: "lightning" | "water"): Battle => {
+  const dealer = unit(battle, id);
+  return { ...battle, units: { ...battle.units, [id]: { ...dealer, abilities: dealer.abilities.map((a) => ({ ...a, damageType: type })) } } };
+};
 
 describe("crit and evasion: counted, never rolled", () => {
   test("Crit 2: every second hit it lands deals double", () => {

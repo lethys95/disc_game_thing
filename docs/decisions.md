@@ -229,3 +229,10 @@ from the unit and effects only: passive abilities' own numbers scale with it, so
 cycle. Units keep their own number only where they're meant to break the curve (`provisional.md` #71). The curve is
 steep on purpose (the user, 2026-10-07: 100 × tier, after Disciples II, where tier 2 is about double): upgrades
 should feel significant, and it probably shortens maps.
+
+## Everything is an ability: no damage stat, no damage type on units (2026-10-07)
+The user: "flat damage stat shouldn't even be a thing […] Everything is an ability", and "having damage type on units
+instead of abilities doesn't really make sense either". A unit's numbers are health, shield, armor, initiative and
+ability power; what it hits for and with what element is each ability's. Buffs that used to raise damage add to every
+damaging hit instead (`Stats.hitBonus`, `hitPercent`, starting at 0), which keeps auras working as stat hooks. The views
+show hits through the abilities' own text and the hover preview.

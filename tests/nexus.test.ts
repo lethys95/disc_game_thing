@@ -1,5 +1,5 @@
 import { UNITS } from "#rules/units/index";
-import { applyAction, effectiveStats, legalActions } from "#rules/battle/engine";
+import { applyAction, legalActions, strongestHits } from "#rules/battle/engine";
 import { allowedUnits, choose, openForks } from "#rules/forks";
 import { grow } from "#rules/progression";
 import { act, anchorKey, p, start, unit, until } from "#tests/helpers";
@@ -88,6 +88,6 @@ describe("Mutant", () => {
   test("restoring a shield that's already full mutates it: +10 damage each time", () => {
     let battle = until(start([p("mutant", 0, 1), p("technician", 1, 1)], [p("congregant", 2, 2)]), "0.1.1");
     battle = act(battle, "restore_shield", "0.0.1").battle;
-    expect(effectiveStats(battle, "0.0.1").damage).toBe(50);
+    expect(strongestHits(battle)["0.0.1"]).toBe(50);
   });
 });

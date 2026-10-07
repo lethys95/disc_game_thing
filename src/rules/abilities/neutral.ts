@@ -8,9 +8,11 @@ export const neutral: Readonly<Record<string, Behavior>> = {
   area_2x2: {
     kind: "active",
     name: "Area Spell",
-    describe: () =>
-      "Ranged spell: hits every enemy in a 2x2 block.",
+    describe: (p) =>
+      `Ranged spell: hits every enemy in a 2x2 block for ${p["power"]}.`,
     tags: ["attack", "ranged", "spell", "damage", "area"],
+    defaults: { power: 20 },
+    scales: ["power"],
     choices: (ctx, self) =>
       areaChoices(ctx, self, (row, col) => {
         const r = Math.min(row, 1);

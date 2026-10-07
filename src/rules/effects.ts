@@ -2,7 +2,7 @@ import { PUNISHMENT_MAX_STACKS } from "#rules/balance";
 import type { Ctx, EffectDef, EffectInstance, Stacking, Stats } from "#rules/battle/types";
 
 /** What a point of each stat is worth to the AI, roughly in health. Rough, provisional. */
-const STAT_WORTH: Readonly<Record<keyof Stats, number>> = { maxHp: 0.5, shield: 0.5, damage: 2, armor: 3, initiative: 1, abilityPower: 0.5 };
+const STAT_WORTH: Readonly<Record<keyof Stats, number>> = { maxHp: 0.5, shield: 0.5, hitBonus: 2, hitPercent: 0.4, armor: 3, initiative: 1, abilityPower: 0.5 };
 
 /** Punishment's per-stack penalty to damage and initiative. */
 export const PUNISHED_PER_STACK = 10;
@@ -35,7 +35,7 @@ function lostUntilHurt(id: string, name: string): EffectDef {
       incoming: (ctx, self, packet) => {
         if (packet.amount > 0 && self.effect) ctx.removeEffect(self.unitId, self.effect);
       },
-      aiValue: (ctx, self) => -ctx.stats(self.unitId).damage,
+      aiValue: (ctx, self) => -ctx.strongestHit(self.unitId),
     },
   };
 }
@@ -112,7 +112,7 @@ const effects: readonly EffectDef[] = [
     hooks: {
       stats: (_ctx, self, subjectId, stats) => {
         if (subjectId !== self.unitId || !self.effect) return;
-        stats.damage -= PUNISHED_PER_STACK * self.effect.stacks;
+        stats.hitBonus -= PUNISHED_PER_STACK * self.effect.stacks;
         stats.initiative -= PUNISHED_PER_STACK * self.effect.stacks;
       },
     },
@@ -157,7 +157,7 @@ const effects: readonly EffectDef[] = [
         if (mark.amount > 0) ctx.hit(mark.source ?? self.unitId, [self.unitId], { power: mark.amount, type: "weapon", tags: ["spell", "damage"] });
         return "cancel";
       },
-      aiValue: (ctx, self) => -2 * ctx.unit(self.unitId).base.damage - (self.effect?.amount ?? 0),
+      aiValue: (ctx, self) => -2 * ctx.strongestHit(self.unitId) - (self.effect?.amount ?? 0),
     },
   },
   {
@@ -196,7 +196,7 @@ const effects: readonly EffectDef[] = [
       aiValue: (ctx, self) => {
         const bearer = ctx.unit(self.unitId);
         const enemies = ctx.living(bearer.side === 0 ? 1 : 0);
-        const hit = enemies.reduce((sum, u) => sum + ctx.stats(u.id).damage, 0) / Math.max(1, enemies.length);
+        const hit = enemies.reduce((sum, u) => sum + ctx.strongestHit(u.id), 0) / Math.max(1, enemies.length);
         return 2 * hit;
       },
     },
@@ -282,7 +282,7 @@ const effects: readonly EffectDef[] = [
     visibility: "public",
     hooks: {
       stats: (_ctx, self, subjectId, stats) => {
-        if (subjectId === self.unitId && self.effect) stats.damage += MUTATED_PER_STACK * self.effect.stacks;
+        if (subjectId === self.unitId && self.effect) stats.hitBonus += MUTATED_PER_STACK * self.effect.stacks;
       },
       aiValue: (_ctx, self) => 15 * (self.effect?.stacks ?? 0),
     },
@@ -498,8 +498,8 @@ const effects: readonly EffectDef[] = [
     hooks: {},
     onExpire: (ctx, self) => ctx.heal(self.unitId, Math.round((ctx.stats(self.unitId).maxHp * (self.effect?.amount ?? 0)) / 100)),
   },
-  flatStat({ id: "gorged", name: "Gorged", stat: "damage", stacking: { mode: "merge" }, describe: (e) => `Deals ${e.amount} more damage (fed on the dead).` }),
-  flatStat({ id: "withered", name: "Withered", stat: "damage", sign: -1, stacking: { mode: "unique" }, describe: (e) => `Deals ${e.amount} less damage (withered by a Decay unit).` }),
+  flatStat({ id: "gorged", name: "Gorged", stat: "hitBonus", stacking: { mode: "merge" }, describe: (e) => `Deals ${e.amount} more damage (fed on the dead).` }),
+  flatStat({ id: "withered", name: "Withered", stat: "hitBonus", sign: -1, stacking: { mode: "unique" }, describe: (e) => `Deals ${e.amount} less damage (withered by a Decay unit).` }),
   {
     // Mend: heals at the start of each of the bearer's turns while it lasts (`stacks` turns).
     id: "mending",
@@ -544,7 +544,7 @@ const effects: readonly EffectDef[] = [
     },
   },
   // A bought unit-type upgrade (placeholder content until the user designs unique ones).
-  flatStat({ id: "extra_damage", quiet: true, name: "Extra damage", stat: "damage", stacking: { mode: "merge" }, describe: (e) => `+${e.amount} damage.` }),
+  flatStat({ id: "extra_damage", quiet: true, name: "Extra damage", stat: "hitBonus", stacking: { mode: "merge" }, describe: (e) => `+${e.amount} damage.` }),
   {
     // Retreat (the user's surrender design from an earlier attempt): the unit turns its back and loses its next
     // turn, then leaves the battle alive at the start of the one after. `amount` counts the turns it has spent so.
@@ -622,7 +622,7 @@ const effects: readonly EffectDef[] = [
     id: "veteran",
     quiet: true,
     name: "Veteran",
-    describe: (e) => `+${e.amount}% of its base max HP, damage and ability power.`,
+    describe: (e) => `+${e.amount}% of its base max HP and ability power.`,
     stacking: { mode: "merge" },
     lifetime: "battle",
     visibility: "public",
@@ -632,7 +632,6 @@ const effects: readonly EffectDef[] = [
         const base = ctx.unit(subjectId).base;
         const share = (self.effect?.amount ?? 0) / 100;
         stats.maxHp += Math.round(base.maxHp * share);
-        stats.damage += Math.round(base.damage * share);
         stats.abilityPower += Math.round(base.abilityPower * share);
       },
     },
@@ -658,14 +657,14 @@ const effects: readonly EffectDef[] = [
     id: "leader_aura",
     quiet: true,
     name: "Leader's aura",
-    describe: (e) => `While this leader stands, its side's units deal +${e.amount}% of their base damage.`,
+    describe: (e) => `While this leader stands, its side's units deal ${e.amount}% more damage.`,
     stacking: { mode: "unique" },
     lifetime: "battle",
     visibility: "public",
     hooks: {
       stats: (ctx, self, subjectId, stats) => {
         const subject = ctx.unit(subjectId);
-        if (subject.side === ctx.unit(self.unitId).side) stats.damage += Math.round((subject.base.damage * (self.effect?.amount ?? 0)) / 100);
+        if (subject.side === ctx.unit(self.unitId).side) stats.hitPercent += self.effect?.amount ?? 0;
       },
     },
   },
@@ -723,7 +722,7 @@ const effects: readonly EffectDef[] = [
     stacking: { mode: "unique" },
     lifetime: "untilOwnTurn",
     visibility: "public",
-    hooks: { turnStart: () => "skip", aiValue: (ctx, self) => -ctx.stats(self.unitId).damage },
+    hooks: { turnStart: () => "skip", aiValue: (ctx, self) => -ctx.strongestHit(self.unitId) },
   },
   // Tarot rewards (`battle/tarot.ts`).
   {
@@ -735,9 +734,9 @@ const effects: readonly EffectDef[] = [
     visibility: "public",
     hooks: {
       stats: (_ctx, self, subjectId, stats) => {
-        if (subjectId === self.unitId) stats.damage += Math.round((stats.damage * (self.effect?.amount ?? 0)) / 100);
+        if (subjectId === self.unitId) stats.hitPercent += self.effect?.amount ?? 0;
       },
-      aiValue: (ctx, self) => ((ctx.unit(self.unitId).base.damage * (self.effect?.amount ?? 0)) / 100) * STAT_WORTH.damage,
+      aiValue: (ctx, self) => ((ctx.strongestHit(self.unitId) * (self.effect?.amount ?? 0)) / 100) * STAT_WORTH.hitBonus,
     },
   },
   flatStat({ id: "tarot_exposed", name: "Exposed", stat: "armor", sign: -1, stacking: { mode: "merge" }, describe: (e) => `−${e.amount} armor (an enemy's tarot card).` }),
@@ -754,7 +753,7 @@ const effects: readonly EffectDef[] = [
     onExpire: (ctx, self) => {
       const source = self.effect?.source;
       if (!source || !ctx.unit(source).alive) return;
-      ctx.hit(source, [self.unitId], { power: self.effect?.amount ?? 0, type: ctx.unit(source).damageType, tags: ["attack", "ranged", "damage"] });
+      ctx.hit(source, [self.unitId], { power: self.effect?.amount ?? 0, type: ctx.abilityRef(source, "foretell").damageType ?? "weapon", tags: ["attack", "ranged", "damage"] });
     },
   },
   {
@@ -767,7 +766,7 @@ const effects: readonly EffectDef[] = [
     visibility: "public",
     hooks: {
       stats: (_ctx, self, subjectId, stats) => {
-        if (subjectId === self.unitId) stats.damage -= Math.round((stats.damage * (self.effect?.amount ?? 0)) / 100);
+        if (subjectId === self.unitId) stats.hitPercent -= self.effect?.amount ?? 0;
       },
       turnStart: (ctx, self) => {
         const curse = self.effect;
@@ -776,7 +775,7 @@ const effects: readonly EffectDef[] = [
         else curse.stacks -= 1;
         return null;
       },
-      aiValue: (ctx, self) => -((ctx.stats(self.unitId).damage * (self.effect?.amount ?? 0)) / 100) * STAT_WORTH.damage * Math.max(1, self.effect?.stacks ?? 1),
+      aiValue: (ctx, self) => -((ctx.strongestHit(self.unitId) * (self.effect?.amount ?? 0)) / 100) * STAT_WORTH.hitBonus * Math.max(1, self.effect?.stacks ?? 1),
     },
   },
   // The gnolls (`abilities/gnolls.ts`).
@@ -850,7 +849,7 @@ const effects: readonly EffectDef[] = [
         packet.amount = 0;
         ctx.removeEffect(self.unitId, self.effect);
       },
-      aiValue: (ctx, self) => -ctx.stats(self.unitId).damage,
+      aiValue: (ctx, self) => -ctx.strongestHit(self.unitId),
     },
   },
   {
@@ -863,18 +862,15 @@ const effects: readonly EffectDef[] = [
     hooks: {},
   },
   {
-    // A Chrysalis that has emerged: it hits harder and flies.
+    // A Chrysalis that has emerged: it flies at its enemies (the Flit its Metamorphosis carries).
     id: "emerged",
     name: "Emerged",
-    describe: (e) => `Emerged from its cocoon: +${e.amount} damage, and it flies (Flit).`,
+    describe: () => "Emerged from its cocoon: it flies (Flit).",
     stacking: { mode: "unique" },
     lifetime: "battle",
     visibility: "public",
     hooks: {
-      stats: (_ctx, self, subjectId, stats) => {
-        if (subjectId === self.unitId) stats.damage += self.effect?.amount ?? 0;
-      },
-      grants: (_ctx, self, subjectId) => (subjectId === self.unitId ? [{ id: "flit" }] : []),
+      grants: (_ctx, self, subjectId) => (subjectId === self.unitId && self.effect?.ability ? [self.effect.ability] : []),
     },
   },
   // An Eyespot's or the Pale Mother's gaze.
@@ -892,7 +888,7 @@ const effects: readonly EffectDef[] = [
     visibility: "public",
     hooks: {
       stats: (ctx, self, subjectId, stats) => {
-        if (subjectId !== self.unitId && ctx.unit(subjectId).side === ctx.unit(self.unitId).side) stats.damage += self.effect?.amount ?? 0;
+        if (subjectId !== self.unitId && ctx.unit(subjectId).side === ctx.unit(self.unitId).side) stats.hitBonus += self.effect?.amount ?? 0;
       },
     },
   },

@@ -1,4 +1,4 @@
-import { effectiveStatsOf, legalActions, traitValues } from "#rules/battle/engine";
+import { effectiveStatsOf, legalActions, strongestHits, traitValues } from "#rules/battle/engine";
 import { createWorld } from "#rules/world/create";
 import { neutralGroup, tribeAt } from "#rules/world/state";
 import { act, p, start, twoPlayers, unit, until } from "#tests/helpers";
@@ -50,11 +50,11 @@ describe("gnolls", () => {
 
   test("Pecking order: the pack hits harder for the Matriarch; when she falls, the healthiest gnoll leads at half", () => {
     const battle = until(start([p("zealot", 0, 1)], [{ ...p("matriarch", 0, 1), hp: 1 }, p("packstalker", 0, 0), { ...p("bonecracker", 0, 2), hp: 30 }]), "0.0.1");
-    expect(effectiveStatsOf(battle)["1.0.0"]?.damage).toBe(20 + 8);
+    expect(strongestHits(battle)["1.0.0"]).toBe(20 + 8);
     const after = act(battle, "attack", "1.0.1").battle;
     expect(unit(after, "1.0.1").alive).toBe(false);
     expect(unit(after, "1.0.0").effects.some((e) => e.def === "next_in_line")).toBe(true);
-    expect(effectiveStatsOf(after)["1.0.2"]?.damage).toBe(24 + 4);
+    expect(strongestHits(after)["1.0.2"]).toBe(24 + 4);
   });
 
   test("camps and dungeons in the desert are guarded by gnolls, elsewhere by bandits", () => {

@@ -70,7 +70,7 @@ export function dealHand(ctx: Ctx, unitId: string, count: number, seed: number):
   const cards: TarotCard[] = [];
   for (let i = 0; i < count; i++) {
     const kind = left.length > 0 ? left.splice(Math.floor(random() * left.length), 1)[0] ?? "doubleKill" : pick(...TASKS);
-    const strongestHit = Math.max(1, ...allies.map((u) => ctx.stats(u.id).damage));
+    const strongestHit = Math.max(1, ...allies.map((u) => ctx.strongestHit(u.id)));
     const toughest = [...enemies].sort((a, b) => ctx.stats(b.id).maxHp - ctx.stats(a.id).maxHp || (a.id < b.id ? -1 : 1))[0];
     const task: TarotTask =
       kind === "killBefore" ? { kind, round: pick(2, 3) }

@@ -3,7 +3,7 @@ import { levelBonusPercent } from "#rules/world/record";
 import { forkOptions } from "#rules/forks";
 import { FACTION_ROOTS, UNITS } from "#rules/units/index";
 import { legalActions } from "#rules/battle/engine";
-import { act, p, start, unit, until } from "#tests/helpers";
+import { act, hitOf, p, start, unit, until } from "#tests/helpers";
 import { describe, expect, test } from "vitest";
 
 /** The Grove's melee line (the user's design, 2026-09-29). Numbers provisional. */
@@ -75,7 +75,7 @@ describe("Decay tier 4: the Mulch Gorger (user, 2026-10-04)", () => {
 
   test("Gorge: every death, of either side, heals it and adds damage for the rest of combat, without limit", () => {
     let battle = until(start([{ ...p("mulch_gorger", 0, 1), hp: 100 }, { ...p("sproutling", 0, 0), hp: 1 }], [p("congregant", 0, 0), { ...p("congregant", 0, 1), hp: 1 }]), "0.0.1");
-    const base = UNITS["mulch_gorger"]?.stats.damage ?? 0;
+    const base = hitOf("mulch_gorger");
     battle = act(battle, "attack", "1.0.1").battle;
     expect(unit(battle, "0.0.1").hp).toBe(100 + (paramsOf({ id: "gorge" }, UNITS["mulch_gorger"]?.stats.abilityPower ?? 0)["heal"] ?? 0));
     expect(unit(battle, "0.0.1").effects.find((e) => e.def === "gorged")?.amount).toBe(6);
@@ -84,7 +84,7 @@ describe("Decay tier 4: the Mulch Gorger (user, 2026-10-04)", () => {
     battle = act(battle, "attack", "0.0.0").battle;
     expect(unit(battle, "0.0.0").alive).toBe(false);
     expect(unit(battle, "0.0.1").effects.find((e) => e.def === "gorged")?.amount).toBe(12);
-    expect(UNITS["mulch_gorger"]?.stats.damage).toBe(base);
+    expect(hitOf("mulch_gorger")).toBe(base);
   });
 
   test("Gorge: a corpse used up or burst feeds it as well", () => {

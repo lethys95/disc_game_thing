@@ -98,7 +98,7 @@ export const gnolls: Readonly<Record<string, Behavior>> = {
     hooks: {
       stats: (ctx, self, subjectId, stats) => {
         if (subjectId === self.unitId || ctx.unit(subjectId).side !== ctx.unit(self.unitId).side) return;
-        if (auraSource(ctx, self, "pecking_order", () => true, (p) => p["damage"] ?? 8)) stats.damage += self.params["damage"] ?? 0;
+        if (auraSource(ctx, self, "pecking_order", () => true, (p) => p["damage"] ?? 8)) stats.hitBonus += self.params["damage"] ?? 0;
       },
       remains: (ctx, self, unitId, change) => {
         if (unitId !== self.unitId || change !== "died") return;

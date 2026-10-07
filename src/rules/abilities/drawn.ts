@@ -19,7 +19,9 @@ export const drawn: Readonly<Record<string, Behavior>> = {
   flit: {
     kind: "active",
     name: "Flit",
-    describe: () => "Its attack: it flies over the front line and strikes any enemy.",
+    describe: (p) => `Its attack: it flies over the front line and strikes any enemy for ${p["power"]}.`,
+    defaults: { power: 22 },
+    scales: ["power"],
     tags: ["attack", "melee", "damage"],
     hotkey: "a",
     choices: rangedChoices,
@@ -42,8 +44,9 @@ export const drawn: Readonly<Record<string, Behavior>> = {
   metamorphosis: {
     kind: "passive",
     name: "Metamorphosis",
-    defaults: { turns: 3, damage: 12 },
-    describe: (p) => `It can't attack while it pupates. At the start of its turn number ${p["turns"]} it emerges: back to full health, +${p["damage"]} damage, and it flies (Flit).`,
+    // `flit` isn't scaled here: the Flit it carries grows with the bearer's ability power when it's used.
+    defaults: { turns: 3, flit: 34 },
+    describe: (p) => `It can't attack while it pupates. At the start of its turn number ${p["turns"]} it emerges: back to full health, and it flies at any enemy (Flit, for ${p["flit"]}).`,
     hooks: {
       turnStart: (ctx, self) => {
         const unit = ctx.unit(self.unitId);
@@ -56,7 +59,7 @@ export const drawn: Readonly<Record<string, Behavior>> = {
         pupa.stacks -= 1;
         if (pupa.stacks > 0) return null;
         ctx.removeEffect(self.unitId, pupa);
-        ctx.addEffect(self.unitId, { def: "emerged", amount: self.params["damage"] ?? 0, source: self.unitId });
+        ctx.addEffect(self.unitId, { def: "emerged", source: self.unitId, ability: { id: "flit", params: { power: self.params["flit"] ?? 0 } } });
         ctx.heal(self.unitId, ctx.stats(self.unitId).maxHp);
         return null;
       },

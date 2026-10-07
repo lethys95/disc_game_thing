@@ -34,9 +34,10 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
   condemn: {
     kind: "active",
     name: "Condemn",
-    describe: (p) => `Ranged: hit any enemy for this unit's damage, plus ${p["missing"]}% of the health the target is missing.`,
+    describe: (p) => `Ranged: hit any enemy for ${p["power"]}, plus ${p["missing"]}% of the health the target is missing.`,
     tags: ["attack", "ranged", "spell", "damage"],
-    defaults: { missing: 30 },
+    defaults: { power: 25, missing: 30 },
+    scales: ["power"],
     choices: rangedChoices,
     resolve: (ctx, self, choice) => {
       const spec = ctx.hitSpec(self);
@@ -51,9 +52,11 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
   flail: {
     kind: "active",
     name: "Flail",
-    describe: () =>
-      "One swing hits the entire enemy front line.",
+    describe: (p) =>
+      `One swing hits the entire enemy front line for ${p["power"]}.`,
     tags: ["attack", "melee", "damage", "area"],
+    defaults: { power: 15 },
+    scales: ["power"],
     choices: (ctx, self) => {
       const units = ctx.living();
       const user = ctx.unit(self.unitId);
@@ -77,21 +80,22 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
         if (subjectId !== self.unitId) return;
         const owner = ctx.unit(self.unitId);
         const others = ctx.living(owner.side).filter((u) => u.id !== owner.id && ctx.abilityIds(u.id).includes("congregation"));
-        stats.damage += (self.params["bonus"] ?? 0) * others.length;
+        stats.hitBonus += (self.params["bonus"] ?? 0) * others.length;
       },
     },
   },
 
-  /** Heals for `multiplier` × the healer's damage: self as a free action; allies (if `allies`) as the main action. */
+  /** A heal: self as a free action; allies (if `allies`) as the main action. */
   lay_on_hands: {
     kind: "active",
     name: "Lay on Hands",
     describe: (p) =>
       p["allies"]
-        ? `${uses(p)}. Heal for ${p["multiplier"]}× this unit's damage: self as a free action, an ally as the main action.`
-        : `Free action, ${uses(p).toLowerCase()}: heal self for ${p["multiplier"]}× this unit's damage.`,
+        ? `${uses(p)}. Heal for ${p["heal"]}: self as a free action, an ally as the main action.`
+        : `Free action, ${uses(p).toLowerCase()}: heal self for ${p["heal"]}.`,
     tags: ["heal"],
-    defaults: { charges: 1, multiplier: 2, allies: 0 },
+    defaults: { charges: 1, heal: 40, allies: 0 },
+    scales: ["heal"],
     choices: (ctx, self) => {
       const user = ctx.unit(self.unitId);
       const own = [single(user, "free")];
@@ -99,7 +103,7 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
       return [...own, ...ctx.living(user.side).filter((u) => u.id !== user.id).map((u) => single(u, "main"))];
     },
     resolve: (ctx, self, choice) => {
-      for (const id of choice.affected) ctx.heal(id, (self.params["multiplier"] ?? 0) * ctx.stats(self.unitId).damage);
+      for (const id of choice.affected) ctx.heal(id, self.params["heal"] ?? 0);
     },
   },
 
@@ -148,15 +152,15 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
     },
   },
 
-  /** Zealot: every attack costs half of its current damage in health. */
+  /** Zealot: every attack costs half of its hardest hit in health. */
   zeal: {
     kind: "passive",
     name: "Zeal",
     describe: () =>
-      "Each attack costs half of this unit's damage in health.",
+      "Each attack costs it half of its hardest hit in health.",
     hooks: {
       afterAttack: (ctx, self) => {
-        ctx.lose(self.unitId, Math.floor(ctx.stats(self.unitId).damage / 2), self.unitId);
+        ctx.lose(self.unitId, Math.floor(ctx.strongestHit(self.unitId) / 2), self.unitId);
       },
     },
   },

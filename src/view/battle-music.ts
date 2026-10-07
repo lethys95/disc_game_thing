@@ -1,4 +1,4 @@
-import { actionsPerRound, effectiveStatsOf } from "#rules/battle/engine";
+import { actionsPerRound, effectiveStatsOf, strongestHits } from "#rules/battle/engine";
 import type { Battle, Side } from "#rules/battle/types";
 
 /**
@@ -18,6 +18,7 @@ export const LEAD_COOLDOWN_MS = 15000;
  */
 export function standing(battle: Battle): number {
   const stats = effectiveStatsOf(battle);
+  const hits = strongestHits(battle);
   const strength = [0, 1].map((side) => {
     let health = 0;
     let damage = 0;
@@ -25,7 +26,7 @@ export function standing(battle: Battle): number {
       const own = stats[unit.id];
       if (unit.side !== side || !unit.alive || !own) continue;
       health += unit.hp + unit.shield;
-      damage += own.damage * actionsPerRound(own.initiative);
+      damage += (hits[unit.id] ?? 0) * actionsPerRound(own.initiative);
     }
     return health * damage;
   });

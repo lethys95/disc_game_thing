@@ -107,6 +107,23 @@ abilities instead of flat numbers."
 - **Witherbloom** replaces Decay support 2's weakened Bloom (the user: "just create a different bloom spell. Call it
   witherbloom. Maybe it heals less and does something slightly different"). Claude's pitch: regrows 4 at 100 (8 on
   the unit) for 3 turns, and while it blooms, an enemy that hits the bearer withers 5 (up to 15) for the rest of combat.
-- **Matrix at this point** (all squads): tier 1 unchanged; tier 2 J 49, N 55, G 46; tier 3 about as before (N ~32–39).
-  Not final: the damage stat is going away (next), and attacks will scale too.
+- **No damage stat, no damage type on units (the user, 2026-10-07):** "flat damage stat shouldn't even be a thing. It
+  was never intended to be a thing. The intention was for there to not be a 'basic attack'. Everything is an ability."
+  Every unit's attack is an ability with its own `power`, written at 100 and grown by its ability power (the old damage
+  ÷ ability power, rounded; eleven units moved by 1–2: Fanatic 110 → 111, Chosen 150 → 152, Thaumaturge's Bolt 12 → 13,
+  Backlasher's and Maelstrom's 16 → 18, Etherborn's Absorb hit 10 → 9, Regrowth 3 32 → 33, Deadwood 76 → 75, Mulch
+  Gorger 66 → 68, Psychopomp's Water 14 → 15, Soothsayer 55 → 56). What used to change the damage stat now changes
+  every damaging hit: `hitBonus` (Mutate, Punishment, Withered, Gorge, Pecking order, Congregation, bought upgrades)
+  and `hitPercent` (a leader's aura, the tarot's might, Curse); so they now reach spells too. Levels raise health and
+  ability power (no longer damage separately). Lay on Hands heals 40 at 100 (the Paladin's 80, the Templar's 120, the
+  Immortal's 160: the same as before). The Zealot's Zeal costs half its hardest hit. The Chrysalis gains a Flit of 34
+  when it emerges (was its 22 damage + 12). The AI's sense of a unit's threat, tarot's "big hit" and a unit's XP worth
+  use its hardest hit. Damage types belong to abilities: the Chosen's, Avatar's and Hedge Mage's attacks and Jilliath
+  mage 1's Condemn deal fire on their refs; Water, Spit fire and the Explosive flask carry their own; **Homing
+  Lightning now deals lightning** (it always said so, but took the Nexus caster's weapon type). Save 29.
+- **The composition matrix after all of this** (all squads, win %): tier 1 J 70, N 41, G 39 (unchanged since before
+  ability power); tier 2 J 49, N 55, G 45; tier 3 J 69, N 33, G 50. Ral-Vitahl's casters are its strength, as the user
+  expects ("expedience from their casters"); a fair verdict needs the other factions' ranged lines.
+- **Rules text marks what ability power grew:** each scaled number is gold and underlined, and hovering it gives its
+  value at 100; plain tooltips list "20 → 40" after the text.
 

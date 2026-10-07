@@ -77,7 +77,7 @@ export const keywords: Readonly<Record<string, Behavior>> = {
     },
     resolve: (ctx, self, choice) => {
       const power = Math.round((ctx.stats(self.unitId).maxHp * (self.params["percent"] ?? 0)) / 100);
-      ctx.hit(self.unitId, choice.affected, { ...ctx.hitSpec(self), power });
+      ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self, undefined, power));
       ctx.lose(self.unitId, ctx.unit(self.unitId).hp, self.unitId);
       ctx.spendCorpse(self.unitId, "destroyed");
     },

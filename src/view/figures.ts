@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import type { Faction, Side } from "#rules/battle/types";
+import { elementsOf } from "#rules/abilities/index";
 import { UNITS } from "#rules/units/index";
 
 /** Placeholder statues until real art exists: silhouette by unit, material by side, accent by faction. */
@@ -182,7 +183,7 @@ function mutantBody(m: Parts): THREE.Group {
 export function buildFigure(defId: string, side: Side, owner: THREE.Color | null): THREE.Group {
   const def = UNITS[defId];
   const palette = owner ? { ...PALETTES[side], trim: owner.clone().multiplyScalar(0.8) } : PALETTES[side];
-  const m = materials(palette, ACCENTS[def?.faction ?? "neutral"], def?.damageType === "fire");
+  const m = materials(palette, ACCENTS[def?.faction ?? "neutral"], (def ? elementsOf(def).includes("fire") : false));
   const g = new THREE.Group();
   const scale = 1.15 + (def?.tier ?? 1) * 0.08;
   const height = 1.1;

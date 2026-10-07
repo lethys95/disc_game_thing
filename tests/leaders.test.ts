@@ -1,5 +1,5 @@
 import { LEADER_XP_PER_POINT, MAX_LEADERSHIP, STARTING_LEADERSHIP } from "#rules/balance";
-import { effectiveStats } from "#rules/battle/engine";
+import { strongestHits } from "#rules/battle/engine";
 import type { Placement } from "#rules/battle/engine";
 import { COLS } from "#rules/battle/grid";
 import { applyWorldAction } from "#rules/world/actions";
@@ -71,7 +71,7 @@ describe("leader tree", () => {
     const plain = fresh();
     const withAura = engage(world, leaderById(world, "leader0"), { kind: "leader", leaderId: "leader1" }).battle;
     const without = engage(plain, leaderById(plain, "leader0"), { kind: "leader", leaderId: "leader1" }).battle;
-    const damage = (battle: typeof withAura, id: string) => effectiveStats(battle, id).damage;
+    const damage = (battle: typeof withAura, id: string) => strongestHits(battle)[id] ?? 0;
     expect(damage(withAura, "0.0.1")).toBe(damage(without, "0.0.1") + 1);
     expect(damage(withAura, "1.0.1")).toBe(damage(without, "1.0.1"));
   });

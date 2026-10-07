@@ -1,5 +1,5 @@
 import type { Placement } from "#rules/battle/engine";
-import { effectiveStats } from "#rules/battle/engine";
+import { strongestHits } from "#rules/battle/engine";
 import { COLS } from "#rules/battle/grid";
 import { UPGRADES } from "#rules/upgrades";
 import { applyWorldAction } from "#rules/world/actions";
@@ -76,6 +76,6 @@ describe("marks in battle", () => {
     const tile = leader.squad[2]?.tile;
     const plain = leader.squad[0]?.tile;
     if (!tile || !plain) throw new Error("no recruit");
-    expect(effectiveStats(battle, `0.${tile.row}.${tile.col}`).damage).toBe(effectiveStats(battle, `0.${plain.row}.${plain.col}`).damage + 5);
+    expect(strongestHits(battle)[`0.${tile.row}.${tile.col}`]).toBe((strongestHits(battle)[`0.${plain.row}.${plain.col}`] ?? 0) + 5);
   });
 });

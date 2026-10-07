@@ -11,11 +11,13 @@ export const carnival: Readonly<Record<string, Behavior>> = {
   foretell: {
     kind: "active",
     name: "Foretell",
-    describe: () => "Her attack, ranged: the hit lands at the start of her next turn (if she still stands).",
+    describe: (p) => `Her attack, ranged: a hit of ${p["power"]} lands at the start of her next turn (if she still stands).`,
     tags: ["attack", "ranged", "damage"],
+    defaults: { power: 28 },
+    scales: ["power"],
     choices: rangedChoices,
     resolve: (ctx, self, choice) => {
-      for (const id of choice.affected) ctx.addEffect(id, { def: "foretold", amount: ctx.stats(self.unitId).damage, source: self.unitId });
+      for (const id of choice.affected) ctx.addEffect(id, { def: "foretold", amount: ctx.hitSpec(self).power, source: self.unitId });
     },
   },
 
@@ -54,12 +56,13 @@ export const carnival: Readonly<Record<string, Behavior>> = {
   explosive_flask: {
     kind: "active",
     name: "Explosive flask",
+    damageType: "fire",
     describe: (p) => `Its attack, thrown: one enemy anywhere takes ${p["power"]} fire.`,
     tags: ["attack", "ranged", "damage"],
     defaults: { power: 18 },
     scales: ["power"],
     choices: rangedChoices,
-    resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self, "fire")),
+    resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self)),
   },
 
   /** Snakeoiler: "one-time use sleep potion which incapacitates for one turn"; it wakes if hurt, keeping its place. */
@@ -98,7 +101,10 @@ export const carnival: Readonly<Record<string, Behavior>> = {
   spit_fire: {
     kind: "active",
     name: "Spit fire",
-    describe: () => "Its attack, fire: a cone over the three enemy front-row tiles across from it and the middle-row tile behind the centre one.",
+    damageType: "fire",
+    describe: (p) => `Its attack, fire: a cone over the three enemy front-row tiles across from it and the middle-row tile behind the centre one, for ${p["power"]} each.`,
+    defaults: { power: 18 },
+    scales: ["power"],
     tags: ["attack", "melee", "damage", "area"],
     choices: (ctx, self) => {
       const user = ctx.unit(self.unitId);
@@ -114,6 +120,6 @@ export const carnival: Readonly<Record<string, Behavior>> = {
       const anchor = hit.find((u) => u.tile.row === front && u.tile.col === col) ?? hit[0];
       return anchor ? [at(anchor, hit.map((u) => u.id), "main")] : [];
     },
-    resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self, "fire")),
+    resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self)),
   },
 };

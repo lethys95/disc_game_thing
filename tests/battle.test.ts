@@ -1,6 +1,6 @@
 import { chooseAction } from "#rules/ai";
 import { PUNISHMENT_MAX_STACKS } from "#rules/balance";
-import { actionsPerRound, applyAction, createBattle, effectiveStats, legalActions } from "#rules/battle/engine";
+import { actionsPerRound, applyAction, createBattle, effectiveStats, legalActions, strongestHits } from "#rules/battle/engine";
 import type { Placement } from "#rules/battle/engine";
 import type { Battle, BattleEvent, Col, Row } from "#rules/battle/types";
 import { squadProblems } from "#rules/forks";
@@ -103,7 +103,7 @@ describe("melee reach", () => {
 describe("Jilliath abilities", () => {
   test("Congregation: +10 damage per other congregant in the squad", () => {
     const battle = start([p("congregant", 0, 0), p("congregant", 0, 1), p("congregant", 2, 2)], [p("paladin", 0, 0)]);
-    expect(effectiveStats(battle, "0.0.0").damage).toBe(40);
+    expect(strongestHits(battle)["0.0.0"]).toBe(40);
   });
 
   test("Lay on Hands: free self-heal for 2x damage, once per combat, then the unit still acts", () => {
@@ -133,9 +133,8 @@ describe("Jilliath abilities", () => {
     battle = act(battle, "flail", "1.0.0").battle;
     for (const id of ["1.0.0", "1.0.1", "1.0.2"]) expect(hp(battle, id)).toBe(90 - 45);
     expect(hp(battle, "1.1.1")).toBe(90);
-    const stats = effectiveStats(battle, "1.0.0");
-    expect(stats.damage).toBe(20 + 30 - 10);
-    expect(actionsPerRound(stats.initiative)).toBe(2);
+    expect(strongestHits(battle)["1.0.0"]).toBe(20 + 30 - 10);
+    expect(actionsPerRound(effectiveStats(battle, "1.0.0").initiative)).toBe(2);
   });
 
   test("Punishment stops stacking at its cap", () => {
@@ -144,8 +143,7 @@ describe("Jilliath abilities", () => {
       battle = act(battle, "flail", "1.0.1").battle;
       if (current(battle) !== "0.0.1") battle = act(battle, "defend").battle;
     }
-    const stats = effectiveStats(battle, "1.0.1");
-    expect(stats.damage).toBe(80 - 10 * PUNISHMENT_MAX_STACKS);
+    expect(strongestHits(battle)["1.0.1"]).toBe(80 - 10 * PUNISHMENT_MAX_STACKS);
   });
 
   test("Torturer: half the damage becomes bleed that ticks at the start of the victim's turn", () => {

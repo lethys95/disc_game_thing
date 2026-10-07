@@ -1,5 +1,5 @@
 import { AI_CHARGE_VALUE } from "#rules/balance";
-import { applyAction, chooseTarot, effectiveStatsOf, legalActions, traitValues } from "#rules/battle/engine";
+import { applyAction, chooseTarot, legalActions, strongestHits, traitValues } from "#rules/battle/engine";
 import { cardValue } from "#rules/battle/tarot";
 import { UNITS } from "#rules/units/index";
 import type { Action, Battle, Side } from "#rules/battle/types";
@@ -16,12 +16,12 @@ export function chooseAction(battle: Battle): Action | null {
 /** Below this share of the enemy's strength a fight is lost: a unit that can flee saves itself for the next one. */
 const HOPELESS = 0.15;
 
-/** What a side can still do: each living unit's health (shields at half) weighted by its damage. */
+/** What a side can still do: each living unit's health (shields at half) weighted by its hardest hit. */
 function strengthOf(battle: Battle, side: Side): number {
-  const stats = effectiveStatsOf(battle);
+  const hits = strongestHits(battle);
   return Object.values(battle.units)
     .filter((u) => u.alive && u.side === side)
-    .reduce((sum, u) => sum + (u.hp + 0.5 * u.shield) * (1 + (stats[u.id]?.damage ?? 0)), 0);
+    .reduce((sum, u) => sum + (u.hp + 0.5 * u.shield) * (1 + (hits[u.id] ?? 0)), 0);
 }
 
 /** A losing unit's way out: an ability tagged `flee` (Retreat), when its side is hopelessly behind. */

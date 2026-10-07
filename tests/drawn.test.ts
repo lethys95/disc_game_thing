@@ -1,4 +1,5 @@
-import { effectiveStatsOf, legalActions } from "#rules/battle/engine";
+import { BEHAVIORS } from "#rules/abilities/index";
+import { effectiveStatsOf, legalActions, strongestHits } from "#rules/battle/engine";
 import { UNITS } from "#rules/units/index";
 import { act, affectedBy, p, start, unit, until } from "#tests/helpers";
 import { describe, expect, test } from "vitest";
@@ -29,7 +30,7 @@ describe("the Drawn", () => {
     const chrysalis = unit(battle, "0.0.1");
     expect(chrysalis.effects.some((e) => e.def === "emerged")).toBe(true);
     expect(chrysalis.hp).toBe(UNITS["chrysalis"]?.stats.maxHp);
-    expect(effectiveStatsOf(battle)["0.0.1"]?.damage).toBe((UNITS["chrysalis"]?.stats.damage ?? 0) + 12);
+    expect(strongestHits(battle)["0.0.1"]).toBe(BEHAVIORS["metamorphosis"]?.defaults?.["flit"]);
     expect(legalActions(battle).map((a) => a.abilityId)).toContain("flit");
   });
 

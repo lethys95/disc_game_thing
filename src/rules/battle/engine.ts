@@ -78,7 +78,6 @@ export function createBattle(sides: readonly [readonly Placement[], readonly Pla
         hp: hp ?? Infinity,
         shield: def.stats.shield,
         base: def.stats,
-        damageType: def.damageType,
         abilities: def.abilities,
         chargesUsed: {},
         effects: [...(effects ?? []), ...context.sideEffects[side]].map(instance),
@@ -171,8 +170,19 @@ export function abilityRef(battle: Battle, unitId: string, abilityId: string): A
   return makeCtx(battle, []).abilityRef(unitId, abilityId);
 }
 
+/** A damaging hit of `power` from a unit with these stats: its percent first, then its flat bonus. */
+export const withBonuses = (stats: Stats, power: number): number => Math.max(0, Math.round((power * (100 + stats.hitPercent)) / 100) + stats.hitBonus);
+
+/** Every living unit's hardest single hit now (`Ctx.strongestHit`): the AI's sense of a threat. */
+export function strongestHits(battle: Battle): Record<string, number> {
+  const ctx = makeCtx(battle, []);
+  return Object.fromEntries(ctx.living().map((u) => [u.id, ctx.strongestHit(u.id)]));
+}
+
 function activeSelf(ctx: Ctx, unitId: string, abilityId: string): ActiveSelf {
-  return { unitId, params: paramsOf(ctx.abilityRef(unitId, abilityId), ctx.abilityPower(unitId)), effect: null, tags: active(abilityId).tags };
+  const ref = ctx.abilityRef(unitId, abilityId);
+  const b = active(abilityId);
+  return { unitId, params: paramsOf(ref, ctx.abilityPower(unitId)), effect: null, tags: b.tags, damageType: ref.damageType ?? b.damageType ?? "weapon" };
 }
 
 function active(abilityId: string): ActiveBehavior {
@@ -541,7 +551,7 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
     const store = memo().power;
     const known = store.get(id);
     if (known !== undefined) return known;
-    const result = { ...unit(id).base };
+    const result = { ...unit(id).base, hitBonus: 0, hitPercent: 0 };
     for (const owner of living()) for (const effect of owner.effects) effectDef(effect.def).hooks.stats?.(ctx, { unitId: owner.id, params: {}, effect }, id, result);
     const power = Math.max(0, result.abilityPower);
     store.set(id, power);
@@ -549,11 +559,10 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
   };
 
   const stats = (id: string): Stats => {
-    const result = { ...unit(id).base };
+    const result = { ...unit(id).base, hitBonus: 0, hitPercent: 0 };
     for (const t of allTraits(ctx)) t.hooks.stats?.(ctx, t.self, id, result);
     if (Math.max(0, result.abilityPower) !== abilityPower(id)) throw new Error(`a passive ability changed ${id}'s ability power: give it an effect instead`);
     result.abilityPower = abilityPower(id);
-    result.damage = Math.max(0, result.damage);
     result.initiative = Math.max(0, result.initiative);
     result.armor = Math.max(0, result.armor);
     return result;
@@ -589,11 +598,21 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
     abilityPower,
     living,
     hit: (sourceId, targetIds, spec) => hit(ctx, sourceId, targetIds, spec),
-    hitSpec: (self, type) => ({
-      power: self.params["power"] ?? stats(self.unitId).damage,
-      type: type ?? unit(self.unitId).damageType,
-      tags: self.tags,
-    }),
+    hitSpec: (self, type, power) => {
+      const base = power ?? self.params["power"];
+      if (base === undefined) throw new Error(`${unit(self.unitId).defId} hits with an ability that has no power`);
+      return { power: self.tags.includes("damage") ? withBonuses(stats(self.unitId), base) : base, type: type ?? self.damageType, tags: self.tags };
+    },
+    strongestHit: (id) => {
+      const own = stats(id);
+      const hits = abilityIds(id).flatMap((abilityId) => {
+        const b = behavior(abilityId);
+        if (b.kind !== "active" || !b.tags.includes("damage")) return [];
+        const power = paramsOf(abilityRef(id, abilityId), own.abilityPower)["power"];
+        return power === undefined ? [] : [withBonuses(own, power)];
+      });
+      return Math.max(0, ...hits);
+    },
     lose: (targetId, amount, sourceId) => lose(ctx, targetId, amount, sourceId),
     heal: (targetId, offered) => {
       const target = unit(targetId);

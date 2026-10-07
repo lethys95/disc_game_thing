@@ -1,4 +1,5 @@
-import { BEHAVIORS, describeAbility, usesAbilityPower } from "#rules/abilities/index";
+import { BEHAVIORS, describeAbility, elementsOf } from "#rules/abilities/index";
+import { abilityText } from "#view/ability-text";
 import type { UnitDef } from "#rules/battle/types";
 import { EFFECTS } from "#rules/effects";
 import { FACTIONS } from "#rules/factions";
@@ -124,10 +125,10 @@ export class Codex {
     const rows: [string, string][] = [
       ["Health", String(def.stats.maxHp)],
       ...(def.stats.shield > 0 ? [["Shield", String(def.stats.shield)] satisfies [string, string]] : []),
-      ["Damage", `${def.stats.damage}${def.damageType === "weapon" ? "" : ` ${def.damageType}`}`],
       ["Armor", String(def.stats.armor)],
       ["Initiative", String(def.stats.initiative)],
-      ...(usesAbilityPower(def.abilities) ? [["Ability power", String(def.stats.abilityPower)] satisfies [string, string]] : []),
+      ["Ability power", String(def.stats.abilityPower)],
+      ...(elementsOf(def).length === 0 ? [] : [["Deals", elementsOf(def).join(", ")] satisfies [string, string]]),
       ...(def.spellCharges ? [["Spell charges", String(def.spellCharges)] satisfies [string, string]] : []),
       ...(RECRUIT_COST[def.id] ? [["Recruit", `${RECRUIT_COST[def.id]} gold`] satisfies [string, string]] : []),
     ];
@@ -140,7 +141,7 @@ export class Codex {
     for (const ref of def.abilities.filter((a) => !COMMON.includes(a.id))) {
       const behavior = BEHAVIORS[ref.id];
       const item = element("li", behavior?.kind === "passive" ? "passive" : "");
-      item.append(element("span", "name", ref.name ?? behavior?.name ?? ref.id), element("div", "text", describeAbility(ref, def.stats.abilityPower)));
+      item.append(element("span", "name", ref.name ?? behavior?.name ?? ref.id), abilityText(ref, def.stats.abilityPower));
       abilities.appendChild(item);
     }
     page.appendChild(abilities);

@@ -1,7 +1,9 @@
+import { strongestHitOf } from "#rules/abilities/index";
 import { applyAction, createBattle, legalActions } from "#rules/battle/engine";
 import type { BattleContext, Placement } from "#rules/battle/engine";
 import type { Battle, BattleEvent, BattleUnit, Col, EffectSeed, Row } from "#rules/battle/types";
 import type { Commitment } from "#rules/forks";
+import { UNITS } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
 import { defaultColors } from "#rules/world/colors";
 import type { PlayerSetup } from "#rules/world/create";
@@ -94,3 +96,9 @@ export function beside(world: World, hex: Hex): Hex {
   if (!free) throw new Error("no free hex");
   return free;
 }
+
+/** What a unit type hits for at its own ability power: its strongest damaging ability. */
+export const hitOf = (defId: string): number => {
+  const def = UNITS[defId];
+  return def ? strongestHitOf(def) : 0;
+};

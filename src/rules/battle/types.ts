@@ -17,18 +17,30 @@ export interface Tile {
 /** Lightning and water (2026-10-05) exist for the statuses: wet units conduct lightning; water puts out burning. */
 export type DamageType = "weapon" | "fire" | "lightning" | "water";
 
-export interface Stats {
+/**
+ * A unit type's numbers. There is no damage stat (the user, 2026-10-07: "flat damage stat shouldn't even be a thing
+ * […] there [is] not […] a 'basic attack'. Everything is an ability"): what a unit hits for is each damaging
+ * ability's `power`, grown by its ability power.
+ */
+export interface BaseStats {
   maxHp: number;
   /** A pool that absorbs hits before health (Nexus automatons). Full at the start of every battle. */
   shield: number;
-  damage: number;
   armor: number;
   initiative: number;
   /**
-   * How strong its abilities are, in percent: the magnitudes each behavior lists in `scales` (heals, ability damage,
-   * shields, burns) are multiplied by it. 100 is the numbers as written. Its weapon damage is `damage`, not this.
+   * How strong its abilities are, in percent: the magnitudes each behavior lists in `scales` (hits, heals, shields,
+   * burns) are multiplied by it. 100 is the numbers as written. Per unit, like health; 100 × tier is the guideline.
    */
   abilityPower: number;
+}
+
+/** A unit's numbers in a battle: its type's, plus what buffs and debuffs add to every damaging hit it makes. */
+export interface Stats extends BaseStats {
+  /** Added to each damaging hit (Mutate, Withered, Pecking order). */
+  hitBonus: number;
+  /** Percent added to each damaging hit, before `hitBonus` (a leader's aura, Curse). */
+  hitPercent: number;
 }
 
 /** Numeric tuning for one use of a behavior: power, charges, amounts. */
@@ -39,6 +51,8 @@ export interface AbilityRef {
   readonly params?: Params;
   /** A unit-specific name for this use of the behavior (Divine Lay on Hands is Lay on Hands with more params). */
   readonly name?: string;
+  /** What its hits deal for this unit, when not the behavior's own type (a Chosen's fiery Attack). */
+  readonly damageType?: DamageType;
 }
 
 export type Faction = "jilliath" | "nexus" | "grove" | "neutral";
@@ -48,8 +62,7 @@ export interface UnitDef {
   readonly faction: Faction;
   readonly name: string;
   readonly tier: number;
-  readonly stats: Readonly<Stats>;
-  readonly damageType: DamageType;
+  readonly stats: Readonly<BaseStats>;
   readonly abilities: readonly AbilityRef[];
   /**
    * Nexus casters' batteries (docs/design/factions/ral-vitahl.md): spell charges for the whole battle, full at its
@@ -87,8 +100,7 @@ export interface BattleUnit {
   tile: Tile;
   hp: number;
   shield: number;
-  readonly base: Readonly<Stats>;
-  readonly damageType: DamageType;
+  readonly base: Readonly<BaseStats>;
   /** Its own abilities (granted ones come from traits: `Ctx.abilityRef`). */
   readonly abilities: readonly AbilityRef[];
   /** Uses spent this battle of each ability with `charges`, own or granted. */
@@ -232,6 +244,7 @@ export interface TraitSelf {
 /** An active ability resolving: its tags travel with it, so hits it makes carry them. */
 export interface ActiveSelf extends TraitSelf {
   readonly tags: readonly Tag[];
+  readonly damageType: DamageType;
 }
 
 /** A hook bundle together with whom it runs for. Passive abilities and effects are both traits. */
@@ -347,7 +360,7 @@ export interface ActiveBehavior {
   readonly defaults?: Params;
   /** The params that are magnitudes, grown or shrunk by the unit's ability power (`Stats.abilityPower`). */
   readonly scales?: readonly string[];
-  /** Uses the damage type given here instead of the unit's. */
+  /** What its hits deal, unless a unit's ref says otherwise; weapon if neither does. */
   readonly damageType?: DamageType;
   /** Wait: puts the unit back in the queue instead of acting. Not an ability a Counter can cancel. */
   readonly reschedules?: boolean;
@@ -384,6 +397,8 @@ export interface Ctx {
   readonly battle: Battle;
   unit(id: string): BattleUnit;
   stats(id: string): Stats;
+  /** Its hardest single hit now: its strongest damaging ability, with `hitPercent` and `hitBonus` (what the AI fears). */
+  strongestHit(id: string): number;
   /**
    * The unit's ability power: the same as `stats(id).abilityPower`, but safe to ask while traits are being built
    * (passive abilities' params scale with it, and they feed `stats`).
@@ -392,9 +407,11 @@ export interface Ctx {
   living(side?: Side): BattleUnit[];
   /** The damage pipeline: power → outgoing → conversion → incoming → armor → pools → mitigation → HP, then reactions. */
   hit(sourceId: string, targetIds: readonly string[], spec: HitSpec): void;
-  /** The power and type an ability of this unit hits with: `params.power` if given, else the unit's damage. */
-  /** A hit with the resolving ability's power and tags. */
-  hitSpec(self: ActiveSelf, type?: DamageType): HitSpec;
+  /**
+   * A hit with the resolving ability's tags, of `power` (default: its `power` param, already grown by ability power),
+   * plus the unit's `hitPercent` and `hitBonus` when the ability does damage.
+   */
+  hitSpec(self: ActiveSelf, type?: DamageType, power?: number): HitSpec;
   /** Direct HP loss that skips the pipeline (bleed, self-sacrifice). Returns the HP actually removed. */
   lose(targetId: string, amount: number, sourceId: string | null): number;
   heal(targetId: string, amount: number): void;

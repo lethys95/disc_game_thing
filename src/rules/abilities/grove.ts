@@ -101,7 +101,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
       const rot = ctx.unit(self.unitId).effects.find((e) => e.def === "rotting");
       if (!rot) return;
       const power = Math.round((rot.amount * (self.params["percent"] ?? 100)) / 100);
-      ctx.hit(self.unitId, choice.affected, { ...ctx.hitSpec(self), power });
+      ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self, undefined, power));
       rot.stacks = Math.max(rot.stacks, ROT_TURNS);
     },
   },
@@ -202,7 +202,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
       const corpse = corpseId ? ctx.unit(corpseId) : null;
       if (!corpse || corpse.corpse !== "intact") return;
       ctx.spendCorpse(corpse.id, "destroyed");
-      if (near.length > 0) ctx.hit(self.unitId, near, { ...ctx.hitSpec(self), power: self.params["power"] ?? 0 });
+      if (near.length > 0) ctx.hit(self.unitId, near, ctx.hitSpec(self));
       for (const id of near) if (ctx.unit(id).alive) ctx.addEffect(id, { def: "infested", amount: self.params["infest"] ?? 0, stacks: self.params["turns"] ?? 3, source: self.unitId });
     },
   },
@@ -223,7 +223,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
       const me = ctx.unit(self.unitId);
       for (const id of choice.affected) {
         if (ctx.unit(id).side !== me.side) {
-          ctx.hit(self.unitId, [id], { ...ctx.hitSpec(self), power: self.params["power"] ?? 0 });
+          ctx.hit(self.unitId, [id], ctx.hitSpec(self));
           if (ctx.unit(id).alive) ctx.addEffect(id, { def: "healing_back", amount: Math.round((self.params["power"] ?? 0) / 3), source: self.unitId });
         } else {
           ctx.heal(id, self.params["heal"] ?? 0);
@@ -240,17 +240,18 @@ export const grove: Readonly<Record<string, Behavior>> = {
   water: {
     kind: "active",
     name: "Water",
-    describe: (p) => `Ranged, water. An enemy takes this unit's damage and is wet for ${p["rounds"]} rounds. An ally (or itself) heals ${p["heal"]}; a burning one is put out (and wet).`,
+    damageType: "water",
+    describe: (p) => `Ranged, water. An enemy takes ${p["power"]} and is wet for ${p["rounds"]} rounds. An ally (or itself) heals ${p["heal"]}; a burning one is put out (and wet).`,
     tags: ["attack", "ranged", "damage", "heal"],
-    defaults: { heal: 30, rounds: 2 },
-    scales: ["heal"],
+    defaults: { power: 10, heal: 30, rounds: 2 },
+    scales: ["power", "heal"],
     choices: (ctx, self) => [...rangedChoices(ctx, self), ...ctx.living(ctx.unit(self.unitId).side).map((u) => single(u, "main"))],
     resolve: (ctx, self, choice) => {
       const me = ctx.unit(self.unitId);
       for (const id of choice.affected) {
         const rounds = self.params["rounds"] ?? 2;
         if (ctx.unit(id).side !== me.side) {
-          ctx.hit(self.unitId, [id], ctx.hitSpec(self, "water"));
+          ctx.hit(self.unitId, [id], ctx.hitSpec(self));
           wetten(ctx, id, rounds, self.unitId);
         } else {
           ctx.heal(id, self.params["heal"] ?? 0);

@@ -1,6 +1,6 @@
 import { duplicateAbilityIds, paramsOf } from "#rules/abilities/index";
 import { UNITS } from "#rules/units/index";
-import { createBattle, effectiveStats, legalActions } from "#rules/battle/engine";
+import { createBattle, effectiveStats, legalActions, strongestHits } from "#rules/battle/engine";
 import type { BattleContext } from "#rules/battle/engine";
 import type { BattleEvent } from "#rules/battle/types";
 import { act, anchorKey, p, start, until } from "#tests/helpers";
@@ -31,7 +31,7 @@ describe("world context reaches the battle as effects", () => {
 
   test("it's not a stat: heals scaled on damage don't grow, and the unit card's damage is unchanged", () => {
     const battle = createBattle([[p("paladin", 0, 1)], [p("congregant", 2, 2)]], blacksmith(10)).battle;
-    expect(effectiveStats(battle, "0.0.1").damage).toBe(40);
+    expect(strongestHits(battle)["0.0.1"]).toBe(40);
   });
 
   test("the enemy side isn't affected", () => {

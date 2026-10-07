@@ -11,11 +11,11 @@ Already in the game:
 - Replacements: a cancelled ability (Counter), a prevented death (Guardian Spirit), damage turned into bleed (Domination).
 - Reactions: on hit (Punishment), after attacking (Zeal, Fanaticism), on a kill (Hysteria), on a shield overcharge (Mutate).
 - Auras: positional (Devotion Aura), battlefield-wide rule changes that grant and forbid abilities (Fanaticism Aura), dynamic (Congregation).
-- Per-target bonuses (Marauder vs armor); abilities with fixed power (Burst) vs power from the unit's damage (Attack).
+- Per-target bonuses (Marauder vs armor). Every hit's power is its ability's (there's no damage stat; the user, 2026-10-07: "Everything is an ability").
 - Hidden information (Counter's mark is secret from the marked side).
 
 Asked for or implied by the design:
-- **Blacksmith node**: a world-level source (owning a city node) makes abilities deal +10 damage in battle. Fixed-power spells too, not just the damage stat.
+- **Blacksmith node**: a world-level source (owning a city node) makes abilities deal +10 damage in battle. Every damaging ability.
 - **Fire shield**: a pool that only absorbs fire damage.
 - Items and equipment granting abilities or stats; leader upgrades; overworld spells buffing a warband for N world turns; city upgrades giving stationed units armor and regeneration.
 - Immunities ("immunity is the only true zero"), resistances, damage types beyond weapon/fire.
@@ -60,7 +60,7 @@ An **effect instance** on a unit is plain data: `{ def, source, stacks, amount }
 
 ### 3. Damage is a typed packet through an ordered pipeline
 `{ source, target, amount, type, tags }` goes through:
-1. **Power**: the ability's power (a param, or the unit's damage stat).
+1. **Power**: the ability's `power` param, grown by the unit's ability power, then the unit's `hitPercent` and `hitBonus` (buffs and debuffs: Mutate, Withered, a leader's aura, Curse) when the ability does damage (`ctx.hitSpec`). There is no damage stat.
 2. **Outgoing**: the attacker's traits add or multiply, filtered by the ability's tags and the target (Blacksmith +10 on `damage` abilities; Marauder +10 against armor).
 3. **Conversion**: traits may split off part of the packet (Domination turns half into bleed).
 4. **Incoming**: the target's immunities (to 0) and resistances.
@@ -73,7 +73,7 @@ An **effect instance** on a unit is plain data: `{ def, source, stacks, amount }
 Direct losses (bleed, self-sacrifice) skip steps 2–7 by design: they're costs, not hits.
 
 ### 4. Abilities: behavior plus params and tags
-An ability on a unit is `{ id, params }`; `params` are numbers (power, charges, amounts), so variants and balance tuning don't need new code. Divine Lay on Hands is Lay on Hands with `{ charges: 2, allies: 1 }`. The params that are magnitudes (a heal's amount, an ability's hit, a burn, a shield) are listed in the behavior's `scales`, and grow with the unit's **ability power** (`Stats.abilityPower`, percent): `paramsOf(ref, abilityPower)` multiplies them, so rules code and rules text both see the scaled numbers. Charges, turns, costs, percentages and stat buffs don't scale. Ability power comes from the unit and the effects on the field (levels, items, buffs), never from a passive ability, because passive abilities' params depend on it (the engine throws if one tries). Each ability declares **tags** (`attack`, `melee`, `ranged`, `spell`, `damage`, `heal`, `basic`) and a damage type. Modifiers target tags, and the UI and AI use tags (default action = the `attack`-tagged one; `basic` actions aren't listed on unit cards). Nothing outside `abilities/` names an ability id.
+An ability on a unit is `{ id, params }`; `params` are numbers (power, charges, amounts), so variants and balance tuning don't need new code. Divine Lay on Hands is Lay on Hands with `{ charges: 2, allies: 1 }`. The params that are magnitudes (a heal's amount, an ability's hit, a burn, a shield) are listed in the behavior's `scales`, and grow with the unit's **ability power** (`Stats.abilityPower`, percent): `paramsOf(ref, abilityPower)` multiplies them, so rules code and rules text both see the scaled numbers. Charges, turns, costs, percentages and stat buffs don't scale. Ability power comes from the unit and the effects on the field (levels, items, buffs), never from a passive ability, because passive abilities' params depend on it (the engine throws if one tries). Each ability declares **tags** (`attack`, `melee`, `ranged`, `spell`, `damage`, `heal`, `basic`). Its **damage type** is the unit's ref's (`{ id: "attack", damageType: "fire" }`), else the behavior's own (Homing Lightning: lightning), else weapon; units have none (the user, 2026-10-07: "having damage type on units instead of abilities doesn't really make sense"). A unit's attack is an ability like any other, with its own `power` on the unit's ref. Modifiers target tags, and the UI and AI use tags (default action = the `basic`-tagged one). Nothing outside `abilities/` names an ability id.
 
 ### 5. Context from the world enters battle as traits
 `createBattle` takes a context per side and per unit:

@@ -1,4 +1,5 @@
 import type { Commitment } from "#rules/forks";
+import { strongestHitOf } from "#rules/abilities/index";
 import { EVOLUTIONS, UNITS } from "#rules/units/index";
 import { XP_TO_EVOLVE } from "#rules/balance";
 
@@ -8,8 +9,8 @@ import { XP_TO_EVOLVE } from "#rules/balance";
  */
 /** What defeating one unit of this kind is worth. */
 export function xpValue(defId: string): number {
-  const stats = UNITS[defId]?.stats;
-  return stats ? Math.round(stats.maxHp / 2 + stats.damage + stats.armor) : 0;
+  const def = UNITS[defId];
+  return def ? Math.round(def.stats.maxHp / 2 + strongestHitOf(def) + def.stats.armor) : 0;
 }
 
 /** XP a unit of this tier needs for its next step (evolution or level); tiers past the table use its last entry. */

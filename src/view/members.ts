@@ -1,6 +1,7 @@
 import { itemById } from "#rules/items";
 import { NODES } from "#rules/nodes";
-import { BEHAVIORS, describeAbility, usesAbilityPower } from "#rules/abilities/index";
+import { BEHAVIORS, elementsOf } from "#rules/abilities/index";
+import { abilityText } from "#view/ability-text";
 import { effectDef } from "#rules/effects";
 import type { Commitment } from "#rules/forks";
 import { nextForm, xpToEvolve, xpToLevel } from "#rules/progression";
@@ -9,6 +10,7 @@ import { UPGRADES } from "#rules/upgrades";
 import { LEADER_SKILLS } from "#rules/world/leaders";
 import { isLeaderOf, maxHpOf, placementOf, recordOf } from "#rules/world/record";
 import { ownStats } from "#rules/battle/engine";
+import type { Stats } from "#rules/battle/types";
 import type { Leader, Mark, SquadMember } from "#rules/world/state";
 import { art } from "#view/art";
 import { element } from "#view/dom";
@@ -67,6 +69,12 @@ export function memberRow(m: SquadMember, leader: Leader | undefined, commitment
 }
 
 /** What a unit type is, before you have one: portrait, stats and abilities (for choosing a branch). */
+/** What buffs add to its damaging hits, if anything: "+10 to its hits", "+25% to its hits". */
+export function hitChange(s: Stats): string {
+  const parts = [s.hitPercent !== 0 ? `${s.hitPercent > 0 ? "+" : ""}${s.hitPercent}%` : "", s.hitBonus !== 0 ? `${s.hitBonus > 0 ? "+" : ""}${s.hitBonus}` : ""].filter((p) => p);
+  return parts.length > 0 ? `${parts.join(", ")} to its hits` : "";
+}
+
 /** `abilityPower`: what its abilities are described at (a veteran's is higher than its type's). */
 export function unitDefCard(defId: string, abilityPower?: number): HTMLElement {
   const def = UNITS[defId];
@@ -75,15 +83,14 @@ export function unitDefCard(defId: string, abilityPower?: number): HTMLElement {
   card.appendChild(art({ kind: "portrait", id: defId, frame: "bust" }, "card-portrait"));
   card.append(element("div", "title", def.name), element("div", "subtitle", `Tier ${def.tier}`));
   const s = def.stats;
-  const facts = [`${s.maxHp} HP`, s.shield > 0 ? `${s.shield} shield` : "", `${s.damage} damage${def.damageType === "weapon" ? "" : ` (${def.damageType})`}`, `${s.armor} armor`, `${s.initiative} initiative`];
-  if (usesAbilityPower(def.abilities)) facts.push(`${s.abilityPower} ability power`);
+  const facts = [`${s.maxHp} HP`, s.shield > 0 ? `${s.shield} shield` : "", `${s.armor} armor`, `${s.initiative} initiative`, `${s.abilityPower} ability power`, elementsOf(def).length === 0 ? "" : `deals ${elementsOf(def).join(", ")}`];
   if (def.spellCharges) facts.push(`${def.spellCharges} spell charges`);
   card.appendChild(element("div", "stats", facts.filter((f) => f).join(" · ")));
   for (const ref of def.abilities) {
     const behavior = BEHAVIORS[ref.id];
-    if (!behavior || (behavior.kind === "active" && behavior.tags.includes("basic"))) continue;
+    if (!behavior) continue;
     const item = element("div", "ability");
-    item.append(element("span", "name", ref.name ?? behavior.name), element("div", "text", describeAbility(ref, abilityPower ?? s.abilityPower)));
+    item.append(element("span", "name", ref.name ?? behavior.name), abilityText(ref, abilityPower ?? s.abilityPower));
     card.appendChild(item);
   }
   return card;
@@ -97,8 +104,7 @@ export function memberCard(m: SquadMember, leader: Leader | undefined): HTMLElem
   const s = ownStats(placementOf(m, leader));
   const card = unitDefCard(m.defId, s.abilityPower);
   const def = UNITS[m.defId];
-  const facts = [`${m.hp} / ${maxHpOf(m, leader)} HP`, s.shield > 0 ? `${s.shield} shield` : "", `${s.damage} damage${def && def.damageType !== "weapon" ? ` (${def.damageType})` : ""}`, `${s.armor} armor`, `${s.initiative} initiative`];
-  if (def && usesAbilityPower(def.abilities)) facts.push(`${s.abilityPower} ability power`);
+  const facts = [`${m.hp} / ${maxHpOf(m, leader)} HP`, s.shield > 0 ? `${s.shield} shield` : "", `${s.armor} armor`, `${s.initiative} initiative`, `${s.abilityPower} ability power`, hitChange(s), def && elementsOf(def).length > 0 ? `deals ${elementsOf(def).join(", ")}` : ""];
   if (def?.spellCharges) facts.push(`${def.spellCharges} spell charges`);
   card.querySelector(".stats")?.replaceWith(element("div", "stats", facts.filter((f) => f).join(" · ")));
   const title = card.querySelector(".title");

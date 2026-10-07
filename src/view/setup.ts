@@ -1,4 +1,5 @@
-import { BEHAVIORS, describeAbility } from "#rules/abilities/index";
+import { BEHAVIORS, elementsOf, strongestHitOf } from "#rules/abilities/index";
+import { abilityPlain } from "#view/ability-text";
 import type { Placement } from "#rules/battle/engine";
 import { STARTING_LEADERSHIP } from "#rules/balance";
 import { allowedUnits, squadProblems } from "#rules/forks";
@@ -239,7 +240,7 @@ export class Setup {
       head.append(element("span", "name", def.name), element("span", "tier", `tier ${def.tier}`));
       card.appendChild(head);
       card.appendChild(
-        element("div", "stats", `${def.stats.maxHp} HP${def.stats.shield > 0 ? ` · ${def.stats.shield} shield` : ""} · ${def.stats.damage} dmg${def.damageType === "weapon" ? "" : ` (${def.damageType})`} · ${def.stats.armor} armor · ${def.stats.initiative} init`),
+        element("div", "stats", `${def.stats.maxHp} HP${def.stats.shield > 0 ? ` · ${def.stats.shield} shield` : ""} · hits ${strongestHitOf(def)}${elementsOf(def).length === 0 ? "" : ` (${elementsOf(def).join(", ")})`} · ${def.stats.armor} armor · ${def.stats.initiative} init`),
       );
       const special = def.abilities.filter((a) => {
         const b = BEHAVIORS[a.id];
@@ -247,7 +248,7 @@ export class Setup {
       });
       const label = (a: (typeof special)[number]) => a.name ?? BEHAVIORS[a.id]?.name ?? a.id;
       card.appendChild(element("div", "abilities", special.map(label).join(" · ")));
-      card.title = special.map((a) => `${label(a)}: ${describeAbility(a, def.stats.abilityPower)}`).join("\n");
+      card.title = special.map((a) => `${label(a)}: ${abilityPlain(a, def.stats.abilityPower)}`).join("\n");
       card.addEventListener("click", (e) => {
         e.stopPropagation();
         this.brush = this.brush === defId ? null : defId;

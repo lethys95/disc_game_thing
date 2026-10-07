@@ -51,18 +51,22 @@ export const core: Readonly<Record<string, Behavior>> = {
   attack: {
     kind: "active",
     name: "Attack",
-    describe: () =>
-      "Strike an enemy in the front line, at most one column away.",
+    describe: (p) =>
+      `Strike an enemy in the front line, at most one column away, for ${p["power"]}.`,
     tags: ["attack", "basic", "melee", "damage"],
+    defaults: { power: 20 },
+    scales: ["power"],
     choices: (ctx, self) => meleeTargets(ctx.living(), ctx.unit(self.unitId)).map((t) => single(t, "main")),
     resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self)),
   },
   shoot: {
     kind: "active",
     name: "Shoot",
-    describe: () =>
-      "Ranged: hit any enemy.",
+    describe: (p) =>
+      `Ranged: hit any enemy for ${p["power"]}.`,
     tags: ["attack", "basic", "ranged", "damage"],
+    defaults: { power: 10 },
+    scales: ["power"],
     choices: rangedChoices,
     resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self)),
   },

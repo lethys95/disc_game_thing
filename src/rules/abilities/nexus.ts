@@ -9,9 +9,11 @@ export const nexus: Readonly<Record<string, Behavior>> = {
   bolt: {
     kind: "active",
     name: "Bolt",
-    describe: () =>
-      "Very weak ranged hit on any enemy. Unlimited.",
+    describe: (p) =>
+      `A weak ranged hit on any enemy, for ${p["power"]}. Unlimited.`,
     tags: ["attack", "ranged", "spell", "damage"],
+    defaults: { power: 5 },
+    scales: ["power"],
     choices: rangedChoices,
     resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self)),
   },
@@ -103,10 +105,10 @@ export const nexus: Readonly<Record<string, Behavior>> = {
     kind: "active",
     name: "Absorb",
     describe: (p) =>
-      `On an enemy: a very weak ranged hit, and its next hit deals ${p["prevent"]} less. On an ally: the next hit on it deals ${p["prevent"]} less. This unit heals by what is prevented. Unlimited.`,
+      `On an enemy: a weak ranged hit for ${p["power"]}, and its next hit deals ${p["prevent"]} less. On an ally: the next hit on it deals ${p["prevent"]} less. This unit heals by what is prevented. Unlimited.`,
     tags: ["attack", "ranged", "spell", "damage"],
-    defaults: { prevent: 5 },
-    scales: ["prevent"],
+    defaults: { power: 3, prevent: 5 },
+    scales: ["power", "prevent"],
     choices: (ctx, self) =>
       ctx
         .living()
@@ -148,6 +150,7 @@ export const nexus: Readonly<Record<string, Behavior>> = {
   homing_lightning: {
     kind: "active",
     name: "Homing Lightning",
+    damageType: "lightning",
     describe: (p) =>
       `Lightning (${p["power"]}) strikes an enemy. ${spellCost(p, "it strikes every unit with the target's name, friend and foe alike")}`,
     tags: ["attack", "ranged", "spell", "damage", "area"],

@@ -1,5 +1,5 @@
 import { autoplay, chooseTarotCards } from "#rules/ai";
-import { chooseTarot, createBattle, effectiveStatsOf, NO_CONTEXT } from "#rules/battle/engine";
+import { chooseTarot, createBattle, NO_CONTEXT, strongestHits } from "#rules/battle/engine";
 import type { TarotHand } from "#rules/battle/tarot";
 import type { Battle, EffectSeed } from "#rules/battle/types";
 import { act, p, start, unit, until } from "#tests/helpers";
@@ -37,11 +37,11 @@ describe("tarot", () => {
   test("Death: kill an enemy in time, and the reward pays the whole side", () => {
     let battle = until(start([p("zealot", 0, 1), p("congregant", 0, 0)], [{ ...p("congregant", 0, 1), hp: 1 }, p("congregant", 0, 2)]), "0.0.1");
     battle = holding(battle, { side: 0, unitId: "0.0.0", cards: [{ task: { kind: "killBefore", round: 2 }, reward: { kind: "might", percent: 25 } }] });
-    const before = effectiveStatsOf(battle)["0.0.0"]?.damage ?? 0;
+    const before = strongestHits(battle)["0.0.0"] ?? 0;
     const { battle: after, events } = act(battle, "attack", "1.0.1");
     expect(events).toContainEqual({ type: "tarot", side: 0, hand: 0, state: "fulfilled", payouts: 1 });
     expect(after.tarot[0]?.state).toBe("fulfilled");
-    expect(effectiveStatsOf(after)["0.0.0"]?.damage).toBe(Math.round(before * 1.25));
+    expect(strongestHits(after)["0.0.0"]).toBe(Math.round(before * 1.25));
   });
 
   test("Strength: losing someone too early fails the card, and nothing is paid", () => {
