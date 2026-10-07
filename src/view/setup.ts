@@ -244,7 +244,7 @@ export class Setup {
       );
       const special = def.abilities.filter((a) => {
         const b = BEHAVIORS[a.id];
-        return !(b?.kind === "active" && b.tags.includes("basic"));
+        return !(b?.kind === "active" && b.tags.includes("common"));
       });
       const label = (a: (typeof special)[number]) => a.name ?? BEHAVIORS[a.id]?.name ?? a.id;
       card.appendChild(element("div", "abilities", special.map(label).join(" · ")));

@@ -309,9 +309,8 @@ export class App implements KeyLayer {
 
   private selectDefault(): void {
     this.overloaded.clear();
-    // The unit's basic attack if it has one, else any attack (casters): never a hard-coded ability id.
-    const options = this.playerOptions().filter((o) => o.tags.includes("attack") && o.enhancement.kind === "none");
-    const attack = options.find((o) => o.tags.includes("basic")) ?? options[0];
+    // The unit's first attack, in its own order (granted ones come after): never a hard-coded ability id.
+    const attack = this.playerOptions().find((o) => o.tags.includes("attack") && o.enhancement.kind === "none");
     this.select(attack ? optionKey(attack) : null);
   }
 
@@ -336,7 +335,7 @@ export class App implements KeyLayer {
     if (this.chosen || !hovered || selected?.choices.some((c) => matches(c, hovered))) return selected;
     const self = this.battle?.current ? this.battle.units[this.battle.current.unitId] : undefined;
     if (self && hovered.side === self.side && sameTile(hovered.tile, self.tile)) return selected;
-    return this.playerOptions().find((o) => o.enhancement.kind === "none" && !o.tags.includes("basic") && o.choices.some((c) => matches(c, hovered))) ?? selected;
+    return this.playerOptions().find((o) => o.enhancement.kind === "none" && !o.tags.includes("common") && o.choices.some((c) => matches(c, hovered))) ?? selected;
   }
 
   /** An ability whose definition claims this key, among the ones the player may use now. */

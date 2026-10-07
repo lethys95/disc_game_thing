@@ -17,6 +17,15 @@ Capitals are unnamed. (Names from the C# attempt, like "Burning Faith" and "Nexu
 ## No RNG
 No hit chance, damage rolls, or morale. Outcomes are deterministic. Crits and evasion exist only as counts, never chances (user, 2026-10-05: "instead of chance, they'll simply do every x amount of hits"); tarot hands are "randomly generated" by a seed, so the same battle always deals the same hand. Depth comes from richer units instead: multiple mechanics, activated abilities. A healer can still attack (poorly). A tank can still use abilities. Units are not single-trick.
 
+## No head math (user, 2026-10-07)
+"Complexity will be in which abilities you use and which strategies you intend to use your units with, not having to
+do math. Having to do math in your head just makes games annoying […] You could easily indicate which of your
+abilities would be good or bad against your opponent, but the devs don't. Instead players reach for matrixes online
+[…] That's just work players just shouldn't have to do. There are plenty of abilities that'll bring complexity. Math
+isn't it." So the game shows outcomes, not formulas: the hover preview runs the action and shows exactly what it does
+(lethal marked with a skull), and rules text shows numbers already scaled. Anything that changes a hit (types,
+statuses, resistances) must show up in what the player sees before acting.
+
 ## Leader elevation
 Leaders are not unique unit types. Any unit can be elevated to leader at any time, irreversibly. Elevation grants squad command, overworld movement, equipment slots, and leader upgrades — **no combat stat boost**. A tier-3 Paladin leader fights exactly like a tier-3 Paladin.
 - No leader cap. Spreading thin is self-punishing: concentrated squads win.

@@ -212,10 +212,10 @@ export type BattleEvent =
 
 /**
  * What an ability does, for modifiers, the AI and the UI to reason about without naming abilities:
- * `attack` is the unit's attack (what Must Attack allows and Hysteria repeats); `basic` marks the universal
- * verbs; `damage` abilities are what "+X ability damage" modifiers touch.
+ * `attack` is the unit's attack (what Must Attack allows and Hysteria repeats, and its default action); `common`
+ * marks the verbs every unit has (Defend, Wait, Retreat); `damage` abilities are what hit bonuses touch.
  */
-export type Tag = "attack" | "basic" | "melee" | "ranged" | "spell" | "damage" | "heal" | "area" | "flee";
+export type Tag = "attack" | "common" | "melee" | "ranged" | "spell" | "damage" | "heal" | "area" | "flee";
 
 /** One hit on one unit, on its way through the damage pipeline (architecture.md §3). */
 export interface Packet {

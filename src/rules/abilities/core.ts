@@ -53,7 +53,7 @@ export const core: Readonly<Record<string, Behavior>> = {
     name: "Attack",
     describe: (p) =>
       `Strike an enemy in the front line, at most one column away, for ${p["power"]}.`,
-    tags: ["attack", "basic", "melee", "damage"],
+    tags: ["attack", "melee", "damage"],
     defaults: { power: 20 },
     scales: ["power"],
     choices: (ctx, self) => meleeTargets(ctx.living(), ctx.unit(self.unitId)).map((t) => single(t, "main")),
@@ -64,7 +64,7 @@ export const core: Readonly<Record<string, Behavior>> = {
     name: "Shoot",
     describe: (p) =>
       `Ranged: hit any enemy for ${p["power"]}.`,
-    tags: ["attack", "basic", "ranged", "damage"],
+    tags: ["attack", "ranged", "damage"],
     defaults: { power: 10 },
     scales: ["power"],
     choices: rangedChoices,
@@ -75,7 +75,7 @@ export const core: Readonly<Record<string, Behavior>> = {
     name: "Defend",
     describe: () =>
       "End the turn. Damage taken is halved until this unit acts again.",
-    tags: ["basic"],
+    tags: ["common"],
     hotkey: "d",
     choices: (ctx, self) => [single(ctx.unit(self.unitId), "main")],
     resolve: (ctx, self) => ctx.addEffect(self.unitId, { def: "defending" }),
@@ -113,7 +113,7 @@ export const core: Readonly<Record<string, Behavior>> = {
     name: "Retreat",
     describe: () =>
       "Turn your back and flee: this unit loses its next turn, then leaves the battle alive at the start of the one after. It keeps its health; the enemy gains no XP for it.",
-    tags: ["basic", "flee"],
+    tags: ["common", "flee"],
     hotkey: "r",
     choices: (ctx, self) => [single(ctx.unit(self.unitId), "main")],
     resolve: (ctx, self) => ctx.addEffect(self.unitId, { def: "retreating", source: self.unitId }),
@@ -123,7 +123,7 @@ export const core: Readonly<Record<string, Behavior>> = {
     name: "Wait",
     describe: () =>
       "Act again at the end of this pass.",
-    tags: ["basic"],
+    tags: ["common"],
     hotkey: "w",
     reschedules: true,
     choices: (ctx, self) => [single(ctx.unit(self.unitId), "main")],
