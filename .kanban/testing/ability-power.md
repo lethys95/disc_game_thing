@@ -14,3 +14,7 @@
 - **The user (2026-10-07):** +25 a tier makes upgrades "a bit insignificant"; Disciples II roughly doubled at tier
   2. Now 100 × tier, with the Apprentice keeping its Burst so Ral-Vitahl's opening holds (#71). Ways to raise it:
   `eventually/ability-power-sources`.
+- **The user (2026-10-07), second round:** ability power per unit like health (100 × tier only a guideline; Nexus
+  casters above it); healing and melee scale too; Witherbloom for Decay support 2; then "Everything is an ability":
+  no damage stat, damage types on abilities. All built (#71), plus marked numbers in rules text and a clearer hover
+  preview (badge, skull when lethal, the health bar marked). Open: questions #14 (Nexus spells: air or fire).
