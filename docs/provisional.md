@@ -152,3 +152,7 @@ Detonate are the user's). Health 75 / 90 / 105 (the Martyr 160, to carry its bac
   deals). A full column of three can nearly kill it.
 - **AI:** every ability gets picked (tier-4 mirror probes: Judgement 24, Repentance 10, Detonate 2, Beam 2 of the
   casters' actions); the Beam is rare because Fire on all scores better for the greedy AI.
+- **The composition matrix after** (all squads, win %): tier 2 J 57, N 52, G 41 (was 49 / 55 / 45); tier 3 J 74, N 34,
+  G 39 (was 69 / 33 / 50); tier 4 J 85, N 20, G 39. Jilliath's best squads at tiers 3–4 now win 93–100%, but tier 4
+  isn't a fair test: Ral-Vitahl has no tier-4 units and most other lines stop at 2–3, so Jilliath's tier-4 mages meet
+  tier-3 casters. Not retuned: the balance pass comes once the other lines exist (the board).
