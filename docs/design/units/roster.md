@@ -30,13 +30,13 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 | Bonecracker | gnolls 1 | Claude (accepted) | picked: 1002 | ✓ |
 | Cackler | gnolls 1 | Claude (accepted) | picked: `cackler-turnaround-1002` | ✓ |
 | Matriarch | gnolls 2 | Claude (accepted) | picked: `matriarch-turnaround-1001` | ✓ |
-| Packstalker | gnolls 1 | Claude (accepted) | picked: `packstalker-skullhelm-turnaround-1001`, spear `packstalker-spear-props-1001` | — |
-| Hamstringer | gnolls 1 | Claude (accepted) | picked: `hamstringer-wraps-turnaround-1000`, kit `hamstringer-kit-props-1000` | — |
-| Dustwing | the Drawn | Claude's own tribe | picked: `dustwing-turnaround-1000` | — |
-| Chrysalis | the Drawn | Claude's own tribe | picked: `chrysalis-cocoon-stance-1002` (a single view) | — |
-| Lightdrinker | the Drawn | Claude's own tribe | picked: `lightdrinker-deathshead-turnaround-1001` | — |
-| Eyespot | the Drawn | Claude's own tribe | picked: `eyespot-fan-turnaround-1000` | — |
-| Pale Mother | the Drawn | Claude's own tribe | picked: `pale-mother-turnaround-1002` | — |
+| Packstalker | gnolls 1 | Claude (accepted) | picked: `packstalker-skullhelm-turnaround-1001`, spear `packstalker-spear-props-1001` | ✓ |
+| Hamstringer | gnolls 1 | Claude (accepted) | picked: `hamstringer-wraps-turnaround-1000`, kit `hamstringer-kit-props-1000` | ✓ |
+| Dustwing | the Drawn | Claude's own tribe | picked: `dustwing-turnaround-1000` | ✓ |
+| Chrysalis | the Drawn | Claude's own tribe | picked: `chrysalis-cocoon-stance-1002` (a single view) | ✓ |
+| Lightdrinker | the Drawn | Claude's own tribe | picked: `lightdrinker-deathshead-turnaround-1001` | ✓ |
+| Eyespot | the Drawn | Claude's own tribe | picked: `eyespot-fan-turnaround-1000` | ✓ |
+| Pale Mother | the Drawn | Claude's own tribe | picked: `pale-mother-turnaround-1002` | ✓ |
 
 ## 2. Identity, but no picked concept: needs concept art
 | Unit | Faction · tier | Identity | Concept |

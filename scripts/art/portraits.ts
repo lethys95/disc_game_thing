@@ -256,6 +256,93 @@ const UNITS: Readonly<Record<string, Unit>> = {
       crops: { bust: { from: "card", size: 0.6, x: 0.5, y: 0.21 }, icon: { from: "card", size: 0.24, x: 0.535, y: 0.09 } },
     },
   },
+  packstalker: {
+    front: "shots/tripo/packstalker-front.png",
+    identity:
+      "a gnoll, a lean long-legged hyena-headed hunter built to run, pale tawny-grey fur with dark spots, its head inside a helm made from a horned antelope skull, a brigandine harness of dark leather studded with bronze, strips of red-dyed cloth tied to its arms and hanging from its belt",
+    poses: ["it crouches low and forward, a long barbed bronze hunting spear with a tuft of fur and a red cloth strip levelled in both hands"],
+    strengths: T_POSED,
+    picked: {
+      card: "packstalker-card-d90.png",
+      crops: { bust: { from: "card", size: 0.6, x: 0.58, y: 0.3 }, icon: { from: "card", size: 0.32, x: 0.635, y: 0.26 } },
+    },
+  },
+  hamstringer: {
+    front: "shots/tripo/hamstringer-front.png",
+    identity:
+      "a gnoll, a small wiry hyena-headed skirmisher with pale grey fur and dark spots, wrapped almost head to toe in dusty layered strips of dark cloth, a dark cowl and scarf around its head and neck, a string of round bronze bolas weights across its chest, rawhide-wrapped legs",
+    poses: ["it stands poised to throw, a short barbed bronze javelin drawn back in one hand, a bundle of javelins slung on its back"],
+    strengths: T_POSED,
+    picked: {
+      card: "hamstringer-card-d90.png",
+      crops: { bust: { from: "card", size: 0.6, x: 0.52, y: 0.28 }, icon: { from: "card", size: 0.28, x: 0.52, y: 0.2 } },
+    },
+  },
+  dustwing: {
+    front: "shots/tripo/dustwing-front.png",
+    identity:
+      "a slender moth-folk creature: a thin pale grey body with a ruff of white fur at its throat, a small head with large black eyes and feathered antennae, thin clawed limbs, broad tattered dusty grey-brown moth wings with dark staring eyespots and long trailing tails",
+    poses: ["it hovers just above the ground, its wings spread wide, its claws reaching forward, dust falling from its wings"],
+    strengths: T_POSED,
+    picked: {
+      card: "dustwing-card-d90.png",
+      crops: { bust: { from: "card", size: 0.6, x: 0.53, y: 0.33 }, icon: { from: "card", size: 0.28, x: 0.55, y: 0.34 } },
+    },
+  },
+  chrysalis: {
+    front: "shots/tripo/chrysalis-front.png",
+    identity:
+      "a tall upright cocoon, an object with no limbs and no face: overlapping scales of grey silk and old wax bound in a spiral of tarnished silver wire with silver filigree, a dark split opening near its top",
+    poses: ["it stands upright"],
+    // At 0.3–0.4 (round one) it stays a 3D render; round two repaints it harder.
+    strengths: { card: [0.5, 0.6], bust: [] },
+    styles: ["ornate", "plain"],
+    picked: {
+      card: "chrysalis-card-d60.png",
+      crops: { bust: { from: "card", size: 0.6, x: 0.5, y: 0.25 }, icon: { from: "card", size: 0.42, x: 0.47, y: 0.21 } },
+    },
+  },
+  lightdrinker: {
+    front: "shots/tripo/lightdrinker-front.png",
+    identity:
+      "a moth-folk like a death's-head hawkmoth, gaunt and menacing, not cute: a heavy furred black body banded with pale cream stripes, a pale bony skull-like mask of a face with two dark insect eyes and small mandibles, feathered antennae, narrow mottled dark wings folded down its back like a coat, thin clawed arms, small vials of pale light on a cord at its waist",
+    // Round one (one pose, a plain "skull-like face") came out round and owlish, one huge eye at 0.9.
+    poses: [
+      "it stands upright on two furred legs, leaning forward, its thin clawed hands raised",
+      "it stands hunched and looming, its clawed hands reaching toward the viewer",
+    ],
+    strengths: T_POSED,
+    picked: {
+      card: "lightdrinker-card-pose2-d90.png",
+      crops: { bust: { from: "card", size: 0.6, x: 0.57, y: 0.27 }, icon: { from: "card", size: 0.28, x: 0.6, y: 0.21 } },
+    },
+  },
+  eyespot: {
+    front: "shots/tripo/eyespot-front.png",
+    identity:
+      "a moth-folk with four huge dark wine-red moth wings spread wide behind it like a fan, each set with a dark staring eyespot; a thin pale body in a long high-collared black velvet coat with black lace at its hem, its face hidden behind a black lace veil, feathered antennae",
+    poses: ["it stands with its four wings raised and spread wide behind it"],
+    strengths: T_POSED,
+    picked: {
+      card: "eyespot-card-d90.png",
+      crops: { bust: { from: "card", size: 0.6, x: 0.5, y: 0.3 }, icon: { from: "card", size: 0.3, x: 0.47, y: 0.25 } },
+    },
+  },
+  pale_mother: {
+    front: "shots/tripo/pale-mother-front.png",
+    identity:
+      "a moth-folk matriarch, tall and regal: pale ivory fur, a moth's face with two huge round black compound eyes and no nose, a crown of lit white candles between feathered antennae, tarnished silver chains and jewelry on her arms and waist, a dark gown, broad pale ivory moth wings with dark eyespots hanging around her like a cloak",
+    // Round one ("large black eyes", the first pose alone) gave her a cat's face with a pink nose.
+    poses: [
+      "she stands tall, her wings beginning to open like a cloak, her clawed hands at her sides",
+      "she stands tall, her wings wrapped around her like a long veil and cloak, one clawed hand raised in command",
+    ],
+    strengths: T_POSED,
+    picked: {
+      card: "pale_mother-card-pose1-d90.png",
+      crops: { bust: { from: "card", size: 0.6, x: 0.51, y: 0.25 }, icon: { from: "card", size: 0.34, x: 0.51, y: 0.135 } },
+    },
+  },
 };
 
 const dirOf = (id: string) => `art/candidates/portraits/${id}`;

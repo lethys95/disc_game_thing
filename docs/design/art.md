@@ -195,6 +195,11 @@ All 43 abilities without art got icons in the recipe of the four the user liked 
 - **The Omen, Soothsayer and Etherborn (2026-10-06):** portraits from their picked concepts (cards at 0.9, posed:
   the Omen with a flintlock, the Soothsayer with the eye orb hovering over one hand and cards in the other, the
   Etherborn with arcane fire). Bust and icon cut from the card; installed. Fifteen units have portraits now.
+- **The Packstalker, Hamstringer and the five Drawn (2026-10-07):** cards at 0.9 (the Packstalker with its spear, the
+  Hamstringer with a javelin and its bundle), the Chrysalis at 0.6 (at 0.3–0.4 it stayed a 3D render; at 0.5–0.6 its
+  wire turns to thorny silver vines, the split darker). Round two for two Drawn: the Lightdrinker came out round and
+  owlish until "gaunt and menacing, not cute" and a skull mask with mandibles were named; the Pale Mother had a cat's
+  face with a pink nose until "a moth's face […] no nose". Bust and icon cut from the card; installed. 22 units.
 
 ## HUD and UI elements: more, and more creative (the user, 2026-10-06; for when ComfyUI is free)
 "We need more UI elements for HUD and more. Maybe some more creative bits. Like maybe a gargoyle of an angel or
