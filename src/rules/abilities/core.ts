@@ -47,6 +47,13 @@ export function areaChoices(ctx: Ctx, self: TraitSelf, shape: (row: Row, col: Co
   return choices;
 }
 
+/** A 2×2 square on the enemy grid, clipped inside it: the anchor and the tiles behind and beside it. */
+export function square2x2(row: Row, col: Col): { row: number; col: number }[] {
+  const r = Math.min(row, 1);
+  const c = Math.min(col, 1);
+  return [{ row: r, col: c }, { row: r + 1, col: c }, { row: r, col: c + 1 }, { row: r + 1, col: c + 1 }];
+}
+
 export const core: Readonly<Record<string, Behavior>> = {
   attack: {
     kind: "active",

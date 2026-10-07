@@ -239,9 +239,9 @@ export function buildFigure(defId: string, side: Side, owner: THREE.Color | null
       g.add(flail(m.trim, m.glow, defId === "torturer" ? 3 : 2));
       if (defId === "torturer") g.add(hookBlade(m.trim));
       break;
-    case "jilliath_holy_2":
-    case "jilliath_holy_3":
-    case "jilliath_holy_4":
+    case "cleric":
+    case "pontiff":
+    case "archon":
       g.add(hood(top - 0.1, 0.17, m.trim));
       g.add(eyes(top + 0.05, m.glow));
       g.add(staff(m.trim, m.glow));

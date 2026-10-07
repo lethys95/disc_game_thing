@@ -13,7 +13,7 @@
 
 ## Tier 1
 
-### Cleric
+### Jilliath support 1 (was Cleric; unnamed until the angels are worked out)
 - **Evolves into:** open.
 - **Role:** healer.
 - **Intent:** (you) a simple single-target heal. (Claude:) the first unit that keeps the front line standing; a squad with a
@@ -25,7 +25,7 @@
   - *Shoot* (main action): a weak ranged attack (you: not D2's attack-less healer).
 - **Strong against / weak against (Claude):** attrition and chip damage / burst that kills before healing matters, and
   anything that reaches the back row.
-- **Status:** in game as `cleric` (numbers provisional).
+- **Status:** in game as `jilliath_support_1` (unnamed since 2026-10-07; numbers provisional).
 
 ## The user's direction (2026-10-06, the backline brainstorm)
 "I can imagine the offensive side of the support line will work maybe a bit like discipline priests in wow, in that they'll heal by damaging. We might actually just straight up yoink the atonement kit they use, I think. Then we can split within fanaticism further to bring in transfusion in a different subline. Faith will likely be more basic. Resurrection only lives under faith. I also want to be careful with the self-damage. Not everything under fanaticism needs to use this mechanic."
@@ -54,3 +54,9 @@ The tree as it stands (names and numbers open):
   damage use a secret which has deflecting palm […] It's neat and kind of cheeky to put a single secret in there when
   it's otherwise a nexus mechanic. Just maybe don't call it deflecting palm." The secret: the next hit on a chosen
   ally is prevented and dealt back to whoever struck.
+
+## The support line is angels (the user, 2026-10-07)
+"We hand over angels to the entirity of the support branch." The tier-1 support was the Cleric; that name went to the
+tier-2 priest, and "t1 support is currently called cleric, so we just need it to be unnamed until we can figure out
+what to do with the angels in the support branch." In the game as `jilliath_support_1` ("Jilliath support 1").
+- **Status:** tier 1 in game as `jilliath_support_1` (unnamed; numbers provisional).

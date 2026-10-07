@@ -9,10 +9,10 @@ import type { Col, Row } from "#rules/battle/types";
  */
 const at = (defId: string, row: Row, col: Col): Placement => ({ defId, tile: { row, col } });
 const jilliath: Record<string, Placement[]> = {
-  "3Co+Cl+Ma": [at("congregant", 0, 0), at("congregant", 0, 1), at("congregant", 0, 2), at("cleric", 2, 0), at("jilliath_mage_1", 2, 1)],
+  "3Co+Cl+Ma": [at("congregant", 0, 0), at("congregant", 0, 1), at("congregant", 0, 2), at("jilliath_support_1", 2, 0), at("acolyte", 2, 1)],
   "5Co": [at("congregant", 0, 0), at("congregant", 0, 1), at("congregant", 0, 2), at("congregant", 1, 0), at("congregant", 1, 2)],
-  "3Co+2Ma": [at("congregant", 0, 0), at("congregant", 0, 1), at("congregant", 0, 2), at("jilliath_mage_1", 2, 0), at("jilliath_mage_1", 2, 1)],
-  "3Co+2Cl": [at("congregant", 0, 0), at("congregant", 0, 1), at("congregant", 0, 2), at("cleric", 2, 0), at("cleric", 2, 1)],
+  "3Co+2Ma": [at("congregant", 0, 0), at("congregant", 0, 1), at("congregant", 0, 2), at("acolyte", 2, 0), at("acolyte", 2, 1)],
+  "3Co+2Cl": [at("congregant", 0, 0), at("congregant", 0, 1), at("congregant", 0, 2), at("jilliath_support_1", 2, 0), at("jilliath_support_1", 2, 1)],
 };
 const nexus: Record<string, Placement[]> = {
   "3Cu+Te+Ap": [at("custodian", 0, 0), at("custodian", 0, 1), at("custodian", 0, 2), at("technician", 1, 0), at("apprentice", 1, 1)],

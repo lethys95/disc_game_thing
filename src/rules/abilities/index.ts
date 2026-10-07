@@ -11,7 +11,7 @@ import type { AbilityRef, Behavior, DamageType, Params, UnitDef } from "#rules/b
 
 const SETS: readonly Readonly<Record<string, Behavior>>[] = [core, keywords, jilliath, nexus, grove, neutral, gnolls, drawn, carnival];
 
-/** Every ability by id. Two sets naming the same id would silently replace one (it happened: the Cleric's Mend). */
+/** Every ability by id. Two sets naming the same id would silently replace one (it happened: the Jilliath support's Mend). */
 export const BEHAVIORS: Readonly<Record<string, Behavior>> = Object.assign({}, ...SETS);
 
 /** Ability ids defined in more than one set: must be none (`tests/architecture.test.ts`). */

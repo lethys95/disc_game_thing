@@ -35,3 +35,9 @@ The user: "we can help each other with some theorycrafting / brainstorming on ji
 `shots/jilliath-backline.html` places the user's directions (inner fire, a beacon, resurrection, martyrdom healing,
 castigation, fire and burning, the martyrdom beam) into two trees forking on faith vs fanaticism, with
 Claude's fillers marked; the user marks keep, maybe or cut. Nothing is designed until the user says so.
+
+## Angels and their followers (the user, 2026-10-07)
+"The entire thing about Jilliath is that it's the faction of angels who flew back to earth to take matters into their
+own hands, and the humans are basically followers of their ways." So the holy mage line is **priests** (humans), and
+the **support line is angels**, the whole branch: "we hand over angels to the entirity of the support branch".
+The question this answers (the user): "what the difference between a holy mage and a priest(healer) is".

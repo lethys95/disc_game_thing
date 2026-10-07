@@ -9,7 +9,7 @@
 
 ## Tier 1
 
-### Jilliath mage 1 (placeholder name)
+### Acolyte
 - **Evolves into:** open.
 - **Role:** (Claude) finisher.
 - **Intent:** (Claude) weak against a fresh enemy, strong against a wounded one. It rewards the Congregant swarm and the
@@ -22,7 +22,7 @@
 - **Strong against / weak against (Claude):** wounded, tanky targets and anything the melee line already hit / fresh
   squads and a first strike, where it's the weakest unit in the fight.
 - **Open questions:** name; whether it's the start of the resurrection or vengeance side of the faction.
-- **Status:** in game as `jilliath_mage_1` (placeholder name; numbers provisional).
+- **Status:** in game as `acolyte`, the Acolyte (the user, 2026-10-07; numbers provisional).
 
 ## The user's direction (2026-10-06, the backline brainstorm)
 "I think I'm fine with faith side of mage line being focused around holy damage, and fire side around fire damage. And
@@ -82,3 +82,16 @@ The tree as built (Claude, provisional; names other than the user's are placehol
   Each tier keeps the last one's spells, like the melee line.
 - **Fanaticism:** Doomsayer (Condemn, Burn at the stake, burn on its hits) → Fire mage 3 (+ fire on all) → forks:
   Fire mage 4 (+ detonate) or Martyr mage 4 (+ the beam, backfiring: Fanaticism's self-damage).
+
+## The faith side is the priests (the user, 2026-10-07)
+- **What "theme" meant:** "we basicaly have these different branches, right? And so the question becomes what the
+  difference between a holy mage and a priest(healer) is. Like, we have the groundstones of the fanaticism line with
+  doomsayer, plenty of stuff to grab onto there. But holy? Mmh." The answer: Jilliath is angels come back to earth and
+  the humans who follow them (`design/factions/jilliath.md`); "We can actually 'just' have the holy mage line be
+  priests, and then we hand over angels to the entirity of the support branch." (This replaces Claude's "justice"
+  reading above.)
+- **Names:** "t2 holy would probably be cleric then, t3 pontiff, t4 archon. If t1 mage isn't named, make it acolyte."
+  Built: **Acolyte** (tier 1) → **Cleric** (2) → **Pontiff** (3) → **Archon** (4); the Doomsayer's side as before.
+- **The Pontiff's other upgrade:** "I think we can just have castigate be AOE on t3 in a square 2x2 as the other
+  upgrade. Yes, that's not balanced right now, but that's probably the right move." Built: from the Pontiff on,
+  Castigation strikes a 2×2 square (the Archon keeps it).

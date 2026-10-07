@@ -30,7 +30,7 @@ function playUntil(battle: Battle, stop: (b: Battle) => boolean, play: (id: stri
 
 describe("the faith side: holy", () => {
   test("Castigation deals holy damage, and its target deals less for its next turns", () => {
-    const battle = until(start([p("jilliath_holy_2", 1, 1)], [p("congregant", 0, 1)]), "0.1.1");
+    const battle = until(start([p("cleric", 1, 1)], [p("congregant", 0, 1)]), "0.1.1");
     const { battle: after, events } = act(battle, "castigation", "1.0.1");
     expect(took(events, "1.0.1")).toBe(36);
     expect(events).toContainEqual({ type: "turnStart", unitId: "1.0.1" });
@@ -39,8 +39,16 @@ describe("the faith side: holy", () => {
     expect(effectiveStats(after, "1.0.1").hitPercent).toBe(-30);
   });
 
+  test("from the Pontiff on, Castigation strikes a 2×2 square", () => {
+    const battle = until(start([p("pontiff", 1, 1)], [p("congregant", 0, 0), p("congregant", 0, 1), p("congregant", 1, 0), p("congregant", 2, 2)]), "0.1.1");
+    expect(affectedBy(battle, "castigation", "1.0.0")).toEqual(["1.0.0", "1.0.1", "1.1.0"]);
+    const after = act(battle, "castigation", "1.0.0").battle;
+    for (const id of ["1.0.0", "1.0.1", "1.1.0"]) expect(effect(after, id, "castigated")).toBeDefined();
+    expect(effect(after, "1.2.2", "castigated")).toBeUndefined();
+  });
+
   test("Repentance is a free action that takes an enemy out for three turns", () => {
-    const battle = until(start([p("jilliath_holy_3", 1, 1)], [p("congregant", 0, 0), p("paladin", 0, 2)]), "0.1.1");
+    const battle = until(start([p("pontiff", 1, 1)], [p("congregant", 0, 0), p("paladin", 0, 2)]), "0.1.1");
     const repented = act(battle, "repentance", "1.0.0").battle;
     expect(repented.current?.unitId).toBe("0.1.1");
     expect(legalActions(repented).map((a) => a.abilityId)).not.toContain("repentance");
@@ -50,7 +58,7 @@ describe("the faith side: holy", () => {
   });
 
   test("anything that damages or heals a repentant unit wakes it, a burn included", () => {
-    const battle = until(start([p("jilliath_holy_3", 1, 1)], [p("congregant", 0, 0), p("congregant", 0, 2, [{ def: "burning", amount: 5, stacks: 3 }])]), "0.1.1");
+    const battle = until(start([p("pontiff", 1, 1)], [p("congregant", 0, 0), p("congregant", 0, 2, [{ def: "burning", amount: 5, stacks: 3 }])]), "0.1.1");
     let woken = act(battle, "repentance", "1.0.0").battle;
     woken = act(woken, "castigation", "1.0.0").battle;
     expect(effect(woken, "1.0.0", "repentant")).toBeUndefined();
@@ -60,7 +68,7 @@ describe("the faith side: holy", () => {
   });
 
   test("Judgement strikes only the enemies whose last turn dealt damage", () => {
-    const battle = start([p("jilliath_holy_4", 0, 1)], [p("congregant", 0, 0), p("congregant", 0, 2)]);
+    const battle = start([p("archon", 0, 1)], [p("congregant", 0, 0), p("congregant", 0, 2)]);
     const fresh = until(battle, "0.0.1");
     expect(legalActions(fresh).map((a) => a.abilityId)).not.toContain("judgement");
     const { battle: judged } = playUntil(

@@ -8,34 +8,37 @@ export const JILLIATH_UNITS: Readonly<Record<string, UnitDef>> = {
     stats: { maxHp: 90, shield: 0, armor: 0, initiative: 50, abilityPower: 100 },
     abilities: [{ id: "attack", params: { power: 20 } }, ...kit("defend", "wait", "congregation")],
   },
-  // The backline's tier 1 (user, 2026-09-26: "keep it simple"). Stats are provisional.
-  cleric: {
-    id: "cleric", name: "Cleric", faction: "jilliath", tier: 1,
+  // The backline's tier 1 (user, 2026-09-26: "keep it simple"). Stats are provisional. The support line is to be
+  // the angels (user, 2026-10-07), so the support stays unnamed until they're worked out.
+  jilliath_support_1: {
+    id: "jilliath_support_1", name: "Jilliath support 1", faction: "jilliath", tier: 1,
     stats: { maxHp: 70, shield: 0, armor: 0, initiative: 45, abilityPower: 100 },
     // A weak attack of its own (user: not D2's attack-less healer).
     abilities: [{ id: "mend" }, { id: "shoot", params: { power: 10 } }, ...kit("defend", "wait")],
   },
-  jilliath_mage_1: {
-    id: "jilliath_mage_1", name: "Jilliath mage 1", faction: "jilliath", tier: 1,
+  acolyte: {
+    id: "acolyte", name: "Acolyte", faction: "jilliath", tier: 1,
     stats: { maxHp: 60, shield: 0, armor: 0, initiative: 50, abilityPower: 100 },
     abilities: [{ id: "condemn", params: { power: 25 }, damageType: "fire" }, ...kit("defend", "wait")],
   },
-  // The mage line past tier 1 (faction-stuff/jilliath/mage.md): faith is holy damage, fanaticism fire and stacking
-  // burn. Every tier keeps the last one's spells. Names other than the Doomsayer's are placeholders; stats provisional.
-  jilliath_holy_2: {
-    id: "jilliath_holy_2", name: "Holy mage 2", faction: "jilliath", tier: 2,
+  // The mage line past tier 1 (faction-stuff/jilliath/mage.md): faith is the priests and holy damage, fanaticism fire
+  // and stacking burn. Every tier keeps the last one's spells. Fire mage 3 and 4 and Martyr mage 4 are placeholder
+  // names; stats are provisional.
+  cleric: {
+    id: "cleric", name: "Cleric", faction: "jilliath", tier: 2,
     stats: { maxHp: 75, shield: 0, armor: 0, initiative: 50, abilityPower: 200 },
     abilities: [{ id: "castigation" }, ...kit("defend", "wait")],
   },
-  jilliath_holy_3: {
-    id: "jilliath_holy_3", name: "Holy mage 3", faction: "jilliath", tier: 3,
+  pontiff: {
+    id: "pontiff", name: "Pontiff", faction: "jilliath", tier: 3,
     stats: { maxHp: 90, shield: 0, armor: 0, initiative: 50, abilityPower: 300 },
-    abilities: [{ id: "castigation" }, ...kit("repentance", "defend", "wait")],
+    // Castigation strikes a 2×2 square from here (user, 2026-10-07).
+    abilities: [{ id: "castigation", params: { square: 1 } }, ...kit("repentance", "defend", "wait")],
   },
-  jilliath_holy_4: {
-    id: "jilliath_holy_4", name: "Holy mage 4", faction: "jilliath", tier: 4,
+  archon: {
+    id: "archon", name: "Archon", faction: "jilliath", tier: 4,
     stats: { maxHp: 105, shield: 0, armor: 0, initiative: 50, abilityPower: 400 },
-    abilities: [{ id: "castigation" }, ...kit("judgement", "repentance", "defend", "wait")],
+    abilities: [{ id: "castigation", params: { square: 1 } }, ...kit("judgement", "repentance", "defend", "wait")],
   },
   doomsayer: {
     id: "doomsayer", name: "Doomsayer", faction: "jilliath", tier: 2,

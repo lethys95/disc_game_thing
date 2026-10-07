@@ -87,7 +87,7 @@ describe("the carnival", () => {
   });
 
   test("Snakeoiler: a healing draught for an ally, a small explosive for one enemy anywhere", () => {
-    let battle = until(start([p("snakeoiler", 1, 1), { ...p("congregant", 0, 1), hp: 30 }], [p("congregant", 0, 1), p("cleric", 2, 1)]), "0.1.1");
+    let battle = until(start([p("snakeoiler", 1, 1), { ...p("congregant", 0, 1), hp: 30 }], [p("congregant", 0, 1), p("jilliath_support_1", 2, 1)]), "0.1.1");
     const healed = act(battle, "healing_draught", "0.0.1").battle;
     expect(unit(healed, "0.0.1").hp - unit(battle, "0.0.1").hp).toBe(30);
     battle = act(battle, "explosive_flask", "1.2.1").battle;

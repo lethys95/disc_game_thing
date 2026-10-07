@@ -13,7 +13,7 @@ const at = (defId: string, row: Row, col: Col): Placement => ({ defId, tile: { r
 export const PRESETS: Readonly<Record<"uncommitted" | "congregants" | "preserve" | "punishment" | "sacrifice" | "holy" | "fire", readonly Placement[]>> = {
   uncommitted: [
     at("congregant", 0, 0), at("congregant", 0, 1), at("congregant", 0, 2),
-    at("cleric", 2, 0), at("jilliath_mage_1", 2, 1),
+    at("jilliath_support_1", 2, 0), at("acolyte", 2, 1),
   ],
   congregants: [
     at("congregant", 0, 0), at("congregant", 0, 1), at("congregant", 0, 2),
@@ -33,7 +33,7 @@ export const PRESETS: Readonly<Record<"uncommitted" | "congregants" | "preserve"
   ],
   holy: [
     at("paladin", 0, 0), at("templar", 0, 1), at("paladin", 0, 2),
-    at("jilliath_holy_2", 2, 0), at("jilliath_holy_3", 2, 1), at("jilliath_holy_4", 2, 2),
+    at("cleric", 2, 0), at("pontiff", 2, 1), at("archon", 2, 2),
   ],
   fire: [
     at("zealot", 0, 0), at("fanatic", 0, 1), at("zealot", 0, 2),
@@ -103,7 +103,7 @@ export const CARNIVAL_GROUP: readonly Placement[] = [
 /** The setup screen's formation presets per faction, named after the branches they took. */
 export const FORMATIONS: Readonly<Record<Playable, readonly { readonly name: string; readonly squad: readonly Placement[] }[]>> = {
   jilliath: [
-    { name: "Congregants with a Cleric and a mage", squad: PRESETS.uncommitted },
+    { name: "Congregants with a support and a mage", squad: PRESETS.uncommitted },
     { name: "Congregants", squad: PRESETS.congregants },
     { name: "Faith", squad: PRESETS.preserve },
     { name: "Fanaticism: Punisher", squad: PRESETS.punishment },

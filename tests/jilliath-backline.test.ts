@@ -4,11 +4,11 @@ import { legalActions } from "#rules/battle/engine";
 import { act, p, start, unit, until } from "#tests/helpers";
 import { describe, expect, test } from "vitest";
 
-/** Jilliath's tier-1 backline (user, 2026-09-26): the Cleric and the first mage. Numbers are provisional. */
+/** Jilliath's tier-1 backline (user, 2026-09-26): the first support and the Acolyte. Numbers are provisional. */
 
-describe("Cleric", () => {
+describe("Jilliath support 1", () => {
   test("heals a wounded ally for more the more it is missing, and only wounded allies", () => {
-    let battle = until(start([p("cleric", 1, 1), { ...p("congregant", 0, 0), hp: 30 }, { ...p("congregant", 0, 2), hp: 80 }, p("congregant", 0, 1)], [p("congregant", 0, 1)]), "0.1.1");
+    let battle = until(start([p("jilliath_support_1", 1, 1), { ...p("congregant", 0, 0), hp: 30 }, { ...p("congregant", 0, 2), hp: 80 }, p("congregant", 0, 1)], [p("congregant", 0, 1)]), "0.1.1");
     const targets = legalActions(battle).find((a) => a.abilityId === "mend")?.choices.flatMap((c) => c.affected);
     expect(targets).toEqual(expect.arrayContaining(["0.0.0", "0.0.2"]));
     expect(targets).not.toContain("0.0.1");
@@ -18,15 +18,15 @@ describe("Cleric", () => {
   });
 
   test("has a weak attack of its own", () => {
-    const battle = until(start([p("cleric", 1, 1)], [p("congregant", 2, 2)]), "0.1.1");
+    const battle = until(start([p("jilliath_support_1", 1, 1)], [p("congregant", 2, 2)]), "0.1.1");
     expect(legalActions(battle).map((a) => a.abilityId)).toContain("shoot");
   });
 });
 
-describe("Jilliath mage 1", () => {
+describe("Acolyte", () => {
   test("Condemn hits harder the more health the target is missing", () => {
-    const fresh = until(start([p("jilliath_mage_1", 1, 1)], [p("congregant", 0, 1)]), "0.1.1");
-    const hurt = until(start([p("jilliath_mage_1", 1, 1)], [{ ...p("congregant", 0, 1), hp: 50 }]), "0.1.1");
+    const fresh = until(start([p("acolyte", 1, 1)], [p("congregant", 0, 1)]), "0.1.1");
+    const hurt = until(start([p("acolyte", 1, 1)], [{ ...p("congregant", 0, 1), hp: 50 }]), "0.1.1");
     const dealt = (b: typeof fresh) => {
       const before = unit(b, "1.0.1").hp;
       return before - unit(act(b, "condemn", "1.0.1").battle, "1.0.1").hp;
@@ -39,7 +39,7 @@ describe("Jilliath mage 1", () => {
 describe("the round limit (#52, provisional)", () => {
   test("a fight neither side can finish ends with the attacker withdrawing, its survivors alive", () => {
     // The pairing that stalled in `pnpm sim:t1`: the last Congregant can't break a shield the Technician refills.
-    const jilliath = [p("congregant", 0, 0), p("congregant", 0, 1), p("congregant", 0, 2), p("cleric", 2, 0), p("cleric", 2, 1)];
+    const jilliath = [p("congregant", 0, 0), p("congregant", 0, 1), p("congregant", 0, 2), p("jilliath_support_1", 2, 0), p("jilliath_support_1", 2, 1)];
     const nexus = [p("custodian", 0, 0), p("custodian", 0, 1), p("custodian", 0, 2), p("technician", 2, 0), p("apprentice", 2, 1)];
     let battle = start(jilliath, nexus);
     battle = autoplay(battle);

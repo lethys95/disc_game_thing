@@ -610,6 +610,6 @@ exports[`saves > the saved shape is pinned to the save version: when this fails,
     "structures[].wares[]",
     "turn",
   ],
-  "version": 30,
+  "version": 31,
 }
 `;

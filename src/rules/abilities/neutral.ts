@@ -1,4 +1,4 @@
-import { areaChoices, single } from "#rules/abilities/core";
+import { areaChoices, single, square2x2 } from "#rules/abilities/core";
 import { meleeTargets } from "#rules/battle/grid";
 import type { Behavior } from "#rules/battle/types";
 
@@ -13,12 +13,7 @@ export const neutral: Readonly<Record<string, Behavior>> = {
     tags: ["attack", "ranged", "spell", "damage", "area"],
     defaults: { power: 20 },
     scales: ["power"],
-    choices: (ctx, self) =>
-      areaChoices(ctx, self, (row, col) => {
-        const r = Math.min(row, 1);
-        const c = Math.min(col, 1);
-        return [{ row: r, col: c }, { row: r + 1, col: c }, { row: r, col: c + 1 }, { row: r + 1, col: c + 1 }];
-      }),
+    choices: (ctx, self) => areaChoices(ctx, self, square2x2),
     resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self)),
   },
 

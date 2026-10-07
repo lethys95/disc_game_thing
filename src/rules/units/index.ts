@@ -23,7 +23,7 @@ export type Playable = Exclude<Faction, "neutral">;
  * evolution) and where its evolution tree starts.
  */
 export const FACTION_ROOTS: Readonly<Record<Playable, readonly string[]>> = {
-  jilliath: ["congregant", "cleric", "jilliath_mage_1"],
+  jilliath: ["congregant", "jilliath_support_1", "acolyte"],
   nexus: ["custodian", "technician", "apprentice"],
   grove: ["sproutling", "grove_support_1", "grove_mage_1"],
 };
@@ -36,10 +36,10 @@ export const ARCHETYPES = ["melee", "support", "mage", "joker"] as const;
 export type Archetype = (typeof ARCHETYPES)[number];
 
 /** Which kind of line each tier-1 unit starts (user: the melee lines, the Technician supports, the Apprentice casts). */
-export const LINE_ARCHETYPE: Readonly<Record<string, Archetype>> = { congregant: "melee", cleric: "support", jilliath_mage_1: "mage", custodian: "melee", technician: "support", apprentice: "mage", sproutling: "melee", grove_support_1: "support", grove_mage_1: "mage" };
+export const LINE_ARCHETYPE: Readonly<Record<string, Archetype>> = { congregant: "melee", jilliath_support_1: "support", acolyte: "mage", custodian: "melee", technician: "support", apprentice: "mage", sproutling: "melee", grove_support_1: "support", grove_mage_1: "mage" };
 
 /** Canon: the Congregant costs 40 gold. The Nexus prices are provisional ("costly", quality over quantity). */
-export const RECRUIT_COST: Readonly<Record<string, number>> = { congregant: 40, cleric: 50, jilliath_mage_1: 60, custodian: 60, technician: 50, apprentice: 60, sproutling: 45, grove_support_1: 50, grove_mage_1: 60 };
+export const RECRUIT_COST: Readonly<Record<string, number>> = { congregant: 40, jilliath_support_1: 50, acolyte: 60, custodian: 60, technician: 50, apprentice: 60, sproutling: 45, grove_support_1: 50, grove_mage_1: 60 };
 
 /** One step up an evolution tree. */
 export interface Evolution {
@@ -65,9 +65,9 @@ export const EVOLUTIONS: Readonly<Record<string, readonly Evolution[]>> = {
   fanatic: [{ to: "chosen" }],
   chosen: [{ to: "avatar_of_vengeance" }],
   // The Jilliath mage line (faction-stuff/jilliath/mage.md): holy vs fire; the fire side forks again at tier 4.
-  jilliath_mage_1: [{ to: "jilliath_holy_2", label: "Faith" }, { to: "doomsayer", label: "Fanaticism" }],
-  jilliath_holy_2: [{ to: "jilliath_holy_3" }],
-  jilliath_holy_3: [{ to: "jilliath_holy_4" }],
+  acolyte: [{ to: "cleric", label: "Faith" }, { to: "doomsayer", label: "Fanaticism" }],
+  cleric: [{ to: "pontiff" }],
+  pontiff: [{ to: "archon" }],
   doomsayer: [{ to: "jilliath_fire_3" }],
   jilliath_fire_3: [{ to: "jilliath_fire_4" }, { to: "jilliath_martyr_4" }],
   // Ral-Vitahl: scheme vs overload, chosen per line (user, 2026-09-25).

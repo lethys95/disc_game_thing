@@ -1,4 +1,4 @@
-import { auraSource, at, rangedChoices, single, uses } from "#rules/abilities/core";
+import { areaChoices, auraSource, at, rangedChoices, single, square2x2, uses } from "#rules/abilities/core";
 import { PUNISHMENT_MAX_STACKS } from "#rules/balance";
 import { PUNISHED_PER_STACK } from "#rules/effects";
 import { adjacent, COLS, frontLine, meleeTargets, occupant, opponent } from "#rules/battle/grid";
@@ -6,7 +6,7 @@ import type { Behavior, Row, TargetChoice } from "#rules/battle/types";
 
 /** The Jilliath melee line's abilities (docs/design/units/jilliath-melee-line.md). */
 export const jilliath: Readonly<Record<string, Behavior>> = {
-  /** Cleric (user, 2026-09-26): a single-target heal that restores more the more health the ally is missing. */
+  /** Jilliath support 1 (user, 2026-09-26): a single-target heal that restores more the more health the ally is missing. */
   mend: {
     kind: "active",
     name: "Heal",
@@ -55,12 +55,14 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
     kind: "active",
     name: "Castigation",
     applies: ["castigated"],
-    describe: (p) => `Hit an enemy for ${p["power"]} holy damage. It deals ${p["weaken"]}% less damage for its next ${p["turns"]} turns.`,
+    describe: (p) =>
+      `Hit ${p["square"] ? "every enemy in a 2×2 square" : "an enemy"} for ${p["power"]} holy damage. ${p["square"] ? "Each" : "It"} deals ${p["weaken"]}% less damage for its next ${p["turns"]} turns.`,
     tags: ["attack", "ranged", "spell", "damage"],
     damageType: "holy",
-    defaults: { power: 18, weaken: 30, turns: 2 },
+    // `square`: 1 strikes a 2×2 square instead of one enemy (the Pontiff's upgrade).
+    defaults: { power: 18, weaken: 30, turns: 2, square: 0 },
     scales: ["power"],
-    choices: rangedChoices,
+    choices: (ctx, self) => (self.params["square"] ? areaChoices(ctx, self, square2x2) : rangedChoices(ctx, self)),
     resolve: (ctx, self, choice) => {
       ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self));
       const turns = self.params["turns"] ?? 0;
