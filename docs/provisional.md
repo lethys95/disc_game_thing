@@ -96,23 +96,23 @@ abilities instead of flat numbers."
 - Shown on unit cards, the battle card and the codex only for units with an ability that scales.
 - The AI values a point of it at 0.5 (`STAT_WORTH`), like a point of health.
 - With every unit at 100, battle sims were unchanged; whole games differed only through veterans.
-- **By tier (the fold, second step):** each unit's ability power is 100 at tier 1, then +25 a tier (125, 150, 175,
-  200), set on the unit so any one can be tuned alone. Abilities' defaults are now their strength at 100, and units'
-  own flat numbers were removed wherever the curve gives the same number. What moved (before → after):
-  | Unit (tier) | Ability | Before | After |
-  |---|---|---|---|
-  | Justiciar, Thaumaturge (2) | Burst | 40 | 44 |
-  | Backlasher, Maelstrom (3) | Burst | 55 | 53 |
-  | Backlasher (3) | Backlash | 40 | 41 |
-  | Spiritess 2 (2) | Spirit bloom's regrowth | 12 | 13 |
-  | Psychopomp (3) | Spirit bloom's heal | 40 | 42 |
-  | Psychopomp (3) | Spiritwalk's heal | 40 | 41 |
-  | Regrowth 3 (3) | Grove mend | 40 | 41 |
+- **By tier: 100 × tier (100, 200, 300, 400, 500; the user, 2026-10-07).** A first try, +25 a tier, made upgrades
+  "a bit insignificant"; the user's reference is Disciples II, where damage starts around 25 and adds 25 a tier, so
+  tier 2 is about double. Melee damage here already grows that way (Congregant 20, Paladin 40, Templar 60); only the
+  casters' ability numbers were flat. Set on each unit, so any one can be tuned alone. Each ability is written at
+  100 so that its lowest-tier user keeps the number it had; units' own flat numbers were removed except where one
+  breaks the curve on purpose:
+  - **The Apprentice's Burst stays 35** (the curve's 22 would leave Ral-Vitahl's tier-1 squads at 17% instead of 41%
+    in the composition matrix: its opening). So Burst runs 35 / 44 / 66 by tier.
+  - **The Maelstrom's Homing Lightning stays 105** (the curve gives 84; the Thaumaturge's is 56).
+  - **Decay support 2's Bloom stays 8** (a weak Bloom beside its corpse abilities; the curve gives 24).
 
-  Unchanged, with a unit's own number kept on purpose: the Maelstrom's Homing Lightning (70 at 100 → 105; the curve
-  alone gives 66) and Decay support 2's Bloom (6 → 8, a weak Bloom beside its corpse abilities). Every other
-  ability's number is the same as before.
-- **What it did to the sims:** the composition matrix (all squads, win %) at tier 2 is Jilliath 52 → 51, Ral-Vitahl
-  46 → 50 (Burst +4 on the Justiciar and Thaumaturge; two Thaumaturges 90 → 95), Sylvan 52 → 49; at tier 3 Jilliath
-  73 → 72, Ral-Vitahl 29 → 27, Sylvan 51 → 54 (the Psychopomp; its best squad 84 → 91). Whole games (8 seeds per
-  pairing) moved within noise. Not tuned back: balance waits for the units.
+  What moved, from before ability power: Burst on the Backlasher and Maelstrom 55 → 66, Justiciar and Thaumaturge
+  40 → 44; Homing Lightning on the Thaumaturge 55 → 56; Backlash 40 → 39; Corpse growth 25 → 26; the Mulch Gorger's
+  Gorge heal 25 → 24; the Psychopomp's Spirit bloom 40 heal + 15 a turn → 54 + 18; the Spiritess's 35 → 36; Grove
+  mend 40 → 39. Spiritwalk's heal is a percentage of max HP and doesn't scale (the first commit scaled it by mistake).
+- **What it did to the composition matrix** (all squads, win %): tier 1 unchanged (J 70, N 41, G 39); tier 2 J 52 → 51,
+  N 46 → 50, G 52 → 49; tier 3 J 73 → 69, N 29 → 32, G 51 → 51. With pure 100 × tier and no exception for the
+  Apprentice, Ral-Vitahl's tier-2 and tier-3 squads won 100%: Burst (the one ability spanning three tiers, hitting up
+  to five units) went 35 / 70 / 105. Balance waits for the units; the curve will tell more once Jilliath's and the
+  Grove's backlines have tiers of their own.

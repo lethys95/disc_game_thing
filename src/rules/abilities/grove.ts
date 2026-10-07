@@ -117,7 +117,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
   gorge: {
     kind: "passive",
     name: "Gorge",
-    defaults: { heal: 14, damage: 6 },
+    defaults: { heal: 6, damage: 6 },
     scales: ["heal"],
     describe: (p) => `Whenever any unit dies, or a corpse is used up or destroyed, it heals ${p["heal"]} and deals ${p["damage"]} more damage for the rest of combat (no limit).`,
     hooks: {
@@ -150,7 +150,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
     name: "Corpse growth",
     describe: (p) => `Main action: growth springs from a corpse (either side's); every living ally heals ${p["amount"]}. The corpse is used up.`,
     tags: ["heal"],
-    defaults: { amount: 20 },
+    defaults: { amount: 13 },
     scales: ["amount"],
     choices: (ctx) => corpses(ctx, null).map((c) => at(c, [c.id], "main")),
     resolve: (ctx, self, choice) => {
@@ -171,7 +171,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
     name: "Corpse explosion",
     describe: (p) => `Main action: an enemy corpse bursts. The enemies next to it take ${p["power"]} now and ${p["infest"]} at the start of each of their next ${p["turns"]} turns. The dead can't be raised.`,
     tags: ["damage", "area"],
-    defaults: { power: 24, infest: 8, turns: 3 },
+    defaults: { power: 15, infest: 5, turns: 3 },
     scales: ["power", "infest"],
     choices: (ctx, self) => {
       const enemy = opponent(ctx.unit(self.unitId).side);
@@ -245,7 +245,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
     name: "Spirit bloom",
     describe: (p) => `Main action: an ally (or itself) heals ${p["heal"]} now, and regrows ${p["amount"]} at the start of each of its next ${p["turns"]} turns.`,
     tags: ["heal"],
-    defaults: { heal: 28, amount: 10, turns: 3 },
+    defaults: { heal: 18, amount: 6, turns: 3 },
     scales: ["heal", "amount"],
     choices: (ctx, self) => ctx.living(ctx.unit(self.unitId).side).map((u) => single(u, "main")),
     resolve: (ctx, self, choice) => {
@@ -293,8 +293,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
     name: "Spiritwalk",
     describe: (p) => `Main action, ${p["charges"]} per combat: any other unit, ally or enemy, leaves the field for ${p["rounds"]} round starts: it can't act or be hit, and doesn't hold its line. It returns healed ${p["heal"]}% of its max HP.`,
     tags: [],
-    defaults: { charges: 1, rounds: 2, heal: 27 },
-    scales: ["heal"],
+    defaults: { charges: 1, rounds: 2, heal: 40 },
     choices: (ctx, self) => ctx.living().filter((u) => u.id !== self.unitId).map((u) => single(u, "main")),
     resolve: (ctx, self, choice) => {
       for (const id of choice.affected) ctx.addEffect(id, { def: "spiritwalking", stacks: self.params["rounds"] ?? 2, amount: self.params["heal"] ?? 0, source: self.unitId });
@@ -306,7 +305,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
     name: "Grove mend",
     describe: (p) => `Main action: an ally (or itself) regrows ${p["amount"]} HP at the start of each of its next ${p["turns"]} turns.`,
     tags: ["heal"],
-    defaults: { amount: 27, turns: 3 },
+    defaults: { amount: 13, turns: 3 },
     scales: ["amount"],
     choices: (ctx, self) => ctx.living(ctx.unit(self.unitId).side).map((u) => single(u, "main")),
     resolve: (ctx, self, choice) => {

@@ -4,3 +4,4 @@
 - **Why:** Four factions is the canon.
 - **Done when:** Designed and playable.
 - **Who:** The user designs.
+- **Ability power (the user, 2026-10-07):** the Wastes may use amp effects (`ability-power-sources`).

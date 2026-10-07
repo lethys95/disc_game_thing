@@ -11,3 +11,6 @@
   whole games differed only through veterans. Then the fold by tier (100, +25 a tier); seven numbers moved by 1–4.
   Table and sim effects: `docs/provisional.md` #71. See it on the battle card or in the codex (`?codex`, Ral-Vitahl,
   Maelstrom). Open for the user: the tier step (25), and whether items, spells or supports should raise it.
+- **The user (2026-10-07):** +25 a tier makes upgrades "a bit insignificant"; Disciples II roughly doubled at tier
+  2. Now 100 × tier, with the Apprentice keeping its Burst so Ral-Vitahl's opening holds (#71). Ways to raise it:
+  `eventually/ability-power-sources`.

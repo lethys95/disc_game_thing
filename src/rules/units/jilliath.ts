@@ -22,47 +22,47 @@ export const JILLIATH_UNITS: Readonly<Record<string, UnitDef>> = {
   },
   paladin: {
     id: "paladin", name: "Paladin", faction: "jilliath", tier: 2, damageType: "weapon",
-    stats: { maxHp: 150, shield: 0, damage: 40, armor: 20, initiative: 50, abilityPower: 125 },
+    stats: { maxHp: 150, shield: 0, damage: 40, armor: 20, initiative: 50, abilityPower: 200 },
     abilities: kit("attack", "defend", "wait", "lay_on_hands"),
   },
   templar: {
     id: "templar", name: "Templar", faction: "jilliath", tier: 3, damageType: "weapon",
-    stats: { maxHp: 200, shield: 0, damage: 60, armor: 20, initiative: 50, abilityPower: 150 },
+    stats: { maxHp: 200, shield: 0, damage: 60, armor: 20, initiative: 50, abilityPower: 300 },
     abilities: kit("attack", "defend", "wait", "lay_on_hands", "devotion_aura"),
   },
   immortal: {
     id: "immortal", name: "Immortal", faction: "jilliath", tier: 4, damageType: "weapon",
-    stats: { maxHp: 260, shield: 0, damage: 80, armor: 20, initiative: 50, abilityPower: 175 },
+    stats: { maxHp: 260, shield: 0, damage: 80, armor: 20, initiative: 50, abilityPower: 400 },
     abilities: [...kit("attack", "defend", "wait"), { id: "lay_on_hands", name: "Divine Lay on Hands", params: { charges: 2, allies: 1 } }, ...kit("devotion_aura", "guardian_spirit")],
   },
   zealot: {
     id: "zealot", name: "Zealot", faction: "jilliath", tier: 2, damageType: "weapon",
-    stats: { maxHp: 180, shield: 0, damage: 70, armor: 0, initiative: 50, abilityPower: 125 },
+    stats: { maxHp: 180, shield: 0, damage: 70, armor: 0, initiative: 50, abilityPower: 200 },
     abilities: kit("attack", "defend", "wait", "must_attack", "zeal"),
   },
   punisher: {
     id: "punisher", name: "Punisher", faction: "jilliath", tier: 3, damageType: "weapon",
-    stats: { maxHp: 200, shield: 0, damage: 45, armor: 0, initiative: 50, abilityPower: 150 },
+    stats: { maxHp: 200, shield: 0, damage: 45, armor: 0, initiative: 50, abilityPower: 300 },
     abilities: kit("flail", "defend", "wait", "punishment"),
   },
   torturer: {
     id: "torturer", name: "Torturer", faction: "jilliath", tier: 4, damageType: "weapon",
-    stats: { maxHp: 220, shield: 0, damage: 60, armor: 0, initiative: 50, abilityPower: 175 },
+    stats: { maxHp: 220, shield: 0, damage: 60, armor: 0, initiative: 50, abilityPower: 400 },
     abilities: kit("flail", "defend", "wait", "hook", "punishment", "domination"),
   },
   fanatic: {
     id: "fanatic", name: "Fanatic", faction: "jilliath", tier: 3, damageType: "weapon",
-    stats: { maxHp: 280, shield: 0, damage: 110, armor: 0, initiative: 50, abilityPower: 150 },
+    stats: { maxHp: 280, shield: 0, damage: 110, armor: 0, initiative: 50, abilityPower: 300 },
     abilities: kit("attack", "defend", "wait", "must_attack", "fanaticism", "hysteria"),
   },
   chosen: {
     id: "chosen", name: "Chosen", faction: "jilliath", tier: 4, damageType: "fire",
-    stats: { maxHp: 320, shield: 0, damage: 150, armor: 0, initiative: 60, abilityPower: 175 },
+    stats: { maxHp: 320, shield: 0, damage: 150, armor: 0, initiative: 60, abilityPower: 400 },
     abilities: kit("attack", "defend", "wait", "must_attack", "fanaticism", "hysteria"),
   },
   avatar_of_vengeance: {
     id: "avatar_of_vengeance", name: "Avatar of Vengeance", faction: "jilliath", tier: 5, damageType: "fire",
-    stats: { maxHp: 400, shield: 0, damage: 150, armor: 0, initiative: 60, abilityPower: 200 },
+    stats: { maxHp: 400, shield: 0, damage: 150, armor: 0, initiative: 60, abilityPower: 500 },
     abilities: kit("attack", "defend", "wait", "fanaticism_aura"),
   },
 };

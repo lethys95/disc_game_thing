@@ -226,4 +226,6 @@ percentage that multiplies the magnitudes each behavior lists in `scales`, so an
 100 and a unit's tier, levels and buffs decide how hard it lands. Additive spell power (WoW-style coefficients) was the
 alternative; a multiplier needs no per-ability coefficient and keeps today's numbers readable as "at 100". It comes
 from the unit and effects only: passive abilities' own numbers scale with it, so a passive feeding it would be a
-cycle. Units keep their own number only where they're meant to break the curve (`provisional.md` #71).
+cycle. Units keep their own number only where they're meant to break the curve (`provisional.md` #71). The curve is
+steep on purpose (the user, 2026-10-07: 100 × tier, after Disciples II, where tier 2 is about double): upgrades
+should feel significant, and it probably shortens maps.

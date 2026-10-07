@@ -4,3 +4,4 @@
 - **Why:** Ral-Vitahl's mages reach tier 3; its melee and support stop at 2 and 1.
 - **Done when:** Every Nexus line reaches its last tier.
 - **Who:** The user designs; Claude builds, then art.
+- **Ability power (the user, 2026-10-07):** Nexus might want some ability-power interaction, "to some extent" (`ability-power-sources`).

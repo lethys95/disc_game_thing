@@ -1,3 +1,4 @@
+import { paramsOf } from "#rules/abilities/index";
 import { levelBonusPercent } from "#rules/world/record";
 import { forkOptions } from "#rules/forks";
 import { FACTION_ROOTS, UNITS } from "#rules/units/index";
@@ -76,7 +77,7 @@ describe("Decay tier 4: the Mulch Gorger (user, 2026-10-04)", () => {
     let battle = until(start([{ ...p("mulch_gorger", 0, 1), hp: 100 }, { ...p("sproutling", 0, 0), hp: 1 }], [p("congregant", 0, 0), { ...p("congregant", 0, 1), hp: 1 }]), "0.0.1");
     const base = UNITS["mulch_gorger"]?.stats.damage ?? 0;
     battle = act(battle, "attack", "1.0.1").battle;
-    expect(unit(battle, "0.0.1").hp).toBe(100 + 25);
+    expect(unit(battle, "0.0.1").hp).toBe(100 + (paramsOf({ id: "gorge" }, UNITS["mulch_gorger"]?.stats.abilityPower ?? 0)["heal"] ?? 0));
     expect(unit(battle, "0.0.1").effects.find((e) => e.def === "gorged")?.amount).toBe(6);
     // An ally falls too: another meal.
     battle = until(battle, "1.0.0");
