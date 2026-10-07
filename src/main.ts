@@ -36,6 +36,8 @@ const settings = new Settings();
 settings.follow((s) => stage.setFeel(ANIMATION_SPEEDS[s.speed].scale, s.rotate, s.zoom));
 settings.follow((s) => stage.setBounceLight(s.bounceLight));
 settings.follow((s) => stage.setFrameRate(s.showFrameRate));
+// Every card's rules text carries its formulas; the page shows them only when asked (CSS: `body.formulas`).
+settings.follow((s) => document.body.classList.toggle("formulas", s.showFormulas));
 const sound = new Sound();
 settings.follow((s) => sound.setVolumes(s));
 // Every button clicks.

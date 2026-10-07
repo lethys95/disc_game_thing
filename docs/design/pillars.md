@@ -25,6 +25,9 @@ abilities would be good or bad against your opponent, but the devs don't. Instea
 isn't it." So the game shows outcomes, not formulas: the hover preview runs the action and shows exactly what it does
 (lethal marked with a skull), and rules text shows numbers already scaled. Anything that changes a hit (types,
 statuses, resistances) must show up in what the player sees before acting.
+The user, after: "Tooltip might show formulas as well. It might be a setting to show the entire thing. Hover over unit
+shows resolved damage. Was the idea." Built: Settings → Display → "Show formulas" writes each scaled number's formula
+after it ("54 (18% × 300)"); hovering a target always shows the resolved outcome.
 
 ## Leader elevation
 Leaders are not unique unit types. Any unit can be elevated to leader at any time, irreversibly. Elevation grants squad command, overworld movement, equipment slots, and leader upgrades — **no combat stat boost**. A tier-3 Paladin leader fights exactly like a tier-3 Paladin.

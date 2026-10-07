@@ -681,3 +681,6 @@ button.codex-row .tier { color: var(--muted); font-size: 11px; }
 
 /* A number ability power grew: hover it for its value at 100. */
 .scaled { color: #e8c877; border-bottom: 1px dotted rgba(232, 200, 119, 0.6); cursor: help; }
+/* "Show formulas" (Settings → Display): how each scaled number came about, written after it. */
+.formula { display: none; color: #a99a7c; font-size: 0.9em; }
+body.formulas .formula { display: inline; }

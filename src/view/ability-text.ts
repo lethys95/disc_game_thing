@@ -16,7 +16,7 @@ export function abilityText(ref: AbilityRef, abilityPower: number): HTMLElement 
     }
     const number = element("span", "scaled", part.text);
     number.title = `${part.base}% of ability power (${part.abilityPower} here)`;
-    text.appendChild(number);
+    text.append(number, element("span", "formula", ` (${part.base}% × ${part.abilityPower})`));
   }
   return text;
 }

@@ -33,9 +33,11 @@ export interface SettingsData {
   readonly bounceLight: boolean;
   /** A corner readout of frames per second, triangles and the GPU backend, to judge performance on real hardware. */
   readonly showFrameRate: boolean;
+  /** Rules text writes out how each scaled number came about ("54 (18% × 300)"), not just the number. */
+  readonly showFormulas: boolean;
 }
 
-export const DEFAULT_SETTINGS: SettingsData = { speed: "normal", rotate: 1, zoom: 1, hotkeys: {}, slotKeys: true, masterVolume: 0.8, effectsVolume: 1, musicVolume: 0.6, bounceLight: true, showFrameRate: false };
+export const DEFAULT_SETTINGS: SettingsData = { speed: "normal", rotate: 1, zoom: 1, hotkeys: {}, slotKeys: true, masterVolume: 0.8, effectsVolume: 1, musicVolume: 0.6, bounceLight: true, showFrameRate: false, showFormulas: false };
 
 /** Camera multipliers stay within this range. */
 export const CAMERA_RANGE = { min: 0.25, max: 2.5 } as const;
@@ -61,6 +63,7 @@ export function parseSettings(text: string | null): SettingsData {
   const slotKeys: unknown = Reflect.get(parsed, "slotKeys");
   const bounceLight: unknown = Reflect.get(parsed, "bounceLight");
   const showFrameRate: unknown = Reflect.get(parsed, "showFrameRate");
+  const showFormulas: unknown = Reflect.get(parsed, "showFormulas");
   const hotkeys: unknown = Reflect.get(parsed, "hotkeys");
   const keys: Record<string, string> = {};
   if (typeof hotkeys === "object" && hotkeys !== null) {
@@ -77,6 +80,7 @@ export function parseSettings(text: string | null): SettingsData {
     musicVolume: volume(Reflect.get(parsed, "musicVolume")) ?? DEFAULT_SETTINGS.musicVolume,
     bounceLight: typeof bounceLight === "boolean" ? bounceLight : DEFAULT_SETTINGS.bounceLight,
     showFrameRate: typeof showFrameRate === "boolean" ? showFrameRate : DEFAULT_SETTINGS.showFrameRate,
+    showFormulas: typeof showFormulas === "boolean" ? showFormulas : DEFAULT_SETTINGS.showFormulas,
   };
 }
 

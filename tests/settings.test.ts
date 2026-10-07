@@ -16,8 +16,10 @@ describe("settings", () => {
       musicVolume: DEFAULT_SETTINGS.musicVolume,
       bounceLight: true,
       showFrameRate: false,
+      showFormulas: false,
     });
     expect(parseSettings(JSON.stringify({ showFrameRate: true })).showFrameRate).toBe(true);
+    expect(parseSettings(JSON.stringify({ showFormulas: true })).showFormulas).toBe(true);
     expect(parseSettings(JSON.stringify({ bounceLight: false })).bounceLight).toBe(false);
     expect(parseSettings(JSON.stringify({ bounceLight: "off" })).bounceLight).toBe(true);
     expect(parseSettings(JSON.stringify({ masterVolume: 3, effectsVolume: -1 }))).toMatchObject({ masterVolume: 1, effectsVolume: 0 });

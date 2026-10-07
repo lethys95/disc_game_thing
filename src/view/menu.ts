@@ -172,6 +172,13 @@ export class GameMenu implements KeyLayer {
     meterBox.addEventListener("change", () => settings.update({ ...settings.data, showFrameRate: meterBox.checked }));
     meter.append(meterBox, element("span", "", "Show the frame rate (frames per second, triangles and the graphics backend, in a corner)"));
     this.root.appendChild(meter);
+    const formulas = element("label", "check-row");
+    const formulasBox = element("input", "check");
+    formulasBox.type = "checkbox";
+    formulasBox.checked = data.showFormulas;
+    formulasBox.addEventListener("change", () => settings.update({ ...settings.data, showFormulas: formulasBox.checked }));
+    formulas.append(formulasBox, element("span", "", "Show formulas in ability text: how each number grew from the unit's ability power, e.g. \"54 (18% × 300)\""));
+    this.root.appendChild(formulas);
     const full = element("button", "small", document.fullscreenElement ? "Leave fullscreen" : "Fullscreen");
     full.addEventListener("click", () => void this.toggleFullscreen());
     this.root.appendChild(full);
