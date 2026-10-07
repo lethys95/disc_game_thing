@@ -35,6 +35,15 @@ const setup: Playtest = {
     t.log(`codex shows: ${shown}`);
     if (shown !== "Psychopomp") t.fail(`the codex should show the Psychopomp: ${shown}`);
     await t.shot("playtest-codex");
+    // Picking an entry far down a list keeps the list where it was (the user, 2026-10-07: it jumped to the top).
+    await t.page.click("#codex .codex-header >> text=Abilities");
+    const rows = t.page.locator("#codex .codex-list .rows");
+    await rows.evaluate((el) => (el.scrollTop = 600));
+    const below = await rows.evaluate((el) => [...el.querySelectorAll(".codex-row")].findIndex((r) => r instanceof HTMLElement && r.offsetTop - el.offsetTop > 700));
+    await t.page.locator("#codex .codex-row").nth(below).click();
+    const kept = await rows.evaluate((el) => el.scrollTop);
+    t.log(`codex list scroll after picking an entry: ${kept} (was 600)`);
+    if (kept !== 600) t.fail(`picking an ability moved the list from 600 to ${kept}`);
     await t.page.click("#codex >> text=Back");
     await t.page.click("#title >> text=Credits");
     await t.page.waitForSelector("#credits .credits-page", { state: "visible" });

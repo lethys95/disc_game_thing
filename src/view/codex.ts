@@ -68,6 +68,9 @@ export class Codex {
   private shelf: Shelf = "jilliath";
   private readonly picked: Record<Tab, string | null> = { units: null, abilities: null, effects: null, nodes: null };
   private readonly queries: Record<Tab, string> = { units: "", abilities: "", effects: "", nodes: "" };
+  /** Each tab's list scroll, kept across re-renders (picking an entry rebuilds the page, not where you were). */
+  private readonly scrolls: Record<Tab, number> = { units: 0, abilities: 0, effects: 0, nodes: 0 };
+  private shownTab: Tab | null = null;
 
   constructor(
     private readonly root: HTMLElement,
@@ -97,6 +100,9 @@ export class Codex {
   }
 
   private render(): void {
+    const rows = this.root.querySelector(".codex-list .rows");
+    if (this.shownTab && rows) this.scrolls[this.shownTab] = rows.scrollTop;
+    this.shownTab = this.tab;
     this.root.replaceChildren();
     const header = element("div", "codex-header");
     header.appendChild(element("div", "title", "Codex"));
@@ -115,9 +121,14 @@ export class Codex {
     const entries = this.entries();
     const body = element("div", "codex-body");
     const selected = entries.find((e) => e.id === this.picked[this.tab]) ?? entries[0];
-    body.appendChild(this.list(entries, selected?.id ?? null));
+    const list = this.list(entries, selected?.id ?? null);
+    body.appendChild(list);
     if (selected) body.appendChild(this.page(selected.id));
     this.root.appendChild(body);
+    const shown = list.querySelector(".rows");
+    if (shown) shown.scrollTop = this.scrolls[this.tab];
+    // A link may open an entry that's out of view: bring it in, without moving a list that already shows it.
+    list.querySelector(".codex-row.selected")?.scrollIntoView({ block: "nearest" });
   }
 
   /** The playable factions, then the tribes, kept apart so it's plain which is which (the user, 2026-10-07). */
@@ -131,6 +142,7 @@ export class Codex {
           button(`doctrine small${this.shelf === shelf ? " selected" : ""}`, shelfName(shelf), () => {
             this.shelf = shelf;
             this.picked.units = null;
+            this.scrolls.units = 0;
             this.render();
           }),
         );
