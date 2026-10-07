@@ -165,7 +165,7 @@ describe("the Spiritess branch (user, 2026-09-29)", () => {
   });
 
   test("Spiritwalk: the unit leaves the field (not a target, doesn't hold its line), then returns healed; the battle doesn't end while it's away", () => {
-    let battle = until(start([p("psychopomp", 2, 1)], [{ ...p("congregant", 0, 1), hp: 30 }, p("jilliath_support_1", 2, 1)]), "0.2.1");
+    let battle = until(start([p("psychopomp", 2, 1)], [{ ...p("congregant", 0, 1), hp: 30 }, p("seraph", 2, 1)]), "0.2.1");
     battle = act(battle, "spiritwalk", "1.0.1").battle;
     expect(unit(battle, "1.0.1").effects.some((e) => e.def === "spiritwalking")).toBe(true);
     expect(battle.outcome).toBeNull();

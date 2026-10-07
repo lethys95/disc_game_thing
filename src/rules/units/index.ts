@@ -23,7 +23,7 @@ export type Playable = Exclude<Faction, "neutral">;
  * evolution) and where its evolution tree starts.
  */
 export const FACTION_ROOTS: Readonly<Record<Playable, readonly string[]>> = {
-  jilliath: ["congregant", "jilliath_support_1", "acolyte"],
+  jilliath: ["congregant", "seraph", "acolyte"],
   nexus: ["custodian", "technician", "apprentice"],
   grove: ["sproutling", "grove_support_1", "grove_mage_1"],
 };
@@ -36,10 +36,10 @@ export const ARCHETYPES = ["melee", "support", "mage", "joker"] as const;
 export type Archetype = (typeof ARCHETYPES)[number];
 
 /** Which kind of line each tier-1 unit starts (user: the melee lines, the Technician supports, the Apprentice casts). */
-export const LINE_ARCHETYPE: Readonly<Record<string, Archetype>> = { congregant: "melee", jilliath_support_1: "support", acolyte: "mage", custodian: "melee", technician: "support", apprentice: "mage", sproutling: "melee", grove_support_1: "support", grove_mage_1: "mage" };
+export const LINE_ARCHETYPE: Readonly<Record<string, Archetype>> = { congregant: "melee", seraph: "support", acolyte: "mage", custodian: "melee", technician: "support", apprentice: "mage", sproutling: "melee", grove_support_1: "support", grove_mage_1: "mage" };
 
 /** Canon: the Congregant costs 40 gold. The Nexus prices are provisional ("costly", quality over quantity). */
-export const RECRUIT_COST: Readonly<Record<string, number>> = { congregant: 40, jilliath_support_1: 50, acolyte: 60, custodian: 60, technician: 50, apprentice: 60, sproutling: 45, grove_support_1: 50, grove_mage_1: 60 };
+export const RECRUIT_COST: Readonly<Record<string, number>> = { congregant: 40, seraph: 50, acolyte: 60, custodian: 60, technician: 50, apprentice: 60, sproutling: 45, grove_support_1: 50, grove_mage_1: 60 };
 
 /** One step up an evolution tree. */
 export interface Evolution {

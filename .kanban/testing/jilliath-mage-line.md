@@ -8,7 +8,7 @@
   - Fanaticism, fire and stacking burn: Doomsayer (Burn at the stake) → Fire mage 3 (fire on all) → Fire mage 4
     (Detonate) or Martyr mage 4 (the beam, backfiring).
   - `?fight=mages` shows holy against fire.
-- **Open (the user):** names for Fire mage 3–4, Martyr mage 4, Fire on all, Beam; where the turn-the-blow-back secret
+- **Open (the user):** names for Fire mage 3–4, Martyr mage 4, Fire on all, Beam; where the deflecting secret
   lives (mage or support: "It really could be in both brackets"); homes for Justice Strike, Arrows of Justice and
   fire spreading on death (maybes).
 - **Done when:** the user has played it, and the open points are decided.

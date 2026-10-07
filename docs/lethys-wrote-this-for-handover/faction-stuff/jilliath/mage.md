@@ -71,7 +71,7 @@ The tree as it stands:
 - **The faith side's theme:** the user: "We also have a design issue, in that we don't really know exactly what theme
   faith mage line should actually have. I don't really know." Claude's reading of what the user kept: every holy piece
   answers the enemy's aggression (Judgement hits whoever struck, Castigation weakens whoever it hits, Repentance takes
-  a unit out until anyone touches it, the secret turns a blow back), so **justice: the faith mage protects the squad
+  a unit out until anyone touches it, the deflecting secret answers a blow), so **justice: the faith mage protects the squad
   by punishing and restraining the aggressor**, where the fanaticism mage consumes. The user: "Okay." (Provisional.)
 - **Order:** "I'm pretty certain judgement is t4 holy magic. I'm also comfortable putting repentence on t3, but I'm
   not sure I'd say it's enough, given that mages is intended to be offense, and it likely needs more tools."

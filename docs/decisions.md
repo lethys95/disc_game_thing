@@ -258,5 +258,5 @@ main screens at 720p, 1080p and 1440p; the verify skill requires it for any inte
 
 ## Jilliath is angels and their human followers (2026-10-07, the user)
 The holy mage line is the priests: Acolyte → Cleric → Pontiff → Archon. The support line is angels, all of it. So the
-name Cleric moved from the tier-1 support to the tier-2 priest, and the support is `jilliath_support_1`, unnamed, until
-the angels are designed. Older notes that say "Cleric" before this date mean the support. Save 31.
+name Cleric moved from the tier-1 support to the tier-2 priest, and the support was unnamed until the
+user named it the Seraph the same day. Older notes that say "Cleric" before this date mean the support. Save 31.

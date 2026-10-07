@@ -95,3 +95,21 @@ The tree as it stands (names open):
   silhuette is just a moving sky/clouds. God rays spikes out and shines out of her skin every once in a while. There is
   only this skin. No clothing, just the silhuette of sky and godrays. It'll be very strange to look at if done
   correctly I think. t4 can be stained glass." Where the resurrecting angel sits (t4 or t5): "I'm not sure."
+
+## Names (the user, 2026-10-07)
+"Lets have t2 fanaticism support be called paragon, and t2 faith emissary. Lets have t1 be called seraph. The three
+will be the most typical angels." And: "t3 faith - guardian, t4 faith - shepherd, t5 faith - godkin. t3a - empyreal,
+t3b - reclaimer (until I figure out something better, not sure about this one)", where "t3a t3b I mean fanaticism
+branch". Reading (Claude): t3a is the wider-atonement subline, t3b the transfusion one, in the order the tree lists
+them.
+
+The tree with names (abilities past atonement, transfusion and resurrection open):
+- **Seraph** (t1, in game as `seraph`), forking on guardian (faith) vs vengeance (fanaticism):
+  - **Guardian:** Emissary (t2) → Guardian (t3) → Shepherd (t4, stained glass) → Godkin (t5, the sky silhouette).
+    The resurrecting angel is the Shepherd or the Godkin (open).
+  - **Vengeance:** Paragon (t2, atonement) → Empyreal (t3a, wider atonement) → ? (t4) / Reclaimer (t3b, transfusion;
+    name provisional).
+- **Round four's page** (the user): "I've really enjoyed this format in other turns, but this angel one here is a miss,
+  I think. It's okay." The picks were "very bland ones. Not maelstrom angel, not filigree, not goldnight castigator.
+  Just a lot of regular sera angel adjacent ones." The format stays; the user is working through MTG's angels on their
+  own sheet.

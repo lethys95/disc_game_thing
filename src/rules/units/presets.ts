@@ -13,7 +13,7 @@ const at = (defId: string, row: Row, col: Col): Placement => ({ defId, tile: { r
 export const PRESETS: Readonly<Record<"uncommitted" | "congregants" | "preserve" | "punishment" | "sacrifice" | "holy" | "fire", readonly Placement[]>> = {
   uncommitted: [
     at("congregant", 0, 0), at("congregant", 0, 1), at("congregant", 0, 2),
-    at("jilliath_support_1", 2, 0), at("acolyte", 2, 1),
+    at("seraph", 2, 0), at("acolyte", 2, 1),
   ],
   congregants: [
     at("congregant", 0, 0), at("congregant", 0, 1), at("congregant", 0, 2),
@@ -33,7 +33,7 @@ export const PRESETS: Readonly<Record<"uncommitted" | "congregants" | "preserve"
   ],
   holy: [
     at("paladin", 0, 0), at("templar", 0, 1), at("paladin", 0, 2),
-    at("cleric", 2, 0), at("pontiff", 2, 1), at("archon", 2, 2),
+    at("seraph", 2, 0), at("pontiff", 2, 1), at("archon", 2, 2),
   ],
   fire: [
     at("zealot", 0, 0), at("fanatic", 0, 1), at("zealot", 0, 2),

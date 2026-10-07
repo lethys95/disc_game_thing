@@ -27,7 +27,7 @@ describe("gnolls", () => {
   });
 
   test("Cackle: a goaded enemy can only attack on its next turn; then it's free again", () => {
-    let battle = until(start([p("cackler", 2, 1)], [p("jilliath_support_1", 2, 1)]), "0.2.1");
+    let battle = until(start([p("cackler", 2, 1)], [p("seraph", 2, 1)]), "0.2.1");
     battle = until(act(battle, "cackle", "1.2.1").battle, "1.2.1");
     expect(legalActions(battle).map((a) => a.abilityId)).toEqual(["shoot"]);
     battle = act(battle, "shoot", "0.2.1").battle;
@@ -36,7 +36,7 @@ describe("gnolls", () => {
 
   test("the AI sees a goaded healer or caster as a win, and a goaded fighter as nothing", () => {
     const goaded = [{ def: "goaded", source: "0.2.1" }];
-    const values = traitValues(start([p("cackler", 2, 1)], [p("jilliath_support_1", 2, 0, goaded), p("congregant", 0, 1, goaded)]));
+    const values = traitValues(start([p("cackler", 2, 1)], [p("seraph", 2, 0, goaded), p("congregant", 0, 1, goaded)]));
     expect(values["1.2.0"]).toBeLessThan(0);
     expect(values["1.0.1"]).toBe(0);
   });

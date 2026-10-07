@@ -6,9 +6,9 @@ import { describe, expect, test } from "vitest";
 
 /** Jilliath's tier-1 backline (user, 2026-09-26): the first support and the Acolyte. Numbers are provisional. */
 
-describe("Jilliath support 1", () => {
+describe("Seraph", () => {
   test("heals a wounded ally for more the more it is missing, and only wounded allies", () => {
-    let battle = until(start([p("jilliath_support_1", 1, 1), { ...p("congregant", 0, 0), hp: 30 }, { ...p("congregant", 0, 2), hp: 80 }, p("congregant", 0, 1)], [p("congregant", 0, 1)]), "0.1.1");
+    let battle = until(start([p("seraph", 1, 1), { ...p("congregant", 0, 0), hp: 30 }, { ...p("congregant", 0, 2), hp: 80 }, p("congregant", 0, 1)], [p("congregant", 0, 1)]), "0.1.1");
     const targets = legalActions(battle).find((a) => a.abilityId === "mend")?.choices.flatMap((c) => c.affected);
     expect(targets).toEqual(expect.arrayContaining(["0.0.0", "0.0.2"]));
     expect(targets).not.toContain("0.0.1");
@@ -18,7 +18,7 @@ describe("Jilliath support 1", () => {
   });
 
   test("has a weak attack of its own", () => {
-    const battle = until(start([p("jilliath_support_1", 1, 1)], [p("congregant", 2, 2)]), "0.1.1");
+    const battle = until(start([p("seraph", 1, 1)], [p("congregant", 2, 2)]), "0.1.1");
     expect(legalActions(battle).map((a) => a.abilityId)).toContain("shoot");
   });
 });
@@ -39,7 +39,7 @@ describe("Acolyte", () => {
 describe("the round limit (#52, provisional)", () => {
   test("a fight neither side can finish ends with the attacker withdrawing, its survivors alive", () => {
     // The pairing that stalled in `pnpm sim:t1`: the last Congregant can't break a shield the Technician refills.
-    const jilliath = [p("congregant", 0, 0), p("congregant", 0, 1), p("congregant", 0, 2), p("jilliath_support_1", 2, 0), p("jilliath_support_1", 2, 1)];
+    const jilliath = [p("congregant", 0, 0), p("congregant", 0, 1), p("congregant", 0, 2), p("seraph", 2, 0), p("seraph", 2, 1)];
     const nexus = [p("custodian", 0, 0), p("custodian", 0, 1), p("custodian", 0, 2), p("technician", 2, 0), p("apprentice", 2, 1)];
     let battle = start(jilliath, nexus);
     battle = autoplay(battle);

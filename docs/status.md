@@ -22,9 +22,10 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
   is fire with stacking burn (Doomsayer's Burn at the stake → Fire mage 3's fire on all → Fire mage 4's Detonate or the
   Martyr's backfiring beam). `?fight=mages`. Engine: a holy damage type, `BattleUnit.struck` (Judgement), a `hurt`
   hook (Repentance wakes on burns), Ignite's burns stack.
-- **Jilliath is angels and their human followers (the user):** the support line is the angels, all of it; the
-  tier-1 support (the old Cleric) is `jilliath_support_1`, unnamed until they're worked out (decisions.md).
-- **The Grove's Water is now Wellspring** (the user: water is the element, not the ability). Save 32.
+- **Jilliath is angels and their human followers (the user):** the support line is the angels, all of it; named by the
+  user: Seraph → Emissary → Guardian → Shepherd → Godkin (faith), Paragon → Empyreal / Reclaimer (fanaticism); only
+  the Seraph (the old Cleric) is in the game.
+- **The Grove's Water is now Wellspring** (the user: water is the element, not the ability). Save 33.
 - **The angels' look and reach** (the user): a humble, hooded, praying tier 1; faith may go to tier 5 and show who
   pulls the strings (t4 stained glass; t5 a bare silhouette of moving sky with god rays, `maybe/sky-silhouette-angel`); vengeance with blood-tipped wings.
 - Before that (2026-10-06/07): ability power and "everything is an ability" (#71), no head math, codex round two, the

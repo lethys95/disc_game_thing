@@ -14,7 +14,7 @@ describe("ability power", () => {
   });
 
   test("levels raise it like the other stats, and an active ability's magnitudes grow with it", () => {
-    let battle = until(start([p("jilliath_support_1", 1, 1, veteran(50)), { ...p("congregant", 0, 0), hp: 30 }], [p("congregant", 0, 1)]), "0.1.1");
+    let battle = until(start([p("seraph", 1, 1, veteran(50)), { ...p("congregant", 0, 0), hp: 30 }], [p("congregant", 0, 1)]), "0.1.1");
     expect(effectiveStats(battle, "0.1.1").abilityPower).toBe(150);
     battle = act(battle, "mend", "0.0.0").battle;
     // 20 × 150% + 30% of the 60 it was missing (a percentage doesn't scale).

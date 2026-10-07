@@ -41,7 +41,7 @@ function fight(world: World): ReturnType<typeof concludeBattle> {
 
 describe("forks", () => {
   test("undecided forks keep both branches open; a choice closes the other", () => {
-    const backline = ["jilliath_support_1", "acolyte", "cleric", "pontiff", "archon", "doomsayer", "jilliath_fire_3", "jilliath_fire_4", "jilliath_martyr_4"];
+    const backline = ["seraph", "acolyte", "cleric", "pontiff", "archon", "doomsayer", "jilliath_fire_3", "jilliath_fire_4", "jilliath_martyr_4"];
     expect(allowedUnits("jilliath", preserve)).toEqual(["congregant", "paladin", "templar", "immortal", ...backline]);
     expect(allowedUnits("jilliath", punishment)).toEqual(["congregant", "zealot", "punisher", "torturer", ...backline]);
     expect(allowedUnits("jilliath", { congregant: "zealot" })).toEqual(["congregant", "zealot", "punisher", "torturer", "fanatic", "chosen", "avatar_of_vengeance", ...backline]);

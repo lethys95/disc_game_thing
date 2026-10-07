@@ -8,10 +8,10 @@ export const JILLIATH_UNITS: Readonly<Record<string, UnitDef>> = {
     stats: { maxHp: 90, shield: 0, armor: 0, initiative: 50, abilityPower: 100 },
     abilities: [{ id: "attack", params: { power: 20 } }, ...kit("defend", "wait", "congregation")],
   },
-  // The backline's tier 1 (user, 2026-09-26: "keep it simple"). Stats are provisional. The support line is to be
-  // the angels (user, 2026-10-07), so the support stays unnamed until they're worked out.
-  jilliath_support_1: {
-    id: "jilliath_support_1", name: "Jilliath support 1", faction: "jilliath", tier: 1,
+  // The support line's tier 1 (user, 2026-09-26: "keep it simple"): the most basic of the angels (user, 2026-10-07).
+  // Stats are provisional.
+  seraph: {
+    id: "seraph", name: "Seraph", faction: "jilliath", tier: 1,
     stats: { maxHp: 70, shield: 0, armor: 0, initiative: 45, abilityPower: 100 },
     // A weak attack of its own (user: not D2's attack-less healer).
     abilities: [{ id: "mend" }, { id: "shoot", params: { power: 10 } }, ...kit("defend", "wait")],

@@ -10,11 +10,11 @@ describe("targeting grids, read from the engine", () => {
   });
 
   test("a ranged hit reaches every enemy tile, two columns either way from an edge", () => {
-    expect(text(targetingOf("jilliath_support_1", "shoot")?.reach)).toBe("##### ##### ##### ..... ..... .....");
+    expect(text(targetingOf("seraph", "shoot")?.reach)).toBe("##### ##### ##### ..... ..... .....");
   });
 
   test("a heal reaches the unit's own side, itself included", () => {
-    expect(text(targetingOf("jilliath_support_1", "mend")?.reach)).toBe("..... ..... ..... ##### ##### #####");
+    expect(text(targetingOf("seraph", "mend")?.reach)).toBe("..... ..... ..... ##### ##### #####");
   });
 
   test("the area is what one use hits around its target", () => {

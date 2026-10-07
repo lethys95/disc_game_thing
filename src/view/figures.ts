@@ -239,6 +239,11 @@ export function buildFigure(defId: string, side: Side, owner: THREE.Color | null
       g.add(flail(m.trim, m.glow, defId === "torturer" ? 3 : 2));
       if (defId === "torturer") g.add(hookBlade(m.trim));
       break;
+    // Hooded and closed off, no eyes showing (the user's humble, praying angel).
+    case "seraph":
+      g.add(hood(top - 0.1, 0.17, m.body));
+      g.add(wings(top - 0.15, 0.7, m.body));
+      break;
     case "cleric":
     case "pontiff":
     case "archon":

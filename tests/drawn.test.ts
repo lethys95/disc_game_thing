@@ -7,7 +7,7 @@ import { describe, expect, test } from "vitest";
 /** The Drawn, Claude's moth-folk tribe (2026-10-04). Numbers provisional (#64). */
 describe("the Drawn", () => {
   test("Flit: a Dustwing flies over the front line to strike the back row", () => {
-    const battle = until(start([p("dustwing", 0, 1)], [p("congregant", 0, 1), p("jilliath_support_1", 2, 1)]), "0.0.1");
+    const battle = until(start([p("dustwing", 0, 1)], [p("congregant", 0, 1), p("seraph", 2, 1)]), "0.0.1");
     expect(affectedBy(battle, "flit", "1.2.1")).toEqual(["1.2.1"]);
   });
 

@@ -19,7 +19,7 @@ function castigate(ctx: Ctx, targetId: string, self: TraitSelf): void {
 
 /** The Jilliath melee line's abilities (docs/design/units/jilliath-melee-line.md). */
 export const jilliath: Readonly<Record<string, Behavior>> = {
-  /** Jilliath support 1 (user, 2026-09-26): a single-target heal that restores more the more health the ally is missing. */
+  /** The tier-1 support (user, 2026-09-26): a single-target heal that restores more the more health the ally is missing. */
   mend: {
     kind: "active",
     name: "Heal",
