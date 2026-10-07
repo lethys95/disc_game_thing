@@ -1,8 +1,7 @@
 import { describeReward, describeTask, TASK_NAMES } from "#rules/battle/tarot";
 import type { TarotCard, TarotHand } from "#rules/battle/tarot";
 import { BEHAVIORS, chargesOf } from "#rules/abilities/index";
-import { abilityPlain, abilityText } from "#view/ability-text";
-import { targetingGrids } from "#view/targeting";
+import { abilityPlain, abilityRow } from "#view/ability-text";
 import { hitChange } from "#view/members";
 import { effectDef } from "#rules/effects";
 import { abilityRef, actionsPerRound, effectiveStats, unitAbilities, upcomingSlots } from "#rules/battle/engine";
@@ -275,13 +274,9 @@ export class Hud {
       const behavior = BEHAVIORS[ref.id];
       if (!behavior || (behavior.kind === "active" && behavior.tags.includes("common"))) continue;
       const item = element("li", behavior.kind);
-      item.appendChild(art({ kind: "ability", id: ref.id }, "small"));
-      item.appendChild(element("span", "name", ref.name ?? behavior.name));
       const charges = chargesOf(ref);
-      if (charges !== undefined) item.appendChild(element("span", "charges", ` ${charges - (unit.chargesUsed[ref.id] ?? 0)}/${charges}`));
-      const grids = targetingGrids(unit.defId, ref.id);
-      if (grids) item.appendChild(grids);
-      item.appendChild(abilityText(ref, stats.abilityPower));
+      const head = [element("span", "name", ref.name ?? behavior.name), ...(charges !== undefined ? [element("span", "charges", ` ${charges - (unit.chargesUsed[ref.id] ?? 0)}/${charges}`)] : [])];
+      item.appendChild(abilityRow(unit.defId, ref, head, stats.abilityPower));
       abilities.appendChild(item);
     }
     this.card.appendChild(abilities);

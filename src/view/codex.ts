@@ -8,7 +8,7 @@ import { EVOLUTIONS, RECRUIT_COST, UNITS } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
 import { TRIBES, tribeUnits } from "#rules/world/state";
 import type { Tribe } from "#rules/world/state";
-import { abilityText } from "#view/ability-text";
+import { abilityRow, abilityText } from "#view/ability-text";
 import { targetingGrids } from "#view/targeting";
 import { art } from "#view/art";
 import { abilityGroup, abilitySources, effectGroup, effectSources, GROUP_NAMES, GROUPS } from "#view/codex-links";
@@ -262,8 +262,7 @@ export class Codex {
       }
       const item = element("li", behavior?.kind === "passive" ? "passive" : "");
       const name = button("codex-link name", ref.name ?? behavior?.name ?? ref.id, () => this.open("abilities", ref.id));
-      const grids = targetingGrids(def.id, ref.id);
-      item.append(...(grids ? [grids] : []), name, abilityText(ref, def.stats.abilityPower));
+      item.appendChild(abilityRow(def.id, ref, [name], def.stats.abilityPower));
       abilities.appendChild(item);
     }
     page.appendChild(abilities);
@@ -287,8 +286,9 @@ export class Codex {
     page.appendChild(this.heading(art({ kind: "ability", id }, "codex-icon"), b.name, b.kind === "passive" ? "Trait" : "Ability"));
     const holder = abilitySources(id).find((s) => s.kind === "unit");
     const grids = holder?.kind === "unit" ? targetingGrids(holder.id, id) : null;
-    if (grids) page.appendChild(grids);
-    page.appendChild(abilityText({ id }, 100));
+    const row = element("div", "ability-row no-icon");
+    row.append(abilityText({ id }, 100), grids ?? element("span", ""));
+    page.appendChild(row);
     if ((b.scales ?? []).length > 0) page.appendChild(element("div", "note", "Its numbers here are at ability power 100; a unit's page shows them at its own."));
     const lines = element("div", "codex-lines");
     const sources = abilitySources(id);

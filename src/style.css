@@ -691,17 +691,20 @@ button.codex-row .tier { color: var(--muted); font-size: 11px; }
 .formula { display: none; color: #a99a7c; font-size: 0.9em; }
 body.formulas .formula { display: inline; }
 
-/* An ability's reach and area (the Eiyuu Senki boxes): enemy lines above, the unit's own below, itself circled. */
-.targeting { display: flex; gap: 8px; float: right; margin: 2px 0 4px 12px; cursor: help; }
+/* An ability's reach and area (the Eiyuu Senki boxes): left to right, your lines then the enemy's, itself circled. */
+.targeting { display: flex; gap: 10px; cursor: help; }
 .targeting-grid { display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .targeting-grid .label { font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-.targeting-grid .cells { display: grid; grid-template-columns: repeat(5, 8px); gap: 1px; }
-.targeting-grid .cells.rows6 .cell:nth-child(n + 16):nth-child(-n + 20) { margin-top: 3px; }
+.targeting-grid .cells { display: grid; gap: 1px; }
+.targeting-grid .cell.divide { margin-right: 3px; }
 .targeting-grid .cell { width: 8px; height: 8px; box-sizing: border-box; background: #241d1a; border: 1px solid #4a3d33; }
 .targeting-grid .cell.own { background: #1c2124; border-color: #3a4248; }
 .targeting-grid .cell.on { background: #b8322a; border-color: #e0604f; }
 .targeting-grid .cell.own.on { background: #3f8a5a; border-color: #68c08a; }
 .targeting-grid .cell.self { border-radius: 50%; border-color: #e8c877; }
 .targeting-grid .cell.anchor { background: radial-gradient(circle, #ffe2a0 0 35%, #b8322a 40%); }
-/* Each ability row holds its own grids: they mustn't stack against the row above's. */
-ul.abilities li, .def-card .ability { display: flow-root; }
+/* One ability: its icon, then its name and text (kept to a readable width), then its grids right beside them. */
+.ability-row { display: grid; grid-template-columns: auto minmax(0, 46ch) auto; gap: 4px 12px; align-items: start; justify-content: start; }
+.ability-row > .art { margin-top: 2px; }
+.ability-row.no-icon { grid-template-columns: minmax(0, 60ch) auto; margin-top: 12px; }
+.ability-row .body .text { margin-top: 1px; }

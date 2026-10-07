@@ -32,9 +32,11 @@ after it ("54 (18% × 300)"); hovering a target always shows the resolved outcom
 **Targeting grids (user, 2026-10-07, after Eiyuu Senki):** "The regular attack reads: 'strike an enemy in the front
 line, at most one column away, for x'. I think that's not great. We should instead show the boxes for targeting […]
 For units to target the extremes, any ability, as I see it, needs to take 5x5 into consideration." For every ability,
-not just attacks. Built (`rules/battle/reach.ts`, `view/targeting.ts`): beside each ability, a **Target** grid (five
-columns: sideways −2 to +2 from the unit; six rows: the enemy's back, middle and front, then the unit's own front,
-middle and back; the unit circled) and an **Area** grid (five by five around the target). Both are read from the engine
+not just attacks. Built (`rules/battle/reach.ts`, `view/targeting.ts`): beside each ability, a **Target** grid and an **Area** grid,
+laid out like the city's squad grids (the user: "it'd be better if we stay consistent"): left to right, the unit's own
+back, middle and front line, then the enemy's front, middle and back; sideways reach (−2 to +2) up and down; the unit
+circled. The Area grid is five by five around the target, deeper to the right. Each ability's entry is its icon, its
+name and text, then its grids beside them. Both are read from the engine
 by probing a full board, so they always match the rules; rules text no longer describes positions.
 
 ## Leader elevation

@@ -1,6 +1,8 @@
 import { describeParts } from "#rules/abilities/index";
 import type { AbilityRef } from "#rules/battle/types";
 import { element } from "#view/dom";
+import { art } from "#view/art";
+import { targetingGrids } from "#view/targeting";
 
 /**
  * An ability's rules text with the numbers ability power grew marked (the user, 2026-10-07: "if we could be
@@ -27,4 +29,16 @@ export function abilityPlain(ref: AbilityRef, abilityPower: number): string {
   const text = parts.map((part) => part.text).join("");
   const grown = parts.flatMap((part) => ("base" in part ? [`${part.text} is ${part.base}%`] : []));
   return grown.length === 0 ? text : `${text}\n(Of ability power ${abilityPower}: ${grown.join(", ")})`;
+}
+
+/**
+ * One ability as a row: its icon, its name and text (kept to a readable width), and its targeting grids right beside
+ * them. `head`: what goes before the text (the name, a link, charges left).
+ */
+export function abilityRow(defId: string, ref: AbilityRef, head: readonly (string | Node)[], abilityPower: number): HTMLElement {
+  const row = element("div", "ability-row");
+  const body = element("div", "body");
+  body.append(...head, abilityText(ref, abilityPower));
+  row.append(art({ kind: "ability", id: ref.id }, "small"), body, targetingGrids(defId, ref.id) ?? element("span", ""));
+  return row;
 }
