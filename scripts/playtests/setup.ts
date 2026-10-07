@@ -39,7 +39,10 @@ const setup: Playtest = {
     await t.page.click("#codex .codex-header >> text=Abilities");
     const rows = t.page.locator("#codex .codex-list .rows");
     await rows.evaluate((el) => (el.scrollTop = 600));
-    const below = await rows.evaluate((el) => [...el.querySelectorAll(".codex-row")].findIndex((r) => r instanceof HTMLElement && r.offsetTop - el.offsetTop > 700));
+    const below = await rows.evaluate((el) => {
+      const top = el instanceof HTMLElement ? el.offsetTop : 0;
+      return [...el.querySelectorAll(".codex-row")].findIndex((r) => r instanceof HTMLElement && r.offsetTop - top > 700);
+    });
     await t.page.locator("#codex .codex-row").nth(below).click();
     const kept = await rows.evaluate((el) => el.scrollTop);
     t.log(`codex list scroll after picking an entry: ${kept} (was 600)`);
