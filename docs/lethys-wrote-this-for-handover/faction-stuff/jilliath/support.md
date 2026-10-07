@@ -59,4 +59,3 @@ The tree as it stands (names and numbers open):
 "We hand over angels to the entirity of the support branch." The tier-1 support was the Cleric; that name went to the
 tier-2 priest, and "t1 support is currently called cleric, so we just need it to be unnamed until we can figure out
 what to do with the angels in the support branch." In the game as `jilliath_support_1` ("Jilliath support 1").
-- **Status:** tier 1 in game as `jilliath_support_1` (unnamed; numbers provisional).

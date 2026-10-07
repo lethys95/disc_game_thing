@@ -132,11 +132,12 @@ abilities instead of flat numbers."
 
 
 ## 72. The Jilliath mage line past tier 1 (2026-10-07; the user's mechanics, Claude's readings, names and numbers)
-`faction-stuff/jilliath/mage.md`. Every tier keeps the last one's spells. Placeholder names: Holy mage 2–4, Fire mage
-3–4, Martyr mage 4, *Fire on all*, *Beam* (the Doomsayer, Castigation, Judgement, Repentance, Burn at the stake and
-Detonate are the user's). Health 75 / 90 / 105 (the Martyr 160, to carry its backfire), initiative 50, ability power
+`faction-stuff/jilliath/mage.md`. Every tier keeps the last one's spells. Placeholder names: Fire mage 3–4, Martyr
+mage 4, *Fire on all*, *Beam* (the Acolyte, Cleric, Pontiff, Archon, Doomsayer, Castigation, Judgement, Repentance,
+Burn at the stake and Detonate are the user's; until 2026-10-07 the Cleric was the tier-1 support, now unnamed). Health 75 / 90 / 105 (the Martyr 160, to carry its backfire), initiative 50, ability power
 100 × tier. Numbers below are at ability power 100.
-- **Castigation** (holy): 18, and its target deals 30% less for its next 2 turns.
+- **Castigation** (holy): 18, and its target deals 30% less for its next 2 turns. From the Pontiff on it strikes a
+  2×2 square (the user's upgrade, "not balanced right now"); the numbers stay the single-target ones.
 - **Repentance:** once per combat, a free action; an enemy loses its next 3 turns (turns, not rounds: a unit with
   several actions a round spends them quickly). Anything that damages it (a hit, a burn, a bleed) or heals it wakes it.
 - **Judgement** (holy): 25 to every enemy whose most recent turn dealt damage. "Last turn" read as each enemy's own

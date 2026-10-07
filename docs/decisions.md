@@ -255,3 +255,8 @@ main screens at 720p, 1080p and 1440p; the verify skill requires it for any inte
   target instead of only refreshing it. No unit carried Ignite before.
 - **Each tier of a mage line keeps the last one's spells**, as the melee line keeps Lay on Hands and Punishment; the
   user hasn't said otherwise.
+
+## Jilliath is angels and their human followers (2026-10-07, the user)
+The holy mage line is the priests: Acolyte → Cleric → Pontiff → Archon. The support line is angels, all of it. So the
+name Cleric moved from the tier-1 support to the tier-2 priest, and the support is `jilliath_support_1`, unnamed, until
+the angels are designed. Older notes that say "Cleric" before this date mean the support. Save 31.
