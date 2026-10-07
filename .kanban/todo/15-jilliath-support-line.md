@@ -8,7 +8,9 @@
   ("maybe this is where deflection palm kicks in?"); where the secret lives and its name.
 - **Angels (the user, 2026-10-07):** the whole support line is angels ("we hand over angels to the entirity of the
   support branch"); the humans are the priests on the mage line. The tier-1 support stays unnamed "until we can figure
-  out what to do with the angels in the support branch". Every tier, both sides, is to be read in that light.
+  out what to do with the angels in the support branch". Every tier, both sides, is to be read in that light. Faith is guardian angels, fanaticism
+  vengeance angels (the user: "guardian vs vengeance, sure"). Round four, MTG's angels as inspiration:
+  `shots/jilliath-angels.html`.
 - **Why:** Jilliath's backline is the biggest gap; Ral-Vitahl's casters dominate the matrix until the others have
   ranged lines.
 - **Done when:** Designed, built, tested, in the codex.

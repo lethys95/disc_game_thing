@@ -59,3 +59,9 @@ The tree as it stands (names and numbers open):
 "We hand over angels to the entirity of the support branch." The tier-1 support was the Cleric; that name went to the
 tier-2 priest, and "t1 support is currently called cleric, so we just need it to be unnamed until we can figure out
 what to do with the angels in the support branch." In the game as `jilliath_support_1` ("Jilliath support 1").
+- **Guardian vs vengeance (the user, 2026-10-07):** faith is guardian angels, fanaticism vengeance angels (from the
+  user's 2024 mana note, "Vengeance angels, Fanatics"): "guardian vs vengeance, sure. We can do that."
+- **Inspiration: MTG's angels.** The user: "I might actually have a look at how mtg handles different kinds of angels
+  thematically. They've done a ton of angels with all sorts of themes." Claude's round four,
+  `shots/jilliath-angels.html`: MTG's angel themes, each with what the card does and a first translation into disc,
+  plus the tier-1 question (an angel already, or a human who ascends at tier 2).

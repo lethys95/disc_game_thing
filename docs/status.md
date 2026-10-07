@@ -29,9 +29,9 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
 
 ## Next
 1. **The user plays the mage line** (`?fight=mages`, or a map game); fire-side names and the secret's home are open.
-2. **Jilliath's support line as angels** (todo 15): the tiers were drafted as human healers; with angels for the whole
-   line, the user's next design round. Atonement and transfusion (fanaticism) and the resurrecting angel (faith) are
-   kept from round two.
+2. **Jilliath's support line as angels** (todo 15): guardian angels (faith) vs vengeance angels (fanaticism), the
+   user's. Round four is on `shots/jilliath-angels.html` (MTG's angels as inspiration; is tier 1 already an angel?).
+   Kept from round two: atonement, transfusion, the resurrecting angel.
 3. **Armor and flat buffs as percentages** (`maybe/percent-armor-and-buffs`): best decided before lines are tuned.
 4. **Waiting for the user to look** (`testing/`): ability power, the front door and codex, portraits, Jilliath's
    opening.
