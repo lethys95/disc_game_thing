@@ -176,3 +176,6 @@ power 100 × tier; numbers at ability power 100. No damage type of their own yet
   Congregant used to win about half its seeds; now its opponent wins 7 of seeds 1–8 (one stalls). The opponent's
   supports now evolve (Seraph → Emissary doubles its healing) while the army wears down on camps. The test now only
   checks that a game ends. For the balance pass (`todo/balance-pass`).
+- **The composition matrix after** (all squads, win %): tier 2 J 67, N 47, G 33 (was 57 / 52 / 41 after the mage
+  line); tier 3 J 79, N 31, G 26 (was 74 / 34 / 39). Jilliath now has every line through tier 3 while the others
+  stop short, so its squads beat theirs almost everywhere. Not retuned (the balance pass, with the line lengths).
