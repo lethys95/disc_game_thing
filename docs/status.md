@@ -1,43 +1,50 @@
 # Status
 
-_Rewritten (not appended) with every commit. Keep under ~50 lines._
+_Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-07 (interface scales with the window)
+**Updated:** 2026-10-07 (handoff at the end of a long session)
 
 ## Where we're going
-The board (`.kanban/`, `pnpm board` → `shots/board.html`, 2026-10-06): the alpha is the three playable factions with every unit line designed, built and painted, playable title to victory; then balance; then look and sound. Next in the queue: the user's open picks, then the missing unit lines (the user designs, Claude builds).
+The board (`.kanban/`, `pnpm board` → `shots/board.html`): the alpha is the three playable factions (Jilliath,
+Ral-Vitahl, the Sylvan) with every unit line designed, built and painted, playable from the title to victory; then
+balance; then look and sound. Unit designs are the user's and gate the rest.
 
 ## Where we are
-A playable map game for 2–6 players (hotseat viewer vs AIs): two factions (**Jilliath**, **Ral-Vitahl**) with tier-1 melee/support/mage and Nexus mages to tier 3; bandit camps, dungeons with rewards, neutral cities; gold, mana and spells; nodes (gold, Blacksmith, mana, Cathedral); items on leaders; fog of war; retreat and a battle round limit; sound slots with placeholder SFX and music. The AI plays both the map (a list of planners in `world/ai.ts`) and battles, in a web worker.
+A playable map game for 2–6 players (hotseat viewer vs AIs) with Jilliath, Ral-Vitahl and the Sylvan; tribes (bandits,
+gnolls; the Drawn and the carnival in fights only), cities, nodes, spells, items, fog, saves, tarot and keywords. The AI
+plays map and battles in a web worker. A front door (title, new game, skirmish, codex, settings, credits).
+Architecture: `design/architecture.md`; gotchas: `engineering.md`; `pnpm verify` before calling anything done (and
+check its exit code, not a grep of its output); `pnpm sizes` for any interface change.
 
-Architecture: `design/architecture.md`; recipes and gotchas: `engineering.md`. `pnpm verify` before calling anything done. Sims: `pnpm sim:many --seeds 1-16 "p1,p2"` (smoke tests only until factions have their lines).
-
-## Now
-**Ability power, and everything is an ability (2026-10-06/07, the user's asks; #71):** units have health, shield, armor, initiative and **ability power** (per unit, 100 × tier as a guideline; Ral-Vitahl's casters above it). No damage stat and no damage type on units: every attack is an ability with its own power and type, grown by ability power; buffs add to every damaging hit (`hitBonus`, `hitPercent`). Every heal scales; Decay support 2 has Witherbloom. Rules text marks the numbers ability power grew; the hover preview is a badge (a skull when lethal) and marks the health bar. Ral-Vitahl's spells all deal lightning for now (air, force and the Grove's earth or necrotic later: `eventually/damage-types`). Save 29. Every ability shows **targeting grids** (Target: 5 sideways × both sides' lines; Area: 5 × 5), read from the engine (`rules/battle/reach.ts`).
-**M80 the front door (2026-10-06, the user's ask):** a title screen (Continue, New game, Skirmish, Load, Codex, Settings, Credits); New game picks faction, color, opponents and map size; the old setup is the Skirmish; the Codex reads every unit, ability, effect and node from the rules (searchable lists by faction, tribes apart as not playable, pages linked by what has and applies what); Credits name the sources (#69). Routes: `/`, `?newgame`, `?skirmish`, `?codex`, `?credits`. **Gameplay audit (2026-10-06):** `design/audit-2026-10-06.md`: the attacker wins 90–97% of battles (the AI only takes sure fights), Ral-Vitahl beats Jilliath 12–3 by attacking ~2.5× as often, spells, mercenaries, nodes, city upgrades and items barely appear, gold piles up late; fixes A–E; **A done**: the forecast was never wrong (battles are deterministic), Jilliath's opening squad was: five Congregants lost to every other opening; it now starts with three, a Cleric and a mage (#70), and goes 6–9 against Ral-Vitahl instead of 3–12. **B done:** the systems aren't ignored, they run out (the AI buys nearly everything by the late game); the one AI gap, never raising non-gold nodes, is fixed; what's left is content (2 spells a faction, none for the Sylvan; placeholder items; no late gold sink). Research trees have elbow connectors.
-**Omen, Soothsayer, Etherborn (2026-10-05/06):** concepts picked by the user after three to six rounds under their "don't make it boring" rule (`shots/carnival.html`, `design/units/carnival-concepts.md`); split for Tripo; portraits installed. **Portraits: 22 units** (`shots/portraits.html`; the Packstalker, Hamstringer and the five Drawn added 2026-10-07, every candidate shown under each).
-**Music (2026-10-05):** the user's Suno tracks are the music: the Grove's seven battle tracks and Jilliath's Inquisition battle theme (more to come); ACE-Step's Nexus tracks and Jilliath map are placeholders. MiniMax Music 3 was tried and dropped (vocals). Music is Opus 256 kb/s from WAVs in `~/Music/theme_music/` (`scripts/audio/music-take.sh`).
-**Unit concepts (2026-10-05, `unit-concepts` skill):** Zealot picked (`zealot-pyre-turnaround-1000` and its sword prop); **Psychopomp picked:** `psychopomp-short-turnaround-1002` (round six; split for Tripo); its ears, which disagreed between views, repainted with the new inpainting (`scripts/art/fixes.ts`; backups short 1001, style-first 1000). The style drift's cause, a long outfit-list prompt, is now a rule in the skill (`design/units/sylvan-psychopomp.md`). **Punisher picked:** `punisher-iron-turnaround-1000` (round two, the original's faceless executioner's hood in iron grey; split for Tripo; flail `punisher-flail-flanged-props-1001`). **Portraits from concepts (#13), the user: "try out the workflow first":** `scripts/art/portraits.ts`, image-to-image and reference-guided routes, tested on the Punisher only: image-to-image works, the card re-poses itself at 0.75+, `shots/portrait-test.html`; questions #13). Units' art now has three framings (card, bust, icon: the user's ask); **twelve units' portraits are installed** (`shots/portraits.html`; round two: one painting per unit, icons cut from the card, no white outlines).
-**2026-10-05 (the user's list):** carnival Cutpurse and Snakeoiler, the Deck of cards item, the AI weighs every new mechanic (#68), cards on the field and icons need only portraits (the standee and the turn order already use them; portrait consistency via image-to-image awaits the user, questions #13); environments postponed by the user (biomes differ by content; a parked list of simple effects); focus on core gameplay.
-**Tarot as cards (2026-10-05):** a fan to flick through and pick, the enemy's fan face down with its pick turning over, held cards as a small stack in the HUD; oil card art (Claude's provisional picks, `shots/tarot-art.html`); card sounds: the user's picks from the flick takes (pick doubles as flip until a chime is found elsewhere; magic layers later).
-**The user's designs (2026-10-05):** the Grove's healing support shoots *Water* (hurts and wets enemies, heals allies 3× and douses burning ones); the **carnival** tribe (Soothsayer with Tarot 5, Foretell and Curse; Omen, whose cards pay twice and whose kills draw new hands mid-fight; Fire Eater's cone of fire). `?fight=carnival`, not on the map. Save 27 (battles carry their seed). #67.
-**New mechanics (2026-10-05, the user's):** keywords any unit can carry: counted Crit and Evasion, Explode, statuses that react to damage types (Ignite, Soak, Wet, Burning, Electrocuted; lightning and water damage), and **Tarot x** (a secret hand dealt as the fight begins: a task that pays the whole side; card screen and held-card status in the battle HUD). No unit carries them yet: the user's call where. #65, #66. Try: `?fight=bandits&tarot=3&seed=4`.
-**M78 Decay line (2026-10-04, the user's design):** names Sproutling (tier 1), Moldling, Deadwood (tier 3), then the Bog Giant or the **Mulch Gorger** (after the user's swap); originally the fork was **Mulch Gorger** (a plant skeleton: every death or corpse used heals it and adds damage for the rest of combat, no cap). New engine hook `remains` (a death, or a corpse used/destroyed) and `ctx.spendCorpse`. Save version 24. Numbers #57; judged by composition, not parity. **Gnolls (M79)** accepted and built: five units guard the desert's camps and dungeons (#63); Cackle goads instead of swinging initiative (the user's warning). `scripts/balance/tribes.ts`. Decay line looks: every unit picked (Sproutling, Moldling, Deadwood, Bog Giant, Mulch Gorger; the user swapped Deadwood to tier 3 and the Bog Giant to tier 4, kits by tier, save 25); split into single views for Tripo in `shots/tripo/` (`design/units/sylvan-decay-line.md`). Next: the user's Tripo tries (the Bog Giant worked; Pro needed to use them). **Gnolls** concepts: three picked, Packstalker and Hamstringer redone by clothing, weapons as separate props (`shots/gnolls-2.html`). **The Drawn** (moth-folk): Claude's own tribe, abilities in game (`?fight=drawn`, not on the map, #64), concepts in three rounds with Claude's picks (`shots/drawn.html`).
-**Battle music (2026-10-03):** both sides' themes play and the winning side's is heard (tug of war, `provisional.md` #62); every faction's tracks come from a bucket (shuffle bag). The Grove has the user's seven Suno battle tracks. Try `?fight=grove`.
-**Balance by composition (2026-09-30):** `pnpm sim:comps [tier]` pits every squad a faction can field at a tier against the others' (the user: composition matters, not unit parity). Retuned: Thaumaturge lightning 80 → 55 (its pair was undefeated), Grove tier-2 melee and Spiritess up. Best squads now tier 1 J 88 / N 94 / G 81, tier 2 94 / 90 / 75, tier 3 89 / 79 / 89 (`provisional.md` #61). Open: Regrowth vs Jilliath (questions #10), the Etherborn (no damage carry; AI plays secrets poorly), Nexus tier-3 melee (content gap). The frame-rate readout is a stored setting now.
-**M77 the desert** (branch `m77-desert`, the user's ask: a desert biome, mostly cosmetic): every map has one desert, about a fifth of it (`provisional.md` #60). No rule changes: the same terrains drawn as sand, palm groves and thorn scrub, dunes, sandstone mesas, oases, with sparse dry tufts for grass; battles fought there get its ground and props. Its 14 props are meshed (TRELLIS.2, all first try); the boulder cluster came out dark and pitted, more lava than sandstone (a redo candidate). Try: any `?map&reveal`, `?fight&biome=desert`. Next: the user's look at it.
-Ability icons: all 47 have art, approved by the user. The Capitol montage spike (real-time scene) was turned down: no interior, and close-ups magnify the models; next is a probe of painted interiors (`design/capitol-screen.md`). **M76 Spiritess branch**: Spiritess 2 (Spirit bloom, Burst mend), Psychopomp (Spiritwalk: absent units, a new engine idea as effect data), HoTs stack per healer (#59). **M75 Grove backline**: tier-1 support (Bloom), Decay support 2 (corpse growth and corpse explosion), tier-1 mage (Cycle, whose ally side rots in and feeds Lash out); corpses in battle (#58). **M74 Decay tier 4** (Lash out, the user's win condition); M73 auras don't stack; M72 Grove retuned. **M71 the Grove** (branch `m71-grove`): the Sylvan Grove is a playable faction (green mana) with the user's melee line: tier 1 regenerates; tier 2 forks into **Regrowth** (more regeneration; tier 3 supports with Grove mend and attacks weakly) and **Decay** (no regeneration; a share of damage rots in over later turns; tier 3 withers enemies that hit it). Placeholder names; numbers `provisional.md` #57. Grove units gain 50% more per level past their line (the user). An id clash (the Grove's "mend" replaced the Cleric's) is now caught by a test. Try: `?fight=grove`, `?fight=grove:decay`, `?map=grove`, or pick Sylvan in the setup. Next: the user's names and look for these units; more Grove lines; the Wastes as a faction (its resurrection hook is agreed).
-
-## Performance
-The user's laptop ran the map at about 6 fps on 2026-09-28, before the terrain went from 7.1M to 2.5M triangles (2026-09-29): stale, awaiting a new reading. Headless integrated Radeon now (`scripts/perf.ts`): 17 fps with bounce light, 40 without. The readout is a setting now (Settings → Display → "Show the frame rate", stored), no longer `?fps`.
+## This session (2026-10-06/07), all committed
+- **Everything is an ability (#71, decisions):** no damage stat, no damage type on units. Units have health, shield,
+  armor, initiative and **ability power** (per unit, 100 × tier as a guideline; Ral-Vitahl's casters above it, the
+  user: "glass cannons"). Each ability's numbers are a share of it (League of Legends-style scaling, the user's
+  framing). Buffs add to every damaging hit (`hitBonus`, `hitPercent`). Ral-Vitahl's spells all deal lightning for
+  now. Witherbloom for Decay support 2. Save 29.
+- **No head math (pillars):** rules text marks the numbers ability power grew (an optional Show formulas setting);
+  the hover preview is a badge, a skull when lethal, the health bar marked; every ability shows **targeting grids**
+  (left to right like the city grids), read from the engine (`rules/battle/reach.ts`).
+- **Codex, round two:** factions and tribes apart, search, groups, linked pages, a Nodes tab; abilities declare the
+  effects they apply (checked by `tests/applies.test.ts`).
+- **The interface scales:** sizes in rem, the root size follows the window height, an Interface size setting.
+- **Portraits:** 22 units (the Packstalker, Hamstringer and five Drawn added).
+- **Audit fixes** (`design/audit-2026-10-06.md`): Jilliath's opening squad; the AI raises every node kind.
 
 ## Next
-1. Waiting on the user: `questions.md` (unit designs first: Jilliath's tier-2 support and mage, then Grove/Wastes tier 1, then tribes).
-2. Claude's plan: things that don't need designs: the map's look (grass, terrain), AI scouting on big maps, research-tree connectors, tribes' foundation (a neutral faction type the bandits move into).
+1. **Jilliath's backline, with the user** (todo 15, 20): the mage line is mostly designed (the user: "we largely just
+   designed the Jilliath mage line"), so its settled parts can be built: holy Castigation, Judgement, Repentance;
+   fire with burn, the Doomsayer's Burn at the stake, tier 3's fire on all, detonate, the martyrdom caster.
+   Still open, on `shots/jilliath-backline.html` (round three): the faith support's tiers 2–3, where the deflecting
+   secret lives and its name, the holy mage's unit order, homes for the maybes (Justice Strike, Arrows of Justice,
+   fire spreading on death). Trees: `faction-stuff/jilliath/support.md`, `mage.md`.
+2. **Armor and flat buffs as percentages** (`maybe/percent-armor-and-buffs`): the user "might"; best decided before
+   lines are tuned against armor.
+3. **Waiting for the user to look** (`testing/`): ability power, the front door and codex, portraits, Jilliath's
+   opening. Damage types later (`eventually/damage-types`); ways to raise ability power (`eventually/ability-power-sources`).
+4. **Claude, without designs:** a probe for the UI kit's grotesques (`eventually/ui-kit-grotesques`, ComfyUI is free);
+   the Water and Wet icons are still placeholders.
 
-## Recently done
-- 2026-09-28: brainstorm on items, nodes and biomes for the user to pick from (`design/brainstorm/`, not canon); M52 tab emblems, tests off the NVIDIA cards; M50 map polish.
-- 2026-09-27: M49 TRELLIS.2 models; M48 UI kit everywhere; M47 city screen filled; M46 framed city view; M45 UI kit pilot; M44 battlefield; M43 dressed map; M42 3D props spike; M41 Capitol screen; questions review; M40 map sizes; M39 merchant wares and potions; M38 map structures; M37 review cleanup; the user's items: Hatchet, Outlaw's pocketwatch, Cathedral node.
-- 2026-09-27: M35 items and spoils; M31 sound; music placeholders; map palette; M30 fast sims, retreat, resolve.
-- 2026-09-26: M17–M27: cities, players, fog, settings, spells and mana, Nexus tier-3 mages, Jilliath tier-1 Cleric and mage, tier-1 balance.
-- 2026-09-25: M1–M16: battles, the map, progression, forks, leaders, saves, art slots. Git history has the detail.
+## Try
+`?codex`, `?fight` (`=nexus`, `=grove`, `=bandits`, `=carnival`, `=drawn`; `&tarot=3&seed=4`), `?map`, `?newgame`,
+`?skirmish`, `?map&capitol=0`. Routes and params: the verify skill.
