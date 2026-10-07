@@ -705,6 +705,7 @@ body.formulas .formula { display: inline; }
 .targeting-grid .cell.anchor { background: radial-gradient(circle, #ffe2a0 0 35%, #b8322a 40%); }
 /* One ability: its icon, then its name and text (kept to a readable width), then its grids right beside them. */
 .ability-row { display: grid; grid-template-columns: auto minmax(0, 46ch) auto; gap: 4px 12px; align-items: start; justify-content: start; }
-.ability-row > .art { margin-top: 2px; }
+.ability-row > .art.ability-icon { width: 48px; height: 48px; margin-top: 2px; font-size: 14px; border: 1px solid #3a302a; }
+#card .ability-row > .art.ability-icon { width: 36px; height: 36px; font-size: 11px; }
 .ability-row.no-icon { grid-template-columns: minmax(0, 60ch) auto; margin-top: 12px; }
 .ability-row .body .text { margin-top: 1px; }

@@ -39,6 +39,6 @@ export function abilityRow(defId: string, ref: AbilityRef, head: readonly (strin
   const row = element("div", "ability-row");
   const body = element("div", "body");
   body.append(...head, abilityText(ref, abilityPower));
-  row.append(art({ kind: "ability", id: ref.id }, "small"), body, targetingGrids(defId, ref.id) ?? element("span", ""));
+  row.append(art({ kind: "ability", id: ref.id }, "ability-icon"), body, targetingGrids(defId, ref.id) ?? element("span", ""));
   return row;
 }
