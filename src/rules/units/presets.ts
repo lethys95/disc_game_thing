@@ -10,7 +10,7 @@ const at = (defId: string, row: Row, col: Col): Placement => ({ defId, tile: { r
  * unable to reach the enemy from the back row) lost to every other opening squad and made Jilliath the weakest
  * faction in whole AI games (the audit, 2026-10-06; provisional #70).
  */
-export const PRESETS: Readonly<Record<"uncommitted" | "congregants" | "preserve" | "punishment" | "sacrifice" | "holy" | "fire", readonly Placement[]>> = {
+export const PRESETS: Readonly<Record<"uncommitted" | "congregants" | "preserve" | "punishment" | "sacrifice" | "holy" | "fire" | "guardian" | "vengeance", readonly Placement[]>> = {
   uncommitted: [
     at("congregant", 0, 0), at("congregant", 0, 1), at("congregant", 0, 2),
     at("seraph", 2, 0), at("acolyte", 2, 1),
@@ -38,6 +38,14 @@ export const PRESETS: Readonly<Record<"uncommitted" | "congregants" | "preserve"
   fire: [
     at("zealot", 0, 0), at("fanatic", 0, 1), at("zealot", 0, 2),
     at("doomsayer", 2, 0), at("jilliath_fire_4", 2, 1), at("jilliath_martyr_4", 2, 2),
+  ],
+  guardian: [
+    at("paladin", 0, 0), at("templar", 0, 1), at("paladin", 0, 2),
+    at("emissary", 2, 0), at("seraph", 2, 1), at("pontiff", 2, 2),
+  ],
+  vengeance: [
+    at("zealot", 0, 0), at("fanatic", 0, 1), at("zealot", 0, 2),
+    at("paragon", 2, 0), at("empyreal", 2, 1), at("reclaimer", 2, 2),
   ],
 };
 

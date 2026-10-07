@@ -244,6 +244,19 @@ export function buildFigure(defId: string, side: Side, owner: THREE.Color | null
       g.add(hood(top - 0.1, 0.17, m.body));
       g.add(wings(top - 0.15, 0.7, m.body));
       break;
+    // Guardian angels keep the Seraph's hood; vengeance angels show their eyes and the red in their wings.
+    case "emissary":
+      g.add(hood(top - 0.1, 0.17, m.body));
+      g.add(wings(top - 0.15, 0.9, m.trim));
+      break;
+    case "paragon":
+    case "empyreal":
+    case "reclaimer":
+      g.add(hood(top - 0.1, 0.17, m.trim));
+      g.add(eyes(top + 0.05, m.glow));
+      g.add(wings(top - 0.15, defId === "paragon" ? 0.9 : 1.1, m.glow));
+      if (defId === "empyreal") g.add(halo(top + 0.3, 0.26, m.glow));
+      break;
     case "cleric":
     case "pontiff":
     case "archon":

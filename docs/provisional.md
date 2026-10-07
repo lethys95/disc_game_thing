@@ -159,3 +159,20 @@ Burn at the stake and Detonate are the user's; until 2026-10-07 the Cleric was t
   G 39 (was 69 / 33 / 50); tier 4 J 85, N 20, G 39. Jilliath's best squads at tiers 3–4 now win 93–100%, but tier 4
   isn't a fair test: Ral-Vitahl has no tier-4 units and most other lines stop at 2–3, so Jilliath's tier-4 mages meet
   tier-3 casters. Not retuned: the balance pass comes once the other lines exist (the board).
+
+## 73. Jilliath's support line, the vengeance angels (2026-10-07; the user's mechanics, Claude's readings and numbers)
+`faction-stuff/jilliath/support.md`. Initiative 45 (supports slower than casters, the user's Disciples II note), ability
+power 100 × tier; numbers at ability power 100. No damage type of their own yet (weapon).
+- **Emissary** (t2, faith): a placeholder until faith is designed: the Seraph's Heal and Shoot at ability power 200,
+  100 health. It exists so the Seraph's fork has two sides.
+- **Paragon** (t2, 100 health): *Atonement* is its only attack and its only heal: 15 to an enemy; the most wounded ally
+  (itself included) heals 150% of the damage dealt (after armor and shields).
+- **Empyreal** (t3a, 130): Atonement healing the three most wounded allies, each 100% of the damage dealt.
+- **Reclaimer** (t3b, 160): *Transfusion*: another ally heals 60 (180 at her ability power); she loses half of what it
+  actually healed. *Reclaim* (placeholder name): 20 to an enemy, and she heals 100% of the damage dealt.
+- **AI** (guardian and vengeance presets against six preset squads, both sides): Emissary 45 Heal / 27 Shoot, Paragon
+  31 Atonement, Empyreal 28, Reclaimer 26 Reclaim / 7 Transfusion; the two angel squads won 20 of 24.
+- **Whole games:** the world test's six-unit army (three Torturers, three Punishers) against a Paladin and a
+  Congregant used to win about half its seeds; now its opponent wins 7 of seeds 1–8 (one stalls). The opponent's
+  supports now evolve (Seraph → Emissary doubles its healing) while the army wears down on camps. The test now only
+  checks that a game ends. For the balance pass (`todo/balance-pass`).

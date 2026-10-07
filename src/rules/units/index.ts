@@ -64,6 +64,9 @@ export const EVOLUTIONS: Readonly<Record<string, readonly Evolution[]>> = {
   punisher: [{ to: "torturer" }],
   fanatic: [{ to: "chosen" }],
   chosen: [{ to: "avatar_of_vengeance" }],
+  // The Jilliath support line, angels (faction-stuff/jilliath/support.md): guardian vs vengeance.
+  seraph: [{ to: "emissary", label: "Faith" }, { to: "paragon", label: "Fanaticism" }],
+  paragon: [{ to: "empyreal" }, { to: "reclaimer" }],
   // The Jilliath mage line (faction-stuff/jilliath/mage.md): holy vs fire; the fire side forks again at tier 4.
   acolyte: [{ to: "cleric", label: "Faith" }, { to: "doomsayer", label: "Fanaticism" }],
   cleric: [{ to: "pontiff" }],

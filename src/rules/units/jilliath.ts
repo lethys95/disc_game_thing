@@ -16,6 +16,29 @@ export const JILLIATH_UNITS: Readonly<Record<string, UnitDef>> = {
     // A weak attack of its own (user: not D2's attack-less healer).
     abilities: [{ id: "mend" }, { id: "shoot", params: { power: 10 } }, ...kit("defend", "wait")],
   },
+  // The support line past tier 1 (faction-stuff/jilliath/support.md): angels, guardian (faith) vs vengeance
+  // (fanaticism). The Emissary is a placeholder until faith is designed; stats are provisional.
+  emissary: {
+    id: "emissary", name: "Emissary", faction: "jilliath", tier: 2,
+    stats: { maxHp: 100, shield: 0, armor: 0, initiative: 45, abilityPower: 200 },
+    abilities: [{ id: "mend" }, { id: "shoot", params: { power: 10 } }, ...kit("defend", "wait")],
+  },
+  paragon: {
+    id: "paragon", name: "Paragon", faction: "jilliath", tier: 2,
+    stats: { maxHp: 100, shield: 0, armor: 0, initiative: 45, abilityPower: 200 },
+    abilities: [{ id: "atonement" }, ...kit("defend", "wait")],
+  },
+  empyreal: {
+    id: "empyreal", name: "Empyreal", faction: "jilliath", tier: 3,
+    stats: { maxHp: 130, shield: 0, armor: 0, initiative: 45, abilityPower: 300 },
+    abilities: [{ id: "atonement", params: { allies: 3, percent: 100 } }, ...kit("defend", "wait")],
+  },
+  // Her health pays for her heals, so she has more of it.
+  reclaimer: {
+    id: "reclaimer", name: "Reclaimer", faction: "jilliath", tier: 3,
+    stats: { maxHp: 160, shield: 0, armor: 0, initiative: 45, abilityPower: 300 },
+    abilities: [...kit("transfusion", "reclaim", "defend", "wait")],
+  },
   acolyte: {
     id: "acolyte", name: "Acolyte", faction: "jilliath", tier: 1,
     stats: { maxHp: 60, shield: 0, armor: 0, initiative: 50, abilityPower: 100 },

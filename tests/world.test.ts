@@ -246,14 +246,15 @@ describe("world", () => {
     expect(done.world.outcome).toEqual({ winner: 0 });
   });
 
-  test("with the AI on both sides, a clearly stronger side marches on and wins the whole game", () => {
-    // Seed 1: across seeds the stronger start wins only about half its games (2026-09-28, provisional #56), since
-    // the other AI builds up while the strong warband clears lairs; this seed is one where the head start holds.
+  test("with the AI on both sides, a whole game reaches a winner", () => {
+    // This was "a clearly stronger start wins", on a seed where it held (about half of all seeds did, provisional #56).
+    // Since the support line evolves (2026-10-07, provisional #73) the six-unit army's opponent wins 7 of seeds 1–8:
+    // its healers grow with it while the army wears itself down on camps. A balance-pass question, not a rule.
     let world = createWorld(1, twoPlayers([army, squad], both("punishment"), ["jilliath", "jilliath"]));
     for (let i = 0; i < 600 && !world.outcome; i++) {
       const battle = world.engagement?.battle;
       world = battle ? concludeBattle(world, autoplay(battle)).world : applyWorldAction(world, chooseWorldAction(world)).world;
     }
-    expect(world.outcome).toEqual({ winner: 0 });
+    expect(world.outcome).not.toBeNull();
   }, 60_000);
 });

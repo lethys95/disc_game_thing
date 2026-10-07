@@ -25,7 +25,7 @@ Tests prove the rules; only a rendered frame proves the view. Always look at the
 |---|---|
 | (none) | title screen |
 | `?newgame`, `?skirmish`, `?codex`, `?credits` | that screen of the title's (the skirmish is the old setup screen: build two squads, fight one battle) |
-| `?fight` | skip setup, battle with the preserve vs punishment presets (`?fight=mages` for the Jilliath mage line, holy vs fire; `?fight=nexus`, `?fight=nexus:scheme`, `?fight=nexus:overload`, `?fight=bandits` for other enemies; `&side=1` plays the defending side, drawn on the left; `&terrain=forest|hills|mountain` and `&backdrop=capitol|city|dungeon` set where it's fought) |
+| `?fight` | skip setup, battle with the preserve vs punishment presets (`?fight=mages` for the Jilliath mage line, holy vs fire; `?fight=angels` for its support line, guardian vs vengeance; `?fight=nexus`, `?fight=nexus:scheme`, `?fight=nexus:overload`, `?fight=bandits` for other enemies; `&side=1` plays the defending side, drawn on the left; `&terrain=forest|hills|mountain` and `&backdrop=capitol|city|dungeon` set where it's fought) |
 | `?steps=N` | fast-forward N AI actions before the first frame (no animation) |
 | `?auto=1` | AI plays both sides |
 | `?map&seed=N` | skip setup, straight onto the map (both sides uncommitted Jilliath; `?map=nexus` makes the enemy Nexus; `&xp=100` starts your units and leader with that XP, e.g. to see the fork prompt or spend leader points; `&capitol` opens the Capitol screen (`&capitol=garrison|research|spells` on that tab), `&leader` the first warband's leader screen, `&structure=mercenaries|merchant|mage` puts it on that structure with its screen open, `&reveal` explores the whole map, `&players=N` adds AI players, `&size=small|medium|large|huge` picks the map size) |

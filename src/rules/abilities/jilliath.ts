@@ -4,6 +4,13 @@ import { PUNISHED_PER_STACK } from "#rules/effects";
 import { adjacent, COLS, frontLine, meleeTargets, occupant, opponent } from "#rules/battle/grid";
 import type { Behavior, Ctx, Row, TargetChoice, TraitSelf } from "#rules/battle/types";
 
+/** What the unit's hits during `act` dealt (pools soaked and health removed). */
+function dealing(ctx: Ctx, unitId: string, act: () => void): number {
+  const before = ctx.tally.get(unitId)?.dealt ?? 0;
+  act();
+  return (ctx.tally.get(unitId)?.dealt ?? 0) - before;
+}
+
 /** Castigation's mark: the stronger of the two weakenings, for the longer of the two spans. */
 function castigate(ctx: Ctx, targetId: string, self: TraitSelf): void {
   const weaken = self.params["weaken"] ?? 0;
@@ -37,6 +44,71 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
         const missing = ctx.stats(id).maxHp - ctx.unit(id).hp;
         ctx.heal(id, (self.params["amount"] ?? 0) + Math.floor((missing * (self.params["missing"] ?? 0)) / 100));
       }
+    },
+  },
+
+  /**
+   * The Paragon and the Empyreal (the user: discipline priests' Atonement, "probably not 1 to 1. Should damage less than
+   * it heals"): a hit whose damage heals the `allies` most wounded allies, each for `percent` of it.
+   */
+  atonement: {
+    kind: "active",
+    name: "Atonement",
+    describe: (p) =>
+      `Hit an enemy for ${p["power"]}. ${p["allies"] === 1 ? "The most wounded ally" : `The ${p["allies"]} most wounded allies`} heal${p["allies"] === 1 ? "s" : " each"} ${p["percent"]}% of the damage dealt.`,
+    tags: ["attack", "ranged", "damage", "heal"],
+    defaults: { power: 15, allies: 1, percent: 150 },
+    scales: ["power"],
+    choices: rangedChoices,
+    resolve: (ctx, self, choice) => {
+      const dealt = dealing(ctx, self.unitId, () => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self)));
+      const side = ctx.unit(self.unitId).side;
+      const missing = (id: string) => ctx.stats(id).maxHp - ctx.unit(id).hp;
+      const wounded = ctx
+        .living(side)
+        .filter((u) => missing(u.id) > 0)
+        .sort((a, b) => missing(b.id) - missing(a.id))
+        .slice(0, self.params["allies"] ?? 1);
+      for (const ally of wounded) ctx.heal(ally.id, Math.floor((dealt * (self.params["percent"] ?? 0)) / 100));
+    },
+  },
+
+  /** The Reclaimer (the user: "massive but double edged heals"): the strongest heal, paid with her own health. */
+  transfusion: {
+    kind: "active",
+    name: "Transfusion",
+    describe: (p) => `Heal another ally for ${p["heal"]}. She loses ${p["paid"]}% of what it heals.`,
+    tags: ["heal"],
+    // Not `cost`: that param is a spell's price in spell charges.
+    defaults: { heal: 60, paid: 50 },
+    scales: ["heal"],
+    choices: (ctx, self) =>
+      ctx
+        .living(ctx.unit(self.unitId).side)
+        .filter((u) => u.id !== self.unitId && u.hp < ctx.stats(u.id).maxHp)
+        .map((u) => single(u, "main")),
+    resolve: (ctx, self, choice) => {
+      for (const id of choice.affected) {
+        const before = ctx.unit(id).hp;
+        ctx.heal(id, self.params["heal"] ?? 0);
+        const healed = ctx.unit(id).hp - before;
+        ctx.lose(self.unitId, Math.floor((healed * (self.params["paid"] ?? 0)) / 100), self.unitId);
+      }
+    },
+  },
+
+  /** The Reclaimer's attack (the user: "some lifedrain on enemies as attack"): it heals her for what it deals. */
+  reclaim: {
+    kind: "active",
+    name: "Reclaim",
+    describe: (p) => `Hit an enemy for ${p["power"]}, and heal ${p["percent"]}% of the damage dealt.`,
+    tags: ["attack", "ranged", "damage", "heal"],
+    defaults: { power: 20, percent: 100 },
+    scales: ["power"],
+    choices: rangedChoices,
+    resolve: (ctx, self, choice) => {
+      const dealt = dealing(ctx, self.unitId, () => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self)));
+      ctx.heal(self.unitId, Math.floor((dealt * (self.params["percent"] ?? 0)) / 100));
     },
   },
 

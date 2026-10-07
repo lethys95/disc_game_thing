@@ -110,3 +110,8 @@ Still open, on purpose until something needs them:
 - **Debug routes live on `Campaign`** (`startingXp`, `startingMana`, `revealAll`, `openCapitol`): small, and the screenshot routes need them.
 - **The AI is greedy** (battle: one ply plus free follow-ups; map: ordered planners). A look-ahead AI is its own milestone.
 - **`App` and `Campaign` are still big controllers.** Keep new screens in their own classes (`view/city.ts`, `view/leader.ts`) the same way.
+
+## Reserved ability params (2026-10-07)
+`cost`, `charges`, `overload` and `replicate` mean something to the engine (spell charges, uses per combat,
+enhancements) whatever the ability. A behavior that names its own param `cost` becomes a spell no unit can afford and
+silently never shows up (Transfusion did: its health price is `paid`).

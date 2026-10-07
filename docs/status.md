@@ -22,9 +22,11 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
   is fire with stacking burn (Doomsayer's Burn at the stake → Fire mage 3's fire on all → Fire mage 4's Detonate or the
   Martyr's backfiring beam). `?fight=mages`. Engine: a holy damage type, `BattleUnit.struck` (Judgement), a `hurt`
   hook (Repentance wakes on burns), Ignite's burns stack.
-- **Jilliath is angels and their human followers (the user):** the support line is the angels, all of it; named by the
-  user: Seraph → Emissary → Guardian → Shepherd → Godkin (faith), Paragon → Empyreal / Reclaimer (fanaticism); only
-  the Seraph (the old Cleric) is in the game.
+- **Jilliath is angels and their human followers (the user):** the support line is the angels, named by the user:
+  Seraph → Emissary → Guardian → Shepherd → Godkin (faith, the safe choice: buffs, moderate heals), Paragon →
+  Empyreal / Reclaimer (vengeance, aggressive). **Built:** the Seraph; the vengeance side (Atonement; the Reclaimer's
+  Transfusion and life-draining Reclaim; provisional #73); the Emissary as a placeholder healer. `?fight=angels`.
+  Whole AI games shifted: the strong-start world test now only checks a game ends (#73, balance pass).
 - **The Grove's Water is now Wellspring** (the user: water is the element, not the ability). Save 33.
 - **The angels' look and reach** (the user): a humble, hooded, praying tier 1; faith may go to tier 5 and show who
   pulls the strings (t4 stained glass; t5 a bare silhouette of moving sky with god rays, `maybe/sky-silhouette-angel`); vengeance with blood-tipped wings.
@@ -33,9 +35,9 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
 
 ## Next
 1. **The user plays the mage line** (`?fight=mages`, or a map game); fire-side names and the secret's home are open.
-2. **Jilliath's support line as angels** (todo 15): guardian angels (faith) vs vengeance angels (fanaticism), the
-   user's. Round four is on `shots/jilliath-angels.html` (MTG's angels as inspiration; is tier 1 already an angel?).
-   Kept from round two: atonement, transfusion, the resurrecting angel.
+2. **The guardian angels** (todo 15): Emissary, Guardian, Shepherd (stained glass), Godkin (the sky silhouette) are
+   named, not designed; buffs and moderate heals, the resurrection at t4 or t5. The vengeance t4 after Empyreal is
+   open. The user is reading MTG's angels on their own sheet.
 3. **Armor and flat buffs as percentages** (`maybe/percent-armor-and-buffs`): best decided before lines are tuned.
 4. **Waiting for the user to look** (`testing/`): ability power, the front door and codex, portraits, Jilliath's
    opening.
