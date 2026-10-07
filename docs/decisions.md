@@ -243,3 +243,15 @@ user found the codex's icons tiny) and with no way to scale outside a browser's 
 hairlines stay px), the root font size follows the window's height (16px at 800 tall, from 0.75× to 2.5×) times the
 player's Interface size setting, and code measures elements instead of assuming pixel sizes. `pnpm sizes` renders the
 main screens at 720p, 1080p and 1440p; the verify skill requires it for any interface change.
+
+## The Jilliath mage line: what the engine learned (2026-10-07)
+- **Holy is a damage type** (`DamageType`), the faith mage's; nothing reacts to it yet.
+- **A unit remembers whether its most recent turn dealt damage** (`BattleUnit.struck`, reset as its turn starts, set
+  when its action dealt any). Judgement needs to know who struck, and only the engine sees every action; it's a fact
+  about the battle, not about a mechanic, so it sits on the unit next to `chargesUsed`.
+- **A `hurt` hook** on the unit that loses health, from anything: Repentance wakes on a burn or a bleed too, which skip
+  the pipeline's `incoming`.
+- **Burns stack** (the user: "Fanaticism casters should probably also stack burn"): Ignite adds its burn to a burning
+  target instead of only refreshing it. No unit carried Ignite before.
+- **Each tier of a mage line keeps the last one's spells**, as the melee line keeps Lay on Hands and Punishment; the
+  user hasn't said otherwise.

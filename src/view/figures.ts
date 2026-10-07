@@ -239,6 +239,25 @@ export function buildFigure(defId: string, side: Side, owner: THREE.Color | null
       g.add(flail(m.trim, m.glow, defId === "torturer" ? 3 : 2));
       if (defId === "torturer") g.add(hookBlade(m.trim));
       break;
+    case "jilliath_holy_2":
+    case "jilliath_holy_3":
+    case "jilliath_holy_4":
+      g.add(hood(top - 0.1, 0.17, m.trim));
+      g.add(eyes(top + 0.05, m.glow));
+      g.add(staff(m.trim, m.glow));
+      g.add(halo(top + 0.3, 0.12 + 0.04 * (def?.tier ?? 2), m.glow));
+      break;
+    case "doomsayer":
+    case "jilliath_fire_3":
+    case "jilliath_fire_4":
+    case "jilliath_martyr_4": {
+      g.add(hood(top - 0.1, 0.18, m.body));
+      g.add(eyes(top + 0.05, m.glow));
+      const orbs = [[1.0, 0.25], [1.3, -0.2], [1.5, 0.1]] as const;
+      for (const [y, z] of orbs.slice(0, (def?.tier ?? 2) - 1)) g.add(mesh(new THREE.IcosahedronGeometry(0.09, 0), m.glow, 0.32, y, z));
+      if (defId === "jilliath_martyr_4") g.add(halo(top + 0.3, 0.28, m.glow));
+      break;
+    }
     case "technician":
       g.add(helm(top - 0.05, 0.14, m.trim));
       g.add(eyes(top + 0.1, m.glow));

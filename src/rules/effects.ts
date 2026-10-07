@@ -1,5 +1,5 @@
 import { PUNISHMENT_MAX_STACKS } from "#rules/balance";
-import type { Ctx, EffectDef, EffectInstance, Stacking, Stats } from "#rules/battle/types";
+import type { Ctx, EffectDef, EffectInstance, Stacking, Stats, TraitSelf } from "#rules/battle/types";
 
 /** What a point of each stat is worth to the AI, roughly in health. Rough, provisional. */
 const STAT_WORTH: Readonly<Record<keyof Stats, number>> = { maxHp: 0.5, shield: 0.5, hitBonus: 2, hitPercent: 0.4, armor: 3, initiative: 1, abilityPower: 0.5 };
@@ -18,8 +18,8 @@ export function wither(ctx: Ctx, targetId: string, amount: number, cap: number, 
 
 /** Mutate's per-stack damage bonus. */
 export const MUTATED_PER_STACK = 10;
-/** What the AI thinks a goaded healer or caster is worth to the other side: about one heal (provisional #63). */
-const GOADED_AI_VALUE = 25;
+/** What the AI thinks a healer's or caster's turn is worth: about one heal (provisional #63). */
+const SUPPORT_TURN_AI_VALUE = 25;
 
 /** The bearer loses its next turn, unless something hurts it first: then it wakes and keeps its place in the queue. */
 function lostUntilHurt(id: string, name: string): EffectDef {
@@ -36,6 +36,68 @@ function lostUntilHurt(id: string, name: string): EffectDef {
         if (packet.amount > 0 && self.effect) ctx.removeEffect(self.unitId, self.effect);
       },
       aiValue: (ctx, self) => -ctx.strongestHit(self.unitId),
+    },
+  };
+}
+
+/** Less damage for the bearer's next few turns (`stacks`, counted down as each starts): a curse, a castigation. */
+function weakened(id: string, name: string): EffectDef {
+  return {
+    id,
+    name,
+    describe: (e) => `Deals ${e.amount}% less damage for ${e.stacks} more turn${e.stacks === 1 ? "" : "s"}.`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      stats: (_ctx, self, subjectId, stats) => {
+        if (subjectId === self.unitId) stats.hitPercent -= self.effect?.amount ?? 0;
+      },
+      turnStart: (ctx, self) => {
+        const curse = self.effect;
+        if (!curse) return null;
+        if (curse.stacks <= 0) ctx.removeEffect(self.unitId, curse);
+        else curse.stacks -= 1;
+        return null;
+      },
+      aiValue: (ctx, self) => -((ctx.strongestHit(self.unitId) * (self.effect?.amount ?? 0)) / 100) * STAT_WORTH.hitBonus * Math.max(1, self.effect?.stacks ?? 1),
+    },
+  };
+}
+
+/**
+ * Repentance (the user, 2026-10-06): out of the fight for `stacks` turns, "wakes up early if damaged or healed by
+ * anyone or anything".
+ */
+function repentant(): EffectDef {
+  const wake = (ctx: Ctx, self: TraitSelf) => {
+    const effect = self.effect;
+    if (effect && ctx.unit(self.unitId).effects.includes(effect)) ctx.removeEffect(self.unitId, effect);
+  };
+  return {
+    id: "repentant",
+    name: "Repentant",
+    describe: (e) => `Out of the fight for ${e.stacks} more turn${e.stacks === 1 ? "" : "s"}. Anything that damages or heals it wakes it.`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      turnStart: (ctx, self) => {
+        const effect = self.effect;
+        // A burn ticking first may have woken it already.
+        if (!effect || !ctx.unit(self.unitId).effects.includes(effect)) return null;
+        effect.stacks -= 1;
+        if (effect.stacks <= 0) ctx.removeEffect(self.unitId, effect);
+        return "skip";
+      },
+      incoming: (ctx, self, packet) => {
+        if (packet.amount > 0) wake(ctx, self);
+      },
+      hurt: wake,
+      healing: (ctx, self, heal) => {
+        if (heal.amount > 0) wake(ctx, self);
+      },
+      aiValue: (ctx, self) => -ctx.strongestHit(self.unitId) * (self.effect?.stacks ?? 1),
     },
   };
 }
@@ -726,6 +788,19 @@ const effects: readonly EffectDef[] = [
     visibility: "public",
     hooks: { turnStart: () => "skip", aiValue: (ctx, self) => -ctx.strongestHit(self.unitId) },
   },
+  // The Jilliath mage line (`abilities/jilliath.ts`).
+  weakened("castigated", "Castigated"),
+  repentant(),
+  {
+    // An ally that fed Burn at the stake: its turn went into the fire.
+    id: "gave_turn",
+    name: "Gave its turn",
+    describe: () => "Gave its next turn to Burn at the stake.",
+    stacking: { mode: "unique" },
+    lifetime: "untilOwnTurn",
+    visibility: "public",
+    hooks: { turnStart: () => "skip", aiValue: (ctx, self) => -Math.max(ctx.strongestHit(self.unitId), SUPPORT_TURN_AI_VALUE) },
+  },
   // Tarot rewards (`battle/tarot.ts`).
   {
     id: "tarot_might",
@@ -758,28 +833,8 @@ const effects: readonly EffectDef[] = [
       ctx.hit(source, [self.unitId], { power: self.effect?.amount ?? 0, type: ctx.damageTypeOf(source, "foretell"), tags: ["attack", "ranged", "damage"] });
     },
   },
-  {
-    // A Soothsayer's curse: less damage for the bearer's next few turns (counted down as each starts).
-    id: "cursed",
-    name: "Cursed",
-    describe: (e) => `Deals ${e.amount}% less damage for ${e.stacks} more turn${e.stacks === 1 ? "" : "s"}.`,
-    stacking: { mode: "unique" },
-    lifetime: "battle",
-    visibility: "public",
-    hooks: {
-      stats: (_ctx, self, subjectId, stats) => {
-        if (subjectId === self.unitId) stats.hitPercent -= self.effect?.amount ?? 0;
-      },
-      turnStart: (ctx, self) => {
-        const curse = self.effect;
-        if (!curse) return null;
-        if (curse.stacks <= 0) ctx.removeEffect(self.unitId, curse);
-        else curse.stacks -= 1;
-        return null;
-      },
-      aiValue: (ctx, self) => -((ctx.strongestHit(self.unitId) * (self.effect?.amount ?? 0)) / 100) * STAT_WORTH.hitBonus * Math.max(1, self.effect?.stacks ?? 1),
-    },
-  },
+  // A Soothsayer's curse.
+  weakened("cursed", "Cursed"),
   // The gnolls (`abilities/gnolls.ts`).
   {
     // A Packstalker's mark: the marker's side hits it harder until the end of the next round.
@@ -832,7 +887,7 @@ const effects: readonly EffectDef[] = [
       aiValue: (ctx, self) => {
         const ids = ctx.abilityIds(self.unitId);
         const denied = ids.some((id) => ctx.hasTag(id, "heal") || (ctx.hasTag(id, "spell") && !ctx.hasTag(id, "attack")));
-        return denied && ids.some((id) => ctx.hasTag(id, "attack")) ? -GOADED_AI_VALUE : 0;
+        return denied && ids.some((id) => ctx.hasTag(id, "attack")) ? -SUPPORT_TURN_AI_VALUE : 0;
       },
     },
   },

@@ -4,7 +4,9 @@ Kept short: only what is the user's to decide, most blocking first. Answer inlin
 
 ## Unit designs (the main bottleneck)
 1. **Going wide (user, 2026-09-27):** a foundation across factions before deepening Nexus. What unblocks the most: Jilliath's tier-2 support and mage branches (your directions are in `design/factions/jilliath.md`), then first units for the Grove and the Wastes (Claude's pitches are in your sheets under `faction-stuff/sylvan/` and `faction-stuff/wastes/`, marked "(Claude)": cut, rename or veto), then tribes (`design/tribes.md`). One line at a time is fine.
-2. **A name for Jilliath's tier-1 mage** (the unit is in the game as `jilliath_mage_1`).
+2. **Names for Jilliath's mage line** (in the game as placeholders): the tier-1 mage, Holy mage 2–4, Fire mage 3–4,
+   Martyr mage 4, and the spells *Fire on all* and *Beam*. Plus: what more Holy mage 3 gets, and where the secret lives
+   (`.kanban/testing/jilliath-mage-line.md`).
 3. **The joker line** per faction (`design/pillars.md`): whenever an idea comes.
 
 10. **The Regrowth line's damage (the composition matrix, 2026-09-30, `provisional.md` #61):** Regrowth 3 "supports and attacks weakly" (your design), and the Grove has no damage dealer past its tier-1 mage. So Regrowth squads win 0–17% against Jilliath's tier 3 (Templars' 20 armor turn its 32 into 12) while Decay squads win 92%. A tier-2 Grove mage would give it a partner; or Regrowth 3 hits harder; or it stays the Grove's weak matchup. Your call.

@@ -130,3 +130,25 @@ abilities instead of flat numbers."
 - **Rules text marks what ability power grew:** each scaled number is gold and underlined, and hovering it gives its
   value at 100; plain tooltips list "20 → 40" after the text.
 
+
+## 72. The Jilliath mage line past tier 1 (2026-10-07; the user's mechanics, Claude's readings, names and numbers)
+`faction-stuff/jilliath/mage.md`. Every tier keeps the last one's spells. Placeholder names: Holy mage 2–4, Fire mage
+3–4, Martyr mage 4, *Fire on all*, *Beam* (the Doomsayer, Castigation, Judgement, Repentance, Burn at the stake and
+Detonate are the user's). Health 75 / 90 / 105 (the Martyr 160, to carry its backfire), initiative 50, ability power
+100 × tier. Numbers below are at ability power 100.
+- **Castigation** (holy): 18, and its target deals 30% less for its next 2 turns.
+- **Repentance:** once per combat, a free action; an enemy loses its next 3 turns (turns, not rounds: a unit with
+  several actions a round spends them quickly). Anything that damages it (a hit, a burn, a bleed) or heals it wakes it.
+- **Judgement** (holy): 25 to every enemy whose most recent turn dealt damage. "Last turn" read as each enemy's own
+  last turn.
+- **Burn at the stake** (fire): 20, plus 25 for every ally still to act this round (this pass or a later one); each
+  of those allies loses its next turn.
+- **Burns stack** (the Ignite keyword, for every unit that carries it): a hit adds its burn and starts the turns over.
+  The Doomsayer's hits burn 5 a turn, the tier-3 and 4 casters' 3, for 3 turns.
+- **Fire on all:** 5 to every enemy (and the caster's burn on each).
+- **Detonate:** every burning enemy takes its remaining burn (per turn × turns left) at 150% at once, as a fire hit
+  (armor and shields count); the burn ends, though the hit itself sets a fresh one through Ignite.
+- **Beam:** 25 to every enemy in one column, front to back; the backfire is the Martyr's Fanaticism (half of what it
+  deals). A full column of three can nearly kill it.
+- **AI:** every ability gets picked (tier-4 mirror probes: Judgement 24, Repentance 10, Detonate 2, Beam 2 of the
+  casters' actions); the Beam is rare because Fire on all scores better for the greedy AI.

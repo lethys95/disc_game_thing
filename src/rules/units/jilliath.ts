@@ -20,6 +20,44 @@ export const JILLIATH_UNITS: Readonly<Record<string, UnitDef>> = {
     stats: { maxHp: 60, shield: 0, armor: 0, initiative: 50, abilityPower: 100 },
     abilities: [{ id: "condemn", params: { power: 25 }, damageType: "fire" }, ...kit("defend", "wait")],
   },
+  // The mage line past tier 1 (faction-stuff/jilliath/mage.md): faith is holy damage, fanaticism fire and stacking
+  // burn. Every tier keeps the last one's spells. Names other than the Doomsayer's are placeholders; stats provisional.
+  jilliath_holy_2: {
+    id: "jilliath_holy_2", name: "Holy mage 2", faction: "jilliath", tier: 2,
+    stats: { maxHp: 75, shield: 0, armor: 0, initiative: 50, abilityPower: 200 },
+    abilities: [{ id: "castigation" }, ...kit("defend", "wait")],
+  },
+  jilliath_holy_3: {
+    id: "jilliath_holy_3", name: "Holy mage 3", faction: "jilliath", tier: 3,
+    stats: { maxHp: 90, shield: 0, armor: 0, initiative: 50, abilityPower: 300 },
+    abilities: [{ id: "castigation" }, ...kit("repentance", "defend", "wait")],
+  },
+  jilliath_holy_4: {
+    id: "jilliath_holy_4", name: "Holy mage 4", faction: "jilliath", tier: 4,
+    stats: { maxHp: 105, shield: 0, armor: 0, initiative: 50, abilityPower: 400 },
+    abilities: [{ id: "castigation" }, ...kit("judgement", "repentance", "defend", "wait")],
+  },
+  doomsayer: {
+    id: "doomsayer", name: "Doomsayer", faction: "jilliath", tier: 2,
+    stats: { maxHp: 75, shield: 0, armor: 0, initiative: 50, abilityPower: 200 },
+    abilities: [{ id: "condemn", params: { power: 25 }, damageType: "fire" }, { id: "burn_at_the_stake" }, { id: "ignite", params: { burn: 5 } }, ...kit("defend", "wait")],
+  },
+  jilliath_fire_3: {
+    id: "jilliath_fire_3", name: "Fire mage 3", faction: "jilliath", tier: 3,
+    stats: { maxHp: 90, shield: 0, armor: 0, initiative: 50, abilityPower: 300 },
+    abilities: [{ id: "condemn", params: { power: 25 }, damageType: "fire" }, ...kit("fire_on_all", "burn_at_the_stake"), { id: "ignite", params: { burn: 3 } }, ...kit("defend", "wait")],
+  },
+  jilliath_fire_4: {
+    id: "jilliath_fire_4", name: "Fire mage 4", faction: "jilliath", tier: 4,
+    stats: { maxHp: 105, shield: 0, armor: 0, initiative: 50, abilityPower: 400 },
+    abilities: [{ id: "condemn", params: { power: 25 }, damageType: "fire" }, ...kit("fire_on_all", "detonate", "burn_at_the_stake"), { id: "ignite", params: { burn: 3 } }, ...kit("defend", "wait")],
+  },
+  // The martyrdom caster: its own branch at tier 4 (the user, 2026-10-06). More health, to carry the backfire.
+  jilliath_martyr_4: {
+    id: "jilliath_martyr_4", name: "Martyr mage 4", faction: "jilliath", tier: 4,
+    stats: { maxHp: 160, shield: 0, armor: 0, initiative: 50, abilityPower: 400 },
+    abilities: [{ id: "condemn", params: { power: 25 }, damageType: "fire" }, ...kit("beam", "fire_on_all", "burn_at_the_stake"), { id: "ignite", params: { burn: 3 } }, ...kit("fanaticism", "defend", "wait")],
+  },
   paladin: {
     id: "paladin", name: "Paladin", faction: "jilliath", tier: 2,
     stats: { maxHp: 150, shield: 0, armor: 20, initiative: 50, abilityPower: 200 },

@@ -86,21 +86,27 @@ export const keywords: Readonly<Record<string, Behavior>> = {
     },
   },
 
-  /** Ignite: its hits set the target burning (not a wet one). */
+  /**
+   * Ignite: its hits set the target burning (not a wet one). Burns stack (the user, 2026-10-06: "Fanaticism casters
+   * should probably also stack burn on enemies"): each hit adds its burn and starts the turns over.
+   */
   ignite: {
     kind: "passive",
     name: "Ignite",
     applies: ["burning"],
     defaults: { burn: 8, turns: 3 },
     scales: ["burn"],
-    describe: (p) => `Its hits set the target burning: ${p["burn"]} damage at the start of each of its next ${p["turns"]} turns. A wet target doesn't catch.`,
+    describe: (p) => `Its hits set the target burning: ${p["burn"]} damage at the start of each of its next ${p["turns"]} turns. Burns stack. A wet target doesn't catch.`,
     hooks: {
       afterHit: (ctx, self, targetId) => {
         const target = ctx.unit(targetId);
         if (!target.alive || target.effects.some((e) => e.def === "wet")) return;
+        const turns = self.params["turns"] ?? 3;
         const burning = target.effects.find((e) => e.def === "burning");
-        if (burning) burning.stacks = Math.max(burning.stacks, self.params["turns"] ?? 3);
-        else ctx.addEffect(targetId, { def: "burning", amount: self.params["burn"] ?? 0, stacks: self.params["turns"] ?? 3, source: self.unitId });
+        if (burning) {
+          burning.amount += self.params["burn"] ?? 0;
+          burning.stacks = Math.max(burning.stacks, turns);
+        } else ctx.addEffect(targetId, { def: "burning", amount: self.params["burn"] ?? 0, stacks: turns, source: self.unitId });
       },
     },
   },

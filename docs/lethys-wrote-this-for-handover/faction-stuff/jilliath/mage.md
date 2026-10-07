@@ -66,3 +66,19 @@ The tree as it stands:
   maybe. Cut: Lightning Helix ("the mage line having both damage and healing is owned by sylvans"), Boros Charm ("too
   much complexity").
 - The deflecting secret may live on a holy off-branch here or in the support tree (see support.md).
+
+## Round three, in conversation (the user, 2026-10-07)
+- **The faith side's theme:** the user: "We also have a design issue, in that we don't really know exactly what theme
+  faith mage line should actually have. I don't really know." Claude's reading of what the user kept: every holy piece
+  answers the enemy's aggression (Judgement hits whoever struck, Castigation weakens whoever it hits, Repentance takes
+  a unit out until anyone touches it, the secret turns a blow back), so **justice: the faith mage protects the squad
+  by punishing and restraining the aggressor**, where the fanaticism mage consumes. The user: "Okay." (Provisional.)
+- **Order:** "I'm pretty certain judgement is t4 holy magic. I'm also comfortable putting repentence on t3, but I'm
+  not sure I'd say it's enough, given that mages is intended to be offense, and it likely needs more tools."
+- **The secret:** "It really could be in both brackets" (mage or support). Open.
+
+The tree as built (Claude, provisional; names other than the user's are placeholders):
+- **Faith:** Holy mage 2 (Castigation) → Holy mage 3 (+ Repentance; more offense open) → Holy mage 4 (+ Judgement).
+  Each tier keeps the last one's spells, like the melee line.
+- **Fanaticism:** Doomsayer (Condemn, Burn at the stake, burn on its hits) → Fire mage 3 (+ fire on all) → forks:
+  Fire mage 4 (+ detonate) or Martyr mage 4 (+ the beam, backfiring: Fanaticism's self-damage).

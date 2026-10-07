@@ -64,6 +64,12 @@ export const EVOLUTIONS: Readonly<Record<string, readonly Evolution[]>> = {
   punisher: [{ to: "torturer" }],
   fanatic: [{ to: "chosen" }],
   chosen: [{ to: "avatar_of_vengeance" }],
+  // The Jilliath mage line (faction-stuff/jilliath/mage.md): holy vs fire; the fire side forks again at tier 4.
+  jilliath_mage_1: [{ to: "jilliath_holy_2", label: "Faith" }, { to: "doomsayer", label: "Fanaticism" }],
+  jilliath_holy_2: [{ to: "jilliath_holy_3" }],
+  jilliath_holy_3: [{ to: "jilliath_holy_4" }],
+  doomsayer: [{ to: "jilliath_fire_3" }],
+  jilliath_fire_3: [{ to: "jilliath_fire_4" }, { to: "jilliath_martyr_4" }],
   // Ral-Vitahl: scheme vs overload, chosen per line (user, 2026-09-25).
   custodian: [{ to: "cyclops", label: "Scheme" }, { to: "mutant", label: "Overload" }],
   apprentice: [{ to: "justiciar", label: "Scheme" }, { to: "thaumaturge", label: "Overload" }],

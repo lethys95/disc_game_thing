@@ -14,8 +14,11 @@ export interface Tile {
   readonly col: Col;
 }
 
-/** Lightning and water (2026-10-05) exist for the statuses: wet units conduct lightning; water puts out burning. */
-export type DamageType = "weapon" | "fire" | "lightning" | "water";
+/**
+ * Lightning and water (2026-10-05) exist for the statuses: wet units conduct lightning; water puts out burning. Holy is
+ * the faith mage's (the user, 2026-10-06: "faith side of mage line being focused around holy damage").
+ */
+export type DamageType = "weapon" | "fire" | "lightning" | "water" | "holy";
 
 /**
  * A unit type's numbers. There is no damage stat (the user, 2026-10-07: "flat damage stat shouldn't even be a thing
@@ -116,6 +119,8 @@ export interface BattleUnit {
   corpse: "intact" | "used" | "destroyed";
   /** Spell charges left this battle. */
   spellCharges: number;
+  /** Its most recent turn dealt damage (Judgement strikes the enemies who did). */
+  struck: boolean;
   /** Leads its squad on the map. No combat effect (canon: elevation grants no stat boost); shown to the player. */
   readonly leader: boolean;
 }
@@ -285,6 +290,8 @@ export interface Hooks {
   afterHit?(ctx: Ctx, self: TraitSelf, targetId: string, dealt: number): void;
   /** After this unit's whole action resolves (every target, every copy), if it's still alive and it hit anything. */
   afterAttack?(ctx: Ctx, self: TraitSelf, dealt: number, kills: number): void;
+  /** After this unit loses health to anything: a hit, a bleed, a burn. */
+  hurt?(ctx: Ctx, self: TraitSelf, amount: number): void;
   /** When this unit would die; true keeps it at 1 HP. */
   preventDeath?(ctx: Ctx, self: TraitSelf): boolean;
   /** When any unit dies, or a corpse is used or destroyed. Asked of every trait on the field (and a dying unit's own). */

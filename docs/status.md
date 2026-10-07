@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-07 (handoff at the end of a long session)
+**Updated:** 2026-10-07 (the Jilliath mage line built)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): the alpha is the three playable factions (Jilliath,
@@ -16,35 +16,24 @@ plays map and battles in a web worker. A front door (title, new game, skirmish, 
 Architecture: `design/architecture.md`; gotchas: `engineering.md`; `pnpm verify` before calling anything done (and
 check its exit code, not a grep of its output); `pnpm sizes` for any interface change.
 
-## This session (2026-10-06/07), all committed
-- **Everything is an ability (#71, decisions):** no damage stat, no damage type on units. Units have health, shield,
-  armor, initiative and **ability power** (per unit, 100 × tier as a guideline; Ral-Vitahl's casters above it, the
-  user: "glass cannons"). Each ability's numbers are a share of it (League of Legends-style scaling, the user's
-  framing). Buffs add to every damaging hit (`hitBonus`, `hitPercent`). Ral-Vitahl's spells all deal lightning for
-  now. Witherbloom for Decay support 2. Save 29.
-- **No head math (pillars):** rules text marks the numbers ability power grew (an optional Show formulas setting);
-  the hover preview is a badge, a skull when lethal, the health bar marked; every ability shows **targeting grids**
-  (left to right like the city grids), read from the engine (`rules/battle/reach.ts`).
-- **Codex, round two:** factions and tribes apart, search, groups, linked pages, a Nodes tab; abilities declare the
-  effects they apply (checked by `tests/applies.test.ts`).
-- **The interface scales:** sizes in rem, the root size follows the window height, an Interface size setting.
-- **Portraits:** 22 units (the Packstalker, Hamstringer and five Drawn added).
-- **Audit fixes** (`design/audit-2026-10-06.md`): Jilliath's opening squad; the AI raises every node kind.
+## This session (2026-10-07, second)
+- **Jilliath's mage line, built** (`testing/jilliath-mage-line`, provisional #72): faith is holy (Holy mage 2
+  Castigation → 3 Repentance → 4 Judgement, the user's order); fanaticism is fire with stacking burn (Doomsayer's Burn
+  at the stake → Fire mage 3's fire on all → Fire mage 4's Detonate or the Martyr's backfiring beam). `?fight=mages`.
+  Engine: a holy damage type, `BattleUnit.struck` (Judgement), a `hurt` hook (Repentance wakes on burns), Ignite's
+  burns stack. Save 30. Faith's theme: "justice", Claude's reading, the user unsure.
+- Before that (2026-10-06/07): ability power and "everything is an ability" (#71), no head math, codex round two, the
+  interface in rem, 22 portraits, audit fixes. Details in git history.
 
 ## Next
-1. **Jilliath's backline, with the user** (todo 15, 20): the mage line is mostly designed (the user: "we largely just
-   designed the Jilliath mage line"), so its settled parts can be built: holy Castigation, Judgement, Repentance;
-   fire with burn, the Doomsayer's Burn at the stake, tier 3's fire on all, detonate, the martyrdom caster.
-   Still open, on `shots/jilliath-backline.html` (round three): the faith support's tiers 2–3, where the deflecting
-   secret lives and its name, the holy mage's unit order, homes for the maybes (Justice Strike, Arrows of Justice,
-   fire spreading on death). Trees: `faction-stuff/jilliath/support.md`, `mage.md`.
-2. **Armor and flat buffs as percentages** (`maybe/percent-armor-and-buffs`): the user "might"; best decided before
-   lines are tuned against armor.
-3. **Waiting for the user to look** (`testing/`): ability power, the front door and codex, portraits, Jilliath's
-   opening. Damage types later (`eventually/damage-types`); ways to raise ability power (`eventually/ability-power-sources`).
-4. **Claude, without designs:** a probe for the UI kit's grotesques (`eventually/ui-kit-grotesques`, ComfyUI is free);
-   the Water and Wet icons are still placeholders.
+1. **The user plays the mage line** (`?fight=mages`, or a map game) and names it; Holy mage 3 wants more offense; the
+   secret's home (mage or support) is open.
+2. **Jilliath's support line** (todo 15): faith's tiers 2–3 are open (round three on `shots/jilliath-backline.html`);
+   the fanaticism side (atonement, transfusion) is designed enough to build next.
+3. **Armor and flat buffs as percentages** (`maybe/percent-armor-and-buffs`): best decided before lines are tuned.
+4. **Waiting for the user to look** (`testing/`): ability power, the front door and codex, portraits, Jilliath's
+   opening.
 
 ## Try
-`?codex`, `?fight` (`=nexus`, `=grove`, `=bandits`, `=carnival`, `=drawn`; `&tarot=3&seed=4`), `?map`, `?newgame`,
-`?skirmish`, `?map&capitol=0`. Routes and params: the verify skill.
+`?codex`, `?fight` (`=mages`, `=nexus`, `=grove`, `=bandits`, `=carnival`, `=drawn`; `&tarot=3&seed=4`), `?map`,
+`?newgame`, `?skirmish`, `?map&capitol=0`. Routes and params: the verify skill.

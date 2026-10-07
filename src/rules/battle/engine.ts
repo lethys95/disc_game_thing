@@ -85,6 +85,7 @@ export function createBattle(sides: readonly [readonly Placement[], readonly Pla
         fled: false,
         corpse: "intact",
         spellCharges: def.spellCharges ?? 0,
+        struck: false,
         leader: leader ?? false,
       };
     }
@@ -222,6 +223,7 @@ export function applyAction(battle: Battle, action: Action): Step {
   else for (const cast of casts) found.resolve(ctx, self, cast);
   // Once per action, whatever it hit: only the actor's own hits count (a Backlash landing now is another unit's).
   const own = ctx.tally.get(unitId);
+  if (own && own.dealt > 0) ctx.unit(unitId).struck = true;
   if (own && ctx.unit(unitId).alive) for (const t of [...traitsOn(ctx, unitId)]) t.hooks.afterAttack?.(ctx, t.self, own.dealt, own.kills);
   slot.penaltyMultiplier = 1;
 
@@ -374,6 +376,7 @@ function advance(ctx: Ctx): void {
     const unit = ctx.unit(next);
     if (!unit.alive) continue;
     ctx.emit({ type: "turnStart", unitId: next });
+    unit.struck = false;
     expire(ctx, "untilSourceTurn", (_u, e) => e.source === next);
 
     let skip = false;

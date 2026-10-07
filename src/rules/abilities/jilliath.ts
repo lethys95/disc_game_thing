@@ -1,7 +1,7 @@
 import { auraSource, at, rangedChoices, single, uses } from "#rules/abilities/core";
 import { PUNISHMENT_MAX_STACKS } from "#rules/balance";
 import { PUNISHED_PER_STACK } from "#rules/effects";
-import { adjacent, frontLine, meleeTargets, occupant, opponent } from "#rules/battle/grid";
+import { adjacent, COLS, frontLine, meleeTargets, occupant, opponent } from "#rules/battle/grid";
 import type { Behavior, Row, TargetChoice } from "#rules/battle/types";
 
 /** The Jilliath melee line's abilities (docs/design/units/jilliath-melee-line.md). */
@@ -46,6 +46,155 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
         ctx.hit(self.unitId, [id], { ...spec, power: spec.power + Math.floor((missing * (self.params["missing"] ?? 0)) / 100) });
       }
     },
+  },
+
+  /**
+   * The faith mage (the user, 2026-10-06): holy damage. Castigation: "less damage, but whoever it hits deals less".
+   */
+  castigation: {
+    kind: "active",
+    name: "Castigation",
+    applies: ["castigated"],
+    describe: (p) => `Hit an enemy for ${p["power"]} holy damage. It deals ${p["weaken"]}% less damage for its next ${p["turns"]} turns.`,
+    tags: ["attack", "ranged", "spell", "damage"],
+    damageType: "holy",
+    defaults: { power: 18, weaken: 30, turns: 2 },
+    scales: ["power"],
+    choices: rangedChoices,
+    resolve: (ctx, self, choice) => {
+      ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self));
+      const turns = self.params["turns"] ?? 0;
+      for (const id of choice.affected) {
+        const castigated = ctx.unit(id).effects.find((e) => e.def === "castigated");
+        if (castigated) castigated.stacks = Math.max(castigated.stacks, turns);
+        else ctx.addEffect(id, { def: "castigated", amount: self.params["weaken"] ?? 0, stacks: turns, source: self.unitId });
+      }
+    },
+  },
+
+  /** The user (2026-10-06): "incapacitate for three turns. Free action. Unit wakes up early if damaged or healed by anyone or anything." */
+  repentance: {
+    kind: "active",
+    name: "Repentance",
+    applies: ["repentant"],
+    describe: (p) => `${uses(p)}, a free action: an enemy is out of the fight for its next ${p["turns"]} turns. Anything that damages or heals it wakes it.`,
+    tags: ["spell"],
+    defaults: { charges: 1, turns: 3 },
+    choices: (ctx, self) =>
+      ctx
+        .living(opponent(ctx.unit(self.unitId).side))
+        .filter((u) => !u.effects.some((e) => e.def === "repentant"))
+        .map((u) => single(u, "free")),
+    resolve: (ctx, self, choice) => {
+      for (const id of choice.affected) ctx.addEffect(id, { def: "repentant", stacks: self.params["turns"] ?? 0, source: self.unitId });
+    },
+  },
+
+  /** The user (2026-10-06): "all enemies who dealt damage last turn". */
+  judgement: {
+    kind: "active",
+    name: "Judgement",
+    describe: (p) => `Strike every enemy whose last turn dealt damage, ${p["power"]} holy damage each.`,
+    tags: ["ranged", "spell", "damage", "area"],
+    damageType: "holy",
+    defaults: { power: 25 },
+    scales: ["power"],
+    choices: (ctx, self) => {
+      const guilty = ctx.living(opponent(ctx.unit(self.unitId).side)).filter((u) => u.struck);
+      const first = guilty[0];
+      return first ? [at(first, guilty.map((u) => u.id), "main")] : [];
+    },
+    resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self)),
+  },
+
+  /**
+   * The Doomsayer (the user, 2026-10-06): "deals damage that stacks for every allied unit which are left in the queue
+   * before restart, but skips their turn (as if they're contributing to burning an enemy at the stake)".
+   */
+  burn_at_the_stake: {
+    kind: "active",
+    name: "Burn at the stake",
+    applies: ["gave_turn"],
+    describe: (p) => `Hit an enemy for ${p["power"]}, plus ${p["perAlly"]} for every ally still to act this round. Each of those allies gives up its next turn.`,
+    tags: ["ranged", "spell", "damage"],
+    damageType: "fire",
+    defaults: { power: 20, perAlly: 25 },
+    scales: ["power", "perAlly"],
+    choices: rangedChoices,
+    resolve: (ctx, self, choice) => {
+      const battle = ctx.battle;
+      const waiting = ctx
+        .living(ctx.unit(self.unitId).side)
+        .filter((u) => u.id !== self.unitId && !u.effects.some((e) => e.def === "gave_turn"))
+        .filter((u) => battle.queue.includes(u.id) || (battle.actionsThisRound[u.id] ?? 0) > battle.pass);
+      const power = (self.params["power"] ?? 0) + (self.params["perAlly"] ?? 0) * waiting.length;
+      ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self, undefined, power));
+      for (const ally of waiting) ctx.addEffect(ally.id, { def: "gave_turn", source: self.unitId });
+    },
+  },
+
+  /** The user (2026-10-06): tier 3 "will likely strike all enemies for small damage but putting burn on all enemies". Name: a placeholder. */
+  fire_on_all: {
+    kind: "active",
+    name: "Fire on all",
+    describe: (p) => `Hit every enemy for ${p["power"]}.`,
+    tags: ["ranged", "spell", "damage", "area"],
+    damageType: "fire",
+    defaults: { power: 5 },
+    scales: ["power"],
+    choices: (ctx, self) => {
+      const enemies = ctx.living(opponent(ctx.unit(self.unitId).side));
+      const first = enemies[0];
+      return first ? [at(first, enemies.map((u) => u.id), "main")] : [];
+    },
+    resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self)),
+  },
+
+  /** The user (2026-10-06): "detonate the burn". How much it adds is Claude's (provisional). */
+  detonate: {
+    kind: "active",
+    name: "Detonate",
+    describe: (p) => `Every burning enemy takes what is left of its burn at once, at ${p["percent"]}%, as a fire hit. The burn ends.`,
+    tags: ["ranged", "spell", "damage", "area"],
+    damageType: "fire",
+    defaults: { percent: 150 },
+    choices: (ctx, self) => {
+      const burning = ctx.living(opponent(ctx.unit(self.unitId).side)).filter((u) => u.effects.some((e) => e.def === "burning"));
+      const first = burning[0];
+      return first ? [at(first, burning.map((u) => u.id), "main")] : [];
+    },
+    resolve: (ctx, self, choice) => {
+      for (const id of choice.affected) {
+        const burn = ctx.unit(id).effects.find((e) => e.def === "burning");
+        if (!burn) continue;
+        ctx.removeEffect(id, burn);
+        const power = Math.floor((burn.amount * burn.stacks * (self.params["percent"] ?? 0)) / 100);
+        ctx.hit(self.unitId, [id], ctx.hitSpec(self, undefined, power));
+      }
+    },
+  },
+
+  /**
+   * The martyrdom mage (the user, 2026-09-26): "a beam (a line, up to three in a row), hitting very hard but
+   * backfiring on every shot". The line runs front to back through one column; the backfire is the unit's Fanaticism.
+   */
+  beam: {
+    kind: "active",
+    name: "Beam",
+    describe: (p) => `Hit every enemy in one column, front to back, for ${p["power"]}.`,
+    tags: ["ranged", "spell", "damage", "area"],
+    damageType: "fire",
+    defaults: { power: 25 },
+    scales: ["power"],
+    choices: (ctx, self) => {
+      const enemies = ctx.living(opponent(ctx.unit(self.unitId).side));
+      return COLS.flatMap((col) => {
+        const line = enemies.filter((u) => u.tile.col === col).sort((a, b) => a.tile.row - b.tile.row);
+        const front = line[0];
+        return front ? [at(front, line.map((u) => u.id), "main")] : [];
+      });
+    },
+    resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self)),
   },
 
   /** One swing hits the entire enemy front line. */

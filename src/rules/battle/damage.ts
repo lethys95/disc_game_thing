@@ -55,7 +55,10 @@ export function lose(ctx: Ctx, targetId: string, amount: number, sourceId: strin
   const removed = Math.min(amount, target.hp);
   target.hp -= amount;
   ctx.emit({ type: "damage", unitId: targetId, amount: removed, source: sourceId });
-  if (target.hp > 0) return removed;
+  if (target.hp > 0) {
+    for (const t of [...traitsOn(ctx, targetId)]) t.hooks.hurt?.(ctx, t.self, removed);
+    return removed;
+  }
   if (traitsOn(ctx, targetId).some((t) => t.hooks.preventDeath?.(ctx, t.self))) {
     target.hp = 1;
     ctx.emit({ type: "deathPrevented", unitId: targetId });

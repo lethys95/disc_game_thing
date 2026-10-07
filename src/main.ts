@@ -180,7 +180,9 @@ if (params.has("map")) {
   const tarot = Number(params.get("tarot") ?? 0);
   const withTarot = (squad: readonly Placement[]): Placement[] =>
     squad.map((p, i) => (i === 0 && tarot > 0 ? { ...p, effects: [...(p.effects ?? []), { def: "carries", ability: { id: "tarot", params: { cards: tarot } } }] } : p));
-  app.start([withTarot(presets[0]), withTarot(enemy)], params.get("auto") === "1" ? null : params.get("side") === "1" ? 1 : 0, colorPair(["jilliath", fight.startsWith("nexus") ? "nexus" : fight.startsWith("grove") ? "grove" : "jilliath"]), Number(params.get("steps") ?? 0), setting, Number(params.get("seed") ?? 0));
+  // `fight=mages`: the Jilliath mage line, holy against fire.
+  const own = fight === "mages" ? PRESETS.holy : presets[0];
+  app.start([withTarot(own), withTarot(fight === "mages" ? PRESETS.fire : enemy)], params.get("auto") === "1" ? null : params.get("side") === "1" ? 1 : 0, colorPair(["jilliath", fight.startsWith("nexus") ? "nexus" : fight.startsWith("grove") ? "grove" : "jilliath"]), Number(params.get("steps") ?? 0), setting, Number(params.get("seed") ?? 0));
 } else if (params.has("skirmish")) {
   open(setup);
 } else if (params.has("newgame")) {

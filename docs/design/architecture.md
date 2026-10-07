@@ -38,6 +38,7 @@ A **trait** is a bundle of hooks. Passive abilities are traits. Effects (buffs, 
 | `turnStart(unit)` → `skip` / `leave`? | traits on the unit whose turn starts | Stun, bleed tick, Retreat |
 | `beforeAbility(action)` → `cancel`? | the actor's traits | Counter |
 | `afterHit` (per target), `afterAttack(dealt, kills)` (once per action) | the attacker's traits | Punishment, Zeal, Fanaticism, Hysteria, Condemn |
+| `hurt(amount)` | the unit's traits, after it loses health to anything (a hit, bleed, a burn) | Repentance waking |
 | `preventDeath` | the dying unit's traits | Guardian Spirit, its reprieve |
 | `healing(heal)` | the recipient's traits, before healing or a shield restoration lands | Negate (healing → damage) |
 | `castsFree()` | the actor's traits | Combustion (charged spells become free actions) |
