@@ -41,3 +41,7 @@ Claude's fillers marked; the user marks keep, maybe or cut. Nothing is designed 
 own hands, and the humans are basically followers of their ways." So the holy mage line is **priests** (humans), and
 the **support line is angels**, the whole branch: "we hand over angels to the entirity of the support branch".
 The question this answers (the user): "what the difference between a holy mage and a priest(healer) is".
+The support line's far end shows the faction's root (the user, 2026-10-07): "the very edges of the support branch
+showcases to some extent who is pulling the strings and the reason why the inquisition was pushed into motion." Its
+faith side may go to tier 5. Fanaticism's angels: "how can you display that the angels have become annoyed and decided
+to take matters into their own hands." Look notes: `faction-stuff/jilliath/support.md`.

@@ -10,21 +10,21 @@ import { describe, expect, test } from "vitest";
 /** The user's designs of 2026-10-05: the Grove's water primary fire, and the carnival. Numbers provisional (#67). */
 const holding = (battle: Battle, hand: Omit<TarotHand, "chosen" | "state" | "progress">): Battle => ({ ...battle, tarot: [{ ...hand, chosen: 0, state: "open", progress: 0 }] });
 
-describe("Water: the Grove's healing support's primary fire", () => {
+describe("Wellspring: the Grove's healing support's primary fire", () => {
   test("on an enemy: its damage as water, and it's wet", () => {
     const battle = until(start([p("grove_support_1", 2, 1)], [p("congregant", 0, 1)]), "0.2.1");
-    const after = act(battle, "water", "1.0.1").battle;
+    const after = act(battle, "wellspring", "1.0.1").battle;
     expect(unit(after, "1.0.1").hp).toBe(90 - hitOf("grove_support_1"));
     expect(unit(after, "1.0.1").effects.some((e) => e.def === "wet")).toBe(true);
   });
 
   test("on an ally: a much bigger heal, and no wet unless it was burning", () => {
     const battle = until(start([p("grove_support_1", 2, 1), { ...p("sproutling", 0, 1), hp: 30 }], [p("congregant", 0, 1)]), "0.2.1");
-    const healed = act(battle, "water", "0.0.1").battle;
-    expect(unit(healed, "0.0.1").hp - unit(battle, "0.0.1").hp).toBe(paramsOf({ id: "water" }, UNITS["grove_support_1"]?.stats.abilityPower ?? 0)["heal"]);
+    const healed = act(battle, "wellspring", "0.0.1").battle;
+    expect(unit(healed, "0.0.1").hp - unit(battle, "0.0.1").hp).toBe(paramsOf({ id: "wellspring" }, UNITS["grove_support_1"]?.stats.abilityPower ?? 0)["heal"]);
     expect(unit(healed, "0.0.1").effects.some((e) => e.def === "wet")).toBe(false);
     const burning = until(start([p("grove_support_1", 2, 1), { ...p("sproutling", 0, 1, [{ def: "burning", amount: 8, stacks: 3 }]), hp: 30 }], [p("congregant", 0, 1)]), "0.2.1");
-    const doused = act(burning, "water", "0.0.1").battle;
+    const doused = act(burning, "wellspring", "0.0.1").battle;
     expect(unit(doused, "0.0.1").effects.some((e) => e.def === "burning")).toBe(false);
     expect(unit(doused, "0.0.1").effects.some((e) => e.def === "wet")).toBe(true);
   });

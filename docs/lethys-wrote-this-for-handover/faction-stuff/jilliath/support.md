@@ -65,3 +65,28 @@ what to do with the angels in the support branch." In the game as `jilliath_supp
   thematically. They've done a ton of angels with all sorts of themes." Claude's round four,
   `shots/jilliath-angels.html`: MTG's angel themes, each with what the card does and a first translation into disc,
   plus the tier-1 question (an angel already, or a human who ascends at tier 2).
+
+## The angels' look and the line's reach (the user, 2026-10-07)
+- **Names:** "As for words for angels - I don't think we have many. Seraph, angel - valkyrie if you stretch, but I'm
+  not a fan of using valkyrie like that. So we'll probably just not call all of them something to do with an angel,
+  and we'll make some stuff up probably."
+- **Tier 1:** "t1 angel will be the most basic. Probably in a very humble position. Hooded, closed off, praying.
+  Something like that." (In `LOOKS`, `scripts/art/prompts.ts`.)
+- **Faith, the later tiers:** "I can imagine making one of them on the holy side with wings of stained glass or
+  inspired by it in colors and shape. Probably one of the later tiers. Maybe the last tier will just be pure light. Or
+  like have some vfx be its surface shifting into the colors of a moving sky, like it's completely out of place, light
+  spiking through the clouds in its skin. It's hard to explain what I have in mind here, but I think it could be
+  interesting and difficult."
+- **Faith to tier 5:** "We should probably honestly go to t5 with faith support I think. It's possible. I think
+  there's a lot of room to be creative and it's at the very root of what the faction is actually about. Like the very
+  edges of the support branch showcases to some extent who is pulling the strings and the reason why the inquisition
+  was pushed into motion."
+- **Fanaticism:** "Not necessarily super sure how to move on too much from the fanaticism side thematically except
+  maybe blood tipped wings on one or more of them. Basically how can you display that the angels have become annoyed
+  and decided to take matters into their own hands."
+
+The tree as it stands (names open):
+- Tier 1 (the humble, praying angel), forking on guardian (faith) vs vengeance (fanaticism):
+  - **Guardian:** ? (t2) → ? (t3) → ? (t4) → ? (t5, maybe: pure light, a moving sky in its skin). The resurrecting
+    angel somewhere in t4–t5; stained-glass wings on a later tier.
+  - **Vengeance:** atonement (t2) → wider atonement (t3) → ? (t4) / transfusion (t3). Blood-tipped wings, maybe.

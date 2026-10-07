@@ -30,6 +30,9 @@ const LOOKS: Readonly<Record<string, string>> = {
     "A soothsayer of a travelling carnival: a woman in loose, flowing robes, a veil over her mouth, a crystal ball hovering above one open hand and a fanned hand of tarot cards in the other.",
   "portrait/omen":
     "Omen, a gunslinger of a travelling carnival: his eyes blinded by cloth bands tied around his head, a flintlock pistol in each hand.",
+  // Jilliath's tier-1 support, the most basic of the angels (the user, 2026-10-07: "Probably in a very humble position.
+  // Hooded, closed off, praying.").
+  "portrait/jilliath_support_1": "The humblest of angels, in a very humble position: hooded, closed off, praying.",
 };
 
 const SIZE: Readonly<Record<Slot["kind"], { width: number; height: number }>> = {

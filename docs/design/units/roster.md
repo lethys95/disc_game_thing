@@ -69,10 +69,10 @@ awaiting the user; cand. = candidates, none picked; â€” = none. **Portrait:** âœ
 | Unit | What's missing |
 |---|---|
 | Grove mage 1 | a name; the user's two-sided nuke idea, Claude's tier-1 version (*Cycle*); its look field is empty |
-| Grove support 1 | a name; Claude's Bloom plus the user's Water |
+| Grove support 1 | a name; Claude's Bloom plus the user's Wellspring (was Water) |
 | Decay support 2 | a name; the user's direction (corpses), no unit sheet of its own |
 | Regrowth 2, Regrowth 3 | names; the user's direction only (regeneration, then support); questions #10 |
-| Spiritess 2 | a name beyond the branch's; the user's design (HoT, Burst mend, Water) |
+| Spiritess 2 | a name beyond the branch's; the user's design (HoT, Burst mend, Wellspring) |
 | Jilliath mage 1 | a name and its branches; Claude's *Condemn*, accepted |
 
 ## Not in the game yet (for completeness)

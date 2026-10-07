@@ -10,7 +10,9 @@
   support branch"); the humans are the priests on the mage line. The tier-1 support stays unnamed "until we can figure
   out what to do with the angels in the support branch". Every tier, both sides, is to be read in that light. Faith is guardian angels, fanaticism
   vengeance angels (the user: "guardian vs vengeance, sure"). Round four, MTG's angels as inspiration:
-  `shots/jilliath-angels.html`.
+  `shots/jilliath-angels.html`. The faith side may reach tier 5 and shows "who is pulling the strings"; looks: a
+  humble, hooded, praying tier 1, stained-glass wings, a last tier of pure light, blood-tipped wings on the vengeance
+  side (`support.md`).
 - **Why:** Jilliath's backline is the biggest gap; Ral-Vitahl's casters dominate the matrix until the others have
   ranged lines.
 - **Done when:** Designed, built, tested, in the codex.

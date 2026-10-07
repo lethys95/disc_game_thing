@@ -52,7 +52,7 @@ export const GROVE_UNITS: Readonly<Record<string, UnitDef>> = {
   grove_support_1: {
     id: "grove_support_1", name: "Grove support 1", faction: "grove", tier: 1,
     stats: { maxHp: 70, shield: 0, armor: 0, initiative: 45, abilityPower: 100 },
-    abilities: [{ id: "bloom" }, { id: "water", params: { power: 10 } }, ...kit("defend", "wait")],
+    abilities: [{ id: "bloom" }, { id: "wellspring", params: { power: 10 } }, ...kit("defend", "wait")],
   },
   // The Decay branch: weaker healing, corpses.
   decay_support_2: {
@@ -64,12 +64,12 @@ export const GROVE_UNITS: Readonly<Record<string, UnitDef>> = {
   spiritess_2: {
     id: "spiritess_2", name: "Spiritess 2", faction: "grove", tier: 2,
     stats: { maxHp: 95, shield: 0, armor: 0, initiative: 45, abilityPower: 200 },
-    abilities: [...kit("spirit_bloom", "burst_mend"), { id: "water", params: { power: 5 } }, ...kit("defend", "wait")],
+    abilities: [...kit("spirit_bloom", "burst_mend"), { id: "wellspring", params: { power: 5 } }, ...kit("defend", "wait")],
   },
   psychopomp: {
     id: "psychopomp", name: "Psychopomp", faction: "grove", tier: 3,
     stats: { maxHp: 130, shield: 0, armor: 0, initiative: 50, abilityPower: 300 },
-    abilities: [...kit("spirit_bloom", "burst_mend", "spiritwalk"), { id: "water", params: { power: 5 } }, ...kit("defend", "wait")],
+    abilities: [...kit("spirit_bloom", "burst_mend", "spiritwalk"), { id: "wellspring", params: { power: 5 } }, ...kit("defend", "wait")],
   },
   grove_mage_1: {
     id: "grove_mage_1", name: "Grove mage 1", faction: "grove", tier: 1,

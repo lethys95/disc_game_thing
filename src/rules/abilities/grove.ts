@@ -243,10 +243,11 @@ export const grove: Readonly<Record<string, Behavior>> = {
   /**
    * The healing support's primary fire (the user, 2026-10-05): water. An enemy is hurt and left wet; an ally is healed
    * much more than an enemy is hurt, and wet only if it was burning (else Nexus lightning would punish the healing).
+   * Named by Claude: water is the element, not the ability (the user, 2026-10-07).
    */
-  water: {
+  wellspring: {
     kind: "active",
-    name: "Water",
+    name: "Wellspring",
     applies: ["wet"],
     damageType: "water",
     describe: (p) => `Ranged, water. An enemy takes ${p["power"]} and is wet for ${p["rounds"]} rounds. An ally (or itself) heals ${p["heal"]}; a burning one is put out (and wet).`,

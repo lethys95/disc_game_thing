@@ -21,9 +21,12 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
   holy (Acolyte → Cleric's Castigation → Pontiff's Repentance and Chant → Archon's Judgement); fanaticism
   is fire with stacking burn (Doomsayer's Burn at the stake → Fire mage 3's fire on all → Fire mage 4's Detonate or the
   Martyr's backfiring beam). `?fight=mages`. Engine: a holy damage type, `BattleUnit.struck` (Judgement), a `hurt`
-  hook (Repentance wakes on burns), Ignite's burns stack. Save 31.
+  hook (Repentance wakes on burns), Ignite's burns stack.
 - **Jilliath is angels and their human followers (the user):** the support line is the angels, all of it; the
   tier-1 support (the old Cleric) is `jilliath_support_1`, unnamed until they're worked out (decisions.md).
+- **The Grove's Water is now Wellspring** (the user: water is the element, not the ability). Save 32.
+- **The angels' look and reach** (the user): a humble, hooded, praying tier 1; faith may go to tier 5 and show who
+  pulls the strings (stained glass, pure light, a moving sky in its skin); vengeance with blood-tipped wings.
 - Before that (2026-10-06/07): ability power and "everything is an ability" (#71), no head math, codex round two, the
   interface in rem, 22 portraits, audit fixes. Details in git history.
 
