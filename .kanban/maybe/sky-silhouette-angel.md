@@ -7,4 +7,6 @@
 - **Why:** the edge of the support line shows who pulls the faction's strings; it should look like it doesn't belong.
 - **Done when:** a figure in battle that the user finds properly strange: likely a screen-space sky shader on the
   silhouette plus occasional ray bursts, not a painted texture.
+- **Not soon (the user, 2026-10-07):** "I wouldn't try building t5's graphics soon. I'll probably be very picky I can
+  imagine." After the Tripo models of the units we know (`eventually/3d-figures`).
 - **Who:** the user designs the unit; Claude builds the shader and the figure, in a probe first.
