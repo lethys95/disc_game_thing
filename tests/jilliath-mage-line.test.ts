@@ -39,12 +39,13 @@ describe("the faith side: holy", () => {
     expect(effectiveStats(after, "1.0.1").hitPercent).toBe(-30);
   });
 
-  test("from the Pontiff on, Castigation strikes a 2×2 square", () => {
-    const battle = until(start([p("pontiff", 1, 1)], [p("congregant", 0, 0), p("congregant", 0, 1), p("congregant", 1, 0), p("congregant", 2, 2)]), "0.1.1");
-    expect(affectedBy(battle, "castigation", "1.0.0")).toEqual(["1.0.0", "1.0.1", "1.1.0"]);
-    const after = act(battle, "castigation", "1.0.0").battle;
-    for (const id of ["1.0.0", "1.0.1", "1.1.0"]) expect(effect(after, id, "castigated")).toBeDefined();
-    expect(effect(after, "1.2.2", "castigated")).toBeUndefined();
+  test("the Pontiff's Chant hits every enemy lightly and castigates them more weakly, never weakening a castigation", () => {
+    const castigated = [{ def: "castigated", amount: 30, stacks: 1 }];
+    const battle = until(start([p("pontiff", 1, 1)], [p("congregant", 0, 0, castigated), p("congregant", 0, 1), p("congregant", 2, 2)]), "0.1.1");
+    const { battle: after, events } = act(battle, "chant");
+    for (const id of ["1.0.0", "1.0.1", "1.2.2"]) expect(took(events, id)).toBe(18);
+    expect(effect(after, "1.0.1", "castigated")?.amount).toBe(15);
+    expect(effect(after, "1.0.0", "castigated")?.amount).toBe(30);
   });
 
   test("Repentance is a free action that takes an enemy out for three turns", () => {

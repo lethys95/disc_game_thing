@@ -95,3 +95,8 @@ The tree as built (Claude, provisional; names other than the user's are placehol
 - **The Pontiff's other upgrade:** "I think we can just have castigate be AOE on t3 in a square 2x2 as the other
   upgrade. Yes, that's not balanced right now, but that's probably the right move." Built: from the Pontiff on,
   Castigation strikes a 2×2 square (the Archon keeps it).
+- **Chant instead (the user, the same day):** "I think maybe castigate 2x2 actually eats into what judgement is
+  supposed to do. But we can do better. Maybe lets leave castigate as it is on t3 mage, but create something like...
+  Chant maybe? Hits all enemies for light damage and applies a weaker castigate effect to all. So now there's a use
+  case for judgement, chant and castigate." Built: Castigation stays single-target; the Pontiff gains **Chant**
+  (the Archon keeps it).

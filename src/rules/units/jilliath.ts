@@ -32,13 +32,12 @@ export const JILLIATH_UNITS: Readonly<Record<string, UnitDef>> = {
   pontiff: {
     id: "pontiff", name: "Pontiff", faction: "jilliath", tier: 3,
     stats: { maxHp: 90, shield: 0, armor: 0, initiative: 50, abilityPower: 300 },
-    // Castigation strikes a 2×2 square from here (user, 2026-10-07).
-    abilities: [{ id: "castigation", params: { square: 1 } }, ...kit("repentance", "defend", "wait")],
+    abilities: [{ id: "castigation" }, ...kit("chant", "repentance", "defend", "wait")],
   },
   archon: {
     id: "archon", name: "Archon", faction: "jilliath", tier: 4,
     stats: { maxHp: 105, shield: 0, armor: 0, initiative: 50, abilityPower: 400 },
-    abilities: [{ id: "castigation", params: { square: 1 } }, ...kit("judgement", "repentance", "defend", "wait")],
+    abilities: [{ id: "castigation" }, ...kit("chant", "judgement", "repentance", "defend", "wait")],
   },
   doomsayer: {
     id: "doomsayer", name: "Doomsayer", faction: "jilliath", tier: 2,

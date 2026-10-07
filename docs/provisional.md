@@ -136,8 +136,9 @@ abilities instead of flat numbers."
 mage 4, *Fire on all*, *Beam* (the Acolyte, Cleric, Pontiff, Archon, Doomsayer, Castigation, Judgement, Repentance,
 Burn at the stake and Detonate are the user's; until 2026-10-07 the Cleric was the tier-1 support, now unnamed). Health 75 / 90 / 105 (the Martyr 160, to carry its backfire), initiative 50, ability power
 100 × tier. Numbers below are at ability power 100.
-- **Castigation** (holy): 18, and its target deals 30% less for its next 2 turns. From the Pontiff on it strikes a
-  2×2 square (the user's upgrade, "not balanced right now"); the numbers stay the single-target ones.
+- **Castigation** (holy): 18, and its target deals 30% less for its next 2 turns.
+- **Chant** (holy; the Pontiff and Archon): 6 to every enemy, and each deals 15% less for its next 2 turns. A
+  castigated unit keeps the stronger weakening and the longer span of the two.
 - **Repentance:** once per combat, a free action; an enemy loses its next 3 turns (turns, not rounds: a unit with
   several actions a round spends them quickly). Anything that damages it (a hit, a burn, a bleed) or heals it wakes it.
 - **Judgement** (holy): 25 to every enemy whose most recent turn dealt damage. "Last turn" read as each enemy's own
@@ -152,7 +153,8 @@ Burn at the stake and Detonate are the user's; until 2026-10-07 the Cleric was t
 - **Beam:** 25 to every enemy in one column, front to back; the backfire is the Martyr's Fanaticism (half of what it
   deals). A full column of three can nearly kill it.
 - **AI:** every ability gets picked (tier-4 mirror probes: Judgement 24, Repentance 10, Detonate 2, Beam 2 of the
-  casters' actions); the Beam is rare because Fire on all scores better for the greedy AI.
+  casters' actions); the Beam is rare because Fire on all scores better for the greedy AI. Chant: 8 of the Pontiff's
+  95 actions and 8 of the Archon's 81 against the presets (Castigation 71 and 34, Judgement 19).
 - **The composition matrix after** (all squads, win %): tier 2 J 57, N 52, G 41 (was 49 / 55 / 45); tier 3 J 74, N 34,
   G 39 (was 69 / 33 / 50); tier 4 J 85, N 20, G 39. Jilliath's best squads at tiers 3–4 now win 93–100%, but tier 4
   isn't a fair test: Ral-Vitahl has no tier-4 units and most other lines stop at 2–3, so Jilliath's tier-4 mages meet

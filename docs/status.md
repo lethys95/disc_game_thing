@@ -18,7 +18,7 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
 
 ## This session (2026-10-07, second)
 - **Jilliath's mage line, built** (`testing/jilliath-mage-line`, provisional #72): the faith side is the priests,
-  holy (Acolyte → Cleric's Castigation → Pontiff's Repentance and a 2×2 Castigation → Archon's Judgement); fanaticism
+  holy (Acolyte → Cleric's Castigation → Pontiff's Repentance and Chant → Archon's Judgement); fanaticism
   is fire with stacking burn (Doomsayer's Burn at the stake → Fire mage 3's fire on all → Fire mage 4's Detonate or the
   Martyr's backfiring beam). `?fight=mages`. Engine: a holy damage type, `BattleUnit.struck` (Judgement), a `hurt`
   hook (Repentance wakes on burns), Ignite's burns stack. Save 31.

@@ -1,8 +1,21 @@
-import { areaChoices, auraSource, at, rangedChoices, single, square2x2, uses } from "#rules/abilities/core";
+import { auraSource, at, rangedChoices, single, uses } from "#rules/abilities/core";
 import { PUNISHMENT_MAX_STACKS } from "#rules/balance";
 import { PUNISHED_PER_STACK } from "#rules/effects";
 import { adjacent, COLS, frontLine, meleeTargets, occupant, opponent } from "#rules/battle/grid";
-import type { Behavior, Row, TargetChoice } from "#rules/battle/types";
+import type { Behavior, Ctx, Row, TargetChoice, TraitSelf } from "#rules/battle/types";
+
+/** Castigation's mark: the stronger of the two weakenings, for the longer of the two spans. */
+function castigate(ctx: Ctx, targetId: string, self: TraitSelf): void {
+  const weaken = self.params["weaken"] ?? 0;
+  const turns = self.params["turns"] ?? 0;
+  const castigated = ctx.unit(targetId).effects.find((e) => e.def === "castigated");
+  if (!castigated) {
+    ctx.addEffect(targetId, { def: "castigated", amount: weaken, stacks: turns, source: self.unitId });
+    return;
+  }
+  castigated.amount = Math.max(castigated.amount, weaken);
+  castigated.stacks = Math.max(castigated.stacks, turns);
+}
 
 /** The Jilliath melee line's abilities (docs/design/units/jilliath-melee-line.md). */
 export const jilliath: Readonly<Record<string, Behavior>> = {
@@ -55,22 +68,36 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
     kind: "active",
     name: "Castigation",
     applies: ["castigated"],
-    describe: (p) =>
-      `Hit ${p["square"] ? "every enemy in a 2×2 square" : "an enemy"} for ${p["power"]} holy damage. ${p["square"] ? "Each" : "It"} deals ${p["weaken"]}% less damage for its next ${p["turns"]} turns.`,
+    describe: (p) => `Hit an enemy for ${p["power"]} holy damage. It deals ${p["weaken"]}% less damage for its next ${p["turns"]} turns.`,
     tags: ["attack", "ranged", "spell", "damage"],
     damageType: "holy",
-    // `square`: 1 strikes a 2×2 square instead of one enemy (the Pontiff's upgrade).
-    defaults: { power: 18, weaken: 30, turns: 2, square: 0 },
+    defaults: { power: 18, weaken: 30, turns: 2 },
     scales: ["power"],
-    choices: (ctx, self) => (self.params["square"] ? areaChoices(ctx, self, square2x2) : rangedChoices(ctx, self)),
+    choices: rangedChoices,
     resolve: (ctx, self, choice) => {
       ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self));
-      const turns = self.params["turns"] ?? 0;
-      for (const id of choice.affected) {
-        const castigated = ctx.unit(id).effects.find((e) => e.def === "castigated");
-        if (castigated) castigated.stacks = Math.max(castigated.stacks, turns);
-        else ctx.addEffect(id, { def: "castigated", amount: self.params["weaken"] ?? 0, stacks: turns, source: self.unitId });
-      }
+      for (const id of choice.affected) castigate(ctx, id, self);
+    },
+  },
+
+  /** The Pontiff (the user, 2026-10-07): "Hits all enemies for light damage and applies a weaker castigate effect to all." */
+  chant: {
+    kind: "active",
+    name: "Chant",
+    applies: ["castigated"],
+    describe: (p) => `Hit every enemy for ${p["power"]} holy damage. Each deals ${p["weaken"]}% less damage for its next ${p["turns"]} turns.`,
+    tags: ["ranged", "spell", "damage", "area"],
+    damageType: "holy",
+    defaults: { power: 6, weaken: 15, turns: 2 },
+    scales: ["power"],
+    choices: (ctx, self) => {
+      const enemies = ctx.living(opponent(ctx.unit(self.unitId).side));
+      const first = enemies[0];
+      return first ? [at(first, enemies.map((u) => u.id), "main")] : [];
+    },
+    resolve: (ctx, self, choice) => {
+      ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self));
+      for (const id of choice.affected) castigate(ctx, id, self);
     },
   },
 
