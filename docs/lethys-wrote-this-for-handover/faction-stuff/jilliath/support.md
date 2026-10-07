@@ -90,3 +90,8 @@ The tree as it stands (names open):
   - **Guardian:** ? (t2) → ? (t3) → ? (t4) → ? (t5, maybe: pure light, a moving sky in its skin). The resurrecting
     angel somewhere in t4–t5; stained-glass wings on a later tier.
   - **Vengeance:** atonement (t2) → wider atonement (t3) → ? (t4) / transfusion (t3). Blood-tipped wings, maybe.
+- **Tier 5 and tier 4, elaborated (the user, 2026-10-07):** "it'd probably be like a silhuette. It kind of 'breaks the
+  game's graphics' in that sense. Unit looks out of place in a way that makes it look out of place. Surface of that
+  silhuette is just a moving sky/clouds. God rays spikes out and shines out of her skin every once in a while. There is
+  only this skin. No clothing, just the silhuette of sky and godrays. It'll be very strange to look at if done
+  correctly I think. t4 can be stained glass." Where the resurrecting angel sits (t4 or t5): "I'm not sure."
