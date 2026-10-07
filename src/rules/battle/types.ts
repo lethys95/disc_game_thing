@@ -427,6 +427,8 @@ export interface Ctx {
   abilityIds(unitId: string): string[];
   /** The unit's own ref for an ability, or the granted one (with its params), or a bare `{ id }`. */
   abilityRef(unitId: string, abilityId: string): AbilityRef;
+  /** What that ability's hits deal for this unit: its ref's type, else the behavior's own, else weapon. */
+  damageTypeOf(unitId: string, abilityId: string): DamageType;
   /** The traits on a unit (`battle/traits.ts`), cached until an effect comes or goes or a unit dies. */
   traits(unitId: string): readonly Trait[];
   /** Every trait on the battlefield, cached likewise. */

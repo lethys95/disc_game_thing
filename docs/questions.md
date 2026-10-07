@@ -11,7 +11,6 @@ Kept short: only what is the user's to decide, most blocking first. Answer inlin
 11. **Who gets the new keywords (2026-10-05, `provisional.md` #65, #66):** Tarot x, Crit x, Evasion x, Explode (your "boomer […] on melee line": which faction's?), Ignite and Soak, and which units deal lightning or water damage. All exist and are tested; no unit carries them yet. More statuses beyond wet, burn and electrocuted whenever you have them.
 12. **Biomes by content (2026-10-05, your decision: environments postponed):** which structures and tribes belong in which biome (your example: the carnival in the desert, not bandits). Claude's tribe fits are in `design/environments.md`; the biomes to add are the brainstorm's list. Your call when you get to it.
 13. **Unit portraits:** 22 units have card, bust and icon in the game (`shots/portraits.html`; the gnolls' Packstalker and Hamstringer and the five Drawn added 2026-10-07). Anything to change?
-14. **Damage types per ability (2026-10-07):** types now live on abilities. You said most Nexus casters "would probably be air or fire". Homing Lightning now deals lightning (it always said so, but dealt weapon); Burst, Bolt, Absorb, Backlash, the Cleric's and Technician's shots and the Grove mage's Cycle still deal weapon. Which are air and which fire? And is "air" our lightning (wet targets take ×1.5 and lose a turn), or a type of its own?
 
 ## Look and sound
 4. **The map's look:** "actual grass", and which way terrain goes (`design/map-look.md`). Reference images or games whose map look you like would help most.

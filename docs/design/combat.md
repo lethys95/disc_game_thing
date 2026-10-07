@@ -64,6 +64,13 @@ mechanics." The user's words, then Claude's provisional reading (`provisional.md
   and deals damage scaling with max hp."
 - **Status effects:** "wet/electrocuted/burn etc which has effects based on which damage types and abilities they're
   interacting with."
+- **Damage types belong to abilities (2026-10-07):** "having damage type on units instead of abilities doesn't really
+  make sense […] it's probably very few casters who'd realistically deal weapon damage."
+  - **Now:** "We'll just use lightning for all of nexus' casters. Then we might go back and change things later to what
+    makes sense." Every damaging spell of theirs deals lightning (Burst, Bolt, Absorb, Backlash, Homing Lightning).
+  - **Likely later:** "we'll mash air and lightning together into air. That's what disc2 did." Burst, Bolt, Absorb and
+    Backlash may become **force**, after Baldur's Gate 3 ("just supposed to be like impact spells"). The Grove:
+    "Likely earth or necrotic on most things."
 
 ## Balance observations
 - A Punisher mirror grinds: Punishment stacks without limit, so front lines drop to 0 damage and trade 1-point hits (AI test: 95 rounds). This is canon working as written. Options to discuss: cap stacks, floor damage at a fraction of base, or accept that Punishers make fights long.

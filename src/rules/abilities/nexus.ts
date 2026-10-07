@@ -9,6 +9,7 @@ export const nexus: Readonly<Record<string, Behavior>> = {
   bolt: {
     kind: "active",
     name: "Bolt",
+    damageType: "lightning",
     describe: (p) =>
       `A weak ranged hit on any enemy, for ${p["power"]}. Unlimited.`,
     tags: ["attack", "ranged", "spell", "damage"],
@@ -22,6 +23,7 @@ export const nexus: Readonly<Record<string, Behavior>> = {
   plus_burst: {
     kind: "active",
     name: "Burst",
+    damageType: "lightning",
     describe: (p) =>
       `A burst of ${p["power"]} hitting every enemy in a plus shape. ${spellCost(p, "every enemy is hit")}`,
     tags: ["attack", "ranged", "spell", "damage", "area"],
@@ -62,6 +64,7 @@ export const nexus: Readonly<Record<string, Behavior>> = {
   counter: {
     kind: "active",
     name: "Counter",
+    damageType: "lightning",
     describe: (p) =>
       `Free action: secretly mark an enemy; the next ability it uses is cancelled${p["backlash"] ? `, and the backlash hits it for ${p["backlash"]}` : ""}. ${spellCost(p)}`,
     tags: ["spell"],
@@ -104,6 +107,7 @@ export const nexus: Readonly<Record<string, Behavior>> = {
   absorb: {
     kind: "active",
     name: "Absorb",
+    damageType: "lightning",
     describe: (p) =>
       `On an enemy: a weak ranged hit for ${p["power"]}, and its next hit deals ${p["prevent"]} less. On an ally: the next hit on it deals ${p["prevent"]} less. This unit heals by what is prevented. Unlimited.`,
     tags: ["attack", "ranged", "spell", "damage"],

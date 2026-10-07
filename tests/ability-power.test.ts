@@ -42,6 +42,15 @@ describe("ability power", () => {
     expect(BEHAVIORS["homing_lightning"]?.kind === "active" && BEHAVIORS["homing_lightning"].damageType).toBe("lightning");
   });
 
+  test("every damaging spell of Ral-Vitahl's casters deals lightning (the user, for now)", () => {
+    const spells = Object.values(UNITS)
+      .filter((u) => u.faction === "nexus")
+      .flatMap((u) => u.abilities.map((ref) => ({ ref, b: BEHAVIORS[ref.id] })))
+      .filter(({ b }) => b?.kind === "active" && b.tags.includes("spell") && b.tags.includes("damage"));
+    expect(spells.length).toBeGreaterThan(0);
+    for (const { ref, b } of spells) expect(ref.damageType ?? (b?.kind === "active" ? b.damageType : undefined), ref.id).toBe("lightning");
+  });
+
   test("the rules text shows the scaled numbers", () => {
     expect(describeAbility({ id: "mend" }, 150)).toContain("for 30,");
     expect(describeAbility({ id: "mend" }, 150)).toContain("30%");

@@ -182,7 +182,7 @@ export function strongestHits(battle: Battle): Record<string, number> {
 function activeSelf(ctx: Ctx, unitId: string, abilityId: string): ActiveSelf {
   const ref = ctx.abilityRef(unitId, abilityId);
   const b = active(abilityId);
-  return { unitId, params: paramsOf(ref, ctx.abilityPower(unitId)), effect: null, tags: b.tags, damageType: ref.damageType ?? b.damageType ?? "weapon" };
+  return { unitId, params: paramsOf(ref, ctx.abilityPower(unitId)), effect: null, tags: b.tags, damageType: ctx.damageTypeOf(unitId, abilityId) };
 }
 
 function active(abilityId: string): ActiveBehavior {
@@ -658,6 +658,10 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
     },
     abilityIds,
     abilityRef,
+    damageTypeOf: (unitId, abilityId) => {
+      const b = behavior(abilityId);
+      return abilityRef(unitId, abilityId).damageType ?? (b.kind === "active" ? b.damageType : undefined) ?? "weapon";
+    },
     traits: (unitId) => {
       const store = memo().traits;
       const known = store.get(unitId);

@@ -121,6 +121,9 @@ abilities instead of flat numbers."
   use its hardest hit. Damage types belong to abilities: the Chosen's, Avatar's and Hedge Mage's attacks and Jilliath
   mage 1's Condemn deal fire on their refs; Water, Spit fire and the Explosive flask carry their own; **Homing
   Lightning now deals lightning** (it always said so, but took the Nexus caster's weapon type). Save 29.
+- **All of Ral-Vitahl's casters' spells deal lightning (the user, 2026-10-07: "for now"):** Burst, Bolt, Absorb's hit
+  and Backlash too. The Technician's Shoot isn't a spell and stays weapon. Air, force and the Grove's earth or necrotic
+  are the likely direction (`design/combat.md`).
 - **The composition matrix after all of this** (all squads, win %): tier 1 J 70, N 41, G 39 (unchanged since before
   ability power); tier 2 J 49, N 55, G 45; tier 3 J 69, N 33, G 50. Ral-Vitahl's casters are its strength, as the user
   expects ("expedience from their casters"); a fair verdict needs the other factions' ranged lines.

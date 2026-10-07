@@ -154,7 +154,7 @@ const effects: readonly EffectDef[] = [
         const mark = self.effect;
         if (!mark) return "cancel";
         ctx.removeEffect(self.unitId, mark);
-        if (mark.amount > 0) ctx.hit(mark.source ?? self.unitId, [self.unitId], { power: mark.amount, type: "weapon", tags: ["spell", "damage"] });
+        if (mark.amount > 0) ctx.hit(mark.source ?? self.unitId, [self.unitId], { power: mark.amount, type: mark.source ? ctx.damageTypeOf(mark.source, "counter") : "weapon", tags: ["spell", "damage"] });
         return "cancel";
       },
       aiValue: (ctx, self) => -2 * ctx.strongestHit(self.unitId) - (self.effect?.amount ?? 0),
@@ -753,7 +753,7 @@ const effects: readonly EffectDef[] = [
     onExpire: (ctx, self) => {
       const source = self.effect?.source;
       if (!source || !ctx.unit(source).alive) return;
-      ctx.hit(source, [self.unitId], { power: self.effect?.amount ?? 0, type: ctx.abilityRef(source, "foretell").damageType ?? "weapon", tags: ["attack", "ranged", "damage"] });
+      ctx.hit(source, [self.unitId], { power: self.effect?.amount ?? 0, type: ctx.damageTypeOf(source, "foretell"), tags: ["attack", "ranged", "damage"] });
     },
   },
   {
