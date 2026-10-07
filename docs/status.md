@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines._
 
-**Updated:** 2026-10-07 (targeting grids)
+**Updated:** 2026-10-07 (interface scales with the window)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`, 2026-10-06): the alpha is the three playable factions with every unit line designed, built and painted, playable title to victory; then balance; then look and sound. Next in the queue: the user's open picks, then the missing unit lines (the user designs, Claude builds).

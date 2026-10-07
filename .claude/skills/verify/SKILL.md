@@ -12,6 +12,11 @@ Tests prove the rules; only a rendered frame proves the view. Always look at the
 1. `pnpm check`: typecheck + unit tests. Must be green first.
 2. `pnpm shot <out.png> "<route>"`: headless render. Exits non-zero on any console error or page error.
 3. `pnpm playtest [name…]`: every click-through playtest (battle, map, save, city, settings, setup, spells; setup now goes title → new game → march, then the codex and credits) against one server and browser, each in a fresh context; name some to run only those (`shots/playtest-*.png`, `shots/map-*.png`, `shots/failed-<name>.png` on a failure).
+4. **Any change to the interface (CSS or view layout): `pnpm sizes [route…]`** renders the main screens at 1280×720,
+   1920×1080 and 2560×1440 (`shots/sizes/`). Look at the sizes side by side: each screen should keep its proportions.
+   Size everything in `rem`, never `px` (only 1–2px hairlines stay px); the root size follows the window's height and
+   the player's Interface size setting (`rootFontSize` in `view/settings.ts`). A pixel size set from code is a bug:
+   measure the element instead (the user, 2026-10-07, after the codex's icons were tiny on a big monitor).
 5. `pnpm sim`: AI-vs-AI matchup matrix of the presets, for balance changes.
 6. `PLAYERS=<preset|nexus[:scheme|overload]>,… pnpm sim:world [seeds…]` (two or more players): whole AI-vs-AI games (winner, turns, battles, gold); a "cold war" means neither side could win a fight its forecast allows.
 

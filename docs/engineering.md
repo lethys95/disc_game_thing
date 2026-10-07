@@ -80,6 +80,7 @@ The step-by-step recipes (units, abilities, effects, nodes, forks, recording the
 - **Changing the World's shape? Bump `SAVE_VERSION`** (`src/rules/save.ts`) and update the snapshot (`pnpm vitest -u tests/save.test.ts`); the shape test fails until you do. Old saves are then refused, never migrated.
 
 ## Gotchas
+- **Interface sizes are `rem`, never `px`** (1–2px hairlines aside): the root size follows the window and the Interface size setting (`rootFontSize`, `view/settings.ts`). A popup positioned from code measures itself (`offsetWidth`) instead of assuming pixels. Check with `pnpm sizes`.
 - **The renderer is WebGPU (M57): no `onBeforeCompile`, no `ShaderMaterial`.** Custom shading is TSL on node materials (`positionNode`, `colorNode`, `emissiveNode`; see `view/landscape.ts`); post-processing is a `RenderPipeline` of TSL nodes (`view/stage.ts`). Plain materials (`MeshStandardMaterial`, …) still work: WebGPU converts them. Classes from `three` and `three/webgpu` are the same (shared core), so only files that need WebGPU-only things import `three/webgpu`.
 - **Never flag a texture `needsUpdate` before its image has loaded** under WebGPU: it crashes reading `image.complete` (WebGL shrugged it off).
 - **No MSAA with ambient occlusion:** the AO node can't read a multisampled depth buffer, so the renderer runs without `antialias` and SMAA runs at the end of the chain, after tone mapping (`renderOutput`).

@@ -565,8 +565,8 @@ export class Campaign implements KeyLayer {
     const known = this.known();
     const group = hex && known ? groupAt(known, this.viewer, hex, this.view.sees(hex)) : null;
     const info = !group && hex && known ? placeInfo(known, this.viewer, hex, this.view.sees(hex)) : null;
-    if (group) showPeek(this.peek, formation(group), x, y, 300, 200);
-    else if (info) showPeek(this.peek, info, x, y, 300, 140);
+    if (group) showPeek(this.peek, formation(group), x, y);
+    else if (info) showPeek(this.peek, info, x, y);
     else this.peek.hidden = true;
   }
 

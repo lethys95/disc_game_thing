@@ -3,7 +3,7 @@ import type { Save } from "#rules/save";
 import { FACTIONS } from "#rules/factions";
 import { BEHAVIORS } from "#rules/abilities/index";
 import { element } from "#view/dom";
-import { ANIMATION_SPEEDS, assignable, CAMERA_RANGE, DEFAULT_SETTINGS, remappable, SPEED_ORDER, withHotkey } from "#view/settings";
+import { ANIMATION_SPEEDS, assignable, CAMERA_RANGE, DEFAULT_SETTINGS, remappable, SPEED_ORDER, UI_SCALE_RANGE, withHotkey } from "#view/settings";
 import type { Settings } from "#view/settings";
 import { AUTOSAVE_ID, exportSave } from "#view/saves";
 import type { SaveStore } from "#view/saves";
@@ -158,6 +158,19 @@ export class GameMenu implements KeyLayer {
     this.root.appendChild(slots);
 
     this.root.appendChild(element("div", "section", "Display"));
+    const scaleRow = element("label", "slider-row");
+    const scale = element("input", "slider");
+    scale.type = "range";
+    scale.min = String(UI_SCALE_RANGE.min);
+    scale.max = String(UI_SCALE_RANGE.max);
+    scale.step = "0.05";
+    scale.value = String(data.uiScale);
+    const scaleValue = element("span", "value", `${Math.round(data.uiScale * 100)}%`);
+    scale.addEventListener("input", () => (scaleValue.textContent = `${Math.round(Number(scale.value) * 100)}%`));
+    // Applied on release: resizing the menu under a dragged slider would move the slider.
+    scale.addEventListener("change", () => settings.update({ ...settings.data, uiScale: Number(scale.value) }));
+    scaleRow.append(element("span", "name", "Interface size"), scale, scaleValue);
+    this.root.append(scaleRow, element("div", "note", "On top of the automatic size, which follows the window's height."));
     const bounce = element("label", "check-row");
     const bounceBox = element("input", "check");
     bounceBox.type = "checkbox";

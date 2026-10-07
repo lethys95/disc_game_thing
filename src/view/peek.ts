@@ -38,12 +38,12 @@ export function groupAt(known: World, player: PlayerId, hex: Hex, inSight: boole
   return null;
 }
 
-/** Shows `content` in the peek near the pointer, kept on screen. */
-export function showPeek(peek: HTMLElement, content: readonly HTMLElement[], x: number, y: number, width: number, height: number): void {
+/** Shows `content` in the peek near the pointer, kept on screen (measured: its size follows the UI scale). */
+export function showPeek(peek: HTMLElement, content: readonly HTMLElement[], x: number, y: number): void {
   peek.replaceChildren(...content);
   peek.hidden = false;
-  peek.style.left = `${Math.min(x + 16, window.innerWidth - width)}px`;
-  peek.style.top = `${Math.min(y + 16, window.innerHeight - height)}px`;
+  peek.style.left = `${Math.max(0, Math.min(x + 16, window.innerWidth - peek.offsetWidth))}px`;
+  peek.style.top = `${Math.max(0, Math.min(y + 16, window.innerHeight - peek.offsetHeight))}px`;
 }
 
 /** A group's formation: its 3×3 grid with names and health. */

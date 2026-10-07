@@ -17,7 +17,7 @@ export function targetingGrids(defId: string, abilityId: string): HTMLElement | 
     const wrap = element("div", "targeting-grid");
     wrap.appendChild(element("span", "label", label));
     const cells = element("div", "cells");
-    cells.style.gridTemplateColumns = `repeat(${lines.length}, 8px)`;
+    cells.style.gridTemplateColumns = `repeat(${lines.length}, 0.5rem)`;
     const height = lines[0]?.length ?? 0;
     for (let y = 0; y < height; y++) {
       lines.forEach((line, x) => {

@@ -41,7 +41,7 @@ export class ForkPrompt {
       // Hold right-click on a branch to see the unit it leads to (released on pointerup, like the formation peek).
       choose.addEventListener("contextmenu", (e) => e.preventDefault());
       choose.addEventListener("pointerdown", (e) => {
-        if (e.button === 2) showPeek(this.peek, [unitDefCard(to)], e.clientX, e.clientY, 320, 300);
+        if (e.button === 2) showPeek(this.peek, [unitDefCard(to)], e.clientX, e.clientY);
       });
       this.root.appendChild(choose);
     }

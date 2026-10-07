@@ -35,9 +35,27 @@ export interface SettingsData {
   readonly showFrameRate: boolean;
   /** Rules text writes out how each scaled number came about ("54 (18% × 300)"), not just the number. */
   readonly showFormulas: boolean;
+  /** The interface's size on top of the automatic one (which follows the window's height): 1 is as made. */
+  readonly uiScale: number;
 }
 
-export const DEFAULT_SETTINGS: SettingsData = { speed: "normal", rotate: 1, zoom: 1, hotkeys: {}, slotKeys: true, masterVolume: 0.8, effectsVolume: 1, musicVolume: 0.6, bounceLight: true, showFrameRate: false, showFormulas: false };
+export const DEFAULT_SETTINGS: SettingsData = { speed: "normal", rotate: 1, zoom: 1, hotkeys: {}, slotKeys: true, masterVolume: 0.8, effectsVolume: 1, musicVolume: 0.6, bounceLight: true, showFrameRate: false, showFormulas: false, uiScale: 1 };
+
+/** The player's own UI scale stays within this range. */
+export const UI_SCALE_RANGE = { min: 0.6, max: 1.6 } as const;
+
+/**
+ * The interface is sized in rem, so one root font size scales all of it. It follows the window's height, so the
+ * panels keep their share of the screen from a laptop to a 4K monitor (the user, 2026-10-07: fixed pixels made the
+ * icons tiny on a big screen): 16px at a window this tall, within limits, times the player's own scale.
+ */
+const UI_REFERENCE_HEIGHT = 800;
+const UI_AUTO_RANGE = { min: 0.75, max: 2.5 } as const;
+
+export function rootFontSize(windowHeight: number, uiScale: number): number {
+  const auto = Math.min(UI_AUTO_RANGE.max, Math.max(UI_AUTO_RANGE.min, windowHeight / UI_REFERENCE_HEIGHT));
+  return 16 * auto * uiScale;
+}
 
 /** Camera multipliers stay within this range. */
 export const CAMERA_RANGE = { min: 0.25, max: 2.5 } as const;
@@ -64,6 +82,7 @@ export function parseSettings(text: string | null): SettingsData {
   const bounceLight: unknown = Reflect.get(parsed, "bounceLight");
   const showFrameRate: unknown = Reflect.get(parsed, "showFrameRate");
   const showFormulas: unknown = Reflect.get(parsed, "showFormulas");
+  const uiScale: unknown = Reflect.get(parsed, "uiScale");
   const hotkeys: unknown = Reflect.get(parsed, "hotkeys");
   const keys: Record<string, string> = {};
   if (typeof hotkeys === "object" && hotkeys !== null) {
@@ -81,6 +100,7 @@ export function parseSettings(text: string | null): SettingsData {
     bounceLight: typeof bounceLight === "boolean" ? bounceLight : DEFAULT_SETTINGS.bounceLight,
     showFrameRate: typeof showFrameRate === "boolean" ? showFrameRate : DEFAULT_SETTINGS.showFrameRate,
     showFormulas: typeof showFormulas === "boolean" ? showFormulas : DEFAULT_SETTINGS.showFormulas,
+    uiScale: typeof uiScale === "number" && Number.isFinite(uiScale) ? Math.min(UI_SCALE_RANGE.max, Math.max(UI_SCALE_RANGE.min, uiScale)) : DEFAULT_SETTINGS.uiScale,
   };
 }
 

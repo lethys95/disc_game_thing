@@ -78,9 +78,10 @@ function openMenu(anchor: HTMLElement, choices: readonly GridChoice[]): void {
     menu.appendChild(item);
   }
   const box = anchor.getBoundingClientRect();
-  menu.style.left = `${Math.min(box.left, window.innerWidth - 240)}px`;
-  menu.style.top = `${Math.min(box.bottom + 4, window.innerHeight - 40 * (choices.length + 1))}px`;
   document.body.appendChild(menu);
+  // Measured once it's in the page: its size follows the UI scale.
+  menu.style.left = `${Math.max(0, Math.min(box.left, window.innerWidth - menu.offsetWidth))}px`;
+  menu.style.top = `${Math.max(0, Math.min(box.bottom + 4, window.innerHeight - menu.offsetHeight))}px`;
   const close = (e: MouseEvent) => {
     if (e.target instanceof Node && menu.contains(e.target)) return;
     menu.remove();
@@ -120,7 +121,7 @@ export function squadGrid(side: GridSquad, options: GridOptions): HTMLElement {
         cell.addEventListener("pointerdown", (e) => {
           if (e.button !== 2) return;
           const peek = document.getElementById("peek");
-          if (peek) showPeek(peek, [memberCard(member, side.leader)], e.clientX, e.clientY, 340, 360);
+          if (peek) showPeek(peek, [memberCard(member, side.leader)], e.clientX, e.clientY);
         });
       } else {
         cell.appendChild(element("div", "empty", options.mayAct ? "+" : ""));

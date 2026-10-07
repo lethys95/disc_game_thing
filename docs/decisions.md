@@ -236,3 +236,10 @@ instead of abilities doesn't really make sense either". A unit's numbers are hea
 ability power; what it hits for and with what element is each ability's. Buffs that used to raise damage add to every
 damaging hit instead (`Stats.hitBonus`, `hitPercent`, starting at 0), which keeps auras working as stat hooks. The views
 show hits through the abilities' own text and the hover preview.
+
+## The interface is sized in rem, from the window's height (2026-10-07)
+Every size in `style.css` was a fixed CSS pixel, tuned on 1280×720 screenshots: right there, small on a big monitor (the
+user found the codex's icons tiny) and with no way to scale outside a browser's zoom. Now sizes are `rem` (1–2px
+hairlines stay px), the root font size follows the window's height (16px at 800 tall, from 0.75× to 2.5×) times the
+player's Interface size setting, and code measures elements instead of assuming pixel sizes. `pnpm sizes` renders the
+main screens at 720p, 1080p and 1440p; the verify skill requires it for any interface change.

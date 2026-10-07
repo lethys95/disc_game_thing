@@ -18,7 +18,7 @@ import { Credits } from "#view/credits";
 import type { Placement } from "#rules/battle/engine";
 import type { Save } from "#rules/save";
 import { BANDIT_GROUP, CARNIVAL_GROUP, DRAWN_GROUP, GNOLL_GROUP, GROVE_PRESETS, NEXUS_PRESETS, PRESETS } from "#rules/units/presets";
-import { ANIMATION_SPEEDS, Settings } from "#view/settings";
+import { ANIMATION_SPEEDS, rootFontSize, Settings } from "#view/settings";
 import { Sound } from "#view/sound";
 import { Stage } from "#view/stage";
 import { defaultColors } from "#rules/world/colors";
@@ -38,6 +38,9 @@ settings.follow((s) => stage.setBounceLight(s.bounceLight));
 settings.follow((s) => stage.setFrameRate(s.showFrameRate));
 // Every card's rules text carries its formulas; the page shows them only when asked (CSS: `body.formulas`).
 settings.follow((s) => document.body.classList.toggle("formulas", s.showFormulas));
+const sizeInterface = () => (document.documentElement.style.fontSize = `${rootFontSize(window.innerHeight, settings.data.uiScale)}px`);
+settings.follow(sizeInterface);
+window.addEventListener("resize", sizeInterface);
 const sound = new Sound();
 settings.follow((s) => sound.setVolumes(s));
 // Every button clicks.
