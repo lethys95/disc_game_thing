@@ -25,6 +25,7 @@ export const keywords: Readonly<Record<string, Behavior>> = {
   tarot: {
     kind: "passive",
     name: "Tarot",
+    applies: ["tarot_might", "tarot_exposed"],
     defaults: { cards: 3 },
     describe: (p) => `As the fight begins, its side draws ${p["cards"]} tarot cards and picks one in secret: a task that, done, pays the whole side.`,
     hooks: { tarotCards: (_ctx, self) => self.params["cards"] ?? 0 },
@@ -34,6 +35,7 @@ export const keywords: Readonly<Record<string, Behavior>> = {
   crit: {
     kind: "passive",
     name: "Crit",
+    applies: ["crit_count"],
     defaults: { every: 3 },
     describe: (p) => `Every ${ordinal(p["every"] ?? 3)}hit it lands deals double damage.`,
     hooks: {
@@ -49,6 +51,7 @@ export const keywords: Readonly<Record<string, Behavior>> = {
   evasion: {
     kind: "passive",
     name: "Evasion",
+    applies: ["evasion_count"],
     defaults: { every: 3 },
     describe: (p) => `Every ${ordinal(p["every"] ?? 3)}hit against it misses entirely.`,
     hooks: {
@@ -87,6 +90,7 @@ export const keywords: Readonly<Record<string, Behavior>> = {
   ignite: {
     kind: "passive",
     name: "Ignite",
+    applies: ["burning"],
     defaults: { burn: 8, turns: 3 },
     scales: ["burn"],
     describe: (p) => `Its hits set the target burning: ${p["burn"]} damage at the start of each of its next ${p["turns"]} turns. A wet target doesn't catch.`,
@@ -105,6 +109,7 @@ export const keywords: Readonly<Record<string, Behavior>> = {
   soak: {
     kind: "passive",
     name: "Soak",
+    applies: ["wet"],
     defaults: { rounds: 2 },
     describe: (p) => `Its hits leave the target wet for ${p["rounds"]} rounds (it stops burning; lightning hits it harder).`,
     hooks: {

@@ -11,6 +11,7 @@ export const carnival: Readonly<Record<string, Behavior>> = {
   foretell: {
     kind: "active",
     name: "Foretell",
+    applies: ["foretold"],
     describe: (p) => `Her attack, ranged: a hit of ${p["power"]} lands at the start of her next turn (if she still stands).`,
     tags: ["attack", "ranged", "damage"],
     defaults: { power: 28 },
@@ -25,6 +26,7 @@ export const carnival: Readonly<Record<string, Behavior>> = {
   curse: {
     kind: "active",
     name: "Curse",
+    applies: ["cursed"],
     describe: (p) => `Main action, ranged: an enemy deals ${p["percent"]}% less damage for its next ${p["turns"]} turns.`,
     tags: ["spell"],
     defaults: { percent: 35, turns: 3 },
@@ -69,6 +71,7 @@ export const carnival: Readonly<Record<string, Behavior>> = {
   sleep_potion: {
     kind: "active",
     name: "Sleep potion",
+    applies: ["asleep"],
     describe: (p) => `Main action, thrown, ${p["charges"]} per combat: one enemy anywhere falls asleep and loses its next turn, unless it's hurt first.`,
     tags: ["spell"],
     defaults: { charges: 1 },

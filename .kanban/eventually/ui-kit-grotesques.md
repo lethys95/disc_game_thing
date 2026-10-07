@@ -4,3 +4,4 @@
 - **Why:** The current kit limits the design (the user, 2026-10-06).
 - **Done when:** A kit the HUD and screens use throughout.
 - **Who:** Claude generates when ComfyUI is free; the user judges.
+- **The user again (2026-10-07), after the codex:** "We do need more UI elements though." ComfyUI is free again now.

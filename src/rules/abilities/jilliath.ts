@@ -127,6 +127,7 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
   guardian_spirit: {
     kind: "passive",
     name: "Guardian Spirit",
+    applies: ["deathward"],
     describe: () =>
       "Once per combat, a killing blow leaves this unit at 1 HP, and it cannot die until the round ends.",
     defaults: { charges: 1 },
@@ -212,6 +213,7 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
   punishment: {
     kind: "passive",
     name: "Punishment",
+    applies: ["punished"],
     describe: () =>
       `Every enemy struck loses ${PUNISHED_PER_STACK} damage and ${PUNISHED_PER_STACK} initiative for the rest of combat. Stacks up to ${PUNISHMENT_MAX_STACKS} times.`,
     hooks: {
@@ -223,6 +225,7 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
   domination: {
     kind: "passive",
     name: "Domination",
+    applies: ["bleeding"],
     describe: (p) =>
       `${Math.round((p["share"] ?? 0) * 100)}% of this unit's damage becomes bleed, which strikes at the start of the victim's turns.`,
     defaults: { share: 0.5 },
@@ -239,6 +242,7 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
   hook: {
     kind: "active",
     name: "Hook",
+    applies: ["stunned"],
     describe: () =>
       "Once per combat: pull the first enemy behind an empty front tile into the front row and stun it.",
     tags: [],

@@ -73,6 +73,7 @@ export const core: Readonly<Record<string, Behavior>> = {
   defend: {
     kind: "active",
     name: "Defend",
+    applies: ["defending"],
     describe: () =>
       "End the turn. Damage taken is halved until this unit acts again.",
     tags: ["common"],
@@ -111,6 +112,7 @@ export const core: Readonly<Record<string, Behavior>> = {
   retreat: {
     kind: "active",
     name: "Retreat",
+    applies: ["retreating"],
     describe: () =>
       "Turn your back and flee: this unit loses its next turn, then leaves the battle alive at the start of the one after. It keeps its health; the enemy gains no XP for it.",
     tags: ["common", "flee"],

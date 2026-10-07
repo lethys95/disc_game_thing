@@ -48,6 +48,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
   decay: {
     kind: "passive",
     name: "Decay",
+    applies: ["rotting"],
     defaults: { percent: 40, turns: 3 },
     describe: (p) => `${p["percent"]}% of the damage that reaches it rots in instead, lost over its next ${p["turns"]} turns.`,
     hooks: {
@@ -65,6 +66,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
   withering: {
     kind: "passive",
     name: "Withering",
+    applies: ["withered"],
     defaults: { amount: 5, cap: 15 },
     describe: (p) => `An enemy that hits it withers: it deals ${p["amount"]} less damage for the rest of combat, up to ${p["cap"]} less.`,
     hooks: {
@@ -114,6 +116,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
   gorge: {
     kind: "passive",
     name: "Gorge",
+    applies: ["gorged"],
     defaults: { heal: 6, damage: 6 },
     scales: ["heal"],
     describe: (p) => `Whenever any unit dies, or a corpse is used up or destroyed, it heals ${p["heal"]} and deals ${p["damage"]} more damage for the rest of combat (no limit).`,
@@ -131,6 +134,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
   bloom: {
     kind: "active",
     name: "Bloom",
+    applies: ["mending"],
     describe: (p) => `Main action: an ally (or itself) regrows ${p["amount"]} HP at the start of each of its next ${p["turns"]} turns.`,
     tags: ["heal"],
     defaults: { amount: 12, turns: 3 },
@@ -149,6 +153,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
   witherbloom: {
     kind: "active",
     name: "Witherbloom",
+    applies: ["mending", "witherblooming"],
     describe: (p) =>
       `Main action: an ally (or itself) regrows ${p["amount"]} HP at the start of each of its next ${p["turns"]} turns. While it blooms, an enemy that hits it withers: ${p["wither"]} less damage for the rest of combat, up to ${WITHERBLOOM_CAP} less.`,
     tags: ["heal"],
@@ -189,6 +194,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
   corpse_explosion: {
     kind: "active",
     name: "Corpse explosion",
+    applies: ["infested"],
     describe: (p) => `Main action: an enemy corpse bursts. The enemies next to it take ${p["power"]} now and ${p["infest"]} at the start of each of their next ${p["turns"]} turns. The dead can't be raised.`,
     tags: ["damage", "area"],
     defaults: { power: 15, infest: 5, turns: 3 },
@@ -214,6 +220,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
   cycle: {
     kind: "active",
     name: "Cycle",
+    applies: ["healing_back", "rotting"],
     describe: (p) => `Main action, ranged. An enemy takes ${p["power"]}, and heals back a third at the start of its next turn. An ally heals ${p["heal"]}, and ${p["rot"]} rots in over its next 3 turns (feeding a Decay unit's rot).`,
     tags: ["damage"],
     defaults: { power: 40, heal: 35, rot: 12 },
@@ -240,6 +247,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
   water: {
     kind: "active",
     name: "Water",
+    applies: ["wet"],
     damageType: "water",
     describe: (p) => `Ranged, water. An enemy takes ${p["power"]} and is wet for ${p["rounds"]} rounds. An ally (or itself) heals ${p["heal"]}; a burning one is put out (and wet).`,
     tags: ["attack", "ranged", "damage", "heal"],
@@ -265,6 +273,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
   spirit_bloom: {
     kind: "active",
     name: "Spirit bloom",
+    applies: ["mending"],
     describe: (p) => `Main action: an ally (or itself) heals ${p["heal"]} now, and regrows ${p["amount"]} at the start of each of its next ${p["turns"]} turns.`,
     tags: ["heal"],
     defaults: { heal: 18, amount: 6, turns: 3 },
@@ -313,6 +322,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
   spiritwalk: {
     kind: "active",
     name: "Spiritwalk",
+    applies: ["spiritwalking"],
     describe: (p) => `Main action, ${p["charges"]} per combat: any other unit, ally or enemy, leaves the field for ${p["rounds"]} round starts: it can't act or be hit, and doesn't hold its line. It returns healed ${p["heal"]}% of its max HP.`,
     tags: [],
     defaults: { charges: 1, rounds: 2, heal: 40 },
@@ -325,6 +335,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
   grove_mend: {
     kind: "active",
     name: "Grove mend",
+    applies: ["mending"],
     describe: (p) => `Main action: an ally (or itself) regrows ${p["amount"]} HP at the start of each of its next ${p["turns"]} turns.`,
     tags: ["heal"],
     defaults: { amount: 13, turns: 3 },

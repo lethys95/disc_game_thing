@@ -64,6 +64,7 @@ export const nexus: Readonly<Record<string, Behavior>> = {
   counter: {
     kind: "active",
     name: "Counter",
+    applies: ["countered"],
     damageType: "lightning",
     describe: (p) =>
       `Free action: secretly mark an enemy; the next ability it uses is cancelled${p["backlash"] ? `, and the backlash hits it for ${p["backlash"]}` : ""}. ${spellCost(p)}`,
@@ -85,6 +86,7 @@ export const nexus: Readonly<Record<string, Behavior>> = {
   negate: {
     kind: "active",
     name: "Negate",
+    applies: ["negated"],
     describe: (p) =>
       `Secretly mark any unit: the next damage it would take heals it instead, and the next healing it would get (shields too) hurts it instead. Once. ${spellCost(p)}`,
     tags: ["spell"],
@@ -107,6 +109,7 @@ export const nexus: Readonly<Record<string, Behavior>> = {
   absorb: {
     kind: "active",
     name: "Absorb",
+    applies: ["absorbing_guard", "absorbing_hit"],
     damageType: "lightning",
     describe: (p) =>
       `On an enemy: a weak ranged hit for ${p["power"]}, and its next hit deals ${p["prevent"]} less. On an ally: the next hit on it deals ${p["prevent"]} less. This unit heals by what is prevented. Unlimited.`,
@@ -136,6 +139,7 @@ export const nexus: Readonly<Record<string, Behavior>> = {
   combustion: {
     kind: "active",
     name: "Combustion",
+    applies: ["combusting"],
     describe: (p) =>
       `Free action: until this turn ends, spells that cost charges are free actions. ${spellCost(p)}`,
     tags: ["spell"],
@@ -174,6 +178,7 @@ export const nexus: Readonly<Record<string, Behavior>> = {
   equalize: {
     kind: "active",
     name: "Equalize",
+    applies: ["lent_shield"],
     describe: () =>
       "Share shield with an ally until both are equal. The lent shield perishes when this unit's next turn starts.",
     tags: [],
@@ -203,6 +208,7 @@ export const nexus: Readonly<Record<string, Behavior>> = {
   mutate: {
     kind: "passive",
     name: "Mutate",
+    applies: ["mutated"],
     describe: () =>
       `If its shield is restored while already full, it gains +${MUTATED_PER_STACK} damage for the rest of combat.`,
     hooks: {

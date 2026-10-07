@@ -19,6 +19,7 @@ export const gnolls: Readonly<Record<string, Behavior>> = {
   prey: {
     kind: "passive",
     name: "Prey",
+    applies: ["prey"],
     defaults: { bonus: 8 },
     describe: (p) => `The unit it hits becomes the pack's prey until the end of the next round: its allies deal ${p["bonus"]} more damage to it.`,
     hooks: {
@@ -32,6 +33,7 @@ export const gnolls: Readonly<Record<string, Behavior>> = {
   crack: {
     kind: "passive",
     name: "Crack",
+    applies: ["cracked"],
     defaults: { armor: 4 },
     describe: (p) => `Each hit takes ${p["armor"]} armor from its target for the rest of combat (it adds up).`,
     hooks: {
@@ -48,6 +50,7 @@ export const gnolls: Readonly<Record<string, Behavior>> = {
   hamstring: {
     kind: "passive",
     name: "Hamstring",
+    applies: ["hamstrung"],
     defaults: { initiative: 5 },
     describe: (p) => `The unit it hits has ${p["initiative"]} less initiative until the end of the next round.`,
     hooks: {
@@ -65,6 +68,7 @@ export const gnolls: Readonly<Record<string, Behavior>> = {
   cackle: {
     kind: "active",
     name: "Cackle",
+    applies: ["goaded"],
     describe: () => "Main action: an enemy is goaded. On its next turn it can only attack: no spells, healing, defending or waiting (unless it has no attack).",
     tags: [],
     choices: (ctx, self) => ctx.living(opponent(ctx.unit(self.unitId).side)).map((u) => single(u, "main")),
@@ -93,6 +97,7 @@ export const gnolls: Readonly<Record<string, Behavior>> = {
   pecking_order: {
     kind: "passive",
     name: "Pecking order",
+    applies: ["next_in_line"],
     defaults: { damage: 8 },
     describe: (p) => `Her allies deal ${p["damage"]} more damage. If she falls, the ally with the most health left takes her place: its allies deal ${Math.floor((p["damage"] ?? 0) / 2)} more.`,
     hooks: {

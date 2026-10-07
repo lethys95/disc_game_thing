@@ -32,6 +32,7 @@ export const drawn: Readonly<Record<string, Behavior>> = {
   dust: {
     kind: "passive",
     name: "Dust",
+    applies: ["dusted"],
     describe: () => "The enemy whose hit kills it is dusted: that enemy's next hit lands as nothing.",
     hooks: {
       mitigate: (ctx, self, packet) => {
@@ -44,6 +45,7 @@ export const drawn: Readonly<Record<string, Behavior>> = {
   metamorphosis: {
     kind: "passive",
     name: "Metamorphosis",
+    applies: ["pupating", "emerged"],
     // `flit` isn't scaled here: the Flit it carries grows with the bearer's ability power when it's used.
     defaults: { turns: 3, flit: 34 },
     describe: (p) => `It can't attack while it pupates. At the start of its turn number ${p["turns"]} it emerges: back to full health, and it flies at any enemy (Flit, for ${p["flit"]}).`,
@@ -95,6 +97,7 @@ export const drawn: Readonly<Record<string, Behavior>> = {
   mesmerize: {
     kind: "active",
     name: "Mesmerize",
+    applies: ["mesmerized"],
     describe: (p) => `Main action, ranged, ${p["charges"]} per combat: an enemy loses its next turn, unless it is hurt before then.`,
     tags: ["spell"],
     defaults: { charges: 2 },
@@ -112,6 +115,7 @@ export const drawn: Readonly<Record<string, Behavior>> = {
   open_the_eyes: {
     kind: "active",
     name: "Open the eyes",
+    applies: ["mesmerized"],
     describe: (p) => `Main action, ${p["charges"]} per combat: the whole enemy front row is mesmerized (each loses its next turn, unless hurt first).`,
     tags: ["spell", "area"],
     defaults: { charges: 1 },

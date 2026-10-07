@@ -324,6 +324,8 @@ export type Lifetime = "battle" | "untilOwnTurn" | "untilRoundEnd" | "untilSourc
 export interface EffectDef {
   readonly id: string;
   readonly name: string;
+  /** The effects it puts on units in turn (the codex shows where each effect comes from; a test checks it against the code). */
+  readonly applies?: readonly string[];
   readonly stacking: Stacking;
   readonly lifetime: Lifetime;
   /** `secret`: only the side of the unit that applied it knows it's there, until it fires (a Justiciar's mark). */
@@ -362,6 +364,8 @@ export interface ActiveBehavior {
   readonly scales?: readonly string[];
   /** What its hits deal, unless a unit's ref says otherwise; weapon if neither does. */
   readonly damageType?: DamageType;
+  /** The effects it puts on units (the codex shows where each effect comes from; a test checks it against the code). */
+  readonly applies?: readonly string[];
   /** Wait: puts the unit back in the queue instead of acting. Not an ability a Counter can cancel. */
   readonly reschedules?: boolean;
   /** The target is secret from the other side (Counter). */
@@ -379,6 +383,8 @@ export interface ActiveBehavior {
 export interface PassiveBehavior {
   readonly kind: "passive";
   readonly name: string;
+  /** The effects it puts on units (the codex shows where each effect comes from; a test checks it against the code). */
+  readonly applies?: readonly string[];
   readonly defaults?: Params;
   /** As on active behaviors: the params that grow with ability power. */
   readonly scales?: readonly string[];

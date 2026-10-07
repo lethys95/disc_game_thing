@@ -524,6 +524,7 @@ const effects: readonly EffectDef[] = [
     // Witherbloom (Decay support 2): while it blooms, an enemy that hits its bearer withers. Its heal is a `mending`.
     id: "witherblooming",
     name: "Witherbloom",
+    applies: ["withered"],
     describe: (e) => `For its next ${e.stacks} turn${e.stacks === 1 ? "" : "s"}, an enemy that hits it withers: ${e.amount} less damage for the rest of combat, up to ${WITHERBLOOM_CAP} less.`,
     stacking: { mode: "unique" },
     lifetime: "battle",
@@ -698,6 +699,7 @@ const effects: readonly EffectDef[] = [
     // Soak: lightning hits a wet unit half again as hard and electrocutes it; fire dries it.
     id: "wet",
     name: "Wet",
+    applies: ["electrocuted"],
     describe: (e) => `Wet for ${e.stacks} more round start${e.stacks === 1 ? "" : "s"}: lightning hits it half again as hard and electrocutes it (it loses its next turn); fire dries it.`,
     stacking: { mode: "unique" },
     lifetime: "rounds",

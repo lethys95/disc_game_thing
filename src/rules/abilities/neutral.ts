@@ -26,6 +26,7 @@ export const neutral: Readonly<Record<string, Behavior>> = {
   stun_front: {
     kind: "active",
     name: "Stun",
+    applies: ["stunned"],
     describe: () =>
       "Once per combat: stun the enemy directly in front for one turn.",
     tags: ["melee"],
