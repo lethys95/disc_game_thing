@@ -100,3 +100,6 @@ The tree as built (Claude, provisional; names other than the user's are placehol
   Chant maybe? Hits all enemies for light damage and applies a weaker castigate effect to all. So now there's a use
   case for judgement, chant and castigate." Built: Castigation stays single-target; the Pontiff gains **Chant**
   (the Archon keeps it).
+- **Archon kept (the user, 2026-10-07):** unsure it was the right word ("this elevated person who is one foot into the
+  world of angels"); after Claude laid out its senses (Greek ruler; fantasy's celestials; the Gnostic rulers of the
+  material world) and alternatives (Beatified, Theurge, Ascendant): "Archon is better then."
