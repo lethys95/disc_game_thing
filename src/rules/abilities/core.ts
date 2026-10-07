@@ -52,7 +52,7 @@ export const core: Readonly<Record<string, Behavior>> = {
     kind: "active",
     name: "Attack",
     describe: (p) =>
-      `Strike an enemy in the front line, at most one column away, for ${p["power"]}.`,
+      `Strike an enemy for ${p["power"]}.`,
     tags: ["attack", "melee", "damage"],
     defaults: { power: 20 },
     scales: ["power"],
@@ -63,7 +63,7 @@ export const core: Readonly<Record<string, Behavior>> = {
     kind: "active",
     name: "Shoot",
     describe: (p) =>
-      `Ranged: hit any enemy for ${p["power"]}.`,
+      `Hit an enemy for ${p["power"]}, from any distance.`,
     tags: ["attack", "ranged", "damage"],
     defaults: { power: 10 },
     scales: ["power"],

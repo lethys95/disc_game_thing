@@ -11,7 +11,7 @@ export const nexus: Readonly<Record<string, Behavior>> = {
     name: "Bolt",
     damageType: "lightning",
     describe: (p) =>
-      `A weak ranged hit on any enemy, for ${p["power"]}. Unlimited.`,
+      `A weak hit, ${p["power"]}. Unlimited.`,
     tags: ["attack", "ranged", "spell", "damage"],
     defaults: { power: 5 },
     scales: ["power"],
@@ -25,7 +25,7 @@ export const nexus: Readonly<Record<string, Behavior>> = {
     name: "Burst",
     damageType: "lightning",
     describe: (p) =>
-      `A burst of ${p["power"]} hitting every enemy in a plus shape. ${spellCost(p, "every enemy is hit")}`,
+      `A burst of ${p["power"]} to every enemy in its area. ${spellCost(p, "every enemy is hit")}`,
     tags: ["attack", "ranged", "spell", "damage", "area"],
     defaults: { power: 23, cost: 1 },
     scales: ["power"],

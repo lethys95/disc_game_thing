@@ -29,6 +29,14 @@ The user, after: "Tooltip might show formulas as well. It might be a setting to 
 shows resolved damage. Was the idea." Built: Settings → Display → "Show formulas" writes each scaled number's formula
 after it ("54 (18% × 300)"); hovering a target always shows the resolved outcome.
 
+**Targeting grids (user, 2026-10-07, after Eiyuu Senki):** "The regular attack reads: 'strike an enemy in the front
+line, at most one column away, for x'. I think that's not great. We should instead show the boxes for targeting […]
+For units to target the extremes, any ability, as I see it, needs to take 5x5 into consideration." For every ability,
+not just attacks. Built (`rules/battle/reach.ts`, `view/targeting.ts`): beside each ability, a **Target** grid (five
+columns: sideways −2 to +2 from the unit; six rows: the enemy's back, middle and front, then the unit's own front,
+middle and back; the unit circled) and an **Area** grid (five by five around the target). Both are read from the engine
+by probing a full board, so they always match the rules; rules text no longer describes positions.
+
 ## Leader elevation
 Leaders are not unique unit types. Any unit can be elevated to leader at any time, irreversibly. Elevation grants squad command, overworld movement, equipment slots, and leader upgrades — **no combat stat boost**. A tier-3 Paladin leader fights exactly like a tier-3 Paladin.
 - No leader cap. Spreading thin is self-punishing: concentrated squads win.

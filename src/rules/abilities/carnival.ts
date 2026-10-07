@@ -105,7 +105,7 @@ export const carnival: Readonly<Record<string, Behavior>> = {
     kind: "active",
     name: "Spit fire",
     damageType: "fire",
-    describe: (p) => `Its attack, fire: a cone over the three enemy front-row tiles across from it and the middle-row tile behind the centre one, for ${p["power"]} each.`,
+    describe: (p) => `Its attack, fire: a cone of flame, ${p["power"]} to every enemy in it.`,
     defaults: { power: 18 },
     scales: ["power"],
     tags: ["attack", "melee", "damage", "area"],

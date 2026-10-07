@@ -9,7 +9,7 @@ export const neutral: Readonly<Record<string, Behavior>> = {
     kind: "active",
     name: "Area Spell",
     describe: (p) =>
-      `Ranged spell: hits every enemy in a 2x2 block for ${p["power"]}.`,
+      `A spell: ${p["power"]} to every enemy in its area.`,
     tags: ["attack", "ranged", "spell", "damage", "area"],
     defaults: { power: 20 },
     scales: ["power"],

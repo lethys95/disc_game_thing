@@ -34,7 +34,7 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
   condemn: {
     kind: "active",
     name: "Condemn",
-    describe: (p) => `Ranged: hit any enemy for ${p["power"]}, plus ${p["missing"]}% of the health the target is missing.`,
+    describe: (p) => `Hit an enemy for ${p["power"]}, plus ${p["missing"]}% of the health it is missing.`,
     tags: ["attack", "ranged", "spell", "damage"],
     defaults: { power: 25, missing: 30 },
     scales: ["power"],
@@ -53,7 +53,7 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
     kind: "active",
     name: "Flail",
     describe: (p) =>
-      `One swing hits the entire enemy front line for ${p["power"]}.`,
+      `One swing, ${p["power"]} to every enemy it reaches.`,
     tags: ["attack", "melee", "damage", "area"],
     defaults: { power: 15 },
     scales: ["power"],

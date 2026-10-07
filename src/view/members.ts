@@ -2,6 +2,7 @@ import { itemById } from "#rules/items";
 import { NODES } from "#rules/nodes";
 import { BEHAVIORS, elementsOf } from "#rules/abilities/index";
 import { abilityText } from "#view/ability-text";
+import { targetingGrids } from "#view/targeting";
 import { effectDef } from "#rules/effects";
 import type { Commitment } from "#rules/forks";
 import { nextForm, xpToEvolve, xpToLevel } from "#rules/progression";
@@ -88,9 +89,10 @@ export function unitDefCard(defId: string, abilityPower?: number): HTMLElement {
   card.appendChild(element("div", "stats", facts.filter((f) => f).join(" · ")));
   for (const ref of def.abilities) {
     const behavior = BEHAVIORS[ref.id];
-    if (!behavior) continue;
+    if (!behavior || (behavior.kind === "active" && behavior.tags.includes("common"))) continue;
     const item = element("div", "ability");
-    item.append(element("span", "name", ref.name ?? behavior.name), abilityText(ref, abilityPower ?? s.abilityPower));
+    const grids = targetingGrids(defId, ref.id);
+    item.append(...(grids ? [grids] : []), element("span", "name", ref.name ?? behavior.name), abilityText(ref, abilityPower ?? s.abilityPower));
     card.appendChild(item);
   }
   return card;
