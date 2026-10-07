@@ -113,3 +113,11 @@ The tree with names (abilities past atonement, transfusion and resurrection open
   I think. It's okay." The picks were "very bland ones. Not maelstrom angel, not filigree, not goldnight castigator.
   Just a lot of regular sera angel adjacent ones." The format stays; the user is working through MTG's angels on their
   own sheet.
+- **The Reclaimer (the user, 2026-10-07):** "reclaimer is transfusion... And maybe even lifesteal if we think about
+  reclaiming. 'What was given can be taken away' type stuff. Idk. Worth playing around with, though it's a bit
+  vampire-y. Though she did have an issue with not being able to give herself health back after having lost it to
+  her heals. So by having massive but double edged heals + some lifedrain on enemies as attack. I mean that makes for
+  a pretty neat thing I think. So maybe that's just what we're going for. Of course we're not making a literal
+  vampire, just want to make that clear. It's an angel, but on the fanaticism line." So: **massive heals paid with
+  her own health (transfusion), and an attack that drains life from enemies to win it back.** An angel, not a vampire.
+  (Empyreal is therefore the wider-atonement tier 3.)
