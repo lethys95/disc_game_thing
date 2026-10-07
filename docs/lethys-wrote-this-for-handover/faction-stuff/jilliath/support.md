@@ -121,3 +121,14 @@ The tree with names (abilities past atonement, transfusion and resurrection open
   vampire, just want to make that clear. It's an angel, but on the fanaticism line." So: **massive heals paid with
   her own health (transfusion), and an attack that drains life from enemies to win it back.** An angel, not a vampire.
   (Empyreal is therefore the wider-atonement tier 3.)
+- **The two sides' roles (the user, 2026-10-07):** "Overall I think faith might become more about buffs and moderate
+  heals, where as reclaimer will have the strongest heal of them all but with a downside. Faith will probably usually
+  be the safe choice in the end, fanaticism being used in more aggressive compositions. But yeah, go ahead and create."
+
+Built (Claude's readings, provisional numbers: `provisional.md` #73):
+- **Emissary** (t2, faith): a placeholder, the Seraph's Heal and Shoot at tier-2 strength, so the fork has both sides.
+- **Paragon** (t2): *Atonement*, its attack: hits an enemy, and its most wounded ally heals 150% of the damage dealt.
+  It heals only through Atonement.
+- **Empyreal** (t3a): Atonement healing its three most wounded allies, each for 100% of the damage dealt.
+- **Reclaimer** (t3b): *Transfusion*, the strongest heal, paid for with half of what it heals from her own health; and
+  *Reclaim* (placeholder name, from the user's "reclaiming"), an attack that heals her for what it deals.
