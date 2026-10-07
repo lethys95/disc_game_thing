@@ -1,11 +1,21 @@
 import { PUNISHMENT_MAX_STACKS } from "#rules/balance";
-import type { EffectDef, EffectInstance, Stacking, Stats } from "#rules/battle/types";
+import type { Ctx, EffectDef, EffectInstance, Stacking, Stats } from "#rules/battle/types";
 
 /** What a point of each stat is worth to the AI, roughly in health. Rough, provisional. */
 const STAT_WORTH: Readonly<Record<keyof Stats, number>> = { maxHp: 0.5, shield: 0.5, damage: 2, armor: 3, initiative: 1, abilityPower: 0.5 };
 
 /** Punishment's per-stack penalty to damage and initiative. */
 export const PUNISHED_PER_STACK = 10;
+/** Witherbloom: the most an enemy withers from hitting a blooming unit, over the whole combat. */
+export const WITHERBLOOM_CAP = 15;
+
+/** An enemy withers: `amount` less damage for the rest of combat, adding up to `cap` (Withering, Witherbloom). */
+export function wither(ctx: Ctx, targetId: string, amount: number, cap: number, source: string): void {
+  const withered = ctx.unit(targetId).effects.find((e) => e.def === "withered");
+  if (withered) withered.amount = Math.min(cap, withered.amount + amount);
+  else ctx.addEffect(targetId, { def: "withered", amount: Math.min(cap, amount), source });
+}
+
 /** Mutate's per-stack damage bonus. */
 export const MUTATED_PER_STACK = 10;
 /** What the AI thinks a goaded healer or caster is worth to the other side: about one heal (provisional #63). */
@@ -506,6 +516,29 @@ const effects: readonly EffectDef[] = [
         ctx.heal(self.unitId, mend.amount);
         mend.stacks -= 1;
         if (mend.stacks <= 0) ctx.removeEffect(self.unitId, mend);
+        return null;
+      },
+    },
+  },
+  {
+    // Witherbloom (Decay support 2): while it blooms, an enemy that hits its bearer withers. Its heal is a `mending`.
+    id: "witherblooming",
+    name: "Witherbloom",
+    describe: (e) => `For its next ${e.stacks} turn${e.stacks === 1 ? "" : "s"}, an enemy that hits it withers: ${e.amount} less damage for the rest of combat, up to ${WITHERBLOOM_CAP} less.`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      incoming: (ctx, self, packet) => {
+        const source = packet.source;
+        if (!source || !self.effect || packet.amount <= 0 || ctx.unit(source).side === ctx.unit(self.unitId).side) return;
+        wither(ctx, source, self.effect.amount, WITHERBLOOM_CAP, self.effect.source ?? self.unitId);
+      },
+      turnStart: (ctx, self) => {
+        const bloom = self.effect;
+        if (!bloom) return null;
+        bloom.stacks -= 1;
+        if (bloom.stacks <= 0) ctx.removeEffect(self.unitId, bloom);
         return null;
       },
     },

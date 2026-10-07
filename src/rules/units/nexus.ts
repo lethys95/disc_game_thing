@@ -15,8 +15,8 @@ export const NEXUS_UNITS: Readonly<Record<string, UnitDef>> = {
   },
   apprentice: {
     id: "apprentice", name: "Apprentice", faction: "nexus", tier: 1, damageType: "weapon",
-    stats: { maxHp: 55, shield: 0, damage: 8, armor: 0, initiative: 45, abilityPower: 100 },
-    abilities: [{ id: "plus_burst", params: { power: 35 } }, ...kit("bolt", "defend", "wait")],
+    stats: { maxHp: 55, shield: 0, damage: 8, armor: 0, initiative: 45, abilityPower: 150 },
+    abilities: kit("plus_burst", "bolt", "defend", "wait"),
     spellCharges: 2,
   },
   cyclops: {
@@ -38,7 +38,7 @@ export const NEXUS_UNITS: Readonly<Record<string, UnitDef>> = {
   },
   thaumaturge: {
     id: "thaumaturge", name: "Thaumaturge", faction: "nexus", tier: 2, damageType: "weapon",
-    stats: { maxHp: 65, shield: 0, damage: 12, armor: 0, initiative: 50, abilityPower: 200 },
+    stats: { maxHp: 65, shield: 0, damage: 12, armor: 0, initiative: 50, abilityPower: 250 },
     // Overload overloads: wider, and it doesn't care who it hits.
     abilities: [{ id: "homing_lightning", params: { overload: 1 } }, { id: "plus_burst", params: { overload: 1 } }, ...kit("bolt", "defend", "wait")],
     spellCharges: 4,
@@ -53,16 +53,16 @@ export const NEXUS_UNITS: Readonly<Record<string, UnitDef>> = {
   },
   backlasher: {
     id: "backlasher", name: "Backlasher", faction: "nexus", tier: 3, damageType: "weapon",
-    stats: { maxHp: 85, shield: 0, damage: 16, armor: 0, initiative: 60, abilityPower: 300 },
-    abilities: [{ id: "counter", name: "Backlash", params: { replicate: 1, backlash: 13 } }, { id: "plus_burst", params: { replicate: 1 } }, ...kit("bolt", "defend", "wait")],
+    stats: { maxHp: 85, shield: 0, damage: 16, armor: 0, initiative: 60, abilityPower: 350 },
+    abilities: [{ id: "counter", name: "Backlash", params: { replicate: 1, backlash: 11 } }, { id: "plus_burst", params: { replicate: 1 } }, ...kit("bolt", "defend", "wait")],
     spellCharges: 6,
   },
   maelstrom: {
     id: "maelstrom", name: "Maelstrom", faction: "nexus", tier: 3, damageType: "weapon",
-    stats: { maxHp: 85, shield: 0, damage: 16, armor: 0, initiative: 55, abilityPower: 300 },
+    stats: { maxHp: 85, shield: 0, damage: 16, armor: 0, initiative: 55, abilityPower: 350 },
     // The Thaumaturge's kit, two more charges, and Combustion.
     abilities: [
-      { id: "homing_lightning", params: { overload: 1, power: 35 } },
+      { id: "homing_lightning", params: { overload: 1 } },
       { id: "plus_burst", params: { overload: 1 } },
       ...kit("combustion", "bolt", "defend", "wait"),
     ],

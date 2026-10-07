@@ -1,5 +1,6 @@
 import { at, rangedChoices, single } from "#rules/abilities/core";
 import { wetten } from "#rules/abilities/keywords";
+import { WITHERBLOOM_CAP, wither } from "#rules/effects";
 import { adjacent, frontLine, meleeTargets, opponent } from "#rules/battle/grid";
 import type { BattleUnit, Ctx } from "#rules/battle/types";
 import type { Behavior } from "#rules/battle/types";
@@ -70,11 +71,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
       incoming: (ctx, self, packet) => {
         const source = packet.source;
         if (!source || packet.amount <= 0 || ctx.unit(source).side === ctx.unit(self.unitId).side) return;
-        const amount = self.params["amount"] ?? 0;
-        const cap = self.params["cap"] ?? 0;
-        const withered = ctx.unit(source).effects.find((e) => e.def === "withered");
-        if (withered) withered.amount = Math.min(cap, withered.amount + amount);
-        else ctx.addEffect(source, { def: "withered", amount, source: self.unitId });
+        wither(ctx, source, self.params["amount"] ?? 0, self.params["cap"] ?? 0, self.unitId);
       },
     },
   },
@@ -141,6 +138,29 @@ export const grove: Readonly<Record<string, Behavior>> = {
     choices: (ctx, self) => ctx.living(ctx.unit(self.unitId).side).map((u) => single(u, "main")),
     resolve: (ctx, self, choice) => {
       for (const id of choice.affected) ctx.addEffect(id, { def: "mending", amount: self.params["amount"] ?? 0, stacks: self.params["turns"] ?? 3, source: self.unitId });
+    },
+  },
+
+  /**
+   * Decay support 2 (the user, 2026-10-07: "if decay support's healing spell needs to be worse, then you can just
+   * create a different bloom spell. Call it witherbloom. Maybe it heals less and does something slightly different").
+   * Claude's pitch: a weaker Bloom whose bearer withers the enemies that hit it while it blooms.
+   */
+  witherbloom: {
+    kind: "active",
+    name: "Witherbloom",
+    describe: (p) =>
+      `Main action: an ally (or itself) regrows ${p["amount"]} HP at the start of each of its next ${p["turns"]} turns. While it blooms, an enemy that hits it withers: ${p["wither"]} less damage for the rest of combat, up to ${WITHERBLOOM_CAP} less.`,
+    tags: ["heal"],
+    defaults: { amount: 4, turns: 3, wither: 5 },
+    scales: ["amount"],
+    choices: (ctx, self) => ctx.living(ctx.unit(self.unitId).side).map((u) => single(u, "main")),
+    resolve: (ctx, self, choice) => {
+      const turns = self.params["turns"] ?? 3;
+      for (const id of choice.affected) {
+        ctx.addEffect(id, { def: "mending", amount: self.params["amount"] ?? 0, stacks: turns, source: self.unitId });
+        ctx.addEffect(id, { def: "witherblooming", amount: self.params["wither"] ?? 0, stacks: turns, source: self.unitId });
+      }
     },
   },
 
@@ -220,9 +240,10 @@ export const grove: Readonly<Record<string, Behavior>> = {
   water: {
     kind: "active",
     name: "Water",
-    describe: (p) => `Ranged, water. An enemy takes this unit's damage and is wet for ${p["rounds"]} rounds. An ally (or itself) heals ${p["heal"]}× this unit's damage; a burning one is put out (and wet).`,
+    describe: (p) => `Ranged, water. An enemy takes this unit's damage and is wet for ${p["rounds"]} rounds. An ally (or itself) heals ${p["heal"]}; a burning one is put out (and wet).`,
     tags: ["attack", "ranged", "damage", "heal"],
-    defaults: { heal: 3, rounds: 2 },
+    defaults: { heal: 30, rounds: 2 },
+    scales: ["heal"],
     choices: (ctx, self) => [...rangedChoices(ctx, self), ...ctx.living(ctx.unit(self.unitId).side).map((u) => single(u, "main"))],
     resolve: (ctx, self, choice) => {
       const me = ctx.unit(self.unitId);
@@ -232,7 +253,7 @@ export const grove: Readonly<Record<string, Behavior>> = {
           ctx.hit(self.unitId, [id], ctx.hitSpec(self, "water"));
           wetten(ctx, id, rounds, self.unitId);
         } else {
-          ctx.heal(id, ctx.stats(self.unitId).damage * (self.params["heal"] ?? 0));
+          ctx.heal(id, self.params["heal"] ?? 0);
           if (ctx.unit(id).effects.some((e) => e.def === "burning")) wetten(ctx, id, rounds, self.unitId);
         }
       }

@@ -6,6 +6,7 @@ import { effectiveStats } from "#rules/battle/engine";
 import { COLS, ROWS } from "#rules/battle/grid";
 import type { Battle, BattleEvent, BattleUnit, Col, Row, Side, Tile } from "#rules/battle/types";
 import { artUrl } from "#view/art";
+import { element, skull } from "#view/dom";
 import type { PlayerColor } from "#rules/world/colors";
 import { threeColor } from "#view/colors";
 import { buildFigure } from "#view/figures";
@@ -23,10 +24,14 @@ export interface TileRef {
   readonly tile: Tile;
 }
 
+/** What the hovered action would do to one unit, exactly: health and shield lost, health gained, and whether it dies. */
 export interface PreviewMark {
   readonly unitId: string;
-  readonly text: string;
-  readonly kind: "harm" | "heal" | "death";
+  readonly harm: number;
+  readonly shield: number;
+  readonly heal: number;
+  readonly dies: boolean;
+  readonly spared: boolean;
 }
 
 export interface Highlights {
@@ -43,6 +48,9 @@ interface Figure {
   readonly fill: HTMLDivElement;
   readonly label: CSS2DObject;
   readonly preview: HTMLDivElement;
+  /** The stretch of the health bar the previewed action would take away or give back. */
+  readonly loss: HTMLDivElement;
+  readonly gain: HTMLDivElement;
   readonly materials: THREE.MeshStandardMaterial[];
   shownHp: number;
   maxHp: number;
@@ -295,8 +303,15 @@ export class BattleScene {
     const charges = document.createElement("div");
     charges.className = "charges";
     bar.appendChild(charges);
+    const loss = document.createElement("div");
+    loss.className = "loss";
+    loss.hidden = true;
+    const gain = document.createElement("div");
+    gain.className = "gain";
+    gain.hidden = true;
+    bar.append(loss, gain);
     const figure: Figure = {
-      group, bar, fill, label, preview, materials, charges,
+      group, bar, fill, label, preview, loss, gain, materials, charges,
       shownHp: unit.hp, maxHp: unit.base.maxHp,
       shieldFill, shownShield: unit.shield, maxShield: unit.base.shield,
       fallen: false,
@@ -337,14 +352,29 @@ export class BattleScene {
     this.setHighlights({ current: null, candidates: [], affected: [] });
   }
 
-  /** Shows the exact outcome of the hovered action above each figure it touches. */
+  /** Shows the exact outcome of the hovered action above each figure it touches, and on its health bar. */
   showPreview(marks: readonly PreviewMark[]): void {
     for (const [unitId, figure] of this.figures) {
       const mark = marks.find((m) => m.unitId === unitId);
       figure.preview.hidden = !mark;
+      figure.loss.hidden = !mark || mark.harm <= 0;
+      figure.gain.hidden = !mark || mark.heal <= 0;
       if (!mark) continue;
-      figure.preview.textContent = mark.text;
-      figure.preview.className = `preview ${mark.kind}`;
+      const hp = Math.max(0, figure.shownHp);
+      const share = (amount: number) => `${Math.max(0, Math.min(100, (100 * amount) / figure.maxHp))}%`;
+      const lost = Math.min(mark.harm, hp);
+      figure.loss.style.left = share(hp - lost);
+      figure.loss.style.width = share(lost);
+      figure.gain.style.left = share(hp);
+      figure.gain.style.width = share(Math.min(mark.heal, figure.maxHp - hp));
+      figure.preview.className = `preview ${mark.dies ? "death" : mark.heal > mark.harm ? "heal" : "harm"}`;
+      figure.preview.replaceChildren();
+      if (mark.dies) figure.preview.appendChild(skull());
+      if (mark.harm > 0) figure.preview.appendChild(element("span", "amount", `−${mark.harm}`));
+      if (mark.heal > 0) figure.preview.appendChild(element("span", "amount heal", `+${mark.heal}`));
+      if (mark.shield > 0) figure.preview.appendChild(element("span", "amount shield", `−${mark.shield}`));
+      if (mark.spared) figure.preview.appendChild(element("span", "note", "spared"));
+      if (mark.dies) figure.preview.title = "Lethal";
     }
   }
 

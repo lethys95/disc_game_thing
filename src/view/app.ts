@@ -33,18 +33,16 @@ type Colors = readonly [PlayerColor, PlayerColor];
 /** What one action does to one unit. */
 interface Outcome {
   harm: number;
+  shield: number;
   heal: number;
   dies: boolean;
   spared: boolean;
 }
 
-const change = (t: Outcome): string => (t.harm > 0 ? `−${t.harm}` : t.heal > 0 ? `+${t.heal}` : "");
+const change = (t: Outcome): string =>
+  [t.harm > 0 ? `−${t.harm}` : "", t.heal > 0 ? `+${t.heal}` : "", t.shield > 0 ? `−${t.shield} shield` : ""].filter((s) => s).join(" ");
 
-const markOf = (unitId: string, t: Outcome): PreviewMark => ({
-  unitId,
-  text: `${change(t)}${t.dies ? " †" : t.spared ? " (spared)" : ""}`,
-  kind: t.dies ? "death" : t.heal > 0 ? "heal" : "harm",
-});
+const markOf = (unitId: string, t: Outcome): PreviewMark => ({ unitId, ...t });
 
 interface Preview {
   readonly key: string;
@@ -478,12 +476,13 @@ export class App implements KeyLayer {
   private outcomeOf(battle: Battle, action: Action): Map<string, Outcome> {
     const totals = new Map<string, Outcome>();
     const entry = (id: string) => {
-      const found = totals.get(id) ?? { harm: 0, heal: 0, dies: false, spared: false };
+      const found = totals.get(id) ?? { harm: 0, shield: 0, heal: 0, dies: false, spared: false };
       totals.set(id, found);
       return found;
     };
     for (const event of ownEvents(applyAction(asKnown(battle, this.playerSide), action).events)) {
       if (event.type === "damage") entry(event.unitId).harm += event.amount;
+      if (event.type === "shieldHit") entry(event.unitId).shield += event.amount;
       if (event.type === "heal") entry(event.unitId).heal += event.amount;
       if (event.type === "death") entry(event.unitId).dies = true;
       if (event.type === "deathPrevented") entry(event.unitId).spared = true;

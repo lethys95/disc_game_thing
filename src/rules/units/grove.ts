@@ -58,7 +58,7 @@ export const GROVE_UNITS: Readonly<Record<string, UnitDef>> = {
   decay_support_2: {
     id: "decay_support_2", name: "Decay support 2", faction: "grove", tier: 2, damageType: "weapon",
     stats: { maxHp: 95, shield: 0, damage: 12, armor: 0, initiative: 45, abilityPower: 200 },
-    abilities: [{ id: "bloom", params: { amount: 4 } }, ...kit("corpse_growth", "corpse_explosion", "shoot", "defend", "wait")],
+    abilities: [{ id: "witherbloom" }, ...kit("corpse_growth", "corpse_explosion", "shoot", "defend", "wait")],
   },
   // The Spiritess branch (user, 2026-09-29): semi-HoT and Burst mend at tier 2; the Psychopomp adds Spiritwalk.
   spiritess_2: {

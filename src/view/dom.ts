@@ -48,6 +48,18 @@ const COIN_SVG =
   '<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#b8862b"/><circle cx="8" cy="8" r="7" fill="none" stroke="#6e4d12" stroke-width="1"/>' +
   '<circle cx="8" cy="8" r="4.6" fill="none" stroke="#f3d27a" stroke-width="1.2"/><circle cx="6" cy="5.6" r="1.4" fill="#fbe8a8" opacity="0.8"/></svg>';
 
+const SKULL_SVG =
+  '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.2C4.3 1.2 1.8 3.7 1.8 6.9c0 2 1 3.5 2.6 4.3v2.4c0 .6.4 1 1 1h5.2c.6 0 1-.4 1-1v-2.4c1.6-.8 2.6-2.3 2.6-4.3 0-3.2-2.5-5.7-6.2-5.7Z" fill="#eadfcf" stroke="#2a1512" stroke-width=".8"/>' +
+  '<circle cx="5.5" cy="7.3" r="1.7" fill="#2a1512"/><circle cx="10.5" cy="7.3" r="1.7" fill="#2a1512"/><path d="M8 9.1 7.1 10.9h1.8Z" fill="#2a1512"/>' +
+  '<path d="M6.4 12.3v2.2M8 12.3v2.2M9.6 12.3v2.2" stroke="#2a1512" stroke-width=".7"/></svg>';
+
+/** A skull: what an action that would kill shows over its victim. */
+export function skull(): HTMLElement {
+  const icon = element("span", "skull");
+  icon.innerHTML = SKULL_SVG;
+  return icon;
+}
+
 /** An amount of gold with a coin in front: currency people recognise at a glance. */
 export function gold(amount: number | string, className = ""): HTMLElement {
   const el = element("span", `gold ${className}`.trim());

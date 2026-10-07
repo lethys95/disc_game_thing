@@ -103,6 +103,16 @@ describe("the Grove's backline and corpses (user, 2026-09-29)", () => {
     return { ...battle, units: { ...battle.units, "1.0.1": dead } };
   };
 
+  test("Witherbloom: an ally regrows over its next turns, and an enemy that hits it while it blooms withers", () => {
+    let battle = until(start([p("decay_support_2", 2, 1), { ...p("sproutling", 0, 1), hp: 40 }], [p("congregant", 0, 1)]), "0.2.1");
+    battle = act(battle, "witherbloom", "0.0.1").battle;
+    const bloomed = unit(battle, "0.0.1");
+    expect(bloomed.effects.map((e) => e.def)).toEqual(expect.arrayContaining(["mending", "witherblooming"]));
+    battle = until(battle, "1.0.1");
+    battle = act(battle, "attack", "0.0.1").battle;
+    expect(unit(battle, "1.0.1").effects.find((e) => e.def === "withered")?.amount).toBe(5);
+  });
+
   test("Corpse growth: every living ally heals; the corpse is used up and can't be used again", () => {
     const battle = withCorpse();
     const after = act(battle, "corpse_growth", "1.0.1").battle;

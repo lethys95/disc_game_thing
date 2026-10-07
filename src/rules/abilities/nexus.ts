@@ -23,7 +23,7 @@ export const nexus: Readonly<Record<string, Behavior>> = {
     describe: (p) =>
       `A burst of ${p["power"]} hitting every enemy in a plus shape. ${spellCost(p, "every enemy is hit")}`,
     tags: ["attack", "ranged", "spell", "damage", "area"],
-    defaults: { power: 22, cost: 1 },
+    defaults: { power: 23, cost: 1 },
     scales: ["power"],
     choices: (ctx, self) =>
       areaChoices(ctx, self, (row, col) => [{ row, col }, { row: row - 1, col }, { row: row + 1, col }, { row, col: col - 1 }, { row, col: col + 1 }]),
@@ -151,7 +151,7 @@ export const nexus: Readonly<Record<string, Behavior>> = {
     describe: (p) =>
       `Lightning (${p["power"]}) strikes an enemy. ${spellCost(p, "it strikes every unit with the target's name, friend and foe alike")}`,
     tags: ["attack", "ranged", "spell", "damage", "area"],
-    defaults: { power: 28, cost: 1 },
+    defaults: { power: 22, cost: 1 },
     scales: ["power"],
     choices: (ctx, self) => ctx.living(opponent(ctx.unit(self.unitId).side)).map((target) => single(target, "main")),
     overloadChoices: (ctx, self) => {

@@ -96,23 +96,17 @@ abilities instead of flat numbers."
 - Shown on unit cards, the battle card and the codex only for units with an ability that scales.
 - The AI values a point of it at 0.5 (`STAT_WORTH`), like a point of health.
 - With every unit at 100, battle sims were unchanged; whole games differed only through veterans.
-- **By tier: 100 × tier (100, 200, 300, 400, 500; the user, 2026-10-07).** A first try, +25 a tier, made upgrades
-  "a bit insignificant"; the user's reference is Disciples II, where damage starts around 25 and adds 25 a tier, so
-  tier 2 is about double. Melee damage here already grows that way (Congregant 20, Paladin 40, Templar 60); only the
-  casters' ability numbers were flat. Set on each unit, so any one can be tuned alone. Each ability is written at
-  100 so that its lowest-tier user keeps the number it had; units' own flat numbers were removed except where one
-  breaks the curve on purpose:
-  - **The Apprentice's Burst stays 35** (the curve's 22 would leave Ral-Vitahl's tier-1 squads at 17% instead of 41%
-    in the composition matrix: its opening). So Burst runs 35 / 44 / 66 by tier.
-  - **The Maelstrom's Homing Lightning stays 105** (the curve gives 84; the Thaumaturge's is 56).
-  - **Decay support 2's Bloom stays 8** (a weak Bloom beside its corpse abilities; the curve gives 24).
+- **Per unit, 100 × tier as a guideline (the user, 2026-10-07):** "we're not fixed to this 100, 200 […] Just like
+  all units don't have the same amount of hp, units won't have the same amount of ability power. Nexus units are
+  intended to be fragile glass canons with a tight game plan." Abilities are written at 100; no unit carries its own
+  copy of an ability's number any more. Ral-Vitahl's casters sit above the guideline: Apprentice 150, Justiciar 200,
+  Thaumaturge 250, Backlasher and Maelstrom 350 (Claude's numbers, from the composition matrix: at Justiciar 250 its
+  replicated Burst made its squads unbeatable; at 400 the tier-3 casters' were). Burst 23 at 100 (35 / 46–58 / 81),
+  Homing Lightning 22 (55 / 77).
+- **Every heal scales:** Water now heals a flat 30 at 100 (was 3× the unit's damage, which barely grew with tier).
+- **Witherbloom** replaces Decay support 2's weakened Bloom (the user: "just create a different bloom spell. Call it
+  witherbloom. Maybe it heals less and does something slightly different"). Claude's pitch: regrows 4 at 100 (8 on
+  the unit) for 3 turns, and while it blooms, an enemy that hits the bearer withers 5 (up to 15) for the rest of combat.
+- **Matrix at this point** (all squads): tier 1 unchanged; tier 2 J 49, N 55, G 46; tier 3 about as before (N ~32–39).
+  Not final: the damage stat is going away (next), and attacks will scale too.
 
-  What moved, from before ability power: Burst on the Backlasher and Maelstrom 55 → 66, Justiciar and Thaumaturge
-  40 → 44; Homing Lightning on the Thaumaturge 55 → 56; Backlash 40 → 39; Corpse growth 25 → 26; the Mulch Gorger's
-  Gorge heal 25 → 24; the Psychopomp's Spirit bloom 40 heal + 15 a turn → 54 + 18; the Spiritess's 35 → 36; Grove
-  mend 40 → 39. Spiritwalk's heal is a percentage of max HP and doesn't scale (the first commit scaled it by mistake).
-- **What it did to the composition matrix** (all squads, win %): tier 1 unchanged (J 70, N 41, G 39); tier 2 J 52 → 51,
-  N 46 → 50, G 52 → 49; tier 3 J 73 → 69, N 29 → 32, G 51 → 51. With pure 100 × tier and no exception for the
-  Apprentice, Ral-Vitahl's tier-2 and tier-3 squads won 100%: Burst (the one ability spanning three tiers, hitting up
-  to five units) went 35 / 70 / 105. Balance waits for the units; the curve will tell more once Jilliath's and the
-  Grove's backlines have tiers of their own.
