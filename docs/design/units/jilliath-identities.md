@@ -212,3 +212,8 @@ frame, still inhuman and clothless; 1002 grew a second, lower pair of wings. Hee
 (heavy 1001, heavy-blades 1000); heavy-blades 1001 shows a face under the shell.
 - **Picked (the user):** `reclaimer-platinum-heavy-turnaround-1000`: "I think reclaimer-platinum-heavy-turnaround-1000
   is probably the best one."
+
+## The user, after round six (2026-10-08)
+- **Shepherd, picked:** "With shepherd I'm going to go back and choose the original shepherd-glass-turnaround-1001. I
+  think iteration just gets worse with shepherd."
+- **Acolyte, unpicked again:** "Acolyte is just too boring. idk what to do with it."
