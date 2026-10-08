@@ -182,3 +182,10 @@ yet: Reclaimer, Cleric, Immortal, Torturer, Avatar.
   board." **Avatar:** "I'm dragging avatar of vengeance back too. I need to read the prompts of these very closely I
   think. Same with torturer. I need to look at the prompt, something makes it go into knight and it's not where i want
   to go."
+
+### Round four: Claude's read
+- **Shepherd** `shepherd-window-face` (either seed): a calm pale face and long silver hair on the all-glass figure.
+- **Seraph** `seraph-blue` 1000: faded deep blue, adult, hooded, part of the face showing.
+- **Reclaimer** `reclaimer-shell-gold` 1001: the closest to the user's exoskeleton yet: a smooth head-shell joined to
+  the body, tight shell legs, metal wings with bladed feathers. A cloth panel still hangs front or back;
+  `reclaimer-shell` (ivory) grew a whole skirt again.
