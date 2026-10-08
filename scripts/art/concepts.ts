@@ -618,6 +618,17 @@ const ANGELS: Readonly<Record<string, { readonly subject: string; readonly pose?
     pose: "all in the same pose, arms straight out to the sides, legs hanging straight down, wings spread wide behind her",
     materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: polished platinum, pale grey stone, tarnished gold, dark teal enamel. Serious, adult, not cartoonish.",
   },
+  // Round six (the user, 2026-10-08): "make the reclaimer bulkier". Round five's platinum reading, heavier.
+  "reclaimer-platinum-heavy": {
+    subject: "An inhuman angel, feminine and powerfully built, broad-shouldered and tall: her whole body is a segmented shell of thick, heavy pale platinum-grey plates, layered deep over her chest, shoulders, arms, hips and thighs. Her head is a small smooth shell fused to the body, no face, a small gold diamond set in the brow, gold diamonds set in her chest and shoulders. Her legs have no feet: they taper into long pointed tails of overlapping scaled plates, dark teal at the tips. No cloth anywhere, no skirt, no shoes. Huge wings of pale stone-grey feathers darkening to deep teal at the tips.",
+    pose: "all in the same pose, arms straight out to the sides, legs hanging straight down, wings spread wide behind her",
+    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: polished platinum, pale grey stone, tarnished gold, dark teal enamel. Serious, adult, not cartoonish.",
+  },
+  "reclaimer-platinum-heavy-blades": {
+    subject: "An inhuman angel, feminine and powerfully built, broad-shouldered and tall: her whole body is a segmented shell of thick, heavy pale platinum-grey plates, layered deep over her chest, shoulders, arms, hips and thighs, the shoulder plates wide and high. Her head is a small smooth shell fused to the body, no face, a small gold diamond set in the brow, gold diamonds set in her chest and shoulders. Her legs have no feet: they taper into long pointed tails of overlapping scaled plates. No cloth anywhere, no skirt, no shoes. Huge wings of pale platinum feathers, each feather a long thin blade, darkening to deep teal at the tips.",
+    pose: "all in the same pose, arms straight out to the sides, legs hanging straight down, wings spread wide behind her",
+    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: polished platinum, pale grey stone, tarnished gold, dark teal enamel. Serious, adult, not cartoonish.",
+  },
 };
 
 const ANGEL_JOBS = Object.entries(ANGELS).map(([id, { subject, pose, materials }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are empty and open.`, materials ?? ANGEL_3D, pose ?? WINGED_T_POSE) }));
