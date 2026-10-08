@@ -595,7 +595,7 @@ const ANGELS: Readonly<Record<string, { readonly subject: string; readonly pose?
     subject: "An angel woman whose body is a smooth ivory exoskeleton: a seamless shell fitted tight to her slender form from head to toe, her head part of the same shell, curved and blank, no visor, no skirt, long slender legs in the same shell. Her wings are polished silver metal, each feather a long thin blade.",
   },
   "reclaimer-shell-gold": {
-    subject: "An angel woman sealed in a tight, seamless exoskeleton of polished white and pale gold, smooth as a carapace, the head a featureless curved shell joined to the body, no visor, no skirt, slender legs in the same shell. Wings of pale gold metal, every feather a long thin blade.",
+    subject: "An angel woman sealed in a tight, seamless exoskeleton of polished white and pale gold, a smooth carapace, the head a featureless curved shell joined to the body, no visor, no skirt, slender legs in the same shell. Wings of pale gold metal, every feather a long thin blade.",
   },
 };
 
