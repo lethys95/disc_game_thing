@@ -493,7 +493,7 @@ const ANGEL_3D =
 
 const WINGED_T_POSE = "all standing in the same T-pose, her wings open behind her and clear of her arms";
 
-const ANGELS: Readonly<Record<string, { readonly subject: string; readonly pose?: string }>> = {
+const ANGELS: Readonly<Record<string, { readonly subject: string; readonly pose?: string; readonly materials?: string }>> = {
   // The user: "hooded, closed off, praying"; not "a bundle of feathers". Praying is a pose, so the hood carries it.
   "seraph-hooded": {
     subject: "A humble young angel woman, small and slight. A deep plain hood of undyed linen leaves her face in shadow, her head bowed. A simple long robe of undyed grey linen tied with a rope cord, bare feet. Small grey-white wings folded close behind her back.",
@@ -597,9 +597,30 @@ const ANGELS: Readonly<Record<string, { readonly subject: string; readonly pose?
   "reclaimer-shell-gold": {
     subject: "An angel woman sealed in a tight, seamless exoskeleton of polished white and pale gold, a smooth carapace, the head a featureless curved shell joined to the body, no visor, no skirt, slender legs in the same shell. Wings of pale gold metal, every feather a long thin blade.",
   },
+  // Round five (the user on round four, 2026-10-08): the Shepherd's face of stained glass; the Seraph's cloak looked like
+  // clay (flat light on an untextured cloth: the weave is named now); the Reclaimer after the user's reference, an
+  // inhuman shell with no feet, described in words. "Woman" and the angels' linen line dressed her in a skirt and heels,
+  // so both are gone from her prompt.
+  "shepherd-glassface": {
+    subject: "An angel woman whose whole body and robes are made of stained glass: panes of red, gold and deep blue glass held in black lead frames, light glowing through them. Her wings are the same stained glass in long feather shapes. Her face too is stained glass: a calm woman's face built from pale panes in black lead, long silver hair.",
+  },
+  "seraph-wool": {
+    subject: "A tall, grown angel woman, a mature adult, slender. A long simple robe and deep hood of coarse woven wool in faded deep blue, the weave visible, heavy soft folds, frayed hems, tied with a rope cord, bare feet. The hood leaves her face in shadow, her head bowed. Grey-white wings folded close behind her back.",
+    pose: "all standing in the same T-pose, her wings folded behind her",
+  },
+  "reclaimer-platinum": {
+    subject: "An inhuman angel, slender and feminine, tall with long elongated limbs: her whole body is a segmented shell of smooth pale platinum-grey plates, overlapping along her arms, waist and legs. Her head is a small smooth shell fused to the body, no face, a small gold diamond set in the brow, small gold diamonds set in her chest and shoulders. Her legs have no feet: they taper into long pointed tails of overlapping scaled plates, dark teal at the tips. No cloth anywhere, no skirt, no shoes. Huge wings of pale stone-grey feathers darkening to deep teal at the tips.",
+    pose: "all in the same pose, arms straight out to the sides, legs hanging straight down, wings spread wide behind her",
+    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: polished platinum, pale grey stone, tarnished gold, dark teal enamel. Serious, adult, not cartoonish.",
+  },
+  "reclaimer-platinum-blades": {
+    subject: "An inhuman angel, slender and feminine, tall with long elongated limbs: her whole body is a segmented shell of smooth pale platinum-grey plates, overlapping along her arms, waist and legs. Her head is a small smooth shell fused to the body, no face, a small gold diamond set in the brow, small gold diamonds set in her chest and shoulders. Her legs have no feet: they taper into long pointed tails of overlapping scaled plates. No cloth anywhere, no skirt, no shoes. Huge wings of pale platinum feathers, each feather a long thin blade, darkening to deep teal at the tips.",
+    pose: "all in the same pose, arms straight out to the sides, legs hanging straight down, wings spread wide behind her",
+    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: polished platinum, pale grey stone, tarnished gold, dark teal enamel. Serious, adult, not cartoonish.",
+  },
 };
 
-const ANGEL_JOBS = Object.entries(ANGELS).map(([id, { subject, pose }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are empty and open.`, ANGEL_3D, pose ?? WINGED_T_POSE) }));
+const ANGEL_JOBS = Object.entries(ANGELS).map(([id, { subject, pose, materials }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are empty and open.`, materials ?? ANGEL_3D, pose ?? WINGED_T_POSE) }));
 
 /**
  * Jilliath's priests, the mage line's faith side: the humans who follow the angels (`jilliath-identities.md`). Round
