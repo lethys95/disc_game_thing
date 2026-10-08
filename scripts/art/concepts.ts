@@ -629,6 +629,16 @@ const ANGELS: Readonly<Record<string, { readonly subject: string; readonly pose?
     pose: "all in the same pose, arms straight out to the sides, legs hanging straight down, wings spread wide behind her",
     materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: polished platinum, pale grey stone, tarnished gold, dark teal enamel. Serious, adult, not cartoonish.",
   },
+  // The user (2026-10-08): "She's not captured, she's just humble. Make her hooded. Hide her face, give her robes. She'll
+  // be praying in her posture in game. Robes are black and white cloth/silk. Wings are brown and plain."
+  "seraph-silk": {
+    subject: "A tall, grown angel woman, humble and quiet. A deep hood hides her face completely in shadow. Long layered robes of black and white: a black outer robe of heavy woven cloth over an inner robe of white silk with soft sheen and fine folds, the white showing at the collar, sleeves and hem. Plain brown feathered wings folded behind her back.",
+    pose: "all standing in the same T-pose, her wings folded behind her",
+  },
+  "seraph-silk-white": {
+    subject: "A tall, grown angel woman, humble and quiet. A deep hood hides her face completely in shadow. Long layered robes of white and black: a white outer robe of soft silk with fine folds and a gentle sheen over an inner robe of black woven cloth, the black showing at the collar, sleeves and hem. Plain brown feathered wings folded behind her back.",
+    pose: "all standing in the same T-pose, her wings folded behind her",
+  },
 };
 
 const ANGEL_JOBS = Object.entries(ANGELS).map(([id, { subject, pose, materials }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are empty and open.`, materials ?? ANGEL_3D, pose ?? WINGED_T_POSE) }));

@@ -218,3 +218,6 @@ frame, still inhuman and clothless; 1002 grew a second, lower pair of wings. Hee
   think iteration just gets worse with shepherd."
 - **The Seraph, not the Acolyte:** "Acolyte is just too boring. idk what to do with it", then: "I meant I don't know
   what to do with seraph rather. It's just so boring". The Acolyte stays picked; the Seraph is open.
+- **The Seraph (the user, 2026-10-08):** "No, why would you bound wings. She's not captured, she's just humble. Make
+  her hooded. Hide her face, give her robes. She'll be praying in her posture in game. Robes are black and white
+  cloth/silk. Wings are brown and plain. Try that. I'm sure we can make her seem humble and less boring."
