@@ -94,3 +94,11 @@ casters (names first), the Chosen (the user: "might need more").
   hooded, no iron maiden. **Avatar** (`avatar-wings`): a dark-winged armoured man, no fire. All three retried.
 - **Iron maiden, as the user means it (2026-10-08):** "I don't want a casket for the reclaimer or the torturer. It's the
   metal and the spikes, not the shell." Angels round two's `reclaimer-casket` was already running: off-direction.
+
+### Angels, round two: Claude's read
+- **Godkin** (`godkin-bare` 1001): the bare silhouette filled with a daylit sky and shafts of sun is the user's
+  description; 1000 grew tufts of dark feathers.
+- **Paragon** (`paragon-fire` 1000, 1001): a ring of real fire over her head now, white robe, red-dipped wings; told
+  apart from the Empyreal by colour (white against red) and halo (fire against blades).
+- **Reclaimer** (`reclaimer-porcelain`): still a visored knight's helm on plate armour, not seamless ivory; Krea
+  draws "armor" as knights. `reclaimer-casket` ran before the user's correction and is off-direction.
