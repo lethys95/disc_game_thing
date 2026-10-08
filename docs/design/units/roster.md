@@ -40,6 +40,10 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 
 | Godkin | Jilliath 5 (support) | user (a silhouette of moving sky) | picked: `godkin-bare-turnaround-1001` (user: "has captured what I intended") | — |
 | Pontiff | Jilliath 3 (mage) | Claude's crown of candles (user: "looks good") | picked: `pontiff-candles-turnaround-1001` (seed Claude's) | — |
+| Acolyte | Jilliath 1 (mage) | Claude's (red blindfold, lantern) | picked: `acolyte-branded-turnaround` (user: "as he is now"; seed 1001 Claude's) | — |
+| Doomsayer | Jilliath 2 (mage) | Claude's (a street prophet, yoke and bells) | picked: `doomsayer-plain-turnaround-1001` (user), scroll `doomsayer-scroll-props-1000` (Claude's, the user's leave) | — |
+| Templar | Jilliath 3 (preserve) | Claude's knight, the user's rose shield | picked: `templar-rose-turnaround-1001`, shield `templar-shield-props-1001` (user) | — |
+| Immortal | Jilliath 4 (preserve) | Claude's (white marble mended with gold; crest, halo, cape) | picked: `immortal-kintsugi-turnaround-1000` (user: "he looks awesome"); weapon open | — |
 | Emissary | Jilliath 2 (support) | user ("closer to the stereotypical angel") | picked: `emissary-robed-turnaround` (user: "looks great"; seed 1000 or 1001 open) | — |
 
 ## 2. Identity, but no picked concept: needs concept art

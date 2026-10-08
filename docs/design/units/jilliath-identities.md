@@ -154,3 +154,31 @@ yet: Reclaimer, Cleric, Immortal, Torturer, Avatar.
   nails); Avatar `avatar-flamehead` 1001 (a burning head, charred wings).
 - **Still missing:** Torturer (a knight for the third round), Reclaimer (a knight with a skirt), Cleric `cleric-sewn`.
   Krea keeps reaching for plate knights; next tries describe the body first.
+
+## The user on round three (2026-10-08)
+- **Picked:** the **Acolyte** `acolyte-branded` ("We can take acolyte as he is now I think"; seed 1001, Claude's); the
+  **Doomsayer** `doomsayer-plain-turnaround-1001` ("Doomsayer is fine. 1001 and I'll let you pick the scroll": Claude
+  picks `doomsayer-scroll-props-1000`); the **Templar** `templar-rose-turnaround-1001` and `templar-shield-props-1001`;
+  the **Immortal** `immortal-kintsugi-turnaround-1000` ("he looks awesome. idon't know what weapon to use with him
+  though").
+- **Shepherd:** "Give t4 support a face." **Seraph:** "better, but bland. idk if we can do something about it. Make her
+  clothes blue or something."
+- **Empyreal:** "better. But idk if it works. Clips with wings right now. Lets give her three pairs of wings too." Later:
+  "I actually think we need to rethink Empyreal in a way. like, I don't really know what sense it makes to have a giant
+  metal halo thing of blades, and then not use blades. It's the visual design that has to change. I think I need better
+  ideas. I like the idea of oil canvas skin, glare. Red wings work. but overall just needs more work I think."
+- **Paragon:** "Boring. Even more boring than before. Also the halo might be more of an effect. I basically would want
+  it to be flat from the side too. We're breaking the dimensions again, which makes it hard to sculpt. Which means we
+  can skip it, but it means that she needs character in a different way still."
+- **Guardian:** "still bored honestly. I don't really know how we should get 'more', ideas?"
+- **Reclaimer:** "actually getting close to the platinum angel at ivory-greaves, and given how much it struggles with the
+  iron maiden, I'd reckon we should try more on platinum angel. Her helmet should be more part of the suit. You
+  basically need to think exoskeleton armor/shell instead of a full plated armor set. No skirt, rather tight fitting.
+  Wings should probably be metal colored too. Bladed feathers maybe, idk."
+- **Archon:** "wings just look like thicker wet noodles now. The rest of him looks great though. Idk maybe we can give
+  him some other effect that indicates ascension then, instead of wings and weird tentacle things."
+- **Cleric:** "no. We need to go back to the drawing board with cleric, it's not working."
+- **Chosen:** "extremely boring." **Fanatic:** "better but not good. I think we need to drag him back to the drawing
+  board." **Avatar:** "I'm dragging avatar of vengeance back too. I need to read the prompts of these very closely I
+  think. Same with torturer. I need to look at the prompt, something makes it go into knight and it's not where i want
+  to go."
