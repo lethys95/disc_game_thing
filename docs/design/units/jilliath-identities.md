@@ -141,3 +141,16 @@ yet: Reclaimer, Cleric, Immortal, Torturer, Avatar.
 - **Shepherd:** "I'd agree the stained glass wings are great on that angel, but the rest is boring and forgetable."
 - **Guardian:** "It needs more, I think. Dress is boring."
 - **Chosen:** "He should be in abstract painted armor and he should have a sword of heated metal."
+
+### Round three: Claude's read (all on `shots/jilliath-concepts.html`)
+- **Lands:** Empyreal `empyreal-glare` 1000 (enormous blades, orange eyes, a stare; no painting-craquelure skin);
+  Shepherd `shepherd-window` 1000 (glass robes too); Seraph `seraph-adult` 1000 (an adult now); Templar `templar-rose`
+  1000 with `templar-shield-props` 1000 (the silver rose, excellent); Chosen `chosen-painted` 1000 with
+  `chosen-sword-props`; Cleric `cleric-weeping` 1000 (the gilded weeping mask: not generic at last); Doomsayer
+  `doomsayer-plain` 1001 with `doomsayer-scroll-props`; Archon `archon-massive` 1000 (heavier bands to the ground).
+- **Halfway:** Paragon `paragon-icon-gold` (the flat gold icon disc lands; blood and fury don't); Guardian
+  `guardian-silver` (silver filigree; still restrained); Acolyte `acolyte-branded` (blindfold and lantern; no brand);
+  Immortal `immortal-kintsugi` (crest, halo, cape: a step up; no gold seams); Fanatic `fanatic-nails` (the crown of
+  nails); Avatar `avatar-flamehead` 1001 (a burning head, charred wings).
+- **Still missing:** Torturer (a knight for the third round), Reclaimer (a knight with a skirt), Cleric `cleric-sewn`.
+  Krea keeps reaching for plate knights; next tries describe the body first.
