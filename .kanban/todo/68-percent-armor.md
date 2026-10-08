@@ -7,5 +7,11 @@
   at tier 3, and now reaches every target of an area spell. Canon so far is flat (`design/pillars.md`, the user
   2026-09-25: "20 armor, 25 damage, 5 gets through").
 - **The user (2026-10-07):** "True. We might do this." (both).
+- **Armor: yes (the user, 2026-10-08):** "I think we should do pct armor gain, yes, but then we just need to think
+  about diminishing returns. In disc2, armor is added flat. […] it climbs up to a 90% damage reduction. It's broken.
+  […] So if we do pct armor like disc2 does, then we need to also do diminishing returns, like something like WoW
+  does." Claude's proposal (not yet confirmed): armor stays points; reduction = armor ÷ (armor + 60) (20 → 25%,
+  40 → 40%, 90 → 60%, 540 → 90%); the card shows the percent; a hit still deals at least 1. Flat hit buffs: not
+  answered yet.
 - **Done when:** The user decides; if yes, built before the factions' lines are tuned against armor.
 - **Who:** The user decides; Claude builds and reruns the composition matrix.

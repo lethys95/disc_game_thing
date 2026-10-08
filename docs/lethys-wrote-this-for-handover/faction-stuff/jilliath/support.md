@@ -134,3 +134,11 @@ Built (Claude's readings, provisional numbers: `provisional.md` #73):
   *Reclaim* (placeholder name, from the user's "reclaiming"), an attack that heals her for what it deals.
 - **Vengeance ends at tier 3 (the user, 2026-10-08):** "I think we end at t3 vengeance. it becomes too much. I'm
   already unsure of whether or not t5 is too much in faith support."
+- **The guardian angels (the user, 2026-10-08):** "if t1 is single target basic heal, then t2 could be 'prayer' for a
+  weak/moderate healing, t3 guardian gets a single target single use 30+ armor on target for a single turn. We can
+  just call that 'guardian's shield'. Shepherd... Lets say gets an upgraded prayer with +5 armor to targets healed for
+  a turn. Godkin res." And: "we're not really doing christianity. We're just doing winged people from above."
+  Built (Claude's readings): each tier keeps the last one's spells. **Emissary** (t2): *Prayer* heals every ally a
+  little. **Guardian** (t3): *Guardian's Shield*, once per combat, +30 armor on one ally until its next turn.
+  **Shepherd** (t4): Prayer also gives +5 armor until each ally's next turn. **Godkin** (t5): *Resurrection*, once per
+  combat, a fallen ally rises at 50% health (not one whose corpse was used or destroyed).
