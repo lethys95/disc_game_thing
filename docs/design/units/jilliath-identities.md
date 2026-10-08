@@ -92,3 +92,5 @@ casters (names first), the Chosen (the user: "might need more").
 - **Fanatic** (`fanatic-scarred`): shaved, bare-chested, chains on the arms; the scars and prayer scraps are faint.
 - **Immortal** (`immortal-deathmask`): no death mask, generic knights. **Torturer** (`torturer-maiden`): spiked and
   hooded, no iron maiden. **Avatar** (`avatar-wings`): a dark-winged armoured man, no fire. All three retried.
+- **Iron maiden, as the user means it (2026-10-08):** "I don't want a casket for the reclaimer or the torturer. It's the
+  metal and the spikes, not the shell." Angels round two's `reclaimer-casket` was already running: off-direction.

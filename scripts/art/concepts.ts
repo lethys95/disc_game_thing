@@ -542,6 +542,10 @@ const ANGELS: Readonly<Record<string, { readonly subject: string; readonly pose?
   "reclaimer-porcelain": {
     subject: "An angel woman sealed from head to toe in seamless, tight-fitting armor of smooth polished ivory, slender and elegant, no skin showing, no straps or rivets. Her head is a smooth ivory helm with a blank curved faceplate, no visor, no eye slits. Long ivory feathered wings.",
   },
+  // The iron-maiden reading as the user means it: "the metal and the spikes, not the shell".
+  "reclaimer-iron": {
+    subject: "An angel woman in close-fitting armor of dark riveted iron, rows of short iron spikes standing out along her arms, shoulders and spine, an iron helm shaped as a calm sculpted woman's face. Wings of blackened iron feathers.",
+  },
   "reclaimer-casket": {
     subject: "An iron maiden, the medieval torture casket, made into an angel: a tall upright riveted iron coffin in the shape of a woman, a calm sculpted woman's face on its lid, the lid open a little to show iron spikes inside; slender iron arms, and wings of blackened iron feathers spread from its back.",
   },
@@ -606,8 +610,10 @@ const MELEE: Readonly<Record<string, { readonly subject: string; readonly pose?:
   "immortal-bronze": {
     subject: "A holy knight with no helmet: his face is a bronze death mask cast from his own face, calm, eyes closed, fixed to his head with iron bands. His armour is a patchwork of mismatched plates from many broken suits, white lacquer beside blackened steel beside brass, held by rivets and leather straps.",
   },
-  "torturer-casket": {
-    subject: "A torturer of a militant faith who wears an iron maiden: a tall rusted iron casket closed around his body from neck to knees, its outside studded with long iron spikes, only his arms, legs and head free; on his head a rusted iron cage helm. Grotesque, degenerate, full metal.",
+  // The user (2026-10-08): "I don't want a casket for the reclaimer or the torturer. It's the metal and the spikes, not
+  // the shell."
+  "torturer-spikes": {
+    subject: "A torturer of a militant faith in heavy rusted iron armor bristling with iron spikes, long spikes driven through the plates at every angle, some turned inward into his own body, dried blood at the joints; a rusted iron cage helm over his head. Grotesque, degenerate, full metal.",
   },
   "avatar-fire": {
     subject: "A vengeance angel, a man with a scorched, burned bare body and glowing cracks in his skin. His wings are not feathers: two great wings made entirely of roaring orange fire burst from his back. His eyes burn white. Rags of blood-red cloth at his waist, blackened steel greaves.",
