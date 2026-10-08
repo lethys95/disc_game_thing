@@ -36,8 +36,8 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
 ## Next
 1. **The user plays the mage line** (`?fight=mages`, or a map game); fire-side names and the secret's home are open.
 2. **The guardian angels** (todo 15): Emissary, Guardian, Shepherd (stained glass), Godkin (the sky silhouette) are
-   named, not designed; buffs and moderate heals, the resurrection at t4 or t5. The vengeance t4 after Empyreal is
-   open. The user is reading MTG's angels on their own sheet.
+   named, not designed; buffs and moderate heals, the resurrection at t4 or t5. Vengeance ends at tier 3 (the user);
+   faith's tier 5 is in doubt. The user is reading MTG's angels on their own sheet.
 3. **Armor and flat buffs as percentages** (`maybe/percent-armor-and-buffs`): best decided before lines are tuned.
 4. **Waiting for the user to look** (`testing/`): ability power, the front door and codex, portraits, Jilliath's
    opening.

@@ -15,7 +15,8 @@
   side (`support.md`).
 - **Built (2026-10-07, provisional #73):** the vengeance side, Paragon → Empyreal / Reclaimer; the Emissary as a
   placeholder healer so the fork has two sides. `?fight=angels`. Still to design: the guardian side past the
-  placeholder (Emissary, Guardian, Shepherd, Godkin), the vengeance t4 after Empyreal.
+  placeholder (Emissary, Guardian, Shepherd, Godkin). Vengeance ends at tier 3 (the user, 2026-10-08); whether faith
+  needs tier 5 is unsure ("it becomes too much").
 - **Why:** Jilliath's backline is the biggest gap; Ral-Vitahl's casters dominate the matrix until the others have
   ranged lines.
 - **Done when:** Designed, built, tested, in the codex.

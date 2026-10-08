@@ -132,3 +132,5 @@ Built (Claude's readings, provisional numbers: `provisional.md` #73):
 - **Empyreal** (t3a): Atonement healing its three most wounded allies, each for 100% of the damage dealt.
 - **Reclaimer** (t3b): *Transfusion*, the strongest heal, paid for with half of what it heals from her own health; and
   *Reclaim* (placeholder name, from the user's "reclaiming"), an attack that heals her for what it deals.
+- **Vengeance ends at tier 3 (the user, 2026-10-08):** "I think we end at t3 vengeance. it becomes too much. I'm
+  already unsure of whether or not t5 is too much in faith support."
