@@ -481,6 +481,59 @@ const CARNIVAL_JOBS = [
 
 const ETHERBORN_JOBS = [{ id: "etherborn-lined-turnaround", prompt: turnaround(ETHERBORN, NEXUS_NOBLE_3D) }];
 
+/**
+ * Jilliath's angels, the support line (`docs/design/units/jilliath-identities.md`, the user's answers 2026-10-08): all
+ * female; winged people from above, not Christianity. Round one. The user's words are held fixed (the Guardian's
+ * glowing white wings, black robes and white hair; the Shepherd's stained glass; the Godkin's sky silhouette; the
+ * Paragon's halo of flames; the Reclaimer's sealed ivory armour, or an iron maiden). The rest, and each unit's
+ * standout, are Claude's. No weapons on the figures (support units; staffs and crooks get prop sheets later).
+ */
+const ANGEL_3D =
+  "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: aged white linen and black silk, white and ivory feathers, tarnished gold and silver, blackened iron. Serious, adult, not cartoonish.";
+
+const WINGED_T_POSE = "all standing in the same T-pose, her wings open behind her and clear of her arms";
+
+const ANGELS: Readonly<Record<string, { readonly subject: string; readonly pose?: string }>> = {
+  // The user: "hooded, closed off, praying"; not "a bundle of feathers". Praying is a pose, so the hood carries it.
+  "seraph-hooded": {
+    subject: "A humble young angel woman, small and slight. A deep plain hood of undyed linen leaves her face in shadow, her head bowed. A simple long robe of undyed grey linen tied with a rope cord, bare feet. Small grey-white wings folded close behind her back.",
+    pose: "all standing in the same T-pose, her small wings folded behind her",
+  },
+  // The user: "closer to the stereotypical angel, likely with some free flowy robes"; her face may show.
+  "emissary-robed": {
+    subject: "A graceful angel woman, tall, her calm face uncovered and long pale hair loose. Long flowing robes of white and pale gold silk that drift and trail around her, a thin gold circlet. Large white feathered wings.",
+  },
+  "guardian-glowing": {
+    subject: "A stern angel woman with porcelain-white skin and long, smooth, silky white hair falling straight. A long black robe with a high collar and long black sleeves. Her two wings are made of brilliant glowing white light, neon bright, a strong contrast against the black robe.",
+  },
+  "shepherd-glass": {
+    subject: "An angel woman whose wings are stained glass: long feather shapes of red, gold and deep blue glass held in black lead frames. Her face is a single smooth oval pane of pale stained glass in a lead frame, with no features. Long robes of white and deep blue.",
+  },
+  // The user: "No clothing, just the silhouette of sky and godrays." Two readings: with wings and without.
+  "godkin-sky": {
+    subject: "A tall female figure that is only a smooth silhouette, no face, no features, no clothing, no details: her whole surface is a bright cloudy daytime sky, white clouds drifting across blue, and shafts of golden sunlight spike out from her body.",
+    pose: "all standing in the same T-pose",
+  },
+  "godkin-sky-winged": {
+    subject: "A tall female figure that is only a smooth silhouette, no face, no features, no clothing, no details: her whole surface, wings included, is a bright cloudy daytime sky, white clouds drifting across blue, and shafts of golden sunlight spike out from her body and wings.",
+  },
+  "paragon-flame": {
+    subject: "An angel woman with her face uncovered, severe and beautiful, eyes open and stern. A halo of fire burns above her head. White feathered wings whose tips are dipped in blood red. A long robe of white and blood-red cloth over a fitted steel breastplate.",
+  },
+  "empyreal-blades": {
+    subject: "An angel woman in long red and white robes over a breastplate. Above her head stands her halo: a ring of upright steel blades. Her white wings are blood red from the tips halfway up.",
+  },
+  // The user: full tight-fitting ivory armour with a fully covered helmet; or "an iron maiden angel".
+  "reclaimer-ivory": {
+    subject: "An angel woman sealed from head to toe in tight-fitting armor of smooth curved ivory plates, slender and elegant, no skin showing; a fully closed ivory helmet with a smooth faceplate and no face. Long ivory feathered wings.",
+  },
+  "reclaimer-maiden": {
+    subject: "An angel woman built as an iron maiden: her body is a tall riveted iron casket in a woman's shape with a calm sculpted iron face, its front doors standing a little open to show rows of iron spikes inside. Arms and legs of riveted iron, wings of blackened iron feathers.",
+  },
+};
+
+const ANGEL_JOBS = Object.entries(ANGELS).map(([id, { subject, pose }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are empty and open.`, ANGEL_3D, pose ?? WINGED_T_POSE) }));
+
 /** Each group of jobs has its own folder, so one group's run doesn't mix into another's manifest. */
 const GROUPS = [
   { dir: "art/candidates/units/grove", jobs: GROVE_JOBS },
@@ -491,6 +544,7 @@ const GROUPS = [
   { dir: "art/candidates/units/grove/psychopomp", jobs: PSYCHOPOMP_JOBS },
   { dir: "art/candidates/units/neutrals/carnival", jobs: CARNIVAL_JOBS },
   { dir: "art/candidates/units/nexus/etherborn", jobs: ETHERBORN_JOBS },
+  { dir: "art/candidates/units/jilliath/angels", jobs: ANGEL_JOBS },
 ];
 
 const args = process.argv.slice(2);
