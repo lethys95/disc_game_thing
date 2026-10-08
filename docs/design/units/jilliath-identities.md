@@ -210,3 +210,5 @@ yet: Reclaimer, Cleric, Immortal, Torturer, Avatar.
 `reclaimer-platinum-heavy` 1002 (pick), 1000 next: thicker plates layered over chest, shoulders and thighs, a broader
 frame, still inhuman and clothless; 1002 grew a second, lower pair of wings. Heels creep back in some side views
 (heavy 1001, heavy-blades 1000); heavy-blades 1001 shows a face under the shell.
+- **Picked (the user):** `reclaimer-platinum-heavy-turnaround-1000`: "I think reclaimer-platinum-heavy-turnaround-1000
+  is probably the best one."
