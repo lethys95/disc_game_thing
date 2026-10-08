@@ -530,6 +530,21 @@ const ANGELS: Readonly<Record<string, { readonly subject: string; readonly pose?
   "reclaimer-maiden": {
     subject: "An angel woman built as an iron maiden: her body is a tall riveted iron casket in a woman's shape with a calm sculpted iron face, its front doors standing a little open to show rows of iron spikes inside. Arms and legs of riveted iron, wings of blackened iron feathers.",
   },
+  // Round two (Claude's read of round one: the Godkin came out dress-shaped, the Paragon's halo a thorn crown, the
+  // Reclaimer a generic knight's helm, and the iron maiden a dark angel with no casket at all).
+  "godkin-bare": {
+    subject: "A tall slender female figure that is only the smooth silhouette of a bare body, legs apart, no dress, no hair, no face, no features: her whole surface is a bright cloudy daytime sky, white clouds on blue, and shafts of golden sunlight spike out from her body.",
+    pose: "all standing in the same T-pose",
+  },
+  "paragon-fire": {
+    subject: "An angel woman with her face uncovered, severe and beautiful, eyes open and stern. Above her head floats a ring of real burning fire, flames rising from it. White feathered wings whose tips are dipped in blood red. A long white robe over a fitted steel breastplate.",
+  },
+  "reclaimer-porcelain": {
+    subject: "An angel woman sealed from head to toe in seamless, tight-fitting armor of smooth polished ivory, slender and elegant, no skin showing, no straps or rivets. Her head is a smooth ivory helm with a blank curved faceplate, no visor, no eye slits. Long ivory feathered wings.",
+  },
+  "reclaimer-casket": {
+    subject: "An iron maiden, the medieval torture casket, made into an angel: a tall upright riveted iron coffin in the shape of a woman, a calm sculpted woman's face on its lid, the lid open a little to show iron spikes inside; slender iron arms, and wings of blackened iron feathers spread from its back.",
+  },
 };
 
 const ANGEL_JOBS = Object.entries(ANGELS).map(([id, { subject, pose }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are empty and open.`, ANGEL_3D, pose ?? WINGED_T_POSE) }));
