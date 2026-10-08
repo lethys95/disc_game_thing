@@ -102,3 +102,16 @@ casters (names first), the Chosen (the user: "might need more").
   apart from the Empyreal by colour (white against red) and halo (fire against blades).
 - **Reclaimer** (`reclaimer-porcelain`): still a visored knight's helm on plate armour, not seamless ivory; Krea
   draws "armor" as knights. `reclaimer-casket` ran before the user's correction and is off-direction.
+
+### The last round (2026-10-08): Claude's read
+All misses, in one pattern: "armor" and "knight" pull every figure to the same plate-armoured knight. The Cleric's
+iron bridle was ignored twice (`cleric-cage`), the Immortal's death mask twice (`immortal-bronze`), the Torturer's
+spikes (`torturer-spikes`: a cage-visored knight) and the iron Reclaimer's spikes (`reclaimer-iron`: a dark angel); the
+Avatar's fire wings came out flat orange shapes (`avatar-fire`). Next try for the spiked ones: without the word
+"armor"; or carry the detail in the 3D model.
+
+**All rounds on one page for the user:** `shots/jilliath-concepts.html`. Claude's picks: Shepherd `shepherd-glass`
+1000, Godkin `godkin-bare` 1001, Guardian `guardian-glowing` 1000, Paragon `paragon-fire` 1001, Empyreal
+`empyreal-blades` 1001, Archon `archon-bands` 1000, Pontiff `pontiff-candles` 1001, Doomsayer `doomsayer-prophet`
+1001, Templar `templar-reliquary` 1001; Emissary, Seraph and Acolyte either seed; the Fanatic possibly 1000. No pick
+yet: Reclaimer, Cleric, Immortal, Torturer, Avatar.
