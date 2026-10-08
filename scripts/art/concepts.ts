@@ -581,6 +581,22 @@ const ANGELS: Readonly<Record<string, { readonly subject: string; readonly pose?
   "guardian-silver": {
     subject: "A stern angel woman with porcelain-white skin and long, smooth, silky white hair falling straight. Over a long black robe she wears an ornate breastplate and tall collar of silver filigree, silver vambraces and a long open black coat edged in silver. Her two wings are made of brilliant glowing white light, neon bright, a strong contrast against the black.",
   },
+  // Round four (the user on round three, 2026-10-08).
+  "shepherd-window-face": {
+    subject: "An angel woman whose whole body and robes are made of stained glass: panes of red, gold and deep blue glass held in black lead frames, light glowing through them. Her wings are the same stained glass in long feather shapes. She has a calm, beautiful woman's face of pale glass, eyes closed, framed by long silver hair.",
+  },
+  "seraph-blue": {
+    subject: "A tall, grown angel woman, a mature adult, slender. A deep hood of faded deep blue linen leaves her face in shadow, her head bowed. A long simple robe of the same faded blue, tied with a rope cord, bare feet. Grey-white wings folded close behind her back.",
+    pose: "all standing in the same T-pose, her wings folded behind her",
+  },
+  // The user: "think exoskeleton armor/shell instead of a full plated armor set. No skirt, rather tight fitting. Wings
+  // should probably be metal colored too. Bladed feathers maybe."
+  "reclaimer-shell": {
+    subject: "An angel woman whose body is a smooth ivory exoskeleton: a seamless shell fitted tight to her slender form from head to toe, her head part of the same shell, curved and blank, no visor, no skirt, long slender legs in the same shell. Her wings are polished silver metal, each feather a long thin blade.",
+  },
+  "reclaimer-shell-gold": {
+    subject: "An angel woman sealed in a tight, seamless exoskeleton of polished white and pale gold, smooth as a carapace, the head a featureless curved shell joined to the body, no visor, no skirt, slender legs in the same shell. Wings of pale gold metal, every feather a long thin blade.",
+  },
 };
 
 const ANGEL_JOBS = Object.entries(ANGELS).map(([id, { subject, pose }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are empty and open.`, ANGEL_3D, pose ?? WINGED_T_POSE) }));
