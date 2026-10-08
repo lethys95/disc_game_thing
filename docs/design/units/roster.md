@@ -52,10 +52,18 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 ## 3. No identity yet: needs a look in words first (the user's, or Claude's to propose)
 | Unit | Faction · tier | What exists |
 |---|---|---|
-| Cleric | Jilliath 1 | a design (heal, weak shot), no look |
-| Templar, Immortal | Jilliath 3–4 (preserve) | designs, no look |
-| Fanatic, Chosen, Avatar of Vengeance | Jilliath 3–5 (consume) | designs, no look |
-| Torturer | Jilliath 4 | design, no look |
+| Seraph | Jilliath 1 (support) | user: "hooded, closed off, praying"; Claude's draft adds to it |
+| Emissary, Guardian, Paragon, Empyreal, Reclaimer | Jilliath 2–3 (support) | designs; Claude's drafts (the Paragon's blood-tipped wings are the user's) |
+| Shepherd, Godkin | Jilliath 4–5 (support) | user: stained glass; a silhouette of moving sky with god rays |
+| Acolyte, Cleric, Pontiff | Jilliath 1–3 (mage, priests) | designs; Claude's drafts |
+| Archon | Jilliath 4 (mage) | user: "one foot into the world of angels"; Claude's draft |
+| Doomsayer, Fire mage 3, Fire mage 4, Martyr mage 4 | Jilliath 2–4 (mage, fire) | designs; Claude's drafts |
+| Templar, Immortal | Jilliath 3–4 (preserve) | designs; Claude's drafts |
+| Fanatic, Chosen, Avatar of Vengeance | Jilliath 3–5 (consume) | designs; Claude's drafts |
+| Torturer | Jilliath 4 | design; Claude's draft |
+
+Claude's drafts for every Jilliath unit above (2026-10-08): `shots/jilliath-identities.html`, awaiting the user's
+keep, maybe or cut.
 | Technician | Nexus 1 | design, no look |
 | Cyclops | Nexus 2 | design; "scheme = automata" (dichotomies) |
 | Mutant | Nexus 2 | design; "mutants will be the melee line" |
@@ -73,9 +81,7 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 | Decay support 2 | a name; the user's direction (corpses), no unit sheet of its own |
 | Regrowth 2, Regrowth 3 | names; the user's direction only (regeneration, then support); questions #10 |
 | Spiritess 2 | a name beyond the branch's; the user's design (HoT, Burst mend, Wellspring) |
-| Jilliath mage 1 | a name and its branches; Claude's *Condemn*, accepted |
 
 ## Not in the game yet (for completeness)
 The Wastes (Vexumphat) have no units: Claude's tier-1 pitches sit in `faction-stuff/wastes/`. Undesigned slots: the
-Spiritess line's tier 4, the Grove mage's higher tiers, Nexus melee tier 3, Technician tier 2, Jilliath's tier-2
-support and mage. More carnival units are expected.
+Spiritess line's tier 4, the Grove mage's higher tiers, Nexus melee tier 3, Technician tier 2. More carnival units are expected.
