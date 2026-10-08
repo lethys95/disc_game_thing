@@ -198,3 +198,10 @@ yet: Reclaimer, Cleric, Immortal, Torturer, Avatar.
   body with no face, small gold diamond inlays, legs with no feet tapering into scaled points, huge stone-grey wings
   going dark teal at the tips. (Claude: "woman" and the angels' linen-and-silk materials line dressed her; round five
   drops both and gives her a materials line of her own. The reference is described in words, not fed to the model.)
+
+### Round five: Claude's read
+- **Reclaimer** `reclaimer-platinum` 1001 (and `-blades` 1001): the user's reference, in words, lands: an inhuman
+  slender segmented shell, no skirt or heels, a fused head-shell with a gold diamond, legs tapering to teal points; the
+  chest diamonds didn't come. Her own materials line and "inhuman" over "woman" did it.
+- **Shepherd** `shepherd-glassface` 1001: a calm face divided into panes by black lead.
+- **Seraph** `seraph-wool` 1000: woven wool with weight and fraying; no more clay.
