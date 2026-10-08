@@ -549,6 +549,38 @@ const ANGELS: Readonly<Record<string, { readonly subject: string; readonly pose?
   "reclaimer-casket": {
     subject: "An iron maiden, the medieval torture casket, made into an angel: a tall upright riveted iron coffin in the shape of a woman, a calm sculpted woman's face on its lid, the lid open a little to show iron spikes inside; slender iron arms, and wings of blackened iron feathers spread from its back.",
   },
+  // Round three, after the user's notes (2026-10-08, `jilliath-identities.md`).
+  "seraph-adult": {
+    subject: "A tall, grown angel woman, a mature adult, slender. A deep plain hood of undyed linen leaves her face in shadow, her head bowed. A long simple robe of undyed grey linen tied with a rope cord, bare feet. Grey-white wings folded close behind her back.",
+    pose: "all standing in the same T-pose, her wings folded behind her",
+  },
+  // The user: a halo that is "a flat 2d plane regardless of angle, not unlike how it is in some old art of angels",
+  // filled with something. Two fillings; vengeance "much much more extreme".
+  "paragon-icon-gold": {
+    subject: "An angel of vengeance, a woman with a face of cold fury. Behind her head a halo that is a flat round disc of hammered gold leaf tooled with rays and flames, facing forward, flat as in old icon paintings. White wings drenched in fresh blood from the tips halfway up, blood dripping from the feathers. A white robe spattered with blood over a scorched steel breastplate.",
+  },
+  "paragon-icon-fire": {
+    subject: "An angel of vengeance, a woman with a face of cold fury. Behind her head a halo that is a flat round disc filled with burning fire, facing forward, flat as in old icon paintings. White wings drenched in fresh blood from the tips halfway up, blood dripping from the feathers. A white robe spattered with blood over a scorched steel breastplate.",
+  },
+  // The user's: huge blades, bright orange eyes, skin cracked and coloured like an ancient painting's canvas, a glare.
+  "empyreal-glare": {
+    subject: "An angel of vengeance, a woman of utter intensity. Behind and above her rises an enormous halo of huge steel blades, each blade longer than she is tall, fanning out in a vast ring that dwarfs her whole body. Her eyes glow bright orange. Her skin is cracked all over with the fine craquelure of an ancient oil painting, its colours yellowed and darkened by old varnish. Her face is set in a fixed, intense glare staring straight ahead. Blood-red wings.",
+  },
+  // The user: no skirt, greaves. "Armor" pulls Krea to knights, so the word is left out.
+  "reclaimer-ivory-greaves": {
+    subject: "An angel woman covered from head to toe in fitted plates of polished ivory, slender and elegant, no skin showing, no skirt: plate greaves on her legs, pointed sabatons on her feet. A smooth ivory helm with a blank curved faceplate. Long ivory feathered wings.",
+  },
+  "reclaimer-iron-greaves": {
+    subject: "An angel woman covered in fitted plates of dark riveted iron, rows of short iron spikes standing out along her arms, shoulders, spine and greaves, no skirt: iron greaves on her legs. An iron helm shaped as a calm sculpted woman's face. Wings of blackened iron feathers.",
+  },
+  // The user: the stained-glass wings are great, "the rest is boring and forgetable".
+  "shepherd-window": {
+    subject: "An angel woman whose whole body and robes are made of stained glass: panes of red, gold and deep blue glass held in black lead frames, light glowing through them. Her wings are the same stained glass in long feather shapes. Her face is a single smooth oval pane of pale glass with no features.",
+  },
+  // The user: "It needs more, I think. Dress is boring."
+  "guardian-silver": {
+    subject: "A stern angel woman with porcelain-white skin and long, smooth, silky white hair falling straight. Over a long black robe she wears an ornate breastplate and tall collar of silver filigree, silver vambraces and a long open black coat edged in silver. Her two wings are made of brilliant glowing white light, neon bright, a strong contrast against the black.",
+  },
 };
 
 const ANGEL_JOBS = Object.entries(ANGELS).map(([id, { subject, pose }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are empty and open.`, ANGEL_3D, pose ?? WINGED_T_POSE) }));
@@ -581,6 +613,23 @@ const PRIESTS: Readonly<Record<string, { readonly subject: string }>> = {
   },
   "doomsayer-prophet": {
     subject: "A wild street prophet of doom, gaunt, long matted hair, his face whitened with ash. A ragged grey robe with burnt scrolls of proclamation nailed through it, a wooden yoke across his shoulders hung with small iron bells.",
+  },
+  // Round three, after the user's notes (2026-10-08).
+  "acolyte-branded": {
+    subject: "A young novice of a militant faith, thin and pale, head shaved, a burning outstretched hand freshly branded on his scalp. His eyes bound with a strip of red cloth, both forearms bound in blood-red cloth. A coarse grey robe, a heavy iron chain around his neck from which hangs a lit iron lantern.",
+  },
+  "doomsayer-plain": {
+    subject: "A wild street prophet of doom, gaunt, long matted hair, his face whitened with ash, his eyes wide. A ragged grey and red robe, a wooden yoke across his shoulders hung with small iron bells.",
+  },
+  "cleric-weeping": {
+    subject: "A priest of a militant faith whose face is hidden behind a gilded mask of a weeping face, tears of red enamel running down its cheeks. A long black cassock with a high white collar and a red stole, a black skullcap.",
+  },
+  "cleric-sewn": {
+    subject: "A priest of a militant faith whose eyes are sewn shut with red thread, a third eye painted in red on his forehead, wide open. A long black cassock with a high white collar and a red stole.",
+  },
+  // The user: massive bands, not "wet noodles" (and not framed as anything with legs, or the model draws it).
+  "archon-massive": {
+    subject: "A tall figure completely covered in a black hooded cowl and long black robes, every edge lined with glowing neon-white light. Inside the hood no face, only blank white light. From his back reach enormous wings of four or five massive bands of glowing white light on each side, each band as thick as his whole torso, reaching far out beyond his hands and curving down to the ground.",
   },
 };
 
@@ -623,10 +672,52 @@ const MELEE: Readonly<Record<string, { readonly subject: string; readonly pose?:
     subject: "A vengeance angel, a man: a powerful scorched human body, burned bare, from whose back two great wings of roaring fire tear out through the skin. His eyes burn white. Rags of blood-red cloth at his waist, blackened steel greaves.",
     pose: "all standing in the same T-pose, his wings of fire open behind him and clear of his arms",
   },
+  // Round three, after the user's notes (2026-10-08).
+  "templar-rose": {
+    subject: "A heavily armoured holy knight of a militant faith in white-lacquered plate armour with a red surcoat, a closed great helm.",
+  },
+  // A step up from the Templar: broken and made whole again (Guardian Spirit).
+  "immortal-kintsugi": {
+    subject: "A towering holy knight in ornate plate of white marble, cracked all over and mended with seams of gold. A tall crested helm of white marble and gold, a golden halo standing behind his head, a long white cape torn at the hem.",
+  },
+  "torturer-iron": {
+    subject: "A grotesque torturer of a militant faith covered from head to toe in rusted iron: riveted iron plates bolted onto his body, hundreds of long iron spikes sticking out of him at every angle, iron hooks and chains hanging from him, a rusted iron cage locked over his head. Degenerate, full metal.",
+  },
+  "fanatic-nails": {
+    subject: "A religious fanatic, a tall wiry man, no mask, wild staring eyes. A crown of long iron nails driven into his shaved scalp, blood streaking down his face. His bare chest branded with a burning outstretched hand. Heavy chains wound around his arms, torn white and red cloth at his waist.",
+  },
+  "avatar-smoulder": {
+    subject: "A vengeance angel, a towering man in blackened gold plate. His wings are charred black feathers, smouldering, their edges glowing orange with embers and trailing smoke. A ring of fire stands behind his head. His eyes burn white. Blood-red cloth at his waist.",
+    pose: "all standing in the same T-pose, his wings open behind him and clear of his arms",
+  },
+  "avatar-flamehead": {
+    subject: "A vengeance angel, a towering man in blackened gold plate whose head is a single burning flame, no face. Great wings of charred black feathers glowing with embers at the edges. Blood-red cloth at his waist.",
+    pose: "all standing in the same T-pose, his wings open behind him and clear of his arms",
+  },
+  // The user: "He should be in abstract painted armor and he should have a sword of heated metal."
+  "chosen-painted": {
+    subject: "A fanatic champion of a militant faith in plate armour painted all over with bold abstract strokes and shapes of red, white and black paint. No mask, a shaved head, a stern scarred face.",
+  },
 };
 
-const PRIEST_JOBS = Object.entries(PRIESTS).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Hands empty and open, no weapon.`, PRIEST_3D) }));
-const MELEE_JOBS = Object.entries(MELEE).map(([id, { subject, pose }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, KNIGHT_3D, pose) }));
+// What they hold, as models of their own (the user, 2026-10-08): the Doomsayer's scroll, the Templar's rose shield, the
+// Chosen's sword of heated metal.
+const DOOMSAYER_SCROLL =
+  "an enormous scroll of yellowed parchment as tall as a man, half unrolled, crowded with dense black writing and red wax seals, its wooden rollers capped with iron; beside it the same scroll rolled up.";
+const TEMPLAR_SHIELD =
+  "a tall kite shield of white-lacquered steel with a large raised silver rose across its face, its edge banded in tarnished silver; beside it the same shield seen from the side and from behind.";
+const CHOSEN_SWORD =
+  "a long straight sword of heated metal glowing orange-red from the hilt to the tip, a blackened crossguard and grip; drawn twice, from the side and turned flat.";
+
+const PRIEST_JOBS = [
+  ...Object.entries(PRIESTS).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Hands empty and open, no weapon.`, PRIEST_3D) })),
+  { id: "doomsayer-scroll-props", prompt: prop(DOOMSAYER_SCROLL, PRIEST_3D), width: 2048, height: 832 },
+];
+const MELEE_JOBS = [
+  ...Object.entries(MELEE).map(([id, { subject, pose }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, KNIGHT_3D, pose) })),
+  { id: "templar-shield-props", prompt: prop(TEMPLAR_SHIELD, KNIGHT_3D), width: 2048, height: 832 },
+  { id: "chosen-sword-props", prompt: prop(CHOSEN_SWORD, KNIGHT_3D), width: 2048, height: 832 },
+];
 
 /** Each group of jobs has its own folder, so one group's run doesn't mix into another's manifest. */
 const GROUPS = [
