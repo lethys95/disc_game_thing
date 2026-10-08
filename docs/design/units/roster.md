@@ -38,6 +38,10 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 | Eyespot | the Drawn | Claude's own tribe | picked: `eyespot-fan-turnaround-1000` | ✓ |
 | Pale Mother | the Drawn | Claude's own tribe | picked: `pale-mother-turnaround-1002` | ✓ |
 
+| Godkin | Jilliath 5 (support) | user (a silhouette of moving sky) | picked: `godkin-bare-turnaround-1001` (user: "has captured what I intended") | — |
+| Pontiff | Jilliath 3 (mage) | Claude's crown of candles (user: "looks good") | picked: `pontiff-candles-turnaround-1001` (seed Claude's) | — |
+| Emissary | Jilliath 2 (support) | user ("closer to the stereotypical angel") | picked: `emissary-robed-turnaround` (user: "looks great"; seed 1000 or 1001 open) | — |
+
 ## 2. Identity, but no picked concept: needs concept art
 | Unit | Faction · tier | Identity | Concept |
 |---|---|---|---|
