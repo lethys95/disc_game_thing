@@ -179,3 +179,16 @@ power 100 × tier; numbers at ability power 100. No damage type of their own yet
 - **The composition matrix after** (all squads, win %): tier 2 J 67, N 47, G 33 (was 57 / 52 / 41 after the mage
   line); tier 3 J 79, N 31, G 26 (was 74 / 34 / 39). Jilliath now has every line through tier 3 while the others
   stop short, so its squads beat theirs almost everywhere. Not retuned (the balance pass, with the line lengths).
+
+## 74. Jilliath's guardian angels (2026-10-08; the user's design, Claude's readings and numbers)
+`faction-stuff/jilliath/support.md`. Each keeps the last one's spells (and the Seraph's Shoot). Health 100 / 140 / 170
+/ 200, initiative 45, ability power 100 × tier.
+- **Prayer** (Emissary on): every ally heals 10 (at ability power 100). The Shepherd's (and Godkin's) also gives every
+  ally +5 armor until its next turn (the user's +5; Claude flagged it as small against tier-4 hits).
+- **Guardian's Shield** (Guardian on): once per combat, a main action, one ally +30 armor until its next turn. Timing
+  matters: on an ally whose turn comes next it lasts no time at all; on one that has acted, a whole round.
+- **Resurrection** (Godkin): once per combat, a main action; a fallen ally (not fled, remains not used or destroyed,
+  its tile free) rises with 50% of its health and none of its old effects, and takes its turns from then on.
+- **Armor** is still flat (the buffs are written for it); `todo/percent-armor` changes that.
+- **AI** (two guardian squads against seven presets, both sides): Emissary 53 Heal / 17 Prayer, Guardian 13 Shields,
+  Shepherd 89 Prayer / 26 Shields, Godkin 178 Prayer / 7 Resurrections.

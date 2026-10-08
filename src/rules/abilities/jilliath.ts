@@ -47,6 +47,67 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
     },
   },
 
+  /** The guardian angels (the user, 2026-10-08): "'prayer' for a weak/moderate healing"; the Shepherd's adds armor. */
+  prayer: {
+    kind: "active",
+    name: "Prayer",
+    applies: ["prayed"],
+    describe: (p) => `Every ally heals ${p["heal"]}${p["armor"] ? ` and has +${p["armor"]} armor until its next turn` : ""}.`,
+    tags: ["heal", "area"],
+    defaults: { heal: 10, armor: 0 },
+    scales: ["heal"],
+    choices: (ctx, self) => {
+      const allies = ctx.living(ctx.unit(self.unitId).side);
+      const useful = (self.params["armor"] ?? 0) > 0 || allies.some((u) => u.hp < ctx.stats(u.id).maxHp);
+      const first = allies[0];
+      return useful && first ? [at(first, allies.map((u) => u.id), "main")] : [];
+    },
+    resolve: (ctx, self, choice) => {
+      const armor = self.params["armor"] ?? 0;
+      for (const id of choice.affected) {
+        ctx.heal(id, self.params["heal"] ?? 0);
+        if (armor > 0) ctx.addEffect(id, { def: "prayed", amount: armor, source: self.unitId });
+      }
+    },
+  },
+
+  /** The Guardian (the user, 2026-10-08): "a single target single use 30+ armor on target for a single turn". */
+  guardians_shield: {
+    kind: "active",
+    name: "Guardian's Shield",
+    applies: ["guardians_shield"],
+    describe: (p) => `${uses(p)}: an ally has +${p["armor"]} armor until its next turn.`,
+    tags: [],
+    defaults: { charges: 1, armor: 30 },
+    choices: (ctx, self) => ctx.living(ctx.unit(self.unitId).side).map((u) => single(u, "main")),
+    resolve: (ctx, self, choice) => {
+      for (const id of choice.affected) ctx.addEffect(id, { def: "guardians_shield", amount: self.params["armor"] ?? 0, source: self.unitId });
+    },
+  },
+
+  /**
+   * The Godkin (the user: resurrection "only lives under faith", "at 50% health to begin with"). Not a unit whose
+   * remains were used or destroyed: the Grove's corpse explosion prevents it (the user, 2026-09-26).
+   */
+  resurrection: {
+    kind: "active",
+    name: "Resurrection",
+    describe: (p) => `${uses(p)}: a fallen ally rises with ${p["percent"]}% of its health. Not one whose remains were used or destroyed.`,
+    tags: ["heal"],
+    defaults: { charges: 1, percent: 50 },
+    choices: (ctx, self) => {
+      const side = ctx.unit(self.unitId).side;
+      const living = ctx.living();
+      return Object.values(ctx.battle.units)
+        .filter((u) => u.side === side && !u.alive && !u.fled && u.corpse === "intact")
+        .filter((u) => !living.some((l) => l.side === side && l.tile.row === u.tile.row && l.tile.col === u.tile.col))
+        .map((u) => single(u, "main"));
+    },
+    resolve: (ctx, self, choice) => {
+      for (const id of choice.affected) ctx.revive(id, Math.floor((ctx.stats(id).maxHp * (self.params["percent"] ?? 0)) / 100));
+    },
+  },
+
   /**
    * The Paragon and the Empyreal (the user: discipline priests' Atonement, "probably not 1 to 1. Should damage less than
    * it heals"): a hit whose damage heals the `allies` most wounded allies, each for `percent` of it.

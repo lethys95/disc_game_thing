@@ -65,6 +65,24 @@ function weakened(id: string, name: string): EffectDef {
   };
 }
 
+/** More armor until the bearer's next turn starts: a guardian angel's shield, a Shepherd's prayer. */
+function armorUntilOwnTurn(id: string, name: string): EffectDef {
+  return {
+    id,
+    name,
+    describe: (e) => `+${e.amount} armor until its next turn.`,
+    stacking: { mode: "unique" },
+    lifetime: "untilOwnTurn",
+    visibility: "public",
+    hooks: {
+      stats: (_ctx, self, subjectId, stats) => {
+        if (subjectId === self.unitId) stats.armor += self.effect?.amount ?? 0;
+      },
+      aiValue: (_ctx, self) => (self.effect?.amount ?? 0) * STAT_WORTH.armor,
+    },
+  };
+}
+
 /**
  * Repentance (the user, 2026-10-06): out of the fight for `stacks` turns, "wakes up early if damaged or healed by
  * anyone or anything".
@@ -788,6 +806,9 @@ const effects: readonly EffectDef[] = [
     visibility: "public",
     hooks: { turnStart: () => "skip", aiValue: (ctx, self) => -ctx.strongestHit(self.unitId) },
   },
+  // The Jilliath support line, the guardian angels (`abilities/jilliath.ts`).
+  armorUntilOwnTurn("guardians_shield", "Guardian's Shield"),
+  armorUntilOwnTurn("prayed", "Prayer"),
   // The Jilliath mage line (`abilities/jilliath.ts`).
   weakened("castigated", "Castigated"),
   repentant(),

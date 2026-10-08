@@ -246,9 +246,15 @@ export function buildFigure(defId: string, side: Side, owner: THREE.Color | null
       break;
     // Guardian angels keep the Seraph's hood; vengeance angels show their eyes and the red in their wings.
     case "emissary":
+    case "guardian":
+    case "shepherd":
+    case "godkin": {
+      const tier = def?.tier ?? 2;
       g.add(hood(top - 0.1, 0.17, m.body));
-      g.add(wings(top - 0.15, 0.9, m.trim));
+      g.add(wings(top - 0.15, 0.5 + 0.2 * tier, tier >= 4 ? m.glow : m.trim));
+      if (tier >= 3) g.add(halo(top + 0.3, 0.12 + 0.04 * tier, m.glow));
       break;
+    }
     case "paragon":
     case "empyreal":
     case "reclaimer":

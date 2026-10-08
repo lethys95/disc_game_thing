@@ -626,6 +626,16 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
       target.hp += healed;
       ctx.emit({ type: "heal", unitId: targetId, amount: healed });
     },
+    revive: (unitId, hp) => {
+      const fallen = unit(unitId);
+      if (fallen.alive || fallen.fled) return;
+      fallen.alive = true;
+      fallen.corpse = "intact";
+      fallen.effects = [];
+      fallen.hp = Math.max(1, Math.min(hp, stats(unitId).maxHp));
+      ctx.emit({ type: "revived", unitId });
+      ctx.emit({ type: "heal", unitId, amount: fallen.hp });
+    },
     restoreShield: (targetId, offered) => {
       const target = unit(targetId);
       if (!target.alive) return;

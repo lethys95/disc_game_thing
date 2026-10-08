@@ -41,7 +41,7 @@ export const PRESETS: Readonly<Record<"uncommitted" | "congregants" | "preserve"
   ],
   guardian: [
     at("paladin", 0, 0), at("templar", 0, 1), at("paladin", 0, 2),
-    at("emissary", 2, 0), at("seraph", 2, 1), at("pontiff", 2, 2),
+    at("guardian", 2, 0), at("godkin", 2, 1), at("shepherd", 2, 2),
   ],
   vengeance: [
     at("zealot", 0, 0), at("fanatic", 0, 1), at("zealot", 0, 2),

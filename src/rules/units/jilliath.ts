@@ -17,11 +17,26 @@ export const JILLIATH_UNITS: Readonly<Record<string, UnitDef>> = {
     abilities: [{ id: "mend" }, { id: "shoot", params: { power: 10 } }, ...kit("defend", "wait")],
   },
   // The support line past tier 1 (faction-stuff/jilliath/support.md): angels, guardian (faith) vs vengeance
-  // (fanaticism). The Emissary is a placeholder until faith is designed; stats are provisional.
+  // (fanaticism). Every guardian keeps the last one's spells. Stats are provisional.
   emissary: {
     id: "emissary", name: "Emissary", faction: "jilliath", tier: 2,
     stats: { maxHp: 100, shield: 0, armor: 0, initiative: 45, abilityPower: 200 },
-    abilities: [{ id: "mend" }, { id: "shoot", params: { power: 10 } }, ...kit("defend", "wait")],
+    abilities: [...kit("mend", "prayer"), { id: "shoot", params: { power: 10 } }, ...kit("defend", "wait")],
+  },
+  guardian: {
+    id: "guardian", name: "Guardian", faction: "jilliath", tier: 3,
+    stats: { maxHp: 140, shield: 0, armor: 0, initiative: 45, abilityPower: 300 },
+    abilities: [...kit("mend", "prayer", "guardians_shield"), { id: "shoot", params: { power: 10 } }, ...kit("defend", "wait")],
+  },
+  shepherd: {
+    id: "shepherd", name: "Shepherd", faction: "jilliath", tier: 4,
+    stats: { maxHp: 170, shield: 0, armor: 0, initiative: 45, abilityPower: 400 },
+    abilities: [{ id: "mend" }, { id: "prayer", params: { armor: 5 } }, { id: "guardians_shield" }, { id: "shoot", params: { power: 10 } }, ...kit("defend", "wait")],
+  },
+  godkin: {
+    id: "godkin", name: "Godkin", faction: "jilliath", tier: 5,
+    stats: { maxHp: 200, shield: 0, armor: 0, initiative: 45, abilityPower: 500 },
+    abilities: [{ id: "mend" }, { id: "prayer", params: { armor: 5 } }, ...kit("guardians_shield", "resurrection"), { id: "shoot", params: { power: 10 } }, ...kit("defend", "wait")],
   },
   paragon: {
     id: "paragon", name: "Paragon", faction: "jilliath", tier: 2,

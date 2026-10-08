@@ -13,11 +13,11 @@
   format in other turns, but this angel one here is a miss"); the user works from their own MTG sheet. The faith side may reach tier 5 and shows "who is pulling the strings"; looks: a
   humble, hooded, praying tier 1, stained-glass wings, a last tier of pure light, blood-tipped wings on the vengeance
   side (`support.md`).
-- **Built (2026-10-07, provisional #73):** the vengeance side, Paragon → Empyreal / Reclaimer; the Emissary as a
-  placeholder healer so the fork has two sides. `?fight=angels`. Still to design: the guardian side past the
-  placeholder (Emissary, Guardian, Shepherd, Godkin). Vengeance ends at tier 3 (the user, 2026-10-08); whether faith
-  needs tier 5 is unsure ("it becomes too much").
+- **Built:** vengeance (2026-10-07, provisional #73): Paragon → Empyreal / Reclaimer, ending at tier 3. Guardian
+  (2026-10-08, #74): Emissary (Prayer) → Guardian (Guardian's Shield) → Shepherd (Prayer with armor) → Godkin
+  (Resurrection). `?fight=angels`. Open: whether faith needs tier 5 ("I'm already unsure of whether or not t5 is too
+  much"); where the deflecting secret lives.
+- **Done when:** the user has played it.
 - **Why:** Jilliath's backline is the biggest gap; Ral-Vitahl's casters dominate the matrix until the others have
   ranged lines.
-- **Done when:** Designed, built, tested, in the codex.
 - **Who:** The user designs (reacting to Claude's drafts); Claude builds, then art.

@@ -52,6 +52,8 @@ interface Figure {
   readonly loss: HTMLDivElement;
   readonly gain: HTMLDivElement;
   readonly materials: THREE.MeshStandardMaterial[];
+  /** Each material's glow while standing: a fallen figure goes dark, a risen one gets it back. */
+  readonly glow: readonly number[];
   shownHp: number;
   maxHp: number;
   readonly shieldFill: HTMLDivElement;
@@ -62,6 +64,8 @@ interface Figure {
   fallen: boolean;
 }
 
+/** How high a standing figure's group sits; a fallen one sinks 0.1 below. */
+const STANDING_Y = 0.28;
 const SPACING = 1.65;
 const GAP = 1.15;
 
@@ -257,10 +261,11 @@ export class BattleScene {
         }),
       );
       this.updateBar(figure);
-      figure.group.position.copy(this.position(unit.side, unit.tile)).setY(0.28);
+      figure.group.position.copy(this.position(unit.side, unit.tile)).setY(STANDING_Y);
       // Off the field for now (Spiritwalk): hidden until it returns.
       figure.group.visible = !unit.fled && !unit.effects.some((e) => EFFECTS.get(e.def)?.absent);
       if (!unit.alive && !unit.fled && !figure.fallen) this.topple(figure, 0);
+      if (unit.alive && figure.fallen) this.rise(figure, 0);
     }
   }
 
@@ -311,7 +316,7 @@ export class BattleScene {
     gain.hidden = true;
     bar.append(loss, gain);
     const figure: Figure = {
-      group, bar, fill, label, preview, loss, gain, materials, charges,
+      group, bar, fill, label, preview, loss, gain, materials, charges, glow: materials.map((m) => m.emissiveIntensity),
       shownHp: unit.hp, maxHp: unit.base.maxHp,
       shieldFill, shownShield: unit.shield, maxShield: unit.base.shield,
       fallen: false,
@@ -337,6 +342,23 @@ export class BattleScene {
     const apply = (t: number) => {
       figure.group.rotation.x = (Math.PI / 2) * t;
       figure.group.position.y = startY - 0.1 * t;
+    };
+    if (duration === 0) {
+      apply(1);
+      return Promise.resolve();
+    }
+    return this.stage.tween(duration, (t) => apply(1 - (1 - t) ** 3));
+  }
+
+  /** Topple played backwards: a fallen unit brought back (Resurrection). */
+  private rise(figure: Figure, duration: number): Promise<void> {
+    figure.fallen = false;
+    figure.group.userData["fallen"] = false;
+    figure.bar.hidden = false;
+    figure.materials.forEach((m, i) => (m.emissiveIntensity = figure.glow[i] ?? 0));
+    const apply = (t: number) => {
+      figure.group.rotation.x = (Math.PI / 2) * (1 - t);
+      figure.group.position.y = STANDING_Y - 0.1 * (1 - t);
     };
     if (duration === 0) {
       apply(1);
@@ -452,6 +474,12 @@ export class BattleScene {
         case "deathPrevented":
           this.float(event.unitId, "Spared", "spared");
           break;
+        case "revived": {
+          const figure = this.figures.get(event.unitId);
+          if (figure) pending.push(this.rise(figure, 650));
+          this.float(event.unitId, "Risen", "spared");
+          break;
+        }
         case "crit":
           this.float(event.target, "Crit!", "spared");
           break;
@@ -534,7 +562,7 @@ export class BattleScene {
     const figure = this.figures.get(unitId);
     if (!figure) return;
     const from = figure.group.position.clone();
-    const target = this.position(side, to).setY(0.28);
+    const target = this.position(side, to).setY(STANDING_Y);
     await this.stage.tween(380, (t) => figure.group.position.lerpVectors(from, target, 1 - (1 - t) ** 2));
   }
 

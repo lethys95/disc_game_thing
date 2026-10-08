@@ -201,6 +201,7 @@ export type BattleEvent =
   | { type: "absorbed"; unitId: string; amount: number; by: string }
   | { type: "death"; unitId: string }
   | { type: "deathPrevented"; unitId: string }
+  | { type: "revived"; unitId: string }
   | { type: "crit"; unitId: string; target: string }
   | { type: "tarotDrawn"; side: Side; hand: number }
   | { type: "tarotChosen"; side: Side; hand: number }
@@ -428,6 +429,8 @@ export interface Ctx {
   /** Direct HP loss that skips the pipeline (bleed, self-sacrifice). Returns the HP actually removed. */
   lose(targetId: string, amount: number, sourceId: string | null): number;
   heal(targetId: string, amount: number): void;
+  /** Brings a fallen unit back (not one that fled) with `hp` health and none of the effects it died with. */
+  revive(unitId: string, hp: number): void;
   /** Shields only come back through this; healing never touches them. */
   restoreShield(targetId: string, amount: number): void;
   addEffect(targetId: string, seed: EffectSeed): void;
