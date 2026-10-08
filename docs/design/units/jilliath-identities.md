@@ -205,3 +205,8 @@ yet: Reclaimer, Cleric, Immortal, Torturer, Avatar.
   chest diamonds didn't come. Her own materials line and "inhuman" over "woman" did it.
 - **Shepherd** `shepherd-glassface` 1001: a calm face divided into panes by black lead.
 - **Seraph** `seraph-wool` 1000: woven wool with weight and fraying; no more clay.
+
+### Round six, a bulkier Reclaimer (the user: "make the reclaimer bulkier"): Claude's read
+`reclaimer-platinum-heavy` 1002 (pick), 1000 next: thicker plates layered over chest, shoulders and thighs, a broader
+frame, still inhuman and clothless; 1002 grew a second, lower pair of wings. Heels creep back in some side views
+(heavy 1001, heavy-blades 1000); heavy-blades 1001 shows a face under the shell.
