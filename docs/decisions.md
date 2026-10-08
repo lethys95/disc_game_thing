@@ -260,3 +260,11 @@ main screens at 720p, 1080p and 1440p; the verify skill requires it for any inte
 The holy mage line is the priests: Acolyte → Cleric → Pontiff → Archon. The support line is angels, all of it. So the
 name Cleric moved from the tier-1 support to the tier-2 priest, and the support was unnamed until the
 user named it the Seraph the same day. Older notes that say "Cleric" before this date mean the support. Save 31.
+
+## Armor becomes a percentage, with diminishing returns (2026-10-08, the user)
+"I think we should do pct armor gain, yes, but then we just need to think about diminishing returns." Disciples II adds
+armor flat as a percentage, so stacking it (a gargoyle in a tier-5 town, pots of armor) climbs to 90% and the only way
+to beat a Capitol Guardian was to stack armor on two units and "tank and spank for about 15 minutes straight. We're not
+doing that. Lesson learned." So: percent reduction on a curve that flattens, like World of Warcraft's. Claude's curve,
+to confirm: reduction = armor ÷ (armor + 60). Not built yet: `.kanban/todo/68-percent-armor.md`. Until then armor
+subtracts flat, and the guardian angels' armor buffs (+30, +5) are written for it.
