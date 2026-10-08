@@ -76,3 +76,19 @@ casters (names first), the Chosen (the user: "might need more").
 - **Paragon** (`paragon-flame`): the halo came out a thorn crown, not fire; otherwise close to the Empyreal.
 - **Reclaimer**: the ivory armour came out a generic knight in a visored helm; the iron maiden came out a dark angel
   with no casket at all. Round two retries both, the Godkin as a bare body, and the Paragon with real fire in white.
+
+### Priests and melee, round one: Claude's read
+- **Archon** (`archon-bands` 1000, 1001): the user's look lands: a black cowl lined in glowing white, a dark empty hood,
+  wings of four or five thick glowing bands curving in a wave. Strong.
+- **Pontiff** (`pontiff-candles` 1001; 1000 draws the side view twice): the crown of burning candles over a black veil,
+  red and white vestments, censers. Not weak any more.
+- **Acolyte** (`acolyte-bound`): shaved, grey robe, red-bound forearms. As drafted, plain as a tier 1.
+- **Doomsayer** (`doomsayer-prophet` 1001): the yoke hung with bells and the nailed scrolls read well; the ash-white
+  face didn't come.
+- **Cleric** (`cleric-bridle`): the bridle was ignored: a generic priest in a stole, the user's fear exactly. Round two
+  leads with the cage.
+- **Templar** (`templar-reliquary`): the glass reliquary with a finger bone in the breastplate reads; otherwise a
+  crusader knight, as the line is.
+- **Fanatic** (`fanatic-scarred`): shaved, bare-chested, chains on the arms; the scars and prayer scraps are faint.
+- **Immortal** (`immortal-deathmask`): no death mask, generic knights. **Torturer** (`torturer-maiden`): spiked and
+  hooded, no iron maiden. **Avatar** (`avatar-wings`): a dark-winged armoured man, no fire. All three retried.
