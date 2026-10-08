@@ -62,3 +62,17 @@ Claude's second tries for the two the user found generic or weak: the **Cleric**
 silence; castigation is chastising), the **Pontiff** under a crown of burning candles, wax running over a black veil.
 The Seraph's prayer is a pose, so her hood carries it (concepts are T-posed models, not scenes). Not yet: the fire
 casters (names first), the Chosen (the user: "might need more").
+
+### Angels, round one: Claude's read
+- **Shepherd** (`shepherd-glass` 1000, 1001): the stained-glass wings in lead came out strong, red, gold and blue, with a
+  blank pale glass oval for a face. The pick of the round.
+- **Guardian** (`guardian-glowing`): the user's reading lands: black high-collared robe, white skin and hair, bright
+  white wings (bright rather than glowing; the glow can go to the 3D material).
+- **Emissary** (`emissary-robed`): the classic angel in flowing white and gold, face shown. As asked.
+- **Seraph** (`seraph-hooded`): humble, hooded, grey linen, wings behind. Plain, as a tier 1 may be.
+- **Empyreal** (`empyreal-blades` 1001): the halo of blades reads as a spiked sunburst; red-dipped wings, red robes.
+- **Godkin** (`godkin-sky` 1001): the sky inside a silhouette works and is strange, but the silhouette is a long dress;
+  1000 grew dark wings it wasn't asked for; with wings, the wings stayed feathers instead of sky.
+- **Paragon** (`paragon-flame`): the halo came out a thorn crown, not fire; otherwise close to the Empyreal.
+- **Reclaimer**: the ivory armour came out a generic knight in a visored helm; the iron maiden came out a dark angel
+  with no casket at all. Round two retries both, the Godkin as a bare body, and the Paragon with real fire in white.
