@@ -189,3 +189,12 @@ yet: Reclaimer, Cleric, Immortal, Torturer, Avatar.
 - **Reclaimer** `reclaimer-shell-gold` 1001: the closest to the user's exoskeleton yet: a smooth head-shell joined to
   the body, tight shell legs, metal wings with bladed feathers. A cloth panel still hangs front or back;
   `reclaimer-shell` (ivory) grew a whole skirt again.
+
+## The user on round four (2026-10-08)
+- **Shepherd:** "face of stained glass." **Seraph:** "seraph's cloak looks like clay. Why is that?" (Claude: flat,
+  shadowless light on a cloth with no texture named renders as smooth matte; round five names coarse woven wool.)
+- **Reclaimer:** "Closer, but like... Why skirt and high heels? So annoying." The user's reference is MTG's Platinum
+  Angel card art: an inhuman, slender figure, a body of segmented pale platinum plates, a small head-shell fused to the
+  body with no face, small gold diamond inlays, legs with no feet tapering into scaled points, huge stone-grey wings
+  going dark teal at the tips. (Claude: "woman" and the angels' linen-and-silk materials line dressed her; round five
+  drops both and gives her a materials line of her own. The reference is described in words, not fed to the model.)

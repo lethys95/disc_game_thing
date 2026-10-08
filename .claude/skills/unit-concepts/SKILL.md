@@ -98,6 +98,16 @@ than the Custodian's 3D concepts is a stand-in to redo (the user, 2026-10-05).
   wolf hood too (which also kept them, despite "empty cut-out holes"). Some details resist for rounds on end (her
   cornrows, her absent look): after three tries, say so and offer to carry them in the 3D model or the effects.
 - Symbolic or world art (tarot, UI) shouldn't feature our units (memory: mystery-over-cameos).
+- **The materials line dresses the figure** (Jilliath, 2026-10-08): a shared line naming "steel" and "lacquer" turned
+  every melee unit into the same plate knight, whatever the subject said (the Torturer three rounds running); one naming
+  "linen and black silk" put skirts, and "woman" put high heels, on an angel the user wanted as an inhuman shell. When a
+  unit must not be what its group usually is, give it a materials line of its own, and say "inhuman figure" over
+  "woman" for a body that isn't human.
+- **Name the cloth's texture** (the Seraph, 2026-10-08): under the turnaround's flat shadowless light, "linen" with no
+  texture named renders as smooth matte clay. Say the weave, the folds and the fraying ("coarse woven wool, the weave
+  visible, heavy soft folds, frayed hems").
+- **Words, not someone else's art:** a reference from another game (the user's Platinum Angel) is described in words
+  (its shapes, materials, colours, what it lacks); the image itself never goes into the model.
 
 ## 5. Show the user
 - A page in `shots/<unit-or-line>.html` (served over Tailscale at `http://<host>:5173/shots/…`): JPEG-compressed images
