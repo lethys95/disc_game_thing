@@ -216,4 +216,5 @@ frame, still inhuman and clothless; 1002 grew a second, lower pair of wings. Hee
 ## The user, after round six (2026-10-08)
 - **Shepherd, picked:** "With shepherd I'm going to go back and choose the original shepherd-glass-turnaround-1001. I
   think iteration just gets worse with shepherd."
-- **Acolyte, unpicked again:** "Acolyte is just too boring. idk what to do with it."
+- **The Seraph, not the Acolyte:** "Acolyte is just too boring. idk what to do with it", then: "I meant I don't know
+  what to do with seraph rather. It's just so boring". The Acolyte stays picked; the Seraph is open.
