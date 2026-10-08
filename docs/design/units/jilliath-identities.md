@@ -221,3 +221,7 @@ frame, still inhuman and clothless; 1002 grew a second, lower pair of wings. Hee
 - **The Seraph (the user, 2026-10-08):** "No, why would you bound wings. She's not captured, she's just humble. Make
   her hooded. Hide her face, give her robes. She'll be praying in her posture in game. Robes are black and white
   cloth/silk. Wings are brown and plain. Try that. I'm sure we can make her seem humble and less boring."
+- **Seraph, the user's look: Claude's read.** `seraph-silk-white` 1002 (pick), then `seraph-silk` 1002: hooded, the
+  face lost in shadow, layered black and white robes, plain brown wings. White over black, draped across the body,
+  reads softer and humbler; black over white is starker, and its hands came out black. Seeds 1000 of both draw the side
+  view twice.
