@@ -571,6 +571,10 @@ const PRIESTS: Readonly<Record<string, { readonly subject: string }>> = {
   "archon-bands": {
     subject: "A tall figure completely covered in a black hooded cowl and long black robes, every edge lined with glowing neon-white light. Inside the hood no face, only blank white light. From the back spread wings made of four or five thick glowing white bands on each side, long ribbons of light curving in a wave.",
   },
+  // Round two: round one's Cleric ignored the bridle and came out the generic priest the user feared.
+  "cleric-cage": {
+    subject: "A priest whose head is locked inside an iron scold's bridle: a cage of riveted iron bands around his whole skull, a flat iron plate clamped over his mouth, a padlock at the back. Behind the bars, stern eyes. A long black cassock with a high white collar and a red stole.",
+  },
   "doomsayer-prophet": {
     subject: "A wild street prophet of doom, gaunt, long matted hair, his face whitened with ash. A ragged grey robe with burnt scrolls of proclamation nailed through it, a wooden yoke across his shoulders hung with small iron bells.",
   },
@@ -597,6 +601,17 @@ const MELEE: Readonly<Record<string, { readonly subject: string; readonly pose?:
   },
   "fanatic-scarred": {
     subject: "A religious fanatic, a tall wiry man with a shaved head and wild staring eyes, no mask. Bare back, chest and arms scored with fresh whip scars, small scraps of written prayer nailed into his skin. Torn white and red cloth at his waist, heavy chains wound around his arms.",
+  },
+  // Round two: round one's Immortal had no death mask, the Torturer no iron maiden, the Avatar's wings no fire.
+  "immortal-bronze": {
+    subject: "A holy knight with no helmet: his face is a bronze death mask cast from his own face, calm, eyes closed, fixed to his head with iron bands. His armour is a patchwork of mismatched plates from many broken suits, white lacquer beside blackened steel beside brass, held by rivets and leather straps.",
+  },
+  "torturer-casket": {
+    subject: "A torturer of a militant faith who wears an iron maiden: a tall rusted iron casket closed around his body from neck to knees, its outside studded with long iron spikes, only his arms, legs and head free; on his head a rusted iron cage helm. Grotesque, degenerate, full metal.",
+  },
+  "avatar-fire": {
+    subject: "A vengeance angel, a man with a scorched, burned bare body and glowing cracks in his skin. His wings are not feathers: two great wings made entirely of roaring orange fire burst from his back. His eyes burn white. Rags of blood-red cloth at his waist, blackened steel greaves.",
+    pose: "all standing in the same T-pose, his wings of fire open behind him and clear of his arms",
   },
   "avatar-wings": {
     subject: "A vengeance angel, a man: a powerful scorched human body, burned bare, from whose back two great wings of roaring fire tear out through the skin. His eyes burn white. Rags of blood-red cloth at his waist, blackened steel greaves.",
