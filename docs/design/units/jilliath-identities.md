@@ -115,3 +115,29 @@ Avatar's fire wings came out flat orange shapes (`avatar-fire`). Next try for th
 `empyreal-blades` 1001, Archon `archon-bands` 1000, Pontiff `pontiff-candles` 1001, Doomsayer `doomsayer-prophet`
 1001, Templar `templar-reliquary` 1001; Emissary, Seraph and Acolyte either seed; the Fanatic possibly 1000. No pick
 yet: Reclaimer, Cleric, Immortal, Torturer, Avatar.
+
+## The user on rounds one and two (2026-10-08)
+- **Picked:** the **Godkin** `godkin-bare` 1001 ("has captured what I intended, yes. It can look better, I'm sure
+  though. Much more light effects, godrays etc when in game. Though it doesn't make much sense to make more art of it
+  here"); the **Pontiff** ("looks good"; Claude's seed 1001); the **Emissary** ("looks great. I guess there's plenty of
+  material to take from there").
+- **Seraph:** "looks like a kid. We can't have that."
+- **Vengeance t2 and t3:** "you can make t2 and t3 vengenace much much more extreme. They'll be difficult to make
+  though." **Paragon:** "paragon's halo can be a flat 2d plane regardless of angle, not unlike how it is in some old art
+  of angels, instead of a crown. Have that 2d flat fixed plane be filled. What exactly should be inside it, I don't
+  know." **Empyreal:** "looks too much like Paragon, and I have ideas. make the blades HUGE. As in all encompassing
+  massive, and have her eyes glow a bright orange, have her skin be cracked and colored like the canvas of ancient
+  paintings, her face shaped into a constant intense glare staring directly through you. It's supposed to be utterly
+  intense."
+- **Reclaimer:** "I don't want a skirt on reclaimer. Give her greaves."
+- **Archon:** "the concept is true, but the size of those bands make them look like wet noodles. They need to be
+  massive, like he's the centre body of a spider ( don't frame it like that, or you'll actually get a spider I think )."
+- **Acolyte:** "extremely boring and it needs work." **Cleric:** "extremely boring." **Fanatic:** "boring."
+- **Doomsayer:** "he looks good, but I'd rather have him hold a huge scroll than carry pieces of parchment on his body."
+- **Templar:** "Remove the finger bone. It's weird. Give him a kite shield and have that shield have a large silver rose
+  on it."
+- **Avatar:** "This is fail." **Immortal:** "There is nothing that looks like it's a step up from templar. We can do much
+  better." **Torturer:** "We're not there."
+- **Shepherd:** "I'd agree the stained glass wings are great on that angel, but the rest is boring and forgetable."
+- **Guardian:** "It needs more, I think. Dress is boring."
+- **Chosen:** "He should be in abstract painted armor and he should have a sword of heated metal."
