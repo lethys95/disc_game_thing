@@ -534,6 +534,64 @@ const ANGELS: Readonly<Record<string, { readonly subject: string; readonly pose?
 
 const ANGEL_JOBS = Object.entries(ANGELS).map(([id, { subject, pose }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are empty and open.`, ANGEL_3D, pose ?? WINGED_T_POSE) }));
 
+/**
+ * Jilliath's priests, the mage line's faith side: the humans who follow the angels (`jilliath-identities.md`). Round
+ * one. The Archon is the user's (wings of thick glowing bands, a black hooded cowl with glowing lining, no face). The
+ * Cleric's iron bridle and the Pontiff's crown of candles are Claude's second tries, after the user's "I'm afraid of
+ * this becoming generic" and "It's a bit weak". The Doomsayer is Claude's ("We can try it out").
+ */
+const PRIEST_3D =
+  "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: heavy black and blood-red cloth, yellowed white linen, tarnished gold, blackened iron, old wax and leather. Serious, adult, not cartoonish.";
+
+const PRIESTS: Readonly<Record<string, { readonly subject: string }>> = {
+  "acolyte-bound": {
+    subject: "A young novice of a militant faith, thin and pale, his head shaved. A plain coarse grey robe tied with a rope. Both hands and forearms tightly bound in strips of blood-red cloth, the only colour on him.",
+  },
+  "cleric-bridle": {
+    subject: "A priest of a militant faith sworn to silence: an iron scold's bridle locked over his head, a cage of iron bands around his skull with a flat iron plate pressing over his mouth, his eyes stern behind the bars. A long black cassock with a high white collar, a red stole.",
+  },
+  "pontiff-candles": {
+    subject: "A high priest of a militant faith in heavy red and white vestments thick with gold embroidery. On his head a tall crown made of dozens of burning candles, white wax running down over a black veil that hides his face. Censers hang from his belt on chains.",
+  },
+  "archon-bands": {
+    subject: "A tall figure completely covered in a black hooded cowl and long black robes, every edge lined with glowing neon-white light. Inside the hood no face, only blank white light. From the back spread wings made of four or five thick glowing white bands on each side, long ribbons of light curving in a wave.",
+  },
+  "doomsayer-prophet": {
+    subject: "A wild street prophet of doom, gaunt, long matted hair, his face whitened with ash. A ragged grey robe with burnt scrolls of proclamation nailed through it, a wooden yoke across his shoulders hung with small iron bells.",
+  },
+};
+
+/**
+ * Jilliath's melee line past the Zealot and Punisher (`jilliath-identities.md`). Round one. The Torturer is the user's
+ * ("iron maiden full metal degeneracy"); the rest are Claude's drafts the user marked keep or maybe. No masks after the
+ * Zealot (the user: "nothing after zealot needs it"). The Avatar of Vengeance is the one male angel. No weapons on the
+ * figures.
+ */
+const KNIGHT_3D =
+  "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: blackened and scorched steel, bone-white lacquer, frayed white and blood-red cloth, old leather, tarnished brass. Serious, adult, not cartoonish.";
+
+const MELEE: Readonly<Record<string, { readonly subject: string; readonly pose?: string }>> = {
+  "templar-reliquary": {
+    subject: "A heavily armoured holy knight of a militant faith in white-lacquered plate armour with a red surcoat. Set into the centre of his breastplate, a glass-fronted reliquary holding an old finger bone, faint golden light around it. A closed great helm.",
+  },
+  "immortal-deathmask": {
+    subject: "A holy knight whose armour is riveted together from the pieces of many broken suits, mismatched plates of white lacquer, blackened steel and brass. His visor is a bronze death mask cast from his own face, calm, eyes closed.",
+  },
+  "torturer-maiden": {
+    subject: "A torturer of a militant faith encased in spiked iron: his body sealed in a rusted iron shell in the shape of an iron maiden, iron spikes driven through it pointing out in every direction, a small barred window where the face should be. Grotesque, degenerate, full metal.",
+  },
+  "fanatic-scarred": {
+    subject: "A religious fanatic, a tall wiry man with a shaved head and wild staring eyes, no mask. Bare back, chest and arms scored with fresh whip scars, small scraps of written prayer nailed into his skin. Torn white and red cloth at his waist, heavy chains wound around his arms.",
+  },
+  "avatar-wings": {
+    subject: "A vengeance angel, a man: a powerful scorched human body, burned bare, from whose back two great wings of roaring fire tear out through the skin. His eyes burn white. Rags of blood-red cloth at his waist, blackened steel greaves.",
+    pose: "all standing in the same T-pose, his wings of fire open behind him and clear of his arms",
+  },
+};
+
+const PRIEST_JOBS = Object.entries(PRIESTS).map(([id, { subject }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Hands empty and open, no weapon.`, PRIEST_3D) }));
+const MELEE_JOBS = Object.entries(MELEE).map(([id, { subject, pose }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} His hands are empty and open, no weapon.`, KNIGHT_3D, pose) }));
+
 /** Each group of jobs has its own folder, so one group's run doesn't mix into another's manifest. */
 const GROUPS = [
   { dir: "art/candidates/units/grove", jobs: GROVE_JOBS },
@@ -545,6 +603,8 @@ const GROUPS = [
   { dir: "art/candidates/units/neutrals/carnival", jobs: CARNIVAL_JOBS },
   { dir: "art/candidates/units/nexus/etherborn", jobs: ETHERBORN_JOBS },
   { dir: "art/candidates/units/jilliath/angels", jobs: ANGEL_JOBS },
+  { dir: "art/candidates/units/jilliath/priests", jobs: PRIEST_JOBS },
+  { dir: "art/candidates/units/jilliath/melee", jobs: MELEE_JOBS },
 ];
 
 const args = process.argv.slice(2);
