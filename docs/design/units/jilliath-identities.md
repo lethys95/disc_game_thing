@@ -55,3 +55,10 @@ units").
   boring."
 - **Avatar of Vengeance** (t5, male, the vengeance angel), maybe: "Forget the mask. nothing after zealot needs it. It's
   just zealot." (Claude's: wings of fire tearing out of a human back.)
+
+## Round one of concepts (2026-10-08)
+`scripts/art/concepts.ts`: `ANGELS`, `PRIESTS`, `MELEE`; folders `art/candidates/units/jilliath/{angels,priests,melee}`.
+Claude's second tries for the two the user found generic or weak: the **Cleric** in an iron scold's bridle (sworn to
+silence; castigation is chastising), the **Pontiff** under a crown of burning candles, wax running over a black veil.
+The Seraph's prayer is a pose, so her hood carries it (concepts are T-posed models, not scenes). Not yet: the fire
+casters (names first), the Chosen (the user: "might need more").
