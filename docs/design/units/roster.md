@@ -62,8 +62,8 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 | Fanatic, Chosen, Avatar of Vengeance | Jilliath 3–5 (consume) | designs; Claude's drafts |
 | Torturer | Jilliath 4 | design; Claude's draft |
 
-Claude's drafts for every Jilliath unit above (2026-10-08): `shots/jilliath-identities.html`, awaiting the user's
-keep, maybe or cut.
+Every Jilliath unit above (2026-10-08): the user's answers to Claude's drafts in `jilliath-identities.md` (all angels
+female except the Avatar of Vengeance; the fire casters need names first).
 | Technician | Nexus 1 | design, no look |
 | Cyclops | Nexus 2 | design; "scheme = automata" (dichotomies) |
 | Mutant | Nexus 2 | design; "mutants will be the melee line" |
