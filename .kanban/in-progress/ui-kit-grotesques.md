@@ -65,3 +65,17 @@
   behind the text). Claude's picks: reliquary 65-2, cathedral 65-2, gothic 65-2. To fix before cutting: dark
   recessed panels behind text, no light glare, no moss, no fake sockets on the sill, the plate in front of the
   portrait. Waiting for the user's pick.
+- **The user on round 1 (2026-10-09):** "Overall I think it worked very well, though yes, there's fixes needed in
+  most places." The angel should hold the portrait, not the name plate, and the portrait mustn't sit on top of her;
+  every angel's wings were cut off; reliquary 85-3's top left (a candle in the beam's arcade) and its dimmer light on
+  the angel work best, while reliquary 65-2 has "a distinct 'Ai Look' in terms of lighting, and we generally need
+  something darker"; the two signs at the top right are the weakest part; the log was cut off; the ridge of spikes on
+  the sill adds noise; the targeting grids should fit inside the card; many arms came out strangely long. Painting the
+  whole HUD at once is good for consistency but "probably has a consequence on quality" (upscalers: `maybe/upscalers`).
+- **Why the wings were cut (the user asked):** the paint mask was the greybox silhouette itself, so the stele's straight
+  sides sliced the wings the model painted wider. Fixed in `hud-paint.ts`: the structure keeps its exact edges, the
+  sculpture gets room around it in the mask, and Photon's subject segmentation cuts it out along what was painted (the
+  user's suggestion to use Photon). The greybox changed too: she holds the portrait at her chest, hands in front of its
+  frame, wings whole and overhanging the stele; the plate in the stone below; text in recessed dark panels; no ridge;
+  Resolve now and Auto-battle as a hanging hourglass and puppeteer's cross; smaller targeting grids; steles inset from
+  the screen's edges. Round 2 compares two darker, candlelit lights. A first round-2 run with the old mask was stopped.
