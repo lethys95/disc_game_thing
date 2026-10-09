@@ -410,6 +410,10 @@ const PIECES_OF: Readonly<Record<string, readonly Piece[]>> = {
     // The monument's recessed panel with its carved border: the frame every socket and panel of the battle shares.
     { name: "recess", from: "reliquary-75-3.png", rect: [140, 782, 283, 433], cut: "rect" },
     { name: "log", from: "graft-log.png", rect: [0, 0, 336, 352], cut: "segment", bright: true },
+    // For the map (and later screens): the monument's marble plate in its iron rim, and a length of the hourglass's
+    // chain, so what other screens hang and name is the same stone, iron and light.
+    { name: "plaque", from: "reliquary-75-3.png", rect: [143, 593, 260, 96], cut: "rect" },
+    { name: "chain", from: "reliquary-75-3.png", rect: [2254, 104, 24, 52], cut: "key", fuzz: 6 },
   ],
 };
 

@@ -150,16 +150,11 @@ button.recruit .abilities { color: #b9a98c; font-size: 0.6875rem; }
 button.action.fight { font-size: 1.375rem; padding: 0.5rem 2.5rem; }
 button.action:disabled { opacity: 0.4; cursor: not-allowed; }
 
-#mapturn { position: fixed; top: 1rem; left: 50%; transform: translateX(-50%); font: 700 1.25rem var(--display); text-shadow: 0 2px 0.375rem #000; }
-#mapsquad { position: fixed; left: 1rem; top: 3.75rem; width: 15rem; padding: 0.75rem 0.875rem; }
-#mapsquad .title { font: 700 1.25rem var(--display); }
 #mapsquad .subtitle { color: var(--muted); font-size: 0.6875rem; margin-bottom: 0.5rem; }
 #mapsquad .member { margin-bottom: 0.375rem; }
 #mapsquad .member .name { font: 700 0.875rem var(--display); }
 #mapsquad .hp { height: 0.75rem; border: 1px solid var(--line); }
 #mapsquad .hp .value { position: relative; display: block; text-align: center; font-size: 0.625rem; line-height: 0.75rem; }
-#mapbottom { position: fixed; left: 50%; bottom: 1.125rem; transform: translateX(-50%); text-align: center; }
-#maphint { font: 500 1.0625rem var(--display); text-shadow: 0 1px 0.1875rem #000; margin-bottom: 0.5rem; min-height: 1.375rem; }
 #mapbanner {
   position: fixed; left: 50%; top: 38%; transform: translate(-50%, -50%); text-align: center;
   padding: 1.5rem 3rem; background: var(--panel); border: 1px solid var(--edge);
@@ -178,7 +173,6 @@ button.action:disabled { opacity: 0.4; cursor: not-allowed; }
 .site-label { font: 600 0.625rem var(--text); padding: 0 0.3125rem; background: rgba(10, 9, 9, 0.6); border: 1px solid var(--rule); color: var(--muted); white-space: nowrap; }
 .site-label.side0 { color: var(--side0); border-color: var(--side0); }
 .site-label.side1 { color: var(--side1); border-color: var(--side1); }
-#mapsquad { max-height: calc(100vh - 9.375rem); overflow-y: auto; }
 button.warband {
   display: flex; justify-content: space-between; width: 100%; margin: 0.375rem 0 0.25rem; padding: 0.25rem 0.5rem; cursor: pointer;
   background: var(--field); border: 1px solid var(--rule); color: var(--ink);
@@ -186,8 +180,6 @@ button.warband {
 button.warband.selected { border-color: var(--gold-dim); }
 button.warband .name { font: 700 0.9375rem var(--display); }
 button.warband .meta { color: var(--muted); font-size: 0.6875rem; align-self: center; }
-#mapcity { position: fixed; right: 1rem; top: 3.75rem; width: 16.25rem; padding: 0.75rem 0.875rem; }
-#mapcity .title { font: 700 1.25rem var(--display); margin-bottom: 0.375rem; }
 #mapcity .member { display: grid; grid-template-columns: 1fr auto; gap: 2px 0.375rem; align-items: center; margin-bottom: 0.375rem; }
 #mapcity .member .hp { grid-column: 1; }
 #mapcity .member button.small { grid-row: 1 / span 2; grid-column: 2; }
@@ -203,7 +195,6 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 .member .xp .value { position: relative; display: block; text-align: center; font-size: 0.5625rem; line-height: 0.625rem; color: #d8cbb0; }
 #mapcity .section { font: 700 0.9375rem var(--display); margin-top: 0.75rem; padding-top: 0.375rem; border-top: 1px solid var(--rule); }
 #mapcity .fallen { display: flex; justify-content: space-between; align-items: center; margin-top: 0.25rem; font-size: 0.75rem; }
-#mapcity { max-height: calc(100vh - 9.375rem); overflow-y: auto; }
 .float.shield { color: #6ff0e8; }
 
 #peek { position: fixed; width: 17.5rem; padding: 0.625rem 0.75rem; pointer-events: none; z-index: 10; }
@@ -292,13 +283,11 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 #menu .save-text .name { font: 700 0.9375rem var(--display); }
 #menu .menu-footer { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.625rem; }
 #menu .hidden-file { display: none; }
-#mapmenu { position: fixed; left: 50%; top: 2.75rem; transform: translateX(-50%); min-width: 0; font-size: 0.8125rem; padding: 0.1875rem 0.875rem; }
 
 
 .gold { display: inline-flex; align-items: center; gap: 0.25rem; color: #e8c46a; }
 .coin { display: inline-block; width: 1em; height: 1em; vertical-align: -0.12em; }
 .coin svg { width: 100%; height: 100%; display: block; }
-#mapturn .movement { color: #cfe3d2; letter-spacing: 0.05em; }
 
 .squad .swatches { display: flex; gap: 0.25rem; margin: 0.375rem 0; }
 .squad .swatch { width: 1.25rem; height: 1.25rem; min-width: 0; padding: 0; border: 2px solid #1a1614; cursor: pointer; }
@@ -462,27 +451,7 @@ button.action.selected:not(.ability), button.small.selected, button.doctrine.sel
 }
 .screen .panel { border-width: 1.625rem; border-image-width: 1.75rem; }
 #capitol .tab-rail.panel { border-width: 1.125rem; border-image-width: 1.5rem; }
-#mapturn {
-  padding: 0.25rem 1.375rem; background: rgba(8, 7, 7, 0.6) var(--ui-plate, none) repeat padding-box; background-size: 10rem;
-  border: 0.75rem solid transparent; border-image: var(--ui-frame) 18% / 0.875rem round; top: 0.375rem;
-}
 #mapbanner { border: 1.25rem solid transparent; border-image: var(--ui-frame) 18% / 1.5rem round; background: rgba(13, 11, 11, 0.95) padding-box; }
-
-/* Sculpture grown into the frames (the user, 2026-10-06: "baked into the corner of the hud in a natural way"), never
-   set on top of them. The side panels' outer top corner is a hooded stone angel whose wings are the panel's top and
-   side edges (assets/ui/corner-angel.webp, 940x949: bars about 80 px thick, the angel within the top-left 67% x 66%,
-   its wings overhanging the bars by about 55 px; the right-hand panels take the mirrored file). --px is one image
-   pixel. */
-#mapsquad, #mapcity { --px: 0.0105rem; }
-#mapsquad {
-  border-width: calc(84 * var(--px)) calc(74 * var(--px)) calc(66 * var(--px)) calc(76 * var(--px));
-  border-image: var(--ui-corner-angel) 66% 9% 8% 67% / calc(626 * var(--px)) calc(85 * var(--px)) calc(76 * var(--px)) calc(630 * var(--px)) / calc(54 * var(--px)) 0 0 calc(55 * var(--px)) round;
-}
-#mapcity {
-  border-width: calc(84 * var(--px)) calc(76 * var(--px)) calc(66 * var(--px)) calc(74 * var(--px));
-  border-image: var(--ui-corner-angel-right) 66% 67% 8% 9% / calc(626 * var(--px)) calc(630 * var(--px)) calc(76 * var(--px)) calc(85 * var(--px)) / calc(54 * var(--px)) calc(55 * var(--px)) 0 0 round;
-}
-#mapsquad .title { padding-left: 0.75rem; }
 
 /* The full screens' main panels: a band of cathedral tracery with a praying angel in each corner
    (assets/ui/frame-tracery.webp, 938x955: the band's inner edge about 15% in, the angels within 20.5% x 17.5%). */
@@ -499,15 +468,6 @@ button.action.selected:not(.ability), button.small.selected, button.doctrine.sel
   border: 0 solid transparent;
   border-image: var(--ui-frame-tracery) 20.5% 18% 21% 17.5% / calc(196 * var(--px)) calc(169 * var(--px)) calc(201 * var(--px)) calc(164 * var(--px)) round;
 }
-
-
-/* The map's turn bar hangs between two carved brackets (assets/ui/endcap.webp, 862x540, its flat end the joint). */
-#mapturn::before, #mapturn::after {
-  content: ""; position: absolute; top: 50%; width: 5rem; height: 3.125rem; pointer-events: none;
-  background: var(--ui-endcap) center / contain no-repeat;
-}
-#mapturn::before { right: calc(100% - 0.375rem); transform: translateY(-50%); }
-#mapturn::after { left: calc(100% - 0.375rem); transform: translateY(-50%) scaleX(-1); }
 
 #setup { overflow-y: auto; }
 #setup .panel { border-width: 0.75rem; border-image-width: 0.875rem; }
@@ -673,6 +633,9 @@ body.formulas .formula { display: inline; }
   --gb-shield: #a8dcd8;
   --gb-magic: #4fd8cf;
   --moment: "Grenze Gotisch", var(--display);
+  --gb-bearer: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 160' preserveAspectRatio='none'><g fill='%2366635e'><path d='M74 62C58 46 50 24 46 4C34 16 26 40 26 66C26 96 34 124 48 160H72L80 90Z'/><path d='M106 62C122 46 130 24 134 4C146 16 154 40 154 66C154 96 146 124 132 160H108L100 90Z'/><path d='M70 60C80 54 100 54 110 60L132 160H48Z'/><path d='M90 16C80 17 73 26 72 37C71 47 76 56 82 59H98C104 56 109 47 108 37C107 26 100 17 90 16Z'/></g><g fill='none' stroke='%234f4c48' stroke-width='2'><path d='M44 20C40 50 40 90 50 130M136 20C140 50 140 90 130 130M78 70C76 80 78 90 84 96M102 70C104 80 102 90 96 96'/></g><path d='M90 30C85 31 82 35 82 40C82 46 85 50 90 50C95 50 98 46 98 40C98 35 95 31 90 30Z' fill='%232c2a28'/></svg>");
+  --gb-bell: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 34'><g fill='%237a7671'><path d='M12 2H18V6H12Z'/><path d='M5 29C5 18 8 8 15 6C22 8 25 18 25 29Z'/><rect x='3' y='28' width='24' height='3' rx='1'/></g><circle cx='15' cy='32' r='2' fill='%235a5753'/></svg>");
+  --gb-book: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 44'><path d='M13 0V12' stroke='%236b6864' stroke-width='2'/><rect x='3' y='12' width='20' height='30' rx='1.5' fill='%2366635e'/><rect x='3' y='12' width='4' height='30' fill='%234f4c48'/><rect x='19' y='24' width='5' height='6' rx='1' fill='%237a7671'/></svg>");
 
 
 }
@@ -881,3 +844,69 @@ body.formulas .formula { display: inline; }
 .hpbar .charges { position: absolute; left: 50%; bottom: 0.55rem; transform: translateX(-50%); display: flex; gap: 0.12rem; }
 .hpbar .charges .pip { width: 0.32rem; height: 0.5rem; background: var(--gb-magic); box-shadow: 0 0 0.25rem rgba(79, 216, 207, 0.6); }
 .hpbar .charges .pip.spent { background: var(--gb-stone-lo); box-shadow: inset 0 0 0 0.07rem var(--gb-iron); }
+
+/* The map's interface: the battle's beam across the top, its medallion showing the turn; the warband and the cities on
+   tablets hung from it by chains (the log's block, nine-sliced); marble plaques for names and numbers (the monument's
+   plate). All of these are pieces of the battle's painting, so both screens share one stone and one light. End turn
+   is the bell a hooded angel holds up at the bottom; Menu a book hanging from the beam. */
+#mapbeam { position: fixed; left: 0; right: 0; top: 0; height: 3.542rem; background: var(--ui-battle-beam) 0 0 / 100% 100% no-repeat; filter: drop-shadow(0 0.3rem 0.4rem rgba(0, 0, 0, 0.6)); }
+#mapturn { position: absolute; inset: 0; }
+#mapturn .medallion {
+  position: absolute; left: 50%; top: 0.26rem; width: 3.3rem; height: 3.3rem; margin-left: -1.65rem; border-radius: 50%; box-sizing: border-box;
+  display: grid; place-items: center; box-shadow: inset 0 0 0 0.2rem var(--ring); cursor: help;
+  font: 700 1.45rem var(--display); color: #2a2420; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+#mapturn .plaque {
+  position: absolute; top: 0.55rem; height: 2.45rem; box-sizing: border-box; padding: 0 0.7rem; display: flex; align-items: center; gap: 0.3rem; white-space: nowrap; cursor: help;
+  border: 0.5rem solid transparent; border-image: var(--ui-battle-plaque) 26 fill / 0.5rem stretch; color: var(--gb-ink); font: 700 0.95rem var(--display);
+  filter: drop-shadow(0 0.1rem 0.15rem rgba(0, 0, 0, 0.7));
+}
+#mapturn .purse { right: calc(50% + 2.3rem); }
+#mapturn .march { left: calc(50% + 2.3rem); }
+#mapturn .income { font: 600 0.62rem var(--text); color: #5a4c3c; margin-right: 0.35rem; }
+#mapturn .pips { letter-spacing: 0.12em; color: #3a3228; }
+#mapturn .gold { color: #6a4c10; }
+/* Chains from the beam to each tablet; none where a tablet is gone. */
+#mapbeam::before, #mapbeam::after {
+  content: ""; position: absolute; top: 3.3rem; width: 9.6rem; height: 2.4rem; pointer-events: none;
+  background: var(--ui-battle-chain) left top / 0.625rem 1.8rem repeat-y, var(--ui-battle-chain) right top / 0.625rem 1.8rem repeat-y;
+}
+#mapbeam::before { left: 3.9rem; }
+#mapbeam::after { right: 3.9rem; }
+#maphud:has(#mapsquad[hidden]) #mapbeam::before, #maphud:has(#mapcity[hidden]) #mapbeam::after { display: none; }
+#mapmenu.book { position: absolute; left: 63.5%; top: 3.542rem; width: 2.2rem; height: 3.8rem; padding: 0; border: 0; cursor: pointer; background: var(--gb-book) center / 100% 100% no-repeat; filter: drop-shadow(0 0.2rem 0.3rem rgba(0, 0, 0, 0.6)); }
+#mapmenu.book:hover { filter: brightness(1.3) drop-shadow(0 0.2rem 0.3rem rgba(0, 0, 0, 0.6)); }
+
+/* The tablets: stone blocks with a recessed panel, their names on marble plaques crossing their top edge. */
+#mapsquad, #mapcity {
+  position: fixed; top: 5.3rem; width: 17.4rem; box-sizing: border-box;
+  border: solid transparent; border-width: 2.57rem 2.36rem 2.57rem 3.02rem; border-image: var(--ui-battle-log) 74 68 74 87 fill / 2.57rem 2.36rem 2.57rem 3.02rem stretch;
+  filter: drop-shadow(0 0.4rem 0.6rem rgba(0, 0, 0, 0.55));
+}
+#mapsquad { left: 0.8rem; }
+#mapcity { right: 0.8rem; }
+#mapsquad > .title, #mapcity > .title {
+  display: block; width: fit-content; margin: -1.9rem auto 0.5rem; padding: 0 1rem; box-sizing: border-box; line-height: 1.4rem;
+  border: 0.45rem solid transparent; border-image: var(--ui-battle-plaque) 26 fill / 0.45rem stretch; color: var(--gb-ink); font: 700 1.05rem var(--display);
+}
+#mapsquad button.warband, #mapcity button.warband {
+  margin: 0.3rem 0 0.2rem; padding: 0.15rem 0.55rem; color: var(--gb-ink); background: none; filter: none;
+  border: 0.42rem solid transparent; border-image: var(--ui-battle-plaque) 26 fill / 0.42rem stretch;
+}
+#mapsquad button.warband .meta { color: #4a3f30; }
+#mapsquad button.warband.selected { filter: drop-shadow(0 0 0.45rem rgba(232, 195, 108, 0.8)); color: var(--gb-ink); }
+#mapsquad .member .name { color: var(--ink); }
+#mapsquad .hp, #mapcity .hp { background: var(--gb-stone-lo); border-color: var(--gb-iron); }
+#mapsquad .hp .fill, #mapcity .hp .fill { background: var(--gb-health); }
+#mapcity .city-row { border-bottom-color: #2a2622; }
+
+/* End turn: the hooded angel rising from the bottom edge holds up a bell; it glows while the move is yours. */
+#mapbottom { position: fixed; left: 50%; bottom: 0; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; pointer-events: none; }
+#maphint { min-height: 1.4rem; margin-bottom: 0.3rem; font: 500 1.0625rem var(--display); color: var(--ink); text-align: center; text-shadow: 0 1px 0.2rem #000, 0 0 0.6rem #000; white-space: nowrap; }
+#mapbottom .bearer { position: relative; width: 9rem; height: 8rem; background: var(--gb-bearer) center / 100% 100% no-repeat; }
+#endturn.bell {
+  position: absolute; left: 50%; top: 2.4rem; width: 2.7rem; height: 3.1rem; margin-left: -1.35rem; padding: 0; border: 0; cursor: pointer; pointer-events: auto;
+  background: var(--gb-bell) center / 100% 100% no-repeat; filter: drop-shadow(0 0 0.5rem rgba(232, 195, 108, 0.75));
+}
+#endturn.bell:hover { filter: brightness(1.3) drop-shadow(0 0 0.6rem rgba(232, 195, 108, 0.95)); }
+#endturn.bell:disabled { cursor: default; filter: brightness(0.6); }

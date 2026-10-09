@@ -7,9 +7,9 @@ const save: Playtest = {
     await t.open("/?map&seed=2");
     await t.awaiting("map");
     await t.page.click("#endturn");
-    await t.page.waitForFunction(() => document.getElementById("mapturn")?.textContent?.startsWith("Turn 2 · your move"), null, { timeout: 30000 });
+    await t.page.waitForFunction(() => document.getElementById("mapturn")?.getAttribute("aria-label")?.startsWith("Turn 2 · your move"), null, { timeout: 30000 });
     await t.awaiting("map");
-    const before = await t.page.textContent("#mapturn");
+    const before = `${await t.page.getAttribute("#mapturn", "aria-label")}: ${await t.page.textContent("#mapturn")}`;
 
     await t.page.click("#mapmenu");
     await t.page.click("#menu >> text=Save game");
@@ -21,7 +21,7 @@ const save: Playtest = {
     await t.page.click("#title >> text=Load game");
     await t.page.locator("#menu .save-row", { hasText: "Saved game" }).first().locator("text=Load").click();
     await t.page.waitForFunction(() => !document.getElementById("maphud")?.hidden, null, { timeout: 10000 });
-    const after = await t.page.textContent("#mapturn");
+    const after = `${await t.page.getAttribute("#mapturn", "aria-label")}: ${await t.page.textContent("#mapturn")}`;
     await t.shot("save-loaded");
 
     t.log(`saves listed: ${listed.join(", ")}`);
