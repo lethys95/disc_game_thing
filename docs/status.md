@@ -43,7 +43,7 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
 
 ## Next
 0. **The HUD kit goes on** (Claude's): the new game's faction emblems and March as a held object, the codex's ribbons
-   and capitals, the map's labels as pennants; then the faction skins.
+   and capitals; then the faction skins.
 1. **Finish Jilliath's concepts** with the user (the open nine), then portraits from the picks.
 2. **The other factions' missing units** (the alpha needs all three): Nexus melee tier 3, the Grove's mage line, and
    the rest on the board; then their concept art the same way.

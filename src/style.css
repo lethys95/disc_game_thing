@@ -1069,3 +1069,12 @@ body.formulas .formula { display: inline; }
 #menu .save-row:has(> .save-text) .note { color: #6e5d49; }
 #menu .save-row:has(> .save-text) button.small { border: 0; border-image: none; background: none; padding: 0 0.2rem; color: #7d2418; font: 600 0.8rem var(--text); text-decoration: underline; text-underline-offset: 0.2em; filter: none; }
 #menu .save-row:has(> .save-text) button.small:hover { color: #2b2219; }
+
+/* Labels in the world are small pennants (design/hud-kit.md): the name in pale thread on dark cloth, the owner's colour
+   as a band along the bottom (the label's own colour, kept as currentColor), a swallowtail at the end. */
+.leader-label, .site-label {
+  -webkit-text-fill-color: var(--ink); padding: 0.05rem 0.8rem 0.08rem 0.45rem; border: 0; border-bottom: 0.18rem solid currentColor;
+  background: linear-gradient(#2c241f, #17120f); clip-path: polygon(0 0, 100% 0, calc(100% - 0.42rem) 50%, 100% 100%, 0 100%);
+  font: 600 0.66rem var(--text); text-shadow: 0 1px 0 #000;
+}
+.site-label.neutral { -webkit-text-fill-color: #b9b0a2; }

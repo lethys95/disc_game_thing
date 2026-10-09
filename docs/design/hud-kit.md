@@ -398,11 +398,13 @@ page's ink.
   the card's silver seal until each faction's emblem takes its place. The title is in the moment face, and the
   choices are plaques with a seal pressed at each one's start.
 - **Saved games** are parchment strips in the menu, written in ink, with their choices in red ink.
+- **Labels in the world** are pennants: the name in pale thread on dark cloth, the owner's colour as a band along the
+  bottom, a swallowtail at the end.
 
 - **The card's instruments** are engraved silver emblems, the Capitol tabs' metal: the shield (armour), the
   hourglass (initiative), the rayed disc (ability power), the sword (hits). The health's number sits on a silver seal
   with a dark centre.
 
-**Next:** the new game's faction emblems and March as a held object, the codex's ribbons and capitals, the map's
-labels as pennants, then the faction skins (each faction's emblem as the moments' keystone).
+**Next:** the new game's faction emblems and March as a held object, the codex's ribbons and capitals, then the
+faction skins (each faction's emblem as the moments' keystone).
 
