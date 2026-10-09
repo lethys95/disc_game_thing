@@ -35,7 +35,8 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
 - **The Grove's Water is now Wellspring.**
 - **Unreal 5 as a parallel track** (the user: "UE is the king of 3d"; `ongoing/unreal-port`), in its own repo,
   `../disc_unreal`. three.js keeps the pace; Unreal follows as a view, with this repo's TypeScript rules as the only
-  rules. Work here goes on as before; the Unreal repo reads this one and never writes to it.
+  rules. Work here goes on as before; the Unreal repo reads this one and never writes to it. Step 1 is done there:
+  the `?fight` arena in Unreal looks nearly the same as three.js with today's assets (`disc_unreal/shots/`).
 
 ## Next
 1. **Finish Jilliath's concepts** with the user (the open nine), then portraits from the picks.
