@@ -62,7 +62,8 @@ the reason a generic call-by-name bridge beats a protocol designed per feature.
 - **Unreal 5.8.3**, Epic's precompiled Linux build, in `~/programs/ue/` (73 GB, with its own clang 20 toolchain).
   Plugins that matter here ship with it: CommonUI, Python editor scripting, Interchange (glTF import), Geometry
   Scripting and procedural meshes, Niagara, StateTree, PCG, Movie Render Pipeline, Pixel Streaming 2, the Automation
-  Driver (simulated UI input), Functional Testing, WebSockets, and Epic's experimental Unreal MCP.
+  Driver (simulated UI input), Functional Testing and Epic's experimental Unreal MCP, and the engine has a
+  WebSockets module.
 - **A working Unreal workflow in another project.** `~/projects/domestic_bliss_vr` has run this same engine since
   2026-10-05, C++ only, driven by Claude. It measured 2–4 s per C++ build and about 7 s to launch. It runs the game
   headless and offscreen with screenshots, runs automation tests from the command line, and builds maps from editor

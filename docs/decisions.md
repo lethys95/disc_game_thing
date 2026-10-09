@@ -267,3 +267,13 @@ armor flat as a percentage, so stacking it (a gargoyle in a tier-5 town, pots of
 to beat a Capitol Guardian was to stack armor on two units and "tank and spank for about 15 minutes straight. We're not
 doing that. Lesson learned." So: percent reduction on a curve that flattens, like World of Warcraft's. Claude's curve,
 reduction = armor ÷ (armor + 60), the user's yes (2026-10-09); built (provisional #75).
+
+## Unreal 5 as a parallel track; the TypeScript rules stay the only rules (2026-10-09, the user)
+The user, after Claude's estimate (`unreal-port.md`): "Actual 3d quality. Threejs doesn't have all the features we need
+to make a beautiful game, and UE is the king of 3d." Velocity is the cost, so "conversion would likely be a continuous
+effort, where development with higher velocity would happen inside threejs", with agents in parallel. This reverses
+the 2026-09-28 "Unreal is out": a C++-only, script-built Unreal 5.8 workflow already runs on this machine
+(`domestic_bliss_vr`), so the concern that it would be slow for Claude no longer holds. Claude's call on how: Unreal is
+a view, and the rules stay in TypeScript as the only rules, reached from a Node process by calling them by name over a
+local socket. A second copy of the rules would drift and double every new unit. The Unreal project lives in `unreal/`;
+its C++ and scripts are the source, and generated assets stay out of git.
