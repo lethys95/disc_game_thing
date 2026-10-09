@@ -398,14 +398,6 @@ button.action.selected:not(.ability), button.small.selected, button.doctrine.sel
 }
 #mapbanner { border: 1.25rem solid transparent; border-image: var(--ui-frame) 18% / 1.5rem round; background: rgba(13, 11, 11, 0.95) padding-box; }
 
-/* The full screens' main panels: a band of cathedral tracery with a praying angel in each corner
-   (assets/ui/frame-tracery.webp, 938x955: the band's inner edge about 15% in, the angels within 20.5% x 17.5%). */
-.codex-list, .codex-page, .credits-page {
-  --px: 0.0127rem;
-  border-width: calc(136 * var(--px)) calc(140 * var(--px)) calc(141 * var(--px)) calc(137 * var(--px));
-  border-image: var(--ui-frame-tracery) 20.5% 18% 21% 17.5% / calc(196 * var(--px)) calc(169 * var(--px)) calc(201 * var(--px)) calc(164 * var(--px)) round;
-}
-
 #setup { overflow-y: auto; }
 #setup .panel { border-width: 0.75rem; border-image-width: 0.875rem; }
 #setup { padding: 0.5rem 1.125rem; gap: 0.375rem; }
@@ -509,13 +501,19 @@ button.codex-row .tier { color: var(--muted); font-size: 0.6875rem; }
 .codex-lines .links { display: flex; align-items: center; gap: 0.375rem; flex-wrap: wrap; }
 .codex-lines .label { color: var(--muted); width: 6.875rem; }
 
-#credits { display: flex; align-items: center; justify-content: center; }
-.credits-page { width: min(40rem, 92vw); max-height: 86vh; overflow-y: auto; padding: 1rem 1.375rem; display: flex; flex-direction: column; gap: 0.25rem; }
-.credits-page .title { font: 700 2.125rem var(--display); letter-spacing: 0.06em; }
-.credits-page .section { font: 700 1.125rem var(--display); color: var(--gold); margin-top: 0.625rem; }
-.credits-page .credit { display: grid; grid-template-columns: 1fr 1.3fr; gap: 0.75rem; padding: 0.1875rem 0; border-bottom: 1px solid #221d1a; }
-.credits-page .what { color: var(--muted); }
-.credits-page button.action { align-self: flex-end; margin-top: 0.75rem; }
+/* The credits are written in the codex's book, across both its pages; Back is on the wall, as in the codex. */
+#credits .credits-page {
+  position: absolute; top: 4.2rem; height: 45rem; left: 50%; width: 82rem; margin-left: -41rem; box-sizing: border-box; overflow: hidden;
+  columns: 2; column-gap: 8.5rem; column-fill: balance; padding: 3.2rem 7.44rem 3.2rem 5.06rem; border: 0; border-image: none;
+  background: var(--ui-codex-book) 0 0 / 100% 100% no-repeat; color: #2b2219;
+}
+/* Clear of the corner fitting's arm. */
+.credits-page .title { font: 700 2.125rem var(--display); letter-spacing: 0.06em; padding-left: 1.2rem; break-after: avoid; }
+.credits-page .title::first-letter { color: #7d2418; }
+.credits-page .section { font: 700 1.125rem var(--display); color: #7d2418; margin-top: 0.625rem; break-after: avoid; }
+.credits-page .credit { display: grid; grid-template-columns: 1fr 1.3fr; gap: 0.75rem; padding: 0.1875rem 0; border-bottom: 1px solid rgba(72, 52, 32, 0.32); break-inside: avoid; }
+.credits-page .what { color: #6e5d49; }
+#credits .credits-page > button.action { position: fixed; top: 0.75rem; right: 1.2rem; margin: 0; }
 .codex-page .note { color: var(--muted); font-size: 0.6875rem; margin-top: 0.375rem; }
 
 /* A number ability power grew: hover it for its value at 100. */
@@ -925,3 +923,61 @@ body.formulas .formula { display: inline; }
 .screen .panel { overflow: visible; }
 .screen .capitol-body { overflow-y: auto; align-items: start; padding-top: 0.6rem; }
 .screen .city-content { padding-top: 0.6rem; }
+
+/* The codex as a book (design/hud-kit.md; the user accepted it, 2026-10-09): an open book lying on the carved wall,
+   the list on its left page and the entry on its right, in ink on parchment. The shelves are a chapter line at the top
+   of the left page; the kinds of entry are marble plaques on the wall above the book that light, with Back. */
+#codex { display: block; padding: 0; --page-ink: #2b2219; --page-muted: #6e5d49; --page-rubric: #7d2418; --page-rule: rgba(72, 52, 32, 0.32); }
+#codex .codex-header { position: absolute; left: 1.2rem; right: 1.2rem; top: 0.75rem; height: 2.6rem; display: flex; align-items: center; gap: 0.5rem; }
+#codex .codex-header .title, #codex .codex-header .tabs button {
+  height: 2.45rem; box-sizing: border-box; padding: 0 1rem; display: flex; align-items: center; white-space: nowrap;
+  border: 0.5rem solid transparent; border-image: var(--ui-battle-plaque) 26 fill / 0.5rem stretch; color: var(--gb-ink); background: none;
+  font: 700 1.05rem var(--display); letter-spacing: 0.03em; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3); filter: drop-shadow(0 0.1rem 0.15rem rgba(0, 0, 0, 0.7));
+}
+#codex .codex-header .title { font-size: 1.35rem; padding: 0 1.3rem; }
+#codex .codex-header .tabs { display: flex; gap: 0.5rem; flex: 1; justify-content: center; }
+#codex .codex-header .tabs button { cursor: pointer; filter: brightness(0.72) drop-shadow(0 0.1rem 0.15rem rgba(0, 0, 0, 0.7)); }
+#codex .codex-header .tabs button:hover { filter: brightness(0.9) drop-shadow(0 0.1rem 0.15rem rgba(0, 0, 0, 0.7)); }
+#codex .codex-header .tabs button.selected { filter: brightness(1.05) drop-shadow(0 0 0.5rem rgba(232, 195, 108, 0.75)); color: var(--gb-ink); }
+
+/* The book (assets/ui/codex/book.webp) is one painted piece; the text sits on its pages where the painting put them
+   (measured on the 1440p pick): clear of the corner fittings and the slanting page edges, either side of the spine. */
+#codex .codex-body {
+  position: absolute; top: 4.2rem; height: 45rem; left: 50%; width: 82rem; margin-left: -41rem; box-sizing: border-box;
+  display: grid; grid-template-columns: 33rem 30.5rem; column-gap: 6rem; padding: 3.2rem 7.44rem 3.2rem 5.06rem;
+  background: var(--ui-codex-book) 0 0 / 100% 100% no-repeat; filter: drop-shadow(0 0.6rem 1rem rgba(0, 0, 0, 0.6)); color: var(--page-ink);
+}
+#codex:has(.codex-shelves) .codex-list { padding-top: 3.2rem; }
+#codex .codex-shelves {
+  position: absolute; z-index: 1; top: 7.4rem; left: calc(50% - 34.74rem); width: 31.8rem; display: flex; flex-direction: column; align-items: flex-start; gap: 0.3rem;
+}
+/* Each entry opens with a rubric capital. */
+#codex .codex-top .heading .name::first-letter { color: var(--page-rubric); }
+#codex .shelf-group { gap: 0.15rem 0.9rem; }
+#codex .shelf-group + .shelf-group { padding-left: 0; border-left: 0; }
+#codex .shelf-group .label { color: var(--page-muted); font-size: 0.62rem; margin-right: 0.2rem; }
+#codex .shelf-group button { border: 0; background: none; padding: 0; color: var(--page-ink); font: 700 0.95rem var(--display); filter: none; cursor: pointer; }
+#codex .shelf-group button:hover { color: var(--page-rubric); }
+#codex .shelf-group button.selected { color: var(--page-rubric); text-decoration: underline; text-underline-offset: 0.2em; filter: none; }
+
+#codex .codex-list, #codex .codex-page { border: 0; background: none; padding: 0; min-height: 0; filter: none; color: var(--page-ink); }
+#codex .codex-search { background: transparent; border: 0; border-bottom: 1px solid var(--page-rule); color: var(--page-ink); padding: 0.3rem 0.1rem; font-size: 0.9rem; }
+#codex .codex-search::placeholder { color: var(--page-muted); }
+#codex .codex-search:focus { border-bottom-color: var(--page-rubric); }
+#codex .codex-group { color: var(--page-rubric); border-bottom-color: var(--page-rule); }
+#codex button.codex-row { background: none; border: 0; border-bottom: 1px solid var(--page-rule); margin: 0; padding: 0.3rem 0.3rem; color: var(--page-ink); }
+#codex button.codex-row:hover { background: rgba(120, 80, 40, 0.08); }
+#codex button.codex-row.selected { background: rgba(125, 36, 24, 0.1); color: var(--page-rubric); }
+#codex button.codex-row .tier { color: var(--page-muted); }
+#codex .codex-top .subtitle, #codex .codex-top .stats .name, #codex .codex-page .note, #codex .codex-lines .label, #codex .codex-page .abilities .text { color: var(--page-muted); }
+#codex .codex-page > .text { color: var(--page-ink); }
+#codex .codex-page .abilities { border-top-color: var(--page-rule); }
+#codex .codex-page .abilities li { border-bottom-color: var(--page-rule); }
+#codex .codex-page .abilities .passive .name { color: #5d4c38; }
+#codex button.codex-link { color: var(--page-ink); }
+#codex button.codex-link:hover { color: var(--page-rubric); }
+#codex .codex-lines .chip { border-color: var(--page-rule); color: var(--page-muted); }
+#codex .codex-lines button { border: 0; border-image: none; background: none; padding: 0; color: var(--page-rubric); font: 600 0.8rem var(--text); text-decoration: underline; text-underline-offset: 0.2em; filter: none; }
+#codex .codex-lines button:hover { color: var(--page-ink); }
+#codex .scaled { color: #8a4e10; border-bottom-color: rgba(138, 78, 16, 0.5); }
+#codex .ability-row > .art.ability-icon { border-color: #6e5d49; }

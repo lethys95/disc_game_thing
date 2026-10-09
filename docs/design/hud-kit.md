@@ -244,10 +244,10 @@ The paintings in step 3 show them, and the user overrules any that miss.
   - the stone slab buttons
   - the backdrop
   - the four tab emblems, as the niches' first objects
-- **Retires:** the angel corners, the turn bar's end caps, the divider rod, the first marble plaque, the iron plate
-  and the iron medallion (gone with the battle, the map and the Capitol painted), and the tracery frame's corner
-  angels (still on the codex and the credits). Their figures come back with jobs. The filigree and tracery frames
-  give way to the painted pieces screen by screen.
+- **Retired:** the angel corners, the turn bar's end caps, the divider rod, the first marble plaque, the iron plate,
+  the iron medallion and the tracery frame with its corner angels (gone with the battle, the map, the Capitol and the
+  codex painted). Their figures came back with jobs. The filigree frame gives way to the painted pieces screen by
+  screen.
 
 ## Decided (the user, 2026-10-09)
 "I've read the document. I'm not a designer, so I'll be relying on your judgment a lot." All eight accepted:
@@ -366,6 +366,18 @@ The greybox asked for her arms raised under the beam. Every probe painted her wi
 with the niches lower than drawn. The stylesheet follows the painting: the niches' buttons sit where the painting put
 the niches.
 
-**Next:** the codex as a book (the layout change the user accepted), the battle's last flat glyphs, then the title,
-the new game and the menus. After that, the other factions' skins.
+## The codex as a book (2026-10-10, past midnight)
+The layout change the user accepted, built: the codex is an open book lying on the carved wall, painted as one piece
+(`codex-1`, reliquary 85-3, repainted at 1440p). The list is on the left page and the entry on the right, in ink on
+the parchment, and each entry's name opens with a rubric capital. On the units shelf, a chapter line at the top of the
+left page names the shelves, and the chosen one is in rubric and underlined. The four kinds of entry are marble
+plaques on the wall above the book that light, with Back beside them. The text sits where the painting put the pages,
+clear of the corner fittings and the slanting page edges. The credits are written in the same book, across both
+pages, and the tracery frame and its corner angels retired with them.
+
+Still to come for the book: ribbon bookmarks for the kinds and shelves, illuminated capitals, and marginalia in the
+page's ink.
+
+**Next:** the battle's last flat glyphs, then the title, the new game and the menus. After that, the other factions'
+skins.
 

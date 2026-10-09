@@ -112,3 +112,7 @@
   painted into those pieces (`capitol-1`, reliquary 85-1, repainted at 1440p): a hooded angel on its capital carrying
   the beam on her wings, the tabs as four niches below her, the facts on plaques. The city painting is the window
   behind every tab. The old plaque, plate, medallion, angel corners and end caps retired. Next: the codex.
+- **The codex as a book (2026-10-10, past midnight):** the accepted layout change, built: an open book on the carved
+  wall (`codex-1`, reliquary 85-3, 1440p), the list on the left page and the entry on the right in ink, the kinds as
+  plaques on the wall; the credits in the same book. The tracery frame retired. Next: the battle's last flat glyphs,
+  the title, new game and menus.

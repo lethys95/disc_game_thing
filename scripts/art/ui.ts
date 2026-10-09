@@ -31,13 +31,6 @@ const PIECES = [
   { id: "icon-garrison", look: "A single emblem in tarnished engraved silver relief: two crossed swords over a kite shield, bold simple silhouette, filling the frame.", size: [1024, 1024] },
   { id: "icon-research", look: "A single emblem in tarnished engraved silver relief: an open ancient book with a quill, bold simple silhouette, filling the frame.", size: [1024, 1024] },
   { id: "icon-spells", look: "A single emblem in tarnished engraved silver relief: a crescent moon cradling a four-pointed star, bold simple silhouette, filling the frame.", size: [1024, 1024] },
-  // The screens' tracery frame (the user, 2026-10-06: "Think 'grotesque'. Stone part of a building shaped like an angel,
-  // but built into the hud instead"; `docs/design/art.md`), until each screen is painted as one picture (`hud-paint.ts`).
-  {
-    id: "frame-tracery",
-    look: "An ornate square frame border of black stone carved as gothic cathedral tracery: pointed arches, quatrefoils and crockets along all four sides, a small hooded stone angel at each corner. The inside of the frame is completely flat plain black, empty.",
-    size: [1024, 1024],
-  },
 ];
 
 const args = process.argv.slice(2);

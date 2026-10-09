@@ -111,6 +111,11 @@ const CAPITOL_CHROME =
   "#capitol .city-scene,#capitol .rail-tab>*,#capitol .rail-facts,#capitol .capitol-header>*{visibility:hidden!important}";
 const CAPITOL_SCULPTED = "#capitol .tab-rail .column";
 
+// The codex: the open book is new structure, painted exactly; the wall around it is the backdrop, the field.
+const CODEX_BOOK =
+  `${HIDE_STAGE} #codex{background:none!important} #codex *{color:transparent!important;text-shadow:none!important} ` +
+  "#codex .codex-body>*,#codex .codex-header,#codex .codex-shelves{visibility:hidden!important} #codex .codex-body{filter:none!important}";
+
 const SCREENS: Readonly<Record<string, Screen>> = {
   battle: {
     route: "/?fight&steps=2",
@@ -190,6 +195,25 @@ const SCREENS: Readonly<Record<string, Screen>> = {
     sculpture: [{ name: "column", selector: CAPITOL_SCULPTED }],
     // The rail is new: its pillar and its niches, without what sits on it (the figure, the tabs' objects, the plaques).
     paint: `${CAPITOL_CHROME} #capitol *{visibility:hidden!important} #capitol .tab-rail,#capitol .rail-tab{visibility:visible!important}`,
+  },
+  codex: {
+    route: "/?codex",
+    subject:
+      "The interface of a dark fantasy strategy game seen straight on: a large old book lies open on a dark carved stone wall, seen from straight above and filling most of the picture: " +
+      "two wide blank pages of pale warm parchment, clean and empty, curving gently down into the spine at the centre, bound in dark worn leather with tarnished silver corner fittings. " +
+      "No text, no letters, no numbers, no pictures on the pages.",
+    round: 1,
+    probes: ["reliquary"],
+    layers: {
+      chrome: CODEX_BOOK,
+      structure: CODEX_BOOK,
+      sculpture: `${HIDE_STAGE} #codex,#codex *{visibility:hidden!important}`,
+      content: `${HIDE_STAGE} #codex{background:none!important} #codex .codex-body{background:none!important;filter:none!important}`,
+      field: "#codex>*{visibility:hidden!important}",
+      front: `${HIDE_STAGE} #codex,#codex *{visibility:hidden!important}`,
+    },
+    sculpture: [],
+    paint: CODEX_BOOK,
   },
 };
 
@@ -479,6 +503,8 @@ interface Piece {
 }
 
 const PIECES_OF: Readonly<Record<string, readonly Piece[]>> = {
+  // The codex's open book, as painted within the book's exact box.
+  codex: [{ name: "book", from: "reliquary-85-3.png", rect: [99, 121, 2362, 1296], cut: "rect" }],
   // The Capitol's rail as painted, from the beam's underside to the bottom edge: the angel standing on its capital, her
   // wings and hood rising behind the beam, the four niches below her (the painting set them lower than the greybox; the
   // stylesheet follows the painting).

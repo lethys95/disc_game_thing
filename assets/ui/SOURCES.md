@@ -8,7 +8,6 @@ Generated with `scripts/art/ui.ts` (Krea-2 Turbo via ComfyUI) and cut out with `
 | `button.webp` | `button`, 2 | |
 | `backdrop.webp` | `backdrop`, 1 | central 80% cropped, 512 px, tiled |
 | `icon-{city,garrison,research,spells}.webp` | `icon-city` 1, `icon-garrison` 3, `icon-research` 1, `icon-spells` 1 | cut out |
-| `frame-tracery.webp` | `frame-tracery`, 2 | `--hollow` |
 
 Pilot on the city screen (M45), after the user's reference `docs/design/references/disciples2-city.png`.
 
@@ -44,3 +43,10 @@ room around the column figure on its capital (`hud-paint.ts` screen `capitol`, r
 | File | Cut |
 |---|---|
 | `capitol/rail.webp` | the right column as painted, from the beam's underside to the bottom edge: the angel on the capital, the four niches, the pillar |
+
+## The codex (`codex/`), painted as one book (2026-10-10)
+The codex's greybox book painted exactly within its box (`hud-paint.ts` screen `codex`, round 1, probe `reliquary`,
+strength 0.85, seed 3), then repainted at 1440p (0.35). Cut with `pieces codex`:
+| File | Cut |
+|---|---|
+| `codex/book.webp` | the open book as painted; the codex's and the credits' pages |

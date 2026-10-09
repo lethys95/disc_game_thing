@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-10, past midnight (the battle's, the map's and the Capitol's HUD painted and installed)
+**Updated:** 2026-10-10, past midnight (the battle, the map, the Capitol and the codex painted and installed)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): the alpha is the three playable factions (Jilliath,
@@ -40,7 +40,8 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
   under a held right-click. The map reuses the battle's pieces and adds a hooded angel holding up the End turn bell
   and a hanging book for Menu. The Capitol, cities, leader and structure screens take the beam as header and the
   blocks as tablets; a city adds a painted rail (an angel on its capital carrying the beam, the tabs as niches) with
-  the city painting as the window behind every tab. The user handed control to Claude ("I'm giving you control").
+  the city painting as the window behind every tab. The codex is an open book (the list and the entry on its pages,
+  in ink), and the credits are written in it. The user handed control to Claude ("I'm giving you control").
 - **The Grove's Water is now Wellspring.**
 - **Unreal 5 as a parallel track** (the user: "UE is the king of 3d"; `ongoing/unreal-port`), in its own repo,
   `../disc_unreal`. three.js keeps the pace; Unreal follows as a view, with this repo's TypeScript rules as the only
@@ -48,8 +49,8 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
   the `?fight` arena in Unreal looks nearly the same as three.js with today's assets (`disc_unreal/shots/`).
 
 ## Next
-0. **The HUD kit goes on** (Claude's): the codex as a book (accepted layout change), the battle's last flat glyphs as
-   painted pieces, then the title, new game and menus.
+0. **The HUD kit goes on** (Claude's): the battle's last flat glyphs as painted pieces, then the title, new game and
+   menus; the book's ribbons and capitals later.
 1. **Finish Jilliath's concepts** with the user (the open nine), then portraits from the picks.
 2. **The other factions' missing units** (the alpha needs all three): Nexus melee tier 3, the Grove's mage line, and
    the rest on the board; then their concept art the same way.
