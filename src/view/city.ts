@@ -150,7 +150,9 @@ export class CityScreen implements KeyLayer {
     const owner = city.owner === null ? null : playerOf(world, city.owner).faction;
     const painting = cityViewUrl(city.kind === "capitol" ? MODEL_CHAINS.capitol(owner) : MODEL_CHAINS.city());
     const scene = element("div", "city-scene");
-    if (painting) scene.style.backgroundImage = `url("${painting}")`;
+    const canvas = element("div", "city-painting");
+    if (painting) canvas.style.backgroundImage = `url("${painting}")`;
+    scene.appendChild(canvas);
     view.appendChild(scene);
     return view;
   }

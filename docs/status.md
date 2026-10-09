@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-09 (Unreal 5 as a parallel track)
+**Updated:** 2026-10-09 (the HUD kit's second batch, built for the user's review)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): the alpha is the three playable factions (Jilliath,
@@ -32,6 +32,9 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
   made knights of every melee unit), "inhuman" over "woman", name cloth textures; review pages show full prompts.
 - **Armor is a percentage with diminishing returns** (the user; #75, `testing/percent-armor`): armor ÷ (armor + 60),
   shown as a percent on the cards and in the codex.
+- **The HUD kit's second batch** (`testing/ui-kit-grotesques`, `shots/hud-kit.html`): a stone angel whose wings are
+  the side panels' frame, tracery with angel corners on the screens' large panels, end caps, a divider; the Capitol's
+  gargoyle is gone. Sculpture is the frame, never set on it (decisions.md).
 - **The Grove's Water is now Wellspring.**
 - **Unreal 5 as a parallel track** (the user: "UE is the king of 3d"; `ongoing/unreal-port`), in its own repo,
   `../disc_unreal`. three.js keeps the pace; Unreal follows as a view, with this repo's TypeScript rules as the only
@@ -43,7 +46,7 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
 2. **The other factions' missing units** (the alpha needs all three): Nexus melee tier 3, the Grove's mage line, and
    the rest on the board; then their concept art the same way.
 3. **The balance pass** once the factions' lines exist, with the user's worry that Jilliath's lines are too long.
-4. **Waiting for the user to look** (`testing/`): the mage and support lines, ability power, the front door, codex.
+4. **Waiting for the user to look** (`testing/`): the HUD kit, the mage and support lines, ability power, the front door, codex.
 
 ## Try
 `?codex`, `?fight` (`=mages`, `=nexus`, `=grove`, `=bandits`, `=carnival`, `=drawn`; `&tarot=3&seed=4`), `?map`,

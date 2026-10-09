@@ -29,11 +29,6 @@ const PIECES = [
     look: "A round game button: a heavy circular medallion of dark carved iron with a ring of small studs and a thin engraved border, the center a smooth dark polished stone disc, blank.",
     size: [1024, 1024],
   },
-  {
-    id: "gargoyle",
-    look: "A small gothic gargoyle statue of dark weathered stone, crouched with folded bat wings and claws gripping a ledge, facing forward, the whole statue in frame.",
-    size: [1024, 1024],
-  },
   // Surfaces that fill a screen's gaps (the user, 2026-09-27: "a lot of blind spots that aren't filled").
   {
     id: "backdrop",
@@ -52,25 +47,10 @@ const PIECES = [
   { id: "icon-spells", look: "A single emblem in tarnished engraved silver relief: a crescent moon cradling a four-pointed star, bold simple silhouette, filling the frame.", size: [1024, 1024] },
   // A broader kit (the user, 2026-10-06: "Think 'grotesque'. Stone part of a building shaped like an angel, but built
   // into the hud instead"; `docs/design/art.md`): architectural sculpture grown into the panels, so they stop all
-  // looking alike. Corners are drawn for the top-left and mirrored in CSS; the end cap for the left end likewise.
+  // looking alike. The corner is drawn for the top-left and mirrored for the right; the end cap for the left end.
   {
     id: "corner-angel",
     look: "A gothic stone grotesque built into the top left corner of a dark carved iron frame: a hooded angel of weathered black stone crouches in the corner with its head bowed, its folded wings running along the top edge and down the left edge of the frame. Only the corner, the rest empty.",
-    size: [1024, 1024],
-  },
-  {
-    id: "corner-grotesque",
-    look: "A gothic stone grotesque built into the top left corner of a dark carved iron frame: a hunched horned creature of weathered black stone with a snarling face, its claws gripping the top edge and the left edge of the frame. Only the corner, the rest empty.",
-    size: [1024, 1024],
-  },
-  {
-    id: "finial",
-    look: "A gothic spire finial of dark carved stone and iron: a tall pointed pinnacle with crockets along its edges and a small cross-shaped flower at its tip, standing upright on a small square base, the whole finial in frame.",
-    size: [512, 1024],
-  },
-  {
-    id: "keystone",
-    look: "A carved keystone of dark weathered stone, wedge-shaped, wider at the top: on its face a solemn angel's face in relief with small wings spreading to both sides, the whole keystone in frame.",
     size: [1024, 1024],
   },
   {

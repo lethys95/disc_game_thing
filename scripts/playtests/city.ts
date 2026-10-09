@@ -6,7 +6,7 @@ const city: Playtest = {
   async run(t) {
     await t.open("/?map&seed=1&capitol");
     // The Capitol opens on its city view: a painting of the city in a frame, the tab rail on the right.
-    const painting = await t.page.locator("#capitol .city-scene").evaluate((el) => getComputedStyle(el).backgroundImage);
+    const painting = await t.page.locator("#capitol .city-painting").evaluate((el) => getComputedStyle(el).backgroundImage);
     if (!painting.startsWith("url(")) t.fail(`the city view shows no painting: ${painting}`);
     await t.shot("playtest-city-home");
     await t.page.locator("#capitol .rail-tab", { hasText: "Garrison" }).click();

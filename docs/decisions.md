@@ -278,3 +278,12 @@ a view, and the rules stay in TypeScript as the only rules, reached from a Node 
 local socket. A second copy of the rules would drift and double every new unit. The Unreal project is its own repo,
 `../disc_unreal` (the user, the same day, so it doesn't mix with the TypeScript cycle). It reads this repo's rules
 and assets and never writes here; its plan is its `docs/plan.md`.
+
+## Sculpture in the interface is the frame itself, never set on it (2026-10-09)
+The user's test for the UI kit: "are they actually hud elements? do they blend in? […] im NOT interested in a random
+gargoyle". So a piece is kept only if the frame would be incomplete without it: the angel corner is one image that is
+the panel's whole border (its wings are the bars), the tracery frame's angels are its corner blocks, the end caps are
+the turn bar's ends. Anything that stands on a panel as an object (a creature gripping the edge, a spire with nothing
+under it, the Capitol's gargoyle) is out. The angels mark the big panels only: the side panels in battle and on the
+map, the screens' large panels; small rows, buttons and tiles keep the plain carved frame, so the angels don't become
+wallpaper.

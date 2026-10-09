@@ -217,7 +217,7 @@ export class Hud {
     const stats = effectiveStats(battle, unit.id);
     const def = UNITS[unit.defId];
     this.card.replaceChildren();
-    this.card.className = `panel side${unit.side}`;
+    this.card.className = "panel";
     this.card.appendChild(art({ kind: "portrait", id: unit.defId, frame: "bust" }, "card-portrait"));
     this.card.appendChild(element("div", "title", unit.name));
     if (pinned) this.card.appendChild(element("div", "pin", "Pinned · click it again to release"));

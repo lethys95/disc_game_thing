@@ -213,4 +213,10 @@ quite a bit, and we don't really need to be restrained at all."
 - The kit (`assets/ui/`: frame, plaque, button, medallion, gargoyle, backdrop, plate, icons) is too small to design
   with. A broader set: corner pieces that wrap two panel edges, finials and spires for tops, a keystone for headers,
   carved caps for the battle's ability bar and turn order, per-faction variants.
-- Generated in the `krea-images` flow once ComfyUI is free, then cut out (`scripts/art/ui_cut.py`). Not started.
+- Generated in the `krea-images` flow once ComfyUI is free, then cut out (`scripts/art/ui_cut.py`).
+- **First batch built (2026-10-09), for the user to judge** (`shots/hud-kit.html`). The test the user set: "are they
+  actually hud elements? do they blend in? […] im NOT interested in a random gargoyle". Kept: a hooded angel whose
+  wings are the side panels' top and side bars (one image is the whole frame, mirrored on the right), a tracery frame
+  with angel statues as its corners for the screens' large panels, carved brackets at the ends of the map's turn bar, an
+  iron divider on the battle card. Rejected: a horned grotesque gripping a corner (on the frame, not of it), a keystone
+  (a third stone colour, and no arch to close), a finial (nothing vertical to crown). The Capitol's gargoyle is gone.

@@ -13,3 +13,11 @@
   elements? do they blend in? etc. because I'm interested in a random gargoyle somewhere. it'd be something that
   blends into a whole." Then: "im NOT interested in a random gargoyle". The pieces must belong to the panels they sit on, one whole, never an ornament stuck
   on top (the Capitol's gargoyle reads as a sticker, `docs/design/art.md`).
+- **Built (2026-10-09), for the user to look at:** `shots/hud-kit.html` (before and after, Claude's review against
+  the user's test). Kept: the angel corner as the side panels' whole frame (battle card and log, map warband and
+  city), the tracery frame on the screens' large panels (codex, Capitol, leader, credits), end caps on the map's turn
+  bar, a divider on the battle card. Rejected: the horned grotesque (it grips the frame: the random gargoyle), the
+  keystone (brown, a third material; no arch), the finial (nothing to crown). The Capitol's gargoyle is removed.
+- **Claude's own doubts, for the user:** the angel panels' plain bar sits next to the filigree frame that the
+  ability tiles, turn bar and menus keep (two frame styles in one view; a plain frame cut from the angel image could
+  unify them); the garrison tab carries 12 corner angels, where they start to read as a pattern.

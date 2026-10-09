@@ -47,8 +47,6 @@ html, body { margin: 0; height: 100%; background: #0b0a0c; color: var(--ink); fo
 .chip.now { color: var(--ink); border-color: var(--edge); border-bottom-color: var(--blood); transform: translateY(-2px); }
 
 #card { position: fixed; left: 1rem; bottom: 1rem; width: 16.875rem; padding: 0.75rem 0.875rem; }
-#card.side0 { border-top: 0.1875rem solid var(--side0); }
-#card.side1 { border-top: 0.1875rem solid var(--side1); }
 #card .title { font: 700 1.375rem var(--display); letter-spacing: 0.02em; }
 #card .subtitle { color: var(--muted); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem; }
 /* Health bars: one look everywhere; each place sets only its size. */
@@ -505,7 +503,6 @@ button.action:not(.ability), button.small, button.doctrine, button.warband {
 button.action:not(.ability):hover:not(:disabled), button.small:hover:not(:disabled), button.doctrine:hover, button.warband:hover { filter: brightness(1.3); }
 button.action:not(.ability):disabled, button.small:disabled { filter: grayscale(1) brightness(0.65); opacity: 1; }
 #capitol .tab-rail { width: 5.25rem; align-items: center; gap: 2px; }
-#capitol .tab-rail::before { display: block; position: static; content: ""; width: 5rem; height: 6rem; mix-blend-mode: normal; opacity: 1; transform: none; background: var(--ui-gargoyle, none) center bottom / contain no-repeat; }
 #capitol .rail-tab {
   width: 5rem; height: 5rem; border: none; background: var(--ui-medallion) center / 4.625rem no-repeat; box-shadow: none;
   justify-content: center; gap: 0;
@@ -518,8 +515,9 @@ button.action:not(.ability):disabled, button.small:disabled { filter: grayscale(
 button.action.selected:not(.ability), button.small.selected, button.doctrine.selected, button.warband.selected { filter: brightness(1.35) drop-shadow(0 0 0.375rem rgba(217, 179, 106, 0.6)); color: var(--gold); }
 
 /* The city view: a painting of the city in a frame (a placeholder for the montage, design/capitol-screen.md). */
-.city-view { position: relative; flex: 1; min-height: 0; overflow: hidden; padding: 0; }
-.city-scene {
+.city-view { position: relative; flex: 1; min-height: 0; padding: 0; }
+.city-scene { position: absolute; inset: 0; overflow: hidden; }
+.city-painting {
   position: absolute; inset: 0; background: #0b0a0c center / cover no-repeat;
   animation: city-drift 40s ease-in-out infinite alternate;
 }
@@ -565,6 +563,52 @@ button.action.selected:not(.ability), button.small.selected, button.doctrine.sel
   border: 0.75rem solid transparent; border-image: var(--ui-frame) 18% / 0.875rem round; top: 0.375rem;
 }
 #banner, #mapbanner { border: 1.25rem solid transparent; border-image: var(--ui-frame) 18% / 1.5rem round; background: rgba(13, 11, 11, 0.95) padding-box; }
+
+/* Sculpture grown into the frames (the user, 2026-10-06: "baked into the corner of the hud in a natural way"), never
+   set on top of them. The side panels' outer top corner is a hooded stone angel whose wings are the panel's top and
+   side edges (assets/ui/corner-angel.webp, 940x949: bars about 80 px thick, the angel within the top-left 67% x 66%,
+   its wings overhanging the bars by about 55 px; the right-hand panels take the mirrored file). --px is one image
+   pixel. */
+#card, #mapsquad, #log, #mapcity { --px: 0.0105rem; }
+#card, #mapsquad {
+  border-width: calc(84 * var(--px)) calc(74 * var(--px)) calc(66 * var(--px)) calc(76 * var(--px));
+  border-image: var(--ui-corner-angel) 66% 9% 8% 67% / calc(626 * var(--px)) calc(85 * var(--px)) calc(76 * var(--px)) calc(630 * var(--px)) / calc(54 * var(--px)) 0 0 calc(55 * var(--px)) round;
+}
+#log, #mapcity {
+  border-width: calc(84 * var(--px)) calc(76 * var(--px)) calc(66 * var(--px)) calc(74 * var(--px));
+  border-image: var(--ui-corner-angel-right) 66% 67% 8% 9% / calc(626 * var(--px)) calc(630 * var(--px)) calc(76 * var(--px)) calc(85 * var(--px)) / calc(54 * var(--px)) calc(55 * var(--px)) 0 0 round;
+}
+#card .title, #mapsquad .title { padding-left: 0.75rem; }
+#log { padding-top: 2rem; }
+
+/* The full screens' main panels: a band of cathedral tracery with a praying angel in each corner
+   (assets/ui/frame-tracery.webp, 938x955: the band's inner edge about 15% in, the angels within 20.5% x 17.5%). */
+.codex-list, .codex-page, .credits-page, .screen .city-view, .screen .grids, .screen .capitol-trees, .screen .capitol-hall, #capitol .tab-rail.panel {
+  --px: 0.0127rem;
+  border-width: calc(136 * var(--px)) calc(140 * var(--px)) calc(141 * var(--px)) calc(137 * var(--px));
+  border-image: var(--ui-frame-tracery) 20.5% 18% 21% 17.5% / calc(196 * var(--px)) calc(169 * var(--px)) calc(201 * var(--px)) calc(164 * var(--px)) round;
+}
+/* The city painting is content, which paints over a border image: the frame and its angels go on top instead. */
+.screen .city-view { border-image: none; }
+.screen .city-view::after {
+  content: ""; position: absolute; pointer-events: none;
+  inset: calc(-136 * var(--px)) calc(-140 * var(--px)) calc(-141 * var(--px)) calc(-137 * var(--px));
+  border: 0 solid transparent;
+  border-image: var(--ui-frame-tracery) 20.5% 18% 21% 17.5% / calc(196 * var(--px)) calc(169 * var(--px)) calc(201 * var(--px)) calc(164 * var(--px)) round;
+}
+
+/* An iron rod between the card's facts and its abilities (assets/ui/divider.webp, 1404x117). */
+#card .abilities {
+  border-top: none; padding-top: 0.875rem; background: var(--ui-divider) top center / auto 0.75rem no-repeat;
+}
+
+/* The map's turn bar hangs between two carved brackets (assets/ui/endcap.webp, 862x540, its flat end the joint). */
+#mapturn::before, #mapturn::after {
+  content: ""; position: absolute; top: 50%; width: 5rem; height: 3.125rem; pointer-events: none;
+  background: var(--ui-endcap) center / contain no-repeat;
+}
+#mapturn::before { right: calc(100% - 0.375rem); transform: translateY(-50%); }
+#mapturn::after { left: calc(100% - 0.375rem); transform: translateY(-50%) scaleX(-1); }
 
 #setup { overflow-y: auto; }
 #setup .panel { border-width: 0.75rem; border-image-width: 0.875rem; }
