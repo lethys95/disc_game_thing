@@ -27,3 +27,9 @@
   Dale, Disciples 2 and 3, Diablo 2, 3 and 4, others in the style), screenshots in `reference_material/`
   (gitignored), every element written down with what works and why ("like... 50 or something at least"). "I'm not
   asking you to copy, but we need more ideas."
+- **The research (2026-10-09):** about 220 screenshots and over 200 element entries in `reference_material/`
+  (local; `index.html` shows each entry beside its picture). The lessons and 52 ideas by screen are in
+  `docs/design/hud-references.md`. Why the angels read as bolted on: they hold nothing, sit clipped inside the
+  rectangle, repeat as copies, sit on finished corners rather than joints, and don't share the frame's detail. Next:
+  the user picks directions from the ideas; then a kit built on them (a figure with a job per panel, one hero piece
+  per screen, shapes by function).

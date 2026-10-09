@@ -220,3 +220,5 @@ quite a bit, and we don't really need to be restrained at all."
   with angel statues as its corners for the screens' large panels, carved brackets at the ends of the map's turn bar, an
   iron divider on the battle card. Rejected: a horned grotesque gripping a corner (on the frame, not of it), a keystone
   (a third stone colour, and no arch to close), a finial (nothing vertical to crown). The Capitol's gargoyle is gone.
+- **The user (2026-10-09): the angels still feel bolted on; more distinct elements, fewer copies.** Reference research on
+  old gothic HUDs followed: `hud-references.md` (why the angels fail, the principles, ideas by screen).

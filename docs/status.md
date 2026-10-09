@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-09 (HUD reference research under way)
+**Updated:** 2026-10-09 (HUD reference research done)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): the alpha is the three playable factions (Jilliath,
@@ -34,8 +34,8 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
   shown as a percent on the cards and in the codex.
 - **The HUD kit's second batch** (`in-progress/ui-kit-grotesques`, `shots/hud-kit.html`): a stone angel whose wings
   are the side panels' frame, tracery with angel corners, end caps, a divider. The user: the angels still feel "bolted
-  on", and the kit needs more distinct elements, fewer copies. Next: reference research on old gothic HUDs (Disciples,
-  Diablo, Icewind Dale and others) into `reference_material/` (gitignored), every element written down.
+  on", and the kit needs more distinct elements, fewer copies. Researched: old gothic HUDs (Disciples, Diablo, Icewind
+  Dale and others), lessons and ideas in `design/hud-references.md`, screenshots local in `reference_material/`.
 - **The Grove's Water is now Wellspring.**
 - **Unreal 5 as a parallel track** (the user: "UE is the king of 3d"; `ongoing/unreal-port`), in its own repo,
   `../disc_unreal`. three.js keeps the pace; Unreal follows as a view, with this repo's TypeScript rules as the only
