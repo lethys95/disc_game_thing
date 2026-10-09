@@ -33,3 +33,6 @@
   rectangle, repeat as copies, sit on finished corners rather than joints, and don't share the frame's detail. Next:
   the user picks directions from the ideas; then a kit built on them (a figure with a job per panel, one hero piece
   per screen, shapes by function).
+- **The inventory (2026-10-09, the user: "an inventory over everything we need to paint"):**
+  `reference_material/ui-inventory.md` (local), every separate UI element in the game today by screen, with its states
+  and how it's drawn now, style ignored.
