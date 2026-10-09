@@ -1,5 +1,7 @@
 import { execFileSync } from "node:child_process";
-import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { homedir } from "node:os";
+import { resolve } from "node:path";
 import { chromium } from "playwright";
 import { createServer } from "vite";
 import { HEADLESS_ENV, HEADLESS_GPU_ARGS } from "#scripts/headless";
@@ -10,11 +12,13 @@ import type { Candidate } from "#scripts/art/batch";
 /**
  * Step 3 of the HUD kit (`docs/design/hud-kit.md`): a screen's greybox painted as one picture, so every piece cut
  * from it shares one stone, one light and one level of detail.
- * - `render` shoots the greybox in layers: its stone and iron alone (the source), their mask, the live content
- *   (text, portraits, icons, states) and the field behind.
- * - `paint` repaints the stone and iron through the mask, nothing else, once per probe, strength and seed.
- * - `composite` lays each painting back into the screen between the field and the content (the figure's hands back
- *   in front of the portrait), for judging.
+ * - `render` shoots the greybox in layers: its stone and iron alone (the source); the structure (everything with a
+ *   layout edge) and the sculpture (figures and objects) apart; the live content (text, portraits, icons, states); the
+ *   field behind; and what goes in front of the content (the figure's hands and the frame she holds).
+ * - `paint` repaints the stone and iron, once per probe, strength and seed. The structure keeps its exact edges; the
+ *   sculpture gets room around it to finish its own shape (the user, round 1: "All angel wings are cut off").
+ * - `composite` cuts the sculpture out along what was painted, with Photon's subject segmentation (the user's tool
+ *   for it), and lays everything back into the screen between the field and the content, for judging.
  *
  *     pnpm tsx scripts/art/hud-paint.ts render battle
  *     pnpm tsx scripts/art/hud-paint.ts paint battle [probe…] [seed…]
@@ -28,6 +32,14 @@ const HEIGHT = 864;
 const GROUND = "#151413";
 /** Masked image-to-image strengths: how far the painting may move from the greybox's flat shapes. */
 const STRENGTHS = [0.7, 0.8] as const;
+/** Room around the sculpture, in source pixels, for the painting to finish its outline in. */
+const ZONE = 36;
+/** The sculpted pieces, cut by segmentation from a crop around each (their zone included). */
+const SCULPTURE = [
+  { name: "figure", selector: "#card .niche" },
+  { name: "objects", selector: "#beamhang" },
+] as const;
+const PHOTON = `${homedir()}/.photon/bin/photon`;
 
 interface Screen {
   readonly route: string;
@@ -75,20 +87,71 @@ const PROBES: readonly { readonly id: string; readonly look: string }[] = [
 
 /** The greybox's layers, as page styles: each hides what its layer isn't. */
 const HIDE_FIELD = "#stage{visibility:hidden!important} html,body{background:transparent!important} #battlehud::before{display:none!important}";
+// Darker than the greybox shows it: the painting keeps the source's values (the user, round 1: "something darker").
+const CHROME =
+  `${HIDE_FIELD} #battlehud{filter:brightness(0.72)} #battlehud *{color:transparent!important;text-shadow:none!important} ` +
+  "#battlehud .art,#battlehud .fill,#battlehud .channel .shield,#battlehud .band,#battlehud .bead,#battlehud .cell,#battlehud .shield-seal,#card .abilities>*,#log>*{visibility:hidden!important}";
+const SCULPTED = "#card .niche .figure,#card .niche .window,#card .niche .hands,#beamhang";
 const LAYERS = {
-  // Darker than the greybox shows it: the painting keeps the source's values (the user, round 1: "something darker").
-  chrome:
-    `${HIDE_FIELD} #battlehud{filter:brightness(0.72)} #battlehud *{color:transparent!important;text-shadow:none!important} ` +
-    "#battlehud .art,#battlehud .fill,#battlehud .channel .shield,#battlehud .band,#battlehud .bead,#battlehud .cell,#battlehud .shield-seal,#card .abilities>*,#log>*{visibility:hidden!important}",
+  chrome: CHROME,
+  structure: `${CHROME} ${SCULPTED}{visibility:hidden!important}`,
+  sculpture: `${CHROME} #battlehud *{visibility:hidden!important} ${SCULPTED.split(",").map((s) => `${s},${s} *`).join(",")}{visibility:visible!important}`,
   content:
     `${HIDE_FIELD} #battlehud *:not(.art):not(.fill):not(.shield):not(.band):not(.bead):not(.cell):not(.shield-seal),#battlehud *::before,#battlehud *::after` +
     "{background:transparent!important;border-color:transparent!important;box-shadow:none!important}",
   field: "#battlehud>*{visibility:hidden!important}",
-  // What sits in front of the live content: the figure's hands over the portrait's frame.
-  front: `${HIDE_FIELD} #battlehud *{visibility:hidden!important} #card .niche .hands{visibility:visible!important}`,
+  // In front of the live portrait: the frame the figure holds (its rim, not its opening) and her hands over it.
+  front:
+    `${HIDE_FIELD} #battlehud *{visibility:hidden!important} #card .niche .hands,#card .niche .window{visibility:visible!important} ` +
+    "#card .niche .window{background:transparent!important} #card .niche .window *{visibility:hidden!important}",
 } as const;
 
+interface Box {
+  readonly name: string;
+  readonly x: number;
+  readonly y: number;
+  readonly width: number;
+  readonly height: number;
+}
+
+const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null;
+const isBox = (value: unknown): value is Box =>
+  isRecord(value) && typeof value["name"] === "string" && ["x", "y", "width", "height"].every((k) => typeof value[k] === "number");
+
 const magick = (...args: string[]) => execFileSync("magick", args, { stdio: "inherit" });
+
+/** One Photon CLI call (`photon-edit` skill), its JSON reply when it succeeded. */
+function photon(args: readonly string[]): Record<string, unknown> {
+  const reply: unknown = JSON.parse(execFileSync(PHOTON, [...args], { encoding: "utf8" }));
+  if (!isRecord(reply) || reply["ok"] !== true) throw new Error(`photon ${args.slice(0, 2).join(" ")}: ${JSON.stringify(reply)}`);
+  return reply;
+}
+
+/**
+ * The subject of `source` (a PNG), cut along its painted outline by Photon's local segmentation model (Layer ▸ Remove
+ * Background), into `target` with alpha. Headless, and the document is closed without saving.
+ */
+function cutSubject(source: string, target: string): void {
+  const opened = photon(["execute", "session.open", "--params", JSON.stringify({ path: resolve(source), mode: "headless" })]);
+  const result = opened["result"];
+  if (!isRecord(result)) throw new Error("photon session.open: no document");
+  const at = { session: String(result["sessionId"]), document: String(result["documentId"]), revision: Number(opened["revision"]) };
+  const edit = (operation: string, params: Record<string, unknown>) => {
+    const reply = photon(["execute", operation, "--session", at.session, "--document", at.document, "--revision", String(at.revision), "--params", JSON.stringify(params)]);
+    if (typeof reply["revision"] === "number") at.revision = reply["revision"];
+  };
+  try {
+    edit("layer.background.unlock", { name: "piece" });
+    const inspected = photon(["inspect", "--session", at.session, "--document", at.document])["result"];
+    const layers = isRecord(inspected) ? inspected["layers"] : undefined;
+    const first: unknown = Array.isArray(layers) ? layers[0] : undefined;
+    if (!isRecord(first) || typeof first["id"] !== "string") throw new Error("photon inspect: no layer");
+    edit("layer.removeBackground", { layerId: first["id"] });
+    edit("document.save", { path: resolve(target), format: "png", asCopy: true });
+  } finally {
+    edit("session.close", { disposition: "discard" });
+  }
+}
 
 async function render(name: string, screen: Screen, dir: string): Promise<void> {
   const server = await createServer({ logLevel: "error", server: { port: 0 } });
@@ -107,12 +170,26 @@ async function render(name: string, screen: Screen, dir: string): Promise<void> 
     await page.screenshot({ path: `${dir}/${layer}-layer.png`, omitBackground: layer !== "field" });
     await style.evaluate((node) => node.parentNode?.removeChild(node));
   }
+  // Where each sculpted piece is, with its zone around it: what segmentation gets to cut it from.
+  const boxes: Box[] = [];
+  for (const piece of SCULPTURE) {
+    const box = await page.locator(piece.selector).boundingBox();
+    if (!box) continue;
+    const x = Math.max(0, Math.floor(box.x - ZONE));
+    const y = Math.max(0, Math.floor(box.y - ZONE));
+    boxes.push({ name: piece.name, x, y, width: Math.min(WIDTH, Math.ceil(box.x + box.width + ZONE)) - x, height: Math.min(HEIGHT, Math.ceil(box.y + box.height + ZONE)) - y });
+  }
+  await writeFile(`${dir}/pieces.json`, JSON.stringify(boxes, null, 2));
   await browser.close();
   await server.close();
-  // The source: the stone and iron on a plain dark ground. The mask: wherever they are, a little wider.
+  // The source: the stone and iron on a plain dark ground.
   magick(`${dir}/chrome-layer.png`, "-background", GROUND, "-flatten", `${dir}/chrome.png`);
-  magick(`${dir}/chrome-layer.png`, "-alpha", "extract", "-threshold", "35%", "-morphology", "Dilate", "Disk:2", `${dir}/mask.png`);
-  magick(`${dir}/front-layer.png`, "-alpha", "extract", "-threshold", "35%", "-morphology", "Dilate", "Disk:1", `${dir}/front-mask.png`);
+  // The structure keeps its edges; the sculpture gets its zone; the paint mask is both.
+  magick(`${dir}/structure-layer.png`, "-alpha", "extract", "-threshold", "35%", "-morphology", "Dilate", "Disk:2", `${dir}/structure-mask.png`);
+  magick(`${dir}/sculpture-layer.png`, "-alpha", "extract", "-threshold", "35%", "-morphology", "Dilate", `Disk:${ZONE}`, `${dir}/zone-mask.png`);
+  magick(`${dir}/structure-mask.png`, `${dir}/zone-mask.png`, "-compose", "Lighten", "-composite", `${dir}/mask.png`);
+  // In front of the portrait, a little wider so the painted rim covers the portrait's edge.
+  magick(`${dir}/front-layer.png`, "-alpha", "extract", "-threshold", "35%", "-morphology", "Dilate", "Disk:3", `${dir}/front-mask.png`);
   console.log(`${name}: layers in ${dir}`);
 }
 
@@ -135,33 +212,49 @@ async function paint(name: string, screen: Screen, dir: string, probeIds: readon
   }
 }
 
+async function paintings(dir: string): Promise<Candidate[]> {
+  return JSON.parse(await readFile(`${dir}/manifest.json`, "utf8"));
+}
+
 async function composite(name: string, dir: string): Promise<void> {
   await mkdir(`${dir}/preview`, { recursive: true });
-  const layers = new Set(["greybox.png", "chrome.png", "mask.png", "front-mask.png", "chrome-layer.png", "content-layer.png", "field-layer.png", "front-layer.png"]);
-  const paintings = (await readdir(dir)).filter((f) => f.endsWith(".png") && !layers.has(f) && f !== "contact-sheet.png");
-  for (const file of paintings) {
+  await mkdir(`${dir}/cut`, { recursive: true });
+  const read: unknown = JSON.parse(await readFile(`${dir}/pieces.json`, "utf8"));
+  const pieces = Array.isArray(read) ? read.filter(isBox) : [];
+  const done = await paintings(dir);
+  for (const { file } of done) {
+    const stem = file.replace(/\.png$/, "");
+    const cuts: string[] = [];
+    for (const piece of pieces) {
+      const crop = `${dir}/cut/${stem}-${piece.name}-crop.png`;
+      const cut = `${dir}/cut/${stem}-${piece.name}.png`;
+      magick(`${dir}/${file}`, "-crop", `${piece.width}x${piece.height}+${piece.x}+${piece.y}`, "+repage", crop);
+      cutSubject(crop, cut);
+      cuts.push(cut, "-geometry", `+${piece.x}+${piece.y}`, "-compose", "Over", "-composite");
+    }
     magick(
       `${dir}/field-layer.png`,
-      "(", `${dir}/${file}`, `${dir}/mask.png`, "-alpha", "off", "-compose", "CopyOpacity", "-composite", ")",
+      "(", `${dir}/${file}`, `${dir}/structure-mask.png`, "-alpha", "off", "-compose", "CopyOpacity", "-composite", ")",
       "-compose", "Over", "-composite",
-      `${dir}/content-layer.png`, "-compose", "Over", "-composite",
+      ...cuts,
+      `${dir}/content-layer.png`, "-geometry", "+0+0", "-compose", "Over", "-composite",
       "(", `${dir}/${file}`, `${dir}/front-mask.png`, "-alpha", "off", "-compose", "CopyOpacity", "-composite", ")",
       "-compose", "Over", "-composite",
       `${dir}/preview/${file}`,
     );
   }
-  console.log(`${name}: ${paintings.length} previews in ${dir}/preview`);
+  console.log(`${name}: ${done.length} previews in ${dir}/preview`);
 }
 
 /** The review page (`shots/hud-paint-<screen>.html`): per probe its full prompt as sent, then its previews by strength. */
 async function page(name: string, dir: string): Promise<void> {
-  const manifest: Candidate[] = JSON.parse(await readFile(`${dir}/manifest.json`, "utf8"));
+  const manifest = await paintings(dir);
   const escape = (text: string) => text.replaceAll("&", "&amp;").replaceAll("<", "&lt;");
   const sections = PROBES.filter((p) => manifest.some((m) => m.id.startsWith(`${p.id}-`))).map((probe) => {
     const rows = STRENGTHS.map((denoise) => {
       const id = `${probe.id}-${Math.round(denoise * 100)}`;
       const shots = manifest.filter((m) => m.id === id).sort((a, b) => a.seed - b.seed);
-      const cells = shots.map((m) => `<figure><a href="/${dir}/${m.file}" target="_blank"><img loading="lazy" src="/${dir}/preview/${m.file}"></a><figcaption>${m.file} (the painting alone: click)</figcaption></figure>`).join("");
+      const cells = shots.map((m) => `<figure><a href="/${dir}/${m.file}" target="_blank"><img loading="lazy" src="/${dir}/preview/${m.file}"></a><figcaption>${m.file}: <a href="/${dir}/${m.file}" target="_blank">the painting</a> · <a href="/${dir}/cut/${m.file.replace(/\.png$/, "")}-figure.png" target="_blank">the figure as Photon cut it</a></figcaption></figure>`).join("");
       return `<h3>Strength ${denoise}</h3><div class="row">${cells}</div>`;
     }).join("");
     const prompt = manifest.find((m) => m.id.startsWith(`${probe.id}-`))?.prompt ?? "";
@@ -175,8 +268,8 @@ h1{font-size:28px;margin:0 0 6px}h2{font-size:22px;margin:36px 0 6px;border-bott
 .row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}figure{margin:0}img{width:100%;display:block;border:1px solid #2a2420}
 figcaption{color:#9a8f80;font-size:12px}@media(max-width:900px){.row{grid-template-columns:1fr}}</style></head><body><main>
 <h1>The ${name} screen painted over its greybox: probes, round ${ROUND}</h1>
-<p>Each picture repaints only the stone and iron of the greybox (through its mask), then sits between the live field and the live text and portraits, as it would in the game; the figure's hands go back in front of the portrait. Pick a light and a strength; click any picture to see the painting alone.</p>
-<div class="row"><figure><img src="/${dir}/greybox.png"><figcaption>The greybox</figcaption></figure><figure><img src="/${dir}/chrome.png"><figcaption>What was painted over: its stone and iron alone</figcaption></figure></div>
+<p>Each picture repaints the greybox's stone and iron. The structure keeps its layout edges; the figure and the hanging objects had room to finish their own outlines and were cut out along what was painted, by Photon. Everything then sits between the live field and the live text and portraits, as it would in the game, with the frame the figure holds and her hands back in front of the portrait. Pick a light and a strength.</p>
+<div class="row"><figure><img src="/${dir}/greybox.png"><figcaption>The greybox</figcaption></figure><figure><img src="/${dir}/chrome.png"><figcaption>What was painted over: its stone and iron alone</figcaption></figure><figure><img src="/${dir}/mask.png"><figcaption>Where the painting may go: the structure exactly, the sculpture with room</figcaption></figure></div>
 ${sections}</main></body></html>`;
   await writeFile(`shots/hud-paint-${name}-${ROUND}.html`, html);
   console.log(`shots/hud-paint-${name}-${ROUND}.html`);

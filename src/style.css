@@ -725,12 +725,12 @@ body.formulas .formula { display: inline; }
 
 /* The card: a stele rising from the sill's left end, set in from the screen's edge so its frame is whole. */
 #card {
-  position: absolute; left: 0.6rem; bottom: 0; z-index: 1; width: 18.8rem; max-height: 66vh; box-sizing: border-box;
+  position: absolute; left: 1.4rem; bottom: 0; z-index: 1; width: 18.8rem; max-height: 66vh; box-sizing: border-box;
   display: flex; flex-direction: column; padding: 0 1rem 0.8rem; background: var(--gb-stone); border: 0.3rem solid var(--gb-stone-hi); border-bottom: 0;
   box-shadow: 0.4rem 0 0.9rem rgba(0, 0, 0, 0.5);
 }
 /* The niche: the figure rises above the stele, holds the portrait at her chest; her hands are in front of its frame. */
-#card .niche { position: relative; flex: none; height: 14rem; margin: -3.6rem -1rem 0; }
+#card .niche { position: relative; flex: none; height: 14rem; margin: -3.6rem -2.4rem 0; }
 #card .niche .figure { position: absolute; inset: 0; background: var(--gb-figure-niche) center / 100% 100% no-repeat; }
 #card .niche .window { position: absolute; left: 50%; top: 5.4rem; width: 5.4rem; height: 6rem; transform: translateX(-50%); overflow: hidden; border-radius: 2.7rem 2.7rem 0 0; background: var(--gb-stone-lo); border: 0.2rem solid var(--gb-iron); box-sizing: border-box; }
 #card .niche .window .art { width: 100%; height: 100%; margin: 0; font-size: 1.5rem; }
@@ -844,7 +844,7 @@ body.formulas .formula { display: inline; }
 
 /* The held tarot cards lie on the sill. */
 #tarot-icon {
-  position: absolute; left: 20.4rem; bottom: 100%; margin-bottom: 0.2rem; z-index: 1; width: 4.6rem; height: 3.9rem; padding: 0; border: 0; background: none; cursor: pointer;
+  position: absolute; left: 21.2rem; bottom: 100%; margin-bottom: 0.2rem; z-index: 1; width: 4.6rem; height: 3.9rem; padding: 0; border: 0; background: none; cursor: pointer;
   display: flex; justify-content: center; align-items: flex-end;
 }
 #tarot-icon .mini-card {
