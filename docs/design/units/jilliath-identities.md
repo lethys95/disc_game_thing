@@ -341,3 +341,16 @@ texture in 3D).
   with torturer, then it's a mixture of the gold boss from baldur's gate 3 [linked], pinhead from hellraiser without the
   pins, and an iron maiden without the casket. I'm not looking for skin anywhere on his body, and he isn't really going
   to look human. He's like... Some humanoid abberation of torture."
+
+### Round twelve: Claude's read (`shots/jilliath-round12.html`)
+- **Avatar** `avatar-streaks` 1001: the reference's wings, close: long loose red feathers streaking and fraying, on the
+  hooded red-void figure.
+- **Chosen** `chosen-battered-1002-red-d70` (a repaint of 1002 by inpainting, three strengths): blood-red enamel over
+  half the plates, the faceless head kept, the asymmetry mild; at d55 the head became a visored helm.
+- **Torturer** `torturer-aberration` 1001: the reference's dark ornate bronze and gold, layered and spiked, a headdress of
+  iron spikes; the face is a helm's mask with no scored grid, the body still an armoured man's.
+- **Empyreal** `empyreal-mosaic-mantle` 1001: covered, a heavy mosaic mantle, the glare, disc and wings; the old-paint
+  skin still didn't come (an olive human face).
+- **Guardian** `guardian-statue-bald` 1001: not anime any more: a stern older bald woman in a long black coat; no
+  porcelain, no cracks. Cracks with light (Guardian) and craquelure (Empyreal) have failed in every wording: likely 3D
+  texture work, not concept work.
