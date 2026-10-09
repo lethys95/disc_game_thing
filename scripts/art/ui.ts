@@ -50,6 +50,44 @@ const PIECES = [
   { id: "icon-garrison", look: "A single emblem in tarnished engraved silver relief: two crossed swords over a kite shield, bold simple silhouette, filling the frame.", size: [1024, 1024] },
   { id: "icon-research", look: "A single emblem in tarnished engraved silver relief: an open ancient book with a quill, bold simple silhouette, filling the frame.", size: [1024, 1024] },
   { id: "icon-spells", look: "A single emblem in tarnished engraved silver relief: a crescent moon cradling a four-pointed star, bold simple silhouette, filling the frame.", size: [1024, 1024] },
+  // A broader kit (the user, 2026-10-06: "Think 'grotesque'. Stone part of a building shaped like an angel, but built
+  // into the hud instead"; `docs/design/art.md`): architectural sculpture grown into the panels, so they stop all
+  // looking alike. Corners are drawn for the top-left and mirrored in CSS; the end cap for the left end likewise.
+  {
+    id: "corner-angel",
+    look: "A gothic stone grotesque built into the top left corner of a dark carved iron frame: a hooded angel of weathered black stone crouches in the corner with its head bowed, its folded wings running along the top edge and down the left edge of the frame. Only the corner, the rest empty.",
+    size: [1024, 1024],
+  },
+  {
+    id: "corner-grotesque",
+    look: "A gothic stone grotesque built into the top left corner of a dark carved iron frame: a hunched horned creature of weathered black stone with a snarling face, its claws gripping the top edge and the left edge of the frame. Only the corner, the rest empty.",
+    size: [1024, 1024],
+  },
+  {
+    id: "finial",
+    look: "A gothic spire finial of dark carved stone and iron: a tall pointed pinnacle with crockets along its edges and a small cross-shaped flower at its tip, standing upright on a small square base, the whole finial in frame.",
+    size: [512, 1024],
+  },
+  {
+    id: "keystone",
+    look: "A carved keystone of dark weathered stone, wedge-shaped, wider at the top: on its face a solemn angel's face in relief with small wings spreading to both sides, the whole keystone in frame.",
+    size: [1024, 1024],
+  },
+  {
+    id: "endcap",
+    look: "A carved end cap for the left end of a horizontal bar: a heavy bracket of dark carved iron and black stone with a small grotesque face in relief and gothic filigree, its right side cut straight where the bar continues.",
+    size: [1024, 1024],
+  },
+  {
+    id: "divider",
+    look: "A long thin horizontal divider ornament: a carved rod of dark iron with a small gothic quatrefoil boss at its center and tapering pointed ends, perfectly straight.",
+    size: [1536, 384],
+  },
+  {
+    id: "frame-tracery",
+    look: "An ornate square frame border of black stone carved as gothic cathedral tracery: pointed arches, quatrefoils and crockets along all four sides, a small hooded stone angel at each corner. The inside of the frame is completely flat plain black, empty.",
+    size: [1024, 1024],
+  },
 ];
 
 const args = process.argv.slice(2);
