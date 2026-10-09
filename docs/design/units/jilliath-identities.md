@@ -270,3 +270,10 @@ models will be as small as you think they will", so detail inside the outline wi
 - **Torturer** `torturer-husk`: chains and spikes, but a knight's helm and plate; "metal plated" still pulls to a knight.
 - **Avatar** `avatar-illusory` 1001: hooded white-red armour, translucent layered wings; no flames, no heated gauntlets.
 - **Guardian** `guardian-porcelain`: missed: no porcelain cracks, the old breastplate.
+
+## The user on round eight (2026-10-09)
+"I think paragon 1001 is good enough in the latest batch. Chosen is very close and torturer is getting closer.
+Guardian, avatar still need help. Archon is probably also close, though I might be sort of worried that he really won't
+seem much like a step up from whatever pontiff is going to look like, but we'll see. I'm also worried that archon in his
+current form here doesn't actually fit into our gothic universe all that much." **Picked:** the Paragon,
+`paragon-runes-turnaround-1001`.

@@ -42,6 +42,7 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 | Pontiff | Jilliath 3 (mage) | Claude's crown of candles (user: "looks good") | picked: `pontiff-candles-turnaround-1001` (seed Claude's) | — |
 | Acolyte | Jilliath 1 (mage) | Claude's (red blindfold, lantern) | picked: `acolyte-branded-turnaround` (user: "as he is now"; seed 1001 Claude's) | — |
 | Seraph | Jilliath 1 (support) | user (hooded, face hidden, black and white robes, brown wings) | picked: `seraph-silk-turnaround-1002` (user: "both interesting and humble") | — |
+| Paragon | Jilliath 2 (support) | user (red hair over the right eye, runic forearms, a book on a chain, the burning-palm emblem) | picked: `paragon-runes-turnaround-1001` (user: "good enough") | — |
 | Shepherd | Jilliath 4 (support) | user (stained glass) | picked: `shepherd-glass-turnaround-1001` (user, round one: "I think iteration just gets worse with shepherd") | — |
 | Reclaimer | Jilliath 3 (support) | user (after MTG's Platinum Angel: an inhuman segmented shell, bulkier) | picked: `reclaimer-platinum-heavy-turnaround-1000` (user: "probably the best one") | — |
 | Doomsayer | Jilliath 2 (mage) | Claude's (a street prophet, yoke and bells) | picked: `doomsayer-plain-turnaround-1001` (user), scroll `doomsayer-scroll-props-1000` (Claude's, the user's leave) | — |
