@@ -390,9 +390,9 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "she stands still and upright in a burst of daybreak: blinding shafts of golden sunlight and god rays pour out of her body in every direction, cutting through the dark around her, a dawn glow spreading from her",
       "she stands with her arms a little open as daybreak breaks out of her: rays of golden light burst from her silhouette, lighting the dark around her gold and white",
     ],
+    // Round two: only the pose whose rays reached across the dark (round one's pose 2 kept the light inside her).
     fresh: [
-      "she stands upright and still in the heart of daybreak: blinding shafts of golden sunlight and god rays burst out of her in every direction and stream far across the dark around her, the whole card lit by her dawn, the darkness behind her split by long beams of light",
-      "she rises with her arms a little open, the sun breaking out of her chest: long god rays fan out from her across the dark, motes of light drifting in the beams, the edges of her silhouette glowing white-gold",
+      "she stands upright and still in the heart of daybreak: blinding shafts of golden sunlight and god rays burst out of her in every direction and stream far across the dark around her, the whole image lit by her dawn, the darkness behind her split by long beams of light",
     ],
     strengths: T_POSED,
     // The card's god rays are a light effect laid on top (`godkin-card-pose1-d75-rays.png`: the brightest light streaked
@@ -742,10 +742,11 @@ async function fresh(id: string): Promise<void> {
   if (!unit?.fresh) throw new Error(`${id} has no fresh poses`);
   const jobs = unit.fresh.map((pose, p) => ({
     id: `${id}-fresh${unit.fresh && unit.fresh.length > 1 ? `-pose${p + 1}` : ""}`,
-    prompt: `A painted full-body character card of ${unit.identity}; ${pose}. ${PAINTED.ornate}`,
+    // "Character card" painted a card's frame inside the image; a fresh card fills its image edge to edge.
+    prompt: `A painted full-body illustration of ${unit.identity}; ${pose}. The painting fills the whole image edge to edge, no border, no frame. ${PAINTED.ornate}`,
     ...CARD,
   }));
-  await runBatch(dirOf(id), jobs, [1000, 1001, 1002]);
+  await runBatch(dirOf(id), jobs, [1003, 1004, 1005, 1006]);
 }
 
 const args = process.argv.slice(2);
