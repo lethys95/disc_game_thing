@@ -203,3 +203,6 @@ points. A siege-trained attack now *ignores* the walls' armor (`Packet.pierce`) 
 damage. Untouched for now: the AI's worth of a point of armor (3), the walls' 2 armor per city tier (now about 3%
 each), the Marauder's +10 against armour. The whole-game test's strong start wins seeds 1–3 again (seed 1 after 82
 turns).
+- **The composition matrix with percent armor** (all squads, win %): tier 2 J 59, N 55, G 34 (was 67 / 47 / 33);
+  tier 3 J 75, N 36, G 27 (was 79 / 31 / 26); tier 4 J 86, N 20, G 26. Jilliath's armoured lines lose some of their
+  wall against many small hits and Ral-Vitahl's casters gain a little at tier 2; the gap the line lengths open stays.
