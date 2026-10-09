@@ -140,3 +140,12 @@ than the Custodian's 3D concepts is a stand-in to redo (the user, 2026-10-05).
   itself, the bust (a head-and-shoulders crop) at 0.45–0.75 keeps it. `--install <card> <bust>` puts the card, the
   bust and an icon cut from the bust (zoomed on the face) into `assets/art/{portrait,bust,icon}/`. One unit at a
   time; look at each in a battle shot.
+- **Where the bust and icon are cut: `uv run scripts/art/portrait-frames.py <card.png…>`** (a pose model finds the face
+  and shoulders; one rule frames them all). Never estimate crops from a grid: the user (2026-10-09) found "a lot of the
+  portraits are misaligned […] this manual nudging is very prone to having faults". It reports what it can't see (a
+  silhouette with no face, the Godkin); a faceless head can fool it (the Chosen's face points landed on his sword):
+  check its icons at full size and set those few by hand.
+- **A card shows the unit as it looks in the game, effects included** (the user, on the Godkin: "the intention is, that
+  there should be effects that fleshen things out. So you need to think more about godrays, daybreak, sunlight, etc
+  when it comes to cards and icons"): light, fire, glow and aura go into the card's pose words, even when the 3D model
+  will carry them as effects.

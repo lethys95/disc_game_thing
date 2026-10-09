@@ -33,9 +33,9 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
 - **Armor is a percentage with diminishing returns** (the user; #75, `testing/percent-armor`): armor ÷ (armor + 60),
   shown as a percent on the cards and in the codex.
 - **The Grove's Water is now Wellspring.**
-- **Unreal 5 as a parallel track** (the user: "UE is the king of 3d"; `unreal-port.md`, `ongoing/unreal-port`).
-  three.js keeps the pace; Unreal follows as a view, with the TypeScript rules as the only rules (a Node process).
-  Step 1, the project and the battle arena (`in-progress/unreal-battle-arena`), runs in a background agent.
+- **Unreal 5 as a parallel track** (the user: "UE is the king of 3d"; `ongoing/unreal-port`), in its own repo,
+  `../disc_unreal`. three.js keeps the pace; Unreal follows as a view, with this repo's TypeScript rules as the only
+  rules. Work here goes on as before; the Unreal repo reads this one and never writes to it.
 
 ## Next
 1. **Finish Jilliath's concepts** with the user (the open nine), then portraits from the picks.
