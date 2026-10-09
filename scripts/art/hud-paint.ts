@@ -47,18 +47,57 @@ const GROUND = "#151413";
 const STRENGTHS = [0.75, 0.85] as const;
 /** Room around the sculpture, in source pixels, for the painting to finish its outline in. */
 const ZONE = 36;
-/** The sculpted pieces, cut by segmentation from a crop around each (their zone included). */
-const SCULPTURE = [
-  { name: "figure", selector: "#card .niche" },
-  { name: "objects", selector: "#beamhang" },
-] as const;
 const PHOTON = `${homedir()}/.photon/bin/photon`;
+
+/**
+ * Material and light. Battle round 1 compared materials and the user preferred reliquary (85-3's light: "dimmed like
+ * 85-3 reliquary works better", against 65-2's "distinct 'Ai Look'"); round 2 went too dark; round 3 is round 1's
+ * reliquary line as sent, with candles, and the same with the contrast between lit stone and shadow named. Its pick
+ * (reliquary 75-3) is the light every later screen matches.
+ */
+const RELIQUARY = "Black wrought iron and dark stone like an old reliquary, worn smooth, with tarnished silver edges and deep shadows. Desaturated, grim and solemn.";
+const PROBES = {
+  reliquary: `Lit by one soft light from the upper left and a few candles. ${RELIQUARY}`,
+  contrast: `Lit by one soft warm light from the upper left and a few candles: lit stone against deep shadow, matte, no glare, no moss. ${RELIQUARY}`,
+} as const;
+type ProbeId = keyof typeof PROBES;
+
+type Layer = "chrome" | "structure" | "sculpture" | "content" | "field" | "front";
 
 interface Screen {
   readonly route: string;
   /** What is in the picture, piece by piece, with Jilliath's skin (provisional #76). */
   readonly subject: string;
+  /** Each round of probes keeps its own folder, `<screen>-<round>`, its layers and paintings. */
+  readonly round: number;
+  readonly probes: readonly ProbeId[];
+  /** The greybox's layers, as page styles: each hides what its layer isn't. */
+  readonly layers: Readonly<Record<Layer, string>>;
+  /** The sculpted pieces, cut by segmentation from a crop around each (their zone included). */
+  readonly sculpture: readonly { readonly name: string; readonly selector: string }[];
+  /** False where the structure is already painted (pieces of an earlier screen): only the sculpture is painted. */
+  readonly paintStructure: boolean;
 }
+
+const HIDE_STAGE = "#stage{visibility:hidden!important} html,body{background:transparent!important}";
+
+// The battle (the record of how its pieces were painted; its greybox is gone, replaced by them). Round 2 (after the
+// user's notes on round 1): the angel holds the portrait, her wings whole, no ridge on the sill, recessed panels behind
+// text, the two controls as hanging objects, darker and candlelit. Round 3 (after the user on round 2: "the darkness on
+// each angel is now an overreaction […] there was contrast between dark and light"; "there are even more cuts now"):
+// round 1's light and source values again; the angel stands on the stele's top, so no greybox stone sits behind her to
+// leave a dark slab; the small instrument glyphs stay out of the painting (crisp pieces on top).
+const BATTLE_HIDE = `${HIDE_STAGE} #battlehud::before{display:none!important}`;
+const BATTLE_CHROME =
+  `${BATTLE_HIDE} #battlehud *{color:transparent!important;text-shadow:none!important} ` +
+  "#battlehud .art,#battlehud .fill,#battlehud .channel .shield,#battlehud .band,#battlehud .bead,#battlehud .cell,#battlehud .shield-seal,#card .abilities>*,#log>*,#battlehud .shape,#battlehud .seal,#battlehud .tier{visibility:hidden!important}";
+const BATTLE_SCULPTED = "#card .niche .figure,#card .niche .window,#card .niche .hands,#beamhang";
+
+// The map: its structure is the battle's pieces already; only the bell-bearer and the book are painted.
+const MAP_CHROME =
+  `${HIDE_STAGE} #maphud *{color:transparent!important;text-shadow:none!important} ` +
+  "#maphud .fill,#maphud .coin,#maphud .gem,#maphud .xp,#mapbanner,#forkprompt,#peek,#maphud .screen{visibility:hidden!important}";
+const MAP_SCULPTED = "#mapbottom .bearer,#mapmenu";
 
 const SCREENS: Readonly<Record<string, Screen>> = {
   battle: {
@@ -71,53 +110,53 @@ const SCREENS: Readonly<Record<string, Screen>> = {
       "on the left a tall stone stele with a hooded angel standing on its top, carved in the same dark stone, humble, head bowed, her wings rising whole behind her, " +
       "both her hands holding an empty arched portrait frame against her chest, short arms; set into the stele's face below her feet a pale marble name plate, then a recessed dark panel; " +
       "on the right a shorter stone stele with a recessed dark panel; thin bands of dark red stained glass along the seams. No text, no letters, no numbers.",
+    round: 3,
+    probes: ["reliquary", "contrast"],
+    layers: {
+      chrome: BATTLE_CHROME,
+      structure: `${BATTLE_CHROME} ${BATTLE_SCULPTED}{visibility:hidden!important}`,
+      sculpture: `${BATTLE_CHROME} #battlehud *{visibility:hidden!important} ${BATTLE_SCULPTED.split(",").map((s) => `${s},${s} *`).join(",")}{visibility:visible!important}`,
+      content:
+        `${BATTLE_HIDE} #battlehud *:not(.art):not(.fill):not(.shield):not(.band):not(.bead):not(.cell):not(.shield-seal):not(.shape):not(.seal):not(.tier),#battlehud *::before,#battlehud *::after` +
+        "{background:transparent!important;border-color:transparent!important;box-shadow:none!important}",
+      field: "#battlehud>*{visibility:hidden!important}",
+      // In front of the live portrait: the frame the figure holds (its rim, not its opening) and her hands over it.
+      front:
+        `${BATTLE_HIDE} #battlehud *{visibility:hidden!important} #card .niche .hands,#card .niche .window{visibility:visible!important} ` +
+        "#card .niche .window{background:transparent!important} #card .niche .window *{visibility:hidden!important}",
+    },
+    sculpture: [
+      { name: "figure", selector: "#card .niche" },
+      { name: "objects", selector: "#beamhang" },
+    ],
+    paintStructure: true,
+  },
+  map: {
+    route: "/?map&seed=3",
+    subject:
+      "The interface of a dark fantasy strategy game seen straight on, carved dark stonework around an empty middle: a carved stone band along the top edge with an arcade of small arches and a round iron medallion; " +
+      "two stone tablets with recessed panels hang from it on iron chains at the left and the right; from the band, on a short iron chain, hangs a small closed book bound in dark leather with iron corners and a clasp; " +
+      "at the bottom centre, rising from the bottom edge and cut off by it below her waist, a hooded angel carved in the same dark stone, humble, head bowed, her wings folded close behind her, " +
+      "both her hands holding up a small iron hand bell before her chest, short arms. No text, no letters, no numbers.",
+    round: 1,
+    probes: ["reliquary"],
+    layers: {
+      chrome: MAP_CHROME,
+      structure: `${MAP_CHROME} ${MAP_SCULPTED}{visibility:hidden!important}`,
+      sculpture: `${MAP_CHROME} #maphud *,#mapbeam::before,#mapbeam::after{visibility:hidden!important} ${MAP_SCULPTED.split(",").map((s) => `${s},${s} *`).join(",")},#mapbottom{visibility:visible!important} #mapbeam{background:none!important;filter:none!important}`,
+      content:
+        `${HIDE_STAGE} #mapbeam,#mapbeam::before,#mapbeam::after,#mapsquad,#mapcity,#mapturn .plaque,#mapsquad>.title,#mapcity>.title,#maphud button.warband,#mapbottom .bearer,#endturn,#mapmenu` +
+        "{background:transparent!important;border-image:none!important;border-color:transparent!important;filter:none!important}",
+      field: "#maphud>*{visibility:hidden!important}",
+      front: `${HIDE_STAGE} #maphud,#maphud *{visibility:hidden!important}`,
+    },
+    sculpture: [
+      { name: "bearer", selector: "#mapbottom .bearer" },
+      { name: "book", selector: "#mapmenu" },
+    ],
+    paintStructure: false,
   },
 };
-
-/**
- * Bump for a new round of probes: each round keeps its own folder (`<screen>-<round>`), its layers and paintings.
- * Round 2 (2026-10-09), after the user's notes on round 1: the angel holds the portrait, her wings whole, no ridge on
- * the sill, recessed panels behind text, the two controls as hanging objects, darker and candlelit.
- * Round 3 (2026-10-09), after the user on round 2 ("the darkness on each angel is now an overreaction […] there was
- * contrast between dark and light"; "there are even more cuts now"): round 1's light and source values again; the
- * angel stands on the stele's top, so no greybox stone sits behind her to leave a dark slab; the small instrument
- * glyphs stay out of the painting (crisp pieces on top).
- */
-const ROUND = 3;
-
-/**
- * Material and light. Round 1 compared materials and the user preferred reliquary (85-3's light: "dimmed like 85-3
- * reliquary works better", against 65-2's "distinct 'Ai Look'"). Round 2 went too dark. Round 3 is round 1's
- * reliquary line as sent, with candles, and the same with the contrast between lit stone and shadow named.
- */
-const RELIQUARY = "Black wrought iron and dark stone like an old reliquary, worn smooth, with tarnished silver edges and deep shadows. Desaturated, grim and solemn.";
-const PROBES: readonly { readonly id: string; readonly look: string }[] = [
-  { id: "reliquary", look: `Lit by one soft light from the upper left and a few candles. ${RELIQUARY}` },
-  { id: "contrast", look: `Lit by one soft warm light from the upper left and a few candles: lit stone against deep shadow, matte, no glare, no moss. ${RELIQUARY}` },
-];
-
-/** The greybox's layers, as page styles: each hides what its layer isn't. */
-const HIDE_FIELD = "#stage{visibility:hidden!important} html,body{background:transparent!important} #battlehud::before{display:none!important}";
-// The small functional glyphs (the instruments' shapes, the health seal, the tier numeral) stay out of the painting: they
-// are too small to survive a repaint and become crisp pieces of their own, drawn over it.
-const GLYPHS = ".shape,.seal,.tier";
-const CHROME =
-  `${HIDE_FIELD} #battlehud *{color:transparent!important;text-shadow:none!important} ` +
-  `#battlehud .art,#battlehud .fill,#battlehud .channel .shield,#battlehud .band,#battlehud .bead,#battlehud .cell,#battlehud .shield-seal,#card .abilities>*,#log>*,${GLYPHS.split(",").map((g) => `#battlehud ${g}`).join(",")}{visibility:hidden!important}`;
-const SCULPTED = "#card .niche .figure,#card .niche .window,#card .niche .hands,#beamhang";
-const LAYERS = {
-  chrome: CHROME,
-  structure: `${CHROME} ${SCULPTED}{visibility:hidden!important}`,
-  sculpture: `${CHROME} #battlehud *{visibility:hidden!important} ${SCULPTED.split(",").map((s) => `${s},${s} *`).join(",")}{visibility:visible!important}`,
-  content:
-    `${HIDE_FIELD} #battlehud *:not(.art):not(.fill):not(.shield):not(.band):not(.bead):not(.cell):not(.shield-seal):not(.shape):not(.seal):not(.tier),#battlehud *::before,#battlehud *::after` +
-    "{background:transparent!important;border-color:transparent!important;box-shadow:none!important}",
-  field: "#battlehud>*{visibility:hidden!important}",
-  // In front of the live portrait: the frame the figure holds (its rim, not its opening) and her hands over it.
-  front:
-    `${HIDE_FIELD} #battlehud *{visibility:hidden!important} #card .niche .hands,#card .niche .window{visibility:visible!important} ` +
-    "#card .niche .window{background:transparent!important} #card .niche .window *{visibility:hidden!important}",
-} as const;
 
 interface Box {
   readonly name: string;
@@ -200,7 +239,7 @@ async function render(name: string, screen: Screen, dir: string, width = WIDTH, 
   await page.waitForSelector("body[data-ready=true]", { timeout: 20000 });
   await page.waitForTimeout(600);
   await page.screenshot({ path: `${dir}/greybox.png` });
-  for (const [layer, css] of Object.entries(LAYERS)) {
+  for (const [layer, css] of Object.entries(screen.layers)) {
     const style = await page.addStyleTag({ content: css });
     await page.waitForTimeout(100);
     await page.screenshot({ path: `${dir}/${layer}-layer.png`, omitBackground: layer !== "field" });
@@ -208,7 +247,7 @@ async function render(name: string, screen: Screen, dir: string, width = WIDTH, 
   }
   // Where each sculpted piece is, with its zone around it: what segmentation gets to cut it from.
   const boxes: Box[] = [];
-  for (const piece of SCULPTURE) {
+  for (const piece of screen.sculpture) {
     const box = await page.locator(piece.selector).boundingBox();
     if (!box) continue;
     const x = Math.max(0, Math.floor(box.x - zone));
@@ -223,21 +262,22 @@ async function render(name: string, screen: Screen, dir: string, width = WIDTH, 
   // The structure keeps its edges; the sculpture gets its zone; the paint mask is both.
   magick(`${dir}/structure-layer.png`, "-alpha", "extract", "-threshold", "35%", "-morphology", "Dilate", "Disk:2", `${dir}/structure-mask.png`);
   magick(`${dir}/sculpture-layer.png`, "-alpha", "extract", "-threshold", "35%", "-morphology", "Dilate", `Disk:${zone}`, `${dir}/zone-mask.png`);
-  magick(`${dir}/structure-mask.png`, `${dir}/zone-mask.png`, "-compose", "Lighten", "-composite", `${dir}/mask.png`);
+  if (screen.paintStructure) magick(`${dir}/structure-mask.png`, `${dir}/zone-mask.png`, "-compose", "Lighten", "-composite", `${dir}/mask.png`);
+  else magick(`${dir}/zone-mask.png`, `${dir}/mask.png`);
   // In front of the portrait, a little wider so the painted rim covers the portrait's edge.
   magick(`${dir}/front-layer.png`, "-alpha", "extract", "-threshold", "35%", "-morphology", "Dilate", "Disk:3", `${dir}/front-mask.png`);
   console.log(`${name}: layers in ${dir}`);
 }
 
 async function paint(name: string, screen: Screen, dir: string, probeIds: readonly string[], seeds: readonly number[]): Promise<void> {
-  const probes = probeIds.length > 0 ? PROBES.filter((p) => probeIds.includes(p.id)) : PROBES;
+  const probes = probeIds.length > 0 ? screen.probes.filter((p) => probeIds.includes(p)) : screen.probes;
   const manifest: Candidate[] = [];
   for (const probe of probes) {
     for (const denoise of STRENGTHS) {
       for (const seed of seeds) {
-        const id = `${probe.id}-${Math.round(denoise * 100)}`;
+        const id = `${probe}-${Math.round(denoise * 100)}`;
         const file = `${id}-${seed}.png`;
-        const prompt = `${screen.subject} ${probe.look}`;
+        const prompt = `${screen.subject} ${PROBES[probe]}`;
         const started = Date.now();
         await writeFile(`${dir}/${file}`, await inpaint({ prompt, seed, source: `${dir}/chrome.png`, mask: `${dir}/mask.png`, denoise }, `disc/hud-${name}`));
         console.log(`${dir}/${file} (${((Date.now() - started) / 1000).toFixed(1)} s)`);
@@ -542,20 +582,20 @@ async function composite(name: string, dir: string): Promise<void> {
 }
 
 /** The review page (`shots/hud-paint-<screen>.html`): per probe its full prompt as sent, then its previews by strength. */
-async function page(name: string, dir: string): Promise<void> {
+async function page(name: string, screen: Screen, dir: string): Promise<void> {
   const manifest = await paintings(dir);
   const read: unknown = JSON.parse(await readFile(`${dir}/cut-by-shape.json`, "utf8").catch(() => "[]"));
   const byShape = new Set(Array.isArray(read) ? read.filter((x): x is string => typeof x === "string") : []);
   const escape = (text: string) => text.replaceAll("&", "&amp;").replaceAll("<", "&lt;");
-  const sections = PROBES.filter((p) => manifest.some((m) => m.id.startsWith(`${p.id}-`))).map((probe) => {
+  const sections = screen.probes.filter((p) => manifest.some((m) => m.id.startsWith(`${p}-`))).map((probe) => {
     const rows = STRENGTHS.map((denoise) => {
-      const id = `${probe.id}-${Math.round(denoise * 100)}`;
+      const id = `${probe}-${Math.round(denoise * 100)}`;
       const shots = manifest.filter((m) => m.id === id).sort((a, b) => a.seed - b.seed);
       const cells = shots.map((m) => `<figure><a href="/${dir}/${m.file}" target="_blank"><img loading="lazy" src="/${dir}/preview/${m.file}"></a><figcaption>${m.file}: <a href="/${dir}/${m.file}" target="_blank">the painting</a> · <a href="/${dir}/cut/${m.file.replace(/\.png$/, "")}-figure.png" target="_blank">the figure as Photon cut it</a>${["figure", "objects"].filter((p) => byShape.has(`${m.file.replace(/\.png$/, "")}-${p}`)).map((p) => ` · Photon found no ${p === "figure" ? "figure" : "hanging objects"} here, cut by the greybox shape`).join("")}</figcaption></figure>`).join("");
       return `<h3>Strength ${denoise}</h3><div class="row">${cells}</div>`;
     }).join("");
-    const prompt = manifest.find((m) => m.id.startsWith(`${probe.id}-`))?.prompt ?? "";
-    return `<section><h2>${probe.id}</h2><p class="prompt">${escape(prompt)}</p>${rows}</section>`;
+    const prompt = manifest.find((m) => m.id.startsWith(`${probe}-`))?.prompt ?? "";
+    return `<section><h2>${probe}</h2><p class="prompt">${escape(prompt)}</p>${rows}</section>`;
   }).join("");
   const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>HUD paint probes: ${name}</title><style>
@@ -564,25 +604,25 @@ h1{font-size:28px;margin:0 0 6px}h2{font-size:22px;margin:36px 0 6px;border-bott
 .prompt{font:12px/1.5 ui-monospace,monospace;color:#b9ae9c;background:#171312;padding:8px 10px;max-width:none}
 .row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}figure{margin:0}img{width:100%;display:block;border:1px solid #2a2420}
 figcaption{color:#9a8f80;font-size:12px}@media(max-width:900px){.row{grid-template-columns:1fr}}</style></head><body><main>
-<h1>The ${name} screen painted over its greybox: probes, round ${ROUND}</h1>
+<h1>The ${name} screen painted over its greybox: probes, round ${screen.round}</h1>
 <p>Each picture repaints the greybox's stone and iron. The structure keeps its layout edges; the figure and the hanging objects had room to finish their own outlines and were cut out along what was painted, by Photon. Everything then sits between the live field and the live text and portraits, as it would in the game, with the frame the figure holds and her hands back in front of the portrait. Pick a light and a strength.</p>
 <div class="row"><figure><img src="/${dir}/greybox.png"><figcaption>The greybox</figcaption></figure><figure><img src="/${dir}/chrome.png"><figcaption>What was painted over: its stone and iron alone</figcaption></figure><figure><img src="/${dir}/mask.png"><figcaption>Where the painting may go: the structure exactly, the sculpture with room</figcaption></figure></div>
 ${sections}</main></body></html>`;
-  await writeFile(`shots/hud-paint-${name}-${ROUND}.html`, html);
-  console.log(`shots/hud-paint-${name}-${ROUND}.html`);
+  await writeFile(`shots/hud-paint-${name}-${screen.round}.html`, html);
+  console.log(`shots/hud-paint-${name}-${screen.round}.html`);
 }
 
 const [mode, name = "battle", ...rest] = process.argv.slice(2);
 const screen = SCREENS[name];
 if (!screen) throw new Error(`no screen "${name}"; known: ${Object.keys(SCREENS).join(", ")}`);
-const dir = `art/candidates/ui/paint/${name}-${ROUND}`;
+const dir = `art/candidates/ui/paint/${name}-${screen.round}`;
 await mkdir(dir, { recursive: true });
 if (mode === "render") await render(name, screen, dir);
 else if (mode === "paint") {
   const seeds = rest.map(Number).filter((n) => !Number.isNaN(n));
   await paint(name, screen, dir, rest.filter((a) => Number.isNaN(Number(a))), seeds.length > 0 ? seeds : [1, 2, 3]);
 } else if (mode === "composite") await composite(name, rest[0] === "hires" ? `${dir}/hires` : dir);
-else if (mode === "page") await page(name, dir);
+else if (mode === "page") await page(name, screen, dir);
 else if (mode === "hires" && rest[0]) await hires(name, screen, dir, rest[0]);
 else if (mode === "fix") await fix(name, dir, rest);
 else if (mode === "graft") await graft(name, dir);
