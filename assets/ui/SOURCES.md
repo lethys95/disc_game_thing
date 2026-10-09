@@ -24,7 +24,7 @@ grafted from seed 1 of the same probe (`graft log`). Cut with `pieces battle`:
 | `battle/sill.webp` | `fix-sill` | the band as painted |
 | `battle/log.webp` | `graft-log` | Photon's segmentation on a brightened copy; nine-sliced in CSS |
 | `battle/hourglass.webp`, `battle/marionette.webp` | the 1440p pick | keyed from the crop's corners (the marionette also by a light floor) |
-| `battle/recess.webp` | the 1440p pick | the monument's recessed panel as painted; the sockets' frame, nine-sliced |
+| `battle/recess.webp` | the 1440p pick | the monument's recessed panel as painted, a candle's glow in its lower left corner covered with the stone beside it; the sockets' and the light-rim panels' frame, nine-sliced |
 
 ## The map (`map/`), painted into the battle's pieces (2026-10-09)
 The map's greybox carries the battle's pieces (beam, plaque, chain, the log's block as its tablets); only its two
@@ -50,3 +50,10 @@ strength 0.85, seed 3), then repainted at 1440p (0.35). Cut with `pieces codex`:
 | File | Cut |
 |---|---|
 | `codex/book.webp` | the open book as painted; the codex's and the credits' pages |
+
+## The title (`title/`), painted as one stele (2026-10-10)
+The title's greybox stele painted exactly within its outline (`hud-paint.ts` screen `title`, round 1, probe
+`reliquary`, strength 0.75, seed 3), then repainted at 1440p (0.35). Cut with `pieces title`:
+| File | Cut |
+|---|---|
+| `title/stele.webp` | Photon's segmentation on a brightened copy, its dark recess kept whole by the greybox outline |

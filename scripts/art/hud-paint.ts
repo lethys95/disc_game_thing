@@ -111,6 +111,11 @@ const CAPITOL_CHROME =
   "#capitol .city-scene,#capitol .rail-tab>*,#capitol .rail-facts,#capitol .capitol-header>*{visibility:hidden!important}";
 const CAPITOL_SCULPTED = "#capitol .tab-rail .column";
 
+// The title: the stele that is the menu is new structure, painted exactly; the parade behind it is the field.
+const TITLE_STELE =
+  `${HIDE_STAGE} #title{background:none!important} #title::after{display:none!important} ` +
+  "#title .title-parade,#title .title-name,#title .title-menu{visibility:hidden!important}";
+
 // The codex: the open book is new structure, painted exactly; the wall around it is the backdrop, the field.
 const CODEX_BOOK =
   `${HIDE_STAGE} #codex{background:none!important} #codex *{color:transparent!important;text-shadow:none!important} ` +
@@ -214,6 +219,25 @@ const SCREENS: Readonly<Record<string, Screen>> = {
     },
     sculpture: [],
     paint: CODEX_BOOK,
+  },
+  title: {
+    route: "/",
+    subject:
+      "The title screen of a dark fantasy strategy game seen straight on: at the centre a tall narrow stele of dark carved stone rises from the bottom edge, " +
+      "its top a pointed gothic arch with a moulded rim; under the arch a smooth blank band of stone, and below it one deep recessed panel down most of its face, dark inside, " +
+      "standing on a plain plinth. No text, no letters, no numbers.",
+    round: 1,
+    probes: ["reliquary"],
+    layers: {
+      chrome: TITLE_STELE,
+      structure: TITLE_STELE,
+      sculpture: `${HIDE_STAGE} #title,#title *{visibility:hidden!important} #title::after{display:none!important}`,
+      content: `${HIDE_STAGE} #title{background:none!important} #title::after{display:none!important} #title .title-parade{visibility:hidden!important} #title .title-panel{background:none!important}`,
+      field: "#title .title-panel{visibility:hidden!important}",
+      front: `${HIDE_STAGE} #title,#title *{visibility:hidden!important} #title::after{display:none!important}`,
+    },
+    sculpture: [],
+    paint: TITLE_STELE,
   },
 };
 
@@ -490,8 +514,11 @@ interface Piece {
   readonly name: string;
   readonly from: string;
   readonly rect: readonly [number, number, number, number];
-  /** `key`: the painting's flat ground flooded away from the crop's corners (for bright things, chains and metal). */
-  readonly cut: "rect" | "segment" | "key" | "well";
+  /**
+   * `key`: the painting's flat ground flooded away from the crop's corners (for bright things, chains and metal).
+   * `outline`: the greybox's own outline of the painted structure (the paint layer), for a shape that isn't a box.
+   */
+  readonly cut: "rect" | "segment" | "key" | "well" | "outline";
   readonly hole?: readonly [number, number, number, number];
   readonly inset?: number;
   /** Segment a brightened copy (dark stone against the dark ground is otherwise lost), keeping the original's pixels. */
@@ -500,9 +527,18 @@ interface Piece {
   readonly fuzz?: number;
   /** Also drop whatever is darker than this, in percent (a dark painted backdrop a flood or a segmentation kept). */
   readonly minLight?: number;
+  /**
+   * For `segment`: the greybox's outline of the painted structure, shrunk by this many pixels, is kept whole, so
+   * segmentation decides only the edge (it can drop a dark recess inside the piece).
+   */
+  readonly core?: number;
+  /** A spot covered with the stone beside it, in the piece's own pixels: `[x, y, width, height]` copied to `[x, y]`. */
+  readonly clone?: readonly [number, number, number, number, number, number];
 }
 
 const PIECES_OF: Readonly<Record<string, readonly Piece[]>> = {
+  // The title's stele, cut along its painted edge, its dark recess kept whole; the name and the choices sit on it live.
+  title: [{ name: "stele", from: "reliquary-75-3.png", rect: [1006, 259, 548, 1181], cut: "segment", bright: true, core: 24 }],
   // The codex's open book, as painted within the book's exact box.
   codex: [{ name: "book", from: "reliquary-85-3.png", rect: [99, 121, 2362, 1296], cut: "rect" }],
   // The Capitol's rail as painted, from the beam's underside to the bottom edge: the angel standing on its capital, her
@@ -521,7 +557,8 @@ const PIECES_OF: Readonly<Record<string, readonly Piece[]>> = {
     { name: "monument", from: "reliquary-75-3.png", rect: [30, 190, 630, 1150], cut: "segment", bright: true, hole: [242, 393, 103, 167] },
     { name: "sill", from: "fix-sill.png", rect: [0, 1253, 2560, 187], cut: "rect" },
     // The monument's recessed panel with its carved border: the frame every socket and panel of the battle shares.
-    { name: "recess", from: "reliquary-75-3.png", rect: [140, 782, 283, 433], cut: "rect" },
+    // A candle at the pedestal's foot reaches into its lower left corner, which a wide panel shows at full size.
+    { name: "recess", from: "reliquary-75-3.png", rect: [140, 782, 283, 433], cut: "rect", clone: [16, 408, 15, 25, 0, 408] },
     { name: "log", from: "graft-log.png", rect: [0, 0, 336, 352], cut: "segment", bright: true },
     // For the map (and later screens): the monument's marble plate in its iron rim, and a length of the hourglass's
     // chain, so what other screens hang and name is the same stone, iron and light.
@@ -557,6 +594,10 @@ async function cutPieces(name: string, dir: string, only: readonly string[]): Pr
         await cutSubject(bright, brightCut);
         magick(crop, "(", brightCut, "-alpha", "extract", ")", "-alpha", "off", "-compose", "CopyOpacity", "-composite", cut);
       } else await cutSubject(crop, cut);
+      if (piece.core !== undefined) {
+        magick(cut, "(", "+clone", "-alpha", "extract", "(", `${source}/paint-layer.png`, "-crop", `${w}x${h}+${x}+${y}`, "+repage", "-alpha", "extract", "-threshold", "50%",
+          "-morphology", "Erode", `Disk:${piece.core}`, ")", "-compose", "Lighten", "-composite", ")", "-alpha", "off", "-compose", "CopyOpacity", "-composite", cut);
+      }
       // Whatever is darker than the floor goes too: the painted ground a flood or a segmentation kept.
       if (piece.minLight !== undefined) {
         magick(cut, "(", "+clone", "-alpha", "extract", "(", crop, "-colorspace", "Gray", "-threshold", `${piece.minLight}%`, "-morphology", "Dilate", "Disk:1", "-blur", "0x0.7", ")",
@@ -582,12 +623,23 @@ async function cutPieces(name: string, dir: string, only: readonly string[]): Pr
           "-compose", "Multiply", "-composite", ")", "-alpha", "off", "-compose", "CopyOpacity", "-composite", holed);
         png = holed;
       }
+    } else if (piece.cut === "outline") {
+      const outlined = `${work}/${piece.name}-outline.png`;
+      magick(crop, "(", `${source}/paint-layer.png`, "-crop", `${w}x${h}+${x}+${y}`, "+repage", "-alpha", "extract", "-threshold", "50%", "-blur", "0x0.7", ")",
+        "-alpha", "off", "-compose", "CopyOpacity", "-composite", outlined);
+      png = outlined;
     } else if (piece.cut === "well") {
       const inset = piece.inset ?? 0;
       const welled = `${work}/${piece.name}-well.png`;
       magick(crop, "(", "-size", `${w}x${h}`, "xc:white", "-fill", "black", "-draw", `rectangle ${inset},${inset} ${w - inset},${h - inset}`, "-blur", "0x1", ")",
         "-alpha", "off", "-compose", "CopyOpacity", "-composite", welled);
       png = welled;
+    }
+    if (piece.clone) {
+      const [sx, sy, sw, sh, dx, dy] = piece.clone;
+      const cloned = `${work}/${piece.name}-cloned.png`;
+      magick(png, "(", "+clone", "-crop", `${sw}x${sh}+${sx}+${sy}`, "+repage", ")", "-geometry", `+${dx}+${dy}`, "-compose", "Over", "-composite", cloned);
+      png = cloned;
     }
     magick(png, "-quality", "92", "-define", "webp:alpha-quality=100", `${out}/${piece.name}.webp`);
     const rem = (v: number) => Number((v / REM).toFixed(3));

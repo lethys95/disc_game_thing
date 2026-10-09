@@ -378,6 +378,19 @@ pages, and the tracery frame and its corner angels retired with them.
 Still to come for the book: ribbon bookmarks for the kinds and shelves, illuminated capitals, and marginalia in the
 page's ink.
 
-**Next:** the battle's last flat glyphs, then the title, the new game and the menus. After that, the other factions'
-skins.
+## The title and the new game (2026-10-10, past midnight)
+- **The title's menu is one object:** a stone stele rising from the bottom edge in front of the parade, painted as
+  one piece (`title-1`, reliquary 75-3, repainted at 1440p) and cut along its greybox outline. The game's name is
+  inscribed in gilt in its arch. The choices are marble plaques set into its recess, and they light on hover.
+- **The new game** moves onto the kit's pieces without new painting. The faction cards and the options are tablets
+  with the light rim, so the cards, the options and March still fit one screen. The chosen card is lit and the
+  others are dimmed. The screen's name is a plaque, and the choices are plaques that light. The faction emblems,
+  the enamel discs and March as a held object are still to come.
+
+- **Menus and settings** are a light-rim panel with the title on a plaque. Toggles are gem lamps that light with
+  candlelight, sliders are an iron knob in a groove, and the speed choices are plaques that light.
+- **The recess frame** lost a candle's glow from its lower left corner by cloning the stone beside it. A wide panel
+  shows that corner at full size.
+
+**Next:** the battle's last flat glyphs, the saves on parchment, then the other factions' skins.
 

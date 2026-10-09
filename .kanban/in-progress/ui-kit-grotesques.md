@@ -116,3 +116,7 @@
   wall (`codex-1`, reliquary 85-3, 1440p), the list on the left page and the entry on the right in ink, the kinds as
   plaques on the wall; the credits in the same book. The tracery frame retired. Next: the battle's last flat glyphs,
   the title, new game and menus.
+- **The title, the new game and the menus (2026-10-10, past midnight):** the title's menu is one stele (`title-1`,
+  reliquary 75-3, 1440p) with the name in gilt in its arch and the choices as plaques in its recess; the new game and
+  the settings move onto the kit's pieces (light-rim tablets, plaques that light, gem-lamp toggles, iron sliders).
+  Next: the battle's last flat glyphs, the saves on parchment, then the other factions' skins.
