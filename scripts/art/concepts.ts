@@ -696,6 +696,27 @@ const ANGELS: Readonly<Record<string, { readonly subject: string; readonly pose?
     pose: "all standing in the same T-pose, her six wings open behind her in three pairs, one pair above another, clear of her arms",
     materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: pale cracked oil paint, torn painted canvas, frayed threads, tooled gold leaf, blood-red feathers. Serious, adult, not cartoonish.",
   },
+  // Round twelve (the user on rounds ten and eleven). The Empyreal covered: the mosaic as something she wears, said
+  // as what covers her ("no cloth" undressed her); the old-paint skin worded toward amber (it kept coming out pale).
+  "empyreal-mosaic-tunic": {
+    subject: "An angel of vengeance, an old icon painting come alive. Her skin is old varnished oil paint, amber-yellow, covered in a web of fine dark cracks. Her eyes glow bright orange in a fixed, intense glare staring straight ahead. She wears a stiff, high-collared tunic of Byzantine mosaic, gold and blood-red glass tiles, reaching below her knees, with stiff mosaic panels over her shoulders and long mosaic sleeves. Six blood-red wings, three pairs. Behind her head stands a large flat disc of tooled gold leaf.",
+    pose: "all standing in the same T-pose, her six wings open behind her in three pairs, one pair above another, clear of her arms",
+    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: amber-yellowed cracked oil paint, gold and blood-red glass mosaic tiles, tooled gold leaf, blood-red feathers. Serious, adult, not cartoonish.",
+  },
+  "empyreal-mosaic-mantle": {
+    subject: "An angel of vengeance, an old icon painting come alive. Her skin is old varnished oil paint, amber-yellow, covered in a web of fine dark cracks. Her eyes glow bright orange in a fixed, intense glare staring straight ahead. A heavy, stiff mantle of Byzantine mosaic, gold and blood-red glass tiles, covers her from the shoulders to the ankles, falling in rigid angular folds, its edges set with gold. Six blood-red wings, three pairs. Behind her head stands a large flat disc of tooled gold leaf.",
+    pose: "all standing in the same T-pose, her six wings open behind her in three pairs, one pair above another, clear of her arms",
+    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: amber-yellowed cracked oil paint, gold and blood-red glass mosaic tiles, tooled gold leaf, blood-red feathers. Serious, adult, not cartoonish.",
+  },
+  // The Guardian away from the anime girl: an ancient, severe statue, not a young woman; a long coat, not a dress.
+  "guardian-statue-bald": {
+    subject: "An ancient porcelain angel, severe and still, a cathedral statue come alive: her head is bald and smooth, her face stern and old, cold porcelain cracked all over in a fine web, pure white light glowing in the cracks, her hands the same. An ancient chestplate from a forgotten age, pale abstract metal in flowing alien curves, over a long black coat with a high collar, reaching the ground. Two wings of pure white light, no feathers.",
+    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: weathered cracked white porcelain, pale abstract metal, heavy black wool, pure white light. Serious, adult, not cartoonish.",
+  },
+  "guardian-statue": {
+    subject: "An ancient porcelain angel, severe and still, a cathedral statue come alive: her face stern and old, cold porcelain cracked all over in a fine web, pure white light glowing in the cracks, her hands the same, long straight white hair. An ancient chestplate from a forgotten age, pale abstract metal in flowing alien curves, over a long black coat with a high collar, reaching the ground. Two wings of pure white light, no feathers.",
+    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: weathered cracked white porcelain, pale abstract metal, heavy black wool, pure white light. Serious, adult, not cartoonish.",
+  },
 };
 
 const ANGEL_JOBS = Object.entries(ANGELS).map(([id, { subject, pose, materials }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are empty and open.`, materials ?? ANGEL_3D, pose ?? WINGED_T_POSE) }));
@@ -881,6 +902,23 @@ const MELEE: Readonly<Record<string, { readonly subject: string; readonly pose?:
   "chosen-shell": {
     subject: "An inhuman juggernaut in a man's shape, a brutish champion of a militant faith, massive and heavy, completely covered in one continuous shell of smooth fused plates, none of the seams or straps of a knight's suit, no skin showing. His head is a smooth rounded shell with no face, no visor and no eye slits. No cape.",
     materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: blackened shell plates, bone-white enamel, heat-scorched metal. Serious, adult, not cartoonish.",
+  },
+  // Round twelve. The Avatar's wings after the user's reference (the Illusory Angel), on round ten's ascended figure.
+  "avatar-streaks": {
+    subject: "A vengeance angel, the faceless champion ascended: a tall body of white and red shell plates under a deep hood, no face, only a glowing red void inside the hood, the plates' edges glowing and covered in abstract symbols, gauntlets and boots glowing with heat. From his back spread three pairs of enormous wings, far larger than his body, made of long, loose, flowing red feathers that trail away into streaks of red light and smoke, the feathers drifting apart at their ends, wispy and translucent, painted in loose streaks.",
+    pose: "all standing in the same T-pose, his enormous wings spread wide behind him and clear of his arms",
+    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: white and red shell plates, glowing heated metal, translucent red light, smoke. Serious, adult, not cartoonish.",
+  },
+  // The Torturer after the user's three references, in words: the gold boss of Baldur's Gate 3 (a body cased in dark,
+  // ornate bronze and gold, a smooth metal face, a spiked headdress, bladed claws), Pinhead without the pins (a head
+  // scored in a grid), an iron maiden without the casket (iron and spikes). No skin, not human.
+  "torturer-aberration": {
+    subject: "A humanoid aberration of torture, not human: a heavy, hulking body cased entirely in dark, ornate bronze and tarnished gold, layered metal folds over metal folds, iron spikes jutting out between them. His face is a smooth metal mask, eyes closed, deep lines scored into it in a grid across the face and the bald metal head. A tall headdress of iron spikes. His fingers are long iron blades. No skin anywhere.",
+    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: dark bronze, tarnished gold, blackened iron, verdigris. Serious, adult, not cartoonish.",
+  },
+  "torturer-aberration-maiden": {
+    subject: "A humanoid aberration of torture, not human: a tall, heavy body of dark bronze and blackened iron plates hinged at the front like the doors of an iron maiden, standing a little open to show rows of spikes inside. His face is a smooth bronze mask, eyes closed, deep lines scored into it in a grid across the face and the bald metal head. A tall headdress of iron spikes. His fingers are long iron blades. No skin anywhere.",
+    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: dark bronze, tarnished gold, blackened iron, rust, verdigris. Serious, adult, not cartoonish.",
   },
 };
 

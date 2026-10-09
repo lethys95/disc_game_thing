@@ -35,6 +35,19 @@ const FIXES: Readonly<Record<string, Fix>> = {
     seed: 1002,
     denoise: [0.7, 0.85, 1],
   },
+  // The user (2026-10-09): "if we can add red colors to chosen-battered-turnaround-1002 and maybe add some assymetry,
+  // then maybe it could work." The whole figure repainted lightly, so his shape stays.
+  "chosen-battered-1002-red": {
+    dir: "art/candidates/units/jilliath/melee",
+    source: "chosen-battered-turnaround-1002.png",
+    mask: "masks/chosen-battered-1002-all.png",
+    edits: [
+      ["battered, chipped and scorched, no sculpted muscles.", "battered, chipped and scorched, half of them enamelled blood red, his left shoulder and arm far heavier than his right, layered high, no sculpted muscles."],
+      ["materials: blackened shell plates, chipped bone-white enamel, heat-scorched metal.", "materials: blackened shell plates, chipped bone-white and blood-red enamel, heat-scorched metal."],
+    ],
+    seed: 1002,
+    denoise: [0.55, 0.7, 0.85],
+  },
 };
 
 const id = process.argv[2] ?? "";
