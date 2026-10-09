@@ -324,3 +324,20 @@ texture in 3D).
   robes, no cloth" undresses a figure; say what covers her instead.
 - **Chosen** `chosen-shell`: a visored knight again; "massive and heavy" leading brought the knight back (round nine's
   faceless head came only when the head led).
+
+## The user on rounds ten and eleven (2026-10-09)
+- **Avatar:** "closer with ascended. Wings are still a bit bland, though we could end him here. I wouldn't mind shaking
+  the bag a bit though, trying to capture those wings from the picture I gave, but it's probably going to be fairly
+  difficult."
+- **Empyreal:** "lost her robes, but nothing really replaced it... I.e. she's practically naked. I know this is supposed
+  to be a game for adults, but I'm not exactly sure having naked angels is going to land well... Or well maybe it
+  would, but it would be for the wrong reasons. Ancient oil painting skin still missing, arguably all editions got
+  paler."
+- **Chosen:** "8 was still better, but this variation from this time is better than the last. Arguably if we can add red
+  colors to chosen-battered-turnaround-1002 and maybe add some assymetry, then maybe it could work."
+- **Guardian:** "looks like an anime girl from an anime, and the only thing she'll be guarding, is the mangas of her 17
+  year old nerdy fanboys."
+- **Torturer:** "looks like a knight, now with a weird skirt like chains/spikes from his hip. […] what I'm trying to land
+  with torturer, then it's a mixture of the gold boss from baldur's gate 3 [linked], pinhead from hellraiser without the
+  pins, and an iron maiden without the casket. I'm not looking for skin anywhere on his body, and he isn't really going
+  to look human. He's like... Some humanoid abberation of torture."
