@@ -59,3 +59,9 @@
   (Krea, masked image-to-image), and lays each painting back between the field and the content. Probes: the user's
   own gothic line, plus two of Claude's to compare (soot-darkened cathedral stone, reliquary iron), at two
   strengths, three seeds each, with Jilliath's skin in the subject.
+- **The probes (2026-10-09):** `shots/hud-paint-battle.html`, 18 paintings composited into the real screen. The
+  method works: the greybox silhouette became a hooded stone angel whose wings arch around the portrait, one stone
+  and one light with the stele. Strength 0.65 keeps the layout (0.85 moves the medallion, pales the stone, carves
+  behind the text). Claude's picks: reliquary 65-2, cathedral 65-2, gothic 65-2. To fix before cutting: dark
+  recessed panels behind text, no light glare, no moss, no fake sockets on the sill, the plate in front of the
+  portrait. Waiting for the user's pick.
