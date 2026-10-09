@@ -50,3 +50,7 @@
   after, states, sizes). The layout changes the user accepted are in: the sill joining card, sockets and log; the log a
   few lines that unroll; dark sockets for what can't be used now; red health; ground brackets instead of glowing
   tiles. Next: step 3, the battle painted as one picture over the greybox, a few style probes in Jilliath's skin.
+- **The user on the greybox (2026-10-09):** "it looks great". Remarks done: the subtitle became marks on the plate
+  (side band, tier numeral, crown), the instruments lost their captions, and explanations moved under a held
+  right-click everywhere in battle (rule 7 of the system). Asked what "paint" means in step 3; explained, waiting for
+  the go.

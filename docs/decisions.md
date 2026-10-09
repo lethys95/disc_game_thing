@@ -299,3 +299,9 @@ be extracted from the themes of each faction, presumably." Claude extracted them
 made while extracting: portrait frames follow the unit's faction, not the player's, so a mixed turn order shows whose
 each face is. Next: the battle screen's greybox, then each screen painted as one picture and cut up.
 
+## Explanations live under a held right-click, not in captions (2026-10-09, the user)
+After the battle greybox: "text on armor, hourglass, ability power will eventually come off as noise, and it's better
+that you can hold right click for an explanation when hovering over them". The same for the card's subtitle ("seems
+arbitrary"). So the interface shows shapes, marks and numbers, and anything that explains itself does so in the peek
+while right-click is held (`view/explain.ts`), the way groups on the map already did. A rule of the HUD kit (rule 7).
+

@@ -741,38 +741,48 @@ body.formulas .formula { display: inline; }
 #card .niche .plate::before, #card .niche .plate::after { content: ""; position: absolute; top: 50%; width: 1.7rem; height: 1.7rem; margin-top: -0.85rem; background: var(--gb-hand) center / contain no-repeat; }
 #card .niche .plate::before { left: -0.9rem; }
 #card .niche .plate::after { right: -0.9rem; transform: scaleX(-1); }
-#card .subtitle { margin-top: 0.35rem; text-align: center; color: var(--muted); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; }
-#card .pin { text-align: center; color: var(--gb-light); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; }
+/* The plate's enamel band is the unit's side; the numeral at the joint of portrait and plate its tier; a crown a leader. */
+#card .niche .plate.side0 { border-bottom: 0.3rem solid var(--side0); }
+#card .niche .plate.side1 { border-bottom: 0.3rem solid var(--side1); }
+#card .niche .plate .crown { margin-right: 0.3rem; color: #6a5420; }
+#card .niche .plate .tier {
+  position: absolute; left: 50%; top: -1rem; width: 1.5rem; height: 1.5rem; margin-left: -0.75rem; border-radius: 50%; box-sizing: border-box;
+  display: grid; place-items: center; font: 700 0.62rem var(--display); color: var(--gb-ink); background: var(--gb-iron-hi); border: 0.12rem solid var(--gb-iron);
+}
+/* Pinned: an iron pin through the stele's corner. */
+#card .niche .pin { position: absolute; left: 1.5rem; top: 2.2rem; width: 0.85rem; height: 0.85rem; border-radius: 50%; background: var(--gb-light); box-shadow: 0 0.15rem 0.3rem rgba(0, 0, 0, 0.7); }
 
 /* The instruments: each value its own shape. */
 #card .instruments { margin: 0.6rem 0 0.4rem; }
 #card .health { display: flex; align-items: center; gap: 0.45rem; }
 #card .seal {
-  display: grid; place-items: center; flex: none; width: 2.9rem; height: 2.9rem; border-radius: 50%; background: var(--gb-stone-lo);
+  position: relative; display: grid; place-items: center; flex: none; width: 2.9rem; height: 2.9rem; border-radius: 50%; background: var(--gb-stone-lo);
   border: 0.22rem solid var(--gb-iron); color: var(--ink); font: 700 1.15rem var(--display);
+}
+/* A shield is a second, pale seal pressed against the health's. */
+#card .seal .shield-seal {
+  position: absolute; right: -0.65rem; bottom: -0.45rem; min-width: 1.5rem; height: 1.5rem; padding: 0 0.15rem; border-radius: 0.75rem; box-sizing: border-box;
+  display: grid; place-items: center; font: 700 0.62rem var(--text); color: var(--gb-ink); background: var(--gb-shield); border: 0.12rem solid var(--gb-iron);
 }
 #card .seal .skull { width: 1.5rem; height: 1.5rem; }
 #card .channel { position: relative; flex: 1; height: 0.75rem; background: var(--gb-stone-lo); border: 0.1rem solid var(--gb-iron); box-shadow: inset 0 0.15rem 0.25rem rgba(0, 0, 0, 0.8); }
 #card .channel .fill { position: absolute; inset: 0 auto 0 0; background: var(--gb-health); }
 #card .channel .shield { position: absolute; left: 0; top: -0.4rem; height: 0.25rem; background: repeating-linear-gradient(90deg, var(--gb-shield) 0 0.6rem, transparent 0.6rem 0.75rem); }
-#card .max { color: var(--muted); font-size: 0.7rem; }
-#card .shield-line { margin: 0.2rem 0 0 3.35rem; color: var(--gb-shield); font-size: 0.65rem; }
-#card .badges { display: flex; flex-wrap: wrap; gap: 0.5rem 0.9rem; margin-top: 0.7rem; }
-#card .badge { display: grid; grid-template-columns: auto auto; grid-template-rows: auto auto; column-gap: 0.35rem; align-items: center; }
-#card .badge .shape { grid-row: 1 / span 2; width: 1.45rem; height: 1.7rem; background: var(--gb-iron); }
+#card .max { color: var(--muted); font: 600 0.75rem var(--display); }
+#card .health { cursor: help; }
+#card .badges { display: flex; flex-wrap: wrap; gap: 0.5rem 1.1rem; margin-top: 0.75rem; }
+#card .badge { display: flex; align-items: center; gap: 0.35rem; cursor: help; }
+#card .badge .shape { flex: none; width: 1.45rem; height: 1.7rem; background: var(--gb-iron); }
 #card .badge.armor .shape { clip-path: polygon(0 0, 100% 0, 100% 55%, 50% 100%, 0 55%); }
 #card .badge.initiative .shape { width: 1.25rem; clip-path: polygon(0 0, 100% 0, 60% 50%, 100% 100%, 0 100%, 40% 50%); }
 #card .badge.power .shape { height: 1.45rem; border-radius: 50%; background: radial-gradient(circle, var(--gb-iron) 0 38%, transparent 40%), repeating-conic-gradient(var(--gb-iron) 0 10deg, transparent 10deg 30deg); }
 #card .badge .value { font: 700 1.05rem var(--display); color: var(--ink); line-height: 1; }
 #card .badge .value.up { color: var(--gb-light); }
 #card .badge .value.down { color: #d8584a; }
-#card .badge .delta { font-size: 0.7rem; }
-#card .badge .caption { color: var(--muted); font-size: 0.58rem; line-height: 1.1; }
-#card .badge .studs { margin-right: 0.25rem; color: var(--gb-light); letter-spacing: 0.05em; }
-#card .badge.charges { grid-template-columns: auto; }
-#card .hits { margin-top: 0.35rem; font-size: 0.65rem; color: var(--muted); }
-#card .hits.up { color: var(--gb-light); }
-#card .hits.down { color: #d8584a; }
+#card .badge .studs { font-size: 0.6rem; color: var(--gb-light); letter-spacing: 0.05em; }
+#card .badge.hits .shape { width: 1.2rem; clip-path: polygon(42% 0, 58% 0, 58% 68%, 84% 70%, 84% 78%, 58% 80%, 58% 100%, 42% 100%, 42% 80%, 16% 78%, 16% 70%, 42% 68%); }
+#card .badge.hits.up .value { color: var(--gb-light); }
+#card .badge.hits.down .value { color: #d8584a; }
 #card .effects { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-bottom: 0.4rem; }
 #card .effect { padding: 1px 0.375rem; font-size: 0.65rem; color: #e0a090; background: var(--gb-stone-lo); border: 1px solid var(--gb-iron); cursor: help; }
 /* A rod between the instruments and the abilities, with a boss at its middle. */
@@ -811,7 +821,8 @@ body.formulas .formula { display: inline; }
 #actions .socket .cells { position: absolute; right: -0.65rem; top: 0.4rem; display: flex; flex-direction: column; gap: 0.12rem; }
 .cells .cell { width: 0.42rem; height: 0.62rem; background: var(--gb-magic); box-shadow: 0 0 0.3rem rgba(79, 216, 207, 0.6); }
 .cells .cell.spent { background: var(--gb-stone-lo); box-shadow: inset 0 0 0 0.08rem var(--gb-iron); }
-#card .badge.charges .cells { display: flex; gap: 0.12rem; }
+#card .badge.charges .cells { display: flex; gap: 0.15rem; }
+#card .badge.charges .cell { width: 0.55rem; height: 0.85rem; }
 /* The overload toggle: a gem on the socket's rim, lit when on. */
 #actions .socket button.overload {
   position: absolute; right: -0.55rem; top: -0.55rem; width: 1.35rem; height: 1.35rem; padding: 0; border-radius: 50%; cursor: pointer;

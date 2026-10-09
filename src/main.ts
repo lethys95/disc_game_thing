@@ -7,6 +7,7 @@ import { AUTOSAVE_ID, LocalSaveStore } from "#view/saves";
 import { applyUiKit } from "#view/art";
 import { App } from "#view/app";
 import { byId } from "#view/dom";
+import { wireExplanations } from "#view/explain";
 import { Campaign } from "#view/campaign";
 import { isMood, MapView, MOODS } from "#view/map";
 import { BattleScene } from "#view/scene";
@@ -31,6 +32,7 @@ import { isTerrain } from "#rules/map";
 const params = new URLSearchParams(window.location.search);
 
 applyUiKit(document.documentElement);
+wireExplanations(byId("peek"));
 const stage = new Stage(byId("stage"));
 const settings = new Settings();
 settings.follow((s) => stage.setFeel(ANIMATION_SPEEDS[s.speed].scale, s.rotate, s.zoom));

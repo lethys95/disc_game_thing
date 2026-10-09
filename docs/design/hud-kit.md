@@ -18,7 +18,7 @@ stand at the screen's edges and are cut off by them. A beam runs across the top 
 panels hang from them on clasps. The game is seen through the opening. Sculpture lives only where architecture puts
 it: a keystone, a capital, a corbel, a niche, a column. Each figure does a job (P1, P2, P4).
 
-Six rules follow from that:
+Seven rules follow from that:
 1. **Delete test.** Every sculpted piece must be a part the structure would miss: a post, an arch, a keystone, the
    thing that holds a control. If the frame still looks finished without it, it doesn't go in (P1).
 2. **One loud piece per screen.** Each screen gets one hero piece, usually a figure with a job. Everything else is
@@ -33,6 +33,9 @@ Six rules follow from that:
    up afterwards (P5).
 6. **The machine never changes shape; it lights up.** Empty, locked, unavailable and selected are all states of the
    same piece, shown by light and binding, never by hiding (P12).
+7. **Words wait under the right button.** The interface shows shapes, marks and numbers; what they mean is read by
+   holding right-click on them, never in captions beside them (the user, 2026-10-09: captions on the instruments "will
+   eventually come off as noise, and it's better that you can hold right click for an explanation").
 
 ## Materials and light
 Each material always means one thing (P9). The world stays muted and the faction's mana colour is the one loud
@@ -271,6 +274,12 @@ changed: the figure read as a blob, then a bow tie, until the wings traced the a
 until it was capped near the old card's height; the sill went empty during the enemy's turn until it kept the next
 unit's sockets. Known compromises: a wide squad's far-left back row can sit behind the card stele (camera framing,
 later); the portrait window keeps a rim of its own until the painting makes the wings its rim.
+
+**The user on it (2026-10-09):** "it looks great", with two remarks, both done: the card's subtitle ("Your · Tier 2 ·
+Front left") "seems arbitrary", so the plate now carries it as marks (the side's enamel band, the tier's numeral at
+the joint of portrait and plate, a crown for a leader) and the words moved under a held right-click; and the
+instruments lost their captions for the same reason (rule 7). Every battle element that had a browser tooltip now
+explains itself on a held right-click instead (the peek, now available on every screen).
 
 Next: step 3 for the battle, the screen painted as one picture over this greybox in a few style probes (Jilliath's
 skin), for the user to pick. Then the map and the Capitol greyboxes.

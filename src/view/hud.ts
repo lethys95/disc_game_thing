@@ -11,6 +11,7 @@ import { art } from "#view/art";
 import { miniStack, TarotFan } from "#view/tarot-hand";
 import type { CardCue, FanCard } from "#view/tarot-hand";
 import { byId, element, skull } from "#view/dom";
+import { explain } from "#view/explain";
 import { sees } from "#view/secrecy";
 import type { Settings } from "#view/settings";
 import { armorReduction } from "#rules/battle/damage";
@@ -64,6 +65,7 @@ export interface BannerButton {
 }
 
 const ROW_NAMES = ["front", "middle", "back"] as const;
+const ROMAN = ["", "I", "II", "III", "IV", "V"] as const;
 const COL_NAMES = ["left", "centre", "right"] as const;
 
 export function unitLabel(unit: BattleUnit, playerSide: Side | null): string {
@@ -196,7 +198,7 @@ export class Hud {
     if (key !== this.tarotKeyShown) {
       this.tarotKeyShown = key;
       this.tarotIcon.replaceChildren(...miniStack(entries.map((e) => e.card)));
-      this.tarotIcon.title = `Tarot: ${entries.length} card${entries.length === 1 ? "" : "s"} in play`;
+      explain(this.tarotIcon, `Tarot: ${entries.length} card${entries.length === 1 ? "" : "s"} in play`, "Click to look at them.");
     }
     this.tarotEntries = entries;
   }
@@ -219,14 +221,14 @@ export class Hud {
     this.turns.replaceChildren();
     const round = element("div", "round");
     round.append(element("span", "label", "Round"), element("span", "number", String(battle.round)));
-    this.turns.appendChild(round);
+    this.turns.appendChild(explain(round, `Round ${battle.round}`, "The faces along the beam act in this order."));
     upcoming.forEach((unit, index) => {
       const niche = element("div", `niche side${unit.side}${index === 0 ? " now" : index === 1 ? " next" : ""}`);
       const window = element("div", "window");
       window.appendChild(art({ kind: "portrait", id: unit.defId, frame: "icon" }, index === 0 ? "queue-now" : "queue"));
       niche.append(window, element("span", "band"));
       if (index < 2) niche.appendChild(element("span", "when", index === 0 ? "now" : "next"));
-      niche.title = `${unitLabel(unit, playerSide)} (${place(unit)})`;
+      explain(niche, unitLabel(unit, playerSide), `Stands ${place(unit)}. ${index === 0 ? "Acting now." : index === 1 ? "Acts next." : "Acts later this round or the next."}`);
       niche.addEventListener("mouseenter", () => this.handlers.onFocus(unit.id));
       niche.addEventListener("mouseleave", () => this.handlers.onFocus(null));
       this.turns.appendChild(niche);
@@ -244,10 +246,16 @@ export class Hud {
     const niche = element("div", "niche");
     const window = element("div", "window");
     window.appendChild(art({ kind: "portrait", id: unit.defId, frame: "bust" }, "niche-portrait"));
-    niche.append(element("div", "figure"), window, element("div", "plate", unit.name));
+    // The plate says who: its enamel band is the side's colour, the numeral its tier, a crown a leader; the words
+    // (whose, where it stands) wait under a held right-click.
+    const tier = def?.tier ?? 1;
+    const plate = element("div", `plate side${unit.side}`);
+    if (unit.leader) plate.appendChild(element("span", "crown", "♛"));
+    plate.append(unit.name, element("span", "tier", ROMAN[tier] ?? String(tier)));
+    explain(plate, unitLabel(unit, playerSide), `Tier ${tier}${unit.leader ? ", leading its warband" : ""}. Stands ${place(unit)}.`);
+    niche.append(element("div", "figure"), window, plate);
+    if (pinned) niche.appendChild(explain(element("span", "pin"), "Pinned", "This card stays put. Click the unit again to release it."));
     this.card.appendChild(niche);
-    this.card.appendChild(element("div", "subtitle", `${unitLabel(unit, playerSide).split(" ")[0]}${unit.leader ? " leader" : ""} · tier ${def?.tier ?? "?"} · ${place(unit)}`));
-    if (pinned) this.card.appendChild(element("div", "pin", "Pinned · click it again to release"));
     this.card.appendChild(instruments(unit, stats, def?.spellCharges));
 
     // Secret effects (a Justiciar's mark) show only to the side that applied them.
@@ -257,7 +265,7 @@ export class Hud {
       for (const effect of shown) {
         const tag = element("span", `effect ${effect.def}`);
         tag.append(art({ kind: "effect", id: effect.def }, "tiny"), effectLabel(effect));
-        tag.title = effectDef(effect.def).describe(effect);
+        explain(tag, effectLabel(effect), effectDef(effect.def).describe(effect));
         effects.appendChild(tag);
       }
       this.card.appendChild(effects);
@@ -337,7 +345,7 @@ export class Hud {
     if (overload && shown.enhancement.kind === "none") {
       const on = overloaded.has(shown.abilityId);
       const toggle = element("button", `overload${on ? " on" : ""}`, `+${overload.spellCost - shown.spellCost}`);
-      toggle.title = on ? "Overloaded: click to cast it plain." : `Overload: it reaches wider, for ${overload.spellCost - shown.spellCost} more charges.`;
+      explain(toggle, on ? "Overloaded" : "Overload", `It reaches wider, for ${overload.spellCost - shown.spellCost} more charges.`, on ? "Click to cast it plain." : "Click to overload it.");
       toggle.addEventListener("click", () => this.handlers.onOverload(shown.abilityId));
       socket.appendChild(toggle);
     }
@@ -429,6 +437,7 @@ function instruments(unit: BattleUnit, stats: Stats, battery: number | undefined
   const health = element("div", "health");
   const seal = element("span", "seal", unit.alive ? String(unit.hp) : "");
   if (!unit.alive) seal.appendChild(skull());
+  if (stats.shield > 0) seal.appendChild(element("span", "shield-seal", String(unit.shield)));
   const channel = element("div", "channel");
   const fill = element("div", "fill");
   fill.style.width = `${(100 * unit.hp) / stats.maxHp}%`;
@@ -438,46 +447,46 @@ function instruments(unit: BattleUnit, stats: Stats, battery: number | undefined
     band.style.width = `${(100 * unit.shield) / stats.shield}%`;
     channel.appendChild(band);
   }
-  health.append(seal, channel, element("span", "max", unit.alive ? `of ${stats.maxHp}` : "Fallen"));
+  health.append(seal, channel, element("span", "max", unit.alive ? String(stats.maxHp) : ""));
+  const shieldLine = stats.shield > 0 ? [`Shield ${unit.shield} of ${stats.shield}: it takes hits before health does.`] : [];
+  explain(health, unit.alive ? `Health ${unit.hp} of ${stats.maxHp}` : "Fallen", ...shieldLine);
   box.appendChild(health);
-  if (stats.shield > 0) box.appendChild(element("div", "shield-line", `Shield ${unit.shield} of ${stats.shield}`));
 
   const badges = element("div", "badges");
   const actions = actionsPerRound(stats.initiative);
   badges.append(
-    badge("armor", "Armor", stats.armor, unit.base.armor, stats.armor > 0 ? `${armorReduction(stats.armor)}% off hits` : "no armor"),
-    badge("initiative", "Initiative", stats.initiative, unit.base.initiative, `${actions} action${actions === 1 ? "" : "s"} a round`, actions),
-    badge("power", "Ability power", stats.abilityPower, unit.base.abilityPower, "ability power"),
+    badge("armor", "Armor", stats.armor, unit.base.armor, stats.armor > 0 ? `Takes ${armorReduction(stats.armor)}% off each hit.` : "No armor: hits land in full."),
+    badge("initiative", "Initiative", stats.initiative, unit.base.initiative, `${actions} action${actions === 1 ? "" : "s"} a round, one stud each.`, actions),
+    badge("power", "Ability power", stats.abilityPower, unit.base.abilityPower, "Its abilities' numbers grow with it."),
   );
   if (battery !== undefined) {
-    const charges = element("span", "badge charges");
-    charges.title = "Spell charges";
-    charges.append(cells(unit.spellCharges, battery), element("span", "caption", `${unit.spellCharges} of ${battery} charges`));
-    badges.appendChild(charges);
+    badges.appendChild(explain(element("span", "badge charges"), `Spell charges ${unit.spellCharges} of ${battery}`, "Its spells spend them. They come back after the battle."));
+    badges.lastElementChild?.appendChild(cells(unit.spellCharges, battery));
+  }
+  const hits = hitChange(stats);
+  if (hits) {
+    const dealt = element("span", `badge hits ${stats.hitBonus + stats.hitPercent > 0 ? "up" : "down"}`);
+    dealt.append(element("span", "shape"), element("span", "value", hits.replace(" to its hits", "")));
+    badges.appendChild(explain(dealt, "Damage dealt", `${capitalize(hits)}, from its effects.`));
   }
   box.appendChild(badges);
-  const hits = hitChange(stats);
-  if (hits) box.appendChild(element("div", `hits ${stats.hitBonus + stats.hitPercent > 0 ? "up" : "down"}`, `Damage dealt ${hits.replace(" to its hits", "")}`));
   return box;
 }
 
-/** A value in its shape, raised or lowered against the unit's own, with what it means in words beneath. */
-function badge(kind: string, name: string, value: number, base: number, caption: string, studs = 0): HTMLElement {
+/** A value in its shape, lit when raised and red when lowered against the unit's own. What it means: hold right-click. */
+function badge(kind: string, name: string, value: number, base: number, meaning: string, studs = 0): HTMLElement {
   const box = element("span", `badge ${kind}`);
-  box.title = name;
   const delta = value - base;
-  const number = element("span", `value${delta > 0 ? " up" : delta < 0 ? " down" : ""}`, String(value));
-  if (delta !== 0) number.appendChild(element("small", "delta", ` ${delta > 0 ? "+" : ""}${delta}`));
-  const words = element("span", "caption", caption);
-  if (studs > 0) words.prepend(element("span", "studs", "●".repeat(studs)));
-  box.append(element("span", "shape"), number, words);
-  return box;
+  box.append(element("span", "shape"), element("span", `value${delta > 0 ? " up" : delta < 0 ? " down" : ""}`, String(value)));
+  if (studs > 0) box.appendChild(element("span", "studs", "●".repeat(studs)));
+  const change = delta === 0 ? [] : [`${base} of its own, ${delta > 0 ? "+" : ""}${delta} from effects.`];
+  return explain(box, `${name} ${value}`, meaning, ...change);
 }
 
 /** Uses left as beads that go dark when spent ("1/1" before). */
 function beads(left: number, of: number): HTMLElement {
   const row = element("span", "uses");
-  row.title = `${left} of ${of} left this battle`;
+  explain(row, `${left} of ${of} left`, "Uses for this battle.");
   for (let i = 0; i < of; i++) row.appendChild(element("span", i < left ? "bead" : "bead spent"));
   return row;
 }
@@ -485,7 +494,7 @@ function beads(left: number, of: number): HTMLElement {
 /** Spell charges as cells: `of` cells with `full` lit, or `full` lit cells alone for a cost. */
 function cells(full: number, of = full): HTMLElement {
   const row = element("span", "cells");
-  row.title = of === full ? `${full} spell charge${full === 1 ? "" : "s"}` : `${full} of ${of} spell charges`;
+  explain(row, of === full ? `Costs ${full} spell charge${full === 1 ? "" : "s"}` : `${full} of ${of} spell charges`);
   for (let i = 0; i < of; i++) row.appendChild(element("span", i < full ? "cell" : "cell spent"));
   return row;
 }
