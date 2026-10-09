@@ -189,6 +189,17 @@ power 100 × tier; numbers at ability power 100. No damage type of their own yet
   matters: on an ally whose turn comes next it lasts no time at all; on one that has acted, a whole round.
 - **Resurrection** (Godkin): once per combat, a main action; a fallen ally (not fled, remains not used or destroyed,
   its tile free) rises with 50% of its health and none of its old effects, and takes its turns from then on.
-- **Armor** is still flat (the buffs are written for it); `todo/percent-armor` changes that.
+- **Armor** was flat when these were written; it is a percentage since #75 (the buffs still add points).
 - **AI** (two guardian squads against seven presets, both sides): Emissary 53 Heal / 17 Prayer, Guardian 13 Shields,
   Shepherd 89 Prayer / 26 Shields, Godkin 178 Prayer / 7 Resurrections.
+
+## 75. Armor as a percentage with diminishing returns (2026-10-09; the user's rule, Claude's curve)
+The user: percent armor, "but then we just need to think about diminishing returns […] like something like WoW does"
+(decisions.md). A hit loses armor ÷ (armor + 60) of itself (`ARMOR_HALF` in `balance.ts`): 20 armor 25%, 40 → 40%,
+60 → 50%, 90 → 60%, 540 → 90%, never all; rounded, at least 1 (immunity is still the only zero). Armor stays points on
+the unit, so buffs and debuffs (Devotion Aura +20, Guardian's Shield +30, Prayer +5, Cracked, Exposed, Sundered, the
+walls) add and subtract points as before. The cards, codex, setup and research screens show the percent beside the
+points. A siege-trained attack now *ignores* the walls' armor (`Packet.pierce`) instead of adding their amount back as
+damage. Untouched for now: the AI's worth of a point of armor (3), the walls' 2 armor per city tier (now about 3%
+each), the Marauder's +10 against armour. The whole-game test's strong start wins seeds 1–3 again (seed 1 after 82
+turns).

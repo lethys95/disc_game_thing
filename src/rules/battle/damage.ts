@@ -1,5 +1,11 @@
+import { ARMOR_HALF } from "#rules/balance";
 import { allTraits, traitsOn } from "#rules/battle/traits";
 import type { Ctx, HitSpec, Packet } from "#rules/battle/types";
+
+/** The share of a hit that armor takes off, in percent (rounded, for the view). */
+export function armorReduction(armor: number): number {
+  return Math.round((100 * Math.max(0, armor)) / (Math.max(0, armor) + ARMOR_HALF));
+}
 
 /**
  * The damage pipeline (docs/design/architecture.md §3). Every hit goes through the same ordered stages, and
@@ -13,7 +19,7 @@ export function hit(ctx: Ctx, sourceId: string, targetIds: readonly string[], sp
     if (!ctx.unit(targetId).alive) continue;
     // Read again for each target: a one-shot mark that fired on the first target is gone for the next.
     const own = traitsOn(ctx, sourceId);
-    const packet: Packet = { source: sourceId, target: targetId, amount: spec.power, type: spec.type, tags: spec.tags, bleed: 0 };
+    const packet: Packet = { source: sourceId, target: targetId, amount: spec.power, type: spec.type, tags: spec.tags, bleed: 0, pierce: 0 };
     for (const t of own) t.hooks.outgoing?.(ctx, t.self, packet);
     for (const t of own) t.hooks.convert?.(ctx, t.self, packet);
     const taken = receive(ctx, packet);
@@ -31,7 +37,8 @@ function receive(ctx: Ctx, packet: Packet): number {
   for (const t of theirs) t.hooks.incoming?.(ctx, t.self, packet);
   // Immunity is the only true zero; armor otherwise floors a hit at 1 (docs/design/pillars.md).
   if (packet.amount <= 0) return 0;
-  packet.amount = Math.max(1, packet.amount - ctx.stats(target.id).armor);
+  const armor = Math.max(0, ctx.stats(target.id).armor - packet.pierce);
+  packet.amount = Math.max(1, Math.round((packet.amount * ARMOR_HALF) / (armor + ARMOR_HALF)));
 
   const beforePools = packet.amount;
   const absorbers = theirs.filter((t) => t.hooks.absorb).sort((a, b) => b.absorbPriority - a.absorbPriority);

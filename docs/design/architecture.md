@@ -4,7 +4,7 @@
 
 ## The test: hard cases the model must handle without engine changes
 Already in the game:
-- Armor (flat, floor 1); Defend (halves only what gets past the shield); shields (a pool, not halved by Defend, refilled only by shield restoration, full each battle).
+- Armor (a share of each hit with diminishing returns, floor 1); Defend (halves only what gets past the shield); shields (a pool, not halved by Defend, refilled only by shield restoration, full each battle).
 - Lent shields that perish when the *lender's* next turn starts (Equalize).
 - Stacking with a cap (Punishment ×3), stacking without a cap (Mutate), accumulating magnitude (bleed).
 - Timed effects on different clocks: until the bearer's next turn (Defend, Stun), until the round ends (Guardian Spirit's reprieve), all battle (Punishment, bleed).
@@ -65,7 +65,7 @@ An **effect instance** on a unit is plain data: `{ def, source, stacks, amount }
 2. **Outgoing**: the attacker's traits add or multiply, filtered by the ability's tags and the target (Blacksmith +10 on `damage` abilities; Marauder +10 against armor).
 3. **Conversion**: traits may split off part of the packet (Domination turns half into bleed).
 4. **Incoming**: the target's immunities (to 0) and resistances.
-5. **Armor**: flat subtraction, floor 1 (unless immune).
+5. **Armor**: takes armor ÷ (armor + 60) off the hit (diminishing returns; the user, 2026-10-08), floor 1 (unless immune). A hit's `pierce` ignores that much armor (siege against walls).
 6. **Absorb**: pools in priority order; a typed pool only takes matching damage (fire shield → shield pool).
 7. **Mitigate**: what got through the pools (Defend halves it; the user's rule that shields don't benefit from Defend).
 8. **Apply** to HP, then `preventDeath` if it would kill.

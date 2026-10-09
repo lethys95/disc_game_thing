@@ -232,6 +232,8 @@ export interface Packet {
   readonly tags: readonly Tag[];
   /** Split off by conversion stages; applied as bleed instead of as a hit. */
   bleed: number;
+  /** Armor this hit ignores (a siege-trained attack goes through a city's fortification). */
+  pierce: number;
 }
 
 export interface HitSpec {

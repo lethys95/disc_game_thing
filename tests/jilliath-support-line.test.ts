@@ -19,8 +19,8 @@ describe("the vengeance angels", () => {
     const wounded = [{ ...p("congregant", 0, 0), hp: 20 }, { ...p("congregant", 0, 1), hp: 30 }, { ...p("congregant", 0, 2), hp: 40 }];
     const battle = until(start([p("empyreal", 1, 1), ...wounded], [p("templar", 2, 1)]), "0.1.1");
     const after = act(battle, "atonement", "1.2.1").battle;
-    // 15 at 300 is 45, less the Templar's 20 armor: 25, healed to each.
-    for (const [id, hp] of [["0.0.0", 20], ["0.0.1", 30], ["0.0.2", 40]] as const) expect(unit(after, id).hp).toBe(hp + 25);
+    // 15 at 300 is 45, a quarter off for the Templar's 20 armor: 34, healed to each.
+    for (const [id, hp] of [["0.0.0", 20], ["0.0.1", 30], ["0.0.2", 40]] as const) expect(unit(after, id).hp).toBe(hp + 34);
   });
 
   test("the Reclaimer's Transfusion heals hard and costs her half of it; Reclaim heals her for what it deals", () => {

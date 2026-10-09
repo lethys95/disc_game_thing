@@ -14,6 +14,7 @@ import { art } from "#view/art";
 import { abilityGroup, abilitySources, effectGroup, effectSources, GROUP_NAMES, GROUPS } from "#view/codex-links";
 import type { Group, Source } from "#view/codex-links";
 import { button, element } from "#view/dom";
+import { armorReduction } from "#rules/battle/damage";
 
 export interface CodexHandlers {
   onBack(): void;
@@ -253,7 +254,7 @@ export class Codex {
     const rows: [string, string][] = [
       ["Health", String(def.stats.maxHp)],
       ...(def.stats.shield > 0 ? [["Shield", String(def.stats.shield)] satisfies [string, string]] : []),
-      ["Armor", String(def.stats.armor)],
+      ["Armor", def.stats.armor > 0 ? `${def.stats.armor} (${armorReduction(def.stats.armor)}% off hits)` : "0"],
       ["Initiative", String(def.stats.initiative)],
       ["Ability power", String(def.stats.abilityPower)],
       ...(def.spellCharges ? [["Spell charges", String(def.spellCharges)] satisfies [string, string]] : []),

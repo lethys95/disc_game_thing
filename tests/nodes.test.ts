@@ -52,13 +52,14 @@ describe("recruit marks", () => {
 
   test("Siege workshop: the first attack on a city's defenders goes through their walls; later ones don't", () => {
     const walled = p("congregant", 0, 1, [{ def: "fortified", amount: 10 }]);
-    expect(hit(p("congregant", 0, 1), walled)).toBe(10);
+    // 10 armor takes a seventh off a Congregant's 20; the siege-trained hit goes through it.
+    expect(hit(p("congregant", 0, 1), walled)).toBe(17);
     expect(hit(p("congregant", 0, 1, [{ def: "siege" }]), walled)).toBe(20);
     let battle = until(start([p("congregant", 0, 1, [{ def: "siege" }])], [walled]), "0.0.1");
     battle = act(battle, "attack", "1.0.1").battle;
     const before = unit(until(battle, "0.0.1"), "1.0.1").hp;
     const after = unit(act(until(battle, "0.0.1"), "attack", "1.0.1").battle, "1.0.1").hp;
-    expect(before - after).toBe(10);
+    expect(before - after).toBe(17);
     // Against a target without walls it isn't spent.
     expect(hit(p("congregant", 0, 1, [{ def: "siege" }]), p("congregant", 0, 1))).toBe(20);
   });

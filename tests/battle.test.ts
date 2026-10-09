@@ -62,17 +62,22 @@ describe("initiative", () => {
 });
 
 describe("damage", () => {
-  test("armor subtracts flat and floors at 1", () => {
+  test("armor takes armor ÷ (armor + 60) off a hit, and a hit still deals at least 1", () => {
     let battle = start([p("congregant", 0, 0)], [p("paladin", 0, 0)]);
     battle = act(battle, "attack", "1.0.0").battle;
-    expect(hp(battle, "1.0.0")).toBe(149);
+    // 20 armor takes a quarter off the Congregant's 20.
+    expect(hp(battle, "1.0.0")).toBe(150 - 15);
+    let walled = start([p("congregant", 0, 0)], [{ ...p("paladin", 0, 0), effects: [{ def: "fortified", amount: 100_000 }] }]);
+    walled = act(walled, "attack", "1.0.0").battle;
+    expect(hp(walled, "1.0.0")).toBe(149);
   });
 
   test("defend halves damage until the defender's next turn", () => {
     let battle = start([p("paladin", 0, 0)], [p("zealot", 0, 0)]);
     battle = act(battle, "defend").battle;
     battle = act(battle, "attack", "0.0.0").battle;
-    expect(hp(battle, "0.0.0")).toBe(150 - 25);
+    // The Zealot's 70, a quarter off for 20 armor (53), then halved.
+    expect(hp(battle, "0.0.0")).toBe(150 - 26);
   });
 });
 
@@ -111,7 +116,8 @@ describe("Jilliath abilities", () => {
     battle = act(battle, "defend").battle;
     battle = act(battle, "attack", "0.0.0").battle;
     battle = act(battle, "attack", "0.0.0").battle;
-    expect(hp(battle, "0.0.0")).toBe(100);
+    // Two of the Zealot's 70, a quarter off for armor and halved by Defend: 26 each.
+    expect(hp(battle, "0.0.0")).toBe(150 - 52);
     battle = act(battle, "lay_on_hands").battle;
     expect(hp(battle, "0.0.0")).toBe(150);
     expect(current(battle)).toBe("0.0.0");
@@ -150,7 +156,8 @@ describe("Jilliath abilities", () => {
     const battle = start([p("torturer", 0, 0)], [p("paladin", 0, 0)]);
     const step = act(battle, "flail", "1.0.0");
     const damage = step.events.flatMap((e) => (e.type === "damage" ? [[e.amount, e.source]] : []));
-    expect(damage).toEqual([[10, "0.0.0"], [30, null]]);
+    // The flail's 60 splits first: 30 to bleed, 30 to the hit, which loses a quarter to the Paladin's 20 armor.
+    expect(damage).toEqual([[23, "0.0.0"], [30, null]]);
     expect(current(step.battle)).toBe("1.0.0");
   });
 
@@ -176,7 +183,7 @@ describe("Jilliath abilities", () => {
   test("Guardian Spirit: the first killing blow leaves the Immortal at 1 HP until the round ends", () => {
     let battle = start([p("chosen", 0, 0), p("chosen", 0, 1)], [p("immortal", 0, 0)]);
     const events: BattleEvent[] = [];
-    for (const [ability, target] of [["attack", "1.0.0"], ["attack", "1.0.0"], ["defend"], ["attack", "1.0.0"]]) {
+    for (const [ability, target] of [["attack", "1.0.0"], ["attack", "1.0.0"], ["defend"], ["attack", "1.0.0"], ["attack", "1.0.0"]]) {
       const step = act(battle, ability ?? "", target);
       events.push(...step.events);
       battle = step.battle;

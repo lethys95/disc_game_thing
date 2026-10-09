@@ -15,11 +15,11 @@ describe("crit and evasion: counted, never rolled", () => {
   test("Crit 2: every second hit it lands deals double", () => {
     let battle = until(start([p("congregant", 0, 1, [carries("crit", { every: 2 })])], [p("paladin", 0, 1)]), "0.0.1");
     battle = act(battle, "attack", "1.0.1").battle;
-    // The Paladin's 20 armor floors a Congregant's 20 at 1; doubled, the hit is 40 before armor.
-    expect(150 - unit(battle, "1.0.1").hp).toBe(1);
+    // The Paladin's 20 armor takes a quarter off a Congregant's 20; doubled, the hit is 40 before armor.
+    expect(150 - unit(battle, "1.0.1").hp).toBe(15);
     battle = until(battle, "0.0.1");
     const { battle: after, events } = act(battle, "attack", "1.0.1");
-    expect(unit(battle, "1.0.1").hp - unit(after, "1.0.1").hp).toBe(40 - 20);
+    expect(unit(battle, "1.0.1").hp - unit(after, "1.0.1").hp).toBe(30);
     expect(events).toContainEqual({ type: "crit", unitId: "0.0.1", target: "1.0.1" });
   });
 

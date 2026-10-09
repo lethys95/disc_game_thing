@@ -97,8 +97,8 @@ describe("the fanaticism side: fire and burn", () => {
     const ready = until(battle, "0.0.0");
     expect(ready.queue).toEqual(expect.arrayContaining(["0.0.1", "0.0.2"]));
     const { battle: after, events } = act(ready, "burn_at_the_stake", "1.2.1");
-    // (20 + 25 × 2) × 2 = 140, less the Templar's 20 armor.
-    expect(took(events, "1.2.1")).toBe(120);
+    // (20 + 25 × 2) × 2 = 140, a quarter off for the Templar's 20 armor.
+    expect(took(events, "1.2.1")).toBe(105);
     expect(effect(after, "0.0.1", "gave_turn")).toBeDefined();
     const rest = playUntil(after, (b) => b.round === 2, () => null);
     const skipped = [...events, ...rest.events].filter((e) => e.type === "skipped").map((e) => (e.type === "skipped" ? e.unitId : ""));
@@ -129,8 +129,8 @@ describe("the fanaticism side: fire and burn", () => {
     const battle = until(start([p("jilliath_martyr_4", 1, 1)], [p("paladin", 0, 1), p("paladin", 1, 1), p("paladin", 2, 1), p("paladin", 0, 0)]), "0.1.1");
     expect(affectedBy(battle, "beam", "1.0.1")).toEqual(["1.0.1", "1.1.1", "1.2.1"]);
     const { battle: after, events } = act(battle, "beam", "1.0.1");
-    // 25 × 4 = 100, less a Paladin's 20 armor; the backfire is half of all it dealt.
-    for (const id of ["1.0.1", "1.1.1", "1.2.1"]) expect(took(events, id)).toBe(80);
-    expect(160 - unit(after, "0.1.1").hp).toBe(120);
+    // 25 × 4 = 100, a quarter off for a Paladin's 20 armor; the backfire is half of all it dealt.
+    for (const id of ["1.0.1", "1.1.1", "1.2.1"]) expect(took(events, id)).toBe(75);
+    expect(160 - unit(after, "0.1.1").hp).toBe(112);
   });
 });

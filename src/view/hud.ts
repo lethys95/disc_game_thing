@@ -13,6 +13,7 @@ import type { CardCue, FanCard } from "#view/tarot-hand";
 import { byId, element } from "#view/dom";
 import { sees } from "#view/secrecy";
 import type { Settings } from "#view/settings";
+import { armorReduction } from "#rules/battle/damage";
 
 /** " (overloaded)", " ×3": how an enhanced spell reads in buttons and the log. */
 export function enhancementLabel(enhancement: Enhancement): string {
@@ -230,10 +231,10 @@ export class Hud {
     this.card.appendChild(hp);
 
     const table = element("div", "stats");
-    const row = (name: string, value: number, base: number) => {
+    const row = (name: string, value: number, base: number, note = "") => {
       table.appendChild(element("span", "name", name));
       const delta = value - base;
-      table.appendChild(element("span", `value${delta > 0 ? " up" : delta < 0 ? " down" : ""}`, delta === 0 ? `${value}` : `${value} (${delta > 0 ? "+" : ""}${delta})`));
+      table.appendChild(element("span", `value${delta > 0 ? " up" : delta < 0 ? " down" : ""}`, `${delta === 0 ? `${value}` : `${value} (${delta > 0 ? "+" : ""}${delta})`}${note}`));
     };
     if (stats.shield > 0) {
       table.appendChild(element("span", "name", "Shield"));
@@ -244,7 +245,7 @@ export class Hud {
       table.appendChild(element("span", "name", "Damage dealt"));
       table.appendChild(element("span", `value ${stats.hitBonus + stats.hitPercent > 0 ? "up" : "down"}`, hits.replace(" to its hits", "")));
     }
-    row("Armor", stats.armor, unit.base.armor);
+    row("Armor", stats.armor, unit.base.armor, stats.armor > 0 ? ` · ${armorReduction(stats.armor)}% off hits` : "");
     row("Initiative", stats.initiative, unit.base.initiative);
     row("Ability power", stats.abilityPower, unit.base.abilityPower);
     const battery = def?.spellCharges;

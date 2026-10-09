@@ -13,5 +13,7 @@
   does." Claude's proposal (not yet confirmed): armor stays points; reduction = armor ÷ (armor + 60) (20 → 25%,
   40 → 40%, 90 → 60%, 540 → 90%); the card shows the percent; a hit still deals at least 1. Flat hit buffs: not
   answered yet.
+- **Built (2026-10-09, provisional #75):** armor ÷ (armor + 60), the user's yes; the percent shown beside the points.
+  Flat hit buffs (Punishment, Mutate, Pecking order) stay flat: not answered.
 - **Done when:** The user decides; if yes, built before the factions' lines are tuned against armor.
 - **Who:** The user decides; Claude builds and reruns the composition matrix.

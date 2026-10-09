@@ -18,6 +18,7 @@ import { art } from "#view/art";
 import { colorPair, COLOR_HEX, COLOR_NAMES } from "#view/colors";
 import { FORMATIONS, PRESETS } from "#rules/units/presets";
 import { element } from "#view/dom";
+import { armorReduction } from "#rules/battle/damage";
 
 export type Squads = readonly [readonly Placement[], readonly Placement[]];
 
@@ -240,7 +241,7 @@ export class Setup {
       head.append(element("span", "name", def.name), element("span", "tier", `tier ${def.tier}`));
       card.appendChild(head);
       card.appendChild(
-        element("div", "stats", `${def.stats.maxHp} HP${def.stats.shield > 0 ? ` · ${def.stats.shield} shield` : ""} · hits ${strongestHitOf(def)}${elementsOf(def).length === 0 ? "" : ` (${elementsOf(def).join(", ")})`} · ${def.stats.armor} armor · ${def.stats.initiative} init`),
+        element("div", "stats", `${def.stats.maxHp} HP${def.stats.shield > 0 ? ` · ${def.stats.shield} shield` : ""} · hits ${strongestHitOf(def)}${elementsOf(def).length === 0 ? "" : ` (${elementsOf(def).join(", ")})`} · ${def.stats.armor} armor (${armorReduction(def.stats.armor)}%) · ${def.stats.initiative} init`),
       );
       const special = def.abilities.filter((a) => {
         const b = BEHAVIORS[a.id];

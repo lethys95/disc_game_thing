@@ -14,6 +14,7 @@ import type { Stats } from "#rules/battle/types";
 import type { Leader, Mark, SquadMember } from "#rules/world/state";
 import { art } from "#view/art";
 import { element } from "#view/dom";
+import { armorReduction } from "#rules/battle/damage";
 
 /** A squad member as the map's panels show it: name, health, progress, and its track record. */
 
@@ -83,7 +84,7 @@ export function unitDefCard(defId: string, abilityPower?: number): HTMLElement {
   card.appendChild(art({ kind: "portrait", id: defId, frame: "bust" }, "card-portrait"));
   card.append(element("div", "title", def.name), element("div", "subtitle", `Tier ${def.tier}`));
   const s = def.stats;
-  const facts = [`${s.maxHp} HP`, s.shield > 0 ? `${s.shield} shield` : "", `${s.armor} armor`, `${s.initiative} initiative`, `${s.abilityPower} ability power`, elementsOf(def).length === 0 ? "" : `deals ${elementsOf(def).join(", ")}`];
+  const facts = [`${s.maxHp} HP`, s.shield > 0 ? `${s.shield} shield` : "", s.armor > 0 ? `${s.armor} armor (${armorReduction(s.armor)}%)` : "0 armor", `${s.initiative} initiative`, `${s.abilityPower} ability power`, elementsOf(def).length === 0 ? "" : `deals ${elementsOf(def).join(", ")}`];
   if (def.spellCharges) facts.push(`${def.spellCharges} spell charges`);
   card.appendChild(element("div", "stats", facts.filter((f) => f).join(" · ")));
   for (const ref of def.abilities) {
@@ -104,7 +105,7 @@ export function memberCard(m: SquadMember, leader: Leader | undefined): HTMLElem
   const s = ownStats(placementOf(m, leader));
   const card = unitDefCard(m.defId, s.abilityPower);
   const def = UNITS[m.defId];
-  const facts = [`${m.hp} / ${maxHpOf(m, leader)} HP`, s.shield > 0 ? `${s.shield} shield` : "", `${s.armor} armor`, `${s.initiative} initiative`, `${s.abilityPower} ability power`, hitChange(s), def && elementsOf(def).length > 0 ? `deals ${elementsOf(def).join(", ")}` : ""];
+  const facts = [`${m.hp} / ${maxHpOf(m, leader)} HP`, s.shield > 0 ? `${s.shield} shield` : "", s.armor > 0 ? `${s.armor} armor (${armorReduction(s.armor)}%)` : "0 armor", `${s.initiative} initiative`, `${s.abilityPower} ability power`, hitChange(s), def && elementsOf(def).length > 0 ? `deals ${elementsOf(def).join(", ")}` : ""];
   if (def?.spellCharges) facts.push(`${def.spellCharges} spell charges`);
   card.querySelector(".stats")?.replaceWith(element("div", "stats", facts.filter((f) => f).join(" · ")));
   const title = card.querySelector(".title");

@@ -10,6 +10,7 @@ import { art } from "#view/art";
 import { element, gold, orderButton } from "#view/dom";
 import { strongestHitOf } from "#rules/abilities/index";
 import { unitName } from "#view/members";
+import { armorReduction } from "#rules/battle/damage";
 
 const ARCHETYPE_NAMES: Readonly<Record<Archetype, string>> = { melee: "Melee", support: "Support", mage: "Mage", joker: "Joker" };
 
@@ -133,7 +134,7 @@ export class ResearchPanel {
     const head = element("div", "head");
     head.append(art({ kind: "portrait", id: defId, frame: "icon" }, "thumb"), element("div", "name", `${unitName(defId)}${count > 0 ? ` ×${count}` : ""}`));
     node.appendChild(head);
-    if (def) node.appendChild(element("div", "stats", `Tier ${def.tier} · ${def.stats.maxHp} HP · hits ${strongestHitOf(def)} · ${def.stats.armor} armor`));
+    if (def) node.appendChild(element("div", "stats", `Tier ${def.tier} · ${def.stats.maxHp} HP · hits ${strongestHitOf(def)} · ${def.stats.armor} armor (${armorReduction(def.stats.armor)}%)`));
     const commitment = playerOf(world, side).commitment;
     if (parent && isFork(parent)) {
       // Only the duality fork is labelled; later forks go by the unit's name.

@@ -266,5 +266,4 @@ user named it the Seraph the same day. Older notes that say "Cleric" before this
 armor flat as a percentage, so stacking it (a gargoyle in a tier-5 town, pots of armor) climbs to 90% and the only way
 to beat a Capitol Guardian was to stack armor on two units and "tank and spank for about 15 minutes straight. We're not
 doing that. Lesson learned." So: percent reduction on a curve that flattens, like World of Warcraft's. Claude's curve,
-to confirm: reduction = armor ÷ (armor + 60). Not built yet: `.kanban/todo/68-percent-armor.md`. Until then armor
-subtracts flat, and the guardian angels' armor buffs (+30, +5) are written for it.
+reduction = armor ÷ (armor + 60), the user's yes (2026-10-09); built (provisional #75).

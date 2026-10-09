@@ -475,7 +475,7 @@ const effects: readonly EffectDef[] = [
         if (!trained || !packet.tags.includes("attack")) return;
         const walls = ctx.unit(packet.target).effects.find((e) => (EFFECTS.get(e.def)?.fortifies ?? false));
         if (!walls) return;
-        packet.amount += walls.amount;
+        packet.pierce += walls.amount;
         trained.stacks = 2;
       },
       afterAttack: (ctx, self) => {

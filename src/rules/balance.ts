@@ -13,6 +13,13 @@ export const INITIATIVE_PER_ACTION = 15;
  */
 export const BATTLE_ROUND_LIMIT = 30;
 
+/**
+ * Armor takes a share off each hit, with diminishing returns (the user, 2026-10-08: percent armor "like something like
+ * WoW does", after Disciples II's flat percentages stacked to 90%): a hit loses armor ÷ (armor + this). At this much
+ * armor half gets through; it never reaches all. Provisional (#75).
+ */
+export const ARMOR_HALF = 60;
+
 /** Punishment's stack cap (user: "balance it"; the value is provisional). */
 export const PUNISHMENT_MAX_STACKS = 3;
 

@@ -71,7 +71,8 @@ describe("bandits", () => {
   test("the Marauder hits armored targets 10 harder", () => {
     const vsArmor = act(until(start([p("marauder", 0, 1)], [p("paladin", 0, 1)]), "0.0.1"), "attack", "1.0.1").battle;
     const vsBare = act(until(start([p("marauder", 0, 1)], [p("congregant", 0, 1)]), "0.0.1"), "attack", "1.0.1").battle;
-    expect(150 - unit(vsArmor, "1.0.1").hp).toBe(22 + 10 - 20);
+    // 22 + 10, a quarter off for the Paladin's 20 armor.
+    expect(150 - unit(vsArmor, "1.0.1").hp).toBe(24);
     expect(90 - unit(vsBare, "1.0.1").hp).toBe(22);
   });
 
