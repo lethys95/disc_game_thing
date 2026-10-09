@@ -305,3 +305,14 @@ texture in 3D).
   […]" And: "now you're going to make chosen into a tiny thin guy. Sigh. Moderation. His shape was fine in the
   iteration before the last. Round 8 was fine, we just needed it to be less like a regular piece of armor at eigth
   round chosen-juggernaut-turnaround-1000." Round ten's `empyreal-flaking` and `chosen-battered` are off-direction.
+
+### Round ten: Claude's read
+- **Avatar** `avatar-ascended` 1001/1002 and `avatar-cracked`: lands: a hooded void (or the Chosen's faceless shell),
+  white and red, three pairs of enormous red wings dwarfing him; far stronger than the Paragon, linked to the Chosen.
+  The wings are dense feathers, not dissolving smoke.
+- **Empyreal** `empyreal-flaking`: the skin is pale now (the charcoal is fixed); the robes are the generic shape the user
+  predicted.
+- **Guardian** `guardian-porcelain-*`: "short black robes" gave a miniskirt and heels (a lesson: "short" on a woman's
+  robe means a skirt); the porcelain shows as grey statue skin on the legs, cracks faint; the bare version kept hair.
+- **Torturer** `torturer-instruments`: a knight again; chains at the belt; no scream.
+- **Chosen** `chosen-battered`: narrower but not tiny, faceless, no cape (off-direction since the user's note).
