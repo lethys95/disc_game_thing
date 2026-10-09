@@ -354,3 +354,12 @@ texture in 3D).
 - **Guardian** `guardian-statue-bald` 1001: not anime any more: a stern older bald woman in a long black coat; no
   porcelain, no cracks. Cracks with light (Guardian) and craquelure (Empyreal) have failed in every wording: likely 3D
   texture work, not concept work.
+
+## The user on round twelve (2026-10-09)
+"I think we can lock in avatar-streaks-turnaround-1000, chosen-battered-1002-red-d70. Torturer doesn't need to be fat,
+head is more interesting but we're not there yet. Now empyreal has a poncho for some reason. Guardian just went 180 in
+the opposite direction with youth and visuals, but it's her outfit which is a miss, so. We might need to go back to the
+drawing board with guardian, we're not getting anywhere. We got further away with empyreal than last, not closer. In
+tunic she got a dress again, and we're not taking another dress. I think both Empyreal and guardian needs that we go
+into reference material and try to specify details which makes them more unique." **Picked:** the Avatar
+`avatar-streaks-turnaround-1000`, the Chosen `chosen-battered-1002-red-d70`.

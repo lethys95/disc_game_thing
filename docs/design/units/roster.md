@@ -43,6 +43,8 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 | Acolyte | Jilliath 1 (mage) | Claude's (red blindfold, lantern) | picked: `acolyte-branded-turnaround` (user: "as he is now"; seed 1001 Claude's) | — |
 | Seraph | Jilliath 1 (support) | user (hooded, face hidden, black and white robes, brown wings) | picked: `seraph-silk-turnaround-1002` (user: "both interesting and humble") | — |
 | Paragon | Jilliath 2 (support) | user (red hair over the right eye, runic forearms, a book on a chain, the burning-palm emblem) | picked: `paragon-runes-turnaround-1001` (user: "good enough") | — |
+| Avatar of Vengeance | Jilliath 5 (consume) | user (hooded white-red, three pairs of red wings after the Illusory Angel) + Claude (the Chosen ascended, a red void for a face) | picked: `avatar-streaks-turnaround-1000` (user) | — |
+| Chosen | Jilliath 4 (consume) | user (an inhuman faceless juggernaut, red, asymmetric) | picked: `chosen-battered-1002-red-d70` (a repaint of `chosen-battered-turnaround-1002`), zweihander `chosen-zweihander-props-1000` (Claude's pick) | — |
 | Shepherd | Jilliath 4 (support) | user (stained glass) | picked: `shepherd-glass-turnaround-1001` (user, round one: "I think iteration just gets worse with shepherd") | — |
 | Reclaimer | Jilliath 3 (support) | user (after MTG's Platinum Angel: an inhuman segmented shell, bulkier) | picked: `reclaimer-platinum-heavy-turnaround-1000` (user: "probably the best one") | — |
 | Doomsayer | Jilliath 2 (mage) | Claude's (a street prophet, yoke and bells) | picked: `doomsayer-plain-turnaround-1001` (user), scroll `doomsayer-scroll-props-1000` (Claude's, the user's leave) | — |
