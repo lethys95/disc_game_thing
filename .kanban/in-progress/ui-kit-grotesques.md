@@ -54,3 +54,8 @@
   (side band, tier numeral, crown), the instruments lost their captions, and explanations moved under a held
   right-click everywhere in battle (rule 7 of the system). Asked what "paint" means in step 3; explained, waiting for
   the go.
+- **Step 3 started (2026-10-09, the user: "yes"):** `scripts/art/hud-paint.ts` shoots the battle greybox in layers
+  (stone and iron alone, their mask, the live content, the field), repaints only the stone and iron through the mask
+  (Krea, masked image-to-image), and lays each painting back between the field and the content. Probes: the user's
+  own gothic line, plus two of Claude's to compare (soot-darkened cathedral stone, reliquary iron), at two
+  strengths, three seeds each, with Jilliath's skin in the subject.

@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { mkdir, readdir, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { chromium } from "playwright";
 import { createServer } from "vite";
 import { HEADLESS_ENV, HEADLESS_GPU_ARGS } from "#scripts/headless";
@@ -18,6 +18,7 @@ import type { Candidate } from "#scripts/art/batch";
  *     pnpm tsx scripts/art/hud-paint.ts render battle
  *     pnpm tsx scripts/art/hud-paint.ts paint battle [probe…] [seed…]
  *     pnpm tsx scripts/art/hud-paint.ts composite battle
+ *     pnpm tsx scripts/art/hud-paint.ts page battle          (the review page in shots/)
  */
 
 const WIDTH = 1536;
@@ -137,6 +138,35 @@ async function composite(name: string, dir: string): Promise<void> {
   console.log(`${name}: ${paintings.length} previews in ${dir}/preview`);
 }
 
+/** The review page (`shots/hud-paint-<screen>.html`): per probe its full prompt as sent, then its previews by strength. */
+async function page(name: string, dir: string): Promise<void> {
+  const manifest: Candidate[] = JSON.parse(await readFile(`${dir}/manifest.json`, "utf8"));
+  const escape = (text: string) => text.replaceAll("&", "&amp;").replaceAll("<", "&lt;");
+  const sections = PROBES.filter((p) => manifest.some((m) => m.id.startsWith(`${p.id}-`))).map((probe) => {
+    const rows = STRENGTHS.map((denoise) => {
+      const id = `${probe.id}-${Math.round(denoise * 100)}`;
+      const shots = manifest.filter((m) => m.id === id).sort((a, b) => a.seed - b.seed);
+      const cells = shots.map((m) => `<figure><a href="/${dir}/${m.file}" target="_blank"><img loading="lazy" src="/${dir}/preview/${m.file}"></a><figcaption>${m.file} (the painting alone: click)</figcaption></figure>`).join("");
+      return `<h3>Strength ${denoise}</h3><div class="row">${cells}</div>`;
+    }).join("");
+    const prompt = manifest.find((m) => m.id.startsWith(`${probe.id}-`))?.prompt ?? "";
+    return `<section><h2>${probe.id}</h2><p class="prompt">${escape(prompt)}</p>${rows}</section>`;
+  }).join("");
+  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HUD paint probes: ${name}</title><style>
+body{margin:0;background:#0d0b0b;color:#e6ddcc;font:15px/1.5 Georgia,serif}main{max-width:1700px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:28px;margin:0 0 6px}h2{font-size:22px;margin:36px 0 6px;border-bottom:1px solid #2a2420;padding-bottom:4px}h3{font-size:15px;color:#9a8f80;margin:14px 0 6px}
+.prompt{font:12px/1.5 ui-monospace,monospace;color:#b9ae9c;background:#171312;padding:8px 10px;max-width:none}
+.row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}figure{margin:0}img{width:100%;display:block;border:1px solid #2a2420}
+figcaption{color:#9a8f80;font-size:12px}@media(max-width:900px){.row{grid-template-columns:1fr}}</style></head><body><main>
+<h1>The ${name} screen painted over its greybox: probes</h1>
+<p>Each picture repaints only the stone and iron of the greybox (through its mask), then sits between the live field and the live text and portraits, as it would in the game. Pick a material framing and a strength; click any picture to see the painting alone.</p>
+<div class="row"><figure><img src="/${dir}/greybox.png"><figcaption>The greybox</figcaption></figure><figure><img src="/${dir}/chrome.png"><figcaption>What was painted over: its stone and iron alone</figcaption></figure></div>
+${sections}</main></body></html>`;
+  await writeFile(`shots/hud-paint-${name}.html`, html);
+  console.log(`shots/hud-paint-${name}.html`);
+}
+
 const [mode, name = "battle", ...rest] = process.argv.slice(2);
 const screen = SCREENS[name];
 if (!screen) throw new Error(`no screen "${name}"; known: ${Object.keys(SCREENS).join(", ")}`);
@@ -147,4 +177,5 @@ else if (mode === "paint") {
   const seeds = rest.map(Number).filter((n) => !Number.isNaN(n));
   await paint(name, screen, dir, rest.filter((a) => Number.isNaN(Number(a))), seeds.length > 0 ? seeds : [1, 2, 3]);
 } else if (mode === "composite") await composite(name, dir);
-else throw new Error("usage: hud-paint.ts render|paint|composite <screen> [probe…] [seed…]");
+else if (mode === "page") await page(name, dir);
+else throw new Error("usage: hud-paint.ts render|paint|composite|page <screen> [probe…] [seed…]");
