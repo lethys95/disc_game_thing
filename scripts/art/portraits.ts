@@ -1,7 +1,7 @@
 import { mkdir, rename, stat, writeFile } from "node:fs/promises";
 import sharp from "sharp";
 import { img2img, KREA2_TURBO } from "#scripts/art/comfy";
-import { record } from "#scripts/art/batch";
+import { record, runBatch } from "#scripts/art/batch";
 import type { Candidate } from "#scripts/art/batch";
 
 /**
@@ -14,6 +14,7 @@ import type { Candidate } from "#scripts/art/batch";
  *
  *     pnpm exec tsx scripts/art/portraits.ts <unit…> [--sources]           test images (--sources: only their sources)
  *     pnpm exec tsx scripts/art/portraits.ts --install <unit…>               its picks into the game
+ *     pnpm exec tsx scripts/art/portraits.ts --fresh <unit…>                 cards painted from words alone (`fresh`)
  */
 
 // The first batch's portraits the user liked were painted with chiaroscuro and a rim light on dark grey. "Ornate" in
@@ -70,6 +71,11 @@ interface Unit {
   readonly styles?: readonly Style[];
   /** The head's square within the front view, for a painted bust, when the head isn't on top of the figure. */
   readonly head?: Square;
+  /**
+   * Cards painted from words alone, no concept underneath (`--fresh`): for a unit whose card must show more than its
+   * model can (the Godkin's daybreak; the user, 2026-10-09: "generate a new image entirely").
+   */
+  readonly fresh?: readonly string[];
   /** Claude's picks from the test, and where the bust and icon are cut from, installed by `--install`. */
   readonly picked?: { readonly card: string; readonly bust?: string; readonly crops: { readonly bust: Crop; readonly icon: Crop } };
 }
@@ -383,6 +389,10 @@ const UNITS: Readonly<Record<string, Unit>> = {
     poses: [
       "she stands still and upright in a burst of daybreak: blinding shafts of golden sunlight and god rays pour out of her body in every direction, cutting through the dark around her, a dawn glow spreading from her",
       "she stands with her arms a little open as daybreak breaks out of her: rays of golden light burst from her silhouette, lighting the dark around her gold and white",
+    ],
+    fresh: [
+      "she stands upright and still in the heart of daybreak: blinding shafts of golden sunlight and god rays burst out of her in every direction and stream far across the dark around her, the whole card lit by her dawn, the darkness behind her split by long beams of light",
+      "she rises with her arms a little open, the sun breaking out of her chest: long god rays fan out from her across the dark, motes of light drifting in the beams, the edges of her silhouette glowing white-gold",
     ],
     strengths: T_POSED,
     // The card's god rays are a light effect laid on top (`godkin-card-pose1-d75-rays.png`: the brightest light streaked
@@ -726,9 +736,23 @@ async function test(id: string, sourcesOnly: boolean): Promise<void> {
   }
 }
 
+/** Every `fresh` pose at three seeds, the card's size, into the unit's portrait folder. */
+async function fresh(id: string): Promise<void> {
+  const unit = UNITS[id];
+  if (!unit?.fresh) throw new Error(`${id} has no fresh poses`);
+  const jobs = unit.fresh.map((pose, p) => ({
+    id: `${id}-fresh${unit.fresh && unit.fresh.length > 1 ? `-pose${p + 1}` : ""}`,
+    prompt: `A painted full-body character card of ${unit.identity}; ${pose}. ${PAINTED.ornate}`,
+    ...CARD,
+  }));
+  await runBatch(dirOf(id), jobs, [1000, 1001, 1002]);
+}
+
 const args = process.argv.slice(2);
 if (args[0] === "--install") {
   for (const id of args.slice(1)) await install(id);
+} else if (args[0] === "--fresh") {
+  for (const id of args.slice(1)) await fresh(id);
 } else {
   const sourcesOnly = args.includes("--sources");
   for (const id of args.filter((a) => !a.startsWith("--"))) await test(id, sourcesOnly);
