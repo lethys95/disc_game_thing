@@ -285,3 +285,17 @@ a massive shell body, the cape: the inhuman juggernaut. **Torturer** `torturer-a
 translucent wings; no flames at the tips. **Guardian** `guardian-cracks`: hairline cracks on face and chestplate, a more
 abstract chestplate, but no light from the cracks (Krea draws the crack, not the glow; the glow can be an emissive
 texture in 3D).
+
+## The user on round nine (2026-10-09)
+- **Chosen:** "looking too much like a superhero now. I think in part the cloak makes it worse, so we should probably
+  remove it. He's also too broad."
+- **Torturer:** "1002 is closer, I'd agree. But I'd say something is still definitely missing."
+- **Avatar:** "illusory wings isn't really landing. I meant something like this but red" (MTG's Illusory Angel card
+  art, linked) "Also I can still see his face for some reason. Idk he's just looking very generic. As he looks now,
+  he'd pass as a t2 angel in support line on the same tier as paragon, and he has no particular link to the t4 step
+  before him, which is chosen. Like, he looks inherently weaker. So we can't use this."
+- **Guardian:** "not following the rules we're trying to set at all. We need to take apart the prompt and remove the
+  things that drags it in the wrong directions or something."
+- **Empyreal** (round eight): "misses the skin effect we wanted entirely. I'd say the golden back halo plate thing works
+  pretty well in this case. Red wings work as well, though i'd like the third pair. Robes are very very generic and we
+  need to think about how we turn it more interesting."
