@@ -106,6 +106,12 @@ than the Custodian's 3D concepts is a stand-in to redo (the user, 2026-10-05).
 - **Name the cloth's texture** (the Seraph, 2026-10-08): under the turnaround's flat shadowless light, "linen" with no
   texture named renders as smooth matte clay. Say the weave, the folds and the fraying ("coarse woven wool, the weave
   visible, heavy soft folds, frayed hems").
+- **Say what covers a figure, never only what doesn't** (Jilliath, 2026-10-09): "no robes, no cloth" with "skin between
+  them" gave a gilded corset over near-nudity, and "short black robes" on a woman a miniskirt and heels. Name the
+  covering itself (a skin of mosaic tiles, a long coat, full-length plates).
+- **What leads the subject wins** (the Chosen, rounds nine to eleven): his faceless head came only in the round whose
+  description opened with it; opening with "massive and heavy" brought the visored knight back. Put the feature the
+  model keeps dropping first.
 - **Words, not someone else's art:** a reference from another game (the user's Platinum Angel) is described in words
   (its shapes, materials, colours, what it lacks); the image itself never goes into the model.
 
