@@ -86,3 +86,12 @@
   inpainting to fix things too"): fake sockets on the sill, the lost round medallion, the weak cross, the hood clipped
   where the zone ended, the plate's alignment; the instruments' shapes become their own crisp pieces, out of the
   painting. Photon's PNG export corrupts some files at higher compression levels; the pipeline saves at level 1.
+- **The user on round 2 (2026-10-09):** "the darkness on each angel is now and overreaction. If you see the original,
+  it still had light, but there was contrast between dark and light. now its just dark grey. Also there are even more
+  cuts now […] All in all I think the first round actually went better […] I take everything I said back. You did the
+  studies, and I should just trust you. I'm giving you control." Claude's read: the darkness came from two darkening
+  steps stacked for one note; the cuts were the card's greybox rectangle still standing behind the angel, where the
+  painting put shadow (Photon's own cuts were clean), and the left wing running off the screen. Round 3 (Claude in
+  control): round 1's light and source values, the angel standing on the stele's top with nothing behind her, the
+  wings on screen, the small glyphs out of the painting. Then Claude picks, fixes by inpainting, cuts the pieces and
+  installs them.
