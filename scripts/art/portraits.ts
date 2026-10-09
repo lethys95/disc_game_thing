@@ -343,6 +343,85 @@ const UNITS: Readonly<Record<string, Unit>> = {
       crops: { bust: { from: "card", size: 0.6, x: 0.51, y: 0.25 }, icon: { from: "card", size: 0.34, x: 0.51, y: 0.135 } },
     },
   },
+  // Jilliath's picked concepts (2026-10-09, `docs/design/units/jilliath-identities.md`, `roster.md`).
+  seraph: {
+    front: "shots/tripo/seraph-front.png",
+    identity: "a humble angel woman, her face hidden in the shadow of a deep black hood, long layered robes of black cloth over white silk, plain brown feathered wings",
+    poses: ["she stands with her head bowed and her hands clasped in prayer before her, her wings folded behind her"],
+    strengths: T_POSED,
+  },
+  emissary: {
+    front: "shots/tripo/emissary-front.png",
+    identity: "a graceful angel woman, her calm face uncovered and long pale hair loose, long flowing robes of white and pale gold silk, large white feathered wings",
+    poses: ["she stands serene, one hand raised in blessing, her wings half open"],
+    strengths: T_POSED,
+  },
+  shepherd: {
+    front: "shots/tripo/shepherd-front.png",
+    identity: "an angel woman whose wings are stained glass, long feathers of red, gold and deep blue glass in black lead frames; her face a smooth oval pane of pale glass with no features; long robes of white and deep blue",
+    poses: ["she stands tall, holding a long shepherd's crook, her stained-glass wings spread"],
+    strengths: T_POSED,
+  },
+  godkin: {
+    front: "shots/tripo/godkin-front.png",
+    identity: "a tall female figure that is only a smooth bare silhouette with no face and no features: her whole surface is a bright cloudy daytime sky, white clouds on blue, shafts of golden sunlight shining out of her",
+    poses: ["she stands still and upright, her arms a little open at her sides"],
+    strengths: T_POSED,
+  },
+  reclaimer: {
+    front: "shots/tripo/reclaimer-front.png",
+    identity: "an inhuman angel, feminine and powerfully built, her body a segmented shell of thick pale platinum-grey plates, her head a small smooth shell with no face and a gold diamond in the brow, her legs tapering into scaled points dark teal at the tips, huge stone-grey wings going teal at the tips",
+    poses: ["she hovers above the ground, legs hanging, one hand reaching out"],
+    strengths: T_POSED,
+  },
+  paragon: {
+    front: "shots/tripo/paragon-front.png",
+    identity: "an angel woman with a calm face, blazing red hair falling over the right side of her face, light free-flowing armour of white and red cloth over a few fitted plates, a burning open hand emblem on her right pauldron, a book on a chain at her left hip, runic tattoos on her hands and forearms, white wings dipped in blood red at the tips",
+    poses: ["she stands calm, one hand resting on the chained book at her hip, the other raised"],
+    strengths: T_POSED,
+  },
+  acolyte: {
+    front: "shots/tripo/acolyte-front.png",
+    identity: "a young novice of a militant faith, thin and pale, his head shaved, his eyes bound with a strip of red cloth, his forearms bound in blood-red cloth, a coarse grey robe, a heavy iron chain around his neck",
+    poses: ["he walks forward, holding up a lit iron lantern on its chain"],
+    strengths: T_POSED,
+  },
+  pontiff: {
+    front: "shots/tripo/pontiff-front.png",
+    identity: "a high priest of a militant faith in heavy red and white vestments thick with gold embroidery, a tall crown of burning candles on his head, white wax running down over a black veil that hides his face",
+    poses: ["he stands upright, a smoking censer swinging from its chain in one hand"],
+    strengths: T_POSED,
+  },
+  doomsayer: {
+    front: "shots/tripo/doomsayer-front.png",
+    identity: "a wild street prophet of doom, gaunt, long matted hair, his face whitened with ash, a ragged grey and red robe, a wooden yoke across his shoulders hung with small iron bells",
+    poses: ["he stands proclaiming, holding up an enormous half-unrolled scroll of yellowed parchment in both hands"],
+    strengths: T_POSED,
+  },
+  templar: {
+    front: "shots/tripo/templar-front.png",
+    identity: "a heavily armoured holy knight of a militant faith in white-lacquered plate armour with a red surcoat and a closed great helm",
+    poses: ["he stands guard behind a tall white kite shield bearing a large raised silver rose"],
+    strengths: T_POSED,
+  },
+  immortal: {
+    front: "shots/tripo/immortal-front.png",
+    identity: "a towering holy knight in ornate plate of white marble mended with seams of gold, a tall crested helm, a golden halo behind his head, a long white cape torn at the hem",
+    poses: ["he stands unmoving and unbowed, his fists at his sides"],
+    strengths: T_POSED,
+  },
+  chosen: {
+    front: "shots/tripo/chosen-front.png",
+    identity: "an inhuman juggernaut in a man's shape, faceless, his head a smooth rounded shell, his body thick battered shell plates of black, bone-white and blood-red enamel, one shoulder heavier than the other",
+    poses: ["he stands braced, a massive two-handed greatsword of glowing heated metal resting on his shoulder"],
+    strengths: T_POSED,
+  },
+  avatar_of_vengeance: {
+    front: "shots/tripo/avatar-of-vengeance-front.png",
+    identity: "a vengeance angel, a man in hooded white and red angelic armour with glowing edges, no face, only a glowing red void inside his hood, three pairs of enormous red wings of long loose feathers streaking away into light and smoke",
+    poses: ["he stands with his enormous red wings spread wide behind him, embers drifting"],
+    strengths: T_POSED,
+  },
 };
 
 const dirOf = (id: string) => `art/candidates/portraits/${id}`;
