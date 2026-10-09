@@ -228,3 +228,25 @@ frame, still inhuman and clothless; 1002 grew a second, lower pair of wings. Hee
 - **Seraph, picked (the user):** `seraph-silk-turnaround-1002`: "I think I'll say seraph-silk-turnaround-1002 works.
   The posture will do a lot for us too in practice I think. Either way the character is now both interesting and
   humble, and we can move on."
+
+## The user's directions for the open units (2026-10-09)
+Quoted whole (the user, after `shots/jilliath-remaining.html`). "Keep the gothic stuff on all of these."
+- **Guardian:** "Skin like cracked porcelain, streaks of light pouring out from cracks. Ancient pure clean abstract
+  alien chestplate from a forgotten age. [trying to shuffle the box a bit I suppose]"
+- **Paragon:** "Blazingly red hair covering right side of face. Fairly free flowing light armor. Emblem of flaming palm
+  on right pauldron. Book on a chain at left waist. Hands and forearms end in runic tattoos, fingertips pale gradient
+  into pale blue. Calm facial expression."
+- **Empyreal** and **Archon:** "Try yours" (Claude's: the icon painting come alive; the Archon's ascension without
+  wings, `shots/jilliath-remaining.html`).
+- **Cleric:** "I'll come back to you after having looked at some Orzhov material from mtg. I might pull back pontiff
+  too after that to make them match more."
+- **Chosen:** "I don't think this prompt works. Lets try something like inhuman male shaped juggernaught completely
+  covered in form-fitting shell-like armor brutish champion massive heated metal zweihander, red and white cape."
+- **Torturer:** "No, your idea is just not how I'm imagining it. You're driving him down the same route as what fanatic
+  was before. Try this - Metal skin, hellrazor, iron-maiden mask of anguish, cold grey metal plated inhuman grotesque
+  metal husk riddled with cone-like spikes, evil gauntlets of hanging chains, not showing skin anywhere, disastrous,
+  torturer."
+- **Avatar:** "Three layers of illusory layered wings ending in flames, white-red angelic hooded armor glowing rims and
+  edges covered in abstract symbols, gauntlets and boots gradient into heated metal."
+- **Fanatic:** deferred again.
+- "Next time we look at these, you'll give me the full unsimplified prompt of each, please."
