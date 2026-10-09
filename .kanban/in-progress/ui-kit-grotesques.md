@@ -95,3 +95,7 @@
   control): round 1's light and source values, the angel standing on the stele's top with nothing behind her, the
   wings on screen, the small glyphs out of the painting. Then Claude picks, fixes by inpainting, cuts the pieces and
   installs them.
+- **The user (2026-10-09, 22:34):** "I don't trust my own opinion to interject. So please just keep going for as long as
+  you need, at most until 2am on this machine (as that is when the reset happens). I'll be going to bed anyway."
+  Claude works the battle screen through on its own tonight: pick, 1440p repaint, inpainted fixes, the pieces cut
+  and installed in the game, verified; the write-up for the morning in `docs/status.md` and on this story.

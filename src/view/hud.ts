@@ -66,6 +66,8 @@ export interface BannerButton {
 
 const ROW_NAMES = ["front", "middle", "back"] as const;
 const ROMAN = ["", "I", "II", "III", "IV", "V"] as const;
+/** How many faces the beam's turn order shows. */
+const TURN_SLOTS = 12;
 const COL_NAMES = ["left", "centre", "right"] as const;
 
 export function unitLabel(unit: BattleUnit, playerSide: Side | null): string {
@@ -229,7 +231,7 @@ export class Hud {
    */
   renderTurns(battle: Battle, playerSide: Side | null): void {
     const upcoming = upcomingSlots(battle)
-      .slice(0, 12)
+      .slice(0, TURN_SLOTS)
       .flatMap((id) => {
         const unit = battle.units[id];
         return unit?.alive ? [unit] : [];
@@ -252,6 +254,12 @@ export class Hud {
       niche.addEventListener("mouseleave", () => this.handlers.onFocus(null));
       this.turns.appendChild(niche);
     });
+    // The beam always has its twelve niches: the ones nobody fills this round stay, empty.
+    for (let i = upcoming.length; i < TURN_SLOTS; i++) {
+      const niche = element("div", "niche empty");
+      niche.append(element("div", "window"), element("span", "band"));
+      this.turns.appendChild(niche);
+    }
   }
 
   renderCard(battle: Battle, unitId: string | null, playerSide: Side | null, pinned = false): void {

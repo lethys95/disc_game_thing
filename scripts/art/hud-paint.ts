@@ -24,10 +24,20 @@ import type { Candidate } from "#scripts/art/batch";
  *     pnpm tsx scripts/art/hud-paint.ts paint battle [probe…] [seed…]
  *     pnpm tsx scripts/art/hud-paint.ts composite battle
  *     pnpm tsx scripts/art/hud-paint.ts page battle          (the review page in shots/)
+ *     pnpm tsx scripts/art/hud-paint.ts hires battle <picked.png>   (the pick repainted at 1440p)
+ *     pnpm tsx scripts/art/hud-paint.ts composite battle hires
  */
 
 const WIDTH = 1536;
 const HEIGHT = 864;
+/**
+ * The picked painting is repainted at 1440p from its own upscale, at a low strength: the composition stays, the detail
+ * a 1440p screen needs is added (no upscale model is installed; `maybe/upscalers`). The layout scales with the window's
+ * height, so the greybox rendered at this size is the same layout, larger.
+ */
+const HIRES_WIDTH = 2560;
+const HIRES_HEIGHT = 1440;
+const HIRES_DENOISE = 0.35;
 /** What fills everything outside the mask in the source; the model sees it as the empty middle. */
 const GROUND = "#151413";
 /** Masked image-to-image strengths: how far the painting may move from the greybox's flat shapes. */
@@ -175,13 +185,14 @@ async function cutSubject(source: string, target: string): Promise<void> {
   execFileSync("magick", [target, "null:"], { stdio: "inherit" });
 }
 
-async function render(name: string, screen: Screen, dir: string): Promise<void> {
+async function render(name: string, screen: Screen, dir: string, width = WIDTH, height = HEIGHT): Promise<void> {
+  const zone = Math.round((ZONE * height) / HEIGHT);
   const server = await createServer({ logLevel: "error", server: { port: 0 } });
   await server.listen();
   const address = server.resolvedUrls?.local[0];
   if (!address) throw new Error("vite did not report a local URL");
   const browser = await chromium.launch({ args: [...HEADLESS_GPU_ARGS], env: HEADLESS_ENV });
-  const page = await browser.newPage({ viewport: { width: WIDTH, height: HEIGHT } });
+  const page = await browser.newPage({ viewport: { width, height } });
   await page.goto(new URL(screen.route, address).href);
   await page.waitForSelector("body[data-ready=true]", { timeout: 20000 });
   await page.waitForTimeout(600);
@@ -197,9 +208,9 @@ async function render(name: string, screen: Screen, dir: string): Promise<void> 
   for (const piece of SCULPTURE) {
     const box = await page.locator(piece.selector).boundingBox();
     if (!box) continue;
-    const x = Math.max(0, Math.floor(box.x - ZONE));
-    const y = Math.max(0, Math.floor(box.y - ZONE));
-    boxes.push({ name: piece.name, x, y, width: Math.min(WIDTH, Math.ceil(box.x + box.width + ZONE)) - x, height: Math.min(HEIGHT, Math.ceil(box.y + box.height + ZONE)) - y });
+    const x = Math.max(0, Math.floor(box.x - zone));
+    const y = Math.max(0, Math.floor(box.y - zone));
+    boxes.push({ name: piece.name, x, y, width: Math.min(width, Math.ceil(box.x + box.width + zone)) - x, height: Math.min(height, Math.ceil(box.y + box.height + zone)) - y });
   }
   await writeFile(`${dir}/pieces.json`, JSON.stringify(boxes, null, 2));
   await browser.close();
@@ -208,7 +219,7 @@ async function render(name: string, screen: Screen, dir: string): Promise<void> 
   magick(`${dir}/chrome-layer.png`, "-background", GROUND, "-flatten", `${dir}/chrome.png`);
   // The structure keeps its edges; the sculpture gets its zone; the paint mask is both.
   magick(`${dir}/structure-layer.png`, "-alpha", "extract", "-threshold", "35%", "-morphology", "Dilate", "Disk:2", `${dir}/structure-mask.png`);
-  magick(`${dir}/sculpture-layer.png`, "-alpha", "extract", "-threshold", "35%", "-morphology", "Dilate", `Disk:${ZONE}`, `${dir}/zone-mask.png`);
+  magick(`${dir}/sculpture-layer.png`, "-alpha", "extract", "-threshold", "35%", "-morphology", "Dilate", `Disk:${zone}`, `${dir}/zone-mask.png`);
   magick(`${dir}/structure-mask.png`, `${dir}/zone-mask.png`, "-compose", "Lighten", "-composite", `${dir}/mask.png`);
   // In front of the portrait, a little wider so the painted rim covers the portrait's edge.
   magick(`${dir}/front-layer.png`, "-alpha", "extract", "-threshold", "35%", "-morphology", "Dilate", "Disk:3", `${dir}/front-mask.png`);
@@ -232,6 +243,21 @@ async function paint(name: string, screen: Screen, dir: string, probeIds: readon
       }
     }
   }
+}
+
+/** The picked painting at 1440p: its upscale repainted at a low strength through the 1440p greybox's mask. */
+async function hires(name: string, screen: Screen, dir: string, file: string): Promise<void> {
+  const picked = (await paintings(dir)).find((m) => m.file === file);
+  if (!picked) throw new Error(`no painting ${file} in ${dir}`);
+  const target = `${dir}/hires`;
+  await mkdir(target, { recursive: true });
+  await render(name, screen, target, HIRES_WIDTH, HIRES_HEIGHT);
+  const up = `${target}/${file.replace(/\.png$/, "")}-up.png`;
+  magick(`${dir}/${file}`, "-filter", "Lanczos", "-resize", `${HIRES_WIDTH}x${HIRES_HEIGHT}!`, up);
+  const started = Date.now();
+  await writeFile(`${target}/${file}`, await inpaint({ prompt: picked.prompt, seed: picked.seed, source: up, mask: `${target}/mask.png`, denoise: HIRES_DENOISE }, `disc/hud-${name}-hires`));
+  console.log(`${target}/${file} (${((Date.now() - started) / 1000).toFixed(1)} s)`);
+  await record(target, [{ ...picked, source: `${file} upscaled`, mask: "mask.png", denoise: HIRES_DENOISE }]);
 }
 
 async function paintings(dir: string): Promise<Candidate[]> {
@@ -319,6 +345,7 @@ if (mode === "render") await render(name, screen, dir);
 else if (mode === "paint") {
   const seeds = rest.map(Number).filter((n) => !Number.isNaN(n));
   await paint(name, screen, dir, rest.filter((a) => Number.isNaN(Number(a))), seeds.length > 0 ? seeds : [1, 2, 3]);
-} else if (mode === "composite") await composite(name, dir);
+} else if (mode === "composite") await composite(name, rest[0] === "hires" ? `${dir}/hires` : dir);
 else if (mode === "page") await page(name, dir);
-else throw new Error("usage: hud-paint.ts render|paint|composite|page <screen> [probe…] [seed…]");
+else if (mode === "hires" && rest[0]) await hires(name, screen, dir, rest[0]);
+else throw new Error("usage: hud-paint.ts render|paint|composite [hires]|page|hires <file> <screen> [probe…] [seed…]");
