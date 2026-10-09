@@ -385,9 +385,12 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "she stands with her arms a little open as daybreak breaks out of her: rays of golden light burst from her silhouette, lighting the dark around her gold and white",
     ],
     strengths: T_POSED,
+    // The card's god rays are a light effect laid on top (`godkin-card-pose1-d75-rays.png`: the brightest light streaked
+    // outward from her centre and screened back in gold), since image-to-image keeps the background dark. The pose
+    // model sees no person in a silhouette, so the crops are measured from her outline (the head at its top).
     picked: {
-      card: "godkin-card-d75.png",
-      crops: { bust: { from: "card", size: 0.55, x: 0.66, y: 0.2 }, icon: { from: "card", size: 0.24, x: 0.66, y: 0.075 } },
+      card: "godkin-card-pose1-d75-rays.png",
+      crops: { bust: { from: "card", size: 0.55, x: 0.67, y: 0.2 }, icon: { from: "card", size: 0.32, x: 0.684, y: 0.125 } },
     },
   },
   reclaimer: {
