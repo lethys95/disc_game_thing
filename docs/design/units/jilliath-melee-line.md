@@ -1,30 +1,17 @@
 # Inquisition Melee Line
 
-> Provenance: largely hand-crafted by the user (redesign session, C# attempt, 2026-07-30). **Treat as canon** (user, 2026-09-25). Numbers are first-pass balance, not sacred.
+> Provenance: largely hand-crafted by the user (redesign session, C# attempt, 2026-07-30). **Treat as canon** (user, 2026-09-25).
 
 The Jilliath melee line is built on a central dichotomy: **faith preserves vs faith consumes**. Tier 1 is a shared baseline that diverges at tier 2 into two branches — the Paladin line (self-preservation, defense, protection) and the Zealot line (self-sacrifice, fanaticism, martyrdom). The Paladin line is linear through all tiers. The Zealot line branches again at tier 3.
 
 > [!note] Status
-> Design spec from the 2026-07-28 redesign. Numbers are first-pass, not balanced.
->
-> **Read the numbers as history.** Since 2026-10-07 units have no damage stat ("Everything is an ability",
-> decisions.md): each ability has its own `power`, grown by the unit's ability power, and armor has been a percentage
-> since 2026-10-09 (provisional #75). The game's numbers live in `src/rules/units/jilliath.ts` and
-> `src/rules/abilities/jilliath.ts`; "damage" below means the unit's hit.
+> Design spec from the 2026-07-28 redesign.
 
 ## Tier 1: Congregant
 
-| Stat | Value |
-|------|-------|
-| HP | 90 |
-| Damage | 20 |
-| Armor | 0 |
-| Initiative | 50 |
-| Cost | 40 gold |
-
 The Congregant is the neutral baseline — a common faithful, not yet committed to the path of the Paladin or the Zealot. It is the cheapest melee unit and its strength comes from numbers.
 
-**Congregation mechanic:** A Congregant gains +10 damage for each other Congregant in the same squad. Three congregants in the front line each deal 40 damage (20 base + 20 from two others). This creates a strategic tension: filling the front with congregants is cost-efficient and mutually reinforcing, but upgrading a congregant removes it from the buff network, and congregants in mid/back rows can buff but cannot attack (melee units only hit the front line).
+**Congregation mechanic:** A Congregant hits harder for each other Congregant in the same squad, so three congregants in the front line each hit well above a lone one. This creates a strategic tension: filling the front with congregants is cost-efficient and mutually reinforcing, but upgrading a congregant removes it from the buff network, and congregants in mid/back rows can buff but cannot attack (melee units only hit the front line).
 
 ## Tier 2: Divergence
 
@@ -32,29 +19,15 @@ The Congregant upgrades into one of two branches at tier 2.
 
 ### Paladin — faith preserves
 
-| Stat | Value |
-|------|-------|
-| HP | 150 |
-| Damage | 40 |
-| Armor | 20 |
-| Initiative | 50 |
+The Paladin is the "doesn't die" unit: its armor takes a share off every hit, so it outlasts what would bring a lighter unit down. (The original armor design here was flat: strong against weak attacks, irrelevant against strong ones. Since 2026-10-08 armor is a share of each hit with diminishing returns, the user's decision; see decisions.md.)
 
-The Paladin is the "doesn't die" unit. 20 armor means a Congregant's 20 damage is floored to 1 — the Paladin walls swarm units completely. Against big hits (like the Zealot's 70), armor is irrelevant and the Paladin takes 50. This is the intended armor design: strong against weak attacks, irrelevant against strong ones.
-
-**Lay on Hands** — active ability, free action, once per combat. Heals self for 2× the Paladin's damage stat (80 HP at base). A free action means the Paladin can attack or defend on the same turn it heals. This is the Paladin's sustain tool — it can survive one big hit, then patch itself up and keep holding the line.
+**Lay on Hands** — active ability, free action, once per combat. Heals self for a large amount. A free action means the Paladin can attack or defend on the same turn it heals. This is the Paladin's sustain tool — it can survive one big hit, then patch itself up and keep holding the line.
 
 The Paladin line does not branch. It is a single linear path through all tiers.
 
 ### Zealot — faith consumes
 
-| Stat | Value |
-|------|-------|
-| HP | 180 |
-| Damage | 70 |
-| Armor | 0 |
-| Initiative | 50 |
-
-The Zealot is a ticking clock. It deals 70 damage per attack but takes half of that (35) as self-damage each time it attacks. Five attacks kills itself (5 × 35 = 175). The Zealot either wins before it burns out, or it dies. There is no stalling with a Zealot.
+The Zealot is a ticking clock. It hits very hard but takes half of that as self-damage each time it attacks; a handful of attacks kills it. The Zealot either wins before it burns out, or it dies. There is no stalling with a Zealot.
 
 **Restrictions:**
 
@@ -69,36 +42,22 @@ The self-damage is always half of current damage, so external buffs (Congregatio
 
 ### Templar — Paladin line, tier 3
 
-| Stat | Value |
-|------|-------|
-| HP | 200 |
-| Damage | 60 |
-| Armor | 20 |
-| Initiative | 50 |
-
-The Templar continues the Paladin line's theme of increasing self-defense. It retains **Lay on Hands** (heal for 2× damage = 120 HP, once per combat) and gains **Devotion Aura** — a passive that adds the Templar's armor bonus (+20) to adjacent allied units. The aura makes the Templar a force multiplier: place it in the center of the front line and the units beside it become nearly as hard to kill as the Templar itself.
+The Templar continues the Paladin line's theme of increasing self-defense. It retains **Lay on Hands** (a heal, once per combat) and gains **Devotion Aura** — a passive that adds the Templar's armor bonus to adjacent allied units. The aura makes the Templar a force multiplier: place it in the center of the front line and the units beside it become nearly as hard to kill as the Templar itself.
 
 The Paladin line is linear: Congregant → Paladin → Templar → Immortal (T4, terminal).
 
 ### Immortal — Paladin line, tier 4, terminal
 
-| Stat | Value |
-|------|-------|
-| HP | 260 |
-| Damage | 80 |
-| Armor | 20 |
-| Initiative | 50 |
-
 The capstone of the faith-preserves branch. The Immortal is the Paladin line's ultimate expression — a unit that cannot be killed through normal means.
 
 **Divine Lay on Hands** — upgraded Lay on Hands. Two charges per combat instead of one. Can target self or an ally.
 
-- **On self:** free action. Heals for 2× damage (160 HP).
-- **On ally:** main action. Heals the target for 2× the Immortal's damage (160 HP). Costs the Immortal's main action for the turn.
+- **On self:** free action. Heals the Immortal.
+- **On ally:** main action. Heals the target for the same amount. Costs the Immortal's main action for the turn.
 
 The self-target free action preserves the Paladin line's identity — the Immortal can attack and heal itself on the same turn. The ally-target main action opens the line to a support role: the Immortal can sacrifice its own action to save an ally, but cannot also attack that turn.
 
-**Devotion Aura** — retained from Templar. Adjacent allies gain +20 armor.
+**Devotion Aura** — retained from Templar. Adjacent allies gain armor.
 
 **Guardian Spirit** — passive, once per combat. If the Immortal would be reduced to 0 HP, it instead cannot drop below 1 HP for the rest of the turn. The death blow is negated, and the Immortal survives until the turn ends — giving it a window to heal (Divine Lay on Hands) or be healed by an ally. Once used, Guardian Spirit is spent for the rest of the combat; the next killing blow in a later turn will land. This makes the Immortal genuinely immortal once per fight: it can survive a death blow, heal back up, and keep fighting — but it can only cheat death once, so a second successful kill attempt will finish it.
 
@@ -110,33 +69,19 @@ The Zealot line diverges at tier 3 into two paths with asymmetric depth.
 
 #### Punisher — tier 3
 
-| Stat | Value |
-|------|-------|
-| HP | 200 |
-| Damage | 45 |
-| Armor | 0 |
-| Initiative | 50 |
-
 The Punisher drops the Zealot's forced-attack restriction — it is no longer compelled to attack every turn and can defend like any normal unit. The fanaticism is redirected from self-destruction into control.
 
 Weapon: multi-headed flanged flail. The Punisher's attack hits the **entire enemy front line** in a single swing (all cells in the opposing front row). This is an AoE melee line attack, not a single-target strike.
 
-**Punishment** — passive debuff applied on hit. Every enemy struck by the flail suffers -10 damage and -10 initiative for the rest of combat. The debuff is permanent, does not wear off, is stackable per hit, and applies to every unit caught in the swing. A front line hit twice by a Punisher is at -20 damage and -20 initiative until the fight ends.
+**Punishment** — passive debuff applied on hit. Every enemy struck by the flail loses damage and initiative for the rest of combat. The debuff is permanent, does not wear off, is stackable per hit, and applies to every unit caught in the swing. A front line hit twice by a Punisher has lost twice as much until the fight ends.
 
-The -10 initiative can drop an enemy across an action threshold (for example, from 50 to 40, potentially losing an action). This is the Punisher's core identity: it does not kill fast; it degrades the enemy's ability to fight back.
+The initiative loss can drop an enemy across an action threshold, potentially losing an action. This is the Punisher's core identity: it does not kill fast; it degrades the enemy's ability to fight back.
 
 #### Torturer — tier 4, terminal
 
-| Stat | Value |
-|------|-------|
-| HP | 220 |
-| Damage | 60 |
-| Armor | 0 |
-| Initiative | 50 |
-
 The Torturer escalates the punishment theme into domination. It retains the flail's AoE front-line attack and the Punishment debuff.
 
-**Domination** — passive upgrade to Punishment. 50% of the Torturer's damage dealt is converted into a stackable bleed debuff instead of direct damage. The remaining 50% hits HP immediately; the bleed portion deals damage at the **start of the afflicted unit's turn** (before it acts), stacking per hit. The bleed stacks persist for the rest of combat. The Torturer's front-line swings deal immediate damage and plant a ticking debt — the enemy front line is simultaneously bled now and bleeding later. Because higher-initiative enemies act first, they take their bleed damage early in the round; as the Punishment debuff lowers their initiative over time, they slide later in the turn order, delaying their bleed proc but also delaying their ability to respond. The two effects compound: the enemy gets weaker and slower every turn.
+**Domination** — passive upgrade to Punishment. Part of the Torturer's damage dealt is converted into a stackable bleed debuff instead of direct damage. The rest hits HP immediately; the bleed portion deals damage at the **start of the afflicted unit's turn** (before it acts), stacking per hit. The bleed stacks persist for the rest of combat. The Torturer's front-line swings deal immediate damage and plant a ticking debt — the enemy front line is simultaneously bled now and bleeding later. Because higher-initiative enemies act first, they take their bleed damage early in the round; as the Punishment debuff lowers their initiative over time, they slide later in the turn order, delaying their bleed proc but also delaying their ability to respond. The two effects compound: the enemy gets weaker and slower every turn.
 
 **Hook** — active ability, once per combat, main action. Pulls a target from the second or third enemy row to the front row and stuns it for one round.
 
@@ -152,42 +97,21 @@ The Hook's purpose is to drag a ranged or support unit out of safety and into th
 
 #### Fanatic — tier 3
 
-The martyrdom path begins here. This melee-only unit has **280 HP** and **110 damage** (single-target).
+The martyrdom path begins here. This melee-only unit hits a single target.
 
-**Fanaticism** — passive. The Fanatic must attack each turn; each damage dealt also deals self-damage equal to **50% of the damage dealt**.
+**Fanaticism** — passive. The Fanatic must attack each turn; each damage dealt also deals self-damage equal to **half of the damage dealt**.
 
-**Hysteria** — passive. When the Fanatic defeats an enemy, it immediately makes a free extra attack that suffers **double** the Fanaticism self-damage penalty. The first trigger applies a 100% penalty and the second applies a 200% penalty. Hysteria can trigger up to twice per turn, each time doubling the penalty. The unit can only target melee units in the front line.
-
-| Stat | Value |
-|------|-------|
-| HP | 280 |
-| Damage | 110 |
-| Armor | 0 |
-| Initiative | 50 |
+**Hysteria** — passive. When the Fanatic defeats an enemy, it immediately makes a free extra attack that suffers **double** the Fanaticism self-damage penalty, and the second trigger doubles it again. Hysteria can trigger up to twice per turn, each time doubling the penalty. The unit can only target melee units in the front line.
 
 #### Chosen — tier 4
 
-The self-sacrifice branch's next tier. This melee-only unit has **320 HP**, **150 damage**, and **Initiative 60**. It retains the Fanaticism and Hysteria passives exactly as the Fanatic: self-damage equals 50% of damage dealt, and free extra attacks on kills have doubled self-damage penalties, up to two triggers per turn. Unlike the Fanatic, its attacks deal fire damage instead of weapon damage.
-
-| Stat | Value |
-|------|-------|
-| HP | 320 |
-| Damage | 150 |
-| Armor | 0 |
-| Initiative | 60 |
+The self-sacrifice branch's next tier, a melee-only unit. It retains the Fanaticism and Hysteria passives exactly as the Fanatic: self-damage equals half of damage dealt, and free extra attacks on kills have doubled self-damage penalties, up to two triggers per turn. Unlike the Fanatic, its attacks deal fire damage instead of weapon damage.
 
 #### Avatar of Vengeance — tier 5
 
-The faction's ultimate capstone. This melee-only unit has **400 HP**, **150 damage**, and **Initiative 60**. It suffers self-damage equal to half of the damage it deals.
+The faction's ultimate capstone, a melee-only unit. It suffers self-damage equal to half of the damage it deals.
 
 **Fanaticism Aura** — all units on the battlefield suffer Fanaticism and Hysteria: no unit can defend, and each unit takes self-damage equal to half of the damage it deals.
-
-| Stat | Value |
-|------|-------|
-| HP | 400 |
-| Damage | 150 |
-| Armor | 0 |
-| Initiative | 60 |
 
 The punishment line is shorter (tier 4 cap) because punishment is a utility, not an identity. The self-sacrifice line extends to tier 5 because martyrdom is the Inquisition's ceiling — the deeper the commitment to spending oneself, the higher the tier climbs.
 

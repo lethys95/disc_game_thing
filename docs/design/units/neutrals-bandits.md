@@ -1,17 +1,17 @@
 # Neutral units: bandits
 
-> Provenance: the user, 2026-09-25 (verbatim below). Stats are not specified; the numbers in `src/rules/units/neutral.ts` are provisional.
+> Provenance: the user, 2026-09-25 (verbatim below). Stats are not specified.
 
 User's words:
 > "brigand" basic unit with one turn stun directly in front. single use.
-> "marauder" deals extra 10 damage if opponent has armor.
+> "marauder" deals extra 10 damage if opponent has armor. (numbers in code now)
 > "bandit" basic bow unit with just attack, high init.
 > "hedge mage" mage unit, 2x2 ranged spell, low hp.
 
 | Unit | Role | Mechanic |
 |---|---|---|
 | Brigand | basic (melee) | once per combat: stun the enemy directly in front for one turn |
-| Marauder | melee | +10 damage against a target that has armor |
+| Marauder | melee | extra damage against a target that has armor |
 | Bandit | bow (ranged) | plain attack, high initiative |
 | Hedge Mage | mage (ranged) | a 2x2 area spell; low HP |
 

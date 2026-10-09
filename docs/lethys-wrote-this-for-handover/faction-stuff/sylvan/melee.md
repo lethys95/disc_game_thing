@@ -1,7 +1,7 @@
 # Grove: melee line
 
 > **Pitch (Claude, 2026-09-27): everything below marked (Claude) is a proposal for you to cut, rename or veto.**
-> Faction-wide hook: Grove units gain more per level past the end of their line. **User, 2026-09-29: 50% more** (7.5% instead of 5%), not twice: "if it becomes too much, people might opt to pick whichever line ends the fastest", and see less of the game. Built.
+> Faction-wide hook: Grove units gain more per level past the end of their line. **User, 2026-09-29: 50% more**, not twice: "if it becomes too much, people might opt to pick whichever line ends the fastest", and see less of the game. Built.
 
 ## Tier 1
 

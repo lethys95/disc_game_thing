@@ -7,18 +7,18 @@
 
 ## Soothsayer (tier 2)
 - **The user:** "Soothsayer will add tarot 5 on entry. Otherwise has basic fire which is fairly strong, but always
-  deferred by 1 turn. Also has curse ability which makes targets deal 35% less damage for 3 turns."
+  deferred by 1 turn. Also has curse ability which makes targets deal 35% less damage for 3 turns." (numbers in code now)
 - **Look (user):** "She'll look like a soothsayer does, likely walking around with that one ball hovering in one of her
   hands, a hand of cards in the other. Robes, veil around mouth, loose robes."
-- **Claude's reading:** *Tarot 5* (the keyword). *Foretell* (her attack, ranged): the hit lands at the start of her
-  next turn (if she's dead by then, it never does). *Curse* (main action): one enemy deals 35% less damage for its next
-  3 turns. "Targets" could mean several: say if Curse should hit an area.
+- **Claude's reading:** *Tarot* (the keyword). *Foretell* (her attack, ranged): the hit lands at the start of her
+  next turn (if she's dead by then, it never does). *Curse* (main action): one enemy deals much less damage for its next
+  few turns. "Targets" could mean several: say if Curse should hit an area.
 
 ## Omen (tier 2)
 - **The user:** "Visually uses twin flintlocks blinded by bands over his eyes. Ranged unit. Every tarot he triggers,
   trigger twice. Whenever he or a tarot he triggers, kills a unit, use tarot 3 (i.e. we draw more)."
 - **Claude's reading:** a ranged attack. When his action fulfils a tarot card, its reward pays twice. For each enemy
-  that dies during his action (his shot, or a reward he set off), his side draws a fresh hand of 3 and picks one.
+  that dies during his action (his shot, or a reward he set off), his side draws a fresh hand and picks one.
 
 ## Fire Eater (tier 1; the name is Claude's, at the user's invitation)
 - **The user:** "some melee torch unit which spits out fire in a cone. Probably just 3 tiled aoe with one additional in
@@ -36,12 +36,12 @@ two Fire Eaters and the Soothsayer (medium, level 2); two Fire Eaters, the Sooth
 **Status:** in game as `soothsayer`, `omen`, `fire_eater`, `cutpurse`, `snakeoiler` (`?fight=carnival`); numbers `provisional.md` #67.
 
 ## More units (user, 2026-10-05)
-- **Cutpurse:** "very basic unit probably. Just high initiative and crit 4 I think."
+- **Cutpurse:** "very basic unit probably. Just high initiative and crit 4 I think." (numbers in code now)
 - **Snakeoiler:** "backline support unit. One-time use sleep potion which incapacitates for one turn. Unit wakes up if
   it takes damage, and is put back into the queue. Otherwise just a moderate healing potion throw to allies, or a weak
   one-target explosive (not aoe) on a single target enemy, also ranged any target."
-- **Built (Claude's numbers):** Cutpurse (tier 1) 75 HP, 18, initiative 70, Crit 4. Snakeoiler (tier 1) 65 HP,
-  initiative 45: *Healing draught* (an ally heals 30), *Explosive flask* (its attack: one enemy anywhere takes 18 fire),
+- **Built:** Cutpurse (tier 1): high initiative, Crit. Snakeoiler (tier 1): *Healing draught* (an ally heals),
+  *Explosive flask* (its attack: one enemy anywhere takes fire damage),
   *Sleep potion* (once: one enemy loses its next turn unless hurt first; woken, it keeps its place in the queue; the same
   rule as the Drawn's Mesmerize, under its own name). Groups now: weak Cutpurse, Fire Eater, Snakeoiler; medium two
   Cutpurses, Fire Eater, Snakeoiler, Soothsayer; strong Cutpurse, two Fire Eaters, Snakeoiler, Soothsayer, Omen.

@@ -35,8 +35,8 @@ What's new for the game (each as data, no engine names):
 ### Chrysalis
 - **Role:** a wall that becomes a threat.
 - **Stats:** health high · damage medium (once emerged) · armor low · initiative low.
-- **Abilities:** *Metamorphosis* (passive): it can't attack while it pupates; at the start of its third turn it
-  emerges, back to full health, +12 damage, and it flies (Flit).
+- **Abilities:** *Metamorphosis* (passive): it can't attack while it pupates; after a few turns it
+  emerges, back to full health, hitting harder, and it flies (Flit).
 - **The choice it gives you:** burn it down before it hatches (it's tanky), or ignore it and face a fresh flier at
   full health.
 
@@ -44,7 +44,7 @@ What's new for the game (each as data, no engine names):
 - **Role:** support that unmakes the other side's support.
 - **Stats:** health low · damage low · armor none · initiative medium.
 - **Abilities:** *Drink the light* (main action, ranged): an enemy loses every effect its own side gave it (heals over
-  time, blessings, lent shields) and its shield; the Lightdrinker heals 10 per effect and half the shield. *Shoot*.
+  time, blessings, lent shields) and its shield; the Lightdrinker heals for each effect and half the shield. *Shoot*.
 - **Strong against / weak against:** the Grove's heals over time, Nexus shields, Jilliath blessings / squads with
   none of that.
 
@@ -61,7 +61,7 @@ What's new for the game (each as data, no engine names):
 ### Pale Mother
 - **Role:** the brood's centre. A big pale moth, veiled, her wings folded like a cloak; opening them is her gaze.
 - **Stats:** health high · damage medium · armor low · initiative medium.
-- **Abilities:** *Dust veil* (aura): her side has +5 armor (doesn't stack). *Open the eyes* (main action, once per
+- **Abilities:** *Dust veil* (aura): her side has extra armor (doesn't stack). *Open the eyes* (main action, once per
   fight): the whole enemy front row is mesmerized. *Flit*.
 
 ## Camps (Claude)

@@ -17,8 +17,8 @@
 - **Stats (Claude):** health low · damage low · armor none · initiative medium · fire damage (the red mana).
 - **Abilities:**
   - *Condemn* (main action, every turn; placeholder name): ranged, one enemy. Deals its damage plus a share of the health
-    the target is already missing. (You: fine, but careful it isn't too weak to begin with. Claude:) 25 fire damage plus
-    30% of what's missing, so it's a fair hit on a fresh unit too.
+    the target is already missing. (You: fine, but careful it isn't too weak to begin with. Claude:) a solid base hit on top
+    of the missing-health share, so it's a fair hit on a fresh unit too.
 - **Strong against / weak against (Claude):** wounded, tanky targets and anything the melee line already hit / fresh
   squads and a first strike, where it's the weakest unit in the fight.
 - **Open questions:** name; whether it's the start of the resurrection or vengeance side of the faction.
@@ -57,7 +57,7 @@ The tree as it stands:
 
 ## Round two of the brainstorm (the user, 2026-10-06)
 - **Faith (holy):** castigation and judgement (all enemies who dealt damage last turn) keep. **Repentance:** keep,
-  "incapacitate for three turns. Free action. Unit wakes up early if damaged or healed by anyone or anything." Cut as
+  "incapacitate for three turns. Free action. Unit wakes up early if damaged or healed by anyone or anything." (numbers in code now) Cut as
   copies or too strong: Hammer of Wrath, the exposed mark, Conversion, Swords to Plowshares ("OP"), dazzling light,
   holy nova.
 - **Fanaticism (fire):** Doomsayer's burn at the stake keep ("very thematically pleasing and also useful"); tier 3's

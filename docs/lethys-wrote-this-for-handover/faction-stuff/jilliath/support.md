@@ -21,11 +21,11 @@
 - **Stats (Claude):** health low · damage none · armor none · initiative medium.
 - **Abilities:**
   - *Heal* (main action, every turn): restores health to one wounded ally, more the more it is missing (you, 2026-09-26).
-    Can't restore shields (Nexus rule). (Claude:) 20 plus 30% of what's missing.
+    Can't restore shields (Nexus rule).
   - *Shoot* (main action): a weak ranged attack (you: not D2's attack-less healer).
 - **Strong against / weak against (Claude):** attrition and chip damage / burst that kills before healing matters, and
   anything that reaches the back row.
-- **Status:** in game as `jilliath_support_1` (unnamed since 2026-10-07; numbers provisional).
+- **Status:** in game as `seraph`, the Seraph (named 2026-10-08).
 
 ## The user's direction (2026-10-06, the backline brainstorm)
 "I can imagine the offensive side of the support line will work maybe a bit like discipline priests in wow, in that they'll heal by damaging. We might actually just straight up yoink the atonement kit they use, I think. Then we can split within fanaticism further to bring in transfusion in a different subline. Faith will likely be more basic. Resurrection only lives under faith. I also want to be careful with the self-damage. Not everything under fanaticism needs to use this mechanic."
@@ -48,7 +48,7 @@ The tree as it stands (names and numbers open):
   ("I think we can do better. Atonement at t3 already has more targets. What else can we do with this. Maybe this is
   where deflection palm kicks in?").
 - **Faith:** inner fire and the beacon cut ("too cut and paste from wow"); its tier 2 and 3 are open again.
-  **Resurrection** (tier 4): keep, "at 50% health to begin with. It's possible we go up to 100%." **The unit is an
+  **Resurrection** (tier 4): keep, "at 50% health to begin with. It's possible we go up to 100%." (numbers in code now) **The unit is an
   angel** ("we should have the final side of faith support (resurrection) be an angel").
 - **A secret on the holy side** (the user): "we can actually have an off branch on the holy side of either support or
   damage use a secret which has deflecting palm […] It's neat and kind of cheeky to put a single secret in there when
@@ -127,18 +127,18 @@ The tree with names (abilities past atonement, transfusion and resurrection open
 
 Built (Claude's readings, provisional numbers: `provisional.md` #73):
 - **Emissary** (t2, faith): a placeholder, the Seraph's Heal and Shoot at tier-2 strength, so the fork has both sides.
-- **Paragon** (t2): *Atonement*, its attack: hits an enemy, and its most wounded ally heals 150% of the damage dealt.
+- **Paragon** (t2): *Atonement*, its attack: hits an enemy, and its most wounded ally heals more than the damage dealt.
   It heals only through Atonement.
-- **Empyreal** (t3a): Atonement healing its three most wounded allies, each for 100% of the damage dealt.
-- **Reclaimer** (t3b): *Transfusion*, the strongest heal, paid for with half of what it heals from her own health; and
+- **Empyreal** (t3a): Atonement healing several of its most wounded allies at once.
+- **Reclaimer** (t3b): *Transfusion*, the strongest heal, paid for with part of what it heals, from her own health; and
   *Reclaim* (placeholder name, from the user's "reclaiming"), an attack that heals her for what it deals.
 - **Vengeance ends at tier 3 (the user, 2026-10-08):** "I think we end at t3 vengeance. it becomes too much. I'm
   already unsure of whether or not t5 is too much in faith support."
 - **The guardian angels (the user, 2026-10-08):** "if t1 is single target basic heal, then t2 could be 'prayer' for a
   weak/moderate healing, t3 guardian gets a single target single use 30+ armor on target for a single turn. We can
   just call that 'guardian's shield'. Shepherd... Lets say gets an upgraded prayer with +5 armor to targets healed for
-  a turn. Godkin res." And: "we're not really doing christianity. We're just doing winged people from above."
+  a turn. Godkin res." (numbers in code now) And: "we're not really doing christianity. We're just doing winged people from above."
   Built (Claude's readings): each tier keeps the last one's spells. **Emissary** (t2): *Prayer* heals every ally a
-  little. **Guardian** (t3): *Guardian's Shield*, once per combat, +30 armor on one ally until its next turn.
-  **Shepherd** (t4): Prayer also gives +5 armor until each ally's next turn. **Godkin** (t5): *Resurrection*, once per
-  combat, a fallen ally rises at 50% health (not one whose corpse was used or destroyed).
+  little. **Guardian** (t3): *Guardian's Shield*, once per combat, a lot of armor on one ally until its next turn.
+  **Shepherd** (t4): Prayer also gives a little armor until each ally's next turn. **Godkin** (t5): *Resurrection*, once per
+  combat, a fallen ally rises with part of its health (not one whose corpse was used or destroyed).

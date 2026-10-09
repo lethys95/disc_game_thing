@@ -1,7 +1,7 @@
 # Jilliath: melee line
 
-> Filled in by Claude from the canon (`docs/design/units/jilliath-melee-line.md`, which keeps the original numbers).
-> The stat words are Claude's reading of those numbers against the other units of each tier. Your word wins.
+> Filled in by Claude from the canon (`docs/design/units/jilliath-melee-line.md`).
+> The stat words are Claude's reading of its original numbers against the other units of each tier. Your word wins.
 
 ## The line
 - **Role in the faction:** the core of the army; the line everything else supports.
@@ -32,7 +32,7 @@
 - **Intent:** walls swarm units completely; big hits still hurt it. Survives one big hit, patches itself up, holds the line.
 - **Stats (Claude):** health medium · damage medium · armor high · initiative medium.
 - **Abilities:**
-  - *Lay on Hands* (free action, once per fight): heals itself a lot (scaled on its damage). Free, so it can still attack or defend that turn.
+  - *Lay on Hands* (free action, once per fight): heals itself a lot (scaled on its ability power). Free, so it can still attack or defend that turn.
 - **Strong against / weak against:** swarms and many small hits / a few big hits, where armor stops mattering.
 - **Status:** in game as `paladin`.
 
@@ -67,7 +67,7 @@
 - **Stats (Claude):** health medium · damage low for its tier, but it hits the whole front line · armor none · initiative medium.
 - **Abilities:**
   - *Flail* (the attack): hits the entire enemy front row.
-  - *Punishment* (passive): everything the flail hits loses damage and initiative for the rest of the fight, stacking (now capped at 3 stacks by balance). Losing initiative can cost the enemy whole actions.
+  - *Punishment* (passive): everything the flail hits loses damage and initiative for the rest of the fight, stacking (now capped by balance). Losing initiative can cost the enemy whole actions.
 - **Status:** in game as `punisher`.
 
 ### Fanatic (self-sacrifice)
@@ -98,7 +98,7 @@
 - **Stats (Claude):** health medium · damage medium (front-row sweep) · armor none · initiative medium.
 - **Abilities:**
   - *Flail* and *Punishment*: as the Punisher's.
-  - *Domination* (passive): half its damage becomes a stacking bleed that ticks at the start of the victim's turn.
+  - *Domination* (passive): part of its damage becomes a stacking bleed that ticks at the start of the victim's turn.
   - *Hook* (main action, once per fight): pulls a unit from the second or third row to the front and stuns it for a round; needs a clear straight line. Drags casters out of safety.
 - **Status:** in game as `torturer`.
 

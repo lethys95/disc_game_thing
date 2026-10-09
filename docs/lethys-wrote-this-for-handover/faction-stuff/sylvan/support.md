@@ -2,17 +2,17 @@
 
 > **Pitch (Claude, 2026-09-27): everything below marked (Claude) is a proposal for you to cut, rename or veto.**
 > Faction-wide hook, from "ramp on the strategic level, strong endgame": Grove units gain **twice as much per level**
-> past the end of their line (10% instead of 5%), so an old Grove army outgrows everyone, while a young one is plain.
+> past the end of their line, so an old Grove army outgrows everyone, while a young one is plain.
 
 ## Tier 1
 
 ### Grove support 1 (placeholder name)
 - **Role (Claude):** healing over time.
 - **Intent (Claude):** "healing over time effects": where Jilliath's Cleric heals at once, this one plants a heal that
-  lands over three turns, more in total but slower. Rewards thinking a turn ahead; punished by burst.
+  lands over several turns, more in total but slower. Rewards thinking a turn ahead; punished by burst.
 - **Stats (Claude):** health low · damage very low · armor none · initiative medium.
 - **Abilities (Claude):**
-  - *Bloom* (main action): an ally heals a small amount at the start of each of its next three turns.
+  - *Bloom* (main action): an ally heals a small amount at the start of each of its next few turns.
   - *Shoot*, weak.
 - **Status:** idea (Claude's pitch).
 
@@ -45,5 +45,5 @@ nexus I feel)."
 - **Claude's reading:** the support line has no branch called Regrowth; its healing side is the Spiritess branch (the
   user likened its heal to WoW's Regrowth). So the water primary fire goes to the tier-1 support, the Spiritess and the
   Psychopomp; the Decay support keeps its plain Shoot. Say if the Decay side should have it too.
-- **Built:** *Wellspring* (named *Water* until 2026-10-07; the user: "Water is the element. It needs a different name. I'll let you pick, just don't pick 'water'") replaces Shoot: ranged, water damage. On an enemy: the unit's damage, and it's wet. On an ally (or
-  itself): heals 3× the unit's damage, and puts out a fire (wet only if it was burning). Numbers `provisional.md` #67.
+- **Built:** *Wellspring* (named *Water* until 2026-10-07; the user: "Water is the element. It needs a different name. I'll let you pick, just don't pick 'water'") replaces Shoot: ranged, water damage. On an enemy: damage, and it's wet. On an ally (or
+  itself): heals much more than that, and puts out a fire (wet only if it was burning). Numbers `provisional.md` #67.

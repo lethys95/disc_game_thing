@@ -126,7 +126,7 @@ you try to do something else with cackle."
 - **Cackle, redone (Claude, for you to judge):** no initiative. The laugh **goads** one enemy: on its next turn it can
   only attack (no spells, healing, defending or waiting; a unit without an attack is left alone). It takes a healer's
   or caster's turn away from its spells. *Run them down* stays.
-- **Hamstring** still slows (−5 initiative, one target, until the end of the next round), kept small for the same
+- **Hamstring** still slows (it takes a little initiative, one target, until the end of the next round), kept small for the same
   reason; say if it should do something else too.
 
 **Status:** in game as `packstalker`, `bonecracker`, `hamstringer`, `cackler`, `matriarch`: they guard camps and

@@ -18,8 +18,7 @@ user (after round one): not humanoid by default, and never symmetrical. Prompts:
 
 ## Sproutling (tier 1, `sproutling`)
 - **Play (user):** "some regen": the persistent front. Heals a share of its max HP at the start of its turns.
-  Recruited at 45 gold. Forks at tier 2 into Regrowth (life) or Decay (death).
-- **Numbers:** 121 HP, 24 damage, initiative 45, Regrowth 6%.
+  Forks at tier 2 into Regrowth (life) or Decay (death).
 - **Picked (user, 2026-10-04):** `sproutling-stump-turnaround-1002`, a small treant.
 - **Look concepts (Claude):** not a cute sprout: it's the raw material both branches grow from.
   1. *Graft:* a gaunt, feral elf warrior whose ritual scars sprout pale shoots; wounds closed with bark scabs; a carved
@@ -32,7 +31,6 @@ user (after round one): not humanoid by default, and never symmetrical. Prompts:
 ## Moldling (Decay tier 2, `moldling`)
 - **Play (user):** no regeneration; a share of the damage it takes rots in instead and is lost over its next turns.
   Tankier than Regrowth, and it needs a support backline.
-- **Numbers:** 210 HP, 46 damage, initiative 45, Decay 40% over 3 turns.
 - **Look concepts (Claude):** the delayed damage is something soft that soaks the blow and spoils later.
   1. *Bloom:* a broad brute under a thick coat of grey-white and green mold, puffballs on the shoulders, mold filling
      its wounds.
@@ -49,7 +47,6 @@ user (after round one): not humanoid by default, and never symmetrical. Prompts:
 
 ## Deadwood (Decay tier 3, `deadwood`)
 - **Play (user):** Decay, plus *withering*: an enemy that hits it deals less damage for the rest of combat.
-- **Numbers:** 390 HP, 76 damage, initiative 45, Decay 50%, Withering 5 per hit (up to 15).
 - **Look (user):** "pretty much just an animated dead tree […] the face being strange and ghostly. Nothing about it looks
   humanoid. Both arms are massive stumps", moving "more like a gorilla than a human". **Picked:**
   `deadwood-blasted-turnaround-1002` ("a bit too literal with the gorilla, but we'll just take it anyway. It's good
@@ -60,7 +57,6 @@ user (after round one): not humanoid by default, and never symmetrical. Prompts:
 - **Play (user):** "the more it suffers, the more it lashes back": *Lash out* (main action) deals the rot inside it
   to the whole enemy front row; the rot stays and its countdown restarts. The melee line's win condition, late game;
   it needs healers behind it. Keeps Decay and Withering.
-- **Numbers:** 376 HP, 72 damage, initiative 45, Decay 55%, Withering, Lash out 100%.
 - **Look (user):** "more a hunk of bark, asymmetric sludge and basically whatever you associate with a swamp", the
   right arm huge; fog later as a VFX. **Picked:** `bog-giant-hulk-turnaround-1002`.
 - Round one (under the old tier-3 name): *Peat*, *Idol*, *Troll*.
@@ -68,8 +64,8 @@ user (after round one): not humanoid by default, and never symmetrical. Prompts:
 ## Mulch Gorger (Decay tier 4, `mulch_gorger`)
 - **Play (user):** "whenever someone dies or a corpse gets interacted with (resurrection, corpse explosion, etc) it
   heals and gains damage for the rest of combat, stacking indefinitely." End of the line.
-- **Numbers:** 376 HP, 66 damage, initiative 45, Decay 50%, Withering, *Gorge* (heals 25 and +6 damage per death or
-  spent corpse, either side, no cap). Claude's reading: it keeps the line's Decay and Withering.
+- **Kit:** Decay, Withering, *Gorge* (heals and hits harder per death or spent corpse, either side, no cap). Claude's
+  reading: it keeps the line's Decay and Withering.
 - **Look (user):** "a plant skeleton […] the wood and plant matter receding into showing its nature parasitically
   infesting a corpse with bark, vines, moss and other such related plant matter." Likely the only direct skeleton or
   zombie in the faction.
