@@ -22,11 +22,12 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
   Guardian → Shepherd → Godkin; Paragon → Empyreal / Reclaimer; #73, #74). `?fight=mages`, `?fight=angels`. Engine: a
   holy damage type, `BattleUnit.struck`, a `hurt` hook, `revive`, stacking burns. Save 33.
 - **Jilliath's concept art, in rounds** (`docs/design/units/jilliath-identities.md`, every quote and read;
-  `scripts/art/concepts.ts` ANGELS, PRIESTS, MELEE; review page `shots/jilliath-concepts.html`). **Picked (10):**
-  Seraph, Emissary, Shepherd, Godkin, Reclaimer, Acolyte, Pontiff, Doomsayer (+ scroll), Templar (+ rose shield),
-  Immortal (`roster.md`). **Generating:** the user's directions for the Guardian, Paragon, Chosen (+ zweihander),
-  Torturer, Avatar, and Claude's for the Empyreal and Archon. **Waiting on the user:** the Cleric (Orzhov reading, maybe
-  the Pontiff with it), the Fanatic (deferred), the fire casters (names first). Portraits come later, from the picks.
+  `scripts/art/concepts.ts` ANGELS, PRIESTS, MELEE; review pages `shots/jilliath-*.html`). **Picked (13):**
+  Seraph, Emissary, Shepherd, Godkin, Reclaimer, Paragon, Acolyte, Pontiff, Doomsayer (+ scroll), Templar (+ rose
+  shield), Immortal, Chosen (+ zweihander), Avatar (`roster.md`). **Deferred by the user** until they have an overview of references and designs: the
+  Guardian, Empyreal, Torturer, Archon, Cleric (Orzhov reading, maybe the Pontiff with it), Fanatic, the fire casters
+  (names first). **Portraits installed (2026-10-09)** for the 13 picked:
+  Seraph, Emissary, Shepherd, Godkin, Reclaimer, Paragon, Acolyte, Pontiff, Doomsayer, Templar, Immortal, Chosen, Avatar.
 - **Lessons for every faction's art** (`unit-concepts` skill): a unit's own materials line (a shared "steel" line
   made knights of every melee unit), "inhuman" over "woman", name cloth textures; review pages show full prompts.
 - **Armor is a percentage with diminishing returns** (the user; #75, `testing/percent-armor`): armor ÷ (armor + 60),

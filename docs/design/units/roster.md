@@ -38,19 +38,19 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 | Eyespot | the Drawn | Claude's own tribe | picked: `eyespot-fan-turnaround-1000` | ✓ |
 | Pale Mother | the Drawn | Claude's own tribe | picked: `pale-mother-turnaround-1002` | ✓ |
 
-| Godkin | Jilliath 5 (support) | user (a silhouette of moving sky) | picked: `godkin-bare-turnaround-1001` (user: "has captured what I intended") | — |
-| Pontiff | Jilliath 3 (mage) | Claude's crown of candles (user: "looks good") | picked: `pontiff-candles-turnaround-1001` (seed Claude's) | — |
-| Acolyte | Jilliath 1 (mage) | Claude's (red blindfold, lantern) | picked: `acolyte-branded-turnaround` (user: "as he is now"; seed 1001 Claude's) | — |
-| Seraph | Jilliath 1 (support) | user (hooded, face hidden, black and white robes, brown wings) | picked: `seraph-silk-turnaround-1002` (user: "both interesting and humble") | — |
-| Paragon | Jilliath 2 (support) | user (red hair over the right eye, runic forearms, a book on a chain, the burning-palm emblem) | picked: `paragon-runes-turnaround-1001` (user: "good enough") | — |
-| Avatar of Vengeance | Jilliath 5 (consume) | user (hooded white-red, three pairs of red wings after the Illusory Angel) + Claude (the Chosen ascended, a red void for a face) | picked: `avatar-streaks-turnaround-1000` (user) | — |
-| Chosen | Jilliath 4 (consume) | user (an inhuman faceless juggernaut, red, asymmetric) | picked: `chosen-battered-1002-red-d70` (a repaint of `chosen-battered-turnaround-1002`), zweihander `chosen-zweihander-props-1000` (Claude's pick) | — |
-| Shepherd | Jilliath 4 (support) | user (stained glass) | picked: `shepherd-glass-turnaround-1001` (user, round one: "I think iteration just gets worse with shepherd") | — |
-| Reclaimer | Jilliath 3 (support) | user (after MTG's Platinum Angel: an inhuman segmented shell, bulkier) | picked: `reclaimer-platinum-heavy-turnaround-1000` (user: "probably the best one") | — |
-| Doomsayer | Jilliath 2 (mage) | Claude's (a street prophet, yoke and bells) | picked: `doomsayer-plain-turnaround-1001` (user), scroll `doomsayer-scroll-props-1000` (Claude's, the user's leave) | — |
-| Templar | Jilliath 3 (preserve) | Claude's knight, the user's rose shield | picked: `templar-rose-turnaround-1001`, shield `templar-shield-props-1001` (user) | — |
-| Immortal | Jilliath 4 (preserve) | Claude's (white marble mended with gold; crest, halo, cape) | picked: `immortal-kintsugi-turnaround-1000` (user: "he looks awesome"); weapon open | — |
-| Emissary | Jilliath 2 (support) | user ("closer to the stereotypical angel") | picked: `emissary-robed-turnaround` (user: "looks great"; seed 1000 or 1001 open) | — |
+| Godkin | Jilliath 5 (support) | user (a silhouette of moving sky) | picked: `godkin-bare-turnaround-1001` (user: "has captured what I intended") | ✓ |
+| Pontiff | Jilliath 3 (mage) | Claude's crown of candles (user: "looks good") | picked: `pontiff-candles-turnaround-1001` (seed Claude's) | ✓ |
+| Acolyte | Jilliath 1 (mage) | Claude's (red blindfold, lantern) | picked: `acolyte-branded-turnaround` (user: "as he is now"; seed 1001 Claude's) | ✓ |
+| Seraph | Jilliath 1 (support) | user (hooded, face hidden, black and white robes, brown wings) | picked: `seraph-silk-turnaround-1002` (user: "both interesting and humble") | ✓ |
+| Paragon | Jilliath 2 (support) | user (red hair over the right eye, runic forearms, a book on a chain, the burning-palm emblem) | picked: `paragon-runes-turnaround-1001` (user: "good enough") | ✓ |
+| Avatar of Vengeance | Jilliath 5 (consume) | user (hooded white-red, three pairs of red wings after the Illusory Angel) + Claude (the Chosen ascended, a red void for a face) | picked: `avatar-streaks-turnaround-1000` (user) | ✓ |
+| Chosen | Jilliath 4 (consume) | user (an inhuman faceless juggernaut, red, asymmetric) | picked: `chosen-battered-1002-red-d70` (a repaint of `chosen-battered-turnaround-1002`), zweihander `chosen-zweihander-props-1000` (Claude's pick) | ✓ |
+| Shepherd | Jilliath 4 (support) | user (stained glass) | picked: `shepherd-glass-turnaround-1001` (user, round one: "I think iteration just gets worse with shepherd") | ✓ |
+| Reclaimer | Jilliath 3 (support) | user (after MTG's Platinum Angel: an inhuman segmented shell, bulkier) | picked: `reclaimer-platinum-heavy-turnaround-1000` (user: "probably the best one") | ✓ |
+| Doomsayer | Jilliath 2 (mage) | Claude's (a street prophet, yoke and bells) | picked: `doomsayer-plain-turnaround-1001` (user), scroll `doomsayer-scroll-props-1000` (Claude's, the user's leave) | ✓ |
+| Templar | Jilliath 3 (preserve) | Claude's knight, the user's rose shield | picked: `templar-rose-turnaround-1001`, shield `templar-shield-props-1001` (user) | ✓ |
+| Immortal | Jilliath 4 (preserve) | Claude's (white marble mended with gold; crest, halo, cape) | picked: `immortal-kintsugi-turnaround-1000` (user: "he looks awesome"); weapon open | ✓ |
+| Emissary | Jilliath 2 (support) | user ("closer to the stereotypical angel") | picked: `emissary-robed-turnaround` (user: "looks great"; seed 1000 or 1001 open) | ✓ |
 
 ## 2. Identity, but no picked concept: needs concept art
 | Unit | Faction · tier | Identity | Concept |
