@@ -107,3 +107,8 @@
 - **The map (2026-10-09, night):** built from the battle's pieces (beam, plaques, chains, the log's block as tablets);
   only its bell-bearer (End turn) and hanging book (Menu) painted, through a mask, in their light (`map-1`, reliquary
   75-2, repainted at 1440p, cut by Photon). Verified. Next: the Capitol and the other screens the same way.
+- **The Capitol and the other full screens (2026-10-09, night):** the Capitol, the cities, the leader and the structure
+  screens take the battle's beam as their header and its blocks as tablets; a city adds a rail down the right edge,
+  painted into those pieces (`capitol-1`, reliquary 85-1, repainted at 1440p): a hooded angel on its capital carrying
+  the beam on her wings, the tabs as four niches below her, the facts on plaques. The city painting is the window
+  behind every tab. The old plaque, plate, medallion, angel corners and end caps retired. Next: the codex.

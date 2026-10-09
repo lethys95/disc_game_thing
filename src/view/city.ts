@@ -7,7 +7,8 @@ import { playerOf, cityById, leaderById, leaderUnit, nodesOf, tribeRecruitsOf } 
 import { NODES } from "#rules/nodes";
 import { CITY_RESURRECTION_PREMIUM } from "#rules/research";
 import type { City, PlayerId, SquadMember, SquadRef, World, WorldAction } from "#rules/world/state";
-import { button, element, gold, orderButton } from "#view/dom";
+import { button, element, gold, orderButton, roman } from "#view/dom";
+import { explain } from "#view/explain";
 import { unitName } from "#view/members";
 import { ResearchPanel } from "#view/research";
 import { squadGrid } from "#view/squad-grid";
@@ -41,6 +42,15 @@ const isCityTab = (key: string): key is CityTab => key in TABS;
 
 /** Placeholder city names until the user names them. */
 export const cityName = (city: City): string => (city.kind === "capitol" ? "Capitol" : `City ${city.id.replace("city", "")}`);
+
+/** The city's tier, in the beam's medallion: its one number. */
+function tierMedallion(city: City): HTMLElement {
+  return explain(
+    element("div", "medallion", roman(city.tier)),
+    `Tier ${city.tier}`,
+    `${CITY_SLOTS[city.tier] ?? 0} garrison slots · heals ${Math.round(CITY_HEALING_PER_TIER * city.tier * 100)}% a turn · defenders +${CITY_ARMOR_PER_TIER * (city.tier - 1)} armor`,
+  );
+}
 
 /**
  * A city's screen (pillars.md, "Cities"; the user's layout, `design/capitol-screen.md`): it opens on the city itself
@@ -94,7 +104,9 @@ export class CityScreen implements KeyLayer {
 
     const header = element("div", "capitol-header");
     header.append(element("div", "title", city ? cityName(city) : "Warbands meet"), gold(playerOf(world, side).gold, "purse"));
+    if (city) header.appendChild(tierMedallion(city));
     header.appendChild(button("action", "Back to the map", () => this.options.close()));
+    if (city) this.root.appendChild(this.window(world, city, tab));
     this.root.appendChild(header);
 
     const layout = element("div", "city-layout");
@@ -103,34 +115,35 @@ export class CityScreen implements KeyLayer {
     if (city) layout.appendChild(this.rail(world, side, city, tab));
     this.root.appendChild(layout);
 
-    if (tab === "home" && city) content.appendChild(this.home(world, city));
-    else if (tab === "research") content.appendChild(this.research.render(world, side, mayAct));
+    if (tab === "home" && city) return;
+    if (tab === "research") content.appendChild(this.research.render(world, side, mayAct));
     else if (tab === "spells") content.appendChild(spellsTab(world, side, mayAct, this.options.act));
     else content.appendChild(this.garrison(world, side, place, city, mayAct));
   }
 
   /**
-   * The right-hand column (the user's reference: Disciples II's city panel): the tabs as medallions, and what matters
-   * about the city at a glance on marble plaques below them, whatever the tab.
+   * The rail down the right edge (the user's reference: Disciples II's city panel; `design/hud-kit.md`): its top is
+   * the column figure carrying the beam, then the tabs, each a niche holding its tab's object, lit when open; a tab the
+   * city lacks stays a dark niche. Who is in the city and what it holds are on marble plaques below them.
    */
   private rail(world: World, side: PlayerId, city: City, current: CityTab): HTMLElement {
-    const rail = element("div", "tab-rail panel");
+    const rail = element("div", "tab-rail");
     const tabs = element("div", "rail-tabs");
     for (const [id, tab] of Object.entries(TABS)) {
-      if (!isCityTab(id) || (tab.capitolOnly && city.kind !== "capitol")) continue;
-      const tile = button(`rail-tab${id === current ? " selected" : ""}`, [element("span", `glyph icon-${tab.icon}`, tab.glyph), element("span", "label", tab.label)], () => {
+      if (!isCityTab(id)) continue;
+      const held = !tab.capitolOnly || city.kind === "capitol";
+      const niche = button(`rail-tab${id === current ? " selected" : ""}`, [element("span", held ? `glyph icon-${tab.icon}` : "glyph", held ? tab.glyph : ""), element("span", "label", tab.label)], () => {
         this.tab = id;
         this.rerender();
       });
-      tabs.appendChild(tile);
+      niche.disabled = !held;
+      tabs.appendChild(held ? niche : explain(niche, tab.label, "Only the Capitol has it."));
     }
     rail.appendChild(tabs);
     const defenders = city.garrison.filter((m) => m.defId !== GUARDIAN_ID).length;
     const visitor = world.leaders.find((l) => l.player === side && sameHex(l.hex, city.hex));
+    // What the tier gives (healing, the defenders' armor) is the medallion's to explain.
     const facts = [
-      `Tier ${city.tier}`,
-      `Heals ${Math.round(CITY_HEALING_PER_TIER * city.tier * 100)}% a turn`,
-      `Defenders +${CITY_ARMOR_PER_TIER * (city.tier - 1)} armor`,
       `${defenders} in the garrison${city.kind === "capitol" ? " + Guardian" : ""}`,
       visitor ? `${unitName(leaderUnit(visitor)?.defId ?? "")}'s warband here` : "No warband visiting",
       ...nodesOf(world, city).map((n) => `${NODES[n.kind].name} ${n.level}`),
@@ -142,19 +155,18 @@ export class CityScreen implements KeyLayer {
   }
 
   /**
-   * The city itself, in a frame: a painting of it from the inside (`assets/city/`), drifting slowly, standing in for
-   * the montage the user wants (`docs/design/capitol-screen.md`).
+   * The city itself, the world in the window behind every tab: a painting of it from the inside (`assets/city/`),
+   * drifting slowly, standing in for the montage the user wants (`docs/design/capitol-screen.md`). Its edges are the
+   * screen's, the beam's and the rail's; it has no frame of its own.
    */
-  private home(world: World, city: City): HTMLElement {
-    const view = element("div", "city-view panel");
+  private window(world: World, city: City, tab: CityTab): HTMLElement {
     const owner = city.owner === null ? null : playerOf(world, city.owner).faction;
     const painting = cityViewUrl(city.kind === "capitol" ? MODEL_CHAINS.capitol(owner) : MODEL_CHAINS.city());
-    const scene = element("div", "city-scene");
+    const scene = element("div", `city-scene${tab === "home" ? "" : " behind"}`);
     const canvas = element("div", "city-painting");
     if (painting) canvas.style.backgroundImage = `url("${painting}")`;
     scene.appendChild(canvas);
-    view.appendChild(scene);
-    return view;
+    return scene;
   }
 
   private garrison(world: World, side: PlayerId, place: Place, city: City | undefined, mayAct: boolean): HTMLElement {

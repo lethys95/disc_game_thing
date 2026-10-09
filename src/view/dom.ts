@@ -60,6 +60,13 @@ export function skull(): HTMLElement {
   return icon;
 }
 
+const ROMAN = ["", "I", "II", "III", "IV", "V"] as const;
+
+/** A round or a tier as its numeral, the way the stone carries numbers. */
+export function roman(n: number): string {
+  return ROMAN[n] ?? String(n);
+}
+
 /** An amount of gold with a coin in front: currency people recognise at a glance. */
 export function gold(amount: number | string, className = ""): HTMLElement {
   const el = element("span", `gold ${className}`.trim());

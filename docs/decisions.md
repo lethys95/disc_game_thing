@@ -314,3 +314,11 @@ arches), and the unit card is a monument whose pedestal panel is narrower than t
 tiles whose rules wait under a held right-click (rule 7). Earlier art notes keep their weight; what was dropped is the
 overshoot (two darkening steps for one note).
 
+
+## The city painting is the window behind every tab; the rail follows its painting (2026-10-09, Claude)
+Under the control the user handed over. A city's screen is the battle's frame (the beam as its header, tablets for the
+panels) plus a rail down the right edge whose top is the column figure. The city painting now fills the window behind
+every tab, veiled behind the tablets, instead of being one tab's framed picture: the kit's "world in the window", the
+way the map's tablets hang over the map. The tier moved into the beam's medallion, the city's one number. The probes
+all painted the figure with folded hands and the niches lower than the greybox drew them; the pick was kept as
+painted and the stylesheet follows it, as with the battle's monument.

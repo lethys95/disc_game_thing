@@ -242,14 +242,12 @@ The paintings in step 3 show them, and the user overrules any that miss.
 ## What stays from today's kit
 - **Stays** as a stand-in until the painted pieces replace it:
   - the stone slab buttons
-  - the marble plaques
-  - the backdrop and plate
-  - the turn bar's end caps (they passed the user's test)
-  - the divider rod
-  - the iron medallion, as the round and turn medallions' first form
+  - the backdrop
   - the four tab emblems, as the niches' first objects
-- **Retires:** the angel corners and the tracery frame's corner angels. Their figures come back with jobs. The filigree
-  and tracery frames give way to the one frame family once it is painted.
+- **Retires:** the angel corners, the turn bar's end caps, the divider rod, the first marble plaque, the iron plate
+  and the iron medallion (gone with the battle, the map and the Capitol painted), and the tracery frame's corner
+  angels (still on the codex and the credits). Their figures come back with jobs. The filigree and tracery frames
+  give way to the painted pieces screen by screen.
 
 ## Decided (the user, 2026-10-09)
 "I've read the document. I'm not a designer, so I'll be relying on your judgment a lot." All eight accepted:
@@ -349,6 +347,25 @@ The rest of the map's chrome:
 - *The tablets:* the warband and the cities sit on blocks hung from the beam by chains. Their names are on plaques
   crossing their top edge, and the warband buttons are plaques that light.
 
-**Next:** the Capitol and the other screens the same way: a greybox from the existing pieces, then only what's new
-painted into it. After that, the other factions' skins.
+## The Capitol and the other full screens (2026-10-09, night)
+The Capitol, every city, a leader and a structure share one frame built from the battle's pieces: the beam is the
+header, with the name and the purse on marble plaques, and the panels are tablets (the log's block with its edges
+stretched and the recess's tone in the middle, so a wide tablet doesn't streak; the recess frame for the small rows).
+Their names sit on plaques across the top edge, and each screen scrolls as one, so the plaques aren't clipped.
+
+What a city adds was painted into those pieces:
+- **The rail.** A pillar runs down the right edge from the beam to the bottom. On its capital stands the column
+  figure, a hooded angel with her hands folded and candles at her feet; her wings and hood rise behind the beam, so
+  the beam rests on her. Below her, the tabs are four niches in two rows, each holding its tab's emblem, lit when
+  open. A tab the city lacks stays a dark niche. The facts are marble plaques on the pillar below.
+- **The tier** is the beam's medallion, the city's one number.
+- **The window.** The city painting fills everything left of the rail and under the beam, behind every tab, with no
+  frame of its own. Behind a tab's tablets it is veiled, so the tablets read first.
+
+The greybox asked for her arms raised under the beam. Every probe painted her with her hands folded instead, and
+with the niches lower than drawn. The stylesheet follows the painting: the niches' buttons sit where the painting put
+the niches.
+
+**Next:** the codex as a book (the layout change the user accepted), the battle's last flat glyphs, then the title,
+the new game and the menus. After that, the other factions' skins.
 

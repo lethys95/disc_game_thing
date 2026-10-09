@@ -75,8 +75,11 @@ interface Screen {
   readonly layers: Readonly<Record<Layer, string>>;
   /** The sculpted pieces, cut by segmentation from a crop around each (their zone included). */
   readonly sculpture: readonly { readonly name: string; readonly selector: string }[];
-  /** False where the structure is already painted (pieces of an earlier screen): only the sculpture is painted. */
-  readonly paintStructure: boolean;
+  /**
+   * The structure that is new on this screen and gets painted with its exact edges, as a page style like the layers;
+   * null where every structural piece is one an earlier screen painted (then only the sculpture is painted).
+   */
+  readonly paint: string | null;
 }
 
 const HIDE_STAGE = "#stage{visibility:hidden!important} html,body{background:transparent!important}";
@@ -92,12 +95,21 @@ const BATTLE_CHROME =
   `${BATTLE_HIDE} #battlehud *{color:transparent!important;text-shadow:none!important} ` +
   "#battlehud .art,#battlehud .fill,#battlehud .channel .shield,#battlehud .band,#battlehud .bead,#battlehud .cell,#battlehud .shield-seal,#card .abilities>*,#log>*,#battlehud .shape,#battlehud .seal,#battlehud .tier{visibility:hidden!important}";
 const BATTLE_SCULPTED = "#card .niche .figure,#card .niche .window,#card .niche .hands,#beamhang";
+const BATTLE_STRUCTURE = `${BATTLE_CHROME} ${BATTLE_SCULPTED}{visibility:hidden!important}`;
 
 // The map: its structure is the battle's pieces already; only the bell-bearer and the book are painted.
 const MAP_CHROME =
   `${HIDE_STAGE} #maphud *{color:transparent!important;text-shadow:none!important} ` +
   "#maphud .fill,#maphud .coin,#maphud .gem,#maphud .xp,#mapbanner,#forkprompt,#peek,#maphud .screen{visibility:hidden!important}";
 const MAP_SCULPTED = "#mapbottom .bearer,#mapmenu";
+
+// The Capitol: the beam is the battle's piece; the rail and the column figure on top of it are new. Its city painting
+// is the field, and the plaques and the tabs' objects are live content on top.
+const CAPITOL_ALONE = `${HIDE_STAGE} #maphud>*:not(#capitol){display:none!important}`;
+const CAPITOL_CHROME =
+  `${CAPITOL_ALONE} #capitol{background:none!important} #capitol *{color:transparent!important;text-shadow:none!important} #capitol .rail-tab{background:var(--gb-stone-lo)!important} ` +
+  "#capitol .city-scene,#capitol .rail-tab>*,#capitol .rail-facts,#capitol .capitol-header>*{visibility:hidden!important}";
+const CAPITOL_SCULPTED = "#capitol .tab-rail .column";
 
 const SCREENS: Readonly<Record<string, Screen>> = {
   battle: {
@@ -114,7 +126,7 @@ const SCREENS: Readonly<Record<string, Screen>> = {
     probes: ["reliquary", "contrast"],
     layers: {
       chrome: BATTLE_CHROME,
-      structure: `${BATTLE_CHROME} ${BATTLE_SCULPTED}{visibility:hidden!important}`,
+      structure: BATTLE_STRUCTURE,
       sculpture: `${BATTLE_CHROME} #battlehud *{visibility:hidden!important} ${BATTLE_SCULPTED.split(",").map((s) => `${s},${s} *`).join(",")}{visibility:visible!important}`,
       content:
         `${BATTLE_HIDE} #battlehud *:not(.art):not(.fill):not(.shield):not(.band):not(.bead):not(.cell):not(.shield-seal):not(.shape):not(.seal):not(.tier),#battlehud *::before,#battlehud *::after` +
@@ -129,7 +141,7 @@ const SCREENS: Readonly<Record<string, Screen>> = {
       { name: "figure", selector: "#card .niche" },
       { name: "objects", selector: "#beamhang" },
     ],
-    paintStructure: true,
+    paint: BATTLE_STRUCTURE,
   },
   map: {
     route: "/?map&seed=3",
@@ -154,7 +166,30 @@ const SCREENS: Readonly<Record<string, Screen>> = {
       { name: "bearer", selector: "#mapbottom .bearer" },
       { name: "book", selector: "#mapmenu" },
     ],
-    paintStructure: false,
+    paint: null,
+  },
+  capitol: {
+    route: "/?map&seed=3&capitol",
+    subject:
+      "The interface of a dark fantasy strategy game seen straight on, carved dark stonework around an empty middle: a carved stone band along the top edge with an arcade of small arches and a round iron medallion; " +
+      "along the right edge a tall pillar of the same dark stone runs from below the band down to the bottom edge, cut off by the right edge of the picture; " +
+      "its top is a hooded angel carved in the same dark stone, standing on the pillar's capital, her face in the shadow of her hood, her wings folded close, " +
+      "both arms raised, her hands and her head bearing the band above her like a caryatid, short arms; " +
+      "below her feet four small empty arched niches are cut into the pillar's face in two rows of two, dark inside; below them the pillar's face is plain dressed stone down to the bottom edge. No text, no letters, no numbers.",
+    round: 1,
+    probes: ["reliquary"],
+    layers: {
+      chrome: CAPITOL_CHROME,
+      structure: `${CAPITOL_CHROME} ${CAPITOL_SCULPTED}{visibility:hidden!important}`,
+      sculpture: `${CAPITOL_CHROME} #capitol *{visibility:hidden!important} #capitol .tab-rail{visibility:visible!important;background:none!important;box-shadow:none!important} ${CAPITOL_SCULPTED}{visibility:visible!important}`,
+      content:
+        `${CAPITOL_ALONE} #capitol,#capitol .capitol-header,#capitol .tab-rail,#capitol .rail-tab,${CAPITOL_SCULPTED}{background:transparent!important;box-shadow:none!important;filter:none!important} #capitol .city-scene{visibility:hidden!important}`,
+      field: `${CAPITOL_ALONE} #capitol .capitol-header,#capitol .city-layout{visibility:hidden!important}`,
+      front: `${CAPITOL_ALONE} #capitol,#capitol *{visibility:hidden!important}`,
+    },
+    sculpture: [{ name: "column", selector: CAPITOL_SCULPTED }],
+    // The rail is new: its pillar and its niches, without what sits on it (the figure, the tabs' objects, the plaques).
+    paint: `${CAPITOL_CHROME} #capitol *{visibility:hidden!important} #capitol .tab-rail,#capitol .rail-tab{visibility:visible!important}`,
   },
 };
 
@@ -239,7 +274,8 @@ async function render(name: string, screen: Screen, dir: string, width = WIDTH, 
   await page.waitForSelector("body[data-ready=true]", { timeout: 20000 });
   await page.waitForTimeout(600);
   await page.screenshot({ path: `${dir}/greybox.png` });
-  for (const [layer, css] of Object.entries(screen.layers)) {
+  const shots: [string, string][] = [...Object.entries(screen.layers), ...(screen.paint ? [["paint", screen.paint] as [string, string]] : [])];
+  for (const [layer, css] of shots) {
     const style = await page.addStyleTag({ content: css });
     await page.waitForTimeout(100);
     await page.screenshot({ path: `${dir}/${layer}-layer.png`, omitBackground: layer !== "field" });
@@ -259,11 +295,13 @@ async function render(name: string, screen: Screen, dir: string, width = WIDTH, 
   await server.close();
   // The source: the stone and iron on a plain dark ground.
   magick(`${dir}/chrome-layer.png`, "-background", GROUND, "-flatten", `${dir}/chrome.png`);
-  // The structure keeps its edges; the sculpture gets its zone; the paint mask is both.
+  // The structure keeps its edges; the sculpture gets its zone; the paint mask is the new structure and the zone.
   magick(`${dir}/structure-layer.png`, "-alpha", "extract", "-threshold", "35%", "-morphology", "Dilate", "Disk:2", `${dir}/structure-mask.png`);
   magick(`${dir}/sculpture-layer.png`, "-alpha", "extract", "-threshold", "35%", "-morphology", "Dilate", `Disk:${zone}`, `${dir}/zone-mask.png`);
-  if (screen.paintStructure) magick(`${dir}/structure-mask.png`, `${dir}/zone-mask.png`, "-compose", "Lighten", "-composite", `${dir}/mask.png`);
-  else magick(`${dir}/zone-mask.png`, `${dir}/mask.png`);
+  if (screen.paint) {
+    magick(`${dir}/paint-layer.png`, "-alpha", "extract", "-threshold", "35%", "-morphology", "Dilate", "Disk:2", `${dir}/paint-mask.png`);
+    magick(`${dir}/paint-mask.png`, `${dir}/zone-mask.png`, "-compose", "Lighten", "-composite", `${dir}/mask.png`);
+  } else magick(`${dir}/zone-mask.png`, `${dir}/mask.png`);
   // In front of the portrait, a little wider so the painted rim covers the portrait's edge.
   magick(`${dir}/front-layer.png`, "-alpha", "extract", "-threshold", "35%", "-morphology", "Dilate", "Disk:3", `${dir}/front-mask.png`);
   console.log(`${name}: layers in ${dir}`);
@@ -441,6 +479,10 @@ interface Piece {
 }
 
 const PIECES_OF: Readonly<Record<string, readonly Piece[]>> = {
+  // The Capitol's rail as painted, from the beam's underside to the bottom edge: the angel standing on its capital, her
+  // wings and hood rising behind the beam, the four niches below her (the painting set them lower than the greybox; the
+  // stylesheet follows the painting).
+  capitol: [{ name: "rail", from: "reliquary-85-1.png", rect: [2214, 102, 346, 1338], cut: "rect" }],
   // The map's two painted sculptures, cut from their zones in the 1440p pick (the rest of the map is battle pieces).
   map: [
     { name: "bearer", from: "reliquary-75-2.png", rect: [1090, 1149, 380, 291], cut: "segment", bright: true },

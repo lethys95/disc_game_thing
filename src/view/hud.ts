@@ -10,7 +10,7 @@ import { UNITS } from "#rules/units/index";
 import { art } from "#view/art";
 import { miniStack, TarotFan } from "#view/tarot-hand";
 import type { CardCue, FanCard } from "#view/tarot-hand";
-import { byId, element, skull } from "#view/dom";
+import { byId, element, roman, skull } from "#view/dom";
 import { explain, explainWith } from "#view/explain";
 import { sees } from "#view/secrecy";
 import type { Settings } from "#view/settings";
@@ -65,7 +65,6 @@ export interface BannerButton {
 }
 
 const ROW_NAMES = ["front", "middle", "back"] as const;
-const ROMAN = ["", "I", "II", "III", "IV", "V"] as const;
 /** How many faces the beam's turn order shows: the medallion and the eleven arches right of it. */
 const TURN_SLOTS = 12;
 const COL_NAMES = ["left", "centre", "right"] as const;
@@ -241,7 +240,7 @@ export class Hud {
     if (key === this.turnsKey) return;
     this.turnsKey = key;
     this.turns.replaceChildren();
-    this.turns.appendChild(explain(element("div", "round", ROMAN[battle.round] ?? String(battle.round)), `Round ${battle.round}`, "The acting unit's face is in the medallion; the next ones follow in the arches to its right."));
+    this.turns.appendChild(explain(element("div", "round", roman(battle.round)), `Round ${battle.round}`, "The acting unit's face is in the medallion; the next ones follow in the arches to its right."));
     upcoming.forEach((unit, index) => {
       const niche = element("div", `niche side${unit.side}${index === 0 ? " now" : ""}`);
       niche.style.setProperty("--arch", String(index - 1));
@@ -271,7 +270,7 @@ export class Hud {
     const tier = def?.tier ?? 1;
     const plate = element("div", `plate side${unit.side}`);
     if (unit.leader) plate.appendChild(element("span", "crown", "♛"));
-    plate.append(element("span", "tier", ROMAN[tier] ?? String(tier)), element("span", "name", unit.name));
+    plate.append(element("span", "tier", roman(tier)), element("span", "name", unit.name));
     this.card.appendChild(explain(plate, unitLabel(unit, playerSide), `Tier ${tier}${unit.leader ? ", leading its warband" : ""}. Stands ${place(unit)}.`));
 
     // Everything with words sits in the stele's recessed panel, so the carving around it never runs behind text.
