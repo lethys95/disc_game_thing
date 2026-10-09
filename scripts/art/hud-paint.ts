@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { resolve } from "node:path";
 import { chromium } from "playwright";
@@ -120,18 +120,35 @@ const isBox = (value: unknown): value is Box =>
 
 const magick = (...args: string[]) => execFileSync("magick", args, { stdio: "inherit" });
 
-/** One Photon CLI call (`photon-edit` skill), its JSON reply when it succeeded. */
+/** One Photon CLI call (`photon-edit` skill), its JSON reply when it succeeded; a failed one throws Photon's reply. */
 function photon(args: readonly string[]): Record<string, unknown> {
-  const reply: unknown = JSON.parse(execFileSync(PHOTON, [...args], { encoding: "utf8" }));
+  let out = "";
+  try {
+    out = execFileSync(PHOTON, [...args], { encoding: "utf8" });
+  } catch (error) {
+    out = isRecord(error) && typeof error["stdout"] === "string" ? error["stdout"] : "";
+  }
+  const reply: unknown = out.trim().startsWith("{") ? JSON.parse(out) : out;
   if (!isRecord(reply) || reply["ok"] !== true) throw new Error(`photon ${args.slice(0, 2).join(" ")}: ${JSON.stringify(reply)}`);
   return reply;
+}
+
+/** Photon finishes writing a saved file after its reply: wait until the PNG is whole (it ends in its IEND chunk). */
+async function whole(path: string): Promise<void> {
+  for (let tries = 0; tries < 200; tries++) {
+    const bytes = await readFile(path).catch(() => null);
+    if (bytes && bytes.length > 12 && bytes.subarray(bytes.length - 8, bytes.length - 4).toString("latin1") === "IEND") return;
+    await new Promise((done) => setTimeout(done, 100));
+  }
+  throw new Error(`photon never finished writing ${path}`);
 }
 
 /**
  * The subject of `source` (a PNG), cut along its painted outline by Photon's local segmentation model (Layer ▸ Remove
  * Background), into `target` with alpha. Headless, and the document is closed without saving.
  */
-function cutSubject(source: string, target: string): void {
+async function cutSubject(source: string, target: string): Promise<void> {
+  await rm(target, { force: true });
   const opened = photon(["execute", "session.open", "--params", JSON.stringify({ path: resolve(source), mode: "headless" })]);
   const result = opened["result"];
   if (!isRecord(result)) throw new Error("photon session.open: no document");
@@ -147,10 +164,15 @@ function cutSubject(source: string, target: string): void {
     const first: unknown = Array.isArray(layers) ? layers[0] : undefined;
     if (!isRecord(first) || typeof first["id"] !== "string") throw new Error("photon inspect: no layer");
     edit("layer.removeBackground", { layerId: first["id"] });
-    edit("document.save", { path: resolve(target), format: "png", asCopy: true });
+    // Photon's PNG writer can corrupt its deflate stream at higher levels ("invalid distance too far back", seen at 6
+    // and 9 on 2026-10-09); level 1 decodes.
+    edit("document.save", { path: resolve(target), format: "png", asCopy: true, options: { level: 1 } });
   } finally {
     edit("session.close", { disposition: "discard" });
   }
+  await whole(target);
+  // Fully decoded, not just its header read: a broken stream fails here, not in a composite later.
+  execFileSync("magick", [target, "null:"], { stdio: "inherit" });
 }
 
 async function render(name: string, screen: Screen, dir: string): Promise<void> {
@@ -222,14 +244,24 @@ async function composite(name: string, dir: string): Promise<void> {
   const read: unknown = JSON.parse(await readFile(`${dir}/pieces.json`, "utf8"));
   const pieces = Array.isArray(read) ? read.filter(isBox) : [];
   const done = await paintings(dir);
+  // Where segmentation finds no subject, the piece is cut by its greybox shape instead, and the page says so.
+  magick(`${dir}/sculpture-layer.png`, "-alpha", "extract", "-threshold", "35%", "-morphology", "Dilate", "Disk:2", `${dir}/sculpture-mask.png`);
+  const byShape: string[] = [];
   for (const { file } of done) {
     const stem = file.replace(/\.png$/, "");
     const cuts: string[] = [];
     for (const piece of pieces) {
       const crop = `${dir}/cut/${stem}-${piece.name}-crop.png`;
       const cut = `${dir}/cut/${stem}-${piece.name}.png`;
-      magick(`${dir}/${file}`, "-crop", `${piece.width}x${piece.height}+${piece.x}+${piece.y}`, "+repage", crop);
-      cutSubject(crop, cut);
+      const area = `${piece.width}x${piece.height}+${piece.x}+${piece.y}`;
+      magick(`${dir}/${file}`, "-crop", area, "+repage", crop);
+      try {
+        await cutSubject(crop, cut);
+      } catch (error) {
+        if (!String(error).includes("SUBJECT_NOT_FOUND")) throw error;
+        magick(crop, "(", `${dir}/sculpture-mask.png`, "-crop", area, "+repage", ")", "-alpha", "off", "-compose", "CopyOpacity", "-composite", cut);
+        byShape.push(`${stem}-${piece.name}`);
+      }
       cuts.push(cut, "-geometry", `+${piece.x}+${piece.y}`, "-compose", "Over", "-composite");
     }
     magick(
@@ -243,18 +275,21 @@ async function composite(name: string, dir: string): Promise<void> {
       `${dir}/preview/${file}`,
     );
   }
-  console.log(`${name}: ${done.length} previews in ${dir}/preview`);
+  await writeFile(`${dir}/cut-by-shape.json`, JSON.stringify(byShape, null, 2));
+  console.log(`${name}: ${done.length} previews in ${dir}/preview${byShape.length > 0 ? `; cut by shape: ${byShape.join(", ")}` : ""}`);
 }
 
 /** The review page (`shots/hud-paint-<screen>.html`): per probe its full prompt as sent, then its previews by strength. */
 async function page(name: string, dir: string): Promise<void> {
   const manifest = await paintings(dir);
+  const read: unknown = JSON.parse(await readFile(`${dir}/cut-by-shape.json`, "utf8").catch(() => "[]"));
+  const byShape = new Set(Array.isArray(read) ? read.filter((x): x is string => typeof x === "string") : []);
   const escape = (text: string) => text.replaceAll("&", "&amp;").replaceAll("<", "&lt;");
   const sections = PROBES.filter((p) => manifest.some((m) => m.id.startsWith(`${p.id}-`))).map((probe) => {
     const rows = STRENGTHS.map((denoise) => {
       const id = `${probe.id}-${Math.round(denoise * 100)}`;
       const shots = manifest.filter((m) => m.id === id).sort((a, b) => a.seed - b.seed);
-      const cells = shots.map((m) => `<figure><a href="/${dir}/${m.file}" target="_blank"><img loading="lazy" src="/${dir}/preview/${m.file}"></a><figcaption>${m.file}: <a href="/${dir}/${m.file}" target="_blank">the painting</a> · <a href="/${dir}/cut/${m.file.replace(/\.png$/, "")}-figure.png" target="_blank">the figure as Photon cut it</a></figcaption></figure>`).join("");
+      const cells = shots.map((m) => `<figure><a href="/${dir}/${m.file}" target="_blank"><img loading="lazy" src="/${dir}/preview/${m.file}"></a><figcaption>${m.file}: <a href="/${dir}/${m.file}" target="_blank">the painting</a> · <a href="/${dir}/cut/${m.file.replace(/\.png$/, "")}-figure.png" target="_blank">the figure as Photon cut it</a>${["figure", "objects"].filter((p) => byShape.has(`${m.file.replace(/\.png$/, "")}-${p}`)).map((p) => ` · Photon found no ${p === "figure" ? "figure" : "hanging objects"} here, cut by the greybox shape`).join("")}</figcaption></figure>`).join("");
       return `<h3>Strength ${denoise}</h3><div class="row">${cells}</div>`;
     }).join("");
     const prompt = manifest.find((m) => m.id.startsWith(`${probe.id}-`))?.prompt ?? "";

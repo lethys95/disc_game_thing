@@ -79,3 +79,10 @@
   frame, wings whole and overhanging the stele; the plate in the stone below; text in recessed dark panels; no ridge;
   Resolve now and Auto-battle as a hanging hourglass and puppeteer's cross; smaller targeting grids; steles inset from
   the screen's edges. Round 2 compares two darker, candlelit lights. A first round-2 run with the old mask was stopped.
+- **Round 2 (2026-10-09):** `shots/hud-paint-battle-2.html`, 16 paintings, the sculpture cut by Photon. The user's
+  round-1 notes land: she holds the portrait, wings whole, dim and matte, a candle in the beam's arcade, hourglass and
+  puppeteer's cross, the log whole, no ridge. 0.7 keeps the frame on the portrait; 0.8 drifts. Claude's pick: darker
+  70-3 (candlelit 70-3 the alternative). Left to fix by inpainting (the user: "Idk if there's the option of
+  inpainting to fix things too"): fake sockets on the sill, the lost round medallion, the weak cross, the hood clipped
+  where the zone ended, the plate's alignment; the instruments' shapes become their own crisp pieces, out of the
+  painting. Photon's PNG export corrupts some files at higher compression levels; the pipeline saves at level 1.
