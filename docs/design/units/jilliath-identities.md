@@ -250,3 +250,10 @@ Quoted whole (the user, after `shots/jilliath-remaining.html`). "Keep the gothic
   edges covered in abstract symbols, gauntlets and boots gradient into heated metal."
 - **Fanatic:** deferred again.
 - "Next time we look at these, you'll give me the full unsimplified prompt of each, please."
+
+### Silhouettes of the picked concepts (2026-10-09, Claude; `shots/jilliath-silhouettes.png`)
+The front views as flat black shapes. In the T-pose every figure shares the spread arms, so what separates them is the
+head and shoulder line: the Punisher's pointed hood, the Pontiff's candle crown, the Immortal's halo, the Doomsayer's
+yoke, the Acolyte's lantern, the Godkin's bare body, the Reclaimer's thin legs. The Seraph and the Shepherd share an
+outline (hooded head, folded wings, long gown); the Templar and the Zealot are close. The user: "I don't think these
+models will be as small as you think they will", so detail inside the outline will carry too.
