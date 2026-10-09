@@ -371,3 +371,8 @@ eyes, glass tears, estofado gilding, flaking painted wood), as a Byzantine court
 around the torso, red shoes, a hair band, no crown), as Our Lady of Sorrows (swords in the heart), with a Sevillian
 rostrillo framing the face; the Guardian with Strazza's Veiled Virgin veil, as a weathered cemetery angel (Story's Angel
 of Grief), or in Avacyn's actual armour; the Torturer's head as Pinhead's grid without pins, or an iron maiden's face.
+- **The user on the references (2026-10-09):** "Idk what to do with this reference material. Also we're not taking
+  pinhead's grid either, you're taking my reference ideas too literally. Anyway, lets try to get cards/portaits for what
+  we DO have now for Jilliath, so we can fill out the codex with what we have. I'll defer the remainder until I have a
+  better overview over reference material and designs." Deferred: Guardian, Empyreal, Torturer, Archon, Cleric, Fanatic,
+  the fire casters.
