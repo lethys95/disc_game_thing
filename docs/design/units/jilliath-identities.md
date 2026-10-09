@@ -299,3 +299,9 @@ texture in 3D).
 - **Empyreal** (round eight): "misses the skin effect we wanted entirely. I'd say the golden back halo plate thing works
   pretty well in this case. Red wings work as well, though i'd like the third pair. Robes are very very generic and we
   need to think about how we turn it more interesting."
+- **The user, while round ten ran (2026-10-09):** "we need to get away from 'robes' for empyreal entirely. Now she'll
+  just come with a different set of materials but the same generic shape. We're not getting closer with it. It's the
+  same story as paragon. We need a different outfit and to think outside the box. We have enough generic angel robes.
+  […]" And: "now you're going to make chosen into a tiny thin guy. Sigh. Moderation. His shape was fine in the
+  iteration before the last. Round 8 was fine, we just needed it to be less like a regular piece of armor at eigth
+  round chosen-juggernaut-turnaround-1000." Round ten's `empyreal-flaking` and `chosen-battered` are off-direction.

@@ -679,6 +679,23 @@ const ANGELS: Readonly<Record<string, { readonly subject: string; readonly pose?
     pose: "all standing in the same T-pose, her six wings open behind her in three pairs, one pair above another, clear of her arms",
     materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: pale cracked oil paint, bare canvas weave, tooled gold leaf, gold brocade, blood-red feathers. Serious, adult, not cartoonish.",
   },
+  // Round eleven (the user: "get away from 'robes' for empyreal entirely […] think outside the box"). The skin, glare,
+  // gold disc and six red wings stay; three outfits that aren't cloth, all from the icon painting she stepped out of.
+  "empyreal-frame": {
+    subject: "An angel of vengeance, an old icon painting come alive. Her skin is pale ivory oil paint covered in the fine craquelure of an old painting, flaking away in places to show the bare canvas weave beneath. Her eyes glow bright orange in a fixed, intense glare staring straight ahead. Six blood-red wings, three pairs. Behind her head stands a large flat disc of tooled gold leaf. She wears the broken pieces of her own ornate gilded picture frame: carved gold frame pieces fitted around her as a corset and shoulder pieces, a broken arch of frame rising over her shoulders, painted skin between them. No robes, no cloth.",
+    pose: "all standing in the same T-pose, her six wings open behind her in three pairs, one pair above another, clear of her arms",
+    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: pale cracked oil paint, bare canvas weave, carved and gilded wood, tooled gold leaf, blood-red feathers. Serious, adult, not cartoonish.",
+  },
+  "empyreal-mosaic": {
+    subject: "An angel of vengeance, an old icon painting come alive. Her skin is pale ivory oil paint covered in the fine craquelure of an old painting, flaking away in places to show the bare canvas weave beneath. Her eyes glow bright orange in a fixed, intense glare staring straight ahead. Six blood-red wings, three pairs. Behind her head stands a large flat disc of tooled gold leaf. From the neck down her body is covered in a close-fitting skin of Byzantine mosaic: tiny tiles of gold and blood-red glass, set close together. No robes, no cloth.",
+    pose: "all standing in the same T-pose, her six wings open behind her in three pairs, one pair above another, clear of her arms",
+    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: pale cracked oil paint, gold and blood-red glass mosaic tiles, tooled gold leaf, blood-red feathers. Serious, adult, not cartoonish.",
+  },
+  "empyreal-canvas": {
+    subject: "An angel of vengeance, an old icon painting come alive. Her skin is pale ivory oil paint covered in the fine craquelure of an old painting, flaking away in places to show the bare canvas weave beneath. Her eyes glow bright orange in a fixed, intense glare staring straight ahead. Six blood-red wings, three pairs. Behind her head stands a large flat disc of tooled gold leaf. Strips of her own painted canvas, torn from the painting, are wound tightly around her body and limbs, their frayed ends trailing. No robes.",
+    pose: "all standing in the same T-pose, her six wings open behind her in three pairs, one pair above another, clear of her arms",
+    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: pale cracked oil paint, torn painted canvas, frayed threads, tooled gold leaf, blood-red feathers. Serious, adult, not cartoonish.",
+  },
 };
 
 const ANGEL_JOBS = Object.entries(ANGELS).map(([id, { subject, pose, materials }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are empty and open.`, materials ?? ANGEL_3D, pose ?? WINGED_T_POSE) }));
@@ -858,6 +875,12 @@ const MELEE: Readonly<Record<string, { readonly subject: string; readonly pose?:
     subject: "A vengeance angel, the faceless champion ascended: his smooth rounded shell head and thick shell plates cracked open, fire burning inside every crack, his gauntlets and boots glowing with heat. From his back spread three pairs of enormous red wings, far larger than his body, made of long loose feathers that come apart into streaks, embers and smoke, feathers breaking off and drifting away, translucent and glowing.",
     pose: "all standing in the same T-pose, his enormous wings spread wide behind him and clear of his arms",
     materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: blackened and bone-white shell plates, fire, glowing heated metal, red feathers dissolving into smoke and embers. Serious, adult, not cartoonish.",
+  },
+  // Round eleven: round eight's juggernaut (the user: "His shape was fine […] we just needed it to be less like a
+  // regular piece of armor"), with round nine's faceless head, one continuous shell, no cape.
+  "chosen-shell": {
+    subject: "An inhuman juggernaut in a man's shape, a brutish champion of a militant faith, massive and heavy, completely covered in one continuous shell of smooth fused plates, none of the seams or straps of a knight's suit, no skin showing. His head is a smooth rounded shell with no face, no visor and no eye slits. No cape.",
+    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: blackened shell plates, bone-white enamel, heat-scorched metal. Serious, adult, not cartoonish.",
   },
 };
 
