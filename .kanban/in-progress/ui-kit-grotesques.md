@@ -99,3 +99,8 @@
   you need, at most until 2am on this machine (as that is when the reset happens). I'll be going to bed anyway."
   Claude works the battle screen through on its own tonight: pick, 1440p repaint, inpainted fixes, the pieces cut
   and installed in the game, verified; the write-up for the morning in `docs/status.md` and on this story.
+- **Steps 3 and 4 for the battle, done (2026-10-09, night; Claude in control):** round 3 (round 1's light; the angel on
+  the stele's top) gave the pick, reliquary 75-3; repainted at 1440p, the sill's grille removed by inpainting, the
+  log's stele grafted from seed 1, the pieces cut (Photon) into `assets/ui/battle/` and installed where they were
+  painted. Verified (types, tests, playtests; 720p, 1080p, 1440p). Write-up for the user: `shots/hud-battle.html`.
+  Next: the map and the Capitol the same way.

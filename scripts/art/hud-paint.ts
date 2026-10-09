@@ -410,8 +410,6 @@ const PIECES_OF: Readonly<Record<string, readonly Piece[]>> = {
     // The monument's recessed panel with its carved border: the frame every socket and panel of the battle shares.
     { name: "recess", from: "reliquary-75-3.png", rect: [140, 782, 283, 433], cut: "rect" },
     { name: "log", from: "graft-log.png", rect: [0, 0, 336, 352], cut: "segment", bright: true },
-    // One period of the beam's arcade and a stretch of the sill, for screens wider than the painting.
-    { name: "beam-tile", from: "reliquary-75-3.png", rect: [1925, 0, 80, 102], cut: "rect" },
   ],
 };
 

@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-09 (the battle's HUD in greybox, step 2)
+**Updated:** 2026-10-09, night (the battle's HUD painted and installed)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): the alpha is the three playable factions (Jilliath,
@@ -32,13 +32,12 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
   made knights of every melee unit), "inhuman" over "woman", name cloth textures; review pages show full prompts.
 - **Armor is a percentage with diminishing returns** (the user; #75, `testing/percent-armor`): armor ÷ (armor + 60),
   shown as a percent on the cards and in the codex.
-- **The HUD kit's second batch** (`in-progress/ui-kit-grotesques`, `shots/hud-kit.html`): a stone angel whose wings
-  are the side panels' frame, tracery with angel corners, end caps, a divider. The user: the angels still feel "bolted
-  on", and the kit needs more distinct elements, fewer copies. Researched (`design/hud-references.md`,
-  `reference_material/`), inventoried (`reference_material/ui-inventory.md`), the system written and accepted
-  (`design/hud-kit.md`; faction motifs provisional #76), and the battle built in greybox (`shots/greybox.html`): beam,
-  sill, card and log steles, sockets with hanging tags, dark sockets, ground brackets, red health. Next: step 3, the
-  battle painted as one picture in style probes.
+- **The HUD kit: the battle screen is painted and in the game** (`in-progress/ui-kit-grotesques`; the morning
+  write-up `shots/hud-battle.html`). After the angels felt "bolted on": research (`design/hud-references.md`), an
+  inventory, the system (`design/hud-kit.md`, accepted; motifs provisional #76), a greybox, then the battle painted as
+  one picture in three rounds of probes and cut into pieces (`assets/ui/battle/`, `scripts/art/hud-paint.ts`). The
+  turn order lives in the beam's arcade; the card is a monument (the angel holds the portrait); rules and words wait
+  under a held right-click. The user handed control to Claude ("I'm giving you control").
 - **The Grove's Water is now Wellspring.**
 - **Unreal 5 as a parallel track** (the user: "UE is the king of 3d"; `ongoing/unreal-port`), in its own repo,
   `../disc_unreal`. three.js keeps the pace; Unreal follows as a view, with this repo's TypeScript rules as the only
@@ -46,6 +45,8 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
   the `?fight` arena in Unreal looks nearly the same as three.js with today's assets (`disc_unreal/shots/`).
 
 ## Next
+0. **The HUD kit goes on** (Claude's): the map and the Capitol get their greyboxes and paintings the same way, matching
+   the battle's pick; the battle's last flat glyphs become painted pieces.
 1. **Finish Jilliath's concepts** with the user (the open nine), then portraits from the picks.
 2. **The other factions' missing units** (the alpha needs all three): Nexus melee tier 3, the Grove's mage line, and
    the rest on the board; then their concept art the same way.

@@ -305,3 +305,12 @@ that you can hold right click for an explanation when hovering over them". The s
 arbitrary"). So the interface shows shapes, marks and numbers, and anything that explains itself does so in the peek
 while right-click is held (`view/explain.ts`), the way groups on the map already did. A rule of the HUD kit (rule 7).
 
+## The battle's interface is one painting, cut up; Claude in control (2026-10-09)
+The user after the second round of HUD paint probes: "I take everything I said back. You did the studies, and I should
+just trust you. I'm giving you control", then "keep going for as long as you need". Claude picked the painting
+(reliquary 75-3 of round 3) and installed it as pieces placed where they were painted. Two layout consequences, both
+from the painting: the turn order lives in the beam's arcade (the acting unit in the medallion, the next in the
+arches), and the unit card is a monument whose pedestal panel is narrower than the old card, so the abilities became
+tiles whose rules wait under a held right-click (rule 7). Earlier art notes keep their weight; what was dropped is the
+overshoot (two darkening steps for one note).
+

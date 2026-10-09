@@ -281,5 +281,61 @@ the joint of portrait and plate, a crown for a leader) and the words moved under
 instruments lost their captions for the same reason (rule 7). Every battle element that had a browser tooltip now
 explains itself on a held right-click instead (the peek, now available on every screen).
 
-Next: step 3 for the battle, the screen painted as one picture over this greybox in a few style probes (Jilliath's
-skin), for the user to pick. Then the map and the Capitol greyboxes.
+## Steps 3 and 4: the battle painted and cut (2026-10-09)
+**How a screen gets painted** (`scripts/art/hud-paint.ts`; modes `render`, `paint`, `composite`, `hires`, `fix`,
+`graft`, `pieces`):
+1. **Render** the greybox in layers: its stone and iron alone, the structure and the sculpture apart, the live
+   content, the field.
+2. **Paint** through a mask with Krea (masked image-to-image). The structure keeps its exact edges; the sculpture gets
+   room around it to finish its own outline. Rendering the source darker overshot the light (round 2), so the source
+   keeps the greybox's values.
+3. **Composite** every probe into the real screen for judging. Photon's subject segmentation cuts the sculpture along
+   what was painted.
+4. **Hires:** repaint the pick at 1440p from its own upscale at a low strength. Detail is added and the composition
+   stays.
+5. **Fix:** repair single spots by inpainting just that spot.
+6. **Graft:** where a repair won't take, take the piece from a sibling seed of the same probe (same prompt and light),
+   upscaled and lightly repainted.
+7. **Pieces:** cut the game's pieces into `assets/ui/<screen>/`, each placed in CSS where it was painted (28.8 of the
+   painting's pixels are 1rem; across the screen, a position is a share of the 16:9 painting's width).
+
+**Three rounds of probes** (`shots/hud-paint-battle-1.html`, `-2`, `-3`):
+- *Round 1* compared materials. Reliquary won (85-3's light, which the user named). The user's notes: the angel
+  should hold the portrait, not the name plate; the wings were cut off; the log was cut off; the spiky ridge was noise;
+  the two signs were the weakest part; the light needed contrast.
+- *Round 2* went too dark ("an overreaction […] now its just dark grey") and showed cuts: two darkening steps had been
+  stacked for one note. The cuts came from the card's greybox rectangle still standing behind the angel, where the
+  painting put shadow. The user then handed control to Claude ("I'm giving you control").
+- *Round 3* went back to round 1's light and source values. The angel stands on the stele's top with nothing behind
+  her, and the small glyphs stay out of the painting.
+
+**The pick is reliquary 75-3.**
+- A hooded angel stands on a stone stele, holding a gilded arched frame at her chest, with a marble plate below her.
+- The pedestal's recessed panel holds the text, with candles at its foot.
+- An arcade beam carries a medallion and a candle.
+- The sill has a red glass seam.
+- An iron hourglass and a marionette hang on chains.
+
+It was repainted at 1440p, the sill's painted grille was removed by inpainting, and the log's stele was grafted from
+seed 1.
+
+**In the game:**
+- *Turn order:* the beam itself. The acting unit's face is in the medallion, the next ones stand in the arcade's
+  arches, and the round's numeral sits in the arch before the medallion.
+- *Card:* the monument. The angel holds the portrait in her frame (it shows through the painting's opening). The plate
+  names the unit, with the tier and the side's enamel line. The pedestal's panel holds the instruments and the
+  abilities as tiles, whose rules wait under a held right-click.
+- *Sockets:* each socket is the pedestal's recess frame, nine-sliced.
+- *Log:* the grafted block, nine-sliced to a line's width.
+- *Resolve now and Auto-battle:* the hanging hourglass and marionette.
+
+**Left for the battle:**
+- The instruments' shapes, the tier numeral and the health seal are still flat glyphs. They become small painted
+  pieces.
+- Placeholder faces show where units have no icon art yet.
+- The field's brackets and health channels keep their greybox values.
+- The log's unrolled scroll is the stretched block around parchment.
+
+**Next:** the map and the Capitol, the same way. Each gets its own greybox (step 2), then its painting with the
+battle's pick as the light and material to match.
+
