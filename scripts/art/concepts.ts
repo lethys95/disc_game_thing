@@ -657,6 +657,10 @@ const ANGELS: Readonly<Record<string, { readonly subject: string; readonly pose?
     pose: "all standing in the same T-pose, her three pairs of wings open behind her and clear of her arms",
     materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: old cracked oil paint and yellowed varnish, tooled gold leaf, red and white painted cloth, blood-red feathers. Serious, adult, not cartoonish.",
   },
+  // Round nine: round eight's Guardian ignored the cracks; they lead now.
+  "guardian-cracks": {
+    subject: "An angel woman whose skin is cracked white porcelain: a web of cracks runs over her face, neck, chest and arms, and brilliant white light shines out through every crack. Long, smooth, silky white hair. An ancient chestplate from a forgotten age: smooth, pale and abstract, flowing alien curves with no ornament and no rivets. A long black robe below it. Her two wings are made of brilliant glowing white light, neon bright.",
+  },
 };
 
 const ANGEL_JOBS = Object.entries(ANGELS).map(([id, { subject, pose, materials }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are empty and open.`, materials ?? ANGEL_3D, pose ?? WINGED_T_POSE) }));
@@ -798,6 +802,21 @@ const MELEE: Readonly<Record<string, { readonly subject: string; readonly pose?:
     subject: "A vengeance angel, a man in hooded white and red angelic armour, its rims and edges glowing and covered in abstract symbols; his gauntlets and boots fade into glowing heated metal. Three pairs of wings layered one behind another, translucent and illusory, their feathers ending in flames.",
     pose: "all standing in the same T-pose, his three pairs of wings open behind him and clear of his arms",
     materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: white enamel, red cloth, tarnished gold, glowing heated metal, translucent light. Serious, adult, not cartoonish.",
+  },
+  // Round nine: each leads with what round eight dropped (the Chosen's inhuman head, the Torturer's mask of anguish,
+  // the Avatar's flames and heated gauntlets); "armour" is kept out of the Torturer's words.
+  "chosen-faceless": {
+    subject: "An inhuman juggernaut in a man's shape: no face, his head a smooth rounded shell with no visor and no eye slits, fused to a massive body of thick form-fitting shell plates that follow his muscles, brutish and heavy. A red and white cape.",
+    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: blackened shell plates, bone-white enamel, red and white cloth, heat-scorched metal. Serious, adult, not cartoonish.",
+  },
+  "torturer-anguish": {
+    subject: "A torturer whose face is an iron mask of anguish: a sculpted iron face frozen in a scream, its eyes and mouth stretched wide open, bolted onto his head. His body is an inhuman, grotesque husk of cold grey metal, metal skin and no flesh anywhere, riddled with cone-shaped iron spikes. Evil gauntlets hung with chains. No helmet, no knight. Disastrous, wrong.",
+    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: cold grey iron, rust, blackened chains, old dried blood. Serious, adult, not cartoonish.",
+  },
+  "avatar-flames": {
+    subject: "A vengeance angel, a man in hooded white and red angelic armour, its rims and edges glowing and covered in abstract symbols. His gauntlets and boots glow orange-red with heat, fading from heated metal at the fingers and toes into white armour. Three pairs of translucent, illusory wings layered one behind another, every feather ending in a lick of orange flame.",
+    pose: "all standing in the same T-pose, his three pairs of wings open behind him and clear of his arms",
+    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: white enamel, red cloth, tarnished gold, glowing heated metal, translucent light, flame. Serious, adult, not cartoonish.",
   },
 };
 
