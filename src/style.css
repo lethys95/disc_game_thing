@@ -794,11 +794,19 @@ body.formulas .formula { display: inline; }
 /* A rod between the instruments and the abilities, with a boss at its middle. */
 #card .abilities { position: relative; flex: 1; min-height: 0; overflow-y: auto; list-style: none; margin: 0; padding: 0.7rem 0 0; border-top: 0.2rem solid var(--gb-iron); }
 #card .abilities::before { content: ""; position: absolute; left: 50%; top: -0.55rem; width: 0.9rem; height: 0.9rem; margin-left: -0.45rem; transform: rotate(45deg); background: var(--gb-iron); }
-#card .abilities li { padding: 0.3rem 0; border-bottom: 1px solid var(--gb-stone-lo); }
-#card .abilities .name { font: 700 0.9375rem var(--display); }
-#card .abilities .passive .name { color: #b9a98c; }
-#card .abilities .charges { color: var(--muted); font-size: 0.6875rem; }
-#card .abilities .text { color: var(--muted); font-size: 0.7rem; }
+#card .abilities .tile { position: relative; display: flex; align-items: center; gap: 0.45rem; padding: 0.18rem 0; cursor: help; }
+#card .abilities .tile .art.tile-icon { flex: none; width: 1.9rem; height: 1.9rem; margin: 0; font-size: 0.6rem; border: 0.1rem solid var(--gb-iron); background-size: cover; }
+#card .abilities .tile .name { font: 700 0.9rem var(--display); line-height: 1.1; }
+#card .abilities .tile.passive .name { color: #b9a98c; font-weight: 500; font-style: italic; }
+#card .abilities .tile .uses { display: flex; gap: 0.15rem; margin-left: auto; }
+#card .abilities .tile .bead { width: 0.42rem; height: 0.42rem; border-radius: 50%; background: var(--gb-light); }
+#card .abilities .tile .bead.spent { background: var(--gb-stone-lo); box-shadow: inset 0 0 0 0.08rem var(--gb-iron); }
+/* An ability's rules in the peek: its row as the codex shows it, grids beside the text. */
+#peek .ability-row { margin-top: 0.35rem; }
+#peek .ability-row > .art.ability-icon { display: none; }
+#peek .ability-row .body .name { display: none; }
+#peek .ability-row .text { color: var(--muted); font-size: 0.75rem; }
+#peek:has(.ability-row) { width: auto; max-width: 30rem; }
 
 /* The sockets, cut into the sill's middle; the hint above them on the dark, the rules of the hovered one on a slip. */
 #bottom { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; }

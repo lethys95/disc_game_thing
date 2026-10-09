@@ -11,7 +11,7 @@ import { art } from "#view/art";
 import { miniStack, TarotFan } from "#view/tarot-hand";
 import type { CardCue, FanCard } from "#view/tarot-hand";
 import { byId, element, skull } from "#view/dom";
-import { explain } from "#view/explain";
+import { explain, explainWith } from "#view/explain";
 import { sees } from "#view/secrecy";
 import type { Settings } from "#view/settings";
 import { armorReduction } from "#rules/battle/damage";
@@ -299,15 +299,18 @@ export class Hud {
       }
       inset.appendChild(effects);
     }
+    // The abilities as tiles, icon and name; the rules and targeting grids wait under a held right-click (rule 7).
     const abilities = element("ul", "abilities");
     for (const ref of unitAbilities(battle, unit.id)) {
       const behavior = BEHAVIORS[ref.id];
       if (!behavior || (behavior.kind === "active" && behavior.tags.includes("common"))) continue;
-      const item = element("li", behavior.kind);
+      const name = ref.name ?? behavior.name;
+      const tile = element("li", `tile ${behavior.kind}`);
+      tile.append(art({ kind: "ability", id: ref.id }, "tile-icon"), element("span", "name", name));
       const charges = chargesOf(ref);
-      const head = [element("span", "name", ref.name ?? behavior.name), ...(charges !== undefined ? [element("span", "charges", ` ${charges - (unit.chargesUsed[ref.id] ?? 0)}/${charges}`)] : [])];
-      item.appendChild(abilityRow(unit.defId, ref, head, stats.abilityPower));
-      abilities.appendChild(item);
+      if (charges !== undefined) tile.appendChild(beads(charges - (unit.chargesUsed[ref.id] ?? 0), charges));
+      const head = [element("span", "name", name), ...(charges !== undefined ? [element("span", "charges", ` ${charges - (unit.chargesUsed[ref.id] ?? 0)}/${charges}`)] : [])];
+      abilities.appendChild(explainWith(tile, name, abilityRow(unit.defId, ref, head, stats.abilityPower)));
     }
     inset.appendChild(abilities);
     this.card.appendChild(inset);

@@ -11,6 +11,15 @@ export function explain(target: HTMLElement, title: string, ...lines: readonly s
   return target;
 }
 
+/** The same with richer content than lines of text (an ability's rules and its targeting grids), kept hidden inside. */
+export function explainWith(target: HTMLElement, title: string, content: HTMLElement): HTMLElement {
+  const held = element("div", "explain-content");
+  held.hidden = true;
+  held.appendChild(content);
+  target.appendChild(held);
+  return explain(target, title);
+}
+
 function explained(target: EventTarget | null): HTMLElement | null {
   return target instanceof Element ? target.closest<HTMLElement>("[data-explain]") : null;
 }
@@ -25,7 +34,9 @@ export function wireExplanations(peek: HTMLElement): void {
     const source = explained(e.target);
     if (!source) return;
     const [title = "", ...lines] = (source.dataset["explain"] ?? "").split("\n");
-    showPeek(peek, [element("div", "title", title), ...lines.map((line) => element("div", "note", line))], e.clientX, e.clientY);
+    const rich = source.querySelector<HTMLElement>(":scope > .explain-content");
+    const body = rich ? [...rich.children].map((child) => child.cloneNode(true)).filter((node): node is HTMLElement => node instanceof HTMLElement) : [];
+    showPeek(peek, [element("div", "title", title), ...lines.map((line) => element("div", "note", line)), ...body], e.clientX, e.clientY);
   });
   window.addEventListener("pointerup", (e) => {
     if (e.button === 2) peek.hidden = true;

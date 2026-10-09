@@ -26,6 +26,7 @@ import type { Candidate } from "#scripts/art/batch";
  *     pnpm tsx scripts/art/hud-paint.ts page battle          (the review page in shots/)
  *     pnpm tsx scripts/art/hud-paint.ts hires battle <picked.png>   (the pick repainted at 1440p)
  *     pnpm tsx scripts/art/hud-paint.ts composite battle hires
+ *     pnpm tsx scripts/art/hud-paint.ts fix battle          (spot repairs on the 1440p pick, by inpainting)
  */
 
 const WIDTH = 1536;
@@ -245,6 +246,71 @@ async function paint(name: string, screen: Screen, dir: string, probeIds: readon
   }
 }
 
+/**
+ * Spot repairs on the picked 1440p painting, by masked repaint of just that spot (the user, 2026-10-09: "Idk if
+ * there's the option of inpainting to fix things too"). Rects are in its pixels; each fix starts from the last one's
+ * result, and `from` names a fix whose result it starts from instead (a branch kept apart from the main line).
+ */
+interface Fix {
+  readonly name: string;
+  readonly rects: readonly (readonly [number, number, number, number])[];
+  readonly prompt: string;
+  readonly denoise: number;
+  readonly from?: string;
+}
+
+const FIXES: Readonly<Record<string, { readonly painting: string; readonly fixes: readonly Fix[] }>> = {
+  battle: {
+    painting: "reliquary-75-3.png",
+    fixes: [
+      {
+        // The painted grille is not the sockets: the sill stays plain, and the sockets are pieces of their own.
+        name: "sill",
+        rects: [[905, 1318, 760, 112]],
+        prompt: "The face of a heavy sill of dark carved stone seen straight on, plain matte stone with a moulded edge, no openings, no holes, no grille. Lit by one soft light from the upper left. Black wrought iron and dark stone like an old reliquary, worn smooth, deep shadows. Desaturated, grim and solemn.",
+        denoise: 0.95,
+      },
+      {
+        // The log needs a face to hold its text: a broad low stele with a recessed panel, where the block stood.
+        name: "log",
+        rects: [[2040, 1070, 500, 200]],
+        prompt: "A low broad stele of dark carved stone seen straight on, its whole face a wide recessed dark panel with a thin carved border, standing on a stone sill. Lit by one soft light from the upper left and a candle. Black wrought iron and dark stone like an old reliquary, worn smooth, deep shadows. Desaturated, grim and solemn.",
+        denoise: 0.85,
+      },
+      {
+        // Sockets at the game's own size, for one to be cut as the frame every socket shares (not kept in the sill).
+        name: "sockets",
+        rects: [[910, 1274, 130, 130], [1063, 1274, 130, 130], [1216, 1274, 130, 130], [1369, 1274, 130, 130], [1522, 1274, 130, 130]],
+        prompt: "Square sockets set into a dark stone sill seen straight on: each a deep square hole, dark inside, with a thick rim of black wrought iron and small rivets at its corners. Lit by one soft light from the upper left. Black wrought iron and dark stone like an old reliquary, worn smooth, deep shadows. Desaturated, grim and solemn.",
+        denoise: 0.9,
+        from: "sill",
+      },
+    ],
+  },
+};
+
+/** Applies the screen's fixes to its picked 1440p painting: `hires/fix-<name>.png` each. */
+async function fix(name: string, dir: string): Promise<void> {
+  const plan = FIXES[name];
+  if (!plan) throw new Error(`no fixes for ${name}`);
+  const target = `${dir}/hires`;
+  const picked = (await paintings(target)).find((m) => m.file === plan.painting);
+  if (!picked) throw new Error(`no hires ${plan.painting}`);
+  let last = `${target}/${plan.painting}`;
+  for (const repair of plan.fixes) {
+    const source = repair.from ? `${target}/fix-${repair.from}.png` : last;
+    const mask = `${target}/fix-${repair.name}-mask.png`;
+    magick("-size", `${HIRES_WIDTH}x${HIRES_HEIGHT}`, "xc:black", "-fill", "white",
+      ...repair.rects.flatMap(([x, y, w, h]) => ["-draw", `rectangle ${x},${y} ${x + w},${y + h}`]),
+      "-blur", "0x6", mask);
+    const out = `${target}/fix-${repair.name}.png`;
+    const started = Date.now();
+    await writeFile(out, await inpaint({ prompt: repair.prompt, seed: picked.seed, source, mask, denoise: repair.denoise }, `disc/hud-${name}-fix`));
+    console.log(`${out} (${((Date.now() - started) / 1000).toFixed(1)} s)`);
+    if (!repair.from) last = out;
+  }
+}
+
 /** The picked painting at 1440p: its upscale repainted at a low strength through the 1440p greybox's mask. */
 async function hires(name: string, screen: Screen, dir: string, file: string): Promise<void> {
   const picked = (await paintings(dir)).find((m) => m.file === file);
@@ -348,4 +414,5 @@ else if (mode === "paint") {
 } else if (mode === "composite") await composite(name, rest[0] === "hires" ? `${dir}/hires` : dir);
 else if (mode === "page") await page(name, dir);
 else if (mode === "hires" && rest[0]) await hires(name, screen, dir, rest[0]);
+else if (mode === "fix") await fix(name, dir);
 else throw new Error("usage: hud-paint.ts render|paint|composite [hires]|page|hires <file> <screen> [probe…] [seed…]");
