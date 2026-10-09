@@ -155,12 +155,6 @@ button.action:disabled { opacity: 0.4; cursor: not-allowed; }
 #mapsquad .member .name { font: 700 0.875rem var(--display); }
 #mapsquad .hp { height: 0.75rem; border: 1px solid var(--line); }
 #mapsquad .hp .value { position: relative; display: block; text-align: center; font-size: 0.625rem; line-height: 0.75rem; }
-#mapbanner {
-  position: fixed; left: 50%; top: 38%; transform: translate(-50%, -50%); text-align: center;
-  padding: 1.5rem 3rem; background: var(--panel); border: 1px solid var(--edge);
-}
-#mapbanner .title { font: 700 3rem var(--display); letter-spacing: 0.05em; }
-#mapbanner .subtitle { color: var(--muted); margin-bottom: 1rem; }
 #forkprompt {
   position: fixed; left: 50%; top: 38%; transform: translate(-50%, -50%); text-align: center;
   display: flex; flex-direction: column; gap: 0.5rem; padding: 1.25rem 2rem; max-width: 28.75rem;
@@ -390,13 +384,13 @@ button.action.selected:not(.ability), button.small.selected, button.doctrine.sel
 #capitol .squad-grid .grid { grid-template-columns: repeat(3, 5.75rem); }
 #capitol .squad-grid .cell { height: 5.25rem; }
 
-/* The UI kit everywhere (M48): every panel in the carved frame (thinner on the small HUD panels than on screens),
-   the map's turn line on an iron bar, banners framed. */
+/* Every other panel has the HUD kit's light rim (the battle's recess frame); the full screens' tablets, the codex's
+   book and the documents' parchment are set per screen below. */
 .panel {
-  border: 1rem solid transparent; border-image: var(--ui-frame) 18% / 1.125rem round;
-  background: rgba(13, 11, 11, 0.94) padding-box; box-shadow: none; border-radius: 0;
+  border: solid transparent; border-width: 1rem 0.8rem 1.35rem 0.52rem; border-image: var(--ui-battle-recess) 29 23 39 15 / 1rem 0.8rem 1.35rem 0.52rem stretch;
+  background: #222021 padding-box; box-shadow: 0 0.5rem 1.2rem rgba(0, 0, 0, 0.6); border-radius: 0;
 }
-#mapbanner { border: 1.25rem solid transparent; border-image: var(--ui-frame) 18% / 1.5rem round; background: rgba(13, 11, 11, 0.95) padding-box; }
+
 
 #setup { overflow-y: auto; }
 #setup .panel { border-width: 0.75rem; border-image-width: 0.875rem; }
@@ -725,7 +719,7 @@ body.formulas .formula { display: inline; }
 }
 #actions .socket button.overload.on { color: var(--gb-ink); background: var(--gb-magic); box-shadow: 0 0 0.6rem rgba(79, 216, 207, 0.7); }
 #rules { position: absolute; left: 50%; bottom: 100%; z-index: 3; margin-bottom: 0.3rem; transform: translateX(-50%); width: max-content; max-width: 34rem; }
-#rules .slip { padding: 0.6rem 0.9rem 0.7rem; color: var(--gb-ink); background: var(--gb-parchment); box-shadow: 0 0.4rem 1rem rgba(0, 0, 0, 0.75); }
+#rules .slip { padding: 0.6rem 0.9rem 0.7rem; color: var(--gb-ink); background: var(--gb-parchment) var(--ui-codex-parchment) center / cover; box-shadow: 0 0.4rem 1rem rgba(0, 0, 0, 0.75); }
 #rules .slip .name { font: 700 1.05rem var(--display); }
 #rules .slip .charges, #rules .slip .text, #rules .slip .targeting-grid .label { color: #4a3f30; }
 #rules .slip .why { margin-top: 0.35rem; font-size: 0.68rem; font-style: italic; color: #6a2a1e; }
@@ -765,16 +759,22 @@ body.formulas .formula { display: inline; }
 #logstele.open #log .entry.heal { color: #7a5a14; }
 
 /* Battle's end: a moment, the emblem as its keystone and the title in the moments' face. */
-#banner {
-  position: fixed; left: 50%; top: 40%; z-index: 5; transform: translate(-50%, -50%); padding: 3rem 3.5rem 1.6rem; text-align: center;
-  background: var(--gb-stone); border: 0.3rem solid var(--gb-stone-hi); box-shadow: 0 0.6rem 2rem rgba(0, 0, 0, 0.8);
+/* The moments (a battle's end, the game's end) share one layout on the kit's tablet: a keystone on its top edge (still
+   greybox), the title in the moment face, the choices plaques with a seal pressed at each one's start. */
+#banner, #mapbanner {
+  position: fixed; left: 50%; top: 40%; z-index: 5; transform: translate(-50%, -50%); padding: 1.2rem 2.2rem 0.5rem; text-align: center;
+  border: solid transparent; border-width: 2.57rem 2.36rem 2.57rem 3.02rem; background: #1c1b1b padding-box;
+  border-image: var(--ui-battle-log) 74 68 74 87 / 2.57rem 2.36rem 2.57rem 3.02rem stretch; filter: drop-shadow(0 0.6rem 1.4rem rgba(0, 0, 0, 0.8));
 }
-#banner::before { content: ""; position: absolute; left: 50%; top: -2.4rem; width: 4.4rem; height: 4.4rem; margin-left: -2.2rem; border-radius: 50%; background: var(--gb-stone-hi); border: 0.3rem solid var(--gb-iron); box-sizing: border-box; }
-#banner .title { font: 700 3.8rem var(--moment); letter-spacing: 0.03em; color: var(--gb-marble); }
-#banner .subtitle { margin-bottom: 1.2rem; color: var(--muted); }
-#banner button.action { position: relative; padding: 0.35rem 1rem 0.35rem 1.9rem; color: var(--gb-ink); background: var(--gb-marble); border: 0.15rem solid var(--gb-iron); border-image: none; filter: none; }
-/* Its buttons are seals: a disc pressed at each plaque's start. */
-#banner button.action::before { content: ""; position: absolute; left: 0.35rem; top: 50%; width: 1.1rem; height: 1.1rem; margin-top: -0.55rem; border-radius: 50%; background: #8a2418; }
+#banner::before, #mapbanner::before { content: ""; position: absolute; left: 50%; top: -4.5rem; width: 4.4rem; height: 4.4rem; margin-left: -2.2rem; border-radius: 50%; background: var(--gb-stone-hi); border: 0.3rem solid var(--gb-iron); box-sizing: border-box; }
+#banner .title, #mapbanner .title { font: 700 3.8rem var(--moment); letter-spacing: 0.03em; color: var(--gb-marble); }
+#banner .subtitle, #mapbanner .subtitle { margin-bottom: 1.2rem; color: var(--muted); }
+#banner button.action, #mapbanner button.action {
+  position: relative; padding: 0.1rem 0.9rem 0.1rem 1.8rem; color: var(--gb-ink); background: none; filter: brightness(0.85);
+  border: 0.42rem solid transparent; border-image: var(--ui-battle-plaque) 26 fill / 0.42rem stretch; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+#banner button.action:hover, #mapbanner button.action:hover { filter: brightness(1.05) drop-shadow(0 0 0.4rem rgba(232, 195, 108, 0.7)); }
+#banner button.action::before, #mapbanner button.action::before { content: ""; position: absolute; left: 0.2rem; top: 50%; width: 1.05rem; height: 1.05rem; margin-top: -0.525rem; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #c0402c, #8a2418 55%, #4a0c06); }
 
 /* Over each figure: a slim red channel (the same red on both sides; allegiance is position and cloth). */
 .hpbar { position: relative; width: 3.4rem; height: 0.32rem; background: var(--gb-stone-lo); border: 1px solid #000; }
@@ -1051,3 +1051,9 @@ body.formulas .formula { display: inline; }
 }
 #menu .segmented button:hover { filter: brightness(0.9); }
 #menu .segmented button.selected { filter: brightness(1.05) drop-shadow(0 0 0.4rem rgba(232, 195, 108, 0.75)); color: var(--gb-ink); }
+
+/* The explanations are documents: written on the parchment, in ink (design/hud-kit.md, materials). */
+#peek.panel { border: 0; border-image: none; background: var(--gb-parchment) var(--ui-codex-parchment) center / cover; box-shadow: 0 0.4rem 1rem rgba(0, 0, 0, 0.75); --ink: #2b2219; --muted: #6e5d49; --rule: rgba(72, 52, 32, 0.4); color: var(--ink); }
+#peek .cell.filled { background: rgba(72, 52, 32, 0.12); }
+#peek .scaled { color: #7a4a10; border-bottom-color: rgba(122, 74, 16, 0.6); }
+#peek .formula { color: #6a5a40; }

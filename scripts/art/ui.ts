@@ -11,11 +11,6 @@ const FLAT = "Flat front view, perfectly symmetrical, centered, even lighting, p
 
 const PIECES = [
   {
-    id: "frame",
-    look: "An ornate square picture frame border of dark carved iron and black stone, heavy gothic filigree, small riveted studs and a tiny carved skull at each corner. The inside of the frame is completely flat plain black, empty.",
-    size: [1024, 1024],
-  },
-  {
     id: "button",
     look: "A wide horizontal game button: a slab of dark carved stone with a raised bevelled face and a thin tarnished iron rim with small rivets at the corners. The face is plain and blank.",
     size: [1536, 512],

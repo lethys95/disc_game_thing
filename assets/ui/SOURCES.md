@@ -4,7 +4,6 @@ Generated with `scripts/art/ui.ts` (Krea-2 Turbo via ComfyUI) and cut out with `
 
 | File | Piece, seed | Cut |
 |---|---|---|
-| `frame.webp` | `frame`, 4 | `--hollow` (border slice ~18% per side) |
 | `button.webp` | `button`, 2 | |
 | `backdrop.webp` | `backdrop`, 1 | central 80% cropped, 512 px, tiled |
 | `icon-{city,garrison,research,spells}.webp` | `icon-city` 1, `icon-garrison` 3, `icon-research` 1, `icon-spells` 1 | cut out |
@@ -50,6 +49,7 @@ strength 0.85, seed 3), then repainted at 1440p (0.35). Cut with `pieces codex`:
 | File | Cut |
 |---|---|
 | `codex/book.webp` | the open book as painted; the codex's and the credits' pages |
+| `codex/parchment.webp` | a clean patch of its right page: the parchment of the rules slip and the explanations |
 
 ## The title (`title/`), painted as one stele (2026-10-10)
 The title's greybox stele painted exactly within its outline (`hud-paint.ts` screen `title`, round 1, probe

@@ -539,8 +539,12 @@ interface Piece {
 const PIECES_OF: Readonly<Record<string, readonly Piece[]>> = {
   // The title's stele, cut along its painted edge, its dark recess kept whole; the name and the choices sit on it live.
   title: [{ name: "stele", from: "reliquary-75-3.png", rect: [1006, 259, 548, 1181], cut: "segment", bright: true, core: 24 }],
-  // The codex's open book, as painted within the book's exact box.
-  codex: [{ name: "book", from: "reliquary-85-3.png", rect: [99, 121, 2362, 1296], cut: "rect" }],
+  // The codex's open book, as painted within the book's exact box; a clean patch of its right page is the parchment
+  // every document is written on (the rules slip, the explanations).
+  codex: [
+    { name: "book", from: "reliquary-85-3.png", rect: [99, 121, 2362, 1296], cut: "rect" },
+    { name: "parchment", from: "reliquary-85-3.png", rect: [1520, 520, 480, 480], cut: "rect" },
+  ],
   // The Capitol's rail as painted, from the beam's underside to the bottom edge: the angel standing on its capital, her
   // wings and hood rising behind the beam, the four niches below her (the painting set them lower than the greybox; the
   // stylesheet follows the painting).

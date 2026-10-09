@@ -392,5 +392,14 @@ page's ink.
 - **The recess frame** lost a candle's glow from its lower left corner by cloning the stone beside it. A wide panel
   shows that corner at full size.
 
-**Next:** the battle's last flat glyphs, the saves on parchment, then the other factions' skins.
+- **Documents on parchment:** a clean patch of the codex's page is the parchment the battle's rules slip and the
+  held-right-click explanations are written on, in ink.
+- **Every other panel** (the fork prompt, the grid's menu, the skirmish's panels) has the light rim. The old filigree
+  frame retired.
+- **The moments** (a battle's end, the game's end) share one layout on the tablet. A keystone sits on its top edge
+  (still greybox), the title is in the moment face, and the choices are plaques with a seal pressed at each one's
+  start.
+
+**Next:** the battle's last flat glyphs, the moments' keystone, the saves on parchment, then the other factions'
+skins.
 

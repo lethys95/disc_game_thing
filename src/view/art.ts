@@ -46,7 +46,7 @@ export function art(slot: Slot, className: string): HTMLElement {
 /** The UI kit (`assets/ui/<name>.webp`, and a screen's painted pieces in `assets/ui/<screen>/`), found at build time. */
 const UI_KIT = import.meta.glob<string>("/assets/ui/**/*.webp", { eager: true, query: "?url", import: "default" });
 
-/** The UI kit reaches the stylesheet as custom properties (`--ui-frame`, `--ui-battle-beam`); CSS places each piece. */
+/** The UI kit reaches the stylesheet as custom properties (`--ui-backdrop`, `--ui-battle-beam`); CSS places each piece. */
 export function applyUiKit(root: HTMLElement): void {
   for (const [path, url] of Object.entries(UI_KIT)) {
     const name = /\/assets\/ui\/(.+)\.webp$/.exec(path)?.[1];
