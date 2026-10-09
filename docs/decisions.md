@@ -287,3 +287,15 @@ the turn bar's ends. Anything that stands on a panel as an object (a creature gr
 under it, the Capitol's gargoyle) is out. The angels mark the big panels only: the side panels in battle and on the
 map, the screens' large panels; small rows, buttons and tiles keep the plain carved frame, so the angels don't become
 wallpaper.
+
+## The HUD kit's system (2026-10-09, the user)
+After the reference research and the inventory, Claude wrote the system on paper (`design/hud-kit.md`): architecture
+at the screen's edges with the world in the window, one figure with a job per screen instead of the angel corners,
+shape meaning function, one language for states, fixed material roles, faction skins as a few large pieces. The user:
+"I've read the document. I'm not a designer, so I'll be relying on your judgment a lot", and accepted all eight
+choices, including the layout changes (the battle sill, the map's edge pillars, the codex as a book, dark sockets for
+unavailable abilities), parchment for documents, red health everywhere and a third typeface. Faction motifs: "They can
+be extracted from the themes of each faction, presumably." Claude extracted them (provisional #76). One correction
+made while extracting: portrait frames follow the unit's faction, not the player's, so a mixed turn order shows whose
+each face is. Next: the battle screen's greybox, then each screen painted as one picture and cut up.
+

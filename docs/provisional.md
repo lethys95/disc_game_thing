@@ -206,3 +206,13 @@ turns).
 - **The composition matrix with percent armor** (all squads, win %): tier 2 J 59, N 55, G 34 (was 67 / 47 / 33);
   tier 3 J 75, N 36, G 27 (was 79 / 31 / 26); tier 4 J 86, N 20, G 26. Jilliath's armoured lines lose some of their
   wall against many small hits and Ral-Vitahl's casters gain a little at tier 2; the gap the line lengths open stays.
+
+## 76. The HUD's faction motifs and its third typeface (2026-10-09; Claude's extraction, the user's go)
+The user delegated the faction motifs ("They can be extracted from the themes of each faction, presumably"); the list
+is in `design/hud-kit.md` under Faction skins. Sources: Jilliath's stained glass (the Shepherd), silver rose (the
+Templar's shield), hooded humble angels (the Seraph) and black, white and red; Ral-Vitahl's opulent, immaculate
+noble house, its automata, batteries and teal lightning; the Sylvan's bark, moss, fungus, tribal masks, autumn leaves,
+violet pulses and drums. Avoided on purpose: a living half and a dead half for the Sylvan (the user found the literal
+life-and-death tree too literal). The third typeface for places and moments is picked in the battle greybox. Shown as
+paintings in step 3, where the user overrules any that miss.
+

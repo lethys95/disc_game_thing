@@ -43,3 +43,6 @@
   the window; one figure with a job per screen in place of the angel corners; shape means function; one language for
   states; nineteen families covering all 140 inventory entries; what swaps per faction. Eight choices wait for the user
   at its end. Next: the battle screen's greybox.
+- **The user on the system (2026-10-09):** "I'm not a designer, so I'll be relying on your judgment a lot." All eight
+  choices accepted; the faction motifs left to Claude, extracted from the factions' themes (provisional #76). Step 2,
+  the battle greybox, started.

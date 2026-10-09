@@ -1,9 +1,10 @@
 # The HUD kit: a system
 
-Claude's proposal (2026-10-09). It is step 1 of the plan the user agreed to: the system on paper, then a greybox in the
-game, then each screen painted as one picture, then the pieces cut from it. Nothing here is decided until the user
-says so. Every decision names the principle it comes from (`hud-references.md`, "P" plus its number). The pieces it
-covers are the ones in `reference_material/ui-inventory.md` (the letter-and-number ids).
+Claude's system (2026-10-09), accepted by the user the same day: all eight choices at the end, with the faction motifs
+extracted by Claude from each faction's themes (`provisional.md` #76). It is step 1 of the plan the user agreed to: the
+system on paper, then a greybox in the game, then each screen painted as one picture, then the pieces cut from it.
+Every decision names the principle it comes from (`hud-references.md`, "P" plus its number). The pieces it covers are
+the ones in `reference_material/ui-inventory.md` (the letter-and-number ids).
 
 The user's test for all of it: "are they actually hud elements? do they blend in? […] im NOT interested in a random
 gargoyle", and after the angels: "they feel like they're boltes on, rather than actually part of it. also, i think we
@@ -75,7 +76,7 @@ player at the screen.
 | Parchment | documents | warm pale sheets with torn or rolled edges; text dark on light | A35, C12, D15, B16; the full log; the codex if a book | — |
 | Buttons | one object per role, not per size | the primary command is a held object, lit (below); secondary commands are stone slabs; inline actions are small slabs carrying their price; choices are plaques or tokens that light; toggles are gems that light; confirm and cancel inside documents are seals. Text fields are a recessed well; colours to pick are enamel discs | A4, A5, A6, A37, A38, A39, A40, A41, A42, B3, B8, B9, B15, C3, C5, C7, C11, D9, D10, D12, E19, F9, G7 | — |
 | Sockets and slots | where things sit | iron-rimmed sockets cut into stone. Empty shows the carved sigil, unavailable a dark socket, locked the binding. Equipment slots show a faint carved ghost of what goes there (Icewind Dale). An ability row is its icon in a socket, then its text and grids | A32, B12, C13, D8, E7, E8, E17, E18, F8 | the sigil and the binding |
-| Portrait frames | every face in the interface | the one place the frame changes shape (P14): an arch, a porthole, a niche. Icon, bust and card sizes | A29, A30, B6, C6, D2, D16, E8, E13, F4, F7 | yes |
+| Portrait frames | every face in the interface | the one place the frame changes shape (P14): an arch, a porthole, a niche. Icon, bust and card sizes. A frame follows the faction of the unit in it, not the player's, so a mixed turn order shows whose each face is (Disciples II's frames say who speaks) | A29, A30, B6, C6, D2, D16, E8, E13, F4, F7 | by the unit's faction |
 | Instruments | values, each with its own shape (below) | carved and inlaid; the fill is light or liquid | A18–A24, D4, D17, D19; the round medallion, the turn keystone | the mana vessel |
 | Markers | small signs | carved or cast: skull, crown, tier numeral, hotkey tag, charge bead, preview marks, now and next | A25–A28, A33, A34, D5, D18, D20 | — |
 | Tabs | switching views | Capitol tabs become niches holding their tab's object (below); codex tabs become bookmarks if the codex is a book; other tab rows are plaques that light | A7, E3, F1, F2 | the held objects |
@@ -89,7 +90,7 @@ player at the screen.
 
 ## The cast
 Each screen has one figure, or one figure group, and each has a job. They take the place of the angel corners, which
-retire. Which figure each faction gets is the user's call (below). These are the slots and their jobs.
+retire. These are the slots and their jobs; each faction's figures are under the faction skins below.
 
 | Figure | Screen | Job | Why it can't look bolted on |
 |---|---|---|---|
@@ -184,8 +185,7 @@ call; the look works without it.
 ## Faction skins
 The skin follows the player at the screen. Everything else is shared, so each faction is a small set of large pieces,
 not a kit of small ones (P14):
-- the cast
-- the portrait frames
+- the cast, and the object the end-turn figure holds
 - the seam inlay
 - the relief motif
 - the empty-slot sigil
@@ -193,32 +193,48 @@ not a kit of small ones (P14):
 - the locked-state binding
 - the silhouette of the beam's and the sill's edge
 
-Directions only. Every motif is the user's call, and the greybox will carry neutral placeholders until there is a
-choice:
-- *Jilliath* (angels and their human followers; relic and wound):
-  - the cast as hooded stone angels, in the user's angel language
-  - a lancet or reliquary arch for the portrait frames
-  - stained glass as the inlay
-  - an inscription or a tribunal as the relief
-  - a rose window as the sigil
-  - a reliquary vial as the vessel
-  - a wax seal or iron band as the binding
-  - tracery pinnacles as the silhouette
-- *Ral-Vitahl* (a haughty arcane noble house, opulent and immaculate, never worn):
-  - polished lacquer and fittings in place of weathered stone
-  - a glowing conduit as the inlay
-  - a battery cell as the vessel
-  - a house crest as the sigil
-  - a clockwork lock as the binding
-  - the cast: liveried servants or automata, or noble statues
-- *Sylvan* (wild, fierce, tribal; regrowth and decay):
-  - living wood on one side and rot on the other for the frames
-  - moss or sap as the inlay
-  - a seed or knot as the sigil
-  - a sap pod as the vessel
-  - roots grown over as the binding
-  - a root-and-leaf fringe as the silhouette
-  - figures grown from wood and bone for the cast
+The portrait frames are the exception: they follow the faction of the unit they hold. Screens outside a game (the title,
+the codex, new game, credits) use the shared stone and iron with no faction skin, and the neutral tribes' faces get a
+plain iron frame.
+
+The user (2026-10-09): "I cannot write down every faction's motifs, no. They can be extracted from the themes of each
+faction, presumably." Claude's extraction, from the faction pages and the user's own unit designs, provisional (#76).
+The paintings in step 3 show them, and the user overrules any that miss.
+- *Jilliath* (angels and their human followers; relic and wound; the user's black, white and red):
+  - **cast:** hooded stone angels, female like every angel but the Avatar, humble rather than triumphant (the Seraph:
+    hooded, closed off, praying)
+  - **end turn:** a bell, rung to pass the turn
+  - **portrait frame:** a lancet arch edged in red glass
+  - **inlay:** stained glass in lead (the user's Shepherd)
+  - **relief:** folded wings and bands of written decrees
+  - **sigil:** the silver rose from the user's Templar shield, carved as a rose window
+  - **vessel:** a reliquary vial of red
+  - **binding:** a red wax seal over an iron band
+  - **silhouette:** tracery pinnacles
+- *Ral-Vitahl* (a haughty arcane noble house; inventors; opulent and immaculate, never worn; teal lightning):
+  - **material:** polished black lacquer and silver in place of weathered stone
+  - **cast:** elegant arcane automata in the house's livery. The house's servants carry; its nobles don't
+  - **end turn:** a caged orb of teal lightning, an arc lamp
+  - **portrait frame:** a silver oval, a cameo, with a small teal cell at its crown
+  - **inlay:** a thin conduit of arc light
+  - **relief:** engraved schematics: rings, coils, star charts
+  - **sigil:** the house crest, a coil within a ring (a placeholder design)
+  - **vessel:** a battery cell, glass between silver caps
+  - **binding:** a clockwork dial lock
+  - **silhouette:** slender spires and lightning rods
+- *Sylvan* (wild, fierce, tribal, never noble; regrowth and decay; moss green with violet pulses):
+  - **material:** dark bark and living wood, antler and bone bound with sinew, wet moss, fungus, autumn leaves
+  - **cast:** grown effigies of briar and wood with carved tribal masks, uneven and asymmetric, grown rather than carved
+  - **end turn:** a frame drum (the user's Grove music: "tribal, drums")
+  - **portrait frame:** a ring of bent branches bound with sinew
+  - **inlay:** moss and lichen, glowing violet with fungus in places
+  - **relief:** tribal carvings of animals and spirals
+  - **sigil:** a carved spiral knot
+  - **vessel:** a sap gourd, green with a violet pulse
+  - **binding:** thorny roots grown over
+  - **silhouette:** roots, briars, antler tips and a few autumn leaves
+  - Decay shows the way the world has it, in fungus and withered leaves, never as a frame split into a living half and
+    a dead half: the user found the literal life-and-death tree too literal.
 
 ## What stays from today's kit
 - **Stays** as a stand-in until the painted pieces replace it:
@@ -232,18 +248,19 @@ choice:
 - **Retires:** the angel corners and the tracery frame's corner angels. Their figures come back with jobs. The filigree
   and tracery frames give way to the one frame family once it is painted.
 
-## For the user to decide
+## Decided (the user, 2026-10-09)
+"I've read the document. I'm not a designer, so I'll be relying on your judgment a lot." All eight accepted:
 1. The governing idea: architecture at the edges, the world in the window.
 2. Parchment as a fourth material, for documents.
-3. The layout changes, each on its own:
+3. The layout changes:
    - the battle sill joining card, sockets and log, with the log shortened to a few lines and a scroll
    - the map's edge pillars and full-width beam
    - the codex as a book
    - unavailable abilities kept as dark sockets
-4. Faction skins that follow the player at the screen, and the swap list above.
-5. Each faction's motifs: the cast, frames, inlay, relief, sigil, vessel, binding and silhouette.
-6. Health red everywhere, with allegiance carried by cloth and position. Today the floating bars use the side's colour.
-7. A third typeface for places and moments.
+4. Faction skins that follow the player at the screen, with the swap list above.
+5. Each faction's motifs: extracted by Claude from the factions' themes, as above.
+6. Health red everywhere, with allegiance carried by cloth and position.
+7. A third typeface for places and moments (Claude picks it in the greybox; provisional #76).
 8. Candlelight as the interface's light for selection and availability, with the mana colour kept for magic.
 
 ## Next: the greybox
