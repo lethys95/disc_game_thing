@@ -16,31 +16,29 @@ plays map and battles in a web worker. A front door (title, new game, skirmish, 
 Architecture: `design/architecture.md`; gotchas: `engineering.md`; `pnpm verify` before calling anything done (and
 check its exit code, not a grep of its output); `pnpm sizes` for any interface change.
 
-## This session (2026-10-07, second)
-- **Jilliath's mage line, built** (`testing/jilliath-mage-line`, provisional #72): the faith side is the priests,
-  holy (Acolyte → Cleric's Castigation → Pontiff's Repentance and Chant → Archon's Judgement); fanaticism
-  is fire with stacking burn (Doomsayer's Burn at the stake → Fire mage 3's fire on all → Fire mage 4's Detonate or the
-  Martyr's backfiring beam). `?fight=mages`. Engine: a holy damage type, `BattleUnit.struck` (Judgement), a `hurt`
-  hook (Repentance wakes on burns), Ignite's burns stack.
-- **Jilliath's support line, built** (`testing/jilliath-support-line`, provisional #73, #74): angels, the user's
-  names and designs. Guardian (faith, safe): Seraph → Emissary (Prayer) → Guardian (Guardian's Shield) → Shepherd
-  (Prayer with armor) → Godkin (Resurrection; `revive` in the engine). Vengeance (aggressive): Paragon (Atonement) →
-  Empyreal / Reclaimer (Transfusion, Reclaim), ending at tier 3. `?fight=angels`. The strong-start world test now
-  only checks a game ends (#73).
-- **Armor becomes a percentage with diminishing returns** (the user, decisions.md; `todo/percent-armor`): Claude's
-  curve armor ÷ (armor + 60) awaits a yes.
-- **The Grove's Water is now Wellspring** (the user: water is the element, not the ability). Save 33.
-- **The angels' look and reach** (the user): a humble, hooded, praying tier 1; faith may go to tier 5 and show who
-  pulls the strings (t4 stained glass; t5 a bare silhouette of moving sky with god rays, `maybe/sky-silhouette-angel`); vengeance with blood-tipped wings.
-- Before that (2026-10-06/07): ability power and "everything is an ability" (#71), no head math, codex round two, the
-  interface in rem, 22 portraits, audit fixes. Details in git history.
+## This session (2026-10-07 to 09)
+- **Jilliath's roster is built**, joker line aside: the mage line (priests: Acolyte → Cleric → Pontiff → Archon; fire:
+  Doomsayer → Fire mage 3 → Fire mage 4 / Martyr mage 4; #72) and the support line (angels: Seraph → Emissary →
+  Guardian → Shepherd → Godkin; Paragon → Empyreal / Reclaimer; #73, #74). `?fight=mages`, `?fight=angels`. Engine: a
+  holy damage type, `BattleUnit.struck`, a `hurt` hook, `revive`, stacking burns. Save 33.
+- **Jilliath's concept art, in rounds** (`docs/design/units/jilliath-identities.md`, every quote and read;
+  `scripts/art/concepts.ts` ANGELS, PRIESTS, MELEE; review page `shots/jilliath-concepts.html`). **Picked (10):**
+  Seraph, Emissary, Shepherd, Godkin, Reclaimer, Acolyte, Pontiff, Doomsayer (+ scroll), Templar (+ rose shield),
+  Immortal (`roster.md`). **Generating:** the user's directions for the Guardian, Paragon, Chosen (+ zweihander),
+  Torturer, Avatar, and Claude's for the Empyreal and Archon. **Waiting on the user:** the Cleric (Orzhov reading, maybe
+  the Pontiff with it), the Fanatic (deferred), the fire casters (names first). Portraits come later, from the picks.
+- **Lessons for every faction's art** (`unit-concepts` skill): a unit's own materials line (a shared "steel" line
+  made knights of every melee unit), "inhuman" over "woman", name cloth textures; review pages show full prompts.
+- **Armor becomes a percentage with diminishing returns** (the user; `todo/percent-armor`): Claude's curve
+  armor ÷ (armor + 60) awaits a yes.
+- **The Grove's Water is now Wellspring.**
 
 ## Next
-1. **2D art for every unit without it** (the user, 2026-10-08: lock in the units, then the art): `unit-concepts`
-   skill, identity → concept → portrait, in batches once the first ones are okayed.
-2. **Jilliath's open names and doubts:** Fire mage 3–4, Martyr mage 4, *Fire on all*, *Beam*; faith's tier 5; the
-   deflecting secret's home; the joker line (later).
-3. **Percent armor** (`todo/percent-armor`): confirm the curve, build, rerun the matrix.
+1. **Finish Jilliath's concepts** with the user (the open nine), then portraits from the picks.
+2. **The other factions' missing units** (the alpha needs all three): Nexus melee tier 3, the Grove's mage line, and
+   the rest on the board; then their concept art the same way.
+3. **Percent armor** (`todo/percent-armor`): confirm the curve, build, rerun the matrix. Then the balance pass, with
+   the user's worry that Jilliath's lines are too long.
 4. **Waiting for the user to look** (`testing/`): the mage and support lines, ability power, the front door, codex.
 
 ## Try
