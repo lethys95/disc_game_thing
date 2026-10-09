@@ -257,3 +257,16 @@ head and shoulder line: the Punisher's pointed hood, the Pontiff's candle crown,
 yoke, the Acolyte's lantern, the Godkin's bare body, the Reclaimer's thin legs. The Seraph and the Shepherd share an
 outline (hooded head, folded wings, long gown); the Templar and the Zealot are close. The user: "I don't think these
 models will be as small as you think they will", so detail inside the outline will carry too.
+
+### The user's directions, round eight: Claude's read (`shots/jilliath-open.html`, full prompts shown)
+- **Paragon** `paragon-runes` 1001: lands: red hair over the right side, calm face, runic forearms, a book on a chain,
+  the burning-hand emblem, light armour, blood-tipped wings.
+- **Empyreal** `empyreal-icon` 1001: the gold disc, orange eyes, three pairs of red wings, painted robes; but the
+  "cracked oil paint darkened under varnish" came out as charcoal-dark skin with no visible cracks, so she may read as
+  a dark-skinned figure, not a painting. The plain version is weaker.
+- **Archon** `archon-floating` 1000: the hem fading into light works, subtly; the crack and the ring were ignored.
+- **Chosen** `chosen-juggernaut`: bulky shell plates and the cape; still a helmeted knight. `chosen-zweihander-props`
+  1000: excellent.
+- **Torturer** `torturer-husk`: chains and spikes, but a knight's helm and plate; "metal plated" still pulls to a knight.
+- **Avatar** `avatar-illusory` 1001: hooded white-red armour, translucent layered wings; no flames, no heated gauntlets.
+- **Guardian** `guardian-porcelain`: missed: no porcelain cracks, the old breastplate.
