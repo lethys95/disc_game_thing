@@ -124,3 +124,6 @@
   codex's parchment; every other panel on the light rim (the old filigree frame retired); the battle's and the game's
   end on one moment layout; the card's instruments and health seal as engraved silver emblems (`ui.ts`). Next: the
   moments' keystone, the saves on parchment, the new game's emblems and March, the codex's ribbons; the faction skins.
+- **The moments' keystone and the saves (2026-10-10, ~01:00):** the keystone is the card's silver seal until each
+  faction's emblem takes its place; saved games are parchment strips. Next: the new game's emblems and March, the
+  codex's ribbons, the map's pennants; then the faction skins.

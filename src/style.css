@@ -761,14 +761,15 @@ body.formulas .formula { display: inline; }
 #logstele.open #log .entry.heal { color: #7a5a14; }
 
 /* Battle's end: a moment, the emblem as its keystone and the title in the moments' face. */
-/* The moments (a battle's end, the game's end) share one layout on the kit's tablet: a keystone on its top edge (still
-   greybox), the title in the moment face, the choices plaques with a seal pressed at each one's start. */
+/* The moments (a battle's end, the game's end) share one layout on the kit's tablet: a keystone on its top edge, the
+   title in the moment face, the choices plaques with a seal pressed at each one's start. */
 #banner, #mapbanner {
   position: fixed; left: 50%; top: 40%; z-index: 5; transform: translate(-50%, -50%); padding: 1.2rem 2.2rem 0.5rem; text-align: center;
   border: solid transparent; border-width: 2.57rem 2.36rem 2.57rem 3.02rem; background: #1c1b1b padding-box;
   border-image: var(--ui-battle-log) 74 68 74 87 / 2.57rem 2.36rem 2.57rem 3.02rem stretch; filter: drop-shadow(0 0.6rem 1.4rem rgba(0, 0, 0, 0.8));
 }
-#banner::before, #mapbanner::before { content: ""; position: absolute; left: 50%; top: -4.5rem; width: 4.4rem; height: 4.4rem; margin-left: -2.2rem; border-radius: 50%; background: var(--gb-stone-hi); border: 0.3rem solid var(--gb-iron); box-sizing: border-box; }
+/* Until each faction's emblem takes its place, the keystone is the card's silver seal. */
+#banner::before, #mapbanner::before { content: ""; position: absolute; left: 50%; top: -4.6rem; width: 4.6rem; height: 4.6rem; margin-left: -2.3rem; background: var(--ui-icon-seal) center / contain no-repeat; filter: drop-shadow(0 0.2rem 0.4rem rgba(0, 0, 0, 0.7)); }
 #banner .title, #mapbanner .title { font: 700 3.8rem var(--moment); letter-spacing: 0.03em; color: var(--gb-marble); }
 #banner .subtitle, #mapbanner .subtitle { margin-bottom: 1.2rem; color: var(--muted); }
 #banner button.action, #mapbanner button.action {
@@ -1059,3 +1060,12 @@ body.formulas .formula { display: inline; }
 #peek .cell.filled { background: rgba(72, 52, 32, 0.12); }
 #peek .scaled { color: #7a4a10; border-bottom-color: rgba(122, 74, 16, 0.6); }
 #peek .formula { color: #6a5a40; }
+
+/* Saved games are documents: each a parchment strip, written in ink, its choices in red ink. */
+#menu .save-row:has(> .save-text) {
+  margin: 0.2rem 0; padding: 0.35rem 0.7rem; border: 0; color: #2b2219; box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.6);
+  background: var(--gb-parchment) var(--ui-codex-parchment) center / cover;
+}
+#menu .save-row:has(> .save-text) .note { color: #6e5d49; }
+#menu .save-row:has(> .save-text) button.small { border: 0; border-image: none; background: none; padding: 0 0.2rem; color: #7d2418; font: 600 0.8rem var(--text); text-decoration: underline; text-underline-offset: 0.2em; filter: none; }
+#menu .save-row:has(> .save-text) button.small:hover { color: #2b2219; }

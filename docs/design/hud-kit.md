@@ -394,14 +394,15 @@ page's ink.
   held-right-click explanations are written on, in ink.
 - **Every other panel** (the fork prompt, the grid's menu, the skirmish's panels) has the light rim. The old filigree
   frame retired.
-- **The moments** (a battle's end, the game's end) share one layout on the tablet. A keystone sits on its top edge
-  (still greybox), the title is in the moment face, and the choices are plaques with a seal pressed at each one's
-  start.
+- **The moments** (a battle's end, the game's end) share one layout on the tablet. A keystone sits on its top edge,
+  the card's silver seal until each faction's emblem takes its place. The title is in the moment face, and the
+  choices are plaques with a seal pressed at each one's start.
+- **Saved games** are parchment strips in the menu, written in ink, with their choices in red ink.
 
 - **The card's instruments** are engraved silver emblems, the Capitol tabs' metal: the shield (armour), the
   hourglass (initiative), the rayed disc (ability power), the sword (hits). The health's number sits on a silver seal
   with a dark centre.
 
-**Next:** the moments' keystone, the saves on parchment, the new game's emblems and March, the codex's ribbons and
-capitals, then the other factions' skins.
+**Next:** the new game's faction emblems and March as a held object, the codex's ribbons and capitals, the map's
+labels as pennants, then the faction skins (each faction's emblem as the moments' keystone).
 
