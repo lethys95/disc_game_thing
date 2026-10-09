@@ -31,7 +31,7 @@ const HEIGHT = 864;
 /** What fills everything outside the mask in the source; the model sees it as the empty middle. */
 const GROUND = "#151413";
 /** Masked image-to-image strengths: how far the painting may move from the greybox's flat shapes. */
-const STRENGTHS = [0.7, 0.8] as const;
+const STRENGTHS = [0.75, 0.85] as const;
 /** Room around the sculpture, in source pixels, for the painting to finish its outline in. */
 const ZONE = 36;
 /** The sculpted pieces, cut by segmentation from a crop around each (their zone included). */
@@ -53,10 +53,10 @@ const SCREENS: Readonly<Record<string, Screen>> = {
     subject:
       "The interface frame of a dark fantasy strategy game, seen straight on, carved as one piece of dark stonework around an empty middle: " +
       "a band of carved black stone along the top edge, an arcade of small arched niches with a single candle burning in one of them, and a round iron medallion hanging from the band; " +
-      "from the band's right end two small objects hang on iron chains: an iron hourglass and a wooden puppeteer's cross with its strings; " +
-      "a heavy stone sill along the bottom edge with a plain moulded top and a row of square recessed iron sockets, the stone between them plain; " +
-      "on the left a tall stone stele crowned by a hooded angel carved in the same dark stone, humble, head bowed, her wings rising whole behind her, " +
-      "both her hands holding an empty arched portrait frame against her chest, short arms; below her a pale marble name plate set into the stone, then a recessed dark panel; " +
+      "from the band's right end two small objects hang on iron chains: an iron hourglass, and a wooden puppeteer's cross with a small puppet hanging from its strings; " +
+      "a heavy stone sill along the bottom edge with a plain moulded top and, in its middle only, a short row of square recessed iron sockets, plain stone on either side; " +
+      "on the left a tall stone stele with a hooded angel standing on its top, carved in the same dark stone, humble, head bowed, her wings rising whole behind her, " +
+      "both her hands holding an empty arched portrait frame against her chest, short arms; set into the stele's face below her feet a pale marble name plate, then a recessed dark panel; " +
       "on the right a shorter stone stele with a recessed dark panel; thin bands of dark red stained glass along the seams. No text, no letters, no numbers.",
   },
 };
@@ -65,39 +65,39 @@ const SCREENS: Readonly<Record<string, Screen>> = {
  * Bump for a new round of probes: each round keeps its own folder (`<screen>-<round>`), its layers and paintings.
  * Round 2 (2026-10-09), after the user's notes on round 1: the angel holds the portrait, her wings whole, no ridge on
  * the sill, recessed panels behind text, the two controls as hanging objects, darker and candlelit.
+ * Round 3 (2026-10-09), after the user on round 2 ("the darkness on each angel is now an overreaction […] there was
+ * contrast between dark and light"; "there are even more cuts now"): round 1's light and source values again; the
+ * angel stands on the stele's top, so no greybox stone sits behind her to leave a dark slab; the small instrument
+ * glyphs stay out of the painting (crisp pieces on top).
  */
-const ROUND = 2;
+const ROUND = 3;
 
 /**
- * Material and light to compare. Round 1 compared materials (the user's gothic line, cathedral, reliquary); the user
- * preferred reliquary and asked for darker light ("we generally need something darker to fit the rest of the theme"),
- * so round 2 keeps reliquary and compares how dark.
+ * Material and light. Round 1 compared materials and the user preferred reliquary (85-3's light: "dimmed like 85-3
+ * reliquary works better", against 65-2's "distinct 'Ai Look'"). Round 2 went too dark. Round 3 is round 1's
+ * reliquary line as sent, with candles, and the same with the contrast between lit stone and shadow named.
  */
-const RELIQUARY = "Black wrought iron and dark stone like an old reliquary, worn smooth, with tarnished silver edges.";
+const RELIQUARY = "Black wrought iron and dark stone like an old reliquary, worn smooth, with tarnished silver edges and deep shadows. Desaturated, grim and solemn.";
 const PROBES: readonly { readonly id: string; readonly look: string }[] = [
-  {
-    id: "candlelit",
-    look: `${RELIQUARY} Lit only by a few candles set in the stone: dim warm candlelight, deep shadows, low-key, matte bare stone, no moss, no plants, nothing glossy. Grim and solemn.`,
-  },
-  {
-    id: "darker",
-    look: `${RELIQUARY} Almost dark: a few candles are the only light and most of the stone sits in shadow, matte bare stone, no moss, no plants, nothing glossy. Grim and solemn.`,
-  },
+  { id: "reliquary", look: `Lit by one soft light from the upper left and a few candles. ${RELIQUARY}` },
+  { id: "contrast", look: `Lit by one soft warm light from the upper left and a few candles: lit stone against deep shadow, matte, no glare, no moss. ${RELIQUARY}` },
 ];
 
 /** The greybox's layers, as page styles: each hides what its layer isn't. */
 const HIDE_FIELD = "#stage{visibility:hidden!important} html,body{background:transparent!important} #battlehud::before{display:none!important}";
-// Darker than the greybox shows it: the painting keeps the source's values (the user, round 1: "something darker").
+// The small functional glyphs (the instruments' shapes, the health seal, the tier numeral) stay out of the painting: they
+// are too small to survive a repaint and become crisp pieces of their own, drawn over it.
+const GLYPHS = ".shape,.seal,.tier";
 const CHROME =
-  `${HIDE_FIELD} #battlehud{filter:brightness(0.72)} #battlehud *{color:transparent!important;text-shadow:none!important} ` +
-  "#battlehud .art,#battlehud .fill,#battlehud .channel .shield,#battlehud .band,#battlehud .bead,#battlehud .cell,#battlehud .shield-seal,#card .abilities>*,#log>*{visibility:hidden!important}";
+  `${HIDE_FIELD} #battlehud *{color:transparent!important;text-shadow:none!important} ` +
+  `#battlehud .art,#battlehud .fill,#battlehud .channel .shield,#battlehud .band,#battlehud .bead,#battlehud .cell,#battlehud .shield-seal,#card .abilities>*,#log>*,${GLYPHS.split(",").map((g) => `#battlehud ${g}`).join(",")}{visibility:hidden!important}`;
 const SCULPTED = "#card .niche .figure,#card .niche .window,#card .niche .hands,#beamhang";
 const LAYERS = {
   chrome: CHROME,
   structure: `${CHROME} ${SCULPTED}{visibility:hidden!important}`,
   sculpture: `${CHROME} #battlehud *{visibility:hidden!important} ${SCULPTED.split(",").map((s) => `${s},${s} *`).join(",")}{visibility:visible!important}`,
   content:
-    `${HIDE_FIELD} #battlehud *:not(.art):not(.fill):not(.shield):not(.band):not(.bead):not(.cell):not(.shield-seal),#battlehud *::before,#battlehud *::after` +
+    `${HIDE_FIELD} #battlehud *:not(.art):not(.fill):not(.shield):not(.band):not(.bead):not(.cell):not(.shield-seal):not(.shape):not(.seal):not(.tier),#battlehud *::before,#battlehud *::after` +
     "{background:transparent!important;border-color:transparent!important;box-shadow:none!important}",
   field: "#battlehud>*{visibility:hidden!important}",
   // In front of the live portrait: the frame the figure holds (its rim, not its opening) and her hands over it.

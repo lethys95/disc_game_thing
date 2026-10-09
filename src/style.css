@@ -676,7 +676,7 @@ body.formulas .formula { display: inline; }
 
   --gb-hands: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 76 19' preserveAspectRatio='none'><g fill='%235c5955' stroke='%23474441' stroke-width='0.9'><path d='M3 9C3 4 7 1 12 1C17 1 20 5 20 9C20 14 16 18 11 18C6 18 3 14 3 9Z'/><path d='M73 9C73 4 69 1 64 1C59 1 56 5 56 9C56 14 60 18 65 18C70 18 73 14 73 9Z'/></g><g stroke='%23474441' stroke-width='0.9'><path d='M10 4V15M14 4V15M17 6V14M66 4V15M62 4V15M59 6V14'/></g></svg>");
   --gb-hourglass: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 30'><g fill='%236b6864'><rect x='0' y='0' width='20' height='3'/><rect x='0' y='27' width='20' height='3'/><rect x='1.5' y='3' width='2' height='24'/><rect x='16.5' y='3' width='2' height='24'/></g><path d='M5 3H15C15 9 11 12 10 15C11 18 15 21 15 27H5C5 21 9 18 10 15C9 12 5 9 5 3Z' fill='%23908b84' opacity='0.55'/><path d='M7 27L10 22L13 27Z' fill='%23c9b98f'/></svg>");
-  --gb-puppet: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 30'><g fill='%236b6864'><rect x='1' y='4' width='24' height='3'/><rect x='11.5' y='0' width='3' height='13'/><rect x='6' y='10' width='14' height='2'/></g><g stroke='%23b9b2a6' stroke-width='0.6'><path d='M2 7L3 30M24 7L23 30M13 13V30M7 12L9 30M19 12L17 30'/></g></svg>");
+  --gb-puppet: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 34'><g fill='%236b6864'><rect x='1' y='3' width='24' height='2.6'/><rect x='11.7' y='0' width='2.6' height='11'/><rect x='6' y='8.4' width='14' height='2'/></g><g stroke='%23b9b2a6' stroke-width='0.5'><path d='M2 5.6L9 23M24 5.6L17 23M13 11V18M7 10.4L10.5 30M19 10.4L15.5 30'/></g><g fill='%23857f78'><circle cx='13' cy='19.5' r='2'/><path d='M10 22H16L15 28H11Z'/><path d='M10 23L8.6 24.6M16 23L17.4 24.6M11.4 28L10.6 33M14.6 28L15.4 33' stroke='%23857f78' stroke-width='1.2'/></g></svg>");
 }
 #battlehud { position: fixed; inset: 0; z-index: 2; pointer-events: none; }
 /* The scene darkens toward the sill. */
@@ -711,7 +711,7 @@ body.formulas .formula { display: inline; }
    cross. The puppet glows while the AI pulls its strings. */
 #beamhang { position: absolute; right: 2rem; top: 100%; display: flex; gap: 1.4rem; }
 #beamhang button.object {
-  position: relative; width: 2.4rem; height: 3rem; margin-top: 1rem; padding: 0; border: 0; cursor: pointer;
+  position: relative; width: 3rem; height: 4rem; margin-top: 1rem; padding: 0; border: 0; cursor: pointer;
   background: center / contain no-repeat; filter: drop-shadow(0 0.25rem 0.35rem rgba(0, 0, 0, 0.75));
 }
 #beamhang button.object::before { content: ""; position: absolute; left: 50%; bottom: 100%; width: 0.14rem; height: 1rem; margin-left: -0.07rem; background: var(--gb-iron); }
@@ -725,22 +725,23 @@ body.formulas .formula { display: inline; }
 
 /* The card: a stele rising from the sill's left end, set in from the screen's edge so its frame is whole. */
 #card {
-  position: absolute; left: 1.4rem; bottom: 0; z-index: 1; width: 18.8rem; max-height: 66vh; box-sizing: border-box;
+  position: absolute; left: 2rem; bottom: 0; z-index: 1; width: 18.8rem; max-height: 60vh; box-sizing: border-box;
   display: flex; flex-direction: column; padding: 0 1rem 0.8rem; background: var(--gb-stone); border: 0.3rem solid var(--gb-stone-hi); border-bottom: 0;
   box-shadow: 0.4rem 0 0.9rem rgba(0, 0, 0, 0.5);
 }
-/* The niche: the figure rises above the stele, holds the portrait at her chest; her hands are in front of its frame. */
-#card .niche { position: relative; flex: none; height: 14rem; margin: -3.6rem -2.4rem 0; }
+/* The figure stands on the stele's top, holding the portrait at her chest, her hands in front of its frame. Nothing is
+   behind her but the field: the stele's stone begins at her feet. */
+#card .niche { position: relative; flex: none; height: 13rem; margin: -11.6rem -1.7rem 0; }
 #card .niche .figure { position: absolute; inset: 0; background: var(--gb-figure-niche) center / 100% 100% no-repeat; }
-#card .niche .window { position: absolute; left: 50%; top: 5.4rem; width: 5.4rem; height: 6rem; transform: translateX(-50%); overflow: hidden; border-radius: 2.7rem 2.7rem 0 0; background: var(--gb-stone-lo); border: 0.2rem solid var(--gb-iron); box-sizing: border-box; }
+#card .niche .window { position: absolute; left: 50%; top: 4.9rem; width: 5.4rem; height: 6rem; transform: translateX(-50%); overflow: hidden; border-radius: 2.7rem 2.7rem 0 0; background: var(--gb-stone-lo); border: 0.2rem solid var(--gb-iron); box-sizing: border-box; }
 #card .niche .window .art { width: 100%; height: 100%; margin: 0; font-size: 1.5rem; }
 #card .niche .window .art.portrait { background-size: 150%; background-position: 50% 6%; }
-#card .niche .hands { position: absolute; left: 50%; top: 7.6rem; width: 7.6rem; height: 1.9rem; transform: translateX(-50%); background: var(--gb-hands) center / 100% 100% no-repeat; pointer-events: none; }
+#card .niche .hands { position: absolute; left: 50%; top: 7.1rem; width: 7.6rem; height: 1.9rem; transform: translateX(-50%); background: var(--gb-hands) center / 100% 100% no-repeat; pointer-events: none; }
 /* Pinned: an iron pin through the stele's corner. */
-#card .niche .pin { position: absolute; left: 1.6rem; top: 4.4rem; width: 0.85rem; height: 0.85rem; border-radius: 50%; background: var(--gb-light); box-shadow: 0 0.15rem 0.3rem rgba(0, 0, 0, 0.7); }
+#card .niche .pin { position: absolute; left: 2.2rem; top: 11.2rem; width: 0.85rem; height: 0.85rem; border-radius: 50%; background: var(--gb-light); box-shadow: 0 0.15rem 0.3rem rgba(0, 0, 0, 0.7); }
 /* The plate set in the stone below the figure: the side's enamel band, the tier's numeral at its left end, a crown. */
 #card > .plate {
-  position: relative; align-self: center; margin: -0.5rem 0 0.2rem; min-width: 9rem; padding: 0.15rem 1.4rem; box-sizing: border-box; white-space: nowrap; text-align: center;
+  position: relative; align-self: center; margin: 0 0 0.2rem; min-width: 9rem; padding: 0.15rem 1.4rem; box-sizing: border-box; white-space: nowrap; text-align: center;
   background: var(--gb-marble); color: var(--gb-ink); font: 700 1.2rem var(--display); box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.6); cursor: help;
 }
 #card > .plate.side0 { border-bottom: 0.3rem solid var(--side0); }
@@ -844,7 +845,7 @@ body.formulas .formula { display: inline; }
 
 /* The held tarot cards lie on the sill. */
 #tarot-icon {
-  position: absolute; left: 21.2rem; bottom: 100%; margin-bottom: 0.2rem; z-index: 1; width: 4.6rem; height: 3.9rem; padding: 0; border: 0; background: none; cursor: pointer;
+  position: absolute; left: 21.8rem; bottom: 100%; margin-bottom: 0.2rem; z-index: 1; width: 4.6rem; height: 3.9rem; padding: 0; border: 0; background: none; cursor: pointer;
   display: flex; justify-content: center; align-items: flex-end;
 }
 #tarot-icon .mini-card {
