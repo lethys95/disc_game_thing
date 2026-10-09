@@ -661,6 +661,24 @@ const ANGELS: Readonly<Record<string, { readonly subject: string; readonly pose?
   "guardian-cracks": {
     subject: "An angel woman whose skin is cracked white porcelain: a web of cracks runs over her face, neck, chest and arms, and brilliant white light shines out through every crack. Long, smooth, silky white hair. An ancient chestplate from a forgotten age: smooth, pale and abstract, flowing alien curves with no ornament and no rivets. A long black robe below it. Her two wings are made of brilliant glowing white light, neon bright.",
   },
+  // Round ten (the user on round nine). The Guardian's prompt taken apart: "angel woman", the long robe and the angels'
+  // linen-and-feathers materials line kept pulling her back to the default angel, so she has her own materials and
+  // the porcelain is the subject, not a detail.
+  "guardian-porcelain-statue": {
+    subject: "A porcelain angel, a statue come alive: her body, face and hands are smooth white porcelain, cracked all over in a fine web, pure white light glowing inside every crack. Long smooth white hair. An ancient chestplate from a forgotten age, pale abstract metal in flowing alien curves, over short black robes. Her two wings are pure white light, no feathers.",
+    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: cracked white porcelain, pale abstract metal, black velvet, pure white light. Serious, adult, not cartoonish.",
+  },
+  "guardian-porcelain-bare": {
+    subject: "A porcelain angel, a statue come alive: her body, face, head and hands are smooth white porcelain with no hair, cracked all over in a fine web, pure white light glowing inside every crack. An ancient chestplate from a forgotten age, pale abstract metal in flowing alien curves, over short black robes. Her two wings are pure white light, no feathers.",
+    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: cracked white porcelain, pale abstract metal, black velvet, pure white light. Serious, adult, not cartoonish.",
+  },
+  // The Empyreal: the gold plate and the red wings stay (the user: they work); the skin was charcoal, so it's pale
+  // now, cracked and flaking to canvas; the third pair of wings is spelled out; the robes become the painting too.
+  "empyreal-flaking": {
+    subject: "An angel of vengeance, an old icon painting come alive. Her skin is pale ivory oil paint covered in the fine craquelure of an old painting, flaking away in places to show the bare canvas weave beneath. Her eyes glow bright orange in a fixed, intense glare staring straight ahead. Six blood-red wings, three pairs. Behind her head stands a large flat disc of tooled gold leaf. Her robes are stiff gold-leaf brocade and deep red painted cloth, the paint flaking to bare canvas at the folds and hems.",
+    pose: "all standing in the same T-pose, her six wings open behind her in three pairs, one pair above another, clear of her arms",
+    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: pale cracked oil paint, bare canvas weave, tooled gold leaf, gold brocade, blood-red feathers. Serious, adult, not cartoonish.",
+  },
 };
 
 const ANGEL_JOBS = Object.entries(ANGELS).map(([id, { subject, pose, materials }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are empty and open.`, materials ?? ANGEL_3D, pose ?? WINGED_T_POSE) }));
@@ -817,6 +835,29 @@ const MELEE: Readonly<Record<string, { readonly subject: string; readonly pose?:
     subject: "A vengeance angel, a man in hooded white and red angelic armour, its rims and edges glowing and covered in abstract symbols. His gauntlets and boots glow orange-red with heat, fading from heated metal at the fingers and toes into white armour. Three pairs of translucent, illusory wings layered one behind another, every feather ending in a lick of orange flame.",
     pose: "all standing in the same T-pose, his three pairs of wings open behind him and clear of his arms",
     materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: white enamel, red cloth, tarnished gold, glowing heated metal, translucent light, flame. Serious, adult, not cartoonish.",
+  },
+  // Round ten. The Chosen: no cape, narrower, battered rather than sculpted (the user: "too much like a superhero";
+  // "too broad").
+  "chosen-battered": {
+    subject: "An inhuman juggernaut in a man's shape, tall and heavy but not broad: no face, his head a smooth rounded shell with no visor and no eye slits, fused to a body of thick layered shell plates, battered, chipped and scorched, no sculpted muscles. No cape.",
+    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: blackened shell plates, chipped bone-white enamel, heat-scorched metal. Serious, adult, not cartoonish.",
+  },
+  // The Torturer: the screaming mask leads, then what was missing: the instruments, a hunched, wrong body.
+  "torturer-instruments": {
+    subject: "A torturer whose face is an iron mask of anguish, a sculpted iron face screaming, its mouth stretched wide. An inhuman, grotesque husk of cold grey metal, hunched, with overlong arms, metal skin and no flesh anywhere, riddled with cone-shaped iron spikes, his back bristling with them. Hooks, pincers and saw blades hang from his belt on chains; evil gauntlets hung with chains. No helmet, no knight. Disastrous, wrong.",
+    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: cold grey iron, rust, blackened chains, old dried blood. Serious, adult, not cartoonish.",
+  },
+  // The Avatar after the user's reference (MTG's Illusory Angel, described in words): enormous wings of long loose
+  // feathers coming apart into streaks and smoke, in red. And the Chosen's next step: the same faceless shell.
+  "avatar-ascended": {
+    subject: "A vengeance angel, the faceless champion ascended: a tall body of white and red shell plates under a deep hood, no face, only a glowing red void inside the hood, the plates' edges glowing and covered in abstract symbols, gauntlets and boots glowing with heat. From his back spread three pairs of enormous red wings, far larger than his body, made of long loose feathers that come apart into streaks, embers and smoke, feathers breaking off and drifting away, translucent and glowing.",
+    pose: "all standing in the same T-pose, his enormous wings spread wide behind him and clear of his arms",
+    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: white and red shell plates, glowing heated metal, red feathers dissolving into smoke and embers. Serious, adult, not cartoonish.",
+  },
+  "avatar-cracked": {
+    subject: "A vengeance angel, the faceless champion ascended: his smooth rounded shell head and thick shell plates cracked open, fire burning inside every crack, his gauntlets and boots glowing with heat. From his back spread three pairs of enormous red wings, far larger than his body, made of long loose feathers that come apart into streaks, embers and smoke, feathers breaking off and drifting away, translucent and glowing.",
+    pose: "all standing in the same T-pose, his enormous wings spread wide behind him and clear of his arms",
+    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: blackened and bone-white shell plates, fire, glowing heated metal, red feathers dissolving into smoke and embers. Serious, adult, not cartoonish.",
   },
 };
 
