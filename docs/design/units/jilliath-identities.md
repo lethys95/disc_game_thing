@@ -316,3 +316,11 @@ texture in 3D).
   robe means a skirt); the porcelain shows as grey statue skin on the legs, cracks faint; the bare version kept hair.
 - **Torturer** `torturer-instruments`: a knight again; chains at the belt; no scream.
 - **Chosen** `chosen-battered`: narrower but not tiny, faceless, no cape (off-direction since the user's note).
+
+### Round eleven: Claude's read (`shots/jilliath-round10.html`, with round ten)
+- **Empyreal:** `empyreal-mosaic` is the interesting one: a full skin of gold and red glass tiles, the disc and six
+  wings, no robe; but the tiles follow the body like a bodysuit and read close to a nude statue. `empyreal-frame` gave a
+  gilded corset over near-nudity, and `empyreal-canvas` a half-bare wrapped body near the Wastes' mummies. Lesson: "no
+  robes, no cloth" undresses a figure; say what covers her instead.
+- **Chosen** `chosen-shell`: a visored knight again; "massive and heavy" leading brought the knight back (round nine's
+  faceless head came only when the head led).
