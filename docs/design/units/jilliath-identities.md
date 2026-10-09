@@ -363,3 +363,11 @@ drawing board with guardian, we're not getting anywhere. We got further away wit
 tunic she got a dress again, and we're not taking another dress. I think both Empyreal and guardian needs that we go
 into reference material and try to specify details which makes them more unique." **Picked:** the Avatar
 `avatar-streaks-turnaround-1000`, the Chosen `chosen-battered-1002-red-d70`.
+
+### References for the Empyreal, the Guardian and the Torturer's head (Claude, 2026-10-09; `shots/jilliath-references.html`)
+The user: "both Empyreal and guardian needs that we go into reference material and try to specify details which makes
+them more unique." Claude's research, for keep / maybe / cut: the Empyreal as a Spanish polychrome church statue (glass
+eyes, glass tears, estofado gilding, flaking painted wood), as a Byzantine courtier archangel (the jewelled loros wound
+around the torso, red shoes, a hair band, no crown), as Our Lady of Sorrows (swords in the heart), with a Sevillian
+rostrillo framing the face; the Guardian with Strazza's Veiled Virgin veil, as a weathered cemetery angel (Story's Angel
+of Grief), or in Avacyn's actual armour; the Torturer's head as Pinhead's grid without pins, or an iron maiden's face.
