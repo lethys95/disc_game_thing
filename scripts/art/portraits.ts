@@ -395,12 +395,12 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "she stands upright and still in the heart of daybreak: blinding shafts of golden sunlight and god rays burst out of her in every direction and stream far across the dark around her, the whole image lit by her dawn, the darkness behind her split by long beams of light",
     ],
     strengths: T_POSED,
-    // The card's god rays are a light effect laid on top (`godkin-card-pose1-d75-rays.png`: the brightest light streaked
-    // outward from her centre and screened back in gold), since image-to-image keeps the background dark. The pose
-    // model sees no person in a silhouette, so the crops are measured from her outline (the head at its top).
+    // Picked: a fresh card (`--fresh`, seed 1006), painted from words with the god rays across the whole image, its thin
+    // grey side margins replaced by its own dark edges stretched outward (`godkin-fresh-1006-card.png`). The pose model sees no person in a silhouette: the crops are
+    // measured from her outline (the head at its top).
     picked: {
-      card: "godkin-card-pose1-d75-rays.png",
-      crops: { bust: { from: "card", size: 0.55, x: 0.67, y: 0.2 }, icon: { from: "card", size: 0.32, x: 0.684, y: 0.125 } },
+      card: "godkin-fresh-1006-card.png",
+      crops: { bust: { from: "card", size: 0.56, x: 0.5, y: 0.2 }, icon: { from: "card", size: 0.3, x: 0.5, y: 0.095 } },
     },
   },
   reclaimer: {
