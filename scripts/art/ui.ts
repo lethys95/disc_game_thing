@@ -26,6 +26,13 @@ const PIECES = [
   { id: "icon-garrison", look: "A single emblem in tarnished engraved silver relief: two crossed swords over a kite shield, bold simple silhouette, filling the frame.", size: [1024, 1024] },
   { id: "icon-research", look: "A single emblem in tarnished engraved silver relief: an open ancient book with a quill, bold simple silhouette, filling the frame.", size: [1024, 1024] },
   { id: "icon-spells", look: "A single emblem in tarnished engraved silver relief: a crescent moon cradling a four-pointed star, bold simple silhouette, filling the frame.", size: [1024, 1024] },
+  // The battle card's instruments, each value its own shape (`docs/design/hud-kit.md`), in the tab emblems' silver.
+  { id: "icon-armor", look: "A single emblem in tarnished engraved silver relief: a plain heraldic shield with a pointed base, bold simple silhouette, filling the frame.", size: [1024, 1024] },
+  { id: "icon-initiative", look: "A single emblem in tarnished engraved silver relief: an hourglass in a simple frame, bold simple silhouette, filling the frame.", size: [1024, 1024] },
+  { id: "icon-power", look: "A single emblem in tarnished engraved silver relief: a round disc ringed with straight rays like a sun, bold simple silhouette, filling the frame.", size: [1024, 1024] },
+  { id: "icon-hits", look: "A single emblem in tarnished engraved silver relief: a straight sword pointing up, bold simple silhouette, filling the frame.", size: [1024, 1024] },
+  // The health's seal at the channel's end: the current number sits on its dark centre.
+  { id: "icon-seal", look: "A single emblem in tarnished engraved silver relief: a plain round ring with a raised rim, its centre a smooth flat disc of dark stone, blank, bold simple silhouette, filling the frame.", size: [1024, 1024] },
 ];
 
 const args = process.argv.slice(2);

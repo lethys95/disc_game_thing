@@ -328,8 +328,6 @@ seed 1.
 - *Resolve now and Auto-battle:* the hanging hourglass and marionette.
 
 **Left for the battle:**
-- The instruments' shapes, the tier numeral and the health seal are still flat glyphs. They become small painted
-  pieces.
 - Placeholder faces show where units have no icon art yet.
 - The field's brackets and health channels keep their greybox values.
 - The log's unrolled scroll is the stretched block around parchment.
@@ -400,6 +398,10 @@ page's ink.
   (still greybox), the title is in the moment face, and the choices are plaques with a seal pressed at each one's
   start.
 
-**Next:** the battle's last flat glyphs, the moments' keystone, the saves on parchment, then the other factions'
-skins.
+- **The card's instruments** are engraved silver emblems, the Capitol tabs' metal: the shield (armour), the
+  hourglass (initiative), the rayed disc (ability power), the sword (hits). The health's number sits on a silver seal
+  with a dark centre.
+
+**Next:** the moments' keystone, the saves on parchment, the new game's emblems and March, the codex's ribbons and
+capitals, then the other factions' skins.
 

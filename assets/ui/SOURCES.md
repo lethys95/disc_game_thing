@@ -7,6 +7,8 @@ Generated with `scripts/art/ui.ts` (Krea-2 Turbo via ComfyUI) and cut out with `
 | `button.webp` | `button`, 2 | |
 | `backdrop.webp` | `backdrop`, 1 | central 80% cropped, 512 px, tiled |
 | `icon-{city,garrison,research,spells}.webp` | `icon-city` 1, `icon-garrison` 3, `icon-research` 1, `icon-spells` 1 | cut out |
+| `icon-{armor,initiative,power,hits}.webp` | `icon-armor` 3, `icon-initiative` 2, `icon-power` 3, `icon-hits` 3 | cut out, 256 px: the battle card's instruments |
+| `icon-seal.webp` | `icon-seal`, 2 | cut out, 256 px: the seal the card's health number sits on |
 
 Pilot on the city screen (M45), after the user's reference `docs/design/references/disciples2-city.png`.
 

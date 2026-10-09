@@ -120,3 +120,7 @@
   reliquary 75-3, 1440p) with the name in gilt in its arch and the choices as plaques in its recess; the new game and
   the settings move onto the kit's pieces (light-rim tablets, plaques that light, gem-lamp toggles, iron sliders).
   Next: the battle's last flat glyphs, the saves on parchment, then the other factions' skins.
+- **Documents, panels, moments and instruments (2026-10-10, ~00:50):** the rules slip and the explanations on the
+  codex's parchment; every other panel on the light rim (the old filigree frame retired); the battle's and the game's
+  end on one moment layout; the card's instruments and health seal as engraved silver emblems (`ui.ts`). Next: the
+  moments' keystone, the saves on parchment, the new game's emblems and March, the codex's ribbons; the faction skins.
