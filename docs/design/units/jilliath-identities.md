@@ -225,3 +225,6 @@ frame, still inhuman and clothless; 1002 grew a second, lower pair of wings. Hee
   face lost in shadow, layered black and white robes, plain brown wings. White over black, draped across the body,
   reads softer and humbler; black over white is starker, and its hands came out black. Seeds 1000 of both draw the side
   view twice.
+- **Seraph, picked (the user):** `seraph-silk-turnaround-1002`: "I think I'll say seraph-silk-turnaround-1002 works.
+  The posture will do a lot for us too in practice I think. Either way the character is now both interesting and
+  humble, and we can move on."
