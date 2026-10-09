@@ -5,23 +5,35 @@
     <title>disc</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&family=Grenze+Gotisch:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
     <div id="stage"></div>
-    <div id="turns"></div>
-    <div id="card" class="panel" hidden></div>
-    <div id="log" class="panel"></div>
-    <button id="auto" class="action" hidden>Auto-battle</button>
-    <button id="resolve" class="action" hidden>Resolve now</button>
-    <div id="bottom">
-      <div id="hint"></div>
-      <div id="actions"></div>
+    <div id="battlehud" hidden>
+      <div id="beam">
+        <div id="turns"></div>
+        <div id="beamhang">
+          <button id="resolve" class="action" hidden>Resolve now</button>
+          <button id="auto" class="action" hidden>Auto-battle</button>
+        </div>
+      </div>
+      <div id="sill">
+        <div id="card" hidden></div>
+        <div id="bottom">
+          <div id="rules" hidden></div>
+          <div id="hint"></div>
+          <div id="actions"></div>
+        </div>
+        <button id="tarot-icon" hidden></button>
+        <div id="logstele">
+          <button id="unroll" title="Unroll the whole log"></button>
+          <div id="log"></div>
+        </div>
+      </div>
     </div>
     <div id="banner" hidden></div>
     <div id="tarot" hidden></div>
-    <button id="tarot-icon" hidden></button>
     <div id="title" hidden></div>
     <div id="setup" hidden></div>
     <div id="newgame" hidden></div>

@@ -59,11 +59,6 @@ const PIECES = [
     size: [1024, 1024],
   },
   {
-    id: "divider",
-    look: "A long thin horizontal divider ornament: a carved rod of dark iron with a small gothic quatrefoil boss at its center and tapering pointed ends, perfectly straight.",
-    size: [1536, 384],
-  },
-  {
     id: "frame-tracery",
     look: "An ornate square frame border of black stone carved as gothic cathedral tracery: pointed arches, quatrefoils and crockets along all four sides, a small hooded stone angel at each corner. The inside of the frame is completely flat plain black, empty.",
     size: [1024, 1024],

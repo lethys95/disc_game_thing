@@ -33,52 +33,14 @@ html, body { margin: 0; height: 100%; background: #0b0a0c; color: var(--ink); fo
   border-radius: 2px;
 }
 
-#turns {
-  position: fixed; top: 0.875rem; left: 50%; transform: translateX(-50%);
-  display: flex; gap: 0.25rem; align-items: center; max-width: 90vw; flex-wrap: wrap; justify-content: center;
-}
-#turns .round { font: 700 1.125rem var(--display); margin-right: 0.625rem; letter-spacing: 0.04em; }
 .chip {
   padding: 0.1875rem 0.5rem; font-size: 0.6875rem; background: var(--panel); border: 1px solid var(--rule); border-bottom-width: 0.1875rem;
   color: var(--muted); white-space: nowrap;
 }
-.chip.side0 { border-bottom-color: var(--side0); }
-.chip.side1 { border-bottom-color: var(--side1); }
-.chip.now { color: var(--ink); border-color: var(--edge); border-bottom-color: var(--blood); transform: translateY(-2px); }
 
-#card { position: fixed; left: 1rem; bottom: 1rem; width: 16.875rem; padding: 0.75rem 0.875rem; }
-#card .title { font: 700 1.375rem var(--display); letter-spacing: 0.02em; }
-#card .subtitle { color: var(--muted); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem; }
 /* Health bars: one look everywhere; each place sets only its size. */
 .hp { position: relative; background: var(--well); }
 .hp .fill { position: absolute; inset: 0 auto 0 0; background: var(--hp-fill); }
-#card .hp { height: 1rem; border: 1px solid var(--line); margin-bottom: 0.5rem; }
-#card .hp .value { position: relative; display: block; text-align: center; font-size: 0.6875rem; line-height: 1rem; }
-#card .stats { display: grid; grid-template-columns: auto 1fr; gap: 1px 0.75rem; margin-bottom: 0.5rem; }
-#card .stats .name { color: var(--muted); }
-#card .stats .up { color: var(--gold); }
-#card .stats .down { color: #d8584a; }
-#card .effects { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-bottom: 0.5rem; }
-#card .effect { font-size: 0.6875rem; padding: 1px 0.375rem; border: 1px solid #5e2a22; color: #e0a090; cursor: help; }
-#card .abilities { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
-#card .abilities li { padding: 0.3125rem 0; border-bottom: 1px solid #221d1a; }
-#card .abilities .name { font: 700 0.9375rem var(--display); }
-#card .abilities .passive .name { color: #b9a98c; }
-#card .abilities .charges { color: var(--muted); font-size: 0.6875rem; }
-#card .abilities .text { color: var(--muted); font-size: 0.7188rem; }
-
-#log {
-  position: fixed; right: 1rem; top: 3.75rem; bottom: 1rem; width: 15.625rem; padding: 0.5rem 0.625rem;
-  overflow-y: auto; font-size: 0.7188rem; color: var(--muted);
-}
-#log .entry.roundStart { color: var(--ink); font: 700 0.875rem var(--display); margin-top: 0.375rem; border-top: 1px solid var(--rule); padding-top: 0.25rem; }
-#log .entry.death { color: #d8584a; }
-#log .entry.heal { color: var(--gold); }
-#log .entry.battleEnd { color: var(--ink); font: 700 1rem var(--display); }
-
-#bottom { position: fixed; left: 50%; bottom: 1.125rem; transform: translateX(-50%); text-align: center; }
-#hint { font: 500 1.0625rem var(--display); color: var(--ink); margin-bottom: 0.5rem; text-shadow: 0 1px 0.1875rem #000; min-height: 1.375rem; }
-#actions { display: flex; gap: 0.375rem; justify-content: center; }
 button.action {
   font: 700 1rem var(--display); letter-spacing: 0.03em; color: var(--ink); background: linear-gradient(#211b18, var(--field-dark));
   border: 1px solid var(--edge); padding: 0.4375rem 1rem; cursor: pointer; min-width: 5.625rem;
@@ -88,12 +50,6 @@ button.action.selected { border-color: var(--blood); box-shadow: 0 0 0.75rem rgb
 button.action .tag { font: 600 0.5625rem var(--text); text-transform: uppercase; letter-spacing: 0.1em; margin-left: 0.375rem; color: var(--gold); vertical-align: middle; }
 button.action .key { font: 600 0.5625rem var(--text); margin-left: 0.375rem; padding: 0 0.1875rem; border: 1px solid #5a4a36; color: var(--muted); vertical-align: middle; }
 
-#banner {
-  position: fixed; left: 50%; top: 38%; transform: translate(-50%, -50%); text-align: center;
-  padding: 1.5rem 3rem; background: var(--panel); border: 1px solid var(--edge);
-}
-#banner .title { font: 700 3.375rem var(--display); letter-spacing: 0.06em; }
-#banner .subtitle { color: var(--muted); margin-bottom: 1rem; }
 
 /* Tarot (the user, 2026-10-05): cards floating in a fan at the centre, to flick through like a hand of cards. */
 #tarot {
@@ -127,21 +83,6 @@ button.action .key { font: 600 0.5625rem var(--text); margin-left: 0.375rem; pad
 #tarot .caption.state-fulfilled .task { color: var(--gold); }
 #tarot .caption.state-failed .task { color: var(--muted); text-decoration: line-through; }
 #tarot .fan-footer:empty { display: none; }
-/* The HUD's held cards: a small fanned stack that opens them. */
-#tarot-icon {
-  position: fixed; left: 1.625rem; top: 4.375rem; z-index: 3; width: 4.625rem; height: 3.875rem; padding: 0; border: 0; background: none; cursor: pointer;
-  display: flex; justify-content: center; align-items: flex-end;
-}
-#tarot-icon .mini-card {
-  width: 1.875rem; height: 3.25rem; margin: 0 -9px; border-radius: 0.1875rem; border: 1px solid var(--gold-dim); background: center / cover #120e0d;
-  transform-origin: 50% 110%; box-shadow: 0 0.1875rem 0.5rem rgba(0, 0, 0, 0.7); transition: transform 0.2s;
-}
-#tarot-icon:hover .mini-card { border-color: var(--gold); }
-
-.hpbar { width: 3.375rem; height: 0.3125rem; background: #1a1412; border: 1px solid #000; position: relative; }
-.hpbar .fill { position: absolute; inset: 0 auto 0 0; }
-.hpbar.side0 .fill { background: var(--side0); }
-.hpbar.side1 .fill { background: var(--side1); }
 
 .float { font: 700 1.25rem var(--display); text-shadow: 0 1px 0.25rem #000; animation: rise 1.3s ease-out forwards; white-space: nowrap; }
 .float.damage { color: #f0e0cc; }
@@ -234,8 +175,6 @@ button.action:disabled { opacity: 0.4; cursor: not-allowed; }
 .leader-label { font: 600 0.6875rem var(--text); padding: 1px 0.375rem; background: rgba(10, 9, 9, 0.75); border: 1px solid var(--line); white-space: nowrap; }
 .leader-label.side0 { color: var(--side0); }
 .leader-label.side1 { color: var(--side1); }
-#auto { position: fixed; right: 1rem; top: 0.875rem; min-width: 0; font-size: 0.875rem; padding: 0.3125rem 0.75rem; }
-#resolve { position: fixed; right: 8.75rem; top: 0.875rem; min-width: 0; font-size: 0.875rem; padding: 0.3125rem 0.75rem; }
 .site-label { font: 600 0.625rem var(--text); padding: 0 0.3125rem; background: rgba(10, 9, 9, 0.6); border: 1px solid var(--rule); color: var(--muted); white-space: nowrap; }
 .site-label.side0 { color: var(--side0); border-color: var(--side0); }
 .site-label.side1 { color: var(--side1); border-color: var(--side1); }
@@ -265,10 +204,7 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 #mapcity .section { font: 700 0.9375rem var(--display); margin-top: 0.75rem; padding-top: 0.375rem; border-top: 1px solid var(--rule); }
 #mapcity .fallen { display: flex; justify-content: space-between; align-items: center; margin-top: 0.25rem; font-size: 0.75rem; }
 #mapcity { max-height: calc(100vh - 9.375rem); overflow-y: auto; }
-.hpbar .shield { position: absolute; left: 0; top: -4px; height: 0.1875rem; background: #2fd8d0; box-shadow: 0 0 0.25rem #2fd8d0; }
 .float.shield { color: #6ff0e8; }
-#card .stats .value.shield { color: #6ff0e8; }
-#card .pin { color: var(--gold); font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.08em; }
 
 #peek { position: fixed; width: 17.5rem; padding: 0.625rem 0.75rem; pointer-events: none; z-index: 10; }
 #peek .title { font: 700 1rem var(--display); margin-bottom: 0.375rem; }
@@ -327,7 +263,6 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 /* Portraits are full-body images; small sizes zoom into the head. */
 .art.portrait { background-size: 100%; background-position: 50% 0; }
 .art.portrait.tiny, .art.portrait.small, .art.portrait.thumb { background-size: 260%; background-position: 50% 4%; }
-.art.portrait.card-portrait { background-size: 170%; background-position: 50% 4%; }
 /* A bust or icon fills its box; a bust standing in for a missing icon zooms toward the face. */
 .art.bust { background-size: cover; background-position: 50% 40%; }
 .art.icon { background-size: cover; background-position: 50% 50%; }
@@ -339,8 +274,6 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 .art.tiny { width: 0.875rem; height: 0.875rem; margin-right: 0.25rem; font-size: 0.4375rem; }
 .art.small { width: 1.25rem; height: 1.25rem; margin-right: 0.375rem; font-size: 0.5625rem; }
 .art.thumb { width: 2.125rem; height: 2.125rem; margin-right: 0.5rem; font-size: 0.75rem; }
-.art.card-portrait { float: right; width: 3.5rem; height: 4rem; margin: 0 0 0.375rem 0.625rem; font-size: 1.125rem; }
-#card .hp { clear: both; }
 .screen .node .head, .palette .recruit { display: flex; align-items: center; }
 .palette .recruit { flex-wrap: wrap; }
 .palette .recruit .head { flex: 1; }
@@ -360,18 +293,7 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 #menu .menu-footer { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.625rem; }
 #menu .hidden-file { display: none; }
 #mapmenu { position: fixed; left: 50%; top: 2.75rem; transform: translateX(-50%); min-width: 0; font-size: 0.8125rem; padding: 0.1875rem 0.875rem; }
-button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }
 
-/* The turn order as portraits (view/hud.ts). */
-#turns .chip { position: relative; padding: 0; border-width: 1px 1px 0.1875rem; cursor: default; line-height: 0; }
-#turns .chip .art.queue { width: 2.125rem; height: 2.625rem; }
-#turns .chip .art.queue-now { width: 2.875rem; height: 3.5rem; }
-#turns .chip .art.portrait { background-size: 200%; background-position: 50% 4%; }
-#turns .chip .art.placeholder { font-size: 0.6875rem; }
-#turns .chip .when { position: absolute; left: 0; right: 0; bottom: -15px; font: 600 0.5625rem var(--text); line-height: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); text-align: center; }
-#turns .chip.now .when { color: var(--gold); }
-#turns .chip:hover { border-color: #e0c070; }
-#turns { align-items: flex-start; }
 
 .gold { display: inline-flex; align-items: center; gap: 0.25rem; color: #e8c46a; }
 .coin { display: inline-block; width: 1em; height: 1em; vertical-align: -0.12em; }
@@ -382,13 +304,7 @@ button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }
 .squad .swatch { width: 1.25rem; height: 1.25rem; min-width: 0; padding: 0; border: 2px solid #1a1614; cursor: pointer; }
 .squad .swatch.selected { border-color: #f1eadb; box-shadow: 0 0 0 1px #000; }
 .squad .swatch:disabled { opacity: 0.25; cursor: default; }
-#turns .chip.side0 .art.placeholder { background: var(--side0); border-color: var(--side0); }
-#turns .chip.side1 .art.placeholder { background: var(--side1); border-color: var(--side1); }
 
-/* Spell charges over a caster's bar: small lightning bolts, lit or spent. */
-.hpbar .charges { position: absolute; left: 50%; bottom: 0.5625rem; transform: translateX(-50%); display: flex; gap: 2px; }
-.hpbar .charges .pip { width: 0.4375rem; height: 0.6875rem; background: #4fd8cf; clip-path: polygon(55% 0, 10% 58%, 45% 58%, 30% 100%, 90% 38%, 55% 38%, 75% 0); filter: drop-shadow(0 0 2px #4fd8cf); }
-.hpbar .charges .pip.spent { background: #2a3a3a; filter: none; }
 
 .def-card { width: 17.5rem; }
 .def-card .title { font: 700 1.25rem var(--display); }
@@ -443,17 +359,6 @@ button.action .tag.spell, #card .stats .value.spell { color: #4fd8cf; }
 #menu input.slider { accent-color: var(--blood); width: 100%; }
 #menu .check-row { display: flex; align-items: center; gap: 0.5rem; color: var(--muted); }
 #menu .check-row input { accent-color: var(--blood); }
-#actions { align-items: flex-start; }
-#actions .ability-slot { display: flex; flex-direction: column; gap: 0.1875rem; }
-/* The ability's icon fills its button; the name, keys and costs sit over it. */
-#actions button.ability { position: relative; width: 5.75rem; height: 5.75rem; min-width: 0; padding: 0; overflow: hidden; display: block; }
-#actions button.ability .art.fill { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; background-size: cover; font-size: 1.375rem; }
-#actions button.ability .name { position: absolute; left: 0; right: 0; bottom: 0; padding: 0.875rem 0.25rem 0.25rem; font: 700 0.8125rem var(--display); line-height: 1.1; background: linear-gradient(transparent, rgba(0, 0, 0, 0.85)); text-shadow: 0 1px 2px #000; }
-#actions button.ability .slot { position: absolute; top: 0.1875rem; left: 0.3125rem; font: 700 0.6875rem var(--text); color: var(--ink); text-shadow: 0 1px 2px #000; }
-#actions button.ability .key { position: absolute; top: 0.1875rem; right: 0.25rem; margin: 0; background: rgba(0, 0, 0, 0.6); }
-#actions button.ability .tag { position: absolute; top: 1.25rem; right: 0.25rem; margin: 0; background: rgba(0, 0, 0, 0.6); padding: 0 0.1875rem; }
-#actions button.overload { font: 600 0.625rem var(--text); padding: 2px 0.25rem; background: var(--field-dark); color: var(--muted); border: 1px solid var(--line); cursor: pointer; }
-#actions button.overload.on { color: #7fe0d8; border-color: #2bb8ad; box-shadow: 0 0 0.5rem rgba(43, 184, 173, 0.45); }
 .gem { display: inline-block; width: 0.95em; height: 0.95em; vertical-align: -0.12em; margin-right: 1px; }
 .gem svg { width: 100%; height: 100%; display: block; }
 .spells-tab { padding: 0.75rem 1rem; display: flex; flex-direction: column; gap: 0.5rem; max-width: 45rem; margin: 0 auto; }
@@ -557,29 +462,27 @@ button.action.selected:not(.ability), button.small.selected, button.doctrine.sel
 }
 .screen .panel { border-width: 1.625rem; border-image-width: 1.75rem; }
 #capitol .tab-rail.panel { border-width: 1.125rem; border-image-width: 1.5rem; }
-#actions button.ability { border: 0.5rem solid transparent; border-image: var(--ui-frame) 18% / 0.625rem round; background: #141110 padding-box; }
 #mapturn {
   padding: 0.25rem 1.375rem; background: rgba(8, 7, 7, 0.6) var(--ui-plate, none) repeat padding-box; background-size: 10rem;
   border: 0.75rem solid transparent; border-image: var(--ui-frame) 18% / 0.875rem round; top: 0.375rem;
 }
-#banner, #mapbanner { border: 1.25rem solid transparent; border-image: var(--ui-frame) 18% / 1.5rem round; background: rgba(13, 11, 11, 0.95) padding-box; }
+#mapbanner { border: 1.25rem solid transparent; border-image: var(--ui-frame) 18% / 1.5rem round; background: rgba(13, 11, 11, 0.95) padding-box; }
 
 /* Sculpture grown into the frames (the user, 2026-10-06: "baked into the corner of the hud in a natural way"), never
    set on top of them. The side panels' outer top corner is a hooded stone angel whose wings are the panel's top and
    side edges (assets/ui/corner-angel.webp, 940x949: bars about 80 px thick, the angel within the top-left 67% x 66%,
    its wings overhanging the bars by about 55 px; the right-hand panels take the mirrored file). --px is one image
    pixel. */
-#card, #mapsquad, #log, #mapcity { --px: 0.0105rem; }
-#card, #mapsquad {
+#mapsquad, #mapcity { --px: 0.0105rem; }
+#mapsquad {
   border-width: calc(84 * var(--px)) calc(74 * var(--px)) calc(66 * var(--px)) calc(76 * var(--px));
   border-image: var(--ui-corner-angel) 66% 9% 8% 67% / calc(626 * var(--px)) calc(85 * var(--px)) calc(76 * var(--px)) calc(630 * var(--px)) / calc(54 * var(--px)) 0 0 calc(55 * var(--px)) round;
 }
-#log, #mapcity {
+#mapcity {
   border-width: calc(84 * var(--px)) calc(76 * var(--px)) calc(66 * var(--px)) calc(74 * var(--px));
   border-image: var(--ui-corner-angel-right) 66% 67% 8% 9% / calc(626 * var(--px)) calc(630 * var(--px)) calc(76 * var(--px)) calc(85 * var(--px)) / calc(54 * var(--px)) calc(55 * var(--px)) 0 0 round;
 }
-#card .title, #mapsquad .title { padding-left: 0.75rem; }
-#log { padding-top: 2rem; }
+#mapsquad .title { padding-left: 0.75rem; }
 
 /* The full screens' main panels: a band of cathedral tracery with a praying angel in each corner
    (assets/ui/frame-tracery.webp, 938x955: the band's inner edge about 15% in, the angels within 20.5% x 17.5%). */
@@ -597,10 +500,6 @@ button.action.selected:not(.ability), button.small.selected, button.doctrine.sel
   border-image: var(--ui-frame-tracery) 20.5% 18% 21% 17.5% / calc(196 * var(--px)) calc(169 * var(--px)) calc(201 * var(--px)) calc(164 * var(--px)) round;
 }
 
-/* An iron rod between the card's facts and its abilities (assets/ui/divider.webp, 1404x117). */
-#card .abilities {
-  border-top: none; padding-top: 0.875rem; background: var(--ui-divider) top center / auto 0.75rem no-repeat;
-}
 
 /* The map's turn bar hangs between two carved brackets (assets/ui/endcap.webp, 862x540, its flat end the joint). */
 #mapturn::before, #mapturn::after {
@@ -753,3 +652,226 @@ body.formulas .formula { display: inline; }
 #card .ability-row > .art.ability-icon { width: 2.25rem; height: 2.25rem; font-size: 0.6875rem; }
 .ability-row.no-icon { grid-template-columns: minmax(0, 60ch) auto; margin-top: 0.75rem; }
 .ability-row .body .text { margin-top: 1px; }
+
+/* The battle's interface in greybox (step 2 of the HUD kit, docs/design/hud-kit.md): its structure in flat values,
+   before anything is painted. Stone is mass, iron is joinery, marble speaks names and numbers, parchment holds
+   documents, candlelight is state. The paintings of step 4 replace these fills; the structure stays. */
+:root {
+  --gb-stone: #3e3c3a;
+  --gb-stone-hi: #504d4a;
+  --gb-stone-lo: #242321;
+  --gb-iron: #6b6864;
+  --gb-iron-hi: #96918a;
+  --gb-figure: #7a7671;
+  --gb-marble: #c6c2b8;
+  --gb-ink: #26221e;
+  --gb-parchment: #cfc1a1;
+  --gb-light: #e8c36c;
+  --gb-health: #a32a20;
+  --gb-shield: #a8dcd8;
+  --gb-magic: #4fd8cf;
+  --moment: "Grenze Gotisch", var(--display);
+  --gb-figure-niche: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 120' preserveAspectRatio='none'><g fill='%2366635e'><path d='M96 27C86 23 77 13 72 2C58 2 44 14 40 34C37 50 36 64 36 80L33 87L37 92L33 99L37 104L33 111L38 116L36 120H62C62 100 62 78 64 62C68 44 80 31 96 27Z'/><path d='M104 27C114 23 123 13 128 2C142 2 156 14 160 34C163 50 164 64 164 80L167 87L163 92L167 99L163 104L167 111L162 116L164 120H138C138 100 138 78 136 62C132 44 120 31 104 27Z'/><path d='M100 0C94 5 86 10 85 18C84 24 88 28 92 30H108C112 28 116 24 115 18C114 10 106 5 100 0Z'/></g><g fill='%2366635e' stroke='%234f4c48' stroke-width='1.5'><path d='M66 80C60 88 54 96 50 104L58 107C61 99 65 92 70 86Z'/><path d='M134 80C140 88 146 96 150 104L142 107C139 99 135 92 130 86Z'/></g><g fill='none' stroke='%234f4c48' stroke-width='2'><path d='M70 8C58 10 48 20 46 34'/><path d='M130 8C142 10 152 20 154 34'/><path d='M64 30C54 36 48 50 46 66'/><path d='M136 30C146 36 152 50 154 66'/><path d='M62 64C54 72 50 86 48 100'/><path d='M138 64C146 72 150 86 152 100'/></g><path d='M100 13C96 14 94 17 94 21C94 25 97 27 100 27C103 27 106 25 106 21C106 17 104 14 100 13Z' fill='%232c2a28'/></svg>");
+
+
+  --gb-hand: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M3 6C8 1 18 2 21 9C23 15 19 22 12 22C6 22 2 17 2 12Z' fill='%2366635e'/><path d='M8 8L9 16M12 7L13 16M16 9L16 16' stroke='%23625f5b' stroke-width='1.4'/></svg>");
+  --gb-gable: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 14' preserveAspectRatio='none'><path d='M0 14L16 0L32 14Z' fill='%23504d4a'/></svg>");
+}
+#battlehud { position: fixed; inset: 0; z-index: 2; pointer-events: none; }
+/* The scene darkens toward the sill. */
+#battlehud::before { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 16rem; background: linear-gradient(transparent, rgba(6, 5, 5, 0.82)); }
+#beam, #sill { pointer-events: auto; }
+
+/* The beam: a band of stone across the top. The round's medallion and the acting unit's niche hang below its edge. */
+#beam { position: absolute; left: 0; right: 0; top: 0; height: 3.2rem; background: var(--gb-stone); border-bottom: 0.3rem solid var(--gb-stone-hi); box-shadow: 0 0.4rem 0.9rem rgba(0, 0, 0, 0.6); }
+#turns { position: absolute; left: 50%; top: 0.3rem; transform: translateX(-50%); display: flex; align-items: flex-start; gap: 0.3rem; }
+#turns .round {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; width: 4.6rem; height: 4.6rem; margin-right: 0.5rem;
+  border-radius: 50%; background: var(--gb-stone-hi); border: 0.35rem solid var(--gb-iron); box-shadow: 0 0.3rem 0.6rem rgba(0, 0, 0, 0.7);
+  color: var(--gb-marble); font-family: var(--display); line-height: 1;
+}
+#turns .round .label { font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase; }
+#turns .round .number { font-size: 1.9rem; font-weight: 700; }
+#turns .niche { position: relative; width: 2.3rem; height: 2.85rem; cursor: default; }
+#turns .niche.now { width: 3rem; height: 3.75rem; }
+#turns .niche .window { position: absolute; inset: 0 0 0.3rem; overflow: hidden; border-radius: 1.15rem 1.15rem 0 0; background: var(--gb-stone-lo); border: 0.12rem solid var(--gb-iron); border-bottom: 0; }
+#turns .niche.now .window { border-radius: 1.5rem 1.5rem 0 0; border-color: var(--gb-light); }
+#turns .niche:hover .window { border-color: var(--gb-iron-hi); }
+#turns .niche .art { width: 100%; height: 100%; margin: 0; }
+#turns .niche .art.portrait { background-size: 200%; background-position: 50% 4%; }
+#turns .niche .art.placeholder { font-size: 0.6875rem; background: var(--gb-stone-lo); border: 0; }
+/* Allegiance is enamel: a band of the side's colour under each face. */
+#turns .niche .band { position: absolute; left: 0; right: 0; bottom: 0; height: 0.3rem; }
+#turns .niche.side0 .band { background: var(--side0); }
+#turns .niche.side1 .band { background: var(--side1); }
+#turns .niche .when { position: absolute; left: -0.5rem; right: -0.5rem; top: 100%; margin-top: 0.15rem; font: 600 0.55rem var(--text); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-align: center; }
+#turns .niche.now .when { color: var(--gb-light); }
+/* Resolve now and Auto-battle hang from the beam's right end on chains. */
+#beamhang { position: absolute; right: 1.5rem; top: 100%; display: flex; gap: 0.8rem; }
+#beamhang button.action {
+  position: relative; margin-top: 0.9rem; min-width: 0; padding: 0.3rem 0.85rem; font: 600 0.85rem var(--display); color: var(--gb-ink);
+  background: var(--gb-marble); border: 0.15rem solid var(--gb-iron); border-image: none; box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.6);
+}
+#beamhang button.action::before, #beamhang button.action::after { content: ""; position: absolute; bottom: 100%; width: 0.14rem; height: 1.05rem; background: var(--gb-iron); }
+#beamhang button.action::before { left: 0.7rem; }
+#beamhang button.action::after { right: 0.7rem; }
+#beamhang button.action:hover { border-color: var(--gb-iron-hi); filter: none; }
+#beamhang button.action.selected { background: var(--gb-light); filter: none; }
+
+/* The sill: stone along the bottom, its top edge a row of gables (each faction's own silhouette later). */
+#sill { position: absolute; left: 0; right: 0; bottom: 0; height: 6.2rem; background: var(--gb-stone); border-top: 0.3rem solid var(--gb-stone-hi); box-shadow: 0 -0.4rem 0.9rem rgba(0, 0, 0, 0.5); }
+#sill::before { content: ""; position: absolute; left: 0; right: 0; bottom: 100%; margin-bottom: 0.3rem; height: 0.7rem; background: var(--gb-gable) left bottom / 1.6rem 0.7rem repeat-x; }
+
+/* The card: a stele rising from the sill's left end. */
+#card {
+  position: absolute; left: 0; bottom: 0; z-index: 1; width: 18rem; max-height: 64vh; box-sizing: border-box;
+  display: flex; flex-direction: column; padding: 0 1rem 0.8rem; background: var(--gb-stone); border-right: 0.3rem solid var(--gb-stone-hi);
+  box-shadow: 0.4rem 0 0.9rem rgba(0, 0, 0, 0.5);
+}
+#card .niche { position: relative; flex: none; height: 10.6rem; margin: -1.6rem -1rem 0; }
+#card .niche .figure { position: absolute; inset: 0; background: var(--gb-figure-niche) center / 100% 100% no-repeat; }
+#card .niche .window { position: absolute; left: 50%; top: 2.45rem; width: 6.2rem; height: 6.5rem; transform: translateX(-50%); overflow: hidden; border-radius: 3.1rem 3.1rem 0 0; background: var(--gb-stone-lo); border: 0.18rem solid var(--gb-iron); }
+#card .niche .window .art { width: 100%; height: 100%; margin: 0; font-size: 1.5rem; }
+#card .niche .window .art.portrait { background-size: 150%; background-position: 50% 6%; }
+#card .niche .plate {
+  position: absolute; left: 50%; bottom: 0.35rem; transform: translateX(-50%); min-width: 9rem; padding: 0.15rem 1.3rem; white-space: nowrap; text-align: center;
+  background: var(--gb-marble); color: var(--gb-ink); font: 700 1.2rem var(--display); box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.6);
+}
+/* The figure's hands hold the plate's two ends, in front of it. */
+#card .niche .plate::before, #card .niche .plate::after { content: ""; position: absolute; top: 50%; width: 1.7rem; height: 1.7rem; margin-top: -0.85rem; background: var(--gb-hand) center / contain no-repeat; }
+#card .niche .plate::before { left: -0.9rem; }
+#card .niche .plate::after { right: -0.9rem; transform: scaleX(-1); }
+#card .subtitle { margin-top: 0.35rem; text-align: center; color: var(--muted); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; }
+#card .pin { text-align: center; color: var(--gb-light); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* The instruments: each value its own shape. */
+#card .instruments { margin: 0.6rem 0 0.4rem; }
+#card .health { display: flex; align-items: center; gap: 0.45rem; }
+#card .seal {
+  display: grid; place-items: center; flex: none; width: 2.9rem; height: 2.9rem; border-radius: 50%; background: var(--gb-stone-lo);
+  border: 0.22rem solid var(--gb-iron); color: var(--ink); font: 700 1.15rem var(--display);
+}
+#card .seal .skull { width: 1.5rem; height: 1.5rem; }
+#card .channel { position: relative; flex: 1; height: 0.75rem; background: var(--gb-stone-lo); border: 0.1rem solid var(--gb-iron); box-shadow: inset 0 0.15rem 0.25rem rgba(0, 0, 0, 0.8); }
+#card .channel .fill { position: absolute; inset: 0 auto 0 0; background: var(--gb-health); }
+#card .channel .shield { position: absolute; left: 0; top: -0.4rem; height: 0.25rem; background: repeating-linear-gradient(90deg, var(--gb-shield) 0 0.6rem, transparent 0.6rem 0.75rem); }
+#card .max { color: var(--muted); font-size: 0.7rem; }
+#card .shield-line { margin: 0.2rem 0 0 3.35rem; color: var(--gb-shield); font-size: 0.65rem; }
+#card .badges { display: flex; flex-wrap: wrap; gap: 0.5rem 0.9rem; margin-top: 0.7rem; }
+#card .badge { display: grid; grid-template-columns: auto auto; grid-template-rows: auto auto; column-gap: 0.35rem; align-items: center; }
+#card .badge .shape { grid-row: 1 / span 2; width: 1.45rem; height: 1.7rem; background: var(--gb-iron); }
+#card .badge.armor .shape { clip-path: polygon(0 0, 100% 0, 100% 55%, 50% 100%, 0 55%); }
+#card .badge.initiative .shape { width: 1.25rem; clip-path: polygon(0 0, 100% 0, 60% 50%, 100% 100%, 0 100%, 40% 50%); }
+#card .badge.power .shape { height: 1.45rem; border-radius: 50%; background: radial-gradient(circle, var(--gb-iron) 0 38%, transparent 40%), repeating-conic-gradient(var(--gb-iron) 0 10deg, transparent 10deg 30deg); }
+#card .badge .value { font: 700 1.05rem var(--display); color: var(--ink); line-height: 1; }
+#card .badge .value.up { color: var(--gb-light); }
+#card .badge .value.down { color: #d8584a; }
+#card .badge .delta { font-size: 0.7rem; }
+#card .badge .caption { color: var(--muted); font-size: 0.58rem; line-height: 1.1; }
+#card .badge .studs { margin-right: 0.25rem; color: var(--gb-light); letter-spacing: 0.05em; }
+#card .badge.charges { grid-template-columns: auto; }
+#card .hits { margin-top: 0.35rem; font-size: 0.65rem; color: var(--muted); }
+#card .hits.up { color: var(--gb-light); }
+#card .hits.down { color: #d8584a; }
+#card .effects { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-bottom: 0.4rem; }
+#card .effect { padding: 1px 0.375rem; font-size: 0.65rem; color: #e0a090; background: var(--gb-stone-lo); border: 1px solid var(--gb-iron); cursor: help; }
+/* A rod between the instruments and the abilities, with a boss at its middle. */
+#card .abilities { position: relative; flex: 1; min-height: 0; overflow-y: auto; list-style: none; margin: 0; padding: 0.7rem 0 0; border-top: 0.2rem solid var(--gb-iron); }
+#card .abilities::before { content: ""; position: absolute; left: 50%; top: -0.55rem; width: 0.9rem; height: 0.9rem; margin-left: -0.45rem; transform: rotate(45deg); background: var(--gb-iron); }
+#card .abilities li { padding: 0.3rem 0; border-bottom: 1px solid var(--gb-stone-lo); }
+#card .abilities .name { font: 700 0.9375rem var(--display); }
+#card .abilities .passive .name { color: #b9a98c; }
+#card .abilities .charges { color: var(--muted); font-size: 0.6875rem; }
+#card .abilities .text { color: var(--muted); font-size: 0.7rem; }
+
+/* The sockets, cut into the sill's middle; the hint above them on the dark, the rules of the hovered one on a slip. */
+#bottom { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; }
+#hint { min-height: 1.4rem; margin-bottom: 0.9rem; font: 500 1.0625rem var(--display); color: var(--ink); text-align: center; text-shadow: 0 1px 0.2rem #000; white-space: nowrap; }
+#actions { display: flex; gap: 0.8rem; height: 6.2rem; padding-top: 0.45rem; box-sizing: border-box; }
+#actions .socket { position: relative; flex: none; width: 4.5rem; height: 4.5rem; padding: 0.22rem; box-sizing: border-box; background: var(--gb-stone-lo); border: 0.18rem solid var(--gb-iron); box-shadow: inset 0 0.25rem 0.45rem #000; }
+#actions .socket:hover { border-color: var(--gb-iron-hi); }
+/* Selected: lit from within and pressed a little deeper. No halo. */
+#actions .socket.selected { border-color: var(--gb-light); transform: translateY(0.06rem); }
+#actions .socket.selected .well::after { content: ""; position: absolute; inset: 0; box-shadow: inset 0 0 0.9rem rgba(232, 195, 108, 0.75); pointer-events: none; }
+#actions button.ability { position: relative; display: block; width: 100%; height: 100%; min-width: 0; padding: 0; background: none; border: 0; cursor: pointer; }
+#actions .socket .well { position: absolute; inset: 0; overflow: hidden; }
+#actions .socket .well .art.fill { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; background-size: cover; font-size: 1.2rem; }
+#actions .socket .well .name { position: absolute; left: 0; right: 0; bottom: 0; padding: 0.7rem 0.2rem 0.2rem; font: 700 0.75rem var(--display); line-height: 1.05; color: var(--ink); text-align: center; background: linear-gradient(transparent, rgba(0, 0, 0, 0.88)); }
+#actions .socket.dark .well { filter: grayscale(1) brightness(0.32); }
+/* While the player waits, the sockets stay, empty, carved with the faction's sigil (a plain ring for now). */
+#actions .socket.empty { background: radial-gradient(circle, transparent 0 34%, var(--gb-iron) 36% 42%, transparent 44%), var(--gb-stone-lo); }
+#actions .socket.dark { cursor: help; }
+#actions .socket .slot { position: absolute; top: 0.1rem; left: 0.25rem; font: 700 0.62rem var(--text); color: var(--ink); text-shadow: 0 1px 2px #000; }
+/* Hanging from the socket's lower rim: the key's tag, the uses as beads; the spell cost as cells beside it. */
+#actions .socket .key { position: absolute; left: 50%; top: calc(100% + 0.45rem); transform: translateX(-50%); padding: 0 0.3rem; font: 700 0.62rem var(--text); color: var(--gb-ink); background: var(--gb-iron-hi); }
+#actions .socket .key::before { content: ""; position: absolute; left: 50%; bottom: 100%; width: 0.1rem; height: 0.45rem; background: var(--gb-iron); }
+#actions .socket .uses { position: absolute; left: 0.1rem; top: calc(100% + 0.3rem); display: flex; gap: 0.15rem; }
+#actions .socket .bead { width: 0.48rem; height: 0.48rem; border-radius: 50%; background: var(--gb-light); }
+#actions .socket .bead.spent { background: var(--gb-stone-lo); box-shadow: inset 0 0 0 0.08rem var(--gb-iron); }
+#actions .socket .cells { position: absolute; right: -0.65rem; top: 0.4rem; display: flex; flex-direction: column; gap: 0.12rem; }
+.cells .cell { width: 0.42rem; height: 0.62rem; background: var(--gb-magic); box-shadow: 0 0 0.3rem rgba(79, 216, 207, 0.6); }
+.cells .cell.spent { background: var(--gb-stone-lo); box-shadow: inset 0 0 0 0.08rem var(--gb-iron); }
+#card .badge.charges .cells { display: flex; gap: 0.12rem; }
+/* The overload toggle: a gem on the socket's rim, lit when on. */
+#actions .socket button.overload {
+  position: absolute; right: -0.55rem; top: -0.55rem; width: 1.35rem; height: 1.35rem; padding: 0; border-radius: 50%; cursor: pointer;
+  font: 700 0.55rem var(--text); color: var(--muted); background: var(--gb-stone-lo); border: 0.15rem solid var(--gb-iron);
+}
+#actions .socket button.overload.on { color: var(--gb-ink); background: var(--gb-magic); box-shadow: 0 0 0.6rem rgba(79, 216, 207, 0.7); }
+#rules { position: absolute; left: 50%; bottom: 100%; z-index: 3; margin-bottom: 0.3rem; transform: translateX(-50%); width: max-content; max-width: 34rem; }
+#rules .slip { padding: 0.6rem 0.9rem 0.7rem; color: var(--gb-ink); background: var(--gb-parchment); box-shadow: 0 0.4rem 1rem rgba(0, 0, 0, 0.75); }
+#rules .slip .name { font: 700 1.05rem var(--display); }
+#rules .slip .charges, #rules .slip .text, #rules .slip .targeting-grid .label { color: #4a3f30; }
+#rules .slip .why { margin-top: 0.35rem; font-size: 0.68rem; font-style: italic; color: #6a2a1e; }
+#rules .slip .scaled { color: #7a4a10; border-bottom-color: rgba(122, 74, 16, 0.6); }
+#rules .slip .formula { color: #6a5a40; }
+
+/* The held tarot cards lie on the sill. */
+#tarot-icon {
+  position: absolute; left: 19.6rem; bottom: 100%; margin-bottom: 0.2rem; z-index: 1; width: 4.6rem; height: 3.9rem; padding: 0; border: 0; background: none; cursor: pointer;
+  display: flex; justify-content: center; align-items: flex-end;
+}
+#tarot-icon .mini-card {
+  width: 1.875rem; height: 3.25rem; margin: 0 -0.55rem; border-radius: 0.1875rem; border: 1px solid var(--gb-iron-hi); background: center / cover #120e0d;
+  transform-origin: 50% 110%; box-shadow: 0 0.1875rem 0.5rem rgba(0, 0, 0, 0.7); transition: transform 0.2s;
+}
+#tarot-icon:hover .mini-card { border-color: var(--gb-light); }
+
+/* The log: a shorter stele at the sill's right end showing the last lines; unrolled, the whole battle on parchment. */
+#logstele {
+  position: absolute; right: 0; bottom: 0; z-index: 1; width: 17rem; height: 12rem; box-sizing: border-box; padding: 1.5rem 0.9rem 0.8rem;
+  background: var(--gb-stone); border-left: 0.3rem solid var(--gb-stone-hi); box-shadow: -0.4rem 0 0.9rem rgba(0, 0, 0, 0.5);
+}
+#unroll { position: absolute; left: 50%; top: 0.4rem; width: 5rem; height: 0.7rem; margin-left: -2.5rem; padding: 0; border-radius: 0.35rem; background: var(--gb-iron); border: 0.1rem solid var(--gb-iron-hi); cursor: pointer; }
+#unroll:hover { background: var(--gb-iron-hi); }
+#log { display: flex; flex-direction: column; justify-content: flex-end; height: 100%; overflow: hidden; font-size: 0.7rem; color: var(--muted); }
+#log .entry.roundStart { margin-top: 0.3rem; padding-top: 0.2rem; border-top: 1px solid var(--gb-stone-lo); color: var(--ink); font: 700 0.85rem var(--display); }
+#log .entry.death { color: #d8584a; }
+#log .entry.heal { color: var(--gb-light); }
+#log .entry.battleEnd { color: var(--ink); font: 700 1rem var(--display); }
+#logstele.open { width: 24rem; height: calc(100vh - 7.6rem); }
+#logstele.open #log { display: block; overflow-y: auto; padding: 0.6rem 0.8rem; color: #4a3f30; background: var(--gb-parchment); }
+#logstele.open #log .entry.roundStart, #logstele.open #log .entry.battleEnd { color: var(--gb-ink); border-top-color: #b3a483; }
+#logstele.open #log .entry.death { color: #8a2418; }
+#logstele.open #log .entry.heal { color: #7a5a14; }
+
+/* Battle's end: a moment, the emblem as its keystone and the title in the moments' face. */
+#banner {
+  position: fixed; left: 50%; top: 40%; z-index: 5; transform: translate(-50%, -50%); padding: 3rem 3.5rem 1.6rem; text-align: center;
+  background: var(--gb-stone); border: 0.3rem solid var(--gb-stone-hi); box-shadow: 0 0.6rem 2rem rgba(0, 0, 0, 0.8);
+}
+#banner::before { content: ""; position: absolute; left: 50%; top: -2.4rem; width: 4.4rem; height: 4.4rem; margin-left: -2.2rem; border-radius: 50%; background: var(--gb-stone-hi); border: 0.3rem solid var(--gb-iron); box-sizing: border-box; }
+#banner .title { font: 700 3.8rem var(--moment); letter-spacing: 0.03em; color: var(--gb-marble); }
+#banner .subtitle { margin-bottom: 1.2rem; color: var(--muted); }
+#banner button.action { position: relative; padding: 0.35rem 1rem 0.35rem 1.9rem; color: var(--gb-ink); background: var(--gb-marble); border: 0.15rem solid var(--gb-iron); border-image: none; filter: none; }
+/* Its buttons are seals: a disc pressed at each plaque's start. */
+#banner button.action::before { content: ""; position: absolute; left: 0.35rem; top: 50%; width: 1.1rem; height: 1.1rem; margin-top: -0.55rem; border-radius: 50%; background: #8a2418; }
+
+/* Over each figure: a slim red channel (the same red on both sides; allegiance is position and cloth). */
+.hpbar { position: relative; width: 3.4rem; height: 0.32rem; background: var(--gb-stone-lo); border: 1px solid #000; }
+.hpbar .fill { position: absolute; inset: 0 auto 0 0; background: var(--gb-health); }
+.hpbar .shield { position: absolute; left: 0; top: -0.3rem; height: 0.2rem; background: repeating-linear-gradient(90deg, var(--gb-shield) 0 0.45rem, transparent 0.45rem 0.55rem); }
+/* A caster's spell charges over its bar, as cells. */
+.hpbar .charges { position: absolute; left: 50%; bottom: 0.55rem; transform: translateX(-50%); display: flex; gap: 0.12rem; }
+.hpbar .charges .pip { width: 0.32rem; height: 0.5rem; background: var(--gb-magic); box-shadow: 0 0 0.25rem rgba(79, 216, 207, 0.6); }
+.hpbar .charges .pip.spent { background: var(--gb-stone-lo); box-shadow: inset 0 0 0 0.07rem var(--gb-iron); }

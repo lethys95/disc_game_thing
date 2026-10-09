@@ -77,10 +77,42 @@ export function tilePosition(side: Side, tile: Tile): THREE.Vector3 {
 const key = (ref: TileRef) => `${ref.side}.${ref.tile.row}.${ref.tile.col}`;
 
 const TILE_BASE = new THREE.Color(0x2a2724);
-const TILE_CANDIDATE = new THREE.Color(0x5a1410);
-const TILE_AFFECTED = new THREE.Color(0xd8321f);
-const TILE_CURRENT = new THREE.Color(0x8a7040);
-const TILE_FOCUS = new THREE.Color(0xe0c070);
+
+/**
+ * A tile's state as brackets at its four corners, drawn in the interface's own line language
+ * (`docs/design/hud-kit.md`): candlelight for the acting unit and a hovered one, red for what an action can pick and
+ * what it hits. Brighter means more certain.
+ */
+const BRACKET = {
+  focus: { color: 0xffe2a0, opacity: 1 },
+  affected: { color: 0xff4a32, opacity: 1 },
+  candidate: { color: 0xc0392b, opacity: 0.75 },
+  current: { color: 0xe8c36c, opacity: 0.9 },
+} as const;
+
+/** Four L-shaped corners lying flat around a square of `size`, each arm `arm` long and `width` wide. */
+function bracketGeometry(size: number, arm: number, width: number): THREE.BufferGeometry {
+  const h = size / 2;
+  const quads: number[][] = [];
+  for (const sx of [-1, 1]) {
+    for (const sz of [-1, 1]) {
+      const cx = sx * h;
+      const cz = sz * h;
+      // Along x from the corner inward, then along z.
+      quads.push([cx, cz, cx - sx * arm, cz - sz * width]);
+      quads.push([cx, cz, cx - sx * width, cz - sz * arm]);
+    }
+  }
+  const positions: number[] = [];
+  for (const [x0, z0, x1, z1] of quads) {
+    const [ax, bx] = [Math.min(x0 ?? 0, x1 ?? 0), Math.max(x0 ?? 0, x1 ?? 0)];
+    const [az, bz] = [Math.min(z0 ?? 0, z1 ?? 0), Math.max(z0 ?? 0, z1 ?? 0)];
+    positions.push(ax, 0, az, ax, 0, bz, bx, 0, bz, ax, 0, az, bx, 0, bz, bx, 0, az);
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+  return geometry;
+}
 
 /** What rings the arena on each terrain: model kind, how many, how far, how big (provisional look). */
 const ARENA_PROPS: Readonly<Record<Terrain, readonly { kind: keyof typeof TERRAIN_VARIANTS; variants: number; count: number; radius: [number, number]; height: number; width: number; offset: number }[]>> = {
@@ -113,6 +145,7 @@ export class BattleScene {
     maxDistance: 22,
   };
   private readonly tiles = new Map<string, THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial>>();
+  private readonly brackets = new Map<string, THREE.Mesh<THREE.BufferGeometry, THREE.MeshBasicMaterial>>();
   private readonly figures = new Map<string, Figure>();
   private left: Side = 0;
   /** The ground, textured per terrain (`setSetting`). */
@@ -157,6 +190,7 @@ export class BattleScene {
     this.scene.add(this.ground, this.settingLayer);
 
     const slab = new THREE.BoxGeometry(SPACING * 0.9, 0.16, SPACING * 0.9);
+    const corners = bracketGeometry(SPACING * 0.9, SPACING * 0.24, SPACING * 0.045);
     for (const side of [0, 1] as const) {
       for (const row of ROWS) {
         for (const col of COLS) {
@@ -168,7 +202,12 @@ export class BattleScene {
           tile.position.copy(tilePosition(side, ref.tile)).setY(0.2);
           tile.receiveShadow = true;
           tile.userData = ref;
+          const bracket = new THREE.Mesh(corners, new THREE.MeshBasicMaterial({ transparent: true, depthWrite: false, toneMapped: false }));
+          bracket.position.y = 0.085;
+          bracket.visible = false;
+          tile.add(bracket);
           this.tiles.set(key(ref), tile);
+          this.brackets.set(key(ref), bracket);
           this.scene.add(tile);
         }
       }
@@ -285,7 +324,7 @@ export class BattleScene {
     });
 
     const bar = document.createElement("div");
-    bar.className = `hpbar side${unit.side}`;
+    bar.className = "hpbar";
     const fill = document.createElement("div");
     fill.className = "fill";
     bar.appendChild(fill);
@@ -405,10 +444,12 @@ export class BattleScene {
     const affected = new Set(highlights.affected.map(key));
     const current = highlights.current ? key(highlights.current) : null;
     const focus = highlights.focus ? key(highlights.focus) : null;
-    for (const [k, tile] of this.tiles) {
-      const color = k === focus ? TILE_FOCUS : affected.has(k) ? TILE_AFFECTED : candidates.has(k) ? TILE_CANDIDATE : k === current ? TILE_CURRENT : TILE_BASE;
-      tile.material.emissive.copy(color);
-      tile.material.emissiveIntensity = color === TILE_BASE ? 0.2 : color === TILE_AFFECTED || color === TILE_FOCUS ? 1.6 : 1;
+    for (const [k, bracket] of this.brackets) {
+      const state = k === focus ? BRACKET.focus : affected.has(k) ? BRACKET.affected : candidates.has(k) ? BRACKET.candidate : k === current ? BRACKET.current : null;
+      bracket.visible = state !== null;
+      if (!state) continue;
+      bracket.material.color.setHex(state.color);
+      bracket.material.opacity = state.opacity;
     }
   }
 

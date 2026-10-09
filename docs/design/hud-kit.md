@@ -263,8 +263,14 @@ The paintings in step 3 show them, and the user overrules any that miss.
 7. A third typeface for places and moments (Claude picks it in the greybox; provisional #76).
 8. Candlelight as the interface's light for selection and availability, with the mana colour kept for magic.
 
-## Next: the greybox
-Step 2 builds the battle screen's structure in the game with flat shapes and no paintings: the sill and its two
-steles, the niche figure as a silhouette, the turn beam with its medallion and face niches, the sockets with their tags,
-the instruments on the card, the ground brackets. It is shot at 720p, 1080p and 1440p for the user to judge the
-composition before anything is painted. Then the map and the Capitol the same way.
+## Step 2, the greybox
+**The battle (2026-10-09):** built in the game in flat values (`shots/greybox.html`): the beam with the round's
+medallion and the face niches, the sill with the sockets and their hanging tags, the card stele with the niche
+figure and the instruments, the log stele that unrolls, ground brackets, red health. Found while reviewing it and
+changed: the figure read as a blob, then a bow tie, until the wings traced the arch; the card stele hid the back row
+until it was capped near the old card's height; the sill went empty during the enemy's turn until it kept the next
+unit's sockets. Known compromises: a wide squad's far-left back row can sit behind the card stele (camera framing,
+later); the portrait window keeps a rim of its own until the painting makes the wings its rim.
+
+Next: step 3 for the battle, the screen painted as one picture over this greybox in a few style probes (Jilliath's
+skin), for the user to pick. Then the map and the Capitol greyboxes.

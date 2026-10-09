@@ -46,3 +46,7 @@
 - **The user on the system (2026-10-09):** "I'm not a designer, so I'll be relying on your judgment a lot." All eight
   choices accepted; the faction motifs left to Claude, extracted from the factions' themes (provisional #76). Step 2,
   the battle greybox, started.
+- **Step 2, the battle greybox (2026-10-09):** built in the game, flat values (`shots/greybox.html`, before and
+  after, states, sizes). The layout changes the user accepted are in: the sill joining card, sockets and log; the log a
+  few lines that unroll; dark sockets for what can't be used now; red health; ground brackets instead of glowing
+  tiles. Next: step 3, the battle painted as one picture over the greybox, a few style probes in Jilliath's skin.

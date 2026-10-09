@@ -1,16 +1,16 @@
 import { describeReward, describeTask, TASK_NAMES } from "#rules/battle/tarot";
 import type { TarotCard, TarotHand } from "#rules/battle/tarot";
 import { BEHAVIORS, chargesOf } from "#rules/abilities/index";
-import { abilityPlain, abilityRow } from "#view/ability-text";
+import { abilityRow } from "#view/ability-text";
 import { hitChange } from "#view/members";
 import { effectDef } from "#rules/effects";
 import { abilityRef, actionsPerRound, effectiveStats, unitAbilities, upcomingSlots } from "#rules/battle/engine";
-import type { Battle, BattleEvent, BattleUnit, EffectInstance, Enhancement, LegalAbility, Side } from "#rules/battle/types";
+import type { AbilityRef, Battle, BattleEvent, BattleUnit, EffectInstance, Enhancement, LegalAbility, Side, Stats } from "#rules/battle/types";
 import { UNITS } from "#rules/units/index";
 import { art } from "#view/art";
 import { miniStack, TarotFan } from "#view/tarot-hand";
 import type { CardCue, FanCard } from "#view/tarot-hand";
-import { byId, element } from "#view/dom";
+import { byId, element, skull } from "#view/dom";
 import { sees } from "#view/secrecy";
 import type { Settings } from "#view/settings";
 import { armorReduction } from "#rules/battle/damage";
@@ -75,13 +75,21 @@ function place(unit: BattleUnit): string {
   return `${ROW_NAMES[unit.tile.row]} ${COL_NAMES[unit.tile.col]}`;
 }
 
+/**
+ * The battle's interface as one piece of architecture around the field (`docs/design/hud-kit.md`): a beam across the
+ * top carrying the turn order, a sill along the bottom with the ability sockets, the unit card as a stele rising from
+ * its left end and the log as a shorter one at its right.
+ */
 export class Hud {
   private turnsKey = "";
+  private readonly battlehud = byId("battlehud");
   private readonly turns = byId("turns");
   private readonly card = byId("card");
   private readonly actions = byId("actions");
+  private readonly rules = byId("rules");
   private readonly hint = byId("hint");
   private readonly log = byId("log");
+  private readonly logStele = byId("logstele");
   private readonly banner = byId("banner");
   private readonly auto = byId("auto");
   private readonly resolve = byId("resolve");
@@ -90,6 +98,8 @@ export class Hud {
   private readonly fan: TarotFan;
   private tarotEntries: FanCard[] = [];
   private tarotKeyShown = "";
+  /** The socket under the pointer: re-renders replace the sockets, and its rules must stay up. */
+  private ruled: string | null = null;
 
   constructor(
     private readonly settings: Settings,
@@ -97,6 +107,7 @@ export class Hud {
   ) {
     this.auto.addEventListener("click", () => handlers.onAuto());
     this.resolve.addEventListener("click", () => handlers.onResolve());
+    byId("unroll").addEventListener("click", () => this.unrollLog(!this.logStele.classList.contains("open")));
     this.fan = new TarotFan(this.tarot, (sound) => handlers.onCue(sound));
     this.tarotIcon.addEventListener("click", () => {
       if (this.fan.showing) return this.fan.close();
@@ -112,13 +123,20 @@ export class Hud {
   }
 
   setVisible(visible: boolean): void {
-    for (const el of [this.turns, this.log, this.hint, this.actions, this.auto, this.resolve]) el.hidden = !visible;
+    this.battlehud.hidden = !visible;
     if (!visible) {
       this.card.hidden = true;
       this.banner.hidden = true;
+      this.unrollLog(false);
       this.hideTarot();
       this.tarotIcon.hidden = true;
     }
+  }
+
+  /** The log's stele shows its last lines; unrolled, the whole battle reads as a scroll. */
+  private unrollLog(open: boolean): void {
+    this.logStele.classList.toggle("open", open);
+    this.log.scrollTop = this.log.scrollHeight;
   }
 
   /**
@@ -184,8 +202,9 @@ export class Hud {
   }
 
   /**
-   * The turn order as portraits: who acts now, who's next. Hovering one highlights the unit. Rebuilt only when the
-   * order changes, so a hovered portrait isn't replaced under the pointer.
+   * The turn order on the beam: the round's medallion, then a niche per unit in acting order, the acting one larger,
+   * each over a band of its side's colour. Hovering one highlights the unit. Rebuilt only when the order changes, so a
+   * hovered portrait isn't replaced under the pointer.
    */
   renderTurns(battle: Battle, playerSide: Side | null): void {
     const upcoming = upcomingSlots(battle)
@@ -198,15 +217,19 @@ export class Hud {
     if (key === this.turnsKey) return;
     this.turnsKey = key;
     this.turns.replaceChildren();
-    this.turns.appendChild(element("div", "round", `Round ${battle.round}`));
+    const round = element("div", "round");
+    round.append(element("span", "label", "Round"), element("span", "number", String(battle.round)));
+    this.turns.appendChild(round);
     upcoming.forEach((unit, index) => {
-      const chip = element("div", `chip side${unit.side}${index === 0 ? " now" : index === 1 ? " next" : ""}`);
-      chip.appendChild(art({ kind: "portrait", id: unit.defId, frame: "icon" }, index === 0 ? "queue-now" : "queue"));
-      if (index < 2) chip.appendChild(element("span", "when", index === 0 ? "now" : "next"));
-      chip.title = `${unitLabel(unit, playerSide)} (${place(unit)})`;
-      chip.addEventListener("mouseenter", () => this.handlers.onFocus(unit.id));
-      chip.addEventListener("mouseleave", () => this.handlers.onFocus(null));
-      this.turns.appendChild(chip);
+      const niche = element("div", `niche side${unit.side}${index === 0 ? " now" : index === 1 ? " next" : ""}`);
+      const window = element("div", "window");
+      window.appendChild(art({ kind: "portrait", id: unit.defId, frame: "icon" }, index === 0 ? "queue-now" : "queue"));
+      niche.append(window, element("span", "band"));
+      if (index < 2) niche.appendChild(element("span", "when", index === 0 ? "now" : "next"));
+      niche.title = `${unitLabel(unit, playerSide)} (${place(unit)})`;
+      niche.addEventListener("mouseenter", () => this.handlers.onFocus(unit.id));
+      niche.addEventListener("mouseleave", () => this.handlers.onFocus(null));
+      this.turns.appendChild(niche);
     });
   }
 
@@ -217,45 +240,15 @@ export class Hud {
     const stats = effectiveStats(battle, unit.id);
     const def = UNITS[unit.defId];
     this.card.replaceChildren();
-    this.card.className = "panel";
-    this.card.appendChild(art({ kind: "portrait", id: unit.defId, frame: "bust" }, "card-portrait"));
-    this.card.appendChild(element("div", "title", unit.name));
-    if (pinned) this.card.appendChild(element("div", "pin", "Pinned · click it again to release"));
+    // The niche: a figure whose wings make the portrait's arch and whose hands hold the name plate.
+    const niche = element("div", "niche");
+    const window = element("div", "window");
+    window.appendChild(art({ kind: "portrait", id: unit.defId, frame: "bust" }, "niche-portrait"));
+    niche.append(element("div", "figure"), window, element("div", "plate", unit.name));
+    this.card.appendChild(niche);
     this.card.appendChild(element("div", "subtitle", `${unitLabel(unit, playerSide).split(" ")[0]}${unit.leader ? " leader" : ""} · tier ${def?.tier ?? "?"} · ${place(unit)}`));
-
-    const hp = element("div", "hp");
-    const fill = element("div", "fill");
-    fill.style.width = `${(100 * unit.hp) / stats.maxHp}%`;
-    hp.appendChild(fill);
-    hp.appendChild(element("span", "value", unit.alive ? `${unit.hp} / ${stats.maxHp}` : "Fallen"));
-    this.card.appendChild(hp);
-
-    const table = element("div", "stats");
-    const row = (name: string, value: number, base: number, note = "") => {
-      table.appendChild(element("span", "name", name));
-      const delta = value - base;
-      table.appendChild(element("span", `value${delta > 0 ? " up" : delta < 0 ? " down" : ""}`, `${delta === 0 ? `${value}` : `${value} (${delta > 0 ? "+" : ""}${delta})`}${note}`));
-    };
-    if (stats.shield > 0) {
-      table.appendChild(element("span", "name", "Shield"));
-      table.appendChild(element("span", "value shield", `${unit.shield} / ${stats.shield}`));
-    }
-    const hits = hitChange(stats);
-    if (hits) {
-      table.appendChild(element("span", "name", "Damage dealt"));
-      table.appendChild(element("span", `value ${stats.hitBonus + stats.hitPercent > 0 ? "up" : "down"}`, hits.replace(" to its hits", "")));
-    }
-    row("Armor", stats.armor, unit.base.armor, stats.armor > 0 ? ` · ${armorReduction(stats.armor)}% off hits` : "");
-    row("Initiative", stats.initiative, unit.base.initiative);
-    row("Ability power", stats.abilityPower, unit.base.abilityPower);
-    const battery = def?.spellCharges;
-    if (battery !== undefined) {
-      table.appendChild(element("span", "name", "Spell charges"));
-      table.appendChild(element("span", "value spell", `${unit.spellCharges} / ${battery}`));
-    }
-    table.appendChild(element("span", "name", "Actions"));
-    table.appendChild(element("span", "value", `${actionsPerRound(stats.initiative)} per round`));
-    this.card.appendChild(table);
+    if (pinned) this.card.appendChild(element("div", "pin", "Pinned · click it again to release"));
+    this.card.appendChild(instruments(unit, stats, def?.spellCharges));
 
     // Secret effects (a Justiciar's mark) show only to the side that applied them.
     const shown = unit.effects.filter((e) => sees(battle, playerSide, e.def, e.source));
@@ -283,45 +276,96 @@ export class Hud {
     this.card.appendChild(abilities);
   }
 
-  /** `overloaded`: the abilities whose overload toggle is on. */
-  renderActions(battle: Battle, options: readonly LegalAbility[], selected: string | null, enabled: boolean, overloaded: ReadonlySet<string>): void {
+  /**
+   * The sockets: one per active ability of the acting unit, in its own order. One that can't be used now (spent, no
+   * target, not after a wait) stays as a dark socket instead of disappearing: the sill never changes shape. Keys 1–9
+   * number only the usable ones, as the keyboard does (`actionButtons`). While the player waits, the sill keeps as many
+   * sockets, empty, as the player's next unit will have. `overloaded`: the abilities whose overload toggle is on.
+   */
+  renderActions(battle: Battle, playerSide: Side | null, options: readonly LegalAbility[], selected: string | null, enabled: boolean, overloaded: ReadonlySet<string>): void {
     this.actions.replaceChildren();
     const unitId = battle.current?.unitId;
     const unit = unitId ? battle.units[unitId] : undefined;
-    if (!enabled || !unit) return;
-    for (const [index, shown] of actionButtons(options).entries()) {
-      const option = withOverload(options, shown, overloaded.has(shown.abilityId));
-      const slot = element("div", "ability-slot");
-      const button = element("button", `action ability${optionKey(option) === selected ? " selected" : ""}`);
-      // The icon fills the button (user, 2026-09-27); the words sit on top of it.
-      button.appendChild(art({ kind: "ability", id: option.abilityId }, "fill"));
-      if (this.settings.data.slotKeys && index < 9) button.appendChild(element("span", "slot", String(index + 1)));
-      const replicate = option.enhancement.kind === "replicate";
-      button.appendChild(element("span", "name", `${option.name}${replicate ? " (replicate)" : ""}`));
-      const plain = options.find((o) => o.abilityId === option.abilityId && o.enhancement.kind === "none");
-      const perCopy = replicate && plain && option.enhancement.kind === "replicate" ? (option.spellCost - plain.spellCost) / option.enhancement.copies : 0;
-      if (option.spellCost > 0) button.appendChild(element("span", "tag spell", replicate ? `+${perCopy} ⚡ per copy` : `${option.spellCost} ⚡`));
-      const key = option.enhancement.kind === "none" ? this.settings.keyFor(option.abilityId) : undefined;
-      if (key) button.appendChild(element("span", "key", key.toUpperCase()));
-      const ref = abilityRef(battle, unit.id, option.abilityId);
-      const charges = chargesOf(ref);
-      const used = unit.chargesUsed[option.abilityId] ?? 0;
-      if (charges !== undefined) button.appendChild(element("span", "tag", `${charges - used}/${charges}`));
-      button.title = `${abilityPlain(ref, effectiveStats(battle, unit.id).abilityPower)}${key ? ` (${key.toUpperCase()})` : ""}`;
-      button.addEventListener("click", () => this.handlers.onAbility(optionKey(option)));
-      button.addEventListener("mouseenter", () => this.handlers.onAbilityHover(optionKey(option)));
-      button.addEventListener("mouseleave", () => this.handlers.onAbilityHover(null));
-      slot.appendChild(button);
-      const overload = options.find((o) => o.abilityId === shown.abilityId && o.enhancement.kind === "overload");
-      if (overload && shown.enhancement.kind === "none") {
-        const on = overloaded.has(shown.abilityId);
-        const toggle = element("button", `overload${on ? " on" : ""}`, `Overload +${overload.spellCost - shown.spellCost} ⚡`);
-        toggle.title = on ? "Overloaded: click to cast it plain." : "Click to overload this spell: it reaches wider, for more charges.";
-        toggle.addEventListener("click", () => this.handlers.onOverload(shown.abilityId));
-        slot.appendChild(toggle);
-      }
-      this.actions.appendChild(slot);
+    if (!enabled || !unit) {
+      const next = upcomingSlots(battle).map((id) => battle.units[id]).find((u) => u?.alive && u.side === playerSide);
+      const count = next ? activeAbilities(battle, next.id).length : 0;
+      for (let i = 0; i < count; i++) this.actions.appendChild(element("div", "socket empty"));
+      this.showRules(null);
+      return;
     }
+    const buttons = actionButtons(options);
+    const power = effectiveStats(battle, unit.id).abilityPower;
+    const refs = activeAbilities(battle, unit.id);
+    for (const ref of refs) {
+      const index = buttons.findIndex((b) => b.abilityId === ref.id);
+      const shown = buttons[index];
+      this.actions.appendChild(shown ? this.socket(battle, unit, options, shown, index, selected, overloaded) : this.darkSocket(unit, ref, power));
+    }
+    const ruled = refs.find((ref) => ref.id === this.ruled);
+    this.showRules(ruled ? rulesSlip(unit, ruled, power, buttons.some((b) => b.abilityId === ruled.id)) : null);
+  }
+
+  private socket(battle: Battle, unit: BattleUnit, options: readonly LegalAbility[], shown: LegalAbility, index: number, selected: string | null, overloaded: ReadonlySet<string>): HTMLElement {
+    const option = withOverload(options, shown, overloaded.has(shown.abilityId));
+    const chosen = optionKey(option) === selected;
+    const socket = element("div", `socket${chosen ? " selected" : ""}`);
+    const button = element("button", `action ability${chosen ? " selected" : ""}`);
+    // The icon fills the socket (user, 2026-09-27); the name sits on it, the keys and uses hang below it.
+    const well = element("span", "well");
+    const replicate = option.enhancement.kind === "replicate";
+    well.append(art({ kind: "ability", id: option.abilityId }, "fill"), element("span", "name", `${option.name}${replicate ? " (replicate)" : ""}`));
+    button.appendChild(well);
+    if (this.settings.data.slotKeys && index < 9) button.appendChild(element("span", "slot", String(index + 1)));
+    const key = option.enhancement.kind === "none" ? this.settings.keyFor(option.abilityId) : undefined;
+    if (key) button.appendChild(element("span", "key", key.toUpperCase()));
+    const charges = chargesOf(abilityRef(battle, unit.id, option.abilityId));
+    if (charges !== undefined) button.appendChild(beads(charges - (unit.chargesUsed[option.abilityId] ?? 0), charges));
+    const plain = options.find((o) => o.abilityId === option.abilityId && o.enhancement.kind === "none");
+    const perCopy = replicate && plain && option.enhancement.kind === "replicate" ? (option.spellCost - plain.spellCost) / option.enhancement.copies : 0;
+    if (option.spellCost > 0) button.appendChild(cells(replicate ? perCopy : option.spellCost));
+    button.addEventListener("click", () => this.handlers.onAbility(optionKey(option)));
+    button.addEventListener("mouseenter", () => {
+      this.ruled = option.abilityId;
+      this.handlers.onAbilityHover(optionKey(option));
+    });
+    button.addEventListener("mouseleave", () => {
+      this.ruled = null;
+      this.handlers.onAbilityHover(null);
+    });
+    socket.appendChild(button);
+    const overload = options.find((o) => o.abilityId === shown.abilityId && o.enhancement.kind === "overload");
+    if (overload && shown.enhancement.kind === "none") {
+      const on = overloaded.has(shown.abilityId);
+      const toggle = element("button", `overload${on ? " on" : ""}`, `+${overload.spellCost - shown.spellCost}`);
+      toggle.title = on ? "Overloaded: click to cast it plain." : `Overload: it reaches wider, for ${overload.spellCost - shown.spellCost} more charges.`;
+      toggle.addEventListener("click", () => this.handlers.onOverload(shown.abilityId));
+      socket.appendChild(toggle);
+    }
+    return socket;
+  }
+
+  private darkSocket(unit: BattleUnit, ref: AbilityRef, power: number): HTMLElement {
+    const socket = element("div", "socket dark");
+    const well = element("span", "well");
+    well.append(art({ kind: "ability", id: ref.id }, "fill"), element("span", "name", ref.name ?? BEHAVIORS[ref.id]?.name ?? ref.id));
+    socket.appendChild(well);
+    const charges = chargesOf(ref);
+    if (charges !== undefined) socket.appendChild(beads(charges - (unit.chargesUsed[ref.id] ?? 0), charges));
+    socket.addEventListener("mouseenter", () => {
+      this.ruled = ref.id;
+      this.showRules(rulesSlip(unit, ref, power, false));
+    });
+    socket.addEventListener("mouseleave", () => {
+      this.ruled = null;
+      this.showRules(null);
+    });
+    return socket;
+  }
+
+  /** The hovered socket's rules on a parchment slip right above the sill (or nothing). */
+  private showRules(slip: HTMLElement | null): void {
+    this.rules.hidden = !slip;
+    this.rules.replaceChildren(...(slip ? [slip] : []));
   }
 
   setHint(text: string): void {
@@ -368,6 +412,93 @@ export class Hud {
       this.banner.append(button, " ");
     }
   }
+}
+
+/** A unit's abilities it acts with (not its passives), in its own order. */
+function activeAbilities(battle: Battle, unitId: string): AbilityRef[] {
+  return unitAbilities(battle, unitId).filter((ref) => BEHAVIORS[ref.id]?.kind === "active");
+}
+
+/**
+ * The card's instruments: each value its own shape (`docs/design/hud-kit.md`). Health is a channel with the current
+ * number in a seal; armour a shield, initiative an hourglass with a stud per action, ability power a rayed disc, spell
+ * charges a row of cells.
+ */
+function instruments(unit: BattleUnit, stats: Stats, battery: number | undefined): HTMLElement {
+  const box = element("div", "instruments");
+  const health = element("div", "health");
+  const seal = element("span", "seal", unit.alive ? String(unit.hp) : "");
+  if (!unit.alive) seal.appendChild(skull());
+  const channel = element("div", "channel");
+  const fill = element("div", "fill");
+  fill.style.width = `${(100 * unit.hp) / stats.maxHp}%`;
+  channel.appendChild(fill);
+  if (stats.shield > 0) {
+    const band = element("div", "shield");
+    band.style.width = `${(100 * unit.shield) / stats.shield}%`;
+    channel.appendChild(band);
+  }
+  health.append(seal, channel, element("span", "max", unit.alive ? `of ${stats.maxHp}` : "Fallen"));
+  box.appendChild(health);
+  if (stats.shield > 0) box.appendChild(element("div", "shield-line", `Shield ${unit.shield} of ${stats.shield}`));
+
+  const badges = element("div", "badges");
+  const actions = actionsPerRound(stats.initiative);
+  badges.append(
+    badge("armor", "Armor", stats.armor, unit.base.armor, stats.armor > 0 ? `${armorReduction(stats.armor)}% off hits` : "no armor"),
+    badge("initiative", "Initiative", stats.initiative, unit.base.initiative, `${actions} action${actions === 1 ? "" : "s"} a round`, actions),
+    badge("power", "Ability power", stats.abilityPower, unit.base.abilityPower, "ability power"),
+  );
+  if (battery !== undefined) {
+    const charges = element("span", "badge charges");
+    charges.title = "Spell charges";
+    charges.append(cells(unit.spellCharges, battery), element("span", "caption", `${unit.spellCharges} of ${battery} charges`));
+    badges.appendChild(charges);
+  }
+  box.appendChild(badges);
+  const hits = hitChange(stats);
+  if (hits) box.appendChild(element("div", `hits ${stats.hitBonus + stats.hitPercent > 0 ? "up" : "down"}`, `Damage dealt ${hits.replace(" to its hits", "")}`));
+  return box;
+}
+
+/** A value in its shape, raised or lowered against the unit's own, with what it means in words beneath. */
+function badge(kind: string, name: string, value: number, base: number, caption: string, studs = 0): HTMLElement {
+  const box = element("span", `badge ${kind}`);
+  box.title = name;
+  const delta = value - base;
+  const number = element("span", `value${delta > 0 ? " up" : delta < 0 ? " down" : ""}`, String(value));
+  if (delta !== 0) number.appendChild(element("small", "delta", ` ${delta > 0 ? "+" : ""}${delta}`));
+  const words = element("span", "caption", caption);
+  if (studs > 0) words.prepend(element("span", "studs", "●".repeat(studs)));
+  box.append(element("span", "shape"), number, words);
+  return box;
+}
+
+/** Uses left as beads that go dark when spent ("1/1" before). */
+function beads(left: number, of: number): HTMLElement {
+  const row = element("span", "uses");
+  row.title = `${left} of ${of} left this battle`;
+  for (let i = 0; i < of; i++) row.appendChild(element("span", i < left ? "bead" : "bead spent"));
+  return row;
+}
+
+/** Spell charges as cells: `of` cells with `full` lit, or `full` lit cells alone for a cost. */
+function cells(full: number, of = full): HTMLElement {
+  const row = element("span", "cells");
+  row.title = of === full ? `${full} spell charge${full === 1 ? "" : "s"}` : `${full} of ${of} spell charges`;
+  for (let i = 0; i < of; i++) row.appendChild(element("span", i < full ? "cell" : "cell spent"));
+  return row;
+}
+
+/** A socket's rules for its slip: its row as on the card, and why it's dark when it is. */
+function rulesSlip(unit: BattleUnit, ref: AbilityRef, power: number, usable: boolean): HTMLElement {
+  const charges = chargesOf(ref);
+  const left = charges === undefined ? undefined : charges - (unit.chargesUsed[ref.id] ?? 0);
+  const head = [element("span", "name", ref.name ?? BEHAVIORS[ref.id]?.name ?? ref.id), ...(charges !== undefined ? [element("span", "charges", ` ${left}/${charges}`)] : [])];
+  const slip = element("div", "slip");
+  slip.appendChild(abilityRow(unit.defId, ref, head, power));
+  if (!usable) slip.appendChild(element("div", "why", left === 0 ? "Spent for this battle." : "Not now: nothing it can reach, or not on this action."));
+  return slip;
 }
 
 /** "Punished ×2", "Bleeding 30": an effect's name with its stacks and amount. */
