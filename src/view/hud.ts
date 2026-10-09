@@ -102,6 +102,9 @@ export class Hud {
   private tarotKeyShown = "";
   /** The socket under the pointer: re-renders replace the sockets, and its rules must stay up. */
   private ruled: string | null = null;
+  /** The hint line's own text, and what names a hovered object in its place (`setHint`). */
+  private hintText = "";
+  private hovered: string | null = null;
 
   constructor(
     private readonly settings: Settings,
@@ -109,6 +112,13 @@ export class Hud {
   ) {
     this.auto.addEventListener("click", () => handlers.onAuto());
     this.resolve.addEventListener("click", () => handlers.onResolve());
+    this.resolve.setAttribute("aria-label", "Resolve now");
+    explain(this.resolve, "Resolve now", "Plays the rest of the battle at once, without animations.");
+    this.resolve.dataset["hint"] = "Resolve now: play the rest of the battle at once.";
+    for (const object of [this.auto, this.resolve]) {
+      object.addEventListener("mouseenter", () => this.hover(object.dataset["hint"] ?? null));
+      object.addEventListener("mouseleave", () => this.hover(null));
+    }
     byId("unroll").addEventListener("click", () => this.unrollLog(!this.logStele.classList.contains("open")));
     this.fan = new TarotFan(this.tarot, (sound) => handlers.onCue(sound));
     this.tarotIcon.addEventListener("click", () => {
@@ -117,10 +127,14 @@ export class Hud {
     });
   }
 
+  /** The two objects hanging from the beam: an hourglass (resolve now) and a puppeteer's cross (the AI plays you). */
   renderAuto(available: boolean, on: boolean): void {
     this.auto.hidden = !available;
     this.resolve.hidden = !available;
-    this.auto.textContent = on ? "Take control" : "Auto-battle";
+    const name = on ? "Take control" : "Auto-battle";
+    this.auto.setAttribute("aria-label", name);
+    explain(this.auto, name, on ? "The AI is playing your side. Click to play it yourself again." : "Let the AI play your side. Click again to take it back.");
+    this.auto.dataset["hint"] = on ? "Take control: play your side yourself again." : "Auto-battle: the AI plays your side.";
     this.auto.classList.toggle("selected", on);
   }
 
@@ -133,6 +147,11 @@ export class Hud {
       this.hideTarot();
       this.tarotIcon.hidden = true;
     }
+  }
+
+  private hover(name: string | null): void {
+    this.hovered = name;
+    this.hint.textContent = name ?? this.hintText;
   }
 
   /** The log's stele shows its last lines; unrolled, the whole battle reads as a scroll. */
@@ -242,22 +261,24 @@ export class Hud {
     const stats = effectiveStats(battle, unit.id);
     const def = UNITS[unit.defId];
     this.card.replaceChildren();
-    // The niche: a figure whose wings make the portrait's arch and whose hands hold the name plate.
+    // The niche: a hooded figure holding the portrait at her chest, her hands over its frame, her wings rising whole.
     const niche = element("div", "niche");
     const window = element("div", "window");
     window.appendChild(art({ kind: "portrait", id: unit.defId, frame: "bust" }, "niche-portrait"));
-    // The plate says who: its enamel band is the side's colour, the numeral its tier, a crown a leader; the words
-    // (whose, where it stands) wait under a held right-click.
+    niche.append(element("div", "figure"), window, element("div", "hands"));
+    if (pinned) niche.appendChild(explain(element("span", "pin"), "Pinned", "This card stays put. Click the unit again to release it."));
+    this.card.appendChild(niche);
+    // The plate in the stone below says who: its enamel band is the side's colour, the numeral its tier, a crown a
+    // leader; the words (whose, where it stands) wait under a held right-click.
     const tier = def?.tier ?? 1;
     const plate = element("div", `plate side${unit.side}`);
     if (unit.leader) plate.appendChild(element("span", "crown", "♛"));
-    plate.append(unit.name, element("span", "tier", ROMAN[tier] ?? String(tier)));
-    explain(plate, unitLabel(unit, playerSide), `Tier ${tier}${unit.leader ? ", leading its warband" : ""}. Stands ${place(unit)}.`);
-    niche.append(element("div", "figure"), window, plate);
-    if (pinned) niche.appendChild(explain(element("span", "pin"), "Pinned", "This card stays put. Click the unit again to release it."));
-    this.card.appendChild(niche);
-    this.card.appendChild(instruments(unit, stats, def?.spellCharges));
+    plate.append(element("span", "tier", ROMAN[tier] ?? String(tier)), unit.name);
+    this.card.appendChild(explain(plate, unitLabel(unit, playerSide), `Tier ${tier}${unit.leader ? ", leading its warband" : ""}. Stands ${place(unit)}.`));
 
+    // Everything with words sits in one recessed panel, so the stone around it can be carved and the text stays legible.
+    const inset = element("div", "inset");
+    inset.appendChild(instruments(unit, stats, def?.spellCharges));
     // Secret effects (a Justiciar's mark) show only to the side that applied them.
     const shown = unit.effects.filter((e) => sees(battle, playerSide, e.def, e.source));
     if (shown.length > 0) {
@@ -268,9 +289,8 @@ export class Hud {
         explain(tag, effectLabel(effect), effectDef(effect.def).describe(effect));
         effects.appendChild(tag);
       }
-      this.card.appendChild(effects);
+      inset.appendChild(effects);
     }
-
     const abilities = element("ul", "abilities");
     for (const ref of unitAbilities(battle, unit.id)) {
       const behavior = BEHAVIORS[ref.id];
@@ -281,7 +301,8 @@ export class Hud {
       item.appendChild(abilityRow(unit.defId, ref, head, stats.abilityPower));
       abilities.appendChild(item);
     }
-    this.card.appendChild(abilities);
+    inset.appendChild(abilities);
+    this.card.appendChild(inset);
   }
 
   /**
@@ -376,8 +397,10 @@ export class Hud {
     this.rules.replaceChildren(...(slip ? [slip] : []));
   }
 
+  /** The hint line says what the game wants now, or names the object under the pointer while one is hovered. */
   setHint(text: string): void {
-    this.hint.textContent = text;
+    this.hintText = text;
+    this.hint.textContent = this.hovered ?? text;
   }
 
   appendLog(events: readonly BattleEvent[], battle: Battle, playerSide: Side | null): void {
