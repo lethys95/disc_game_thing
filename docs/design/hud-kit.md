@@ -336,6 +336,19 @@ seed 1.
 - The field's brackets and health channels keep their greybox values.
 - The log's unrolled scroll is the stretched block around parchment.
 
-**Next:** the map and the Capitol, the same way. Each gets its own greybox (step 2), then its painting with the
-battle's pick as the light and material to match.
+## The map (2026-10-09, night)
+The map is built from the battle's pieces: the beam, the plaque and the chain, with the log's block as its tablets.
+Only its two sculptures were painted, through a mask around them, in the light of those pieces:
+- **The bell-bearer.** A hooded angel rises from the bottom edge, cut off by it, and holds up the bell that is End
+  turn. It glows while the move is yours.
+- **The book.** Menu is a book hanging from the beam.
+
+The rest of the map's chrome:
+- *The beam:* its medallion shows the turn, ringed in the colour of whoever moves, with marble plaques for the purse
+  and the march.
+- *The tablets:* the warband and the cities sit on blocks hung from the beam by chains. Their names are on plaques
+  crossing their top edge, and the warband buttons are plaques that light.
+
+**Next:** the Capitol and the other screens the same way: a greybox from the existing pieces, then only what's new
+painted into it. After that, the other factions' skins.
 

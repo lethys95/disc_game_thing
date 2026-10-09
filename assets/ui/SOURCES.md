@@ -32,3 +32,12 @@ grafted from seed 1 of the same probe (`graft log`). Cut with `pieces battle`:
 | `battle/hourglass.webp`, `battle/marionette.webp` | the 1440p pick | keyed from the crop's corners (the marionette also by a light floor) |
 | `battle/recess.webp` | the 1440p pick | the monument's recessed panel as painted; the sockets' frame, nine-sliced |
 
+## The map (`map/`), painted into the battle's pieces (2026-10-09)
+The map's greybox carries the battle's pieces (beam, plaque, chain, the log's block as its tablets); only its two
+sculptures were painted, through a mask around them (`hud-paint.ts` screen `map`, round 1, probe `reliquary`, strength
+0.75, seed 2), then repainted at 1440p (0.35). Cut with `pieces map`:
+| File | Cut |
+|---|---|
+| `map/bearer.webp` | Photon's segmentation on a brightened copy: the hooded angel holding up the bell (End turn) |
+| `map/book.webp` | the same, then the dark ground under a light floor dropped: the book hanging from the beam (Menu) |
+

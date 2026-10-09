@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-09, night (the battle's HUD painted and installed)
+**Updated:** 2026-10-09, night (the battle's and the map's HUD painted and installed)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): the alpha is the three playable factions (Jilliath,
@@ -32,12 +32,13 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
   made knights of every melee unit), "inhuman" over "woman", name cloth textures; review pages show full prompts.
 - **Armor is a percentage with diminishing returns** (the user; #75, `testing/percent-armor`): armor ÷ (armor + 60),
   shown as a percent on the cards and in the codex.
-- **The HUD kit: the battle screen is painted and in the game** (`in-progress/ui-kit-grotesques`; the morning
+- **The HUD kit: the battle and the map are painted and in the game** (`in-progress/ui-kit-grotesques`; the morning
   write-up `shots/hud-battle.html`). After the angels felt "bolted on": research (`design/hud-references.md`), an
   inventory, the system (`design/hud-kit.md`, accepted; motifs provisional #76), a greybox, then the battle painted as
   one picture in three rounds of probes and cut into pieces (`assets/ui/battle/`, `scripts/art/hud-paint.ts`). The
   turn order lives in the beam's arcade; the card is a monument (the angel holds the portrait); rules and words wait
-  under a held right-click. The user handed control to Claude ("I'm giving you control").
+  under a held right-click. The map reuses the battle's pieces and adds a hooded angel holding up the End turn bell
+  and a hanging book for Menu. The user handed control to Claude ("I'm giving you control").
 - **The Grove's Water is now Wellspring.**
 - **Unreal 5 as a parallel track** (the user: "UE is the king of 3d"; `ongoing/unreal-port`), in its own repo,
   `../disc_unreal`. three.js keeps the pace; Unreal follows as a view, with this repo's TypeScript rules as the only
@@ -45,8 +46,8 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
   the `?fight` arena in Unreal looks nearly the same as three.js with today's assets (`disc_unreal/shots/`).
 
 ## Next
-0. **The HUD kit goes on** (Claude's): the map and the Capitol get their greyboxes and paintings the same way, matching
-   the battle's pick; the battle's last flat glyphs become painted pieces.
+0. **The HUD kit goes on** (Claude's): the Capitol and the other screens get the same treatment (a greybox from the
+   existing pieces, only what's new painted into it); the battle's last flat glyphs become painted pieces.
 1. **Finish Jilliath's concepts** with the user (the open nine), then portraits from the picks.
 2. **The other factions' missing units** (the alpha needs all three): Nexus melee tier 3, the Grove's mage line, and
    the rest on the board; then their concept art the same way.

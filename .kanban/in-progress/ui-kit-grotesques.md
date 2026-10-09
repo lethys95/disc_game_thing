@@ -104,3 +104,6 @@
   log's stele grafted from seed 1, the pieces cut (Photon) into `assets/ui/battle/` and installed where they were
   painted. Verified (types, tests, playtests; 720p, 1080p, 1440p). Write-up for the user: `shots/hud-battle.html`.
   Next: the map and the Capitol the same way.
+- **The map (2026-10-09, night):** built from the battle's pieces (beam, plaques, chains, the log's block as tablets);
+  only its bell-bearer (End turn) and hanging book (Menu) painted, through a mask, in their light (`map-1`, reliquary
+  75-2, repainted at 1440p, cut by Photon). Verified. Next: the Capitol and the other screens the same way.

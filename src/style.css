@@ -633,9 +633,6 @@ body.formulas .formula { display: inline; }
   --gb-shield: #a8dcd8;
   --gb-magic: #4fd8cf;
   --moment: "Grenze Gotisch", var(--display);
-  --gb-bearer: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 160' preserveAspectRatio='none'><g fill='%2366635e'><path d='M74 62C58 46 50 24 46 4C34 16 26 40 26 66C26 96 34 124 48 160H72L80 90Z'/><path d='M106 62C122 46 130 24 134 4C146 16 154 40 154 66C154 96 146 124 132 160H108L100 90Z'/><path d='M70 60C80 54 100 54 110 60L132 160H48Z'/><path d='M90 16C80 17 73 26 72 37C71 47 76 56 82 59H98C104 56 109 47 108 37C107 26 100 17 90 16Z'/></g><g fill='none' stroke='%234f4c48' stroke-width='2'><path d='M44 20C40 50 40 90 50 130M136 20C140 50 140 90 130 130M78 70C76 80 78 90 84 96M102 70C104 80 102 90 96 96'/></g><path d='M90 30C85 31 82 35 82 40C82 46 85 50 90 50C95 50 98 46 98 40C98 35 95 31 90 30Z' fill='%232c2a28'/></svg>");
-  --gb-bell: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 34'><g fill='%237a7671'><path d='M12 2H18V6H12Z'/><path d='M5 29C5 18 8 8 15 6C22 8 25 18 25 29Z'/><rect x='3' y='28' width='24' height='3' rx='1'/></g><circle cx='15' cy='32' r='2' fill='%235a5753'/></svg>");
-  --gb-book: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 44'><path d='M13 0V12' stroke='%236b6864' stroke-width='2'/><rect x='3' y='12' width='20' height='30' rx='1.5' fill='%2366635e'/><rect x='3' y='12' width='4' height='30' fill='%234f4c48'/><rect x='19' y='24' width='5' height='6' rx='1' fill='%237a7671'/></svg>");
 
 
 }
@@ -847,8 +844,9 @@ body.formulas .formula { display: inline; }
 
 /* The map's interface: the battle's beam across the top, its medallion showing the turn; the warband and the cities on
    tablets hung from it by chains (the log's block, nine-sliced); marble plaques for names and numbers (the monument's
-   plate). All of these are pieces of the battle's painting, so both screens share one stone and one light. End turn
-   is the bell a hooded angel holds up at the bottom; Menu a book hanging from the beam. */
+   plate). All of these are pieces of the battle's painting, so both screens share one stone and one light. The map's
+   own two pieces (assets/ui/map/) were painted into it in that light: the hooded angel rising from the bottom edge
+   holds up the bell that is End turn, and Menu is the book hanging from the beam. */
 #mapbeam { position: fixed; left: 0; right: 0; top: 0; height: 3.542rem; background: var(--ui-battle-beam) 0 0 / 100% 100% no-repeat; filter: drop-shadow(0 0.3rem 0.4rem rgba(0, 0, 0, 0.6)); }
 #mapturn { position: absolute; inset: 0; }
 #mapturn .medallion {
@@ -874,7 +872,7 @@ body.formulas .formula { display: inline; }
 #mapbeam::before { left: 3.9rem; }
 #mapbeam::after { right: 3.9rem; }
 #maphud:has(#mapsquad[hidden]) #mapbeam::before, #maphud:has(#mapcity[hidden]) #mapbeam::after { display: none; }
-#mapmenu.book { position: absolute; left: 63.5%; top: 3.542rem; width: 2.2rem; height: 3.8rem; padding: 0; border: 0; cursor: pointer; background: var(--gb-book) center / 100% 100% no-repeat; filter: drop-shadow(0 0.2rem 0.3rem rgba(0, 0, 0, 0.6)); }
+#mapmenu.book { position: absolute; left: 61.72%; top: 3.542rem; width: 3.472rem; height: 5.521rem; padding: 0; border: 0; cursor: pointer; background: var(--ui-map-book) center / 100% 100% no-repeat; filter: drop-shadow(0 0.2rem 0.3rem rgba(0, 0, 0, 0.6)); }
 #mapmenu.book:hover { filter: brightness(1.3) drop-shadow(0 0.2rem 0.3rem rgba(0, 0, 0, 0.6)); }
 
 /* The tablets: stone blocks with a recessed panel, their names on marble plaques crossing their top edge. */
@@ -903,10 +901,11 @@ body.formulas .formula { display: inline; }
 /* End turn: the hooded angel rising from the bottom edge holds up a bell; it glows while the move is yours. */
 #mapbottom { position: fixed; left: 50%; bottom: 0; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; pointer-events: none; }
 #maphint { min-height: 1.4rem; margin-bottom: 0.3rem; font: 500 1.0625rem var(--display); color: var(--ink); text-align: center; text-shadow: 0 1px 0.2rem #000, 0 0 0.6rem #000; white-space: nowrap; }
-#mapbottom .bearer { position: relative; width: 9rem; height: 8rem; background: var(--gb-bearer) center / 100% 100% no-repeat; }
+#mapbottom .bearer { position: relative; width: 9.861rem; height: 9.514rem; background: var(--ui-map-bearer) center / 100% 100% no-repeat; filter: drop-shadow(0 -0.2rem 0.5rem rgba(0, 0, 0, 0.5)); }
+/* The painted bell is the button; candlelight gathers on it while the move is yours. */
 #endturn.bell {
-  position: absolute; left: 50%; top: 2.4rem; width: 2.7rem; height: 3.1rem; margin-left: -1.35rem; padding: 0; border: 0; cursor: pointer; pointer-events: auto;
-  background: var(--gb-bell) center / 100% 100% no-repeat; filter: drop-shadow(0 0 0.5rem rgba(232, 195, 108, 0.75));
+  position: absolute; left: 3.3rem; top: 4rem; width: 3.3rem; height: 4.7rem; padding: 0; border: 0; border-radius: 40%; cursor: pointer; pointer-events: auto;
+  background: radial-gradient(ellipse at 50% 70%, rgba(255, 210, 120, 0.42), transparent 62%); mix-blend-mode: screen;
 }
-#endturn.bell:hover { filter: brightness(1.3) drop-shadow(0 0 0.6rem rgba(232, 195, 108, 0.95)); }
-#endturn.bell:disabled { cursor: default; filter: brightness(0.6); }
+#endturn.bell:hover { background: radial-gradient(ellipse at 50% 70%, rgba(255, 215, 130, 0.68), transparent 66%); }
+#endturn.bell:disabled { cursor: default; background: none; }

@@ -436,11 +436,16 @@ interface Piece {
   readonly bright?: boolean;
   /** For `key`: how far from the ground's colour still floods away, in percent. */
   readonly fuzz?: number;
-  /** For `key`: also drop whatever is darker than this, in percent (a dark painted backdrop the flood stops at). */
+  /** Also drop whatever is darker than this, in percent (a dark painted backdrop a flood or a segmentation kept). */
   readonly minLight?: number;
 }
 
 const PIECES_OF: Readonly<Record<string, readonly Piece[]>> = {
+  // The map's two painted sculptures, cut from their zones in the 1440p pick (the rest of the map is battle pieces).
+  map: [
+    { name: "bearer", from: "reliquary-75-2.png", rect: [1090, 1149, 380, 291], cut: "segment", bright: true },
+    { name: "book", from: "reliquary-75-2.png", rect: [1565, 102, 184, 170], cut: "segment", bright: true, minLight: 9 },
+  ],
   battle: [
     { name: "beam", from: "reliquary-75-3.png", rect: [0, 0, 2560, 102], cut: "rect" },
     { name: "hourglass", from: "reliquary-75-3.png", rect: [2215, 102, 100, 200], cut: "key" },
@@ -477,10 +482,6 @@ async function cutPieces(name: string, dir: string, only: readonly string[]): Pr
       if (piece.cut === "key") {
         const corners = ["0,0", "%[fx:w-1],0", "0,%[fx:h-1]", "%[fx:w-1],%[fx:h-1]"];
         magick(crop, "-alpha", "set", "-fuzz", `${piece.fuzz ?? 4}%`, "-fill", "none", ...corners.flatMap((c) => ["-draw", `alpha ${c} floodfill`]), cut);
-        if (piece.minLight !== undefined) {
-          magick(cut, "(", "+clone", "-alpha", "extract", "(", crop, "-colorspace", "Gray", "-threshold", `${piece.minLight}%`, "-morphology", "Dilate", "Disk:1", "-blur", "0x0.7", ")",
-            "-compose", "Multiply", "-composite", ")", "-alpha", "off", "-compose", "CopyOpacity", "-composite", cut);
-        }
       } else if (piece.bright) {
         const bright = `${work}/${piece.name}-bright.png`;
         const brightCut = `${work}/${piece.name}-bright-cut.png`;
@@ -488,6 +489,11 @@ async function cutPieces(name: string, dir: string, only: readonly string[]): Pr
         await cutSubject(bright, brightCut);
         magick(crop, "(", brightCut, "-alpha", "extract", ")", "-alpha", "off", "-compose", "CopyOpacity", "-composite", cut);
       } else await cutSubject(crop, cut);
+      // Whatever is darker than the floor goes too: the painted ground a flood or a segmentation kept.
+      if (piece.minLight !== undefined) {
+        magick(cut, "(", "+clone", "-alpha", "extract", "(", crop, "-colorspace", "Gray", "-threshold", `${piece.minLight}%`, "-morphology", "Dilate", "Disk:1", "-blur", "0x0.7", ")",
+          "-compose", "Multiply", "-composite", ")", "-alpha", "off", "-compose", "CopyOpacity", "-composite", cut);
+      }
       // Trimmed to what was cut, and where that sits in the painting, for the stylesheet.
       const box = execFileSync("magick", [cut, "-alpha", "extract", "-threshold", "8%", "-format", "%@", "info:"], { encoding: "utf8" }).trim();
       const m = /^(\d+)x(\d+)\+(\d+)\+(\d+)$/.exec(box);
