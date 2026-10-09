@@ -4,4 +4,10 @@ shots/
 art/candidates/
 .sim/
 .cache/
-reference_material/
+# Other games' screenshots stay local; the notes about them are ours.
+reference_material/**/*.jpg
+reference_material/**/*.jpeg
+reference_material/**/*.png
+reference_material/**/*.webp
+reference_material/**/*.gif
+reference_material/index.html
