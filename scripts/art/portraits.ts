@@ -343,7 +343,8 @@ const UNITS: Readonly<Record<string, Unit>> = {
       crops: { bust: { from: "card", size: 0.6, x: 0.51, y: 0.25 }, icon: { from: "card", size: 0.34, x: 0.51, y: 0.135 } },
     },
   },
-  // Jilliath's picked concepts (2026-10-09, `docs/design/units/jilliath-identities.md`, `roster.md`).
+  // Jilliath's picked concepts (2026-10-09, `docs/design/units/jilliath-identities.md`, `roster.md`). Their crops come
+  // from `scripts/art/portrait-frames.py` (a pose model finds the head and shoulders), not from estimates.
   seraph: {
     front: "shots/tripo/seraph-front.png",
     identity: "a humble angel woman, her face hidden in the shadow of a deep black hood, long layered robes of black cloth over white silk, plain brown feathered wings",
@@ -351,7 +352,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     strengths: T_POSED,
     picked: {
       card: "seraph-card-d90.png",
-      crops: { bust: { from: "card", size: 0.62, x: 0.5, y: 0.24 }, icon: { from: "card", size: 0.26, x: 0.5, y: 0.13 } },
+      crops: { bust: { from: "card", size: 0.619, x: 0.511, y: 0.227 }, icon: { from: "card", size: 0.310, x: 0.509, y: 0.161 } },
     },
   },
   emissary: {
@@ -361,7 +362,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     strengths: T_POSED,
     picked: {
       card: "emissary-card-d75.png",
-      crops: { bust: { from: "card", size: 0.55, x: 0.45, y: 0.3 }, icon: { from: "card", size: 0.2, x: 0.45, y: 0.24 } },
+      crops: { bust: { from: "card", size: 0.467, x: 0.486, y: 0.318 }, icon: { from: "card", size: 0.234, x: 0.489, y: 0.269 } },
     },
   },
   shepherd: {
@@ -371,13 +372,18 @@ const UNITS: Readonly<Record<string, Unit>> = {
     strengths: T_POSED,
     picked: {
       card: "shepherd-card-d90.png",
-      crops: { bust: { from: "card", size: 0.6, x: 0.47, y: 0.26 }, icon: { from: "card", size: 0.22, x: 0.43, y: 0.16 } },
+      crops: { bust: { from: "card", size: 0.570, x: 0.500, y: 0.257 }, icon: { from: "card", size: 0.285, x: 0.499, y: 0.197 } },
     },
   },
   godkin: {
     front: "shots/tripo/godkin-front.png",
     identity: "a tall female figure that is only a smooth bare silhouette with no face and no features: her whole surface is a bright cloudy daytime sky, white clouds on blue, shafts of golden sunlight shining out of her",
-    poses: ["she stands still and upright, her arms a little open at her sides"],
+    // The user (2026-10-09): the card should show the effects that flesh her out in game, not only the bare model:
+    // "godrays, daybreak, sunlight".
+    poses: [
+      "she stands still and upright in a burst of daybreak: blinding shafts of golden sunlight and god rays pour out of her body in every direction, cutting through the dark around her, a dawn glow spreading from her",
+      "she stands with her arms a little open as daybreak breaks out of her: rays of golden light burst from her silhouette, lighting the dark around her gold and white",
+    ],
     strengths: T_POSED,
     picked: {
       card: "godkin-card-d75.png",
@@ -391,7 +397,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     strengths: T_POSED,
     picked: {
       card: "reclaimer-card-d90.png",
-      crops: { bust: { from: "card", size: 0.6, x: 0.5, y: 0.3 }, icon: { from: "card", size: 0.2, x: 0.51, y: 0.2 } },
+      crops: { bust: { from: "card", size: 0.545, x: 0.505, y: 0.275 }, icon: { from: "card", size: 0.273, x: 0.492, y: 0.218 } },
     },
   },
   paragon: {
@@ -401,7 +407,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     strengths: T_POSED,
     picked: {
       card: "paragon-card-d90.png",
-      crops: { bust: { from: "card", size: 0.6, x: 0.47, y: 0.27 }, icon: { from: "card", size: 0.2, x: 0.47, y: 0.16 } },
+      crops: { bust: { from: "card", size: 0.513, x: 0.495, y: 0.208 }, icon: { from: "card", size: 0.257, x: 0.492, y: 0.154 } },
     },
   },
   acolyte: {
@@ -411,7 +417,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     strengths: T_POSED,
     picked: {
       card: "acolyte-card-d90.png",
-      crops: { bust: { from: "card", size: 0.6, x: 0.5, y: 0.24 }, icon: { from: "card", size: 0.2, x: 0.525, y: 0.145 } },
+      crops: { bust: { from: "card", size: 0.621, x: 0.530, y: 0.227 }, icon: { from: "card", size: 0.287, x: 0.527, y: 0.176 } },
     },
   },
   pontiff: {
@@ -421,7 +427,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     strengths: T_POSED,
     picked: {
       card: "pontiff-card-d90.png",
-      crops: { bust: { from: "card", size: 0.6, x: 0.5, y: 0.26 }, icon: { from: "card", size: 0.3, x: 0.52, y: 0.14 } },
+      crops: { bust: { from: "card", size: 0.825, x: 0.545, y: 0.260 }, icon: { from: "card", size: 0.413, x: 0.528, y: 0.172 } },
     },
   },
   doomsayer: {
@@ -431,7 +437,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     strengths: T_POSED,
     picked: {
       card: "doomsayer-card-d90.png",
-      crops: { bust: { from: "card", size: 0.65, x: 0.5, y: 0.25 }, icon: { from: "card", size: 0.2, x: 0.54, y: 0.16 } },
+      crops: { bust: { from: "card", size: 0.696, x: 0.536, y: 0.235 }, icon: { from: "card", size: 0.348, x: 0.526, y: 0.161 } },
     },
   },
   templar: {
@@ -441,7 +447,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     strengths: T_POSED,
     picked: {
       card: "templar-card-d90.png",
-      crops: { bust: { from: "card", size: 0.6, x: 0.5, y: 0.22 }, icon: { from: "card", size: 0.2, x: 0.51, y: 0.11 } },
+      crops: { bust: { from: "card", size: 0.809, x: 0.508, y: 0.189 }, icon: { from: "card", size: 0.373, x: 0.485, y: 0.137 } },
     },
   },
   immortal: {
@@ -451,7 +457,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     strengths: T_POSED,
     picked: {
       card: "immortal-card-d90.png",
-      crops: { bust: { from: "card", size: 0.6, x: 0.5, y: 0.22 }, icon: { from: "card", size: 0.26, x: 0.48, y: 0.1 } },
+      crops: { bust: { from: "card", size: 0.712, x: 0.502, y: 0.215 }, icon: { from: "card", size: 0.356, x: 0.505, y: 0.140 } },
     },
   },
   chosen: {
@@ -459,9 +465,10 @@ const UNITS: Readonly<Record<string, Unit>> = {
     identity: "an inhuman juggernaut in a man's shape, faceless, his head a smooth rounded shell, his body thick battered shell plates of black, bone-white and blood-red enamel, one shoulder heavier than the other",
     poses: ["he stands braced, a massive two-handed greatsword of glowing heated metal resting on his shoulder"],
     strengths: T_POSED,
+    // The pose model put his face points on the sword beside his faceless head: the icon set by hand.
     picked: {
       card: "chosen-card-d90.png",
-      crops: { bust: { from: "card", size: 0.65, x: 0.55, y: 0.3 }, icon: { from: "card", size: 0.2, x: 0.56, y: 0.21 } },
+      crops: { bust: { from: "card", size: 0.661, x: 0.495, y: 0.295 }, icon: { from: "card", size: 0.26, x: 0.541, y: 0.197 } },
     },
   },
   avatar_of_vengeance: {
@@ -471,7 +478,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     strengths: T_POSED,
     picked: {
       card: "avatar_of_vengeance-card-d90.png",
-      crops: { bust: { from: "card", size: 0.65, x: 0.5, y: 0.35 }, icon: { from: "card", size: 0.2, x: 0.5, y: 0.3 } },
+      crops: { bust: { from: "card", size: 0.405, x: 0.481, y: 0.386 }, icon: { from: "card", size: 0.187, x: 0.474, y: 0.369 } },
     },
   },
 };
