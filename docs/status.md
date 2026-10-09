@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-07 (the Jilliath mage line built)
+**Updated:** 2026-10-09 (an Unreal 5 port estimated)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): the alpha is the three playable factions (Jilliath,
@@ -32,6 +32,8 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
 - **Armor is a percentage with diminishing returns** (the user; #75, `testing/percent-armor`): armor ÷ (armor + 60),
   shown as a percent on the cards and in the codex.
 - **The Grove's Water is now Wellspring.**
+- **An Unreal 5 port, estimated** (the user asked; nothing decided): `unreal-port.md`, `maybe/unreal-port`. About
+  three to six weeks back to today's game, the interface the largest part; a battle-arena spike would come first.
 
 ## Next
 1. **Finish Jilliath's concepts** with the user (the open nine), then portraits from the picks.
