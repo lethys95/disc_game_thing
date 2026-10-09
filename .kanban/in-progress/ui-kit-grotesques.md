@@ -9,3 +9,7 @@
   requires less of me to find solutions." Claude's first batch: a stone angel and a horned grotesque carved into panel
   corners, a spire finial, a keystone, bar end caps, a divider, a cathedral-tracery frame for screens (so screens and
   the HUD stop sharing one frame). Generated with the existing kit's recipe, no new style words.
+- **The user's test for it (2026-10-09):** "when you're done, i want you to review this work. are they actually hud
+  elements? do they blend in? etc. because I'm interested in a random gargoyle somewhere. it'd be something that
+  blends into a whole." Read as: the pieces must belong to the panels they sit on, one whole, never an ornament stuck
+  on top (the Capitol's gargoyle reads as a sticker, `docs/design/art.md`).
