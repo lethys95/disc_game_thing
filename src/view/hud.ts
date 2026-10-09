@@ -66,7 +66,7 @@ export interface BannerButton {
 
 const ROW_NAMES = ["front", "middle", "back"] as const;
 const ROMAN = ["", "I", "II", "III", "IV", "V"] as const;
-/** How many faces the beam's turn order shows. */
+/** How many faces the beam's turn order shows: the medallion and the eleven arches right of it. */
 const TURN_SLOTS = 12;
 const COL_NAMES = ["left", "centre", "right"] as const;
 
@@ -225,8 +225,9 @@ export class Hud {
   }
 
   /**
-   * The turn order on the beam: the round's medallion, then a niche per unit in acting order, the acting one larger,
-   * each over a band of its side's colour. Hovering one highlights the unit. Rebuilt only when the order changes, so a
+   * The turn order is the beam itself (`docs/design/hud-kit.md`): the acting unit's face in the medallion at its
+   * middle, the next ones in the arches of its arcade to the right, each over a band of its side's colour, the round's
+   * numeral on a plate under the medallion. Hovering one highlights the unit. Rebuilt only when the order changes, so a
    * hovered portrait isn't replaced under the pointer.
    */
   renderTurns(battle: Battle, playerSide: Side | null): void {
@@ -240,26 +241,16 @@ export class Hud {
     if (key === this.turnsKey) return;
     this.turnsKey = key;
     this.turns.replaceChildren();
-    const round = element("div", "round");
-    round.append(element("span", "label", "Round"), element("span", "number", String(battle.round)));
-    this.turns.appendChild(explain(round, `Round ${battle.round}`, "The faces along the beam act in this order."));
+    this.turns.appendChild(explain(element("div", "round", ROMAN[battle.round] ?? String(battle.round)), `Round ${battle.round}`, "The acting unit's face is in the medallion; the next ones follow in the arches to its right."));
     upcoming.forEach((unit, index) => {
-      const niche = element("div", `niche side${unit.side}${index === 0 ? " now" : index === 1 ? " next" : ""}`);
-      const window = element("div", "window");
-      window.appendChild(art({ kind: "portrait", id: unit.defId, frame: "icon" }, index === 0 ? "queue-now" : "queue"));
-      niche.append(window, element("span", "band"));
-      if (index < 2) niche.appendChild(element("span", "when", index === 0 ? "now" : "next"));
+      const niche = element("div", `niche side${unit.side}${index === 0 ? " now" : ""}`);
+      niche.style.setProperty("--arch", String(index - 1));
+      niche.append(art({ kind: "portrait", id: unit.defId, frame: "icon" }, "queue"), element("span", "band"));
       explain(niche, unitLabel(unit, playerSide), `Stands ${place(unit)}. ${index === 0 ? "Acting now." : index === 1 ? "Acts next." : "Acts later this round or the next."}`);
       niche.addEventListener("mouseenter", () => this.handlers.onFocus(unit.id));
       niche.addEventListener("mouseleave", () => this.handlers.onFocus(null));
       this.turns.appendChild(niche);
     });
-    // The beam always has its twelve niches: the ones nobody fills this round stay, empty.
-    for (let i = upcoming.length; i < TURN_SLOTS; i++) {
-      const niche = element("div", "niche empty");
-      niche.append(element("div", "window"), element("span", "band"));
-      this.turns.appendChild(niche);
-    }
   }
 
   renderCard(battle: Battle, unitId: string | null, playerSide: Side | null, pinned = false): void {
@@ -269,22 +260,21 @@ export class Hud {
     const stats = effectiveStats(battle, unit.id);
     const def = UNITS[unit.defId];
     this.card.replaceChildren();
-    // The niche: a hooded figure holding the portrait at her chest, her hands over its frame, her wings rising whole.
-    const niche = element("div", "niche");
+    // The monument: the angel on the stele's top holds the portrait in her frame (the portrait shows through the
+    // painting's opening, behind it); the plate set in the stone says who.
     const window = element("div", "window");
     window.appendChild(art({ kind: "portrait", id: unit.defId, frame: "bust" }, "niche-portrait"));
-    niche.append(element("div", "figure"), window, element("div", "hands"));
-    if (pinned) niche.appendChild(explain(element("span", "pin"), "Pinned", "This card stays put. Click the unit again to release it."));
-    this.card.appendChild(niche);
-    // The plate in the stone below says who: its enamel band is the side's colour, the numeral its tier, a crown a
-    // leader; the words (whose, where it stands) wait under a held right-click.
+    this.card.appendChild(window);
+    if (pinned) this.card.appendChild(explain(element("span", "pin"), "Pinned", "This card stays put. Click the unit again to release it."));
+    // The plate: the name, the tier's numeral at its left end, a crown for a leader, a band of the side's colour; the
+    // words (whose, where it stands) wait under a held right-click.
     const tier = def?.tier ?? 1;
     const plate = element("div", `plate side${unit.side}`);
     if (unit.leader) plate.appendChild(element("span", "crown", "♛"));
-    plate.append(element("span", "tier", ROMAN[tier] ?? String(tier)), unit.name);
+    plate.append(element("span", "tier", ROMAN[tier] ?? String(tier)), element("span", "name", unit.name));
     this.card.appendChild(explain(plate, unitLabel(unit, playerSide), `Tier ${tier}${unit.leader ? ", leading its warband" : ""}. Stands ${place(unit)}.`));
 
-    // Everything with words sits in one recessed panel, so the stone around it can be carved and the text stays legible.
+    // Everything with words sits in the stele's recessed panel, so the carving around it never runs behind text.
     const inset = element("div", "inset");
     inset.appendChild(instruments(unit, stats, def?.spellCharges));
     // Secret effects (a Justiciar's mark) show only to the side that applied them.

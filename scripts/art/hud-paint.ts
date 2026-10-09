@@ -5,7 +5,7 @@ import { resolve } from "node:path";
 import { chromium } from "playwright";
 import { createServer } from "vite";
 import { HEADLESS_ENV, HEADLESS_GPU_ARGS } from "#scripts/headless";
-import { inpaint, KREA2_TURBO } from "#scripts/art/comfy";
+import { img2img, inpaint, KREA2_TURBO } from "#scripts/art/comfy";
 import { record } from "#scripts/art/batch";
 import type { Candidate } from "#scripts/art/batch";
 
@@ -27,6 +27,8 @@ import type { Candidate } from "#scripts/art/batch";
  *     pnpm tsx scripts/art/hud-paint.ts hires battle <picked.png>   (the pick repainted at 1440p)
  *     pnpm tsx scripts/art/hud-paint.ts composite battle hires
  *     pnpm tsx scripts/art/hud-paint.ts fix battle          (spot repairs on the 1440p pick, by inpainting)
+ *     pnpm tsx scripts/art/hud-paint.ts graft battle        (pieces taken from a sibling painting of the same probe)
+ *     pnpm tsx scripts/art/hud-paint.ts pieces battle [piece…]   (the game's pieces, into assets/ui/<screen>/)
  */
 
 const WIDTH = 1536;
@@ -257,6 +259,8 @@ interface Fix {
   readonly prompt: string;
   readonly denoise: number;
   readonly from?: string;
+  /** Seeds to try instead of the painting's own; each writes `fix-<name>-<seed>.png`. */
+  readonly seeds?: readonly number[];
 }
 
 const FIXES: Readonly<Record<string, { readonly painting: string; readonly fixes: readonly Fix[] }>> = {
@@ -278,6 +282,15 @@ const FIXES: Readonly<Record<string, { readonly painting: string; readonly fixes
         denoise: 0.85,
       },
       {
+        // The first try at the log painted a candle on a block (the prompt named a candle): a plainer ask, and seeds.
+        name: "tablet",
+        rects: [[2040, 1080, 500, 196]],
+        prompt: "A wide low rectangular tablet of dark carved stone standing on a stone sill, seen straight on, its face filled by one large recessed dark rectangular panel inside a thin carved stone border, plain and empty. Lit by one soft light from the upper left. Black wrought iron and dark stone like an old reliquary, worn smooth, deep shadows. Desaturated, grim and solemn.",
+        denoise: 1,
+        from: "sill",
+        seeds: [11, 12, 13],
+      },
+      {
         // Sockets at the game's own size, for one to be cut as the frame every socket shares (not kept in the sill).
         name: "sockets",
         rects: [[910, 1274, 130, 130], [1063, 1274, 130, 130], [1216, 1274, 130, 130], [1369, 1274, 130, 130], [1522, 1274, 130, 130]],
@@ -289,8 +302,52 @@ const FIXES: Readonly<Record<string, { readonly painting: string; readonly fixes
   },
 };
 
-/** Applies the screen's fixes to its picked 1440p painting: `hires/fix-<name>.png` each. */
-async function fix(name: string, dir: string): Promise<void> {
+/**
+ * A piece taken from a sibling painting of the same probe (same prompt and light, another seed) where the pick's
+ * own came out wrong and repairs didn't take: its area upscaled to the 1440p scale and repainted lightly, so it
+ * matches the pick's detail. Written as `hires/graft-<name>.png`, the area alone.
+ */
+interface Graft {
+  readonly name: string;
+  readonly painting: string;
+  /** In the sibling painting's own pixels (the 1536 render). */
+  readonly rect: readonly [number, number, number, number];
+  readonly prompt: string;
+  readonly denoise: number;
+}
+
+const GRAFTS: Readonly<Record<string, readonly Graft[]>> = {
+  battle: [
+    {
+      // The pick's log stele came out as a plain block, and three repaints didn't give it a panel; seed 1 has one.
+      name: "log",
+      painting: "reliquary-75-1.png",
+      rect: [1336, 644, 200, 208],
+      prompt: "A square block of dark carved stone seen straight on, its face one large recessed dark panel with chamfered corners inside a thick carved stone border. Lit by one soft light from the upper left. Black wrought iron and dark stone like an old reliquary, worn smooth, deep shadows. Desaturated, grim and solemn.",
+      denoise: 0.35,
+    },
+  ],
+};
+
+async function graft(name: string, dir: string): Promise<void> {
+  const target = `${dir}/hires`;
+  const scale = HIRES_HEIGHT / HEIGHT;
+  for (const piece of GRAFTS[name] ?? []) {
+    const [x, y, w, h] = piece.rect;
+    // Krea's latent wants sides in multiples of 16.
+    const [sw, sh] = [Math.round((w * scale) / 16) * 16, Math.round((h * scale) / 16) * 16];
+    const up = `${target}/graft-${piece.name}-up.png`;
+    magick(`${dir}/${piece.painting}`, "-crop", `${w}x${h}+${x}+${y}`, "+repage", "-filter", "Lanczos", "-resize", `${sw}x${sh}!`, up);
+    const sibling = (await paintings(dir)).find((m) => m.file === piece.painting);
+    const started = Date.now();
+    const out = `${target}/graft-${piece.name}.png`;
+    await writeFile(out, await img2img({ prompt: piece.prompt, seed: sibling?.seed ?? 1, source: up, denoise: piece.denoise }, `disc/hud-${name}-graft`));
+    console.log(`${out} (${((Date.now() - started) / 1000).toFixed(1)} s)`);
+  }
+}
+
+/** Applies the screen's fixes (or the named ones) to its picked 1440p painting: `hires/fix-<name>.png` each. */
+async function fix(name: string, dir: string, only: readonly string[]): Promise<void> {
   const plan = FIXES[name];
   if (!plan) throw new Error(`no fixes for ${name}`);
   const target = `${dir}/hires`;
@@ -298,16 +355,127 @@ async function fix(name: string, dir: string): Promise<void> {
   if (!picked) throw new Error(`no hires ${plan.painting}`);
   let last = `${target}/${plan.painting}`;
   for (const repair of plan.fixes) {
+    const out = (seed?: number) => `${target}/fix-${repair.name}${seed === undefined ? "" : `-${seed}`}.png`;
+    if (only.length > 0 && !only.includes(repair.name)) {
+      if (!repair.from) last = out();
+      continue;
+    }
     const source = repair.from ? `${target}/fix-${repair.from}.png` : last;
     const mask = `${target}/fix-${repair.name}-mask.png`;
     magick("-size", `${HIRES_WIDTH}x${HIRES_HEIGHT}`, "xc:black", "-fill", "white",
       ...repair.rects.flatMap(([x, y, w, h]) => ["-draw", `rectangle ${x},${y} ${x + w},${y + h}`]),
       "-blur", "0x6", mask);
-    const out = `${target}/fix-${repair.name}.png`;
-    const started = Date.now();
-    await writeFile(out, await inpaint({ prompt: repair.prompt, seed: picked.seed, source, mask, denoise: repair.denoise }, `disc/hud-${name}-fix`));
-    console.log(`${out} (${((Date.now() - started) / 1000).toFixed(1)} s)`);
-    if (!repair.from) last = out;
+    for (const seed of repair.seeds ?? [undefined]) {
+      const started = Date.now();
+      const file = out(seed);
+      await writeFile(file, await inpaint({ prompt: repair.prompt, seed: seed ?? picked.seed, source, mask, denoise: repair.denoise }, `disc/hud-${name}-fix`));
+      console.log(`${file} (${((Date.now() - started) / 1000).toFixed(1)} s)`);
+    }
+    if (!repair.from) last = out();
+  }
+}
+
+/**
+ * The pieces the game shows, cut from the repaired 1440p painting into `assets/ui/<screen>/` (step 4 of the HUD kit).
+ * - `rect`: the area as it is (bands that span the screen).
+ * - `segment`: cut along its painted outline by Photon, then trimmed to it.
+ * - `hole`: also an opening cleared where live content shows through (the portrait in the frame the angel holds):
+ *   an arch, `[x, y, width, height]` with a round top.
+ * - `well`: a socket, its inside cleared for the live icon, `inset` pixels in from its edge.
+ * Each piece's rect in the painting is printed in rem (the painting is 28.8 px a rem: 1440 / 50), for the stylesheet.
+ */
+interface Piece {
+  readonly name: string;
+  readonly from: string;
+  readonly rect: readonly [number, number, number, number];
+  /** `key`: the painting's flat ground flooded away from the crop's corners (for bright things, chains and metal). */
+  readonly cut: "rect" | "segment" | "key" | "well";
+  readonly hole?: readonly [number, number, number, number];
+  readonly inset?: number;
+  /** Segment a brightened copy (dark stone against the dark ground is otherwise lost), keeping the original's pixels. */
+  readonly bright?: boolean;
+  /** For `key`: how far from the ground's colour still floods away, in percent. */
+  readonly fuzz?: number;
+  /** For `key`: also drop whatever is darker than this, in percent (a dark painted backdrop the flood stops at). */
+  readonly minLight?: number;
+}
+
+const PIECES_OF: Readonly<Record<string, readonly Piece[]>> = {
+  battle: [
+    { name: "beam", from: "reliquary-75-3.png", rect: [0, 0, 2560, 102], cut: "rect" },
+    { name: "hourglass", from: "reliquary-75-3.png", rect: [2215, 102, 100, 200], cut: "key" },
+    { name: "marionette", from: "reliquary-75-3.png", rect: [2330, 102, 220, 210], cut: "key", minLight: 13 },
+    { name: "monument", from: "reliquary-75-3.png", rect: [30, 190, 630, 1150], cut: "segment", bright: true, hole: [242, 393, 103, 167] },
+    { name: "sill", from: "fix-sill.png", rect: [0, 1253, 2560, 187], cut: "rect" },
+    // The monument's recessed panel with its carved border: the frame every socket and panel of the battle shares.
+    { name: "recess", from: "reliquary-75-3.png", rect: [140, 782, 283, 433], cut: "rect" },
+    { name: "log", from: "graft-log.png", rect: [0, 0, 336, 352], cut: "segment", bright: true },
+    // One period of the beam's arcade and a stretch of the sill, for screens wider than the painting.
+    { name: "beam-tile", from: "reliquary-75-3.png", rect: [1925, 0, 80, 102], cut: "rect" },
+  ],
+};
+
+const REM = HIRES_HEIGHT / 50;
+
+async function cutPieces(name: string, dir: string, only: readonly string[]): Promise<void> {
+  const pieces = (PIECES_OF[name] ?? []).filter((p) => only.length === 0 || only.includes(p.name));
+  const source = `${dir}/hires`;
+  const work = `${source}/pieces`;
+  const out = `assets/ui/${name}`;
+  await mkdir(work, { recursive: true });
+  await mkdir(out, { recursive: true });
+  for (const piece of pieces) {
+    const [x, y, w, h] = piece.rect;
+    const crop = `${work}/${piece.name}-crop.png`;
+    magick(`${source}/${piece.from}`, "-crop", `${w}x${h}+${x}+${y}`, "+repage", crop);
+    let png = crop;
+    let at = { x, y, w, h };
+    if (piece.cut === "segment" || piece.cut === "key") {
+      const cut = `${work}/${piece.name}-cut.png`;
+      if (piece.cut === "key") {
+        const corners = ["0,0", "%[fx:w-1],0", "0,%[fx:h-1]", "%[fx:w-1],%[fx:h-1]"];
+        magick(crop, "-alpha", "set", "-fuzz", `${piece.fuzz ?? 4}%`, "-fill", "none", ...corners.flatMap((c) => ["-draw", `alpha ${c} floodfill`]), cut);
+        if (piece.minLight !== undefined) {
+          magick(cut, "(", "+clone", "-alpha", "extract", "(", crop, "-colorspace", "Gray", "-threshold", `${piece.minLight}%`, "-morphology", "Dilate", "Disk:1", "-blur", "0x0.7", ")",
+            "-compose", "Multiply", "-composite", ")", "-alpha", "off", "-compose", "CopyOpacity", "-composite", cut);
+        }
+      } else if (piece.bright) {
+        const bright = `${work}/${piece.name}-bright.png`;
+        const brightCut = `${work}/${piece.name}-bright-cut.png`;
+        magick(crop, "-level", "0%,35%,1.4", bright);
+        await cutSubject(bright, brightCut);
+        magick(crop, "(", brightCut, "-alpha", "extract", ")", "-alpha", "off", "-compose", "CopyOpacity", "-composite", cut);
+      } else await cutSubject(crop, cut);
+      // Trimmed to what was cut, and where that sits in the painting, for the stylesheet.
+      const box = execFileSync("magick", [cut, "-alpha", "extract", "-threshold", "8%", "-format", "%@", "info:"], { encoding: "utf8" }).trim();
+      const m = /^(\d+)x(\d+)\+(\d+)\+(\d+)$/.exec(box);
+      if (!m) throw new Error(`no bounds for ${piece.name}: ${box}`);
+      const [bw, bh, bx, by] = [Number(m[1]), Number(m[2]), Number(m[3]), Number(m[4])];
+      png = `${work}/${piece.name}-trim.png`;
+      magick(cut, "-crop", `${bw}x${bh}+${bx}+${by}`, "+repage", png);
+      at = { x: x + bx, y: y + by, w: bw, h: bh };
+      if (piece.hole) {
+        const [hx, hy, hw, hh] = piece.hole;
+        const r = hw / 2;
+        const lx = hx - at.x;
+        const ly = hy - at.y;
+        const holed = `${work}/${piece.name}-holed.png`;
+        // The piece's own alpha times the opening's mask (black where the live portrait shows through).
+        magick(png, "(", "+clone", "-alpha", "extract", "(", "-size", `${at.w}x${at.h}`, "xc:white", "-fill", "black",
+          "-draw", `roundrectangle ${lx},${ly} ${lx + hw},${ly + hh} ${r},${r}`, "-draw", `rectangle ${lx},${ly + r} ${lx + hw},${ly + hh}`, "-blur", "0x1", ")",
+          "-compose", "Multiply", "-composite", ")", "-alpha", "off", "-compose", "CopyOpacity", "-composite", holed);
+        png = holed;
+      }
+    } else if (piece.cut === "well") {
+      const inset = piece.inset ?? 0;
+      const welled = `${work}/${piece.name}-well.png`;
+      magick(crop, "(", "-size", `${w}x${h}`, "xc:white", "-fill", "black", "-draw", `rectangle ${inset},${inset} ${w - inset},${h - inset}`, "-blur", "0x1", ")",
+        "-alpha", "off", "-compose", "CopyOpacity", "-composite", welled);
+      png = welled;
+    }
+    magick(png, "-quality", "92", "-define", "webp:alpha-quality=100", `${out}/${piece.name}.webp`);
+    const rem = (v: number) => Number((v / REM).toFixed(3));
+    console.log(`${piece.name}: ${at.w}x${at.h}px; left ${rem(at.x)}rem, top ${rem(at.y)}rem, right ${rem(HIRES_WIDTH - at.x - at.w)}rem, bottom ${rem(HIRES_HEIGHT - at.y - at.h)}rem, width ${rem(at.w)}rem, height ${rem(at.h)}rem`);
   }
 }
 
@@ -414,5 +582,7 @@ else if (mode === "paint") {
 } else if (mode === "composite") await composite(name, rest[0] === "hires" ? `${dir}/hires` : dir);
 else if (mode === "page") await page(name, dir);
 else if (mode === "hires" && rest[0]) await hires(name, screen, dir, rest[0]);
-else if (mode === "fix") await fix(name, dir);
+else if (mode === "fix") await fix(name, dir, rest);
+else if (mode === "graft") await graft(name, dir);
+else if (mode === "pieces") await cutPieces(name, dir, rest);
 else throw new Error("usage: hud-paint.ts render|paint|composite [hires]|page|hires <file> <screen> [probe…] [seed…]");
