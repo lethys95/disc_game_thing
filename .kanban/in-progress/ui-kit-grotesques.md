@@ -21,3 +21,9 @@
 - **Claude's own doubts, for the user:** the angel panels' plain bar sits next to the filigree frame that the
   ability tiles, turn bar and menus keep (two frame styles in one view; a plain frame cut from the angel image could
   unify them); the garrison tab carries 12 corner angels, where they start to read as a pattern.
+- **The user's look (2026-10-09):** "I enjoy the angels, but there's a problem they feel like they're boltes on,
+  rather than actually part of it. also, i think we can have even more hud elements, less copies of the same thing.
+  i think you might need reference material." Next: "state of the art" research on old gothic-fantasy HUDs (Icewind
+  Dale, Disciples 2 and 3, Diablo 2, 3 and 4, others in the style), screenshots in `reference_material/`
+  (gitignored), every element written down with what works and why ("like... 50 or something at least"). "I'm not
+  asking you to copy, but we need more ideas."
