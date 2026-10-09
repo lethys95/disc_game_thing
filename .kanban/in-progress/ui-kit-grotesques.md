@@ -36,3 +36,10 @@
 - **The inventory (2026-10-09, the user: "an inventory over everything we need to paint"):**
   `reference_material/ui-inventory.md`, every separate UI element in the game today by screen, with its states
   and how it's drawn now, style ignored.
+- **The plan (agreed 2026-10-09):** the system on paper, then a greybox in the game, then each screen painted as one
+  picture and the pieces cut from it, then the rollout. The user: "we're going to take as educated a decision to design
+  what we've boxed out as possible."
+- **Step 1, the system (2026-10-09):** `docs/design/hud-kit.md`. Architecture at the screen's edges with the world in
+  the window; one figure with a job per screen in place of the angel corners; shape means function; one language for
+  states; nineteen families covering all 140 inventory entries; what swaps per faction. Eight choices wait for the user
+  at its end. Next: the battle screen's greybox.

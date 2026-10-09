@@ -1,0 +1,253 @@
+# The HUD kit: a system
+
+Claude's proposal (2026-10-09). It is step 1 of the plan the user agreed to: the system on paper, then a greybox in the
+game, then each screen painted as one picture, then the pieces cut from it. Nothing here is decided until the user
+says so. Every decision names the principle it comes from (`hud-references.md`, "P" plus its number). The pieces it
+covers are the ones in `reference_material/ui-inventory.md` (the letter-and-number ids).
+
+The user's test for all of it: "are they actually hud elements? do they blend in? […] im NOT interested in a random
+gargoyle", and after the angels: "they feel like they're boltes on, rather than actually part of it. also, i think we
+can have even more hud elements, less copies of the same thing."
+
+## The idea: architecture at the edges, the world in the window
+Today each panel is a framed box floating over the scene, and sculpture is stuck on its corners. That is the floating
+kit the research warns about: the version of Warcraft III that split its console into blocks read as generic and was
+reverted (P15). Instead, each screen's interface is one piece of gothic architecture built around the view. Pillars
+stand at the screen's edges and are cut off by them. A beam runs across the top and a sill across the bottom, and the
+panels hang from them on clasps. The game is seen through the opening. Sculpture lives only where architecture puts
+it: a keystone, a capital, a corbel, a niche, a column. Each figure does a job (P1, P2, P4).
+
+Six rules follow from that:
+1. **Delete test.** Every sculpted piece must be a part the structure would miss: a post, an arch, a keystone, the
+   thing that holds a control. If the frame still looks finished without it, it doesn't go in (P1).
+2. **One loud piece per screen.** Each screen gets one hero piece, usually a figure with a job. Everything else is
+   quiet carving at a whisper (P6, P13).
+3. **Repeat the structure, never the carving.** Slots, niches and studs repeat. Figures, emblems and held objects
+   never do. A mirrored pair is allowed only when it flanks one thing (P7).
+4. **Shape means function.** Every kind of value has its own silhouette, so the eye finds it by shape before reading
+   it. This is where "more HUD elements" comes from: new distinct pieces that each carry meaning, not more copies
+   (P10, P11).
+5. **One stone, one light.** Figures are carved from the material of the thing they belong to, lit from the same
+   side, at the same detail, and they touch what they hold. That is why each screen is painted as one picture and cut
+   up afterwards (P5).
+6. **The machine never changes shape; it lights up.** Empty, locked, unavailable and selected are all states of the
+   same piece, shown by light and binding, never by hiding (P12).
+
+## Materials and light
+Each material always means one thing (P9). The world stays muted and the faction's mana colour is the one loud
+colour, as the art direction already says.
+
+| Material | Means | Used for |
+|---|---|---|
+| Black stone | mass | pillars, beams, sill, panel bodies, every figure and relief |
+| Dark iron | joinery | clasps, bands, chains, rims, studs, sockets, rods |
+| Pale marble | the game speaking | names and numbers: title plaques, name plates, fact plaques |
+| Parchment (new; the user's call) | documents and voices | tooltips, rules text, prompts, the full battle log, the codex if it becomes a book |
+| Light | state | lit means available, selected or ready; dark means not now. Warm candlelight is the interface's light. The faction's mana colour lights only magic and the faction's own inlay |
+| Cloth and enamel | allegiance | the player's colour, only on banners, pennants, the bands under the turn order's faces and standee bases, never on stone |
+| Paintings | the world | portraits, the city painting, tarot faces, ability icons. They carry the colour, so the chrome stays grey (Disciples II) |
+
+## One language for states
+| State | How it looks | Example |
+|---|---|---|
+| Hover | the rim catches more light | any button or socket |
+| Selected | pressed deeper and lit from within; no outline, no halo (it replaces today's glow, A43) | the chosen ability, the open tab |
+| Available | a faint warm light in the socket | a target that can be clicked |
+| Unavailable | a dark socket; the carving sinks into the stone | an ability with no target |
+| Locked | bound shut by the faction's binding: band, seal or growth | research not yet open |
+| Empty | the faction's sigil carved where the content would be | an empty grid cell, an empty bag |
+| Waiting for you | the piece's inlay glows | points to spend, a branch to choose |
+| Danger | red light; a skull for death | a lethal preview |
+
+## The families
+The 140 entries of the inventory come down to these. "Swaps" marks the families that change with the faction of the
+player at the screen.
+
+| Family | What it is | Shape and material | Inventory | Swaps |
+|---|---|---|---|---|
+| Architecture | the members that anchor the HUD to the screen: edge pillars, the top beam, the bottom sill, the header beam | black stone with iron bands, cut off by the screen edges (P4) | A10, C1, D1, E1, E15; new pillars and sill | the silhouette of the beam's and sill's edge (P14, P15) |
+| Frames | the edges of panels: one profile in two weights, a heavy tablet and a light rim | quiet moulding with carved runs; ornament only at corner blocks and joints (P8) | A1, A2, A3, B6, B7, B11, B13, B16, C4, C8, C12, C13, D3, D6, E2, E5, E6, E9, E10, E14, F3, F6, G1 | — |
+| Joints | what joins two members | one small iron stud at every seam, carved corner blocks, terminals at the ends of beams; a thin inlay along each seam (Icewind Dale II's mosaic). Scrollbars are an iron rod with a sliding knob | A17, A36, C2, E12; new studs and inlay | the inlay |
+| The cast | the few figures, each with a job (below) | carved from the stone of what they hold, overlapping its frame both ways (P2, P3) | replaces the angel corners; D3, C11, E2 | yes, all of it |
+| Reliefs | low engravings cut into panel backgrounds and empty spaces | near-grisaille, at very low contrast (P13) | backgrounds of tablets; empty states such as E10's | the motif |
+| Rows and nodes | everything listed | a carved strip: the name at the left, the facts in the middle, the inline action at the right carrying its price. Tree nodes are the same strip stood up as a small card, joined by iron rods | B13, C6, C9, E11, E13, E16, E19, F4, G3, G4, G5, G6 | — |
+| Plaques | names and numbers | pale marble, three sizes: title plaque, name plate, fact plaque. Name plates cross the frame's edge (Icewind Dale II's plaque bridging the seam) | A11, A12, B1, C9, D3's name, E1, E15, F7 | — |
+| Parchment | documents | warm pale sheets with torn or rolled edges; text dark on light | A35, C12, D15, B16; the full log; the codex if a book | — |
+| Buttons | one object per role, not per size | the primary command is a held object, lit (below); secondary commands are stone slabs; inline actions are small slabs carrying their price; choices are plaques or tokens that light; toggles are gems that light; confirm and cancel inside documents are seals. Text fields are a recessed well; colours to pick are enamel discs | A4, A5, A6, A37, A38, A39, A40, A41, A42, B3, B8, B9, B15, C3, C5, C7, C11, D9, D10, D12, E19, F9, G7 | — |
+| Sockets and slots | where things sit | iron-rimmed sockets cut into stone. Empty shows the carved sigil, unavailable a dark socket, locked the binding. Equipment slots show a faint carved ghost of what goes there (Icewind Dale). An ability row is its icon in a socket, then its text and grids | A32, B12, C13, D8, E7, E8, E17, E18, F8 | the sigil and the binding |
+| Portrait frames | every face in the interface | the one place the frame changes shape (P14): an arch, a porthole, a niche. Icon, bust and card sizes | A29, A30, B6, C6, D2, D16, E8, E13, F4, F7 | yes |
+| Instruments | values, each with its own shape (below) | carved and inlaid; the fill is light or liquid | A18–A24, D4, D17, D19; the round medallion, the turn keystone | the mana vessel |
+| Markers | small signs | carved or cast: skull, crown, tier numeral, hotkey tag, charge bead, preview marks, now and next | A25–A28, A33, A34, D5, D18, D20 | — |
+| Tabs | switching views | Capitol tabs become niches holding their tab's object (below); codex tabs become bookmarks if the codex is a book; other tab rows are plaques that light | A7, E3, F1, F2 | the held objects |
+| Labels in the world | names floating over the map and the field | small pennants: the name on dark cloth, the owner's colour as a band, a skull or tier mark (Darkest Dungeon's estate map) | C15, C16 | — |
+| Ground marks | selection and targets drawn on the ground | thin brackets in the HUD's own line style: candlelight for the acting unit, red for targets (Darkest Dungeon). The fog stays the map's own rendering | C17, C18, C19, C20, D21, D22 | — |
+| Surfaces | fills | the carved wall behind full screens, the iron plate, the dark panel fill | A8, A9, B4 | — |
+| Type | the faces | the display serif for names, titles and plaques; the sans for numbers and rules; the numbers that matter set large (Diablo 3). A third face for places and moments is the user's call | A14–A16, A44, B5, B10, B14, C10, D7, E20, F5, G2 | — |
+| Moments | big events | one shared layout: the faction's emblem as its keystone, the title in the display face, seals as buttons | A13, C14, D11, D13 | the emblem |
+| Cursor | new | a small object, not the system arrow (Disciples II's dagger) | — | maybe |
+| Paintings | not chrome: made by the art pipeline and only framed here | portraits, ability icons, tarot faces, the city painting, the map's structures | A31, B2, D14, E4, C21 | — |
+
+## The cast
+Each screen has one figure, or one figure group, and each has a job. They take the place of the angel corners, which
+retire. Which figure each faction gets is the user's call (below). These are the slots and their jobs.
+
+| Figure | Screen | Job | Why it can't look bolted on |
+|---|---|---|---|
+| The end-turn figure | map | rises from the bottom edge at the centre, cut off by it, and holds up the End turn object, which glows while it's your move | it carries the screen's one call to action; delete it and End turn has nothing to stand on (P2, P4; Disciples II's figures bracing the wheel) |
+| The niche figure | battle | forms the unit card's portrait niche: wings or arms make the arch, the head is its keystone, the hands hold the name plate | the niche is made of the figure; delete it and the portrait has no frame (P1, P3) |
+| The column figure | Capitol, cities, leader and structure screens | stands at the top of the right-hand rail as its column and carries the header beam on its head and raised hands | it holds up the roof; delete it and the beam floats (P1; Vampire: Redemption's mourners as side posts) |
+| Marginalia | codex, if it becomes a book | figures drawn in the page's own ink, in the margins | drawn into the surface, not set on it (Pathfinder) |
+
+## The instruments
+| Value | Shape | Notes |
+|---|---|---|
+| Health | a channel cut into the stone, filled with red | on the unit card the current number sits in a round seal at the channel's end, set large |
+| Shield | a pale segmented band laid over the health channel | the Nexus automatons' pool |
+| Armour | a heraldic shield with the number and the share it takes off | |
+| Initiative and actions | an hourglass, with one small stud per action | |
+| Ability power | a rayed disc | |
+| Experience | a thin rail; its end lights when a branch is ready | |
+| Movement | a row of small studs that light | today's ●●●○ |
+| Spell charges | small cells that empty | Nexus casters only, so they can be battery cells |
+| Ability uses | beads hanging under the socket that go dark when spent | today's "1/1" tag |
+| Gold | a coin; a small heap where gold is the subject | |
+| Mana | a vessel in the faction's colour | per faction (below) |
+| Round (battle) | a medallion where the turn beam begins | the turn order grows out of it (Heroes V) |
+| Turn (map) | the keystone at the centre of the top beam: turn number and whose move | the beam's two arms carry gold and mana on one side and movement on the other (Warcraft III's clock) |
+
+## The screens
+"Layout change" marks a change to where things are or what they do, beyond how they look. Each one is the user's
+call; the look works without it.
+
+**Battle.** Hero piece: the niche figure.
+- *Composition (layout change):* the turn beam across the top and the sill along the bottom. The unit card rises from
+  the sill's left end as a tall stele with the niche figure at its top. The ability sockets are cut into the sill's
+  middle. The log moves into a shorter stele at its right end, a few lines deep, and the full history unrolls
+  as a parchment scroll. The scene darkens toward the sill, and the sill's top edge is the faction's silhouette (P15).
+- *Turn beam:* starts at the round medallion. The faces sit in small arched niches cut into the beam, each with a band
+  of its side's colour in enamel beneath it, with no letters and no coloured tiles. The acting unit's niche is larger,
+  right beside the medallion. Resolve now and Auto-battle hang from the beam's right end as chained plaques.
+- *Sockets:* the icon fills the socket. A hotkey tag and the use beads hang beneath, and spell cost cells sit beside it.
+  The overload toggle is a gem on the socket's rim. Hovering a socket shows its rules and targeting grids on a parchment
+  slip right above the sill, replacing the browser tooltip (Darkest Dungeon II). Optional (layout change): abilities
+  with no legal target stay as dark sockets instead of disappearing.
+- *Card:* the instruments above in place of the stat table, the effects as tags, the divider rod, and one low relief in
+  the card's black.
+- *Field:* slim carved channels for the floating health bars, the preview marks, numbers in the display face, ground
+  brackets instead of tile colours. A fallen standee turns to stone with a skull mark.
+- *Tarot:* the held cards lie on the sill; a click fans them out; captions on parchment.
+
+**Map.** Hero piece: the end-turn figure.
+- *Composition (layout change):* pillars at the left and right edges, cut off by the screen, carry the warband and city
+  tablets on clasps (Diablo II: Resurrected's stash pillars). The top beam spans between them with the turn keystone at
+  its centre. The map runs down to the bottom edge, where the end-turn figure rises with End turn.
+- *Tablets:* each title plate crosses the tablet's top edge. Warband selectors are tokens that light. Members are a
+  portrait in the faction frame, a name plate, the health channel and the experience rail. The Leader tree button's
+  inlay glows when points wait.
+- *Hint line:* text on a dark fade above the end-turn figure, with no box.
+- *Menu:* a chained plaque hanging from the beam.
+- *Prompts:* the branch prompt is a document. Each branch shows the unit before and after joined by a forged arrow, and
+  is chosen with a seal (Disciples II's upgrade scroll). The enemy peek is a light-rim slip.
+- *Labels:* pennants. *Highlights:* the four hex kinds stay, in the palette above.
+
+**Capitol, and the city, leader and structure screens.** Hero piece: the column figure.
+- *Composition:* the header beam across the top, carried on the right by the rail, whose top is the column figure.
+  The city painting fills the rest and has no frame of its own where it meets the beam and the rail. The interface's
+  edge is the window (Disciples II).
+- *Tabs:* below the column figure, the rail is an arcade of niches, one per tab, each holding its tab's object (the four
+  emblems we have suggest them: a keep, crossed swords on a shield, a book with a quill, a crescent and star). The open
+  tab's niche is lit. The fact plaques stay marble, below the niches.
+- *Garrison:* the two squad grids face each other across one carved divider. Empty cells show the sigil. The fallen in
+  the graveyard are stone portraits with a skull. Upgrades show before and after on a scroll with a seal.
+- *Research:* the tree's connectors are iron rods. Locked branches are bound. The chosen branch is lit.
+- *Leader and structures:* the same beam and tablets. Equipment slots show carved ghosts of what goes in them.
+
+**Codex.** Hero piece: the book, if the user wants it.
+- *Proposal (layout change):* an open book lying on the carved wall. The list is on the left page and the entry on the
+  right. The shelves and tabs are ribbon bookmarks, entries open with an illuminated capital, and marginalia are drawn
+  in the page's ink (Disciples II's spellbook, Pathfinder). Without the book, the codex keeps dark tablets with the same
+  instruments as the battle card.
+
+**Title, new game and menus.**
+- *Title:* the menu is part of one carved object standing among the portrait parade, not a column of loose buttons
+  (both Disciples II and Icewind Dale build their menus into one piece), and the game's name is inscribed. The greybox
+  tries the object's shape.
+- *New game:* each faction is picked by its own emblem object, which lights when chosen. Colour swatches become enamel
+  discs and map size a row of objects. March is the screen's primary command, a held object like End turn. The longer
+  idea, one shared painted foreground with only the faction's monument and light changing (Disciples II's race select),
+  needs paintings and comes later.
+- *Menus and settings:* a light-rim panel. Toggles are gem lamps, sliders an iron knob in a groove, the speed choice
+  plaques, saves rows on parchment. The skirmish screen reuses all of these and comes last. The frame-rate readout (G8)
+  stays a plain developer box.
+- *Moments:* battle end and game end use the shared moment layout.
+
+## Faction skins
+The skin follows the player at the screen. Everything else is shared, so each faction is a small set of large pieces,
+not a kit of small ones (P14):
+- the cast
+- the portrait frames
+- the seam inlay
+- the relief motif
+- the empty-slot sigil
+- the mana vessel
+- the locked-state binding
+- the silhouette of the beam's and the sill's edge
+
+Directions only. Every motif is the user's call, and the greybox will carry neutral placeholders until there is a
+choice:
+- *Jilliath* (angels and their human followers; relic and wound):
+  - the cast as hooded stone angels, in the user's angel language
+  - a lancet or reliquary arch for the portrait frames
+  - stained glass as the inlay
+  - an inscription or a tribunal as the relief
+  - a rose window as the sigil
+  - a reliquary vial as the vessel
+  - a wax seal or iron band as the binding
+  - tracery pinnacles as the silhouette
+- *Ral-Vitahl* (a haughty arcane noble house, opulent and immaculate, never worn):
+  - polished lacquer and fittings in place of weathered stone
+  - a glowing conduit as the inlay
+  - a battery cell as the vessel
+  - a house crest as the sigil
+  - a clockwork lock as the binding
+  - the cast: liveried servants or automata, or noble statues
+- *Sylvan* (wild, fierce, tribal; regrowth and decay):
+  - living wood on one side and rot on the other for the frames
+  - moss or sap as the inlay
+  - a seed or knot as the sigil
+  - a sap pod as the vessel
+  - roots grown over as the binding
+  - a root-and-leaf fringe as the silhouette
+  - figures grown from wood and bone for the cast
+
+## What stays from today's kit
+- **Stays** as a stand-in until the painted pieces replace it:
+  - the stone slab buttons
+  - the marble plaques
+  - the backdrop and plate
+  - the turn bar's end caps (they passed the user's test)
+  - the divider rod
+  - the iron medallion, as the round and turn medallions' first form
+  - the four tab emblems, as the niches' first objects
+- **Retires:** the angel corners and the tracery frame's corner angels. Their figures come back with jobs. The filigree
+  and tracery frames give way to the one frame family once it is painted.
+
+## For the user to decide
+1. The governing idea: architecture at the edges, the world in the window.
+2. Parchment as a fourth material, for documents.
+3. The layout changes, each on its own:
+   - the battle sill joining card, sockets and log, with the log shortened to a few lines and a scroll
+   - the map's edge pillars and full-width beam
+   - the codex as a book
+   - unavailable abilities kept as dark sockets
+4. Faction skins that follow the player at the screen, and the swap list above.
+5. Each faction's motifs: the cast, frames, inlay, relief, sigil, vessel, binding and silhouette.
+6. Health red everywhere, with allegiance carried by cloth and position. Today the floating bars use the side's colour.
+7. A third typeface for places and moments.
+8. Candlelight as the interface's light for selection and availability, with the mana colour kept for magic.
+
+## Next: the greybox
+Step 2 builds the battle screen's structure in the game with flat shapes and no paintings: the sill and its two
+steles, the niche figure as a silhouette, the turn beam with its medallion and face niches, the sockets with their tags,
+the instruments on the card, the ground brackets. It is shot at 720p, 1080p and 1440p for the user to judge the
+composition before anything is painted. Then the map and the Capitol the same way.
