@@ -26,7 +26,7 @@ in the game's UI.
 save, trim, concat, LUFS normalize). ffmpeg with libopus, `loudnorm`, `ebur128`, `acrossfade`.
 
 ## How it would fit (mirrors the art pipeline)
-1. **Audio slots** (`view/audio-slots.ts`) derived from content: music per context (map per faction, battle,
+1. **Audio slots** (built as `view/sound-slots.ts`, with `sound.ts` and `sound-cues.ts`) derived from content: music per context (map per faction, battle,
    victory/defeat stingers), SFX per ability tags and damage type (hit, cast, by element), UI clicks, footsteps.
    Each slot falls back along a chain (`sfx/cast/fire` → `sfx/cast/default`); nothing at the end means silence.
 2. **`pnpm audio report | generate | accept`**: report what's filled; generate candidates through ComfyUI

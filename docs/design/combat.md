@@ -9,7 +9,8 @@ What's decided, and what isn't. Anything under "Open" is a question for the user
 - Initiative orders turns; higher acts first. Initiative can be modified mid-battle (Punisher's -10).
 - Actions: every unit has the universal verbs **attack, defend, wait, surrender**; unit restrictions remove verbs (Zealot: must attack, cannot defend).
 - Abilities may be a **main action** (consumes the turn) or a **free action** (usable alongside the main action), and may be limited per combat (charges: "once per combat", "two charges").
-- Armor: flat per-hit subtraction, floored at 1. Immunity is the only true zero.
+- Armor: takes armor ÷ (armor + 60) off each hit, with diminishing returns, floored at 1 (since 2026-10-09; it was a flat
+  subtraction before, provisional #75). Immunity is the only true zero.
 - Melee units can only hit the enemy front line (from the Congregant spec). Units in mid/back rows can't melee.
 - **Defend** (user, 2026-09-25, as in D2): uses the unit's action; incoming damage is halved until the unit's next action. Implemented as an effect ("defending") so it composes with everything else.
 

@@ -125,7 +125,6 @@ starting with its tier-1 formation; the old setup screen is the Skirmish (one ba
 name on the title ("disc") is a placeholder.
 
 ## Next up
-- **Engine bake-off** (built M53, `spikes/engine/`; awaiting the user's verdict) (user, 2026-09-28: can three.js reach the quality we want, or Godot?): one small scene built to its best in both, the same assets: a forest hex with foliage and wind, sky lighting and shadows, and a rigged unit that aims its upper body at a target off to the side while its feet stay planted. Compare the pictures (the user judges) and how hard each was to build and test. Decides the engine before the art and asset push.
 - Spread the UI kit (map HUD, battle HUD, setup, menus) once the user has judged the pilot.
 - The user's map notes: foliage, lighting, props sitting into the ground; TRELLIS.2 when access arrives.
 

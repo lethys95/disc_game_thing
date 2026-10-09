@@ -1,6 +1,6 @@
 # Neutral units: bandits
 
-> Provenance: the user, 2026-09-25 (verbatim below). Stats are not specified; the numbers in `src/rules/units.ts` are provisional.
+> Provenance: the user, 2026-09-25 (verbatim below). Stats are not specified; the numbers in `src/rules/units/neutral.ts` are provisional.
 
 User's words:
 > "brigand" basic unit with one turn stun directly in front. single use.

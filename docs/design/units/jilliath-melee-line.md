@@ -6,6 +6,11 @@ The Jilliath melee line is built on a central dichotomy: **faith preserves vs fa
 
 > [!note] Status
 > Design spec from the 2026-07-28 redesign. Numbers are first-pass, not balanced.
+>
+> **Read the numbers as history.** Since 2026-10-07 units have no damage stat ("Everything is an ability",
+> decisions.md): each ability has its own `power`, grown by the unit's ability power, and armor has been a percentage
+> since 2026-10-09 (provisional #75). The game's numbers live in `src/rules/units/jilliath.ts` and
+> `src/rules/abilities/jilliath.ts`; "damage" below means the unit's hit.
 
 ## Tier 1: Congregant
 

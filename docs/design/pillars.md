@@ -65,7 +65,7 @@ Dead units and leaders go to a faction graveyard instead of being lost. Resurrec
 
 ## Armor & shields
 D2's percentage reduction was cheesy at high values. Instead:
-- **Armor**: flat subtraction from each hit, floored at 1. Strong vs weak attacks (swarm counter), irrelevant vs big hits. "20 armor, 25 damage, 5 gets through."
+- **Armor**: a share off each hit, with diminishing returns (the user, 2026-10-08: percent armor "like something like WoW does"; armor ÷ (armor + 60), floored at 1; provisional #75). It was flat subtraction until then: strong vs weak attacks, irrelevant vs big hits, "20 armor, 25 damage, 5 gets through" (the user, 2026-09-25).
 - **Shields**: separate pool that absorbs hits and regenerates. Not reduction. When down, full damage hits health.
 - Nexus automatons use shields, not armor. Vexumphat may use shields broadly (TBD).
 
