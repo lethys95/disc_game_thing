@@ -277,3 +277,11 @@ Guardian, avatar still need help. Archon is probably also close, though I might 
 seem much like a step up from whatever pontiff is going to look like, but we'll see. I'm also worried that archon in his
 current form here doesn't actually fit into our gothic universe all that much." **Picked:** the Paragon,
 `paragon-runes-turnaround-1001`.
+
+### Round nine: Claude's read (`shots/jilliath-round9.html`)
+Each prompt led with what round eight dropped. **Chosen** `chosen-faceless` 1000: faceless at last, a smooth head fused to
+a massive shell body, the cape: the inhuman juggernaut. **Torturer** `torturer-anguish` 1002: an iron face for a mask
+(grim, not screaming), spikes, chains; still plate below. **Avatar** `avatar-flames` 1000: red-hot gauntlets, red-tinged
+translucent wings; no flames at the tips. **Guardian** `guardian-cracks`: hairline cracks on face and chestplate, a more
+abstract chestplate, but no light from the cracks (Krea draws the crack, not the glow; the glow can be an emissive
+texture in 3D).
