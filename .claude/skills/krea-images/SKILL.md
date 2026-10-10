@@ -71,3 +71,5 @@ before saying anything about the images. For the user, put a sheet in `shots/` (
   values from a dark foreground to a luminous distance", "a single clear focal point", named colours. "Rival powers"
   plus three accents gave each side its own colour. "War" and "ruin" desaturate unless colour is named. Anything
   that sounds like a title screen gets garbled lettering of the prompt's own words.
+- Architecture for UI pieces: ask for "a straight-on architectural elevation" (2026-10-10). Parapets, arcades,
+  pinnacles and buttresses came out flat, square on and gothic; carved panels never did.

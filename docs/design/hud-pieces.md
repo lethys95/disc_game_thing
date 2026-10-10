@@ -260,3 +260,32 @@ start screen", each built on the last, no contents named (`shots/title-probe.htm
 "layered values from a dark foreground to a luminous distance" gives depth and a focal point; "rival powers" with
 three accents gives each side its colour. Left alone, "gothic fantasy epic" means armoured armies and a giant, so the
 title painting needs disc's own subject; this only says how to ask for it.
+
+## Gothic as elevations, and how others make interfaces with AI (2026-10-10)
+The user: the paintings' architecture (spires, arches, stained glass, gargoyles, towers) is what they've tried to get
+into the HUD, "at least in part, just hints of it. Somehow it just fails." And: "maybe we need to figure out how other
+people create huds and interfaces with AI."
+
+**Why it failed.** Architecture reads in a painting by silhouette against light, light through glass and repetition.
+Carved into a flat panel, all three are lost, and the panel turns into a slab. The two pieces that did read gothic are
+the ones that keep one of them: the portrait arch and the rose window, red light inside a dark shape.
+
+**The elevation probe.** Four prompts asked as "a straight-on architectural elevation" (an architect's flat drawing
+of a facade): a parapet strip, an arcade of five lancets, a pinnacle, a buttress with a gargoyle. All came out flat,
+square to the viewer, unmistakably gothic, and warm sandstone with moss rather than grey. Uses: the parapet as the top
+edge of a bar cut out against the scene (the scene through its tracery, grotesques where it ends), the arcade for the
+turn order, the pinnacle as an end cap or post, the buttress with its gargoyle as a side post. Candidates in
+`art/candidates/ui/elevation-probe/`.
+
+**How others do it.** The common AI workflow makes one concept of the whole screen for agreement, then regenerates
+each piece on a clean ground with that concept as a reference image, and never slices the concept itself (SpriteCook).
+Others paint the interface over a real gameplay screenshot, keeping the scene (BudgetPixel), and keep a kit together
+with style references (Ludo, Unity, Scenario). Night one sliced its concept; the pieces since have had no reference
+tying them. Each was half of the workflow.
+
+**What fits here.** Locally there are Krea-2 text-to-image, image-to-image and inpainting; no IP-Adapter, ControlNet
+or edit model (ComfyUI's Kontext, Qwen-Edit and Krea style-reference nodes call paid outside services: the user's
+call). So: (1) inpaint the HUD region of a greybox screenshot, scene kept, as the concept in our own layout; (2) crop
+each piece from the chosen concept onto a plain ground and image-to-image it at moderate strength, regenerating it
+clean while it inherits the concept's light and stone; (3) the user cuts, CSS assembles, compared with the concept and
+the greybox. The page: the "Gothic elevations" artifact.
