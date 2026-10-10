@@ -38,6 +38,14 @@ const LAYOUTS: Readonly<Record<string, Layout>> = {
   /** The battle bar again (the user, 2026-10-10: the figures "too perfect [...] like smoothed stone"; the left too white): figures engraved and worn, stat plates in iron, a plate over the log. */
   /** The battle bar, dense (the user, 2026-10-10: Disciples II's "Very very few surfaces are just smooth and plain"; a health globe its figure embraces; a stopped clock). */
   /** The dense bar, its globe again: red glass held close by a kneeling figure whose arm crosses its front. */
+  /** The battle bar, mirrored (the user, 2026-10-10: the outer segments unequal, the scribe hovering, the candle out of place). */
+  "battle-bar-mirror": {
+    page: [1536, 200],
+    size: [2432, 320],
+    denoise: 0.7,
+    depthStrength: 1,
+    prompt: "A long horizontal game interface bar seen straight on, symmetrical, painted as game interface art, in soft even light without glare. Blackened cast iron, old and worn, its three sections joined by upright iron bands with a small faceted amber stud at each end. Every surface is densely worked: interlaced knotwork, scrolling ironwork, small rosettes and tracery cover all the iron between the parts, dark on dark, and no surface is left plain. Cream marble plates, blank. Round sockets with ivory enamel faces, blank. At the left end, a large sphere of deep red glass set straight into a heavy ornate iron rim, with no stand, faintly glowing from within; kneeling on the bar's bottom ledge at its left, carved in deep relief in the same dark iron, a grown veiled woman in long robes with a folded wing, one arm wrapped across the front of the sphere and the other laid over its top. At the right end, mirroring it, a large sphere of pale smoky grey glass with mist drifting inside, in the same heavy ornate iron rim; kneeling on the bottom ledge at its right, carved the same way, a grown hooded scribe in long robes with a quill tucked in his belt, one arm wrapped across the front of the sphere and the other laid over its top. Beside each sphere, a tall arched well, empty and black, and a long marble plate above dark iron panels. In the middle, a carved iron rosette between two small round ivory sockets, and below them a row of seven square sockets, each empty and black. No text, no letters.",
+  },
   "battle-bar-globe": {
     page: [1536, 200],
     size: [2432, 320],
