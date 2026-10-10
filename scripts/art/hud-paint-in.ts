@@ -35,6 +35,14 @@ const LAYOUTS: Readonly<Record<string, Layout>> = {
     depthStrength: 1,
     prompt: "A long horizontal game interface bar seen straight on, painted as game interface art, in soft even light without glare. Blackened cast iron worn bright on its raised edges, its three sections joined by upright iron bands with a small faceted amber stud at each end. Cream marble plates, blank. Round sockets with ivory enamel faces, blank. On the left, a large arched portrait well, empty and black, beside a long marble name plate, a narrow dark recessed channel, a row of four small marble plates and a dark recessed strip. In the middle, a round marble medallion between two small round ivory sockets, and below them a row of seven square sockets, each empty and black. On the right, a wide dark inset window, empty, and a narrow upright slot. Low gothic tracery in the same dark iron behind and between them. At the left end, carved in low relief in the dark iron, a grown hooded herald in long robes, one hand raised to present the arched portrait well; at the right end, a grown hooded scribe in long robes, bent toward the dark window, writing with a long quill. No text, no letters.",
   },
+  /** The battle bar again (the user, 2026-10-10: the figures "too perfect [...] like smoothed stone"; the left too white): figures engraved and worn, stat plates in iron, a plate over the log. */
+  "battle-bar-worn": {
+    page: [1536, 200],
+    size: [2432, 320],
+    denoise: 0.7,
+    depthStrength: 1,
+    prompt: "A long horizontal game interface bar seen straight on, painted as game interface art, in soft even light without glare. Blackened cast iron worn bright on its raised edges, its three sections joined by upright iron bands with a small faceted amber stud at each end. Cream marble plates, blank. Round sockets with ivory enamel faces, blank. On the left, a large arched portrait well, empty and black, beside a long marble name plate, a narrow dark recessed channel, a row of four small dark iron plates and a dark recessed strip. In the middle, a round marble medallion between two small round ivory sockets, and below them a row of seven square sockets, each empty and black. On the right, a long marble plate over a wide dark inset window, empty, and a narrow upright slot. Low gothic tracery in the same dark iron behind and between them. At the left end, engraved shallowly into the iron face itself, a grown hooded herald in long robes, one hand raised to present the arched portrait well; at the right end, engraved the same way, a grown hooded scribe in long robes, bent toward the dark window, writing with a long quill. Both figures are old and worn almost smooth, the same dark corroded iron as the frame, pitted and rusted at the edges, matte, with no polish and no highlights. No text, no letters.",
+  },
   "map-column-window": {
     page: [300, 864],
     size: [576, 1664],
