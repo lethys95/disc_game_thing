@@ -347,4 +347,5 @@ For the box-out-and-paint-in test Claude downloaded Qwen-Image 2.1 and Qwen-Imag
 non-commercial use only, so every asset made with it would have to be catalogued and replaced if disc were ever sold:
 "That's debt. We're not taking that." Edit-2511 (Apache) was "virtually unusable". Krea-2 painted the same greybox
 nearly as well at strength 0.55. What the test found is the method (a value greybox carries the layout, the prompt
-carries the materials), not a model.
+carries the materials), not a model. Krea-2 holds a layout as well as Qwen did once a depth greybox drives its depth
+Control LoRA alongside the value greybox (`hud-pieces.md`, "The route").

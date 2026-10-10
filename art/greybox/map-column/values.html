@@ -1,0 +1,61 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+/* A value greybox of a right-hand map column for disc: structure only (docs/design/hud-pieces.md, "How the Disciples II
+   map column is built"). Dark low-contrast chrome; light only where the player reads or presses. */
+:root { --iron: #34302c; --iron-hi: #4b453f; --iron-lo: #1f1c1a; --rib: #2b2825; --marble: #d8d0c1; --well: #0b0a09; --ivory: #e4dccb; --slate: #45413d; --amber: #d48a2a; --lit: #e8c36c; }
+html, body { margin: 0; width: 1536px; height: 864px; overflow: hidden; background: #0b0a0c; }
+.col { position: absolute; right: 0; top: 0; width: 300px; height: 864px; background: var(--iron); box-shadow: -6px 0 14px rgba(0,0,0,0.7), inset 3px 0 0 var(--iron-hi); display: flex; flex-direction: column; }
+.sec { position: relative; flex: none; box-sizing: border-box; }
+.band { position: relative; flex: none; height: 9px; background: var(--iron-lo); box-shadow: inset 0 2px 0 var(--iron-hi); }
+.band::before, .band::after { content: ""; position: absolute; top: -3px; width: 13px; height: 13px; background: var(--amber); transform: rotate(45deg); }
+.band::before { left: 6px; } .band::after { right: 6px; }
+/* Ribs: ornament as dark-on-dark texture behind the functional parts. */
+.ribs { background: repeating-conic-gradient(from 270deg at 50% 100%, var(--rib) 0 5deg, var(--iron) 5deg 10deg); }
+.ribs-down { background: repeating-conic-gradient(from 90deg at 50% 0%, var(--rib) 0 5deg, var(--iron) 5deg 10deg); }
+.round { position: absolute; border-radius: 50%; box-shadow: 0 0 0 5px var(--iron-lo), 0 0 0 8px var(--iron-hi); }
+.ivory { background: var(--ivory); } .slate { background: var(--slate); }
+.plate { position: absolute; background: var(--marble); box-shadow: 0 0 0 4px var(--iron-lo); }
+.well { position: absolute; background: var(--well); box-shadow: 0 0 0 4px var(--iron-lo), 0 0 0 7px var(--iron-hi); }
+/* Cap: the turn medallion, Menu beside it. */
+.cap { height: 92px; }
+.cap .turn { left: 112px; top: 14px; width: 66px; height: 66px; background: var(--marble); }
+.cap .menu { left: 30px; top: 28px; width: 38px; height: 38px; }
+/* Resources: gold and mana on two plates. */
+.res { height: 58px; }
+.res .gold { left: 18px; top: 13px; width: 124px; height: 32px; }
+.res .mana { left: 158px; top: 13px; width: 124px; height: 32px; }
+/* The selected warband: the leader in an arched well, the name plate, the members below. */
+.band-sec { height: 250px; }
+.band-sec .leader { left: 18px; top: 16px; width: 104px; height: 132px; border-radius: 52px 52px 0 0; }
+.band-sec .name { left: 136px; top: 22px; width: 146px; height: 54px; }
+.band-sec .facts { left: 136px; top: 90px; width: 146px; height: 58px; }
+.band-sec .member { top: 170px; width: 46px; height: 60px; border-radius: 23px 23px 0 0; }
+/* Commands: a fan of round sockets. */
+.fan { height: 132px; }
+.fan .c1 { left: 40px; top: 52px; width: 52px; height: 52px; }
+.fan .c2 { left: 124px; top: 30px; width: 52px; height: 52px; }
+.fan .c3 { left: 208px; top: 52px; width: 52px; height: 52px; }
+/* The city: a plate with its name and facts. */
+.city { height: 74px; }
+.city .cp { left: 18px; top: 12px; width: 264px; height: 50px; }
+/* End turn: the round piece at the foot, cropped by the screen's bottom edge; relief zones either side of it. */
+.foot { flex: 1; overflow: hidden; }
+.foot .disc { left: 50px; top: 34px; width: 200px; height: 200px; background: var(--iron-lo); }
+.foot .end { left: 100px; top: 84px; width: 100px; height: 100px; background: var(--lit); box-shadow: 0 0 0 6px var(--iron-lo), 0 0 0 10px var(--iron-hi), 0 0 30px rgba(232,195,108,0.45); }
+.foot .relief { position: absolute; top: 40px; width: 60px; height: 170px; background: #3d3833; border-radius: 30px 30px 6px 6px; }
+.foot .rl { left: 6px; } .foot .rr { right: 6px; }
+</style></head><body><div class="col">
+  <div class="sec cap ribs"><div class="round slate menu"></div><div class="round turn"></div></div>
+  <div class="band"></div>
+  <div class="sec res"><div class="plate gold"></div><div class="plate mana"></div></div>
+  <div class="band"></div>
+  <div class="sec band-sec">
+    <div class="well leader"></div><div class="plate name"></div><div class="plate facts"></div>
+    <div class="well member" style="left:22px"></div><div class="well member" style="left:76px"></div><div class="well member" style="left:130px"></div><div class="well member" style="left:184px"></div><div class="well member" style="left:238px"></div>
+  </div>
+  <div class="band"></div>
+  <div class="sec fan ribs"><div class="round ivory c1"></div><div class="round ivory c2"></div><div class="round slate c3"></div></div>
+  <div class="band"></div>
+  <div class="sec city"><div class="plate cp"></div></div>
+  <div class="band"></div>
+  <div class="sec foot ribs-down"><div class="relief rl"></div><div class="relief rr"></div><div class="round disc"></div><div class="round end"></div></div>
+</div></body></html>

@@ -77,4 +77,10 @@ before saying anything about the images. For the user, put a sheet in `shots/` (
   non-commercial, and art made with it would have to be catalogued and replaced one day ("That's debt. We're not
   taking that"). Qwen-Image-Edit-2511 (Apache) was too poor. For a layout drawn as a greybox, Krea-2's image to image
   holds it up to strength ~0.55; above that it drifts.
+- Krea-2 add-ons installed in ComfyUI (2026-10-10; code read first): `comfyui-krea2-controlnet` (facok) with
+  `loras/krea2-depth-control-lora.safetensors`, and `ComfyUI-Krea2-Ostris-Edit` (ostris) with
+  `loras/krea2_style_reference.safetensors`, both Krea-2 community licence. A layout drawn as a value greybox plus a
+  depth greybox holds under `paintIn` (`scripts/art/comfy.ts`, run by `scripts/art/hud-paint-in.ts`): values as the
+  start at denoise 0.7, depth at strength 1. Name repeated small parts with their count in the prompt, or they turn
+  into tracery. The style-reference LoRA broke the layout when combined with depth; untested on its own for pieces.
 

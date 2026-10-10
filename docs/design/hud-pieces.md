@@ -366,3 +366,20 @@ The page: `shots/column-probe.html`.
 with orange noise. At its documented 20 steps and guidance 4, without the LoRA (about 97 s an image), it is clean: the
 layout holds, the angels are reliefs beside the End turn disc, and the iron leans warmer, bronze-tinted. A little more
 rendered and glossier than Qwen-Image 2.1, which reads more painted. It is the model whose output can ship.
+
+## The route: Krea-2 with depth control (2026-10-10)
+The user dropped both Qwen models (2.1's licence is debt; Edit-2511's quality is poor) and pointed at two Krea-2
+add-ons instead: a depth ControlNet (Patil/Krea-2-depth-controlnet with facok's `comfyui-krea2-controlnet` node) and
+ostris's style-reference LoRA (with ostris's `ComfyUI-Krea2-Ostris-Edit` node), both under the Krea-2 community licence.
+Claude read both nodes' code (torch and ComfyUI internals only, no network or shell) before installing them.
+- **Depth alone** (the greybox drawn again as heights: wells far, plates and sockets near) paints the richest column
+  yet but confuses what sits at the same height: name plates became wells, the member niches tracery.
+- **Depth plus values** (painting starts from the value greybox at 0.7 while the depth holds the structure) keeps
+  the plates. Naming "a row of five small arched portrait niches" in the prompt keeps the arcade. Seed 1 at depth 1.0
+  keeps every part but the small Menu socket in the cap, which every Krea run loses (draw it bigger, or move it).
+- **The style-reference LoRA** took our pieces' marble and faceted amber, but combined with depth and values it broke
+  the layout. Set aside.
+
+The method is now a generator: `scripts/art/hud-paint-in.ts <layout>`, with each layout's two greyboxes in
+`art/greybox/<layout>/` (`values.html` and `depth.html` as sources; `values.png` and `depth.png` cropped to the column
+and scaled to the paint size, 576×1664 for the map column). The graph is `paintIn` in `scripts/art/comfy.ts`.

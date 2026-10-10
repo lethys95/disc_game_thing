@@ -45,6 +45,22 @@ export interface Img2ImgJob {
   readonly denoise: number;
 }
 
+/**
+ * Paints a layout drawn as two greyboxes (docs/design/hud-pieces.md, "Box out, then paint in"): `values` (light and
+ * dark where they belong) is the starting image, and `depth` (near is white) holds the structure through the Krea-2
+ * depth Control LoRA. Needs the comfyui-krea2-controlnet custom node and `krea2-depth-control-lora.safetensors`.
+ */
+export interface PaintInJob {
+  readonly prompt: string;
+  readonly seed: number;
+  readonly values: string;
+  readonly depth: string;
+  /** How much of `values` is repainted; 0.7 held a whole HUD column. */
+  readonly denoise: number;
+  /** How strictly the depth is followed; 1 held it. */
+  readonly depthStrength: number;
+}
+
 type Input = string | number | boolean | readonly [string, number];
 type Graph = Record<string, { class_type: string; inputs: Record<string, Input> }>;
 
@@ -121,6 +137,34 @@ function img2imgGraph(job: Img2ImgJob, source: string, prefix: string): Graph {
   };
 }
 
+function paintInGraph(job: PaintInJob, values: string, depth: string, prefix: string): Graph {
+  return {
+    ...loaders(job.prompt),
+    negative: { class_type: "ConditioningZeroOut", inputs: { conditioning: ["positive", 0] } },
+    values: { class_type: "LoadImage", inputs: { image: values } },
+    latent: { class_type: "VAEEncode", inputs: { pixels: ["values", 0], vae: ["vae", 0] } },
+    depth: { class_type: "LoadImage", inputs: { image: depth } },
+    control: {
+      class_type: "Krea2ControlImageEncode",
+      inputs: {
+        control_image: ["depth", 0], vae: ["vae", 0], resize: "match_latent_size", upscale_method: "lanczos", crop: "center",
+        channel_mode: "grayscale", normalize: "per_image_minmax", invert: false, batch_mode: "independent_images", latent: ["latent", 0],
+      },
+    },
+    lora: { class_type: "Krea2ControlLoRALoader", inputs: { model: ["unet", 0], lora_name: "krea2-depth-control-lora.safetensors", strength: job.depthStrength } },
+    apply: { class_type: "Krea2ControlApply", inputs: { model: ["lora", 0], control_latent: ["control", 0] } },
+    sample: {
+      class_type: "KSampler",
+      inputs: {
+        model: ["apply", 0], positive: ["positive", 0], negative: ["negative", 0], latent_image: ["latent", 0],
+        seed: job.seed, steps: KREA2_TURBO.steps, cfg: KREA2_TURBO.cfg, sampler_name: "euler", scheduler: "simple", denoise: job.denoise,
+      },
+    },
+    decode: { class_type: "VAEDecode", inputs: { samples: ["sample", 0], vae: ["vae", 0] } },
+    save: { class_type: "SaveImage", inputs: { images: ["decode", 0], filename_prefix: prefix } },
+  };
+}
+
 interface OutputFile {
   readonly filename: string;
   readonly subfolder: string;
@@ -160,6 +204,11 @@ export async function inpaint(job: InpaintJob, prefix: string): Promise<Uint8Arr
 /** Runs one image-to-image and returns the PNG bytes. */
 export async function img2img(job: Img2ImgJob, prefix: string): Promise<Uint8Array> {
   return run(img2imgGraph(job, await upload(job.source), prefix));
+}
+
+/** Runs one paint-in and returns the PNG bytes. */
+export async function paintIn(job: PaintInJob, prefix: string): Promise<Uint8Array> {
+  return run(paintInGraph(job, await upload(job.values), await upload(job.depth), prefix));
 }
 
 async function run(graph: Graph): Promise<Uint8Array> {
