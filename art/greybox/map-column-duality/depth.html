@@ -1,0 +1,38 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+html, body { margin: 0; width: 300px; height: 864px; overflow: hidden; background: #000; }
+.col { position: absolute; left: 0; top: 0; width: 300px; height: 864px; background: #6e6e6e; display: flex; flex-direction: column; }
+.sec { position: relative; flex: none; }
+.band { position: relative; flex: none; height: 9px; background: #8a8a8a; box-shadow: inset 0 2px 0 #a0a0a0; }
+.band::before, .band::after { content: ""; position: absolute; top: -3px; width: 13px; height: 13px; background: #d8d8d8; transform: rotate(45deg); }
+.band::before { left: 6px; } .band::after { right: 6px; }
+.p { position: absolute; }
+.plate { background: #a8a8a8; box-shadow: 0 0 0 4px #5a5a5a; }
+.round { border-radius: 50%; box-shadow: 0 0 0 5px #4a4a4a, 0 0 0 9px #b0b0b0; }
+.ivory { background: #bcbcbc; } .slate { background: #8a8a8a; }
+.cell { background: #0e0e0e; }
+.red { background: #585858; } .amber { background: #5e5e5e; }
+.came { background: #a4a4a4; } .frame { background: #929292; }
+</style></head><body><div class="col">
+  <div class="sec" style="height:80px"><div class="p round slate" style="left:22px;top:18px;width:46px;height:46px"></div><div class="p round plate" style="left:120px;top:10px;width:60px;height:60px"></div></div>
+  <div class="band"></div>
+  <div class="sec" style="height:52px"><div class="p plate" style="left:18px;top:11px;width:124px;height:30px"></div><div class="p plate" style="left:158px;top:11px;width:124px;height:30px"></div></div>
+  <div class="band"></div>
+  <div class="sec" style="height:338px">
+    <div class="p plate" style="left:18px;top:10px;width:264px;height:36px"></div>
+    <div class="p frame" style="left:18px;top:54px;width:264px;height:284px;border-radius:132px 132px 0 0 / 70px 70px 0 0"></div><div class="p came" style="left:26px;top:62px;width:248px;height:268px;border-radius:124px 124px 0 0 / 64px 64px 0 0"></div><div class="p red" style="left:60px;top:74px;width:50px;height:38px;border-radius:25px 25px 0 0"></div><div class="p amber" style="left:125px;top:66px;width:50px;height:46px;border-radius:25px 25px 0 0"></div><div class="p red" style="left:190px;top:74px;width:50px;height:38px;border-radius:25px 25px 0 0"></div><div class="p amber" style="left:28px;top:118px;width:16px;height:46px"></div><div class="p red" style="left:28px;top:170px;width:16px;height:46px"></div><div class="p amber" style="left:28px;top:222px;width:16px;height:46px"></div><div class="p red" style="left:28px;top:274px;width:16px;height:46px"></div><div class="p amber" style="left:256px;top:118px;width:16px;height:46px"></div><div class="p red" style="left:256px;top:170px;width:16px;height:46px"></div><div class="p amber" style="left:256px;top:222px;width:16px;height:46px"></div><div class="p red" style="left:256px;top:274px;width:16px;height:46px"></div><div class="p amber" style="left:48px;top:322px;width:46px;height:10px"></div><div class="p red" style="left:100px;top:322px;width:46px;height:10px"></div><div class="p amber" style="left:152px;top:322px;width:46px;height:10px"></div><div class="p red" style="left:204px;top:322px;width:46px;height:10px"></div><div class="p cell" style="left:48px;top:118px;width:64px;height:64px"></div><div class="p cell" style="left:120px;top:118px;width:64px;height:64px"></div><div class="p cell" style="left:192px;top:118px;width:64px;height:64px"></div><div class="p cell" style="left:48px;top:190px;width:64px;height:64px"></div><div class="p cell" style="left:120px;top:190px;width:64px;height:64px"></div><div class="p cell" style="left:192px;top:190px;width:64px;height:64px"></div><div class="p cell" style="left:48px;top:262px;width:64px;height:64px"></div><div class="p cell" style="left:120px;top:262px;width:64px;height:64px"></div><div class="p cell" style="left:192px;top:262px;width:64px;height:64px"></div>
+  </div>
+  <div class="band"></div>
+  <div class="sec" style="height:104px"><div class="p round ivory" style="left:42px;top:34px;width:50px;height:50px"></div><div class="p round ivory" style="left:125px;top:18px;width:50px;height:50px"></div><div class="p round slate" style="left:208px;top:34px;width:50px;height:50px"></div></div>
+  <div class="band"></div>
+  <div class="sec" style="height:56px"><div class="p plate" style="left:18px;top:8px;width:264px;height:40px"></div></div>
+  <div class="band"></div>
+  <div class="sec" style="flex:1;overflow:hidden">
+    <div class="p round" style="left:75px;top:16px;width:150px;height:150px;background:#828282"></div>
+    <div class="p round" style="left:108px;top:49px;width:84px;height:84px;background:#f0f0f0"></div>
+    <div class="p" style="left:4px;top:70px;width:86px;height:110px;border-radius:50% 60% 20% 30%;background:#9c9c9c;transform:rotate(-18deg)"></div>
+    <div class="p" style="left:52px;top:58px;width:58px;height:34px;border-radius:50%;background:#9c9c9c;transform:rotate(-30deg)"></div>
+    <div class="p" style="left:110px;top:2px;width:150px;height:46px;border-radius:40% 60% 50% 50%;background:#9c9c9c;transform:rotate(14deg)"></div>
+    <div class="p" style="left:218px;top:36px;width:44px;height:120px;border-radius:40%;background:#9c9c9c;transform:rotate(8deg)"></div>
+    <div class="p" style="left:200px;top:96px;width:26px;height:58px;border-radius:40%;background:#9c9c9c;transform:rotate(-12deg)"></div>
+  </div>
+</div></body></html>

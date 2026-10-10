@@ -22,6 +22,12 @@ const LAYOUTS: Readonly<Record<string, Layout>> = {
     depthStrength: 1,
     prompt: "A tall vertical game interface column seen straight on, painted as game interface art, in soft even light without glare. Blackened cast iron worn bright on its raised edges, its sections joined by thin iron bands with a small faceted amber stud at each end. Cream marble plates, blank. Round sockets with ivory enamel faces, blank. In the middle, a gothic lancet window of lead and stained glass in deep red and amber: tracery glass in its pointed head, and below it a three by three grid of square panes, each empty and black. Behind the sockets, low gothic tracery in the same dark iron. At the foot, a large round disc of lit amber glass held up by two adult angels carved in low relief in the dark iron, tall robed figures with grown, solemn faces, their wings raised around it. No text, no letters.",
   },
+  /** The window column with the user's duality at its foot (2026-10-10: "one of them be an angel, and the other a succubus"). */
+  "map-column-duality": {
+    denoise: 0.7,
+    depthStrength: 1,
+    prompt: "A tall vertical game interface column seen straight on, painted as game interface art, in soft even light without glare. Blackened cast iron worn bright on its raised edges, its sections joined by thin iron bands with a small faceted amber stud at each end. Cream marble plates, blank. Round sockets with ivory enamel faces, blank. In the middle, a gothic lancet window of lead and stained glass in deep red and amber: tracery glass in its pointed head, and below it a three by three grid of square panes, each empty and black. Behind the sockets, low gothic tracery in the same dark iron. At the foot, a large round disc of lit amber glass, and carved around it in low relief in the dark iron, an angel and a succubus: on the left a grown angel with feathered wings, kneeling and leaning in to rest her cheek and both hands against the glass; on the right a grown succubus with bat wings, small curved horns and a long tail, lying draped across the top of the disc, one arm trailing down over the glass. Their faces turn toward each other across it. No text, no letters.",
+  },
   "map-column-lattice": {
     denoise: 0.7,
     depthStrength: 1,
