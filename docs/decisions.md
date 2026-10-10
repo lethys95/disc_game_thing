@@ -322,3 +322,13 @@ every tab, veiled behind the tablets, instead of being one tab's framed picture:
 way the map's tablets hang over the map. The tier moved into the beam's medallion, the city's one number. The probes
 all painted the figure with folded hands and the niches lower than the greybox drew them; the pick was kept as
 painted and the stylesheet follows it, as with the battle's monument.
+
+## The one-painting HUD is scrapped; pieces are made one by one, and the user cuts them (2026-10-10, the user)
+After night one's painted screens the user found too many angels and tombstones ("When I say gargoyle, then I think
+about a structure that is part of a larger whole"), everything "too gray", content-bearing pieces at an angle that
+"defeats usability" (the card's angel, the codex's book), repeated cut-off figures, and less readability overall; the
+map's HUD got worse than the version before. Their read: "we're trying to generate the entire HUD as one image. I
+don't think that is how artists do it in practice." So: each piece is generated on its own, flat and facing the
+viewer wherever it carries content; the user does the cutting and cleaning ("I'm fully capable of doing that and I
+have the eyes"); the wording of every piece goes back to the references for a richer vocabulary than grey stone; one
+figure is not repeated across screens; the header beam isn't on every screen.

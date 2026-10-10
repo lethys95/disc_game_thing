@@ -127,3 +127,27 @@
 - **The moments' keystone and the saves (2026-10-10, ~01:00):** the keystone is the card's silver seal until each
   faction's emblem takes its place; saved games are parchment strips. Next: the new game's emblems and March, the
   codex's ribbons, the map's pennants; then the faction skins.
+- **The user on night one (2026-10-10, morning):** the direction is reset. Their notes, in order:
+  - "you have too many angels and too many tombstones. When I say gargoyle, then I think about a structure that is
+    part of a larger whole."
+  - The battle's angel is cut off again. "I think it's better if you let me do the cuts and the cleaning in the
+    future. I'm fully capable of doing that and I have the eyes."
+  - Important assets at an angle "defeats usability": the card's angel and the codex's book. "When you turn the angel
+    like this […] all the content and text would realistically have to be turned as well. And if you do that, then it
+    becomes unreadable." The book the same: "Anyone would point it out immediately." The title is "a tombstone and a
+    set of buttons".
+  - "too gray. I think we can do better." In battle the eye goes to the top-left candle, "the only point where there
+    isn't anything […] everything else is just grey surfaces."
+  - The battle's angel "isn't attached to the side".
+  - "part of the reason why we're having this many problems, is that we're trying to generate the entire HUD as one
+    image. I don't think that is how artists do it in practice."
+  - "The log block needs help. It needs to be something else, it's just a grey stone."
+  - "we have all this reference material […] but all we have in ours are just like. Grey bland surfaces. We need to
+    more words, man." Back to the drawing board with the wording of each piece, and "question how we got to this
+    uninspiring answer".
+  - The Capitol's angel is cut off at the head, "and none of your probes caught it".
+  - "we've gotten more creative, which is cool. But by and in large, it's become less readable."
+  - The Capitol "saw the most improvements", but too many angels, the head cut, and the header beam "doesn't need to
+    be in every screen". The overworld HUD "actually become worse […] It was more clean before, more readable".
+    Neither is final; "the usual creative process in games just often scraps what was done and starts over if
+    something didn't work."
