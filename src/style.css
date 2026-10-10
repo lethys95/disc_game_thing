@@ -538,11 +538,10 @@ body.formulas .formula { display: inline; }
 .ability-row.no-icon { grid-template-columns: minmax(0, 60ch) auto; margin-top: 0.75rem; }
 .ability-row .body .text { margin-top: 1px; }
 
-/* The battle's interface (the HUD kit, docs/design/hud-kit.md). The beam, the monument, the sill, the log's stele and
-   the hanging objects are pieces cut from one painting of the whole screen (assets/ui/battle/, scripts/art/hud-paint.ts),
-   placed where they were painted: 28.8 of its pixels are 1rem, and across the screen a position is a share of the
-   16:9 painting's width. The rest (instruments, marks, slips) is drawn in the same materials' values: stone is mass,
-   iron is joinery, marble speaks names and numbers, parchment holds documents, candlelight is state. */
+/* The battle's interface. The beam, the sill, the hourglass, the marionette, the recess and the plaque are interim
+   pieces from the scrapped one-painting HUD (assets/ui/SOURCES.md), until the pieces of docs/design/hud-pieces.md
+   replace them; the rest is drawn in the materials' values: iron is structure, marble speaks names and numbers,
+   parchment holds documents, candlelight is state. */
 :root {
   --gb-stone: #3e3c3a;
   --gb-stone-hi: #504d4a;

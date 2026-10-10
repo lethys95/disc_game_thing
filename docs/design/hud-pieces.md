@@ -3,29 +3,118 @@
 The plan after the reset (`hud-kit.md`'s note at the top). The user, 2026-10-10: "you don't actually get more very
 often when you write 450 lines instead of 150. It gets like... Washed out. So if you try to capture the entire screen
 with the HUD [...] you get these gray slabs I think. So we have to think modularity." And: "Do not assume you can use
-the prompts we used before. You don't even need the angels."
+the prompts we used before." After the first rounds: "Whatever we create should still fit within the art style, but be
+very careful you don't think in ultimates here. It's not a bool, it's a gradient. We do need to still have a hud which
+fits into the gothic fantasy vibe we're trying to set - BUT, we also don't want every single surface to just be
+completely gray cold stone." And on angels: "I'm also not saying that we can't have AN angel somewhere, small inbuilt
+into the hud [...] just not towering."
 
 So every piece below is made on its own, from its own short prompt, and the screens are put together from the pieces
-in CSS. The words come from `reference_material/elements.md`, the element-by-element reading of the references. None
-of night one's prompt lines is reused.
+in CSS. The words come from `reference_material/elements.md`. `hud-kit.md` still holds the system (material roles,
+the language for states, the instruments); this page is how it gets built.
+
+## How HUDs get made elsewhere
+The user asked for a look at how others go about it. The methods, and what each means for disc:
+- **Layout first, in grey boxes; art last.** A designer's first pass is grey boxes that settle where things are and how
+  the player moves between them, before any finished buttons ([Virtuall](https://virtuall.pro/blog/game-ui-design-38a85)).
+  Diablo IV's UI team: "ease of interaction comes before visual polish", and "Visual polish is one of the last things
+  we focus on" ([Blizzard, Feb 2020](https://news.blizzard.com/en-us/article/23308274/diablo-iv-quarterly-updatefebruary-2020)).
+  *For disc:* the greybox exists and works; the map went back to it because it read better. Every piece below goes
+  into a layout that already works without it.
+- **Hierarchy by urgency.** What the player needs now gets the strongest contrast and the steadiest place, and
+  low-frequency information gets quieter treatment. "Your health bar and primary action should win the hierarchy;
+  cosmetic flourishes should lose it." Size, contrast and space are the levers: "a bright accent on a muted background
+  draws focus", and "isolated elements feel more important than crowded ones"
+  ([Generalist Programmer](https://generalistprogrammer.com/tutorials/game-ui-design-best-practices)).
+  *For disc:* each screen below names what must win. Ornament is spent where the eye should go anyway (the acting
+  unit's card, End turn) and the rest stays plain. That is the gradient the user means: not "no ornament" or
+  "ornament everywhere", but more where it serves.
+- **A visual target, then a style guide, then the kit.** Studios agree the look on one finished concept of a screen
+  (the visual target), then write a short style guide of colours, type and layout rules, and only then make the real
+  pieces ([Morphic](https://morphic.com/resources/how-to/design-a-game-ui-hud-mockup)).
+  *For disc:* night one's mistake was to use the visual target as the asset. Here the target is made **from the
+  kit's own pieces** (step 4 below), so what is agreed is what ships.
+- **Pieces made one by one drift.** Made separately, they get "different lighting, different border thickness,
+  different corner radius" ([SpriteCook](https://www.spritecook.ai/blog/generate-game-ui-with-ai)). Their answer is to
+  paint the whole screen first and cut it up, which is what washed out here. *For disc:* the drift is held by a short
+  shared technique line and one light direction in every prompt (not a shared material line: that was night one's
+  grey), and by checking every pick against the others on one sheet at in-game size (step 3).
+- **One small template, stretched.** A frame is made once and nine-sliced: "The four corners stay fixed, the four
+  edges stretch in one direction, and the center stretches both ways"
+  ([Wayline](https://www.wayline.io/learn/game-ui-art/3)). *For disc:* the frame, plate, button and parchment are
+  made as nine-sliceable pieces and stretched in CSS (`border-image`), never painted at each size.
+- **Atoms, molecules, organisms.** Brad Frost's atomic design builds interfaces from small parts (atoms) joined into
+  groups (molecules, a name plate with its stud) and sections (organisms, the unit card), then templates and pages
+  ([UXPin](https://www.uxpin.com/studio/blog/atomic-ui-components/)). *For disc:* the piece list below is the atoms;
+  "How the screens are put together" is the organisms.
+- **Fixed tokens.** One spacing scale and a small palette ("one or two accent colors, a couple neutrals, plus
+  success/warning/danger") reused everywhere make "your HUD and menus instantly look like they belong together"
+  (Generalist Programmer). *For disc:* the rem scale and the CSS colour tokens already exist; the accents below join
+  them.
+- **Diegetic or not.** Fagerholt and Lorentzon's four kinds: diegetic (in the world, the characters see it),
+  non-diegetic (the classic HUD), spatial (in the 3D scene, not part of the story), meta (on the screen, of the story,
+  like blood on the lens) ([Game Developer](https://www.gamedeveloper.com/design/user-interface-design-in-video-games)).
+  *For disc:* the HUD is non-diegetic but made of objects that could exist in the world: a bell, a sealed letter, a
+  candle. Its labels over the map and the field are spatial. That is how Disciples II does it too.
+
+## The plan
+1. **Style guide** (below, short): what each material means, the accents, the light, the technique line. Every prompt
+   is written against it.
+2. **The atoms**, in painted rounds of four. Claude judges every round, rewrites what fails and runs it again; the
+   user isn't asked between rounds ("You don't need my accept of everything"). Each round's read is logged at the end
+   of this page.
+3. **The kit sheet.** The best candidate of every piece on one page, each at its in-game size, side by side
+   (`shots/hud-pieces.html`, top). This is the drift check: a piece whose light, wear or colour doesn't sit with the
+   others is made again. The user picks from it and cuts.
+4. **The battle screen first, as the visual target.** It is the most seen and the hardest. Claude puts it together
+   from the user's cuts in CSS, then tests it: the screenshot blurred (the squint test: does the eye land on the
+   acting unit and its card?), at 720p for readability, against the greybox it replaces. It is iterated until it beats
+   the greybox; then it is the target the other screens follow.
+5. **The other screens**, reusing the same atoms: map, Capitol, menus, codex, title.
+6. **Faction swaps last.** The pieces are Jilliath's while only Jilliath plays; the other factions get their own marks
+   (portrait arch, empty mark, lock, mana vessel) after the look holds.
+7. **Polish last:** hover and press states, the small animations.
+
+Until a cut piece exists, its place stays the greybox's plain panel. Nothing goes into the game that is worse than
+what it replaces.
+
+## Style guide
+**Material means role.** Each material always does one job, so the eye learns what it can touch (hud-kit P9):
+
+| Material | Means | Pieces |
+|---|---|---|
+| Blackened cast iron | structure; you don't press it | frame, rail, socket rims, the arch |
+| Cream veined marble | the game telling you a name or a fact | plate |
+| Dark oak, brass rivets | something you press | button |
+| Tan parchment | something to read | parchment, roller |
+| Crimson wax | commit: confirm, cancel, locked | seal, sealed band |
+| Glass, lit or dark | state: on or off, ready or not | lamp gem, rose window, candle |
+| Bronze, leather, silver | an object with one job | bell, closed book, vial, coins |
+
+**Accents.** Amber (studs, gems), crimson (wax, Jilliath's glass), brass (rivets, corners). The faction's mana colour
+lights only magic. The paintings (portraits, the city, icons) carry the strongest colour.
+
+**Gothic, by degree.** Iron, lancet arches, tracery, wax and bells keep the gothic fantasy. Warmth comes from wood,
+parchment, brass and amber; no screen is all stone. Ornament is small and sits on joints and ends (hud-kit P8). One
+small built-in angel is welcome where it does a job; a towering one isn't.
+
+**Technique.** "Painted as game interface art." on every prompt: the painted round read best for plate, seal and
+bell (the user: "r3 seems to be the best"), and the plain round's plates were "boring".
 
 ## How a piece is made
-1. **One piece, one prompt, about 25–50 words.** It names the object, its form, its material and at most two accent
-   colours. It carries no mood or style words ("grim", "solemn", "desaturated"): style is the user's call
-   (memory: no-silent-style), and it was those words, plus a grey material line in every prompt, that washed night
-   one out. No similes ("like an old reliquary" was one): name the thing itself.
+1. **One piece, one prompt, about 25–50 words.** It names the object, its form, its material, at most two accent
+   colours, one phrase of finish (worn, tarnished, chipped) and one of ornament (cast scrolls, engraving). No mood
+   words, no similes: name the thing itself.
 2. **Content faces the player.** Anything that will carry text or a portrait is asked for "seen straight on" or "seen
-   from directly above, square to the viewer". Nothing that holds content is drawn at an angle.
-3. **Frames are asked for empty**, their inside flat, so CSS can stretch them (border-image) and the content goes in
-   front.
-4. **Plain background for the cut.** Dark pieces on a plain white ground, light pieces (parchment, marble, wax) on a
-   plain black one, so the edge is easy to find. The user does the cutting and the cleaning
-   ("I'm fully capable of doing that and I have the eyes").
-5. **Four seeds per piece**, on a contact sheet. Claude puts them up with the prompt as sent; the user picks and cuts.
+   from directly above, square to the viewer".
+3. **Frames are asked for empty**, their inside flat, so CSS can stretch them and the content goes in front.
+4. **Plain background for the cut.** Dark pieces on white, light pieces (parchment, marble, wax) on black. The user
+   does the cutting and the cleaning ("I'm fully capable of doing that and I have the eyes").
+5. **Four seeds a round.** Claude judges and reruns; the kit sheet goes to the user.
 6. **Hand-off:** the uncut candidates are in `art/candidates/ui/pieces/<piece>/`. A cut piece saved as
    `art/cut/ui/<piece>.png` is what Claude installs (as `assets/ui/pieces/<piece>.webp`) and places in CSS.
-7. **Figures are rare and optional.** None of the pieces below is a figure. If a screen ever gets one, it is one, it
-   does a job, and it is part of a structure (a corbel, a waterspout, a bracket), never a statue standing beside it.
+7. **Figures, by degree.** A figure is small, does a job and is part of a structure (a corbel, a bracket), never a
+   statue standing beside the HUD. The angel corbel below is the one so far.
 
 The prompts live in `scripts/art/hud-pieces.ts` (one source); `shots/hud-pieces.html` shows each one as sent beside
 its candidates.
@@ -35,80 +124,78 @@ Faction pieces are Jilliath's, from the provisional motifs (#76): red stained gl
 silver rose, a reliquary vial of red, a bell for End turn. The shared pieces carry no faction.
 
 ### Shared structure
-| # | Piece | Its job |
+| # | Piece | Where it goes |
 |---|---|---|
-| 1 | plate | names and facts: the card's name, the Capitol's facts, titles; nine-sliced |
-| 2 | frame | the edge of every panel; nine-sliced, the inside dark |
-| 3 | button | the commands the player presses: the warm, touchable material against the iron |
-| 4 | socket | an ability or item slot, the icon in front of its dark inside |
-| 5 | rail | a thin bar along a screen's top edge for the turn order or the turn, instead of a heavy beam |
+| 1 | plate | every name and fact: the unit card's name, the turn on the map, the Capitol's facts, the title menu's entries; nine-sliced |
+| 2 | frame | the edge of every panel: the map's warband and city panels, the settings and save menus, the garrison; nine-sliced |
+| 3 | button | the commands you press: End turn's label, Auto-battle, Resolve now, the menus' entries; nine-sliced |
+| 4 | socket | an ability or item slot: the battle's ability row, equipment |
+| 5 | rail | a thin bar along the top edge of the battle for the turn order, instead of a heavy beam |
 
 ### Documents
-| # | Piece | Its job |
+| # | Piece | Where it goes |
 |---|---|---|
-| 6 | parchment | every document: rules, explanations, the unit sheet, the log, saves |
-| 7 | roller | the turned rod a sheet hangs from or rolls onto (the unit sheet, the log, the gold on a scroll) |
-| 8 | seal | confirm and cancel; locks |
-| 9 | ribbon | tabs: the codex's kinds and shelves, the Capitol's tabs |
+| 6 | parchment | everything you read: the right-click explanations, the battle log, the unit card's facts, the save slots, the codex's pages, the branch prompt |
+| 7 | roller | the turned rod a sheet hangs from: the unit card and the log hang from one |
+| 8 | seal | confirm and cancel inside documents (save, load, the branch prompt, quit) |
+| 9 | ribbon | tabs: the codex's kinds, the Capitol's tabs |
 | 10 | book | the codex and the credits, lying square |
 
 ### Objects with a job
-| # | Piece | Its job |
+| # | Piece | Where it goes |
 |---|---|---|
-| 11 | bell | End turn, on the map (Jilliath's, #76) |
-| 12 | closed book | Menu |
-| 13 | vial | mana (Jilliath's vessel, #76) |
-| 14 | coins | gold |
-| 15 | candle | the battle's round, and the light that marks the selected thing |
-| 16 | lamp gem | a toggle, lit and unlit (two prompts, the same seed) |
+| 11 | bell | End turn on the map (Jilliath's, #76) |
+| 12 | closed book | Menu on the map and in battle |
+| 13 | vial | mana beside the turn (Jilliath's vessel, #76) |
+| 14 | coins | gold beside the turn |
+| 15 | candle | the battle's round, its numeral beside it |
+| 16 | lamp gem | a toggle in the settings, lit and unlit |
+| 21 | angel corbel | the small angel the user allows: under the map's turn plate, holding it up (Disciples II's two small atlantes at the wheel) |
 
 ### Faction marks (Jilliath)
-| # | Piece | Its job |
+| # | Piece | Where it goes |
 |---|---|---|
-| 17 | portrait arch | the frame of every Jilliath face: the card, the turn order, the codex |
-| 18 | rose window | the empty-slot mark: an empty grid cell, an empty socket |
-| 19 | sealed band | the locked state: research not yet open |
+| 17 | portrait arch | every Jilliath face: the unit card, the turn order, the warband panel, the codex |
+| 18 | rose window | the empty mark: an empty grid cell, an empty socket |
+| 19 | sealed band | locked: research not yet open |
 
 ### Paintings (not chrome, but made the same way)
-| # | Piece | Its job |
+| # | Piece | Where it goes |
 |---|---|---|
-| 20 | still life | the title screen: a place, not a panel (Arcanum's desk, Heroes III's mage guild); the menu's plaques stand over its dark side |
+| 20 | still life | the title screen: a place, not a panel (Arcanum's desk, Heroes III's mage guild); the menu's plates stand over its dark side |
 
 ## How the screens are put together
-Sketches, built in CSS from the pieces above; each is a layout the greybox can try before any art exists.
-- **Battle.** The turn order on the rail (5) along the top, each face in a small arch (17) with the side's colour as a
-  band below, the round as the candle (15) with its numeral. The unit card is a parchment sheet (6) hanging from a
-  roller (7), the portrait in its arch overlapping the sheet's top edge (Disciples II's unit card), the name on a plate
-  (1). The sockets (4) in a row on the sill, the log a parchment strip on a roller.
-- **Map.** No beam. The turn on a small plate at the top centre, gold (14) and mana (13) beside it, End turn the bell
-  (11) at the bottom centre, Menu the closed book (12). The side panels in the frame (2), their names on plates.
-- **Capitol.** No header beam: the city painting full screen, the name on a plate, the tabs as ribbons (9) or objects,
+Each names what must win the screen (hierarchy by urgency), then how the pieces build it.
+- **Battle.** Wins: the acting unit and its card, then the ability row, then the turn order. The turn order on the rail
+  (5) along the top, each face in a small arch (17) with the side's colour as a band below, the round as the candle
+  (15) with its numeral. The unit card is a parchment sheet (6) hanging from a roller (7), the portrait in its arch
+  overlapping the sheet's top edge (Disciples II's unit card), the name on a plate (1). The sockets (4) in a row on the
+  sill, the log a parchment strip on a roller.
+- **Map.** Wins: the map itself, then End turn, then the selected warband. No beam. The turn on a small plate at the
+  top centre on the angel corbel (21), gold (14) and mana (13) beside it, End turn the bell (11) at the bottom centre,
+  Menu the closed book (12). The side panels in the frame (2), their names on plates.
+- **Capitol.** Wins: the city painting and the open tab. No header beam: the name on a plate, the tabs as ribbons (9),
   the facts on plates, the garrison and research in framed panels.
-- **Codex.** The book (10) lying square, the kinds as ribbons (9) hanging from its top edge.
-- **Title.** The still life (20), the name, the menu on plates (1) or buttons (3).
-- **Menus.** A framed panel (2), toggles as lamp gems (16), saves on parchment (6), confirm and cancel as seals (8).
+- **Codex.** Wins: the page being read. The book (10) lying square, the kinds as ribbons (9) hanging from its top edge.
+- **Title.** Wins: the game's name and New game. The still life (20), the menu on plates (1) or buttons (3).
+- **Menus.** Wins: the choice being made. A framed panel (2), toggles as lamp gems (16), saves on parchment (6),
+  confirm and cancel as seals (8).
 
 ## Order
-First the pieces that most screens need, so a single batch changes the most: plate (1), frame (2), button (3),
-parchment (6), then the objects (11–15), then the faction marks, then the paintings. The first test of this workflow
-is on four pieces (plate, parchment, seal, bell), to check that short prompts give colour and clean edges before the
-rest is generated (memory: batch-when-proven).
+The atoms most screens need come first, so one batch changes the most: plate, frame, button, parchment, then the
+objects, then the faction marks, then the paintings. The battle screen is assembled first (plan, step 4).
 
 ## Test 1 (2026-10-10): plate, parchment, seal, bell
-Sixteen candidates from the first short prompts (`shots/hud-pieces.html`). What it showed:
+Sixteen candidates from the first short prompts. What it showed:
 - **Colour and clean edges, yes.** Cream marble with amber studs, warm tan parchment, crimson wax, dark bronze: none of
   it grey, and each piece stands clear on its ground, square to the viewer.
 - **But they read as studio photographs**: pristine marble like a bathroom tile, a plain modern hand bell. The prompts
   named object, form, material and colour, and left out two fields the catalogue has for every element: the
   **finish** (worn, chipped, tarnished, cracked) and the **ornament** (cast scrolls, engraving). Round 2 adds one
   phrase of each, still short.
-- **Photographic or painted is the user's call** (style). Round 2 makes every piece twice, as is and with "Painted as
-  game interface art." added, side by side.
 
 ## Round 2 (2026-10-10): finish and ornament added
-The same four pieces, each prompt with one phrase of finish and one of ornament (the plate's ends became small cast
-leaf scrolls holding the amber studs, the bell got an engraved band of leaves and a handle worn pale), and each made
-twice: as is, and with "Painted as game interface art." Both read as game interface now. As is, they are closer to
-photographs: aged marble, a real bronze bell. Painted, they are more stylised: crackled marble with rust-brown iron,
-heavier wear. That choice is the user's. Every other piece's prompt has the same two phrases added since, and nothing
-else has been generated: the user reads them first.
+The same four pieces, each with one phrase of finish and one of ornament, each made twice: as is (r2), and with
+"Painted as game interface art." (r3). Both read as game interface now; the painted ones are more stylised, crackled
+marble with rust-brown iron. **The user's read:** r3 best for plate, seal and bell; the plain r1 plates boring;
+parchment no strong opinion. Painted is the technique from here on.

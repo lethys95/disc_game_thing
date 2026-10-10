@@ -332,3 +332,12 @@ don't think that is how artists do it in practice." So: each piece is generated 
 viewer wherever it carries content; the user does the cutting and cleaning ("I'm fully capable of doing that and I
 have the eyes"); the wording of every piece goes back to the references for a richer vocabulary than grey stone; one
 figure is not repeated across screens; the header beam isn't on every screen.
+
+## HUD pieces are painted, lit from the upper left, and checked on one kit sheet (2026-10-10, the user and Claude)
+The user picked the painted round ("r3 seems to be the best"; the plain plates were "boring"), so every piece's prompt
+ends with the technique line. Claude added one light direction to it: pieces made one at a time drift apart in their
+light (the research in `design/hud-pieces.md`), and Disciples II lights its chrome from the upper left. The drift is
+checked on a kit sheet of the picks at their in-game sizes, and the battle screen, assembled from the user's cuts, is
+the visual target the other screens follow. Gothic fantasy stays, by degree: the user, "It's not a bool, it's a
+gradient", so warm materials sit beside the iron and one small built-in angel is allowed. Claude runs and judges the
+rounds without asking between them ("You don't need my accept of everything").
