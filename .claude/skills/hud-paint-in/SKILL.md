@@ -74,6 +74,8 @@ material and finish, its joints, the plates and sockets ("blank"), each special 
 ornament behind, the figures and what they do, "No text, no letters."
 - **Name repeated small parts with their count**, or the model turns them into tracery ("a row of five small arched
   portrait niches", "a three by three grid of square panes").
+- **Give different parts different words.** "Four small round sockets" in one place and "four small plates" in
+  another made the plates round too; name each part's shape outright ("rectangular", "buttons").
 - **Light:** "lit from the upper left" gave glare beams; "soft even light without glare" fixed it.
 - **Figures:** say adult ("grown, solemn faces"), give them a pose and a job against the piece ("kneeling and leaning
   in to rest her cheek and both hands against the glass"). The user's duality (an angel and a succubus at the End

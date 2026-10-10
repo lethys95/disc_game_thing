@@ -480,3 +480,9 @@ with a red health globe held by a kneeling figure (the veiled winged woman for o
 wing for theirs, an echo of the map's duality), an arch for the portrait, the name plate, four stat plates and the
 effects panel. The middle holds what belongs to no unit: the round on a marble medallion, Resolve now and Auto-battle
 on its left, the held tarot cards and the log on its right, the seven ability sockets below.
+The duel's first round turned the stat plates into rows of round bosses in every seed: "four small round ivory
+sockets" for the middle bled into "four small dark iron plates" beside the globes. Naming the stats "a two by two grid
+of four small rectangular dark iron plates" and the middle ones "buttons" fixed it in all six (`battle-bar-duel-2`).
+Seed 3 is the pick: both figures kneel on the ledge, the angel's hands on the glass, the horned figure's bat wing
+folded. Portraits fit the painted openings (left x 237–304, right x 1227–1298, y 22–176). The right card keeps the
+left's reading order; only its plates mirror.
