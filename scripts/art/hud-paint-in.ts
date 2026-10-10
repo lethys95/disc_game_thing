@@ -37,6 +37,14 @@ const LAYOUTS: Readonly<Record<string, Layout>> = {
   },
   /** The battle bar again (the user, 2026-10-10: the figures "too perfect [...] like smoothed stone"; the left too white): figures engraved and worn, stat plates in iron, a plate over the log. */
   /** The battle bar, dense (the user, 2026-10-10: Disciples II's "Very very few surfaces are just smooth and plain"; a health globe its figure embraces; a stopped clock). */
+  /** The dense bar, its globe again: red glass held close by a kneeling figure whose arm crosses its front. */
+  "battle-bar-globe": {
+    page: [1536, 200],
+    size: [2432, 320],
+    denoise: 0.7,
+    depthStrength: 1,
+    prompt: "A long horizontal game interface bar seen straight on, painted as game interface art, in soft even light without glare. Blackened cast iron, old and worn, its three sections joined by upright iron bands with a small faceted amber stud at each end. Every surface is densely worked: interlaced knotwork, scrolling ironwork, small rosettes and tracery cover all the iron between the parts, dark on dark, and no surface is left plain. Cream marble plates, blank. Round sockets with ivory enamel faces, blank. At the left end, a large sphere of deep red glass set straight into a heavy ornate iron rim, with no stand, faintly glowing from within; kneeling at its left, carved in deep relief in the same dark iron, a grown veiled woman in long robes with a folded wing, one arm wrapped across the front of the sphere and the other laid over its top, holding it close. Beside it, an arched portrait well, empty and black, a long marble name plate, a row of four small dark iron plates and a dark recessed panel. In the middle, a small glass sphere holding a single candle flame, in an iron ring between two small round ivory sockets, and below them a row of seven square sockets, each empty and black. On the right, a long marble plate over a wide dark inset window, empty, a narrow upright slot, and at the right end a grown hooded scribe in long robes carved in deep relief, writing with a long quill. No text, no letters.",
+  },
   "battle-bar-dense": {
     page: [1536, 200],
     size: [2432, 320],
