@@ -186,6 +186,11 @@ Each names what must win the screen (hierarchy by urgency), then how the pieces 
 The atoms most screens need come first, so one batch changes the most: plate, frame, button, parchment, then the
 objects, then the faction marks, then the paintings. The battle screen is assembled first (plan, step 4).
 
+**Cuts for the battle, in order** (the picks are on the kit sheet, `shots/hud-pieces.html`): parchment, roller,
+plate, portrait arch, socket, rail, candle. Then the map's: frame, bell, closed book, coins, vial, angel corbel. Then
+the menus' and the rest: button, seal, gem, ribbon, book, rose window, sealed band, still life. A frame, plate, button
+or parchment is nine-sliced, so its cut keeps the whole piece; the slices are set in CSS.
+
 ## Test 1 (2026-10-10): plate, parchment, seal, bell
 Sixteen candidates from the first short prompts. What it showed:
 - **Colour and clean edges, yes.** Cream marble with amber studs, warm tan parchment, crimson wax, dark bronze: none of
@@ -227,3 +232,15 @@ Every remaining piece once, painted (68 candidates). Claude's read:
   Small and built in, the way the user allowed one.
 - **The socket still fails:** every candidate's opening is a shape (a cross, notches, a step). Asked next as a small
   square picture frame with a plain flat black square inside.
+
+## Round 5 (2026-10-10): coins, gem, sealed band, still life
+- **The gem in amber** reads as the interface's warm light and no longer competes with the crimson; picked.
+- **The still life** now gathers its objects at the right, the left half of the table bare and dark for the menu;
+  picked.
+- **The coins' six-pointed star is out.** A star of David on a heap of gold coins carries an antisemitic trope; the
+  coins are stamped with a small crown instead.
+- **The sealed band's rivets came out as slotted screws**, too modern; asked as domed rivet heads.
+- **The socket, asked as a small square picture frame,** came out square in all four; picked. Its oak backing is
+  right by the style guide: an ability socket is pressed.
+- **Round 6:** the coins with a crown and the band with domed rivets came out right; picked. Every piece has a
+  pick now.

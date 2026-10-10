@@ -180,4 +180,9 @@
   cuts as the visual target, then the other screens, faction swaps, polish. Painted is the default with one light (upper
   left); an angel corbel added under the map's turn plate. The battle's card and log are parchment on a roller in
   stand-in values meanwhile. All 17 remaining pieces generating, painted.
+- **Every piece picked (2026-10-10):** six painted rounds, judged by Claude without stopping between them; each
+  round's read in `hud-pieces.md`. 21 picks on the kit sheet (`shots/hud-pieces.html`, `shots/hud-kit-sheet.png`),
+  including the small angel corbel. Waiting on the user's cuts, in the order in `hud-pieces.md` (the battle's first:
+  parchment, roller, plate, portrait arch, socket, rail, candle); `hud-pieces.ts install` puts them in the game, then
+  the battle is assembled from them as the visual target.
 
