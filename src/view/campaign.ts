@@ -9,7 +9,6 @@ import { fallbackColor } from "#rules/world/colors";
 import { createWorld } from "#rules/world/create";
 import type { PlayerSetup } from "#rules/world/create";
 import { income, manaIncome } from "#rules/world/economy";
-import { movementOf } from "#rules/world/leaders";
 import { planMove, reachable } from "#rules/world/movement";
 import type { MovePlan } from "#rules/world/movement";
 import { capitolOf, leaderAt, playerOf } from "#rules/world/state";
@@ -23,7 +22,8 @@ import type { App } from "#view/app";
 import { CityScreen } from "#view/city";
 import type { Place } from "#view/city";
 import { applySideColors, battleColors } from "#view/colors";
-import { buttonById, byId, element, gold, mana, movementPips } from "#view/dom";
+import { buttonById, byId, element, gold, mana } from "#view/dom";
+import { explain } from "#view/explain";
 import { Forecasts } from "#view/forecasts";
 import { ForkPrompt } from "#view/fork-prompt";
 import { LeaderScreen } from "#view/leader";
@@ -76,6 +76,8 @@ export class Campaign implements KeyLayer {
   private readonly forecasts: Forecasts;
   private readonly hud = byId("maphud");
   private readonly turn = byId("mapturn");
+  private readonly goldPlate = byId("mapgold");
+  private readonly manaPlate = byId("mapmana");
   private readonly hint = byId("maphint");
   private readonly endTurn = buttonById("endturn");
   private readonly peek = byId("peek");
@@ -502,18 +504,18 @@ export class Campaign implements KeyLayer {
       attack: aimed ?? (plan?.target && plan.target.kind !== "capture" ? this.hovered : null),
     });
 
-    this.turn.replaceChildren();
-    if (!world.outcome) {
-      const color = FACTIONS[playerOf(world, this.viewer).faction].mana;
-      this.turn.append(
-        `Turn ${world.turn} · ${world.activePlayer === this.viewer ? "your move" : "the enemy moves"} · `,
-        gold(playerOf(world, this.viewer).gold),
-        ` (+${income(world, this.viewer)}) · `,
-        mana(playerOf(world, this.viewer).mana[color], color),
-        ` (+${manaIncome(world, this.viewer)})`,
-      );
-      if (leader) this.turn.append(" · ", element("span", "movement", `Movement ${movementPips(leader.movement, movementOf(leader))}`));
-    }
+    // The column's medallion carries the turn; whose move it is, and the purse, sit on its plates (map-panels.ts).
+    const yours = world.activePlayer === this.viewer;
+    this.turn.textContent = `${world.turn}`;
+    this.turn.dataset["turn"] = `${world.turn}`;
+    this.turn.dataset["mover"] = yours ? "you" : "enemy";
+    this.turn.classList.toggle("theirs", !yours);
+    explain(this.turn, `Turn ${world.turn}`, yours ? "Your move." : "The enemy moves.");
+    const color = FACTIONS[playerOf(world, this.viewer).faction].mana;
+    this.goldPlate.replaceChildren(gold(playerOf(world, this.viewer).gold), element("span", "income", ` +${income(world, this.viewer)}`));
+    this.manaPlate.replaceChildren(mana(playerOf(world, this.viewer).mana[color], color), element("span", "income", ` +${manaIncome(world, this.viewer)}`));
+    explain(this.goldPlate, "Gold", `${income(world, this.viewer)} more at the start of your next turn.`);
+    explain(this.manaPlate, "Mana", `${manaIncome(world, this.viewer)} more at the start of your next turn.`);
     this.endTurn.disabled = !this.myTurn();
     this.panels.render(world, this.viewer, leader, this.casting, this.myTurn());
     this.renderCityScreen(world);

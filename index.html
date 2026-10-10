@@ -42,11 +42,18 @@
     <div id="menu" class="panel" hidden></div>
     <div id="peek" class="panel" hidden></div>
     <div id="maphud" hidden>
-      <div id="mapturn"></div>
-      <div id="mapsquad" class="panel"></div>
-      <div id="mapcity" class="panel"></div>
-      <div id="mapbottom"><div id="maphint"></div><button id="endturn" class="action">End turn</button></div>
-      <button id="mapmenu" class="action">Menu</button>
+      <div id="mapcolumn">
+        <div id="mapturn"></div>
+        <button id="mapmenu" aria-label="Menu"></button>
+        <div id="mapgold" class="plate"></div>
+        <div id="mapmana" class="plate"></div>
+        <div id="mapsquad"></div>
+        <div id="mapcommands"></div>
+        <div id="mapcity"></div>
+        <button id="endturn" aria-label="End turn"></button>
+      </div>
+      <div id="mapextra" class="panel" hidden></div>
+      <div id="mapbottom"><div id="maphint"></div></div>
       <div id="mapbanner" hidden></div>
       <div id="capitol" class="screen" hidden></div>
       <div id="leaderscreen" class="screen" hidden></div>

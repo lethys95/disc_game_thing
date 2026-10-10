@@ -20,8 +20,8 @@ const structures: Playtest = {
     if (afterSell !== afterBuy + 30) t.fail(`selling should pay half: ${afterBuy} → ${afterSell}`);
     await t.page.keyboard.press("Escape");
     await t.page.locator("#structurescreen").waitFor({ state: "hidden", timeout: 2000 }).catch(() => t.fail("Escape didn't close the merchant"));
-    const panel = await t.page.locator("#mapsquad button", { hasText: "Visit the merchant" }).count();
-    if (panel !== 1) t.fail("the warband panel offers no visit while standing on the merchant");
+    const panel = await t.page.locator('#mapcommands button[aria-label="Visit the merchant"]').count();
+    if (panel !== 1) t.fail("the column offers no visit while standing on the merchant");
   },
 };
 

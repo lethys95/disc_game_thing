@@ -191,4 +191,7 @@
   with the depth Control LoRA paints it with the layout held and the game's content fitting its windows
   (`shots/column-probe.html`, `scripts/art/hud-paint-in.ts`). Qwen-Image 2.1 and Edit-2511 tried and dropped by the
   user (licence debt; quality). Next: the column in the game, then the battle screen.
+- **The column in the game (2026-10-10):** after the 3×3 squad window, adult angels, and the user's angel-and-succubus
+  duality at the End turn gem ("this is near perfect"), and the `hud-paint-in` skill. The map's floating boxes are
+  replaced by the painted column (`decisions.md`); `pnpm verify` passes, 720p to 1440p checked. Next: the battle.
 

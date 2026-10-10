@@ -150,11 +150,6 @@ button.recruit .abilities { color: #b9a98c; font-size: 0.6875rem; }
 button.action.fight { font-size: 1.375rem; padding: 0.5rem 2.5rem; }
 button.action:disabled { opacity: 0.4; cursor: not-allowed; }
 
-#mapsquad .subtitle { color: var(--muted); font-size: 0.6875rem; margin-bottom: 0.5rem; }
-#mapsquad .member { margin-bottom: 0.375rem; }
-#mapsquad .member .name { font: 700 0.875rem var(--display); }
-#mapsquad .hp { height: 0.75rem; border: 1px solid var(--line); }
-#mapsquad .hp .value { position: relative; display: block; text-align: center; font-size: 0.625rem; line-height: 0.75rem; }
 #forkprompt {
   position: fixed; left: 50%; top: 38%; transform: translate(-50%, -50%); text-align: center;
   display: flex; flex-direction: column; gap: 0.5rem; padding: 1.25rem 2rem; max-width: 28.75rem;
@@ -174,12 +169,6 @@ button.warband {
 button.warband.selected { border-color: var(--gold-dim); }
 button.warband .name { font: 700 0.9375rem var(--display); }
 button.warband .meta { color: var(--muted); font-size: 0.6875rem; align-self: center; }
-#mapcity .member { display: grid; grid-template-columns: 1fr auto; gap: 2px 0.375rem; align-items: center; margin-bottom: 0.375rem; }
-#mapcity .member .hp { grid-column: 1; }
-#mapcity .member button.small { grid-row: 1 / span 2; grid-column: 2; }
-#mapcity .hp { height: 0.75rem; border: 1px solid var(--line); }
-#mapcity .hp .value { position: relative; display: block; text-align: center; font-size: 0.625rem; line-height: 0.75rem; }
-#mapcity .note { color: var(--muted); font-size: 0.6875rem; margin-top: 0.375rem; }
 button.small { font: 600 0.6875rem var(--text); padding: 0.1875rem 0.5rem; background: #1d1714; color: var(--ink); border: 1px solid #5a4a36; cursor: pointer; }
 button.action.small { display: block; width: 100%; font: 700 0.8125rem var(--display); margin-top: 0.375rem; min-width: 0; padding: 0.3125rem 0.5rem; }
 button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -187,8 +176,6 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 .member .xp .fill { position: absolute; inset: 0 auto 0 0; background: linear-gradient(#8a7040, #5a4828); }
 .member .xp.ready .fill { background: linear-gradient(var(--gold), var(--gold-dim)); }
 .member .xp .value { position: relative; display: block; text-align: center; font-size: 0.5625rem; line-height: 0.625rem; color: #d8cbb0; }
-#mapcity .section { font: 700 0.9375rem var(--display); margin-top: 0.75rem; padding-top: 0.375rem; border-top: 1px solid var(--rule); }
-#mapcity .fallen { display: flex; justify-content: space-between; align-items: center; margin-top: 0.25rem; font-size: 0.75rem; }
 .float.shield { color: #6ff0e8; }
 
 #peek { position: fixed; width: 17.5rem; padding: 0.625rem 0.75rem; pointer-events: none; z-index: 10; }
@@ -203,8 +190,6 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 #peek .cell .hp { height: 0.25rem; margin-top: 2px; }
 #peek .cell .hp .fill { background: #8e1e16; }
 .member .mark { font-size: 0.625rem; color: #c9b88e; margin-top: 1px; }
-#mapsquad button.action.small { display: block; width: 100%; margin-top: 0.5rem; }
-#mapsquad button.ready { border-color: var(--gold); color: var(--gold-light); }
 
 .screen {
   position: fixed; inset: 0; display: flex; flex-direction: column; gap: 0.75rem; padding: 1.125rem 1.5rem;
@@ -235,7 +220,6 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 .screen .member button.small { grid-row: 1 / span 2; grid-column: 2; }
 .screen .member .mark { grid-column: 1; }
 .screen .fallen { display: flex; justify-content: space-between; align-items: center; margin: 0.25rem 0; }
-#mapcity button.action { display: block; width: 100%; margin-top: 0.5rem; }
 .screen .tabs { display: flex; gap: 0.25rem; margin: 0.5rem 0 0.25rem; }
 .screen .tabs button { font: 600 0.875rem var(--display); padding: 0.25rem 0.875rem; min-width: 0; }
 .screen .tabs button.selected { border-color: var(--gold); color: var(--gold-light); }
@@ -322,9 +306,6 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 .grid-menu { position: fixed; z-index: 40; display: flex; flex-direction: column; gap: 0.25rem; padding: 0.5rem; min-width: 13.75rem; }
 .grid-menu button { text-align: left; }
 .capitol-header .tabs { display: flex; gap: 0.25rem; }
-#mapcity .city-row { display: flex; align-items: center; gap: 0.5rem; padding: 0.375rem 0; border-bottom: 1px solid var(--rule); }
-#mapcity .city-row .city-text { flex: 1; }
-#mapcity .city-row .name { font: 700 0.9375rem var(--display); }
 .city-body .fortifications .name { white-space: nowrap; }
 .city-body .fortifications .note { flex: 1; }
 .city-body .fortifications button { flex: none; width: auto; margin: 0; }
@@ -784,20 +765,68 @@ body.formulas .formula { display: inline; }
 .hpbar .charges .pip { width: 0.32rem; height: 0.5rem; background: var(--gb-magic); box-shadow: 0 0 0.25rem rgba(79, 216, 207, 0.6); }
 .hpbar .charges .pip.spent { background: var(--gb-stone-lo); box-shadow: inset 0 0 0 0.07rem var(--gb-iron); }
 
-/* The map's interface, as it was before the one-painting HUD (the user, 2026-10-10: "It was more clean before, more
-   readable"), on plain panels until its pieces are made one by one. */
-#mapturn {
-  position: fixed; top: 0.375rem; left: 50%; transform: translateX(-50%); padding: 0.35rem 1.375rem;
-  font: 700 1.25rem var(--display); text-shadow: 0 2px 0.375rem #000; background: var(--plain-fill); border: 1px solid var(--plain-edge); box-shadow: var(--plain-shadow);
+/* The map's interface: one painted column at the right edge, full height (assets/ui/map/column.webp, painted from
+   art/greybox/map-column-duality/ by the hud-paint-in skill). Every window is placed in the painting's own pixels
+   (300 x 864) as shares of the column, and its type is sized against the column's height (cqh), so the content stays
+   in its windows at any size. */
+#mapcolumn {
+  position: fixed; right: 0; top: 0; height: 100vh; aspect-ratio: 300 / 864; container-type: size;
+  background: var(--ui-map-column) 0 0 / 100% 100% no-repeat; box-shadow: -0.5rem 0 1.2rem rgba(0, 0, 0, 0.7);
 }
-#mapturn .movement { color: #cfe3d2; letter-spacing: 0.05em; }
-#mapmenu { position: fixed; left: 50%; top: 3.2rem; transform: translateX(-50%); min-width: 0; font-size: 0.8125rem; padding: 0.1875rem 0.875rem; }
-#mapsquad { position: fixed; left: 1rem; top: 3.75rem; width: 15rem; padding: 0.75rem 0.875rem; max-height: calc(100vh - 9.375rem); overflow-y: auto; }
-#mapsquad .title { font: 700 1.25rem var(--display); }
-#mapcity { position: fixed; right: 1rem; top: 3.75rem; width: 16.25rem; padding: 0.75rem 0.875rem; max-height: calc(100vh - 9.375rem); overflow-y: auto; }
-#mapcity .title { font: 700 1.25rem var(--display); margin-bottom: 0.375rem; }
-#mapbottom { position: fixed; left: 50%; bottom: 1.125rem; transform: translateX(-50%); text-align: center; }
-#maphint { font: 500 1.0625rem var(--display); text-shadow: 0 1px 0.1875rem #000; margin-bottom: 0.5rem; min-height: 1.375rem; }
+#mapcolumn button { margin: 0; padding: 0; background: none; border: 0; color: inherit; font: inherit; cursor: pointer; }
+#mapcolumn button:disabled { cursor: default; }
+#mapsquad, #mapcommands, #mapcity { position: absolute; inset: 0; pointer-events: none; }
+#mapsquad > *, #mapcommands > *, #mapcity > * { pointer-events: auto; }
+#mapturn, #mapmenu, #mapgold, #mapmana, #endturn, #mapsquad .plate, #mapsquad .pane, #mapcommands .socket, #mapcity .plate {
+  position: absolute; box-sizing: border-box;
+  left: calc(var(--x) * 100% / 300); top: calc(var(--y) * 100% / 864); width: calc(var(--w) * 100% / 300); height: calc(var(--h) * 100% / 864);
+}
+#mapcolumn .plate { display: flex; align-items: center; justify-content: center; gap: 0.8cqh; color: #241c15; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35); }
+#mapcolumn .plate .meta, #mapcolumn .income { font: 600 1.3cqh var(--text); color: #4a3c2c; }
+#mapturn { --x: 120; --y: 10; --w: 60; --h: 60; display: grid; place-items: center; border-radius: 50%; font: 700 3.4cqh var(--display); color: #241c15; cursor: help; }
+#mapturn.theirs { color: #7a2418; }
+#mapmenu { --x: 22; --y: 18; --w: 46; --h: 46; border-radius: 50%; display: grid; place-items: center; font: 700 1.4cqh var(--display); color: #e6dccb; text-shadow: 0 1px 0.2cqh #000; }
+#mapmenu::before { content: "Menu"; }
+#mapgold { --x: 18; --y: 100; --w: 124; --h: 30; font: 700 1.7cqh var(--display); }
+#mapgold .gold, #mapmana .mana { color: #241c15; }
+#mapmana { --x: 158; --y: 100; --w: 124; --h: 30; font: 700 1.7cqh var(--display); }
+#mapsquad .plate.name { --x: 18; --y: 160; --w: 264; --h: 36; font: 700 2.2cqh var(--display); }
+#mapsquad .plate.name .name { white-space: nowrap; }
+/* The squad's 3x3 grid in the window's panes; an empty pane is the window's own glass. */
+#mapsquad .pane { --w: 64; --h: 64; overflow: hidden; box-shadow: inset 0 0 0 0.15cqh rgba(0, 0, 0, 0.8); }
+#mapsquad .pane.r0 { --y: 268; } #mapsquad .pane.r1 { --y: 340; } #mapsquad .pane.r2 { --y: 412; }
+#mapsquad .pane.c0 { --x: 48; } #mapsquad .pane.c1 { --x: 120; } #mapsquad .pane.c2 { --x: 192; }
+#mapsquad .pane.empty { box-shadow: none; }
+#mapsquad .pane .art { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; background-size: cover; background-position: 50% 15%; display: grid; place-items: center; font: 700 2.4cqh var(--display); }
+#mapsquad .pane .crown { position: absolute; left: 0.4cqh; top: 0.2cqh; font-size: 1.6cqh; color: #e8c36c; text-shadow: 0 0 0.3cqh #000; }
+#mapsquad .pane-hp { position: absolute; left: 0; right: 0; bottom: 0; height: 0.6cqh; background: rgba(0, 0, 0, 0.75); }
+#mapsquad .pane-hp .fill { position: absolute; inset: 0 auto 0 0; background: var(--gb-health); }
+#mapsquad .pane.fallen .art { filter: grayscale(1) brightness(0.45); }
+#mapsquad .pane:not(.empty):hover { box-shadow: inset 0 0 0 0.25cqh #e8c36c; }
+/* The three sockets: the leader tree, what can be done here, the next warband. The glyph is the engraved emblem. */
+#mapcommands .socket { --w: 50; --h: 50; border-radius: 50%; display: grid; place-items: center; }
+#mapcommands .socket.tree { --x: 42; --y: 531; } #mapcommands .socket.here { --x: 125; --y: 515; } #mapcommands .socket.next { --x: 208; --y: 531; }
+#mapcommands .glyph { width: 62%; height: 62%; background: center / contain no-repeat; filter: brightness(0.3) sepia(0.4); }
+#mapcommands .glyph.icon-research { background-image: var(--ui-icon-research); }
+#mapcommands .glyph.icon-city { background-image: var(--ui-icon-city); }
+#mapcommands .glyph.icon-garrison { background-image: var(--ui-icon-garrison); }
+#mapcommands .socket:disabled .glyph { opacity: 0.25; }
+#mapcommands .socket:not(:disabled):hover, #mapmenu:hover { box-shadow: 0 0 0 0.3cqh rgba(232, 195, 108, 0.7); }
+#mapcommands .socket.ready { box-shadow: 0 0 0 0.35cqh #e8c36c, 0 0 2.2cqh 0.7cqh rgba(232, 195, 108, 0.8); }
+#mapcity .plate.city { --x: 18; --y: 618; --w: 264; --h: 40; font: 700 2.1cqh var(--display); }
+/* End turn is the gem the angel and the succubus hold; lit while it's your move. */
+#endturn { --x: 108; --y: 724; --w: 84; --h: 84; border-radius: 50%; display: grid; place-items: center; font: 700 1.7cqh var(--display); color: #2a1406; text-shadow: 0 0 0.5cqh rgba(255, 220, 150, 0.8); }
+#endturn::before { content: "End turn"; }
+#endturn:not(:disabled):hover { box-shadow: 0 0 2cqh 0.5cqh rgba(255, 190, 90, 0.6); }
+#endturn:disabled { background: radial-gradient(circle, rgba(10, 6, 4, 0.55), rgba(10, 6, 4, 0.75)); color: transparent; text-shadow: none; }
+#mapextra { position: fixed; right: calc(100vh * 300 / 864 + 0.75rem); bottom: 1rem; width: 15rem; max-height: 60vh; overflow-y: auto; padding: 0.625rem 0.75rem; }
+#mapextra .spell-bar:first-child { margin-top: 0; border-top: 0; padding-top: 0; }
+#mapextra .city-row { display: flex; align-items: center; gap: 0.5rem; padding: 0.375rem 0; border-bottom: 1px solid var(--rule); }
+#mapextra .city-row .city-text { flex: 1; }
+#mapextra .city-row .name { font: 700 0.9375rem var(--display); }
+#mapextra .city-row .note { color: var(--muted); font-size: 0.6875rem; }
+#mapbottom { position: fixed; left: calc((100vw - 100vh * 300 / 864) / 2); bottom: 1.125rem; transform: translateX(-50%); text-align: center; }
+#maphint { font: 500 1.0625rem var(--display); text-shadow: 0 1px 0.1875rem #000; min-height: 1.375rem; }
 
 /* The full screens in a game (the Capitol and every city, a leader, a structure; design/hud-kit.md): the battle's beam
    across the top is the header, with the name and the purse on marble plaques; the panels are tablets (the log's

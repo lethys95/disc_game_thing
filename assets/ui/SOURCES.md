@@ -27,3 +27,8 @@ removed outright.
 | `battle/plaque.webp` | a marble plate in an iron rim |
 | `capitol/rail.webp` | the Capitol's right column with its four niches (its angel masked out in CSS) |
 | `codex/parchment.webp` | a patch of painted page: the parchment of the codex, the rules slip and the explanations |
+
+## Painted in (the `hud-paint-in` skill)
+| File | Source |
+|---|---|
+| `map/column.webp` | `scripts/art/hud-paint-in.ts map-column-duality`, seed 2 (Krea-2 with its depth Control LoRA, from `art/greybox/map-column-duality/`), 576×1664, uncut: the map's right-hand column, its windows filled by the game's HTML |

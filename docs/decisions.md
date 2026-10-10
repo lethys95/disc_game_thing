@@ -349,3 +349,13 @@ non-commercial use only, so every asset made with it would have to be catalogued
 nearly as well at strength 0.55. What the test found is the method (a value greybox carries the layout, the prompt
 carries the materials), not a model. Krea-2 holds a layout as well as Qwen did once a depth greybox drives its depth
 Control LoRA alongside the value greybox (`hud-pieces.md`, "The route").
+
+## The map's interface is one painted column (2026-10-10, Claude, after the user's go-ahead)
+The four floating boxes (the turn bar, Menu, the warband panel, the city panel, End turn) became one column at the
+right edge, built like Disciples II's: the turn in a medallion, gold and mana on plates, the shown warband's name and
+its 3×3 squad in a stained-glass window (an empty place shows the glass), three sockets (the leader tree, what can be
+done where the warband stands, the next warband), the Capitol on a plate, and End turn as the gem the angel and the
+succubus hold. A member's full row (health, experience, record) moved under a held right-click on its pane. What the
+column has no window for (spells, other cities, a second meeting) sits in a small drawer beside it. Socket glyphs are
+the city tabs' emblems for now. The column fills the screen's height; its type is sized to the column (cqh), so the
+content keeps to its windows at every size.

@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-10 (the HUD: box out, then paint in, on Krea-2; the map column)
+**Updated:** 2026-10-10 (the map's interface is the painted column)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): the alpha is the three playable factions (Jilliath,
@@ -37,8 +37,8 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
   the `?fight` arena in Unreal looks nearly the same as three.js with today's assets (`disc_unreal/shots/`).
 
 ## Next
-0. **The HUD column into the game:** the painted map column behind the live HTML (the Menu socket back in, glyphs on
-   the round sockets), checked at 720p, 1080p, 1440p; then the battle screen the same way.
+0. **The HUD, screen by screen** (`hud-paint-in` skill): the map column is in the game (2026-10-10); next the battle
+   screen the same way, then the Capitol. The column's socket glyphs are borrowed emblems for now.
 1. **Finish Jilliath's concepts** with the user (the open nine), then portraits from the picks.
 2. **The other factions' missing units** (the alpha needs all three): Nexus melee tier 3, the Grove's mage line, and
    the rest on the board; then their concept art the same way.
