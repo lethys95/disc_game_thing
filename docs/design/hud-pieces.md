@@ -330,3 +330,25 @@ the top, a window for the selected warband (its leader's portrait, a name plate,
 for the map's commands, and at the bottom a round piece with End turn at its centre as the lit primary command. If
 anything is carved as a figure, it is low relief in the negative space around that round piece, in the column's own
 material. The motifs are disc's (#76), never the atlantes, the sunburst ribs or the green orb.
+
+## Box out, then paint in: the map column (2026-10-10)
+The user: "maybe trying to box things out like you suggested, and painting in like that, in the way you suggested,
+is the way forward." So: a value greybox of a right-hand map column for disc, drawn in CSS over the map (the reading
+above, translated: cap with the turn medallion, a resources row of two plates, the selected warband with the leader's
+arched well, a name plate, a facts plate and an arcade of five member wells, a fan of three round sockets, the city
+plate, and End turn as a lit round piece at the foot with two relief zones beside it). Its chrome is dark and low in
+contrast; only plates, sockets and End turn are light.
+
+**Krea-2, image to image from the greybox** (one ~110-word prompt naming the materials, two seeds, strengths 0.55,
+0.70, 0.85; `art/candidates/ui/column-probe/`):
+- At **0.55** the layout holds exactly, and the greybox becomes one painted iron column: tracery and vault ribs dark
+  on dark behind the sockets, cream marble plates, amber studs at every joint, arched wells, and two angels in dark
+  iron low relief holding up the amber disc of End turn. Laid over the map with the game's real text and portraits in
+  its windows, everything lands where it should. The closest the HUD has come to the references.
+- At **0.70** it is richer but drifts: plates merge, sockets appear, the member arcade turns into tracery, so the
+  content no longer fits. At **0.85** the layout is gone.
+- Lost even at 0.55: the small Menu socket in the cap (painted over as tracery). Missing by design: glyphs on the
+  round buttons, which the game draws.
+
+So the greybox, not the words, carries the layout, and the words only carry the materials: the opposite of night
+one, where the words had to carry everything.
