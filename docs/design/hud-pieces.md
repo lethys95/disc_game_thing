@@ -434,3 +434,19 @@ worn almost smooth, the same dark corroded iron as the frame, pitted and rusted 
 and no highlights"; the stat plates dark iron, a marble plate over the log. In all six seeds the figures became
 engraved line work in the iron, flat and matte; each end carries one marble band. The lesson for the skill: **how far
 a figure stands out of the depth greybox is how much of a statue it becomes.**
+
+**The user on the worn round (2026-10-10):** "The others were better probably." The problem is what surrounds the
+figures: in Disciples II's column "Very very few surfaces are just smooth and plain"; its art "is usually intricate
+and dense", and its figures are "within the artwork itself" (the column's carved face, its two small angels). The
+statues of Diablo II's and Path of Exile's health globes blend into the HUD: nothing about them says they belong
+anywhere else. Icewind Dale's glass ball of turning skulls, shown while the game is paused, shows "how creative you
+can be with something that truly is just a stopped clock". Health could be a globe, the classic of Diablo II and
+Path of Exile, not a red overlay on the unit (Disciples II's way: "I don't think we should do that"). And the answers:
+a unit's traits show when hovering an ability or right-clicking it; right-clicking a unit or its icon opens "a full
+sheet over all stats including ability"; the camera may simply move to clear the bar.
+
+**Dense, with a health globe** (`battle-bar-dense`): the bar's face drawn with a fine interlocking pattern in both
+greyboxes (low contrast in values, a shallow relief in depth) so no surface is plain; the acting unit's health a
+large glass globe at the left end, a robed figure carved in deep relief around it (back to round one's height); the
+round as a small glass sphere at the centre holding a flame, disc's own stopped clock (a flame, not Icewind Dale's
+skulls: candlelight is the interface's light); the card, sockets, log and scribe as before.
