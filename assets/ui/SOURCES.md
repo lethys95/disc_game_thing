@@ -30,5 +30,6 @@ removed outright.
 ## Painted in (the `hud-paint-in` skill)
 | File | Source |
 |---|---|
+| `battle/bar-wide.webp` | the bar widened for monitors wider than 16:9: `art/greybox/battle-bar-wide/compose.py` sets the bar between the extension's greyboxes, `scripts/art/hud-inpaint.ts battle-bar-wide` (strength 0.8, seed 2) paints only the two ends; `bar.webp` is its middle |
 | `battle/bar.webp`, `battle/bar-drained.webp` | `scripts/art/hud-paint-in.ts battle-bar-duel-dull-nostone`, seed 3, its figures' arms and hands repaired by `scripts/art/hud-inpaint.ts duel-hands-full` (strength 0.55, seed 3 left, seed 2 right, combined); the drained copy by `scripts/art/hud_drain.py`: the battle's bottom bar, its windows filled by the game's HTML |
 | `map/column.webp` | `scripts/art/hud-paint-in.ts map-column-duality`, seed 2 (Krea-2 with its depth Control LoRA, from `art/greybox/map-column-duality/`), its figures' hands repaired by `scripts/art/hud-inpaint.ts column-hands-2` (strength 0.55, seed 2) and its stray third arm painted out by `column-third-arm` (0.65, seed 4), 576×1664, uncut: the map's right-hand column, its windows filled by the game's HTML |

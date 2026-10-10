@@ -513,3 +513,10 @@ hand, not used). The fix was to remove, not repair: the arm's strip masked alone
 in front of the glass: no arm, no hand", without the depth map so it couldn't bring the arm back
 (`column-third-arm`, 0.65, seed 4, in the game). The lesson: count the limbs before repairing one; an extra limb is
 removed, not fixed.
+
+**Wider than 16:9** (the user: the black beyond the bar on a wide monitor; "what warcraft 3 does with theirs. There'd be
+an additional extended length of segments which is only visible on larger monitors [...] more of the gothic spire
+art", and "Inpainting if possible to not ruin what's there!"): an extension greybox for each end (two blind lancet
+arches with rosettes, a crocketed spire between, the knotwork face; `art/greybox/battle-bar-wide/`), the painted bar
+set between them on one wide canvas, and only the ends inpainted (`battle-bar-wide`, 0.8, seed 2): the bar itself is
+untouched. The painting is now 2.5:1; a 16:9 screen crops the extensions, 21:9 shows them whole.

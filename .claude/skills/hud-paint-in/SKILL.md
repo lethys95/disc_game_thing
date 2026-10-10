@@ -103,6 +103,12 @@ rim edge to edge"), or it shrinks. Separate repairs on one piece can be combined
 back as skin), and say the material outright ("no skin, no flesh") and the colour of anything it touches. Count each figure's limbs first: an extra one is
 painted out (masked alone, the prompt naming only what belongs behind it, no depth map so it can't come back).
 
+### Wider screens
+A bar painted at 16:9 leaves black on a wider monitor. Paint it wider instead (Warcraft III's way): greybox an
+ornament-only extension for each end, set the finished painting between them on one canvas, and inpaint only the ends
+(`art/greybox/battle-bar-wide/compose.py`, the `battle-bar-wide` repair). The game shows the wide painting behind the
+bar's parts; narrower screens crop the extensions.
+
 ## 5. Lay the real content over it
 Make a mock page: the game's screen as the backdrop (`pnpm tsx scripts/art/hud-backdrop.ts <out.png> "?map&seed=3"`
 renders a route at 1536×864 with its HTML interface hidden), the painted piece at its size, and the game's real text and portraits placed into the windows at the greybox coordinates. This is the test

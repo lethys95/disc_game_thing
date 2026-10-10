@@ -578,11 +578,16 @@ body.formulas .formula { display: inline; }
 
 /* The bar (assets/ui/battle/bar.webp, painted from art/greybox/battle-bar-duel-dull-nostone/ by the hud-paint-in
    skill; docs/design/hud-pieces.md, "The battle bar"). 88.89 by 11.57rem, the screen's width at 16:9 and the default
-   interface scale; every window inside it is placed in its own rem, measured on the painting. Beyond its ends, on a
-   wider screen, the band behind it continues dark. */
+   interface scale; every window inside it is placed in its own rem, measured on the painting. Beyond its ends, past
+   the painted extensions (21:9), the band behind it continues dark. */
 #battlebar {
   position: absolute; left: 50%; bottom: 0; width: 88.889rem; height: 11.574rem; transform: translateX(-50%);
-  background: var(--ui-battle-bar) 0 0 / 100% 100% no-repeat; box-shadow: 0 -0.35rem 1rem rgba(0, 0, 0, 0.7);
+}
+/* The painting, and beyond each end painted segments of tracery and spires that only a screen wider than 16:9 shows (Warcraft III's
+   way; the user, 2026-10-10): the same painting widened by inpainting its ends (assets/ui/battle/bar-wide.webp). */
+#battlebar::before {
+  content: ""; position: absolute; top: 0; bottom: 0; left: -18.72rem; right: -18.72rem; z-index: -1;
+  background: var(--ui-battle-bar-wide) 0 0 / 100% 100% no-repeat; box-shadow: 0 -0.35rem 1rem rgba(0, 0, 0, 0.7);
 }
 #battlehud { background: linear-gradient(to top, #0d0b0a 11.574rem, transparent 11.574rem); }
 #battlebar button { margin: 0; padding: 0; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; }
