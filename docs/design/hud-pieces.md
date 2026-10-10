@@ -389,3 +389,11 @@ run of all was Qwen-Image 2.1 "with our picks · seed 1", which can't be used (l
 at. The Krea runs have "too much lighting applied onto them". Squads are 3×3 grids, so the warband should show as a
 3×3 grid, not a leader and five; the units shouldn't be squeezed into arches, "rather maybe it's possible doing some
 stuff with stained glass around it" (Claude's options). And the angels should be adults.
+
+**The 3×3 squad, two ways** (`art/greybox/map-column-window/`, `map-column-lattice/`; `hud-paint-in.ts`): a lancet
+window (tracery glass in its head, a border of red and amber panes, nine squares below) and an iron lattice (a red
+glass frieze, amber roundels at the crossings). Prompt changes, one each: "in soft even light without glare" for the
+light, "two adult angels [...] tall robed figures with grown, solemn faces", the squad named as nine square panes. The
+light calmed, the angels are adults, and the Menu socket survives at its bigger size. The model filled the nine
+squares with stained glass rather than black: with portraits laid over them, an empty slot shows lit glass, which
+reads as meant. Both hold their layout in all four seeds; the lattice's thin facts strip became a riveted bar.
