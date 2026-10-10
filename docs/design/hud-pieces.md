@@ -289,3 +289,44 @@ call). So: (1) inpaint the HUD region of a greybox screenshot, scene kept, as th
 each piece from the chosen concept onto a plain ground and image-to-image it at moderate strength, regenerating it
 clean while it inherits the concept's light and stone; (3) the user cuts, CSS assembles, compared with the concept and
 the greybox. The page: the "Gothic elevations" artifact.
+
+## How the Disciples II map column is built (2026-10-10, from the user's screenshot)
+The user, with the right-hand column of Disciples II's map: "there are in fact two angels right there in the lower
+panel two, and it doesn't have to be huge or out of place. You can in fact bake them in that easily." The lesson is
+how it is built, not its motifs; disc's column takes the structure and none of the carving.
+
+**One object, full height.** It is a single column at the screen's right edge, about a fifth of the screen wide, cut
+by the top and bottom of the screen. Everything the map screen needs is inside it. Nothing floats over the map.
+
+**Stacked sections, joined.** Top to bottom: a cap with two round buttons; the minimap window (the tallest section,
+about a quarter of the column); a fan with three round buttons; a row of two windows, a square portrait well and a
+marble plaque; a thin marble name strip; the command wheel (the bottom third). Each section meets the next along a
+thin horizontal band, and every band ends in a small amber diamond stud at each corner. The studs are the column's one
+repeated warm colour, and they make the seams look deliberate.
+
+**Content and machine alternate.** Window (minimap), machine (fan of buttons), window (portrait and plaque), machine
+(the wheel). The eye gets rest between the clusters of buttons.
+
+**Hierarchy by value, not by size or colour.** The chrome is all one dark, low-contrast iron. The only light things are
+what the player reads or presses: the minimap's colours, the marble plaques, the ivory faces of the buttons that are
+available, the green orb at the wheel's centre and the amber studs. Squint and only those remain. That is why it reads
+although it is covered in ornament.
+
+**Ornament is texture, behind.** The ribbed fans radiating behind each cluster of buttons are dark on dark. They fill
+the space between functional parts and never compete with them. They are what reads gothic: vault ribs, a rose
+window's spokes.
+
+**The angels are relief in the negative space.** The two figures at the wheel are carved in the column's own dark
+material at the same low contrast, crouching left and right, their arms reaching up and over the wheel. The sockets
+sit in front of them and the column's edges crop them. They are seen second, after the buttons. They fill the gap
+around a round wheel inside a rectangular column. That is "baked in": same material, same value, behind the
+functional parts, cropped, doing a job (holding the wheel).
+
+**One button shape.** Every command is a round button in a deep socket. Available is an ivory face with a dark
+engraved glyph; unavailable is a dark slate face. A small inset button sits on the minimap's frame edge, half on it.
+
+**For disc's map, translated:** a right-hand column holding what now floats in four boxes: the turn and resources at
+the top, a window for the selected warband (its leader's portrait, a name plate, the members), a fan of round sockets
+for the map's commands, and at the bottom a round piece with End turn at its centre as the lit primary command. If
+anything is carved as a figure, it is low relief in the negative space around that round piece, in the column's own
+material. The motifs are disc's (#76), never the atlantes, the sunburst ribs or the green orb.
