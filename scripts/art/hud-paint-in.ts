@@ -35,6 +35,14 @@ const LAYOUTS: Readonly<Record<string, Layout>> = {
     depthStrength: 1,
     prompt: "A tall vertical game interface column seen straight on, painted as game interface art, in soft even light without glare, dull lighting. Blackened cast iron, old and worn, its sections joined by thin iron bands with a small faceted amber stud at each end. Every surface is densely worked: interlaced knotwork, scrolling ironwork, small rosettes and tracery cover all the iron between the parts, dark on dark, and no surface is left plain. Cream marble plates, blank. At the top a long marble plate and two small marble plates below it. In the middle, a two by two grid of four tall arched niches, each empty and dark, with a round ivory enamel boss inside each niche, blank; below them three long marble plates stacked. At the foot, a large round seal of deep red wax in a heavy ornate iron ring, held between two grown figures carved in deep relief in the same old dark iron, matte: on the left a kneeling hooded mason with a hammer at his belt, one hand on the ring, on the right a kneeling veiled abbess holding a large key, one hand on the ring. No text, no letters.",
   },
+  /** The Capitol column, round 2: the fact plates dark iron (six marble plates were too bright), the abbess's veil iron. */
+  "capitol-column-2": {
+    page: [300, 864],
+    size: [576, 1664],
+    denoise: 0.7,
+    depthStrength: 1,
+    prompt: "A tall vertical game interface column seen straight on, painted as game interface art, in soft even light without glare, dull lighting. Blackened cast iron, old and worn, its sections joined by thin iron bands with a small faceted amber stud at each end. Every surface is densely worked: interlaced knotwork, scrolling ironwork, small rosettes and tracery cover all the iron between the parts, dark on dark, and no surface is left plain. Cream marble plates, blank. At the top a long marble plate and two small marble plates below it. In the middle, a two by two grid of four tall arched niches, each empty and dark, with a round ivory enamel boss inside each niche, blank; below them three long dark iron plates stacked. At the foot, a large round seal of deep red wax in a heavy ornate iron ring, held between two grown figures carved in deep relief in the same old dark iron, matte: on the left a kneeling hooded mason with a hammer at his belt, one hand on the ring, on the right a kneeling abbess holding a large key, one hand on the ring, her veil and robes the same dark iron as the rest. No text, no letters.",
+  },
   /** The battle's bottom bar (hud-pieces.md, "The battle bar"): the card, the round and the sockets, the log. */
   "battle-bar": {
     page: [1536, 200],
