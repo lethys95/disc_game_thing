@@ -97,6 +97,19 @@ const REPAIRS: Readonly<Record<string, Repair>> = {
       "Game interface art in soft even light: the lower left of a large disc of deep orange amber glass, glowing softly from within, " +
       "set in a heavy round rim of old dark worn iron that curves around it. Only glass and the iron rim, nothing in front of the glass: no arm, no hand, no figure. No text, no letters.",
   },
+  /** The bar's extensions, seen only on monitors wider than 16:9 (the user, 2026-10-10: Warcraft III's way): only the two ends are painted; the bar between is kept. Source and depth from `art/greybox/battle-bar-wide/compose.py`. */
+  "battle-bar-wide": {
+    source: "art/candidates/ui/inpaint/battle-bar-wide-source/source.png",
+    page: [2183, 200],
+    boxes: [[0, 0, 328, 200], [1855, 0, 328, 200]],
+    denoise: [0.8, 0.95],
+    depth: { map: "art/candidates/ui/inpaint/battle-bar-wide-source/depth.png", strength: 1 },
+    prompt:
+      "A long horizontal game interface bar seen straight on, painted as game interface art, in soft even light without glare, dull lighting. " +
+      "Blackened cast iron, old and worn. Every surface is densely worked: interlaced knotwork, scrolling ironwork, small rosettes and tracery, dark on dark, no surface left plain. " +
+      "Two tall blind gothic lancet arches of dark iron tracery, each with two narrow lancets and a carved rosette in its head, and between them a slender gothic spire pinnacle with crockets climbing its edges. " +
+      "An upright iron band with a small faceted amber stud at each end. No figures, no glass, no plates. No text, no letters.",
+  },
 };
 
 const [name, ...rest] = process.argv.slice(2);
