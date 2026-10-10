@@ -79,5 +79,5 @@ before saying anything about the images. For the user, put a sheet in `shots/` (
   image by instruction and take extra reference images. For a layout drawn as a greybox they hold it exactly where
   Krea-2's image to image drifts above strength ~0.55. Edit-2511 wants its full 20 steps at cfg 4 (the Lightning LoRA
   speckles and glosses). Graph shapes: ComfyUI's templates `image_qwen_image_2_1_image_edit.json` and
-  `image_qwen_image_edit_2511.json`; the column probe's scripts are recorded in `docs/design/hud-pieces.md`.
+  `image_qwen_image_edit_2511.json`. No committed generator wraps them yet; the column probe ran from scratch scripts.
 
