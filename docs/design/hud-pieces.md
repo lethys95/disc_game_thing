@@ -501,3 +501,9 @@ stuff"): it was; the level was a flat disc drawn over the whole globe, figure an
 painting (`scripts/art/hud_drain.py`: red, saturated pixels darkened; iron and figures unsaturated, unchanged) is shown
 above the level, clipped to the globe. Over a figure the two images are identical, so the level passes behind its
 hands. The number sits in open glass below them.
+
+**The map column's hands** (the user: the column "actually has messed up hands too at the orb"): the first repair, one
+box over all four hands, also caught the succubus's face (it came out as pale skin) and brightened the amber; the
+second, one small box per hand and a prompt that keeps everything iron ("no skin, no flesh") and the glass "deep
+orange amber", changed only the hands (`column-hands-2`, strength 0.55, seed 2, in the game). The lesson for the skill:
+a box per broken part, never one box over a face.

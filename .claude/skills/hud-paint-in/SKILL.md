@@ -99,7 +99,8 @@ When a seed holds the layout but one part is broken (hands, a merged plate), rep
 `pnpm tsx scripts/art/hud-inpaint.ts <repair>` (a repair names the source, boxes in page units, strengths and a
 prompt for that part only). Mask only the broken part, not its frame; hold the repaint to the piece's depth greybox
 (`depth` in the repair) so rims and edges survive; and name what must stay the same size ("a sphere that fills its
-rim edge to edge"), or it shrinks. Separate repairs on one piece can be combined.
+rim edge to edge"), or it shrinks. Separate repairs on one piece can be combined. Use one small box per broken part: a box that also covers a face repaints the face (a relief's iron came
+back as skin), and say the material outright ("no skin, no flesh") and the colour of anything it touches.
 
 ## 5. Lay the real content over it
 Make a mock page: the game's screen as the backdrop (`pnpm tsx scripts/art/hud-backdrop.ts <out.png> "?map&seed=3"`
