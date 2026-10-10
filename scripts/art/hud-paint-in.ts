@@ -15,7 +15,18 @@ interface Layout {
   readonly depthStrength: number;
 }
 
+/** The 3x3 squad columns (the user, 2026-10-10: squads are 3x3 grids; "too much lighting"; adult angels). */
 const LAYOUTS: Readonly<Record<string, Layout>> = {
+  "map-column-window": {
+    denoise: 0.7,
+    depthStrength: 1,
+    prompt: "A tall vertical game interface column seen straight on, painted as game interface art, in soft even light without glare. Blackened cast iron worn bright on its raised edges, its sections joined by thin iron bands with a small faceted amber stud at each end. Cream marble plates, blank. Round sockets with ivory enamel faces, blank. In the middle, a gothic lancet window of lead and stained glass in deep red and amber: tracery glass in its pointed head, and below it a three by three grid of square panes, each empty and black. Behind the sockets, low gothic tracery in the same dark iron. At the foot, a large round disc of lit amber glass held up by two adult angels carved in low relief in the dark iron, tall robed figures with grown, solemn faces, their wings raised around it. No text, no letters.",
+  },
+  "map-column-lattice": {
+    denoise: 0.7,
+    depthStrength: 1,
+    prompt: "A tall vertical game interface column seen straight on, painted as game interface art, in soft even light without glare. Blackened cast iron worn bright on its raised edges, its sections joined by thin iron bands with a small faceted amber stud at each end. Cream marble plates, blank. Round sockets with ivory enamel faces, blank. In the middle, a square iron lattice framed by a band of deep red stained glass: a three by three grid of square panes, each empty and black, with a small amber glass roundel where the bars cross. Behind the sockets, low gothic tracery in the same dark iron. At the foot, a large round disc of lit amber glass held up by two adult angels carved in low relief in the dark iron, tall robed figures with grown, solemn faces, their wings raised around it. No text, no letters.",
+  },
   "map-column": {
     denoise: 0.7,
     depthStrength: 1,
