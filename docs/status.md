@@ -38,7 +38,8 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
   the `?fight` arena in Unreal looks nearly the same as three.js with today's assets (`disc_unreal/shots/`).
 
 ## Next
-0. **The HUD pieces, one by one** (Claude's, the user reads the prompts and does the cuts): `design/hud-pieces.md`.
+0. **The HUD pieces, one by one** (Claude's; the user reads the prompts and does the cuts): `design/hud-pieces.md`, prompts in
+   `scripts/art/hud-pieces.ts`, candidates on `shots/hud-pieces.html`; the first test is four pieces.
 1. **Finish Jilliath's concepts** with the user (the open nine), then portraits from the picks.
 2. **The other factions' missing units** (the alpha needs all three): Nexus melee tier 3, the Grove's mage line, and
    the rest on the board; then their concept art the same way.
