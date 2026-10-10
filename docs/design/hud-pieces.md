@@ -419,3 +419,9 @@ up to seven ability sockets below, the log as an inset window at the right with 
 are new, not the map's angel and succubus (repeat the structure, never the carving): at the left end a herald
 presenting the unit's portrait, at the right end a scribe writing the log with a quill. The turn order along the top
 is its own piece, later.
+
+**The battle bar, first round** (6 seeds, `shots/battle-probe.html`): the layout holds in seeds 1, 2 and 6; in 3, 4
+and 5 one ability socket turned into a marble plate. The chrome came out as tracery in blackened iron with amber studs
+at the joints, the plates cream marble, the light calm. The herald and the scribe are small reliefs at the ends,
+hooded and grown, the herald's hand raised toward the portrait, the scribe bent over the log with a quill. Laid over
+the battle with a Seraph's card, six abilities and the log, everything lands in its window and reads.
