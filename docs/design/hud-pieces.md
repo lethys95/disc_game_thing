@@ -383,3 +383,9 @@ Claude read both nodes' code (torch and ComfyUI internals only, no network or sh
 The method is now a generator: `scripts/art/hud-paint-in.ts <layout>`, with each layout's two greyboxes in
 `art/greybox/<layout>/` (`values.html` and `depth.html` as sources; `values.png` and `depth.png` cropped to the column
 and scaled to the paint size, 576×1664 for the map column). The graph is `paintIn` in `scripts/art/comfy.ts`.
+
+**The user's read of the column trial (2026-10-10):** "A lot better [...] we might get somewhere with this." The best
+run of all was Qwen-Image 2.1 "with our picks · seed 1", which can't be used (licence), so it is the look to aim Krea
+at. The Krea runs have "too much lighting applied onto them". Squads are 3×3 grids, so the warband should show as a
+3×3 grid, not a leader and five; the units shouldn't be squeezed into arches, "rather maybe it's possible doing some
+stuff with stained glass around it" (Claude's options). And the angels should be adults.
