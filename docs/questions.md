@@ -17,6 +17,7 @@ Kept short: only what is the user's to decide, most blocking first. Answer inlin
 ## Look and sound
 4. **The map's look:** "actual grass", and which way terrain goes (`design/map-look.md`). Reference images or games whose map look you like would help most.
 5. **Music:** the placeholder tracks are ACE-Step takes; you mentioned Suno for final AI music. Direction per faction, or references?
+14. **HUD pieces: photographic or painted?** Four test pieces, each made both ways (`shots/hud-pieces.html`, rounds 2 and 3). As is they're closer to photographs (aged marble, a real bronze bell); with "Painted as game interface art." they're more stylised (crackled marble, rust-brown iron). Your pick sets the line for every piece; the other prompts are on the same page to read before they're generated (`design/hud-pieces.md`).
 
 ## Access
 9. **Hugging Face access for TRELLIS.2** (the better mesh generator; TRELLIS v1 works meanwhile): request access at https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m, then run `! hf auth login` here. Only if you want it.

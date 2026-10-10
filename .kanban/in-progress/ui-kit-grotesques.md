@@ -163,3 +163,7 @@
   prompts we used before. You don't even need the angels". Done the same day: the map back to its pre-kit HUD, the
   battle's monument and log block and the title's stele replaced by plain panels, the Capitol's angel masked, the
   codex a flat book, the paint script deleted. Next: `docs/design/hud-pieces.md`, a short prompt per piece.
+- **Pieces, one by one (2026-10-10):** `docs/design/hud-pieces.md`, `scripts/art/hud-pieces.ts`, `shots/hud-pieces.html`.
+  Test 1 (plate, parchment, seal, bell): colour and clean edges, but studio-photo pristine. Round 2 added a phrase of
+  finish and of ornament to each, made both plain and "painted": both read as game interface. Waiting on the user:
+  photographic or painted (questions #14), and a read of the other prompts; then the rest, and the user's cuts.
