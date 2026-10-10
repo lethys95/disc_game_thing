@@ -41,6 +41,17 @@ const REPAIRS: Readonly<Record<string, Repair>> = {
       "Game interface art, a dark iron bar in soft even light. At the left end, carved in deep relief in old worn blackened iron, a grown veiled woman in long robes with a folded feathered wing, kneeling on a ledge, both hands laid flat and gently on a large sphere of deep red glass, her arms and hands well formed, each hand with five fingers. " +
       "At the right end, mirroring her, carved the same way, a grown hooded figure with small curved horns and a folded bat wing, kneeling, both hands laid flat on another sphere of deep red glass, arms and hands well formed. No text, no letters.",
   },
+  /** The held repair, the sphere told to fill its rim (it shrank inside it). */
+  "duel-hands-full": {
+    source: "art/candidates/ui/paint-in/battle-bar-duel-dull-nostone/battle-bar-duel-dull-nostone-3.png",
+    page: [1536, 200],
+    boxes: [[50, 25, 115, 115], [1371, 25, 115, 115]],
+    denoise: [0.55, 0.7],
+    depth: { map: "art/greybox/battle-bar-duel-dull-nostone/depth.png", strength: 1 },
+    prompt:
+      "Game interface art, a dark iron bar in soft even light. At the left end, carved in deep relief in old worn blackened iron, a grown veiled woman in long robes with a folded feathered wing, kneeling on a ledge, both hands laid flat and gently on a large sphere of deep red glass that fills its round iron rim edge to edge, her arms and hands well formed, each hand with five fingers. " +
+      "At the right end, mirroring her, carved the same way, a grown hooded figure with small curved horns and a folded bat wing, kneeling, both hands laid flat on another sphere of deep red glass that fills its rim edge to edge, arms and hands well formed. No text, no letters.",
+  },
 };
 
 const [name, ...rest] = process.argv.slice(2);
