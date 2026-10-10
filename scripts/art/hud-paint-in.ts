@@ -27,6 +27,14 @@ interface Layout {
 
 /** The 3x3 squad columns (the user, 2026-10-10: squads are 3x3 grids; "too much lighting"; adult angels). */
 const LAYOUTS: Readonly<Record<string, Layout>> = {
+  /** The battle's bottom bar (hud-pieces.md, "The battle bar"): the card, the round and the sockets, the log. */
+  "battle-bar": {
+    page: [1536, 200],
+    size: [2432, 320],
+    denoise: 0.7,
+    depthStrength: 1,
+    prompt: "A long horizontal game interface bar seen straight on, painted as game interface art, in soft even light without glare. Blackened cast iron worn bright on its raised edges, its three sections joined by upright iron bands with a small faceted amber stud at each end. Cream marble plates, blank. Round sockets with ivory enamel faces, blank. On the left, a large arched portrait well, empty and black, beside a long marble name plate, a narrow dark recessed channel, a row of four small marble plates and a dark recessed strip. In the middle, a round marble medallion between two small round ivory sockets, and below them a row of seven square sockets, each empty and black. On the right, a wide dark inset window, empty, and a narrow upright slot. Low gothic tracery in the same dark iron behind and between them. At the left end, carved in low relief in the dark iron, a grown hooded herald in long robes, one hand raised to present the arched portrait well; at the right end, a grown hooded scribe in long robes, bent toward the dark window, writing with a long quill. No text, no letters.",
+  },
   "map-column-window": {
     page: [300, 864],
     size: [576, 1664],

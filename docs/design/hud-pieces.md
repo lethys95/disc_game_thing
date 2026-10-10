@@ -404,3 +404,18 @@ this gem [...] one of them be an angel, and the other a succubus so it seems lik
 in on the left, a reclining one over the top and down the right) and the poses named in the prompt. In all six seeds
 the angel kneels with her cheek and hands against the gem and the succubus, horned, bat-winged and tailed, leans over
 its top reaching down onto the glass; the layout above holds.
+
+## The battle bar (2026-10-10, the `hud-paint-in` skill)
+**The reference's structure** (Disciples II's battle bottom bar, `reference_material/elements.md`): one bar along the
+bottom edge; the unit's portrait in a heavy ring at an end, its name plaque flowing toward the middle; the commands
+clustered at the centre under a tracery arch; the chrome dark, the plaques and available buttons light, amber studs at
+the seams. From `hud-references.md`'s battle ideas: the bar's two ends as two different figures with jobs (Total War),
+the log as a few lines inset in the bar (Heroes III, Disciples II), the round counter as an object.
+
+**Translated for disc** (none of the reference's ringed portraits at both ends, filigree or button cross): the acting
+unit's card at the left (an arched portrait well, the name plate, a health channel, four stat plates, a strip for
+effects and traits), the round as a medallion at the centre with Resolve now and Auto-battle beside it and the row of
+up to seven ability sockets below, the log as an inset window at the right with the tarot slot beside it. The figures
+are new, not the map's angel and succubus (repeat the structure, never the carving): at the left end a herald
+presenting the unit's portrait, at the right end a scribe writing the log with a quill. The turn order along the top
+is its own piece, later.
