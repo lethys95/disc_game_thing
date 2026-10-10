@@ -52,6 +52,18 @@ const REPAIRS: Readonly<Record<string, Repair>> = {
       "Game interface art, a dark iron bar in soft even light. At the left end, carved in deep relief in old worn blackened iron, a grown veiled woman in long robes with a folded feathered wing, kneeling on a ledge, both hands laid flat and gently on a large sphere of deep red glass that fills its round iron rim edge to edge, her arms and hands well formed, each hand with five fingers. " +
       "At the right end, mirroring her, carved the same way, a grown hooded figure with small curved horns and a folded bat wing, kneeling, both hands laid flat on another sphere of deep red glass that fills its rim edge to edge, arms and hands well formed. No text, no letters.",
   },
+  /** The map column's foot: the angel's and the succubus's hands around the End turn gem (the user, 2026-10-10). */
+  "column-hands": {
+    source: "art/candidates/ui/paint-in/map-column-duality/map-column-duality-2.png",
+    page: [300, 864],
+    boxes: [[92, 700, 118, 122]],
+    denoise: [0.55, 0.7],
+    depth: { map: "art/greybox/map-column-duality/depth.png", strength: 1 },
+    prompt:
+      "Game interface art in soft even light: carved in deep relief in old dark worn iron, a grown angel with feathered wings kneeling at the left and a grown succubus with bat wings and small curved horns at the right, " +
+      "both resting their hands gently on a large round disc of lit amber glass that fills its round iron rim edge to edge, the angel's cheek and both hands against the glass, the succubus's arm laid over its top, " +
+      "their arms and hands well formed, each hand with five fingers. No text, no letters.",
+  },
 };
 
 const [name, ...rest] = process.argv.slice(2);
