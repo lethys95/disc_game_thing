@@ -38,6 +38,7 @@ pnpm board        # the board (.kanban/) as shots/board.html
 pnpm sizes [route…]   # main screens at 720p, 1080p, 1440p (any UI change: sizes in rem, never px)
 ```
 Image generation (Krea-2 in the local ComfyUI, on the second GPU) always runs in a background subagent with exact parameters: the `krea-images` skill. Unit concept art follows the `unit-concepts` skill (identity → concept → portrait; T-pose turnarounds in rounds, then `scripts/art/portraits.ts`).
+HUD and interface art that holds a layout follows the `hud-paint-in` skill (a value and a depth greybox, painted by Krea-2 with its depth Control LoRA, judged with the game's real content laid over it).
 Package manager is pnpm; build scripts need approval (`pnpm approve-builds <pkg>`).
 
 ## TypeScript style
