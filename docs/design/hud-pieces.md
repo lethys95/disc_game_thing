@@ -397,3 +397,10 @@ light, "two adult angels [...] tall robed figures with grown, solemn faces", the
 light calmed, the angels are adults, and the Menu socket survives at its bigger size. The model filled the nine
 squares with stained glass rather than black: with portraits laid over them, an empty slot shows lit glass, which
 reads as meant. Both hold their layout in all four seeds; the lattice's thin facts strip became a riveted bar.
+
+**The angel and the succubus** (the user: the angels were "the most boring piece"; "maybe make them fawn or lay on
+this gem [...] one of them be an angel, and the other a succubus so it seems like there's some duality to it"):
+`art/greybox/map-column-duality/`, the window column with the foot's relief shapes redrawn (a kneeling mass leaning
+in on the left, a reclining one over the top and down the right) and the poses named in the prompt. In all six seeds
+the angel kneels with her cheek and hands against the gem and the succubus, horned, bat-winged and tailed, leans over
+its top reaching down onto the glass; the layout above holds.
