@@ -76,6 +76,17 @@ const REPAIRS: Readonly<Record<string, Repair>> = {
       "The iron hands of a kneeling angel and a kneeling succubus resting gently on a large disc of deep orange amber glass in a round iron rim, " +
       "each hand well formed with five slender fingers laid flat on the glass. No text, no letters.",
   },
+  /** The angel's near hand at her chest, which the per-hand boxes missed (the user, 2026-10-10: "still broken"). */
+  "column-angel-hand": {
+    source: "art/candidates/ui/inpaint/column-hands-2/column-hands-2-d55-2.png",
+    page: [300, 864],
+    boxes: [[78, 724, 36, 48]],
+    denoise: [0.55, 0.7],
+    depth: { map: "art/greybox/map-column-duality/depth.png", strength: 1 },
+    prompt:
+      "Game interface art in soft even light: a dark iron relief, everything carved in the same old dark worn iron, no skin, no flesh. " +
+      "A kneeling angel's hand laid flat against her breast beside a disc of amber glass, a well formed hand with four slender fingers held together and a thumb, the folds of her iron sleeve at the wrist. No text, no letters.",
+  },
 };
 
 const [name, ...rest] = process.argv.slice(2);
