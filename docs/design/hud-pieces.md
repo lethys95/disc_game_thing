@@ -469,3 +469,14 @@ the scribe, quill in his belt), an arch beside each (the portrait; the held taro
 panels (the stats; the log); a carved rosette in place of the candle. Seed 5 keeps every part. The portrait is fitted
 to the arch's inner opening as measured on the painting (x 231–305, y 20–178, a 37 px round head), so the lip, the
 columns and the sill frame it.
+
+**The user on the mirrored round:** the second globe gave them the idea: show the hovered enemy's "health, frame,
+stats, etc on hover not unlike how we're doing it for the unit we're currently using on the left", and move the log,
+either expandable above the bar ("maybe even just a click and it opens a modal") or behind buttons that switch the
+right side between the enemy and the log; "right now it's trying to do two things at once and failing at both".
+**The duel** (`battle-bar-duel`): Claude took the first: the log opens on demand from a socket, as a sheet over the
+field. The bar is now fully mirrored: the acting unit at the left end, the unit under the pointer at the right, each
+with a red health globe held by a kneeling figure (the veiled winged woman for ours; a horned counterpart with a bat
+wing for theirs, an echo of the map's duality), an arch for the portrait, the name plate, four stat plates and the
+effects panel. The middle holds what belongs to no unit: the round on a marble medallion, Resolve now and Auto-battle
+on its left, the held tarot cards and the log on its right, the seven ability sockets below.
