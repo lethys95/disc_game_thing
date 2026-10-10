@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-10 (the HUD: a plan from how HUDs are made; every piece in painted rounds)
+**Updated:** 2026-10-10 (the HUD: box out, then paint in, on Krea-2; the map column)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): the alpha is the three playable factions (Jilliath,
@@ -24,12 +24,12 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
   13 picked with portraits installed (`roster.md`); deferred by the user until they have an overview: the Guardian,
   Empyreal, Torturer, Archon, Cleric, Fanatic and the fire casters. Lessons in the `unit-concepts` skill.
 - **Armor is a percentage with diminishing returns** (the user; #75, `testing/percent-armor`).
-- **The HUD kit, reset and replanned (2026-10-10)** (`in-progress/ui-kit-grotesques`). Night one's one-painting
-  screens are out (too many angels and tombstones, grey, content at an angle, less readable). The plan
-  (`design/hud-pieces.md`): how HUDs are made elsewhere, a style guide (material means role), every piece from its own
-  short painted prompt (`scripts/art/hud-pieces.ts`, `shots/hud-pieces.html` with a kit sheet of picks), the user doing
-  the cuts, the battle assembled first as the visual target. The battle's card and log are parchment on a roller in
-  stand-in values until the cuts come. Elements of the references: `reference_material/elements.md`.
+- **The HUD: box out, then paint in (2026-10-10)** (`in-progress/ui-kit-grotesques`; `design/hud-pieces.md`). After
+  the one-painting reset and a round of single pieces, the method that works: draw a layout as two greyboxes (values
+  and depth, `art/greybox/<layout>/`) and let Krea-2 paint them with its depth Control LoRA
+  (`scripts/art/hud-paint-in.ts`). The map's right-hand column, built the way Disciples II's is (one object, joined
+  sections, light only where you read or press, two small angels in relief holding End turn), holds its layout with
+  the game's real content in its windows: `shots/column-probe.html`. Qwen models tried and dropped (licence, quality).
 - **The Grove's Water is now Wellspring.**
 - **Unreal 5 as a parallel track** (the user: "UE is the king of 3d"; `ongoing/unreal-port`), in its own repo,
   `../disc_unreal`. three.js keeps the pace; Unreal follows as a view, with this repo's TypeScript rules as the only
@@ -37,9 +37,8 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
   the `?fight` arena in Unreal looks nearly the same as three.js with today's assets (`disc_unreal/shots/`).
 
 ## Next
-0. **The HUD pieces:** all 21 picked (kit sheet on `shots/hud-pieces.html`). Waiting on the user's cuts into
-   `art/cut/ui/<piece>.png`, battle pieces first (order in `design/hud-pieces.md`); then `hud-pieces.ts install` and
-   the battle assembled from them as the visual target.
+0. **The HUD column into the game:** the painted map column behind the live HTML (the Menu socket back in, glyphs on
+   the round sockets), checked at 720p, 1080p, 1440p; then the battle screen the same way.
 1. **Finish Jilliath's concepts** with the user (the open nine), then portraits from the picks.
 2. **The other factions' missing units** (the alpha needs all three): Nexus melee tier 3, the Grove's mage line, and
    the rest on the board; then their concept art the same way.

@@ -185,4 +185,10 @@
   including the small angel corbel. Waiting on the user's cuts, in the order in `hud-pieces.md` (the battle's first:
   parchment, roller, plate, portrait arch, socket, rail, candle); `hud-pieces.ts install` puts them in the game, then
   the battle is assembled from them as the visual target.
+- **Box out, then paint in (2026-10-10):** the user, with Disciples II's map column: its two angels are "baked in", and
+  "maybe trying to box things out like you suggested, and painting in [...] is the way forward." The column's
+  structure read and translated (`hud-pieces.md`); a value greybox and a depth greybox of disc's own map column; Krea-2
+  with the depth Control LoRA paints it with the layout held and the game's content fitting its windows
+  (`shots/column-probe.html`, `scripts/art/hud-paint-in.ts`). Qwen-Image 2.1 and Edit-2511 tried and dropped by the
+  user (licence debt; quality). Next: the column in the game, then the battle screen.
 
