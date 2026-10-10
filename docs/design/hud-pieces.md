@@ -352,3 +352,12 @@ contrast; only plates, sockets and End turn are light.
 
 So the greybox, not the words, carries the layout, and the words only carry the materials: the opposite of night
 one, where the words had to carry everything.
+
+**Qwen-Image 2.1, editing the greybox** (downloaded 2026-10-10 with the user's go-ahead; 7B, the turbo weights at
+8 steps, about ten seconds an image; the greybox as the image to edit and an instruction naming the materials):
+the layout holds exactly, every socket included, at a richer finish than Krea's: one blackened iron column, tracery
+dark on dark, cream marble plates, amber studs at the joints, and the two angels as small reliefs holding the End
+turn disc. Given our own plate and frame picks as reference images, it takes on their rust and crackled marble: a
+kit held together by references, as the guides describe. On the map with real content in its windows it reads as one
+structure. Its licence is non-commercial only (question #14); Qwen-Image-Edit-2511 (Apache 2.0) gets the same test.
+The page: `shots/column-probe.html`.
