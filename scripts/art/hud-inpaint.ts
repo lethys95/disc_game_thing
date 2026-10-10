@@ -64,6 +64,18 @@ const REPAIRS: Readonly<Record<string, Repair>> = {
       "both resting their hands gently on a large round disc of lit amber glass that fills its round iron rim edge to edge, the angel's cheek and both hands against the glass, the succubus's arm laid over its top, " +
       "their arms and hands well formed, each hand with five fingers. No text, no letters.",
   },
+  /** The same, one small box per hand, the faces and the glass outside them; everything kept iron. */
+  "column-hands-2": {
+    source: "art/candidates/ui/paint-in/map-column-duality/map-column-duality-2.png",
+    page: [300, 864],
+    boxes: [[98, 722, 30, 40], [108, 782, 40, 36], [138, 712, 34, 26], [162, 778, 46, 40]],
+    denoise: [0.55, 0.7],
+    depth: { map: "art/greybox/map-column-duality/depth.png", strength: 1 },
+    prompt:
+      "Game interface art in soft even light: a dark iron relief, everything carved in the same old dark worn iron, no skin, no flesh. " +
+      "The iron hands of a kneeling angel and a kneeling succubus resting gently on a large disc of deep orange amber glass in a round iron rim, " +
+      "each hand well formed with five slender fingers laid flat on the glass. No text, no letters.",
+  },
 };
 
 const [name, ...rest] = process.argv.slice(2);
