@@ -520,3 +520,14 @@ art", and "Inpainting if possible to not ruin what's there!"): an extension grey
 arches with rosettes, a crocketed spire between, the knotwork face; `art/greybox/battle-bar-wide/`), the painted bar
 set between them on one wide canvas, and only the ends inpainted (`battle-bar-wide`, 0.8, seed 2): the bar itself is
 untouched. The painting is now 2.5:1; a 16:9 screen crops the extensions, 21:9 shows them whole.
+
+## The Capitol (2026-10-10, the `hud-paint-in` skill)
+The user: "begin the capitol". Earlier: the header beam "doesn't need to be in every screen". **The reference's
+structure** (Disciples II's capital, `reference_material/disciples/notes.md`): the city painting fills the screen with
+no frame of its own and runs into the same iron column as the map, its compartments swapped for the city's, "so the
+player never has to relearn the layout". **For disc** (`capitol-column`): the map column's sibling at the right edge,
+no beam: the city's name plate and the purse; the four tabs (city, garrison, research, spells) as a two by two grid of
+tall arched niches, each with a round boss for its emblem, the open one lit; three fact plates; Back to the map at the
+foot as a red wax seal in an iron ring. Its figures are new (repeat the structure, never the carving): a kneeling
+hooded mason with a hammer at his belt and a veiled abbess with a key, each with a hand on the ring. The tabs' content
+panels (garrison, research) are the next piece.
