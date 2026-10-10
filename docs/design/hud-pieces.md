@@ -425,3 +425,12 @@ and 5 one ability socket turned into a marble plate. The chrome came out as trac
 at the joints, the plates cream marble, the light calm. The herald and the scribe are small reliefs at the ends,
 hooded and grown, the herald's hand raised toward the portrait, the scribe bent over the log with a quill. Laid over
 the battle with a Seraph's card, six abilities and the log, everything lands in its window and reads.
+
+**Worn and engraved** (the user: an imbalance in the lighting, "white on the left side, while it's dark on the right";
+the monks "don't look like they're engraved into the metal frame itself [...] too perfect. They look like smoothed
+stone [...] old worn metal engraved into the metal without highlights"): `battle-bar-worn`. The figures drawn barely
+above the face in the depth greybox and in the face's own value, the prompt asking for shallow engraving, "old and
+worn almost smooth, the same dark corroded iron as the frame, pitted and rusted at the edges, matte, with no polish
+and no highlights"; the stat plates dark iron, a marble plate over the log. In all six seeds the figures became
+engraved line work in the iron, flat and matte; each end carries one marble band. The lesson for the skill: **how far
+a figure stands out of the depth greybox is how much of a statue it becomes.**

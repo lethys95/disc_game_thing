@@ -53,6 +53,11 @@ Rules learned:
   it survives.
 - **Leave content areas blank.** Text, portraits and numbers are the game's HTML, laid over the paint. A wanted glyph
   or face in the greybox comes back garbled.
+- **A figure's height in the depth greybox decides what it becomes.** Raised well above the face it is sculpted as a
+  smooth statue; barely above it, in the face's own value, it is engraved into the metal (the battle bar's herald and
+  scribe). Ask for "old and worn [...] matte, with no polish and no highlights" to keep it from shining.
+- **Balance the light across the piece.** Marble plates are the brightest things in it; a section with several and
+  another with none reads lopsided. Give each end its share, or make some plates dark iron with light inlay.
 - **Both greyboxes are needed.** Values alone drift above strength ~0.55; depth alone confuses parts at the same
   height (name plates became wells, small niches became tracery).
 
