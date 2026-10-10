@@ -495,3 +495,9 @@ little; "no stone" changed almost nothing. Inpainting (`scripts/art/hud-inpaint.
 tries: the whole corner (the hands improved, the globes lost their rims); only the arms and hands held to the bar's
 depth greybox (`depthInpaint`; rims kept, spheres shrank); the same with the sphere told to fill its rim (both hands
 on the glass, arms that read). The best left and right repairs combine, being separate regions.
+
+**The globes drain behind the figures** (the user: the level "still cut off [...] this has to be some layering
+stuff"): it was; the level was a flat disc drawn over the whole globe, figure and all. Now a drained copy of the
+painting (`scripts/art/hud_drain.py`: red, saturated pixels darkened; iron and figures unsaturated, unchanged) is shown
+above the level, clipped to the globe. Over a figure the two images are identical, so the level passes behind its
+hands. The number sits in open glass below them.

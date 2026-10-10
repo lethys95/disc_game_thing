@@ -110,6 +110,11 @@ Fit content to the **painted** openings, not the greybox's: the paint moves edge
 have an inner lip. Measure each window on the painting (from its pixels where the edge is light against dark, by eye
 on a fine grid where it isn't) and clip the content to the inner opening, so the lip frames it.
 
+**Never draw a live value over a figure.** A health level or any fill drawn as a flat shape over a painted globe cuts
+the figure holding it. Change only what the value lives in: a copy of the painting with only that part altered (the
+drained glass, `scripts/art/hud_drain.py`), clipped to the level, so everything in front stays whole. Zoom into every
+live part with its overlay on before calling a mock done.
+
 ## 6. Show it, record it
 - A page in `shots/` with the greyboxes, every seed, the mocks and the prompt as sent; link it over Tailscale.
 - `docs/design/hud-pieces.md`: what changed and what it showed, with the user's words when they react.
