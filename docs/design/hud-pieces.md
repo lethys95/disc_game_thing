@@ -531,3 +531,10 @@ tall arched niches, each with a round boss for its emblem, the open one lit; thr
 foot as a red wax seal in an iron ring. Its figures are new (repeat the structure, never the carving): a kneeling
 hooded mason with a hammer at his belt and a veiled abbess with a key, each with a hand on the ring. The tabs' content
 panels (garrison, research) are the next piece.
+
+**The Capitol column, in the game.** Round 1 held the layout in all six seeds, but six marble plates made the column
+bright from top to bottom and the abbess's veil came out pale. Round 2 (`capitol-column-2`): the three fact plates
+dark iron with light lettering, her veil and robes named iron. Seed 1 is in the game: the mason with his hammer raised
+and a hand on the ring, the abbess with the key and a hand on it. The screen has no beam now: the city painting runs
+to the column, the name plate, purse and tier at its top, the four tab niches (the open one lit), the facts, and Back
+to the map as the seal. The meeting of two warbands (no city) keeps its header.

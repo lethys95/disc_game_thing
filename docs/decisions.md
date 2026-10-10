@@ -374,3 +374,10 @@ on four knobs, the ability sockets in the painted wells below. A held right-clic
 (health, stats, every ability with its grids). The log opens over the field on demand (the user's first option). The
 camera aims short of the field so it sits clear of the bar. The bar is 88.89rem wide, the screen's width at 16:9; a
 wider screen shows a dark band beyond its ends.
+
+## A city's screen has the map column's sibling, and no beam (2026-10-10, Claude, after the user's "begin the capitol")
+Disciples II keeps the map's column on its capital screen with its compartments swapped. disc's Capitol and city
+screens now do the same: the city painting runs full screen to a painted column at the right edge
+(`assets/ui/capitol/column.webp`) with the city's name, gold and tier, the four tabs as niches, three facts, and Back to
+the map as a wax seal two figures hold. The interim beam and rail are gone from it (the user: the header "doesn't need
+to be in every screen"). The tabs' panels (garrison, research, spells) are still the interim tablets.

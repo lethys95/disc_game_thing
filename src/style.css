@@ -887,53 +887,47 @@ body.formulas .formula { display: inline; }
   display: grid; place-items: center; cursor: help; font: 700 1.45rem var(--display); color: #2a2420; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 .screen .capitol-header > button.action { margin-left: auto; }
-#capitol:has(.tab-rail) .capitol-header > button.action { margin-right: 11.4rem; }
 
-#capitol .city-scene { position: absolute; left: 0; top: 0; right: 12rem; bottom: 0; z-index: -1; overflow: hidden; }
+/* A city's screen: the city painting full screen, no beam (the user, 2026-10-10: the header "doesn't need to be in every
+   screen"), meeting the column at the right edge (assets/ui/capitol/column.webp, the hud-paint-in skill), the map
+   column's sibling: 50rem tall like it, its windows placed as shares of the painting (300 by 864). */
+#capitol:has(.city-column) { padding-top: 1.2rem; padding-right: calc(50rem * 300 / 864 + 1.2rem); }
+#capitol .city-scene { position: absolute; left: 0; top: 0; right: calc(50rem * 300 / 864); bottom: 0; z-index: -1; overflow: hidden; }
 #capitol .city-scene.behind::after { content: ""; position: absolute; inset: 0; background: rgba(8, 7, 7, 0.6); }
 .city-painting { position: absolute; inset: 0; background: #0b0a0c center / cover no-repeat; animation: city-drift 40s ease-in-out infinite alternate; }
 @keyframes city-drift { from { transform: scale(1.06) translate(-1.5%, 0.5%); } to { transform: scale(1.14) translate(1.5%, -1%); } }
-.city-layout:has(> .tab-rail) > .city-content { margin-right: 11.6rem; }
-
-/* The rail (assets/ui/capitol/rail.webp, one painted piece from the beam's underside to the bottom edge): the hooded
-   angel on its capital carries the beam on her wings and hood; the tabs are the four niches below her, each holding
-   its tab's emblem, lit when open; a tab the city lacks stays a dark niche. The niches sit where the painting put them
-   (measured on the 1440p pick, 28.8 px a rem), lower than the greybox drew them. */
-#capitol .tab-rail { position: absolute; right: 0; top: 3.542rem; bottom: 0; width: 12rem; background: var(--ui-capitol-rail) 0 0 / 100% 100% no-repeat; }
-/* Her figure is out (2026-10-10: too many angels, her head cut off): the pillar fades in below where she stood. */
-#capitol .tab-rail { -webkit-mask-image: linear-gradient(transparent 14.5rem, #000 16.5rem); mask-image: linear-gradient(transparent 14.5rem, #000 16.5rem); }
-#capitol .rail-tab {
-  position: absolute; width: 3.87rem; height: 6rem; padding: 0; border: 0; background: none; cursor: pointer;
-  font: 600 0.52rem var(--text); text-transform: uppercase; letter-spacing: 0.1em; color: #a59b8c; text-shadow: 0 1px 0.15rem #000;
+.city-column {
+  position: fixed; right: 0; top: 0; height: 50rem; aspect-ratio: 300 / 864; z-index: 2;
+  background: var(--ui-capitol-column) 0 0 / 100% 100% no-repeat; box-shadow: -0.5rem 0 1.2rem rgba(0, 0, 0, 0.7);
 }
-#capitol .rail-tab:nth-child(1) { left: 1.63rem; top: 19.62rem; }
-#capitol .rail-tab:nth-child(2) { left: 6.91rem; top: 19.62rem; }
-#capitol .rail-tab:nth-child(3) { left: 1.63rem; top: 26.39rem; }
-#capitol .rail-tab:nth-child(4) { left: 6.91rem; top: 26.39rem; }
-#capitol .rail-tab .glyph {
-  position: absolute; left: 0.88rem; top: 1.65rem; width: 2.1rem; height: 2.1rem; border-radius: 50%;
-  background: center / contain no-repeat; color: transparent; font-size: 0; filter: brightness(0.62) saturate(0.6);
-}
-#capitol .rail-tab .label { position: absolute; left: -0.6rem; right: -0.6rem; top: 5.32rem; text-align: center; white-space: nowrap; }
-#capitol .rail-tab .icon-city { background-image: var(--ui-icon-city); }
-#capitol .rail-tab .icon-garrison { background-image: var(--ui-icon-garrison); }
-#capitol .rail-tab .icon-research { background-image: var(--ui-icon-research); }
-#capitol .rail-tab .icon-spells { background-image: var(--ui-icon-spells); }
-#capitol .rail-tab:hover:not(:disabled) .glyph { filter: brightness(0.9) saturate(0.8); }
-/* The open tab's niche is lit: candlelight gathers inside it, on its emblem and its name. */
-#capitol .rail-tab::before {
-  content: ""; position: absolute; left: 0.62rem; top: 0.55rem; width: 2.63rem; height: 4.3rem; border-radius: 1.3rem 1.3rem 0 0; pointer-events: none;
-}
-#capitol .rail-tab.selected::before { background: radial-gradient(ellipse at 50% 62%, rgba(255, 205, 120, 0.42), transparent 70%); mix-blend-mode: screen; }
-#capitol .rail-tab.selected .glyph { filter: brightness(1.12) drop-shadow(0 0 0.45rem rgba(232, 195, 108, 0.75)); }
-#capitol .rail-tab.selected .label { color: var(--gold-light); }
-#capitol .rail-tab:disabled { cursor: default; }
-#capitol .rail-tab:disabled .label { visibility: hidden; }
-#capitol .rail-facts { position: absolute; left: 0.9rem; right: 1rem; top: 33.2rem; display: flex; flex-direction: column; gap: 0.3rem; }
-#capitol .rail-facts .fact {
-  border: 0.4rem solid transparent; border-image: var(--ui-battle-plaque) 26 fill / 0.4rem stretch; padding: 0 0.3rem; line-height: 1.05rem;
-  color: var(--gb-ink); font: 600 0.64rem var(--text); text-align: center; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
-}
+.city-column > * { position: absolute; box-sizing: border-box; left: calc(var(--x) * 100% / 300); top: calc(var(--y) * 100% / 864); width: calc(var(--w) * 100% / 300); height: calc(var(--h) * 100% / 864); }
+.city-column button { margin: 0; padding: 0; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; }
+.city-column .plate, .city-column .fact { display: flex; align-items: center; justify-content: center; gap: 0.3rem; white-space: nowrap; }
+.city-column .plate { color: #241c15; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35); }
+.city-column .plate.name { --x: 18; --y: 14; --w: 264; --h: 44; font: 700 1.5rem var(--display); letter-spacing: 0.05em; }
+.city-column .plate.purse { --x: 18; --y: 88; --w: 124; --h: 32; font: 700 1rem var(--display); cursor: help; }
+.city-column .plate.purse .gold { color: #241c15; }
+.city-column .plate.tier { --x: 158; --y: 88; --w: 124; --h: 32; font: 700 1rem var(--display); cursor: help; }
+/* The tabs: each niche's round boss holds its emblem; the open niche is lit; one the city lacks stays dark. */
+.city-column .niche { --w: 116; --h: 146; border-radius: 3.4rem 3.4rem 0 0; }
+.city-column .niche.home { --x: 26; --y: 170; } .city-column .niche.garrison { --x: 158; --y: 170; }
+.city-column .niche.research { --x: 26; --y: 330; } .city-column .niche.spells { --x: 158; --y: 330; }
+.city-column .niche .glyph { position: absolute; left: 24.1%; top: 27.4%; width: 51.7%; height: 41.1%; background: center / 72% no-repeat; filter: brightness(0.32) sepia(0.4); }
+.city-column .niche .icon-city { background-image: var(--ui-icon-city); }
+.city-column .niche .icon-garrison { background-image: var(--ui-icon-garrison); }
+.city-column .niche .icon-research { background-image: var(--ui-icon-research); }
+.city-column .niche .icon-spells { background-image: var(--ui-icon-spells); }
+.city-column .niche:hover:not(:disabled) { box-shadow: inset 0 0 1.2rem rgba(232, 195, 108, 0.35); }
+.city-column .niche.selected { box-shadow: inset 0 0 1.6rem rgba(255, 200, 110, 0.5); }
+.city-column .niche.selected .glyph { filter: brightness(0.25) sepia(0.6) drop-shadow(0 0 0.35rem rgba(255, 210, 130, 0.9)); }
+.city-column .niche:disabled { cursor: default; }
+.city-column .niche:disabled .glyph { opacity: 0; }
+/* The facts, light on the dark iron plates. */
+.city-column .fact { --x: 18; --w: 264; --h: 30; font: 600 0.72rem var(--text); color: #e6dccb; text-shadow: 0 1px 2px #000; }
+.city-column .fact.f0 { --y: 520; } .city-column .fact.f1 { --y: 560; } .city-column .fact.f2 { --y: 600; }
+/* Back to the map: the wax seal the mason and the abbess hold. */
+.city-column .seal { --x: 104; --y: 719; --w: 92; --h: 92; border-radius: 50%; }
+.city-column .seal:hover { box-shadow: 0 0 1.4rem 0.4rem rgba(220, 80, 60, 0.45); }
 
 /* The tablets. */
 .screen .panel { padding: 1.5rem 1.2rem 1rem; background: var(--plain-fill); border: 1px solid var(--plain-edge); border-image: none; box-shadow: var(--plain-shadow); }

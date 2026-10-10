@@ -9,7 +9,7 @@ const city: Playtest = {
     const painting = await t.page.locator("#capitol .city-painting").evaluate((el) => getComputedStyle(el).backgroundImage);
     if (!painting.startsWith("url(")) t.fail(`the city view shows no painting: ${painting}`);
     await t.shot("playtest-city-home");
-    await t.page.locator("#capitol .rail-tab", { hasText: "Garrison" }).click();
+    await t.page.click("#capitol .niche.garrison");
     const grids = t.page.locator("#capitol .squad-grid");
     const titles = () => grids.locator(".section").allTextContents();
     /** "Garrison · 2/4" → 2. */

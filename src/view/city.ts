@@ -102,17 +102,20 @@ export class CityScreen implements KeyLayer {
     const city = place.kind === "city" ? cityById(world, place.cityId) : undefined;
     const tab: CityTab = city ? (TABS[this.tab].capitolOnly && city.kind !== "capitol" ? "home" : this.tab) : "garrison";
 
-    const header = element("div", "capitol-header");
-    header.append(element("div", "title", city ? cityName(city) : "Warbands meet"), gold(playerOf(world, side).gold, "purse"));
-    if (city) header.appendChild(tierMedallion(city));
-    header.appendChild(button("action", "Back to the map", () => this.options.close()));
-    if (city) this.root.appendChild(this.window(world, city, tab));
-    this.root.appendChild(header);
+    // A city's screen has its column at the right edge (the map column's sibling); a meeting of warbands, a header.
+    if (city) {
+      this.root.appendChild(this.window(world, city, tab));
+      this.root.appendChild(this.column(world, side, city, tab));
+    } else {
+      const header = element("div", "capitol-header");
+      header.append(element("div", "title", "Warbands meet"), gold(playerOf(world, side).gold, "purse"));
+      header.appendChild(button("action", "Back to the map", () => this.options.close()));
+      this.root.appendChild(header);
+    }
 
     const layout = element("div", "city-layout");
     const content = element("div", "city-content");
     layout.appendChild(content);
-    if (city) layout.appendChild(this.rail(world, side, city, tab));
     this.root.appendChild(layout);
 
     if (tab === "home" && city) return;
@@ -122,36 +125,43 @@ export class CityScreen implements KeyLayer {
   }
 
   /**
-   * The rail down the right edge (the user's reference: Disciples II's city panel; `design/hud-kit.md`): its top is
-   * the column figure carrying the beam, then the tabs, each a niche holding its tab's object, lit when open; a tab the
-   * city lacks stays a dark niche. Who is in the city and what it holds are on marble plaques below them.
+   * The column at the right edge (assets/ui/capitol/column.webp, the hud-paint-in skill; Disciples II's capital keeps
+   * the map's column with its compartments swapped): the city's name, the purse and the tier, the four tabs in their
+   * niches (the open one lit; one the city lacks stays dark), three facts, and Back to the map as the seal the mason and
+   * the abbess hold.
    */
-  private rail(world: World, side: PlayerId, city: City, current: CityTab): HTMLElement {
-    const rail = element("div", "tab-rail");
-    const tabs = element("div", "rail-tabs");
+  private column(world: World, side: PlayerId, city: City, current: CityTab): HTMLElement {
+    const column = element("div", "city-column");
+    column.appendChild(element("div", "plate name", cityName(city)));
+    column.appendChild(explain(element("div", "plate purse"), "Gold", "What your realm holds."));
+    column.lastElementChild?.appendChild(gold(playerOf(world, side).gold));
+    const tier = tierMedallion(city);
+    tier.className = "plate tier";
+    tier.textContent = `Tier ${roman(city.tier)}`;
+    column.appendChild(tier);
     for (const [id, tab] of Object.entries(TABS)) {
       if (!isCityTab(id)) continue;
       const held = !tab.capitolOnly || city.kind === "capitol";
-      const niche = button(`rail-tab${id === current ? " selected" : ""}`, [element("span", held ? `glyph icon-${tab.icon}` : "glyph", held ? tab.glyph : ""), element("span", "label", tab.label)], () => {
+      const niche = button(`niche ${id}${id === current ? " selected" : ""}`, [element("span", held ? `glyph icon-${tab.icon}` : "glyph")], () => {
         this.tab = id;
         this.rerender();
       });
+      niche.setAttribute("aria-label", tab.label);
       niche.disabled = !held;
-      tabs.appendChild(held ? niche : explain(niche, tab.label, "Only the Capitol has it."));
+      column.appendChild(held ? explain(niche, tab.label) : explain(niche, tab.label, "Only the Capitol has it."));
     }
-    rail.appendChild(tabs);
     const defenders = city.garrison.filter((m) => m.defId !== GUARDIAN_ID).length;
     const visitor = world.leaders.find((l) => l.player === side && sameHex(l.hex, city.hex));
-    // What the tier gives (healing, the defenders' armor) is the medallion's to explain.
     const facts = [
       `${defenders} in the garrison${city.kind === "capitol" ? " + Guardian" : ""}`,
       visitor ? `${unitName(leaderUnit(visitor)?.defId ?? "")}'s warband here` : "No warband visiting",
-      ...nodesOf(world, city).map((n) => `${NODES[n.kind].name} ${n.level}`),
+      nodesOf(world, city).map((n) => `${NODES[n.kind].name} ${n.level}`).join(" · ") || "No nodes",
     ];
-    const plaques = element("div", "rail-facts");
-    for (const fact of facts) plaques.appendChild(element("div", "fact", fact));
-    rail.appendChild(plaques);
-    return rail;
+    facts.forEach((fact, i) => column.appendChild(element("div", `fact f${i}`, fact)));
+    const back = button("seal", [], () => this.options.close());
+    back.setAttribute("aria-label", "Back to the map");
+    column.appendChild(explain(back, "Back to the map", "Escape does the same."));
+    return column;
   }
 
   /**
