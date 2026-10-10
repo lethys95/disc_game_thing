@@ -93,3 +93,14 @@ First the pieces that most screens need, so a single batch changes the most: pla
 parchment (6), then the objects (11–15), then the faction marks, then the paintings. The first test of this workflow
 is on four pieces (plate, parchment, seal, bell), to check that short prompts give colour and clean edges before the
 rest is generated (memory: batch-when-proven).
+
+## Test 1 (2026-10-10): plate, parchment, seal, bell
+Sixteen candidates from the first short prompts (`shots/hud-pieces.html`). What it showed:
+- **Colour and clean edges, yes.** Cream marble with amber studs, warm tan parchment, crimson wax, dark bronze: none of
+  it grey, and each piece stands clear on its ground, square to the viewer.
+- **But they read as studio photographs**: pristine marble like a bathroom tile, a plain modern hand bell. The prompts
+  named object, form, material and colour, and left out two fields the catalogue has for every element: the
+  **finish** (worn, chipped, tarnished, cracked) and the **ornament** (cast scrolls, engraving). Round 2 adds one
+  phrase of each, still short.
+- **Photographic or painted is the user's call** (style). Round 2 makes every piece twice, as is and with "Painted as
+  game interface art." added, side by side.
