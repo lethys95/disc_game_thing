@@ -427,20 +427,13 @@ button.action.selected:not(.ability), button.small.selected, button.doctrine.sel
 }
 .title-parade .art.parade:nth-child(odd) { transform: translateY(-4vh); }
 #title::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.75) 70%); pointer-events: none; }
-/* The menu is one object (design/hud-kit.md): a stone stele rising from the bottom edge in front of the parade
-   (assets/ui/title/stele.webp), the game's name inscribed in gilt in its arch, the choices marble plaques set into its
-   recess that light. The name and the plaques sit where the painting put the arch and the recess. */
-.title-panel { position: absolute; z-index: 1; left: 50%; bottom: 0; width: 19rem; height: 41rem; margin-left: -9.5rem; }
-/* The stele as cut: trimmed to its painted edge, where it was painted within the panel (1440p pick, 28.8 px a rem). */
-.title-panel::before {
-  content: ""; position: absolute; left: 0.542rem; top: 0.41rem; width: 18.021rem; height: 40.59rem; z-index: -1;
-  background: var(--ui-title-stele) 0 0 / 100% 100% no-repeat; filter: drop-shadow(0 0 1rem rgba(0, 0, 0, 0.7));
-}
+/* The title: the game's name and a column of marble plaques over the parade (the stele retired, 2026-10-10). */
+.title-panel { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 1.6rem; margin-top: -6vh; }
 .title-name {
-  position: absolute; left: 0; right: 0; top: 7rem; text-align: center; font: 700 4.2rem/1 var(--display); letter-spacing: 0.16em; text-indent: 0.16em; text-transform: lowercase;
-  color: #b8975a; text-shadow: 0 0.08rem 0 rgba(0, 0, 0, 0.75), 0 -0.04rem 0 rgba(255, 230, 170, 0.25);
+  font: 700 5rem/1 var(--display); letter-spacing: 0.16em; text-indent: 0.16em; text-transform: lowercase;
+  color: #c9a668; text-shadow: 0 0.25rem 1.1rem #000, 0 0 2.4rem rgba(0, 0, 0, 0.8);
 }
-.title-menu { position: absolute; left: 4.9rem; right: 5.5rem; top: 18.9rem; display: flex; flex-direction: column; gap: 0.4rem; }
+.title-menu { display: flex; flex-direction: column; gap: 0.45rem; width: 14rem; }
 .title-menu button.action {
   height: 2.2rem; padding: 0; border: 0.5rem solid transparent; border-image: var(--ui-battle-plaque) 26 fill / 0.5rem stretch; background: none;
   color: var(--gb-ink); font: 700 1.05rem/1 var(--display); letter-spacing: 0.03em; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3); filter: brightness(0.78);
@@ -511,13 +504,8 @@ button.codex-row .tier { color: var(--muted); font-size: 0.6875rem; }
 .codex-lines .label { color: var(--muted); width: 6.875rem; }
 
 /* The credits are written in the codex's book, across both its pages; Back is on the wall, as in the codex. */
-#credits .credits-page {
-  position: absolute; top: 4.2rem; height: 45rem; left: 50%; width: 82rem; margin-left: -41rem; box-sizing: border-box; overflow: hidden;
-  columns: 2; column-gap: 8.5rem; column-fill: balance; padding: 3.2rem 7.44rem 3.2rem 5.06rem; border: 0; border-image: none;
-  background: var(--ui-codex-book) 0 0 / 100% 100% no-repeat; color: #2b2219;
-}
-/* Clear of the corner fitting's arm. */
-.credits-page .title { font: 700 2.125rem var(--display); letter-spacing: 0.06em; padding-left: 1.2rem; break-after: avoid; }
+#credits .credits-page { --page-ink: #2b2219; border-image: none; overflow: hidden; columns: 2; column-gap: 4.6rem; column-fill: balance; padding: 2rem 2.4rem; }
+.credits-page .title { font: 700 2.125rem var(--display); letter-spacing: 0.06em; break-after: avoid; }
 .credits-page .title::first-letter { color: #7d2418; }
 .credits-page .section { font: 700 1.125rem var(--display); color: #7d2418; margin-top: 0.625rem; break-after: avoid; }
 .credits-page .credit { display: grid; grid-template-columns: 1fr 1.3fr; gap: 0.75rem; padding: 0.1875rem 0; border-bottom: 1px solid rgba(72, 52, 32, 0.32); break-inside: avoid; }
@@ -569,6 +557,10 @@ body.formulas .formula { display: inline; }
   --gb-health: #a32a20;
   --gb-shield: #a8dcd8;
   --gb-magic: #4fd8cf;
+  /* The plain panel every retired painted piece fell back to (2026-10-10), until its own piece is made. */
+  --plain-fill: rgba(14, 12, 11, 0.94);
+  --plain-edge: #4a3c2e;
+  --plain-shadow: inset 0 0 0 0.2rem rgba(0, 0, 0, 0.55), 0 0.5rem 1.2rem rgba(0, 0, 0, 0.6);
   --moment: "Grenze Gotisch", var(--display);
 
 
@@ -609,28 +601,29 @@ body.formulas .formula { display: inline; }
 /* The sill along the bottom. */
 #sill { position: absolute; left: 0; right: 0; bottom: 0; height: 6.493rem; background: var(--ui-battle-sill) 0 0 / 100% 100% no-repeat; }
 
-/* The card is the monument at the sill's left end: the hooded angel holds the portrait in her frame (the portrait
-   shows through the painting's opening, behind it), the marble plate below her names the unit, and the pedestal's
-   recessed panel holds everything else. */
-#card { position: absolute; left: 1.042rem; bottom: 3.472rem; z-index: 1; width: 15.208rem; height: 39.028rem; }
-#card::before { content: ""; position: absolute; inset: 0; z-index: 2; background: var(--ui-battle-monument) 0 0 / 100% 100% no-repeat; pointer-events: none; }
-#card .window { position: absolute; left: 7.361rem; top: 6.146rem; z-index: 1; width: 3.576rem; height: 5.799rem; overflow: hidden; border-radius: 1.79rem 1.79rem 0 0; background: #0d0b0a; }
+/* The card: a plain panel until its pieces are made one by one (the monument and its angel retired, 2026-10-10). The
+   portrait at the top left, the plate beside it naming the unit, everything else below. */
+#card {
+  position: absolute; left: 1rem; bottom: 6.9rem; z-index: 1; width: 15.2rem; box-sizing: border-box; padding: 0.7rem 0.75rem 0.6rem;
+  display: grid; grid-template-columns: 4.4rem 1fr; grid-template-rows: auto 1fr; gap: 0.6rem 0.6rem; max-height: calc(100vh - 13rem);
+  background: var(--plain-fill); border: 1px solid var(--plain-edge); box-shadow: var(--plain-shadow);
+}
+#card .window { grid-column: 1; grid-row: 1; width: 4.4rem; height: 5.4rem; overflow: hidden; border-radius: 2.2rem 2.2rem 0 0; background: #0d0b0a; box-shadow: 0 0 0 0.12rem #4a3c2e; }
 #card .window .art { width: 100%; height: 100%; margin: 0; font-size: 1.2rem; }
 #card .window .art.portrait { background-size: 150%; background-position: 50% 6%; }
-#card > .pin { position: absolute; left: 3rem; top: 13.9rem; z-index: 3; width: 0.7rem; height: 0.7rem; border-radius: 50%; background: var(--gb-light); box-shadow: 0 0.12rem 0.3rem rgba(0, 0, 0, 0.8); }
-/* The plate: the name, the tier's numeral at its left end, a crown for a leader; an enamel line of the side's colour
-   set into the marble's foot. */
+#card > .pin { position: absolute; right: 0.5rem; top: 0.5rem; width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--gb-light); box-shadow: 0 0.12rem 0.3rem rgba(0, 0, 0, 0.8); }
+/* The plate: the name, the tier's numeral before it, a crown for a leader; a line of the side's colour at its foot. */
 #card > .plate {
-  position: absolute; left: 3.993rem; top: 13.264rem; z-index: 3; width: 8.681rem; height: 3.056rem; box-sizing: border-box; padding: 0 0.8rem;
-  display: flex; align-items: center; justify-content: center; gap: 0.35rem; white-space: nowrap; cursor: help; color: var(--gb-ink); font: 700 1.2rem var(--display);
+  position: relative; grid-column: 2; grid-row: 1; align-self: center; min-height: 2.6rem; box-sizing: border-box; padding: 0 0.6rem;
+  display: flex; align-items: center; justify-content: center; gap: 0.35rem; cursor: help; color: var(--gb-ink); font: 700 1.05rem/1.1 var(--display); text-align: center;
+  border: 0.45rem solid transparent; border-image: var(--ui-battle-plaque) 26 fill / 0.45rem stretch;
 }
 #card > .plate .tier { font: 700 0.7rem var(--display); color: #5a4c3c; }
 #card > .plate .crown { color: #6a5420; }
-#card > .plate::after { content: ""; position: absolute; left: 1rem; right: 1rem; bottom: 0.42rem; height: 0.14rem; }
+#card > .plate::after { content: ""; position: absolute; left: 0.6rem; right: 0.6rem; bottom: -0.1rem; height: 0.14rem; }
 #card > .plate.side0::after { background: var(--side0); }
 #card > .plate.side1::after { background: var(--side1); }
-/* The pedestal's recessed panel: everything with words, so no carving ever runs behind text. */
-#card .inset { position: absolute; left: 4.514rem; top: 20.833rem; z-index: 3; width: 8.16rem; height: 12.326rem; box-sizing: border-box; padding: 0.2rem 0.15rem; display: flex; flex-direction: column; }
+#card .inset { grid-column: 1 / -1; grid-row: 2; min-height: 0; display: flex; flex-direction: column; }
 #card .targeting-grid .cell { width: 0.4rem; height: 0.4rem; }
 
 /* The instruments: each value its own shape. */
@@ -739,16 +732,15 @@ body.formulas .formula { display: inline; }
 }
 #tarot-icon:hover .mini-card { border-color: var(--gb-light); }
 
-/* The log: a stone block at the sill's right end with a recessed panel showing the last lines (the piece is sliced at
-   its panel's border so the block can be as wide as a line needs); unrolled, the whole battle on parchment. */
+/* The log: a plain panel at the sill's right end showing the last lines (the stone block retired, 2026-10-10);
+   unrolled, the whole battle on parchment. */
 #logstele {
-  position: absolute; right: 0.5rem; bottom: 0.35rem; z-index: 1; width: 17rem; height: 11.6rem; box-sizing: border-box;
-  border: solid transparent; border-width: 2.57rem 2.36rem 2.57rem 3.02rem; border-image: var(--ui-battle-log) 74 68 74 87 fill / 2.57rem 2.36rem 2.57rem 3.02rem stretch;
-  filter: drop-shadow(-0.3rem 0 0.5rem rgba(0, 0, 0, 0.5));
+  position: absolute; right: 0.6rem; bottom: 0.6rem; z-index: 1; width: 17rem; height: 7.4rem; box-sizing: border-box; padding: 0.6rem 0.8rem;
+  background: var(--plain-fill); border: 1px solid var(--plain-edge); box-shadow: var(--plain-shadow);
 }
-#unroll { position: absolute; left: 50%; top: -1.6rem; width: 3.4rem; height: 0.55rem; margin-left: -1.7rem; padding: 0; border-radius: 0.3rem; background: var(--gb-iron); border: 0.1rem solid var(--gb-iron-hi); cursor: pointer; }
+#unroll { position: absolute; left: 50%; top: -0.35rem; width: 3.4rem; height: 0.55rem; margin-left: -1.7rem; padding: 0; border-radius: 0.3rem; background: var(--gb-iron); border: 0.1rem solid var(--gb-iron-hi); cursor: pointer; }
 #unroll:hover { background: var(--gb-iron-hi); }
-#log { display: flex; flex-direction: column; justify-content: flex-end; height: 100%; margin: -0.5rem -0.6rem; box-sizing: border-box; overflow: hidden; font-size: 0.66rem; line-height: 1.32; color: var(--muted); mask-image: linear-gradient(transparent, #000 1.1rem); }
+#log { display: flex; flex-direction: column; justify-content: flex-end; height: 100%; margin: 0; box-sizing: border-box; overflow: hidden; font-size: 0.66rem; line-height: 1.32; color: var(--muted); mask-image: linear-gradient(transparent, #000 1.1rem); }
 #logstele.open #log { mask-image: none; }
 #log .entry.roundStart { margin-top: 0.3rem; padding-top: 0.2rem; border-top: 1px solid var(--gb-stone-lo); color: var(--ink); font: 700 0.85rem var(--display); }
 #log .entry.death { color: #d8584a; }
@@ -765,11 +757,10 @@ body.formulas .formula { display: inline; }
    title in the moment face, the choices plaques with a seal pressed at each one's start. */
 #banner, #mapbanner {
   position: fixed; left: 50%; top: 40%; z-index: 5; transform: translate(-50%, -50%); padding: 1.2rem 2.2rem 0.5rem; text-align: center;
-  border: solid transparent; border-width: 2.57rem 2.36rem 2.57rem 3.02rem; background: #1c1b1b padding-box;
-  border-image: var(--ui-battle-log) 74 68 74 87 / 2.57rem 2.36rem 2.57rem 3.02rem stretch; filter: drop-shadow(0 0.6rem 1.4rem rgba(0, 0, 0, 0.8));
+  padding: 2.8rem 3rem 1.4rem; background: var(--plain-fill); border: 1px solid var(--plain-edge); box-shadow: var(--plain-shadow);
 }
 /* Until each faction's emblem takes its place, the keystone is the card's silver seal. */
-#banner::before, #mapbanner::before { content: ""; position: absolute; left: 50%; top: -4.6rem; width: 4.6rem; height: 4.6rem; margin-left: -2.3rem; background: var(--ui-icon-seal) center / contain no-repeat; filter: drop-shadow(0 0.2rem 0.4rem rgba(0, 0, 0, 0.7)); }
+#banner::before, #mapbanner::before { content: ""; position: absolute; left: 50%; top: -2.3rem; width: 4.6rem; height: 4.6rem; margin-left: -2.3rem; background: var(--ui-icon-seal) center / contain no-repeat; filter: drop-shadow(0 0.2rem 0.4rem rgba(0, 0, 0, 0.7)); }
 #banner .title, #mapbanner .title { font: 700 3.8rem var(--moment); letter-spacing: 0.03em; color: var(--gb-marble); }
 #banner .subtitle, #mapbanner .subtitle { margin-bottom: 1.2rem; color: var(--muted); }
 #banner button.action, #mapbanner button.action {
@@ -788,73 +779,20 @@ body.formulas .formula { display: inline; }
 .hpbar .charges .pip { width: 0.32rem; height: 0.5rem; background: var(--gb-magic); box-shadow: 0 0 0.25rem rgba(79, 216, 207, 0.6); }
 .hpbar .charges .pip.spent { background: var(--gb-stone-lo); box-shadow: inset 0 0 0 0.07rem var(--gb-iron); }
 
-/* The map's interface: the battle's beam across the top, its medallion showing the turn; the warband and the cities on
-   tablets hung from it by chains (the log's block, nine-sliced); marble plaques for names and numbers (the monument's
-   plate). All of these are pieces of the battle's painting, so both screens share one stone and one light. The map's
-   own two pieces (assets/ui/map/) were painted into it in that light: the hooded angel rising from the bottom edge
-   holds up the bell that is End turn, and Menu is the book hanging from the beam. */
-#mapbeam { position: fixed; left: 0; right: 0; top: 0; height: 3.542rem; background: var(--ui-battle-beam) 0 0 / 100% 100% no-repeat; filter: drop-shadow(0 0.3rem 0.4rem rgba(0, 0, 0, 0.6)); }
-#mapturn { position: absolute; inset: 0; }
-#mapturn .medallion {
-  position: absolute; left: 50%; top: 0.26rem; width: 3.3rem; height: 3.3rem; margin-left: -1.65rem; border-radius: 50%; box-sizing: border-box;
-  display: grid; place-items: center; box-shadow: inset 0 0 0 0.2rem var(--ring); cursor: help;
-  font: 700 1.45rem var(--display); color: #2a2420; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+/* The map's interface, as it was before the one-painting HUD (the user, 2026-10-10: "It was more clean before, more
+   readable"), on plain panels until its pieces are made one by one. */
+#mapturn {
+  position: fixed; top: 0.375rem; left: 50%; transform: translateX(-50%); padding: 0.35rem 1.375rem;
+  font: 700 1.25rem var(--display); text-shadow: 0 2px 0.375rem #000; background: var(--plain-fill); border: 1px solid var(--plain-edge); box-shadow: var(--plain-shadow);
 }
-#mapturn .plaque {
-  position: absolute; top: 0.55rem; height: 2.45rem; box-sizing: border-box; padding: 0 0.7rem; display: flex; align-items: center; gap: 0.3rem; white-space: nowrap; cursor: help;
-  border: 0.5rem solid transparent; border-image: var(--ui-battle-plaque) 26 fill / 0.5rem stretch; color: var(--gb-ink); font: 700 0.95rem var(--display);
-  filter: drop-shadow(0 0.1rem 0.15rem rgba(0, 0, 0, 0.7));
-}
-#mapturn .purse { right: calc(50% + 2.3rem); }
-#mapturn .march { left: calc(50% + 2.3rem); }
-#mapturn .income { font: 600 0.62rem var(--text); color: #5a4c3c; margin-right: 0.35rem; }
-#mapturn .pips { letter-spacing: 0.12em; color: #3a3228; }
-#mapturn .gold { color: #6a4c10; }
-/* Chains from the beam to each tablet; none where a tablet is gone. */
-#mapbeam::before, #mapbeam::after {
-  content: ""; position: absolute; top: 3.3rem; width: 9.6rem; height: 2.4rem; pointer-events: none;
-  background: var(--ui-battle-chain) left top / 0.625rem 1.8rem repeat-y, var(--ui-battle-chain) right top / 0.625rem 1.8rem repeat-y;
-}
-#mapbeam::before { left: 3.9rem; }
-#mapbeam::after { right: 3.9rem; }
-#maphud:has(#mapsquad[hidden]) #mapbeam::before, #maphud:has(#mapcity[hidden]) #mapbeam::after { display: none; }
-#mapmenu.book { position: absolute; left: 61.72%; top: 3.542rem; width: 3.472rem; height: 5.521rem; padding: 0; border: 0; cursor: pointer; background: var(--ui-map-book) center / 100% 100% no-repeat; filter: drop-shadow(0 0.2rem 0.3rem rgba(0, 0, 0, 0.6)); }
-#mapmenu.book:hover { filter: brightness(1.3) drop-shadow(0 0.2rem 0.3rem rgba(0, 0, 0, 0.6)); }
-
-/* The tablets: stone blocks with a recessed panel, their names on marble plaques crossing their top edge. */
-#mapsquad, #mapcity {
-  position: fixed; top: 5.3rem; width: 17.4rem; box-sizing: border-box;
-  border: solid transparent; border-width: 2.57rem 2.36rem 2.57rem 3.02rem; border-image: var(--ui-battle-log) 74 68 74 87 fill / 2.57rem 2.36rem 2.57rem 3.02rem stretch;
-  filter: drop-shadow(0 0.4rem 0.6rem rgba(0, 0, 0, 0.55));
-}
-#mapsquad { left: 0.8rem; }
-#mapcity { right: 0.8rem; }
-#mapsquad > .title, #mapcity > .title {
-  display: block; width: fit-content; margin: -1.9rem auto 0.5rem; padding: 0 1rem; box-sizing: border-box; line-height: 1.4rem;
-  border: 0.45rem solid transparent; border-image: var(--ui-battle-plaque) 26 fill / 0.45rem stretch; color: var(--gb-ink); font: 700 1.05rem var(--display);
-}
-#mapsquad button.warband, #mapcity button.warband {
-  margin: 0.3rem 0 0.2rem; padding: 0.15rem 0.55rem; color: var(--gb-ink); background: none; filter: none;
-  border: 0.42rem solid transparent; border-image: var(--ui-battle-plaque) 26 fill / 0.42rem stretch;
-}
-#mapsquad button.warband .meta { color: #4a3f30; }
-#mapsquad button.warband.selected { filter: drop-shadow(0 0 0.45rem rgba(232, 195, 108, 0.8)); color: var(--gb-ink); }
-#mapsquad .member .name { color: var(--ink); }
-#mapsquad .hp, #mapcity .hp { background: var(--gb-stone-lo); border-color: var(--gb-iron); }
-#mapsquad .hp .fill, #mapcity .hp .fill { background: var(--gb-health); }
-#mapcity .city-row { border-bottom-color: #2a2622; }
-
-/* End turn: the hooded angel rising from the bottom edge holds up a bell; it glows while the move is yours. */
-#mapbottom { position: fixed; left: 50%; bottom: 0; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; pointer-events: none; }
-#maphint { min-height: 1.4rem; margin-bottom: 0.3rem; font: 500 1.0625rem var(--display); color: var(--ink); text-align: center; text-shadow: 0 1px 0.2rem #000, 0 0 0.6rem #000; white-space: nowrap; }
-#mapbottom .bearer { position: relative; width: 9.861rem; height: 9.514rem; background: var(--ui-map-bearer) center / 100% 100% no-repeat; filter: drop-shadow(0 -0.2rem 0.5rem rgba(0, 0, 0, 0.5)); }
-/* The painted bell is the button; candlelight gathers on it while the move is yours. */
-#endturn.bell {
-  position: absolute; left: 3.3rem; top: 4rem; width: 3.3rem; height: 4.7rem; padding: 0; border: 0; border-radius: 40%; cursor: pointer; pointer-events: auto;
-  background: radial-gradient(ellipse at 50% 70%, rgba(255, 210, 120, 0.42), transparent 62%); mix-blend-mode: screen;
-}
-#endturn.bell:hover { background: radial-gradient(ellipse at 50% 70%, rgba(255, 215, 130, 0.68), transparent 66%); }
-#endturn.bell:disabled { cursor: default; background: none; }
+#mapturn .movement { color: #cfe3d2; letter-spacing: 0.05em; }
+#mapmenu { position: fixed; left: 50%; top: 3.2rem; transform: translateX(-50%); min-width: 0; font-size: 0.8125rem; padding: 0.1875rem 0.875rem; }
+#mapsquad { position: fixed; left: 1rem; top: 3.75rem; width: 15rem; padding: 0.75rem 0.875rem; max-height: calc(100vh - 9.375rem); overflow-y: auto; }
+#mapsquad .title { font: 700 1.25rem var(--display); }
+#mapcity { position: fixed; right: 1rem; top: 3.75rem; width: 16.25rem; padding: 0.75rem 0.875rem; max-height: calc(100vh - 9.375rem); overflow-y: auto; }
+#mapcity .title { font: 700 1.25rem var(--display); margin-bottom: 0.375rem; }
+#mapbottom { position: fixed; left: 50%; bottom: 1.125rem; transform: translateX(-50%); text-align: center; }
+#maphint { font: 500 1.0625rem var(--display); text-shadow: 0 1px 0.1875rem #000; margin-bottom: 0.5rem; min-height: 1.375rem; }
 
 /* The full screens in a game (the Capitol and every city, a leader, a structure; design/hud-kit.md): the battle's beam
    across the top is the header, with the name and the purse on marble plaques; the panels are tablets (the log's
@@ -891,6 +829,8 @@ body.formulas .formula { display: inline; }
    its tab's emblem, lit when open; a tab the city lacks stays a dark niche. The niches sit where the painting put them
    (measured on the 1440p pick, 28.8 px a rem), lower than the greybox drew them. */
 #capitol .tab-rail { position: absolute; right: 0; top: 3.542rem; bottom: 0; width: 12rem; background: var(--ui-capitol-rail) 0 0 / 100% 100% no-repeat; }
+/* Her figure is out (2026-10-10: too many angels, her head cut off): the pillar fades in below where she stood. */
+#capitol .tab-rail { -webkit-mask-image: linear-gradient(transparent 14.5rem, #000 16.5rem); mask-image: linear-gradient(transparent 14.5rem, #000 16.5rem); }
 #capitol .rail-tab {
   position: absolute; width: 3.87rem; height: 6rem; padding: 0; border: 0; background: none; cursor: pointer;
   font: 600 0.52rem var(--text); text-transform: uppercase; letter-spacing: 0.1em; color: #a59b8c; text-shadow: 0 1px 0.15rem #000;
@@ -925,16 +865,12 @@ body.formulas .formula { display: inline; }
 }
 
 /* The tablets. */
-/* The block's recess, stretched across a wide tablet, would streak: the edges stretch, the middle is the recess's tone. */
-.screen .panel {
-  border: solid transparent; border-width: 2.57rem 2.36rem 2.57rem 3.02rem; padding: 0 0.3rem; background: #1c1b1b padding-box;
-  border-image: var(--ui-battle-log) 74 68 74 87 / 2.57rem 2.36rem 2.57rem 3.02rem stretch; filter: drop-shadow(0 0.4rem 0.6rem rgba(0, 0, 0, 0.55));
-}
+.screen .panel { padding: 1.5rem 1.2rem 1rem; background: var(--plain-fill); border: 1px solid var(--plain-edge); border-image: none; box-shadow: var(--plain-shadow); }
 .screen .city-head .panel, .screen .city-body > .note.panel {
   border-width: 1rem 0.8rem 1.35rem 0.52rem; padding: 0.2rem 0.8rem; background: #222021 padding-box; border-image: var(--ui-battle-recess) 29 23 39 15 / 1rem 0.8rem 1.35rem 0.52rem stretch;
 }
 .screen .panel > .section:first-child {
-  width: fit-content; margin: -1.95rem auto 0.6rem; padding: 0 1rem; line-height: 1.4rem;
+  width: fit-content; margin: -2.25rem auto 0.6rem; padding: 0 1rem; line-height: 1.4rem;
   border: 0.45rem solid transparent; border-image: var(--ui-battle-plaque) 26 fill / 0.45rem stretch; color: var(--gb-ink); font: 700 1.05rem var(--display);
 }
 /* One scroller per screen, so names can cross their tablets' top edges. */
@@ -958,16 +894,18 @@ body.formulas .formula { display: inline; }
 #codex .codex-header .tabs button:hover { filter: brightness(0.9) drop-shadow(0 0.1rem 0.15rem rgba(0, 0, 0, 0.7)); }
 #codex .codex-header .tabs button.selected { filter: brightness(1.05) drop-shadow(0 0 0.5rem rgba(232, 195, 108, 0.75)); color: var(--gb-ink); }
 
-/* The book (assets/ui/codex/book.webp) is one painted piece; the text sits on its pages where the painting put them
-   (measured on the 1440p pick): clear of the corner fittings and the slanting page edges, either side of the spine. */
-#codex .codex-body {
-  position: absolute; top: 4.2rem; height: 45rem; left: 50%; width: 82rem; margin-left: -41rem; box-sizing: border-box;
-  display: grid; grid-template-columns: 33rem 30.5rem; column-gap: 6rem; padding: 3.2rem 7.44rem 3.2rem 5.06rem;
-  background: var(--ui-codex-book) 0 0 / 100% 100% no-repeat; filter: drop-shadow(0 0.6rem 1rem rgba(0, 0, 0, 0.6)); color: var(--page-ink);
+/* The book lies square to the player (the user, 2026-10-10: a book at an angle "defeats usability"): two flat pages
+   of parchment in a dark leather binding, the spine a shadow between them; the angled painted book retired. */
+#codex .codex-body, #credits .credits-page {
+  position: absolute; top: 4.2rem; bottom: 1.2rem; left: 50%; width: min(80rem, 96vw); transform: translateX(-50%); box-sizing: border-box;
+  border: 1rem solid #2e1d16; border-radius: 0.5rem; box-shadow: inset 0 0 0 0.12rem #5a3b2a, 0 0.8rem 1.6rem rgba(0, 0, 0, 0.7);
+  background: linear-gradient(90deg, transparent calc(50% - 1.6rem), rgba(60, 40, 22, 0.35) 50%, transparent calc(50% + 1.6rem)), var(--gb-parchment) var(--ui-codex-parchment) center / cover;
+  color: var(--page-ink);
 }
-#codex:has(.codex-shelves) .codex-list { padding-top: 3.2rem; }
+#codex .codex-body { display: grid; grid-template-columns: 1fr 1fr; column-gap: 4.6rem; padding: 2rem 2.4rem; }
+#codex:has(.codex-shelves) .codex-list { padding-top: 3.4rem; }
 #codex .codex-shelves {
-  position: absolute; z-index: 1; top: 7.4rem; left: calc(50% - 34.74rem); width: 31.8rem; display: flex; flex-direction: column; align-items: flex-start; gap: 0.3rem;
+  position: absolute; z-index: 1; top: 6.4rem; left: calc(50% - min(40rem, 48vw) + 3.4rem); width: calc(min(40rem, 48vw) - 6rem); display: flex; flex-direction: column; align-items: flex-start; gap: 0.3rem;
 }
 /* Each entry opens with a rubric capital. */
 #codex .codex-top .heading .name::first-letter { color: var(--page-rubric); }
@@ -978,7 +916,7 @@ body.formulas .formula { display: inline; }
 #codex .shelf-group button:hover { color: var(--page-rubric); }
 #codex .shelf-group button.selected { color: var(--page-rubric); text-decoration: underline; text-underline-offset: 0.2em; filter: none; }
 
-#codex .codex-list, #codex .codex-page { border: 0; background: none; padding: 0; min-height: 0; filter: none; color: var(--page-ink); }
+#codex .codex-list, #codex .codex-page { border: 0; border-image: none; background: none; box-shadow: none; padding: 0; min-height: 0; filter: none; color: var(--page-ink); }
 #codex .codex-search { background: transparent; border: 0; border-bottom: 1px solid var(--page-rule); color: var(--page-ink); padding: 0.3rem 0.1rem; font-size: 0.9rem; }
 #codex .codex-search::placeholder { color: var(--page-muted); }
 #codex .codex-search:focus { border-bottom-color: var(--page-rubric); }

@@ -1,5 +1,23 @@
 # The HUD kit: a system
 
+> **Reset, 2026-10-10.** After night one the user found too many angels and tombstones, everything too grey, content
+> at an angle, less readable overall, and the map worse than before. Their read: one image for a whole screen washes
+> out the way a 450-word unit prompt does ("So we have to think modularity"). What changed:
+> - **Pieces are made one at a time**, each from its own short prompt (`hud-pieces.md`). No screen is painted as one
+>   picture any more; the paint script is deleted.
+> - **The user does the cutting and cleaning.**
+> - **No cast of figures.** Figures are optional and rare (the user: "You don't even need the angels"); the steles,
+>   the monument, the bell-bearer and the rail's angel are gone. A "gargoyle" means a part of a larger structure.
+> - **Content faces the player flat**: no book or statue at an angle with text on it.
+> - **Not grey.** "The chrome stays grey" below was a misreading of Disciples II's *neutral* chrome, which is iron,
+>   cream marble, tan parchment, honey wood and amber, teal and green gems (`reference_material/elements.md`).
+> - **The header beam isn't on every screen.**
+>
+> The principles, the families, the instruments and the one language for states below still stand. The cast, the
+> screens' painted compositions and the steps 3–4 record are history. In the game until the new pieces exist: the
+> map as it was before the kit, plain panels where the stele, the log block and the monument were, the codex as a
+> flat book.
+
 Claude's system (2026-10-09), accepted by the user the same day: all eight choices at the end, with the faction motifs
 extracted by Claude from each faction's themes (`provisional.md` #76). It is step 1 of the plan the user agreed to: the
 system on paper, then a greybox in the game, then each screen painted as one picture, then the pieces cut from it.
@@ -49,7 +67,7 @@ colour, as the art direction already says.
 | Parchment (new; the user's call) | documents and voices | tooltips, rules text, prompts, the full battle log, the codex if it becomes a book |
 | Light | state | lit means available, selected or ready; dark means not now. Warm candlelight is the interface's light. The faction's mana colour lights only magic and the faction's own inlay |
 | Cloth and enamel | allegiance | the player's colour, only on banners, pennants, the bands under the turn order's faces and standee bases, never on stone |
-| Paintings | the world | portraits, the city painting, tarot faces, ability icons. They carry the colour, so the chrome stays grey (Disciples II) |
+| Paintings | the world | portraits, the city painting, tarot faces, ability icons. They carry the strongest colour; the chrome is neutral, not grey (Disciples II: iron with amber studs, cream marble, tan parchment, honey wood, coloured gems) |
 
 ## One language for states
 | State | How it looks | Example |

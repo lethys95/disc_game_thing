@@ -22,8 +22,7 @@ import type { AiClient } from "#view/ai-client";
 import type { App } from "#view/app";
 import { CityScreen } from "#view/city";
 import type { Place } from "#view/city";
-import { applySideColors, battleColors, COLOR_HEX } from "#view/colors";
-import { explain } from "#view/explain";
+import { applySideColors, battleColors } from "#view/colors";
 import { buttonById, byId, element, gold, mana, movementPips } from "#view/dom";
 import { Forecasts } from "#view/forecasts";
 import { ForkPrompt } from "#view/fork-prompt";
@@ -177,19 +176,6 @@ export class Campaign implements KeyLayer {
     });
     this.endTurn.addEventListener("click", () => void this.act({ type: "endTurn" }));
     buttonById("mapmenu").addEventListener("click", () => this.options.onMenu());
-    // The bell and the book name themselves on the hint line while hovered, and explain under a held right-click.
-    explain(this.endTurn, "End turn", "Ring the bell: your move is over.");
-    explain(buttonById("mapmenu"), "Menu", "Save, load, settings.");
-    for (const [object, name] of [[this.endTurn, "End turn"], [buttonById("mapmenu"), "Menu"]] as const) {
-      object.addEventListener("mouseenter", () => {
-        this.hint.dataset["object"] = name;
-        this.hint.textContent = name;
-      });
-      object.addEventListener("mouseleave", () => {
-        delete this.hint.dataset["object"];
-        this.render();
-      });
-    }
   }
 
   /** The camera glides while pan keys are held: the sum of their directions. */
@@ -516,32 +502,22 @@ export class Campaign implements KeyLayer {
       attack: aimed ?? (plan?.target && plan.target.kind !== "capture" ? this.hovered : null),
     });
 
-    // The beam: the turn in its medallion, ringed in the colour of whoever moves; the purse and the march on plaques.
     this.turn.replaceChildren();
     if (!world.outcome) {
-      const me = playerOf(world, this.viewer);
-      const color = FACTIONS[me.faction].mana;
-      const mine = world.activePlayer === this.viewer;
-      this.turn.setAttribute("aria-label", `Turn ${world.turn} · ${mine ? "your move" : "the enemy moves"}`);
-      const purse = element("div", "plaque purse");
-      purse.append(gold(me.gold), element("small", "income", `+${income(world, this.viewer)}`), mana(me.mana[color], color), element("small", "income", `+${manaIncome(world, this.viewer)}`));
-      explain(purse, "Your gold and mana", `+${income(world, this.viewer)} gold and +${manaIncome(world, this.viewer)} mana each turn, from your cities and nodes.`);
-      const medallion = element("div", "medallion", String(world.turn));
-      medallion.style.setProperty("--ring", COLOR_HEX[playerOf(world, world.activePlayer).color]);
-      explain(medallion, `Turn ${world.turn}`, mine ? "Your move." : "The enemy moves.");
-      this.turn.append(purse, medallion);
-      if (leader) {
-        const march = element("div", "plaque march");
-        march.append(element("span", "pips", movementPips(leader.movement, movementOf(leader))));
-        explain(march, "Movement", `${leader.movement} of ${movementOf(leader)} hexes left this turn for ${leaderName(leader)}'s warband.`);
-        this.turn.append(march);
-      }
-    } else this.turn.removeAttribute("aria-label");
+      const color = FACTIONS[playerOf(world, this.viewer).faction].mana;
+      this.turn.append(
+        `Turn ${world.turn} · ${world.activePlayer === this.viewer ? "your move" : "the enemy moves"} · `,
+        gold(playerOf(world, this.viewer).gold),
+        ` (+${income(world, this.viewer)}) · `,
+        mana(playerOf(world, this.viewer).mana[color], color),
+        ` (+${manaIncome(world, this.viewer)})`,
+      );
+      if (leader) this.turn.append(" · ", element("span", "movement", `Movement ${movementPips(leader.movement, movementOf(leader))}`));
+    }
     this.endTurn.disabled = !this.myTurn();
     this.panels.render(world, this.viewer, leader, this.casting, this.myTurn());
     this.renderCityScreen(world);
-    if (this.hint.dataset["object"]) this.hint.textContent = this.hint.dataset["object"];
-    else this.hint.textContent = casting && this.myTurn()
+    this.hint.textContent = casting && this.myTurn()
       ? castHint(known, casting, this.hovered)
       : this.myTurn()
       ? hintText({ known, player: this.viewer, leader, hovered: this.hovered, plan, forecast: (l, target) => this.forecasts.text(known, l, target) })

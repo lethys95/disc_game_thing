@@ -157,3 +157,9 @@
   grey (one "black iron and dark stone … desaturated" line in every prompt; "the chrome stays grey" misread from
   Disciples II's "neutral"; marble and parchment never named; "stele" asked for three times). Next: write each disc
   piece's prompt from that vocabulary, one piece at a time, for the user to read before anything is generated.
+- **The user (2026-10-10):** "you don't actually get more very often when you write 450 lines instead of 150. It gets
+  like... Washed out. So if you try to capture the entire screen with the HUD [...] you get these gray slabs I think.
+  So we have to think modularity." "See if you can throw the tombstones away too. Do not assume you can use the
+  prompts we used before. You don't even need the angels". Done the same day: the map back to its pre-kit HUD, the
+  battle's monument and log block and the title's stele replaced by plain panels, the Capitol's angel masked, the
+  codex a flat book, the paint script deleted. Next: `docs/design/hud-pieces.md`, a short prompt per piece.

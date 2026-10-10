@@ -3,7 +3,7 @@ import { runBatch } from "#scripts/art/batch";
 /**
  * UI kit pieces (`assets/ui/`), after the user's reference (`docs/design/references/disciples2-city.png`): carved
  * dark metal and stone. Frames are drawn as a border around a flat empty center, so CSS `border-image` can stretch
- * them to any size. The screens painted as one picture have their pieces from `hud-paint.ts` instead.
+ * them to any size.
  * `pnpm tsx scripts/art/ui.ts [id…] [seed…]`
  */
 

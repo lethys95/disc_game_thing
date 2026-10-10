@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-10, past midnight (the battle, map, Capitol, codex and title painted and installed)
+**Updated:** 2026-10-10 (the HUD kit reset: the one-painting screens taken out, pieces next, one by one)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): the alpha is the three playable factions (Jilliath,
@@ -24,17 +24,13 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
   13 picked with portraits installed (`roster.md`); deferred by the user until they have an overview: the Guardian,
   Empyreal, Torturer, Archon, Cleric, Fanatic and the fire casters. Lessons in the `unit-concepts` skill.
 - **Armor is a percentage with diminishing returns** (the user; #75, `testing/percent-armor`).
-- **The HUD kit: every screen is on it, most of them painted** (`in-progress/ui-kit-grotesques`; the morning
-  write-up `shots/hud-battle.html`). After the angels felt "bolted on": research (`design/hud-references.md`), an
-  inventory, the system (`design/hud-kit.md`, accepted; motifs provisional #76), a greybox, then each screen painted
-  as one picture and cut into pieces (`scripts/art/hud-paint.ts`, `assets/ui/<screen>/`). The user handed control to
-  Claude ("I'm giving you control"). Painted: the battle (the turn order in the beam's arcade, the card a monument
-  whose angel holds the portrait, the hourglass and marionette hanging from the beam), the map (an angel holding up
-  the End turn bell, a book for Menu), the Capitol (an angel on the rail carrying the beam, the tabs as niches, the
-  city painting as the window behind every tab), the codex as an open book (the credits written in it), the title's
-  menu as one stele. On the kit's pieces: the leader and structure screens, the new game, the settings, the moments.
-  Documents are on the codex's parchment; the card's instruments are engraved silver emblems; words wait under a held
-  right-click.
+- **The HUD kit, reset (2026-10-10)** (`in-progress/ui-kit-grotesques`; `design/hud-kit.md`'s reset note). Night
+  one painted each screen as one picture; the user found too many angels and tombstones, everything grey, content at
+  an angle, less readable, the map worse. Now: the map back as it was, plain panels where the steles stood, the codex
+  a flat book; the paint script deleted. The references re-read element by element (`reference_material/elements.md`,
+  with how the prompts went grey). Next: pieces made one by one from short prompts (`design/hud-pieces.md`), the user
+  doing the cuts. Kept from the kit: the layouts (turn order in the beam, sockets, the card's instruments as silver
+  emblems, documents on parchment) and words under a held right-click.
 - **The Grove's Water is now Wellspring.**
 - **Unreal 5 as a parallel track** (the user: "UE is the king of 3d"; `ongoing/unreal-port`), in its own repo,
   `../disc_unreal`. three.js keeps the pace; Unreal follows as a view, with this repo's TypeScript rules as the only
@@ -42,8 +38,7 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
   the `?fight` arena in Unreal looks nearly the same as three.js with today's assets (`disc_unreal/shots/`).
 
 ## Next
-0. **The HUD kit goes on** (Claude's): the new game's faction emblems and March as a held object, the codex's ribbons
-   and capitals; then the faction skins.
+0. **The HUD pieces, one by one** (Claude's, the user reads the prompts and does the cuts): `design/hud-pieces.md`.
 1. **Finish Jilliath's concepts** with the user (the open nine), then portraits from the picks.
 2. **The other factions' missing units** (the alpha needs all three): Nexus melee tier 3, the Grove's mage line, and
    the rest on the board; then their concept art the same way.
