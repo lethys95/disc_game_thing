@@ -450,3 +450,11 @@ greyboxes (low contrast in values, a shallow relief in depth) so no surface is p
 large glass globe at the left end, a robed figure carved in deep relief around it (back to round one's height); the
 round as a small glass sphere at the centre holding a flame, disc's own stopped clock (a flame, not Icewind Dale's
 skulls: candlelight is the interface's light); the card, sockets, log and scribe as before.
+
+**Dense, first round:** the density worked (all six seeds carved knotwork and scrollwork over every surface) and the
+flame sphere came out a candle under glass, but "a large round glass globe [...] dark and empty inside" became a clear
+world globe on a stand, its figure a small monk behind it. **The globe again** (`battle-bar-globe`): "a large sphere
+of deep red glass set straight into a heavy ornate iron rim, with no stand", and its figure kneeling at its left with
+"one arm wrapped across the front of the sphere", the arm drawn raised in front of the globe in the depth greybox. In
+all six seeds a hooded, winged figure kneels holding the red globe, and the layout holds. In the mock the game
+darkens the globe from the top as health drops and writes the number on the glass.
