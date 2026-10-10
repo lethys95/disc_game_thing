@@ -12,7 +12,7 @@ Five groups of games were studied from screenshots, one element at a time:
 - Strategy: Heroes of Might and Magic III and V, Warcraft III, Darkest Dungeon, Total War: Warhammer, King's Bounty and Age of Wonders
 - Gothic RPGs: Path of Exile, Grim Dawn, Vampire: The Masquerade – Redemption, Arcanum, Divine Divinity, Blasphemous, Dungeon Keeper and Blood Omen
 
-Every entry lives in `reference_material/` (the notes are committed; the screenshots they name stay local and gitignored, and a locally generated `index.html` shows each entry beside its picture). This page keeps the lessons. The ideas below are directions, not features to transcribe; which motifs each faction gets is the user's call. The system built from them: `hud-kit.md`.
+Every entry lives in `reference_material/`, with every single element described for prompts in `elements.md` (the notes are committed; the screenshots they name stay local and gitignored, and a locally generated `index.html` shows each entry beside its picture). This page keeps the lessons. The ideas below are directions, not features to transcribe; which motifs each faction gets is the user's call. The system built from them: `hud-kit.md`.
 
 ## Why disc's angels read as bolted on
 Measured against the references, the current angels fail the same tests the convincing examples pass:

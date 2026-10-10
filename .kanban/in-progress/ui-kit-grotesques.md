@@ -151,3 +151,9 @@
     be in every screen". The overworld HUD "actually become worse […] It was more clean before, more readable".
     Neither is final; "the usual creative process in games just often scraps what was done and starts over if
     something didn't work."
+- **Back to the references (2026-10-10):** the user: "write down what you see, the actual elements […] it's
+  descriptions we'll use to generate in the end anyway". `reference_material/elements.md` describes every element of
+  the key screenshots by object, form, material, colour, finish, ornament and joinery, then traces how night one went
+  grey (one "black iron and dark stone … desaturated" line in every prompt; "the chrome stays grey" misread from
+  Disciples II's "neutral"; marble and parchment never named; "stele" asked for three times). Next: write each disc
+  piece's prompt from that vocabulary, one piece at a time, for the user to read before anything is generated.
