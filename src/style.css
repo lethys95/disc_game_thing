@@ -767,10 +767,11 @@ body.formulas .formula { display: inline; }
 
 /* The map's interface: one painted column at the right edge, full height (assets/ui/map/column.webp, painted from
    art/greybox/map-column-duality/ by the hud-paint-in skill). Every window is placed in the painting's own pixels
-   (300 x 864) as shares of the column, and its type is sized against the column's height (cqh), so the content stays
-   in its windows at any size. */
+   (300 x 864) as shares of the column. The column is 50rem tall, the screen's height at the default interface scale
+   (rootFontSize), so it follows the interface-scale setting like the rest; anchored at the top, a larger scale runs
+   its foot off the bottom edge. */
 #mapcolumn {
-  position: fixed; right: 0; top: 0; height: 100vh; aspect-ratio: 300 / 864; container-type: size;
+  position: fixed; right: 0; top: 0; height: 50rem; aspect-ratio: 300 / 864;
   background: var(--ui-map-column) 0 0 / 100% 100% no-repeat; box-shadow: -0.5rem 0 1.2rem rgba(0, 0, 0, 0.7);
 }
 #mapcolumn button { margin: 0; padding: 0; background: none; border: 0; color: inherit; font: inherit; cursor: pointer; }
@@ -781,30 +782,31 @@ body.formulas .formula { display: inline; }
   position: absolute; box-sizing: border-box;
   left: calc(var(--x) * 100% / 300); top: calc(var(--y) * 100% / 864); width: calc(var(--w) * 100% / 300); height: calc(var(--h) * 100% / 864);
 }
-#mapcolumn .plate { display: flex; align-items: center; justify-content: center; gap: 0.8cqh; color: #241c15; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35); }
-#mapcolumn .plate .meta, #mapcolumn .income { font: 600 1.3cqh var(--text); color: #4a3c2c; }
-#mapturn { --x: 120; --y: 10; --w: 60; --h: 60; display: grid; place-items: center; border-radius: 50%; font: 700 3.4cqh var(--display); color: #241c15; cursor: help; }
+#mapcolumn .plate { display: flex; align-items: center; justify-content: center; gap: 0.4rem; color: #241c15; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35); }
+#mapcolumn .plate .meta, #mapcolumn .income { font: 600 0.65rem var(--text); color: #4a3c2c; }
+#mapturn { --x: 120; --y: 10; --w: 60; --h: 60; display: grid; place-items: center; border-radius: 50%; font: 700 1.7rem var(--display); color: #241c15; cursor: help; }
 #mapturn.theirs { color: #7a2418; }
-#mapmenu { --x: 22; --y: 18; --w: 46; --h: 46; border-radius: 50%; display: grid; place-items: center; font: 700 1.4cqh var(--display); color: #e6dccb; text-shadow: 0 1px 0.2cqh #000; }
+#mapmenu { --x: 22; --y: 18; --w: 46; --h: 46; border-radius: 50%; display: grid; place-items: center; font: 700 0.7rem var(--display); color: #e6dccb; text-shadow: 0 1px 0.1rem #000; }
 #mapmenu::before { content: "Menu"; }
-#mapgold { --x: 18; --y: 100; --w: 124; --h: 30; font: 700 1.7cqh var(--display); }
+#mapgold { --x: 18; --y: 100; --w: 124; --h: 30; font: 700 0.85rem var(--display); }
 #mapgold .gold, #mapmana .mana { color: #241c15; }
-#mapmana { --x: 158; --y: 100; --w: 124; --h: 30; font: 700 1.7cqh var(--display); }
-#mapsquad .plate.name { --x: 18; --y: 160; --w: 264; --h: 36; font: 700 2.2cqh var(--display); }
+#mapmana { --x: 158; --y: 100; --w: 124; --h: 30; font: 700 0.85rem var(--display); }
+#mapsquad .plate.name { --x: 18; --y: 160; --w: 264; --h: 36; font: 700 1.1rem var(--display); }
 #mapsquad .plate.name .name { white-space: nowrap; }
 /* The squad's 3x3 grid in the window's panes, each the glass between the painting's lead cames as measured on the
-   painting itself (the greybox's squares moved a little in the paint); an empty pane is the window's own glass. A
+   painting itself from its pixels, lead core to lead core (the greybox's squares moved a little in the paint); an
+   empty pane is the window's own glass. A
    portrait covers its pane and is cropped where it overflows, never stretched out of shape. */
-#mapsquad .pane { overflow: hidden; box-shadow: inset 0 0 0 0.15cqh rgba(0, 0, 0, 0.8); }
-#mapsquad .pane.x0 { --x: 51.5; --w: 59.5; } #mapsquad .pane.x1 { --x: 119; --w: 63; } #mapsquad .pane.x2 { --x: 190; --w: 60; }
-#mapsquad .pane.y0 { --y: 268.5; --h: 60.5; } #mapsquad .pane.y1 { --y: 337; --h: 63; } #mapsquad .pane.y2 { --y: 408; --h: 61; }
+#mapsquad .pane { overflow: hidden; box-shadow: inset 0 0 0 0.075rem rgba(0, 0, 0, 0.8); }
+#mapsquad .pane.x0 { --x: 47.4; --w: 63.6; } #mapsquad .pane.x1 { --x: 118.2; --w: 64.6; } #mapsquad .pane.x2 { --x: 189; --w: 63.6; }
+#mapsquad .pane.y0 { --y: 266.3; --h: 64.5; } #mapsquad .pane.y1 { --y: 336.4; --h: 66; } #mapsquad .pane.y2 { --y: 408.1; --h: 63.9; }
 #mapsquad .pane.empty { box-shadow: none; }
-#mapsquad .pane .art { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; background-size: cover; background-position: 50% 15%; display: grid; place-items: center; font: 700 2.4cqh var(--display); }
-#mapsquad .pane .crown { position: absolute; left: 0.4cqh; top: 0.2cqh; font-size: 1.6cqh; color: #e8c36c; text-shadow: 0 0 0.3cqh #000; }
-#mapsquad .pane-hp { position: absolute; left: 0; right: 0; bottom: 0; height: 0.6cqh; background: rgba(0, 0, 0, 0.75); }
+#mapsquad .pane .art { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; background-size: cover; background-position: 50% 15%; display: grid; place-items: center; font: 700 1.2rem var(--display); }
+#mapsquad .pane .crown { position: absolute; left: 0.2rem; top: 0.1rem; font-size: 0.8rem; color: #e8c36c; text-shadow: 0 0 0.15rem #000; }
+#mapsquad .pane-hp { position: absolute; left: 0; right: 0; bottom: 0; height: 0.3rem; background: rgba(0, 0, 0, 0.75); }
 #mapsquad .pane-hp .fill { position: absolute; inset: 0 auto 0 0; background: var(--gb-health); }
 #mapsquad .pane.fallen .art { filter: grayscale(1) brightness(0.45); }
-#mapsquad .pane:not(.empty):hover { box-shadow: inset 0 0 0 0.25cqh #e8c36c; }
+#mapsquad .pane:not(.empty):hover { box-shadow: inset 0 0 0 0.125rem #e8c36c; }
 /* The three sockets: the leader tree, End turn (raised, in the middle), what can be done here. The glyph is the
    engraved emblem; End turn's is an hourglass. */
 #mapcommands .socket, #endturn { --w: 50; --h: 50; border-radius: 50%; display: grid; place-items: center; }
@@ -816,20 +818,20 @@ body.formulas .formula { display: inline; }
 #mapcommands .glyph.icon-city { background-image: var(--ui-icon-city); }
 #mapcommands .glyph.icon-garrison { background-image: var(--ui-icon-garrison); }
 #mapcommands .socket:disabled .glyph { opacity: 0.25; }
-#mapcommands .socket:not(:disabled):hover, #endturn:not(:disabled):hover, #mapmenu:hover { box-shadow: 0 0 0 0.3cqh rgba(232, 195, 108, 0.7); }
-#mapcommands .socket.ready { box-shadow: 0 0 0 0.35cqh #e8c36c, 0 0 2.2cqh 0.7cqh rgba(232, 195, 108, 0.8); }
-#mapcity .plate.city { --x: 18; --y: 618; --w: 264; --h: 40; font: 700 2.1cqh var(--display); }
+#mapcommands .socket:not(:disabled):hover, #endturn:not(:disabled):hover, #mapmenu:hover { box-shadow: 0 0 0 0.15rem rgba(232, 195, 108, 0.7); }
+#mapcommands .socket.ready { box-shadow: 0 0 0 0.175rem #e8c36c, 0 0 1.1rem 0.35rem rgba(232, 195, 108, 0.8); }
+#mapcity .plate.city { --x: 18; --y: 618; --w: 264; --h: 40; font: 700 1.05rem var(--display); }
 /* The gem the angel and the succubus hold is the spell book: it opens the spells in the drawer, and glows while open. */
 #mapspells { --x: 108; --y: 724; --w: 84; --h: 84; border-radius: 50%; }
-#mapspells:not(:disabled):hover, #mapspells.open { box-shadow: 0 0 2cqh 0.5cqh rgba(255, 190, 90, 0.6); }
+#mapspells:not(:disabled):hover, #mapspells.open { box-shadow: 0 0 1rem 0.25rem rgba(255, 190, 90, 0.6); }
 #mapspells:disabled { background: radial-gradient(circle, rgba(10, 6, 4, 0.15), rgba(10, 6, 4, 0.3)); }
-#mapextra { position: fixed; right: calc(100vh * 300 / 864 + 0.75rem); bottom: 1rem; width: 15rem; max-height: 60vh; overflow-y: auto; padding: 0.625rem 0.75rem; }
+#mapextra { position: fixed; right: calc(50rem * 300 / 864 + 0.75rem); bottom: 1rem; width: 15rem; max-height: 60vh; overflow-y: auto; padding: 0.625rem 0.75rem; }
 #mapextra .spell-bar:first-child { margin-top: 0; border-top: 0; padding-top: 0; }
 #mapextra .city-row { display: flex; align-items: center; gap: 0.5rem; padding: 0.375rem 0; border-bottom: 1px solid var(--rule); }
 #mapextra .city-row .city-text { flex: 1; }
 #mapextra .city-row .name { font: 700 0.9375rem var(--display); }
 #mapextra .city-row .note { color: var(--muted); font-size: 0.6875rem; }
-#mapbottom { position: fixed; left: calc((100vw - 100vh * 300 / 864) / 2); bottom: 1.125rem; transform: translateX(-50%); text-align: center; }
+#mapbottom { position: fixed; left: calc((100vw - 50rem * 300 / 864) / 2); bottom: 1.125rem; transform: translateX(-50%); text-align: center; }
 #maphint { font: 500 1.0625rem var(--display); text-shadow: 0 1px 0.1875rem #000; min-height: 1.375rem; }
 
 /* The full screens in a game (the Capitol and every city, a leader, a structure; design/hud-kit.md): the battle's beam

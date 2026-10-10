@@ -361,5 +361,5 @@ left column (the user's). Clicking the warband's plate moves to the next warband
 measured on it. A member's full row (health, experience, record) moved under a held right-click on its pane. What the
 column has no window for (the opened spells, other cities, a second meeting) sits in a small drawer beside it. The
 page asks dark-mode extensions to leave it alone (Dark Reader inverted the type on the marble). Socket glyphs are
-the city tabs' emblems for now. The column fills the screen's height; its type is sized to the column (cqh), so the
-content keeps to its windows at every size.
+the city tabs' emblems for now. The column is 50rem tall (the screen's height at the default interface scale, so it follows
+the scale setting); its windows are shares of the painting, the panes measured from the painting's pixels.
