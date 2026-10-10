@@ -56,6 +56,8 @@ Rules learned:
 - **A figure's height in the depth greybox decides what it becomes.** Raised well above the face it is sculpted as a
   smooth statue; barely above it, in the face's own value, it is engraved into the metal (the battle bar's herald and
   scribe). Ask for "old and worn [...] matte, with no polish and no highlights" to keep it from shining.
+- **Mirror what looks like it should be mirrored.** Three sections with a symmetrical middle make the eye expect
+  the outer two to match; build them alike, the same width, a counterpart at each end.
 - **Balance the light across the piece.** Marble plates are the brightest things in it; a section with several and
   another with none reads lopsided. Give each end its share, or make some plates dark iron with light inlay.
 - **Both greyboxes are needed.** Values alone drift above strength ~0.55; depth alone confuses parts at the same
@@ -94,6 +96,10 @@ Look at every seed yourself, the full piece and a close crop of the figures:
 Make a mock page: the game's screen as the backdrop (`pnpm tsx scripts/art/hud-backdrop.ts <out.png> "?map&seed=3"`
 renders a route at 1536×864 with its HTML interface hidden), the painted piece at its size, and the game's real text and portraits placed into the windows at the greybox coordinates. This is the test
 that matters: everything has to land in its window, and read.
+
+Fit content to the **painted** openings, not the greybox's: the paint moves edges by a few pixels, and its frames
+have an inner lip. Measure each window on the painting (from its pixels where the edge is light against dark, by eye
+on a fine grid where it isn't) and clip the content to the inner opening, so the lip frames it.
 
 ## 6. Show it, record it
 - A page in `shots/` with the greyboxes, every seed, the mocks and the prompt as sent; link it over Tailscale.

@@ -458,3 +458,14 @@ of deep red glass set straight into a heavy ornate iron rim, with no stand", and
 "one arm wrapped across the front of the sphere", the arm drawn raised in front of the globe in the depth greybox. In
 all six seeds a hooded, winged figure kneels holding the red globe, and the layout holds. In the mock the game
 darkens the globe from the top as health drops and writes the number on the glass.
+
+**The user on the globe round:** "this is much much better". Four notes: the scribe "is still hovering"; "There
+are three segments, yet the left segment is way larger than the right one is. The middle segment is symmetrical, the
+others are not"; the candle "seems out of place"; the Seraph cuts into the frame, "cutting from within the outer
+layer, and not the inner, which destroys some dimension". **Mirrored** (`battle-bar-mirror`): both outer segments
+the same width and built alike about a centred middle, a sphere at each end held by a figure kneeling on the bottom
+ledge (health in red glass with the veiled winged figure; the round in pale smoky glass with drifting mist, held by
+the scribe, quill in his belt), an arch beside each (the portrait; the held tarot cards), a marble plate over dark
+panels (the stats; the log); a carved rosette in place of the candle. Seed 5 keeps every part. The portrait is fitted
+to the arch's inner opening as measured on the painting (x 231–305, y 20–178, a 37 px round head), so the lip, the
+columns and the sill frame it.
