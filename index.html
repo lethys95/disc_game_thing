@@ -2,6 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <!-- The game is dark and paints its own light surfaces (marble plates): dark-mode extensions would invert the type on them. -->
+    <meta name="color-scheme" content="dark" />
+    <meta name="darkreader-lock" />
     <title>disc</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -50,7 +53,8 @@
         <div id="mapsquad"></div>
         <div id="mapcommands"></div>
         <div id="mapcity"></div>
-        <button id="endturn" aria-label="End turn"></button>
+        <button id="endturn" class="socket" aria-label="End turn"></button>
+        <button id="mapspells" aria-label="Spell book"></button>
       </div>
       <div id="mapextra" class="panel" hidden></div>
       <div id="mapbottom"><div id="maphint"></div></div>

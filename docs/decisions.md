@@ -353,9 +353,13 @@ Control LoRA alongside the value greybox (`hud-pieces.md`, "The route").
 ## The map's interface is one painted column (2026-10-10, Claude, after the user's go-ahead)
 The four floating boxes (the turn bar, Menu, the warband panel, the city panel, End turn) became one column at the
 right edge, built like Disciples II's: the turn in a medallion, gold and mana on plates, the shown warband's name and
-its 3×3 squad in a stained-glass window (an empty place shows the glass), three sockets (the leader tree, what can be
-done where the warband stands, the next warband), the Capitol on a plate, and End turn as the gem the angel and the
-succubus hold. A member's full row (health, experience, record) moved under a held right-click on its pane. What the
-column has no window for (spells, other cities, a second meeting) sits in a small drawer beside it. Socket glyphs are
+its 3×3 squad in a stained-glass window (an empty place shows the glass), three sockets (the leader tree, End turn
+with an hourglass, what can be done where the warband stands), the Capitol on a plate, and the gem the angel and the
+succubus hold as the spell book (the user, 2026-10-10: the orb "might honestly be better at symbolizing something else
+than ending a turn"; it opens the spells in the drawer). The grid shows a quarter turned, the squad's back row as the
+left column (the user's). Clicking the warband's plate moves to the next warband. The panes are the painting's own,
+measured on it. A member's full row (health, experience, record) moved under a held right-click on its pane. What the
+column has no window for (the opened spells, other cities, a second meeting) sits in a small drawer beside it. The
+page asks dark-mode extensions to leave it alone (Dark Reader inverted the type on the marble). Socket glyphs are
 the city tabs' emblems for now. The column fills the screen's height; its type is sized to the column (cqh), so the
 content keeps to its windows at every size.

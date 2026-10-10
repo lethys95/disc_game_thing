@@ -7,7 +7,7 @@ import type { Leader, PlayerId, World } from "#rules/world/state";
 import { cityName } from "#view/city";
 import type { Place } from "#view/city";
 import { art } from "#view/art";
-import { button, byId, element, movementPips } from "#view/dom";
+import { button, buttonById, byId, element, movementPips } from "#view/dom";
 import { explain, explainWith } from "#view/explain";
 import { STRUCTURES } from "#rules/structures";
 import { structureAt } from "#rules/world/structures";
@@ -39,36 +39,53 @@ export class MapPanels {
   private readonly city = byId("mapcity");
   private readonly extra = byId("mapextra");
   private readonly banner = byId("mapbanner");
+  private readonly spellBook = buttonById("mapspells");
+  /** The gem's spell book is open: the spell bar shows in the drawer. Aiming a spell keeps it open. */
+  private spellsOpen = false;
+  private last: (() => void) | null = null;
 
-  constructor(private readonly actions: MapPanelActions) {}
+  constructor(private readonly actions: MapPanelActions) {
+    this.spellBook.addEventListener("click", () => {
+      this.spellsOpen = !this.spellsOpen;
+      this.last?.();
+    });
+  }
 
   render(world: World, player: PlayerId, selected: Leader | undefined, casting: string | null, mayAct: boolean): void {
+    this.last = () => this.render(world, player, selected, casting, mayAct);
     const mine = world.leaders.filter((l) => l.player === player);
     const shown = selected ?? mine[0];
     this.extra.replaceChildren();
-    this.renderSquad(world, player, shown, shown !== undefined && shown.id === selected?.id);
+    this.renderSquad(world, player, mine, shown, shown !== undefined && shown.id === selected?.id);
     this.renderCommands(world, mine, shown);
     this.renderCities(world, player);
     const spells = spellBar(world, player, mayAct, casting, this.actions.pickSpell);
-    if (spells) this.extra.prepend(spells);
+    this.spellBook.disabled = spells === null;
+    this.spellBook.classList.toggle("open", this.spellsOpen && spells !== null);
+    explain(this.spellBook, "Spell book", spells ? (this.spellsOpen ? "Close the spells." : "Open the spells you have learned.") : "No spells learned yet: the Capitol's Spells tab.");
+    if (spells && (this.spellsOpen || casting !== null)) this.extra.prepend(spells);
     this.extra.hidden = this.extra.childElementCount === 0;
     this.renderBanner(world, player);
   }
 
   /** The name plate and the nine panes; a pane without a unit shows the window's glass. */
-  private renderSquad(world: World, player: PlayerId, leader: Leader | undefined, isSelected: boolean): void {
+  private renderSquad(world: World, player: PlayerId, mine: readonly Leader[], leader: Leader | undefined, isSelected: boolean): void {
     this.squad.replaceChildren();
     if (!leader) return;
     const plate = element("button", `plate name${isSelected ? " selected" : ""}`);
     plate.append(element("span", "name", `♛ ${leaderName(leader)}`), element("span", "meta", `${leader.squad.length}/${leadershipOf(leader)} · ${movementPips(leader.movement, movementOf(leader))}`));
-    plate.addEventListener("click", () => this.actions.select(leader.id));
-    explain(plate, `${leaderName(leader)}'s warband`, `${leader.squad.length} of ${leadershipOf(leader)} places filled.`, `Movement ${leader.movement} of ${movementOf(leader)}.`);
+    // Clicking the shown warband's plate moves on to the next warband; an unselected one is selected first.
+    const next = mine[(mine.indexOf(leader) + 1) % mine.length] ?? leader;
+    plate.addEventListener("click", () => this.actions.select(isSelected ? next.id : leader.id));
+    const cycle = mine.length > 1 ? [`Click for the next warband: ${leaderName(next)}.`] : [];
+    explain(plate, `${leaderName(leader)}'s warband`, `${leader.squad.length} of ${leadershipOf(leader)} places filled.`, `Movement ${leader.movement} of ${movementOf(leader)}.`, ...cycle);
     this.squad.appendChild(plate);
     const commitment = playerOf(world, player).commitment;
     for (const row of [0, 1, 2] as const) {
       for (const col of [0, 1, 2] as const) {
         const m = leader.squad.find((u) => u.tile.row === row && u.tile.col === col);
-        const cell = element("button", `pane r${row} c${col}${m ? "" : " empty"}`);
+        // The window shows the grid a quarter turned: a squad's back row (row 2) is its left column.
+        const cell = element("button", `pane x${2 - row} y${col}${m ? "" : " empty"}`);
         if (m) {
           cell.appendChild(art({ kind: "portrait", id: m.defId, frame: "icon" }, "pane-art"));
           if (isLeaderOf(m, leader)) cell.appendChild(element("span", "crown", "♛"));
@@ -89,7 +106,7 @@ export class MapPanels {
     }
   }
 
-  /** The three sockets: the leader tree, what can be done where the warband stands, the next warband. */
+  /** Two of the three sockets: the leader tree and what can be done where the warband stands. End turn is the third. */
   private renderCommands(world: World, mine: readonly Leader[], leader: Leader | undefined): void {
     this.commands.replaceChildren();
     const points = leader ? unspentPoints(leader) : 0;
@@ -106,10 +123,6 @@ export class MapPanels {
     const [first, ...rest] = here;
     this.commands.appendChild(first ? this.socket("here", "icon-city", first.label, "", first.act, false) : this.socket("here", "icon-city", "Nothing here", "Stand on a structure, or next to another warband.", null, false));
     for (const more of rest) this.extra.appendChild(button("action small", more.label, more.act));
-    const next = leader ? mine[(mine.indexOf(leader) + 1) % mine.length] : undefined;
-    this.commands.appendChild(
-      this.socket("next", "icon-garrison", "Next warband", next && mine.length > 1 ? leaderName(next) : "You have one warband.", next && mine.length > 1 ? () => this.actions.select(next.id) : null, false),
-    );
   }
 
   private socket(slot: string, icon: string, label: string, note: string, act: (() => void) | null, ready: boolean): HTMLElement {

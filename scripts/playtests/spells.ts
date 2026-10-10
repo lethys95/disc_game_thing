@@ -13,6 +13,7 @@ const spells: Playtest = {
     if (!learned?.includes("Learned")) t.fail("the spell wasn't learned");
     await t.page.locator("#capitol button", { hasText: "Back to the map" }).click();
 
+    await t.page.click("#mapspells");
     await t.page.locator(".spell-bar button", { hasText: "Bless warband" }).click();
     // Our warband stands on the Capitol at the start.
     const capitol = await t.capitolHex(0);
