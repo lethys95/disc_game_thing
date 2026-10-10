@@ -507,6 +507,9 @@ box over all four hands, also caught the succubus's face (it came out as pale sk
 second, one small box per hand and a prompt that keeps everything iron ("no skin, no flesh") and the glass "deep
 orange amber", changed only the hands (`column-hands-2`, strength 0.55, seed 2, in the game). The lesson for the skill:
 a box per broken part, never one box over a face.
-The angel's near hand at her chest was still broken (the user); the per-hand boxes had missed it. Asked for alone
-(`column-angel-hand`), Krea-2 drew no hand at that size in twelve tries and folded her sleeve over it instead; seed 1
-at 0.55 reads as a draped arm at her breast, nothing malformed, and is in the game.
+Still wrong (the user): not the hand at the angel's chest, which was fine, but a third arm running down the globe's
+left rim to a hand at its foot. Claude had repaired the wrong one first (`column-angel-hand`, a sleeve over the good
+hand, not used). The fix was to remove, not repair: the arm's strip masked alone, painted as glass and rim, "nothing
+in front of the glass: no arm, no hand", without the depth map so it couldn't bring the arm back
+(`column-third-arm`, 0.65, seed 4, in the game). The lesson: count the limbs before repairing one; an extra limb is
+removed, not fixed.
