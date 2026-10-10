@@ -112,7 +112,8 @@ bell (the user: "r3 seems to be the best"), and the plain round's plates were "b
    does the cutting and the cleaning ("I'm fully capable of doing that and I have the eyes").
 5. **Four seeds a round.** Claude judges and reruns; the kit sheet goes to the user.
 6. **Hand-off:** the uncut candidates are in `art/candidates/ui/pieces/<piece>/`. A cut piece saved as
-   `art/cut/ui/<piece>.png` is what Claude installs (as `assets/ui/pieces/<piece>.webp`) and places in CSS.
+   `art/cut/ui/<piece>.png` is what Claude installs (`pnpm tsx scripts/art/hud-pieces.ts install`, as
+   `assets/ui/pieces/<piece>.webp`, the CSS variable `--ui-pieces-<piece>`) and places in CSS.
 7. **Figures, by degree.** A figure is small, does a job and is part of a structure (a corbel, a bracket), never a
    statue standing beside the HUD. The angel corbel below is the one so far.
 
@@ -149,7 +150,7 @@ silver rose, a reliquary vial of red, a bell for End turn. The shared pieces car
 | 13 | vial | mana beside the turn (Jilliath's vessel, #76) |
 | 14 | coins | gold beside the turn |
 | 15 | candle | the battle's round, its numeral beside it |
-| 16 | lamp gem | a toggle in the settings, lit and unlit |
+| 16 | lamp gem | a toggle in the settings: one piece, lit (on) or dark (off) in CSS, since a piece lights up rather than changes (hud-kit's states) |
 | 21 | angel corbel | the small angel the user allows: under the map's turn plate, holding it up (Disciples II's two small atlantes at the wheel) |
 
 ### Faction marks (Jilliath)
@@ -199,3 +200,21 @@ The same four pieces, each with one phrase of finish and one of ornament, each m
 "Painted as game interface art." (r3). Both read as game interface now; the painted ones are more stylised, crackled
 marble with rust-brown iron. **The user's read:** r3 best for plate, seal and bell; the plain r1 plates boring;
 parchment no strong opinion. Painted is the technique from here on.
+
+## Round 3 (2026-10-10): the other seventeen, painted
+Every remaining piece once, painted (68 candidates). Claude's read:
+- **Right the first time:** frame (blackened iron, brass rivets, amber studs at the corners), button (warm oak with
+  riveted iron end bands), ribbon, the open book (flat and square, oxblood and brass), the closed book, the candle,
+  the portrait arch (a lancet of iron with a band of red glass in lead), the rose window, the sealed band.
+- **Made again:** the socket came out with a quatrefoil opening, so the prompt asks for a square one (an icon is
+  square). The rail was a thin rod, too slight to carry the turn's faces: now a band "as tall as a hand". The roller
+  read as a rolling pin: now a slim walnut rod with brass acorn finials. The vial's "fine engraving" became fake
+  lettering: now a band of engraved leaves. The coins came stamped with letter shapes: now a small six-pointed star.
+  The still life is warm and good, but busy across the whole width; the title's menu needs a bare dark side, so the
+  objects now gather at the right.
+- **Lit and unlit gems came out the same.** One gem now, lit or dark in CSS: the state language says a piece lights
+  up rather than changes, so one picture is the right shape anyway.
+- **The kit sheet** (the picks at in-game size, side by side): iron, brass, amber, oak, cream marble and crimson sit
+  together. Two outliers: the sealed band's iron was greyer and more pitted than the frame's (now the frame's
+  smooth blackened iron), and there was too much crimson (seal, ribbon, gem, rose window, arch glass, leather). Red
+  means Jilliath and commit; the toggle gem moves to amber, the interface's candlelight.

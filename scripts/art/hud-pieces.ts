@@ -1,4 +1,5 @@
-import { readFile, writeFile } from "node:fs/promises";
+import { access, mkdir, readFile, writeFile } from "node:fs/promises";
+import sharp from "sharp";
 import { runBatch } from "#scripts/art/batch";
 import type { Candidate } from "#scripts/art/batch";
 
@@ -9,6 +10,7 @@ import type { Candidate } from "#scripts/art/batch";
  *
  *     pnpm tsx scripts/art/hud-pieces.ts <piece…> [seed…]   (a round of candidates into art/candidates/ui/pieces/<piece>/)
  *     pnpm tsx scripts/art/hud-pieces.ts page              (shots/hud-pieces.html: the kit sheet, every prompt as sent)
+ *     pnpm tsx scripts/art/hud-pieces.ts install           (the user's cuts, art/cut/ui/<piece>.png, into assets/ui/pieces/)
  */
 
 /** Dark pieces on white and light pieces on black, so the user's cut finds the edge. */
@@ -29,27 +31,26 @@ interface Piece {
 
 const PIECES: readonly Piece[] = [
   { id: "plate", pick: "plate-painted-r3-2.png", job: "the unit card's name, the map's turn, the Capitol's facts, the title menu", shown: 18, size: [1536, 512], ground: "black", prompt: "A long name plate of cream marble, its face smooth and evenly pale with a few faint grey veins, its edges chipped and yellowed with age, set in a rim of blackened cast iron with a small leaf scroll at each end holding a faceted amber stud. Seen straight on, the face blank." },
-  { id: "frame", job: "the edge of every panel: warband and city panels, menus, the garrison", shown: 16, size: [1024, 1024], ground: "white", prompt: "A rectangular frame of blackened cast iron, worn smooth on its raised edges, a narrow moulded border with small brass rivets along it and a small leaf scroll at each corner holding a faceted amber stud. The inside is empty and flat black. Seen straight on." },
-  { id: "button", job: "End turn's label, Auto-battle, Resolve now, menu entries", shown: 12, size: [1536, 512], ground: "white", prompt: "A wide flat button of dark oak, its bevelled face worn smooth and scratched, capped at both ends with bands of blackened iron held by brass rivets. Seen straight on, the face blank." },
-  { id: "socket", job: "the battle's ability row, equipment", shown: 3.5, size: [1024, 1024], ground: "white", prompt: "A square socket of blackened iron set into dark scratched oak, a deep bevelled rim worn bright on its edge, a brass rivet at each corner, the inside empty and black. Seen straight on." },
-  { id: "rail", job: "the battle's turn order along the top", shown: 40, size: [1536, 384], ground: "white", prompt: "A long horizontal bar of blackened cast iron, its slim moulded profile worn bright along the top edge, brass rivets at even intervals and a small leaf scroll at each end. Seen straight on." },
+  { id: "frame", pick: "frame-painted-r1-4.png", job: "the edge of every panel: warband and city panels, menus, the garrison", shown: 16, size: [1024, 1024], ground: "white", prompt: "A rectangular frame of blackened cast iron, worn smooth on its raised edges, a narrow moulded border with small brass rivets along it and a small leaf scroll at each corner holding a faceted amber stud. The inside is empty and flat black. Seen straight on." },
+  { id: "button", pick: "button-painted-r1-1.png", job: "End turn's label, Auto-battle, Resolve now, menu entries", shown: 12, size: [1536, 512], ground: "white", prompt: "A wide flat button of dark oak, its bevelled face worn smooth and scratched, capped at both ends with bands of blackened iron held by brass rivets. Seen straight on, the face blank." },
+  { id: "socket", job: "the battle's ability row, equipment", shown: 3.5, size: [1024, 1024], ground: "white", prompt: "A square socket of blackened iron set into dark scratched oak, a deep bevelled rim worn bright on its edge, a brass rivet at each corner, its opening square with sharp corners, the inside empty and black. Seen straight on." },
+  { id: "rail", job: "the battle's turn order along the top", shown: 40, size: [1536, 384], ground: "white", prompt: "A long horizontal band of blackened cast iron, as tall as a hand, with a moulded rim along its top and bottom edges worn bright, brass rivets at even intervals and a small leaf scroll at each end. Seen straight on." },
   { id: "parchment", job: "the right-click explanations, the battle log, the card's facts, save slots, codex pages", shown: 16, size: [1024, 1024], ground: "black", prompt: "A sheet of tan parchment, smooth and unfolded, its deckled edges darkened and a little torn, faint brown foxing near the edges and the middle plain, lying flat and square to the viewer, blank." },
-  { id: "roller", job: "the rod the unit card and the log hang from", shown: 16, size: [1536, 512], ground: "white", prompt: "A turned scroll roller of honey-coloured wood, its varnish worn through where it is handled, with a round knob at each end and a thin brass ring at each shoulder, lying horizontal. Seen straight on." },
+  { id: "roller", job: "the rod the unit card and the log hang from", shown: 16, size: [1536, 512], ground: "white", prompt: "A long slim scroll rod of dark turned walnut, thin as a curtain rod, its varnish worn through where it is handled, with a small acorn finial of tarnished brass at each end, lying horizontal. Seen straight on." },
   { id: "seal", pick: "seal-painted-r3-4.png", job: "confirm and cancel inside documents", shown: 3.5, size: [1024, 1024], ground: "black", prompt: "A round seal of dull crimson wax with a thick uneven rim, a little cracked and worn, its face smooth and blank. Seen straight on." },
-  { id: "ribbon", job: "tabs: the codex's kinds, the Capitol's tabs", shown: 2.5, size: [768, 1536], ground: "black", prompt: "A bookmark ribbon of deep red silk, frayed a little at its swallowtail end, with gold edge stitching, hanging straight down. Seen straight on." },
-  { id: "book", job: "the codex and the credits, lying square", shown: 44, size: [1536, 1024], ground: "black", prompt: "An open book lying flat on a dark wooden table, seen from directly above and square to the viewer: two blank pages of cream parchment, foxed at the edges, a cover of scuffed oxblood leather showing around them, tarnished brass corner pieces." },
+  { id: "ribbon", pick: "ribbon-painted-r1-2.png", job: "tabs: the codex's kinds, the Capitol's tabs", shown: 2.5, size: [768, 1536], ground: "black", prompt: "A bookmark ribbon of deep red silk, frayed a little at its swallowtail end, with gold edge stitching, hanging straight down. Seen straight on." },
+  { id: "book", pick: "book-painted-r1-2.png", job: "the codex and the credits, lying square", shown: 44, size: [1536, 1024], ground: "black", prompt: "An open book lying flat on a dark wooden table, seen from directly above and square to the viewer: two blank pages of cream parchment, foxed at the edges, a cover of scuffed oxblood leather showing around them, tarnished brass corner pieces." },
   { id: "bell", pick: "bell-painted-r3-2.png", job: "End turn on the map", shown: 5, size: [1024, 1024], ground: "white", prompt: "A small hand bell of tarnished dark bronze with a band of engraved leaves around its waist and a turned black wooden handle worn pale where it is held, standing upright. Seen straight on." },
-  { id: "closed-book", job: "Menu on the map and in battle", shown: 3.5, size: [1024, 1024], ground: "white", prompt: "A small closed book bound in scuffed oxblood leather with blind-tooled lines on its cover, tarnished brass corner pieces and a brass clasp, standing upright. Seen straight on." },
-  { id: "vial", job: "mana beside the turn", shown: 3, size: [1024, 1024], ground: "white", prompt: "A small reliquary vial of red glass between two caps of tarnished silver, a tiny silver rose on the upper cap and fine engraving on the lower, standing upright. Seen straight on." },
-  { id: "coins", job: "gold beside the turn", shown: 3, size: [1024, 1024], ground: "white", prompt: "A small heap of worn gold coins, their stamped faces rubbed nearly smooth. Seen straight on." },
-  { id: "candle", job: "the battle's round", shown: 4, size: [1024, 1024], ground: "black", prompt: "A white wax candle half burned down in a small blackened iron holder with a ring handle, lit, wax run down its side. Seen straight on." },
-  { id: "gem-lit", job: "a settings toggle, on", shown: 2, size: [1024, 1024], ground: "white", prompt: "A small oval cabochon of red glass in a bezel of blackened iron with a beaded rim, glowing from inside. Seen straight on." },
-  { id: "gem-unlit", job: "a settings toggle, off", shown: 2, size: [1024, 1024], ground: "white", prompt: "A small oval cabochon of red glass in a bezel of blackened iron with a beaded rim, dark and unlit. Seen straight on." },
-  { id: "portrait-arch", job: "every Jilliath face: card, turn order, warband, codex", shown: 5, size: [1024, 1536], ground: "white", prompt: "A tall portrait frame shaped as a pointed lancet arch of blackened cast iron, worn bright on its edges, a thin band of red stained glass in lead around the opening, the opening empty and black. Seen straight on." },
-  { id: "rose-window", job: "the empty mark: an empty cell or socket", shown: 3, size: [1024, 1024], ground: "white", prompt: "A small round rose window of blackened iron tracery, its six petals filled with dull red glass, one pane cracked. Seen straight on." },
-  { id: "sealed-band", job: "locked: research not yet open", shown: 12, size: [1536, 512], ground: "white", prompt: "A flat band of blackened iron, pitted and worn, with a crimson wax seal pressed over its middle. Seen straight on." },
+  { id: "closed-book", pick: "closed-book-painted-r1-4.png", job: "Menu on the map and in battle", shown: 3.5, size: [1024, 1024], ground: "white", prompt: "A small closed book bound in scuffed oxblood leather with blind-tooled lines on its cover, tarnished brass corner pieces and a brass clasp, standing upright. Seen straight on." },
+  { id: "vial", job: "mana beside the turn", shown: 3, size: [1024, 1024], ground: "white", prompt: "A small reliquary vial of red glass between two caps of tarnished silver, a tiny silver rose on the upper cap and a band of engraved leaves on the lower, standing upright. Seen straight on." },
+  { id: "coins", job: "gold beside the turn", shown: 3, size: [1024, 1024], ground: "white", prompt: "A small heap of worn gold coins, each stamped with a small six-pointed star, their rims nicked and their faces rubbed by handling. Seen straight on." },
+  { id: "candle", pick: "candle-painted-r1-4.png", job: "the battle's round", shown: 4, size: [1024, 1024], ground: "black", prompt: "A white wax candle half burned down in a small blackened iron holder with a ring handle, lit, wax run down its side. Seen straight on." },
+  { id: "gem", job: "a settings toggle; lit (on) and dark (off) in CSS: a piece lights up, it doesn't change", shown: 2, size: [1024, 1024], ground: "white", prompt: "A small oval cabochon of amber glass in a bezel of blackened iron with a beaded rim. Seen straight on." },
+  { id: "portrait-arch", pick: "portrait-arch-painted-r1-1.png", job: "every Jilliath face: card, turn order, warband, codex", shown: 5, size: [1024, 1536], ground: "white", prompt: "A tall portrait frame shaped as a pointed lancet arch of blackened cast iron, worn bright on its edges, a thin band of red stained glass in lead around the opening, the opening empty and black. Seen straight on." },
+  { id: "rose-window", pick: "rose-window-painted-r1-1.png", job: "the empty mark: an empty cell or socket", shown: 3, size: [1024, 1024], ground: "white", prompt: "A small round rose window of blackened iron tracery, its six petals filled with dull red glass, one pane cracked. Seen straight on." },
+  { id: "sealed-band", job: "locked: research not yet open", shown: 12, size: [1536, 512], ground: "white", prompt: "A flat band of blackened cast iron worn smooth, a brass rivet at each end, with a crimson wax seal pressed over its middle. Seen straight on." },
   { id: "angel-corbel", job: "the one small angel: under the map's turn plate, holding it up", shown: 5, size: [1024, 1024], ground: "black", prompt: "A small stone corbel carved as an angel's head with folded wings spread flat beneath a square ledge it holds up, pale weathered limestone with traces of old gilding in the feathers. Seen straight on." },
-  { id: "still-life", job: "the title screen", shown: 60, size: [1536, 864], ground: "black", prompt: "A still life on a scarred dark wooden table at night, seen straight on: a tarnished bronze hand bell, a closed book bound in scuffed oxblood leather, a letter sealed with crimson wax, a half-burned candle in an iron holder, a small vial of red glass." },
+  { id: "still-life", job: "the title screen", shown: 60, size: [1536, 864], ground: "black", prompt: "A still life on a scarred dark wooden table at night, seen straight on: a tarnished bronze hand bell, a closed book bound in scuffed oxblood leather, a letter sealed with crimson wax, a half-burned candle in an iron holder, a small vial of red glass. The objects are gathered at the right of the table; its left half is bare and in deep shadow." },
 ];
 
 const DIR = "art/candidates/ui/pieces";
@@ -101,8 +102,24 @@ ${rows.join("")}</main></body></html>`;
   console.log("shots/hud-pieces.html");
 }
 
+/** 1rem at the largest automatic scale (`rootFontSize`'s 2.5 × 16px), so a piece is never upscaled. */
+const REM_PX_MAX = 40;
+
+/** Installs every cut that exists, as `--ui-pieces-<piece>` (the `assets/ui` glob), and prints its size for the slices. */
+async function install(): Promise<void> {
+  await mkdir("assets/ui/pieces", { recursive: true });
+  for (const piece of PIECES) {
+    const cut = `art/cut/ui/${piece.id}.png`;
+    if (!(await access(cut).then(() => true, () => false))) continue;
+    const out = `assets/ui/pieces/${piece.id}.webp`;
+    const info = await sharp(cut).resize({ width: Math.round(piece.shown * REM_PX_MAX), withoutEnlargement: true }).webp({ quality: 90, alphaQuality: 100 }).toFile(out);
+    console.log(`${out}: ${info.width}x${info.height}`);
+  }
+}
+
 const args = process.argv.slice(2);
 if (args[0] === "page") await page();
+else if (args[0] === "install") await install();
 else {
   const seeds = args.map(Number).filter((n) => !Number.isNaN(n));
   const ids = args.filter((a) => Number.isNaN(Number(a)));
