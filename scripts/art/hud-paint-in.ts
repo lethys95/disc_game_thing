@@ -40,6 +40,14 @@ const LAYOUTS: Readonly<Record<string, Layout>> = {
   /** The dense bar, its globe again: red glass held close by a kneeling figure whose arm crosses its front. */
   /** The battle bar, mirrored (the user, 2026-10-10: the outer segments unequal, the scribe hovering, the candle out of place). */
   /** The battle bar as a duel (the user, 2026-10-10: the second globe shows the hovered unit; the log opens on demand). */
+  /** The duel, its stat plates named as rectangles (round one turned them into round bosses). */
+  "battle-bar-duel-2": {
+    page: [1536, 200],
+    size: [2432, 320],
+    denoise: 0.7,
+    depthStrength: 1,
+    prompt: "A long horizontal game interface bar seen straight on, symmetrical, painted as game interface art, in soft even light without glare. Blackened cast iron, old and worn, its three sections joined by upright iron bands with a small faceted amber stud at each end. Every surface is densely worked: interlaced knotwork, scrolling ironwork, small rosettes and tracery cover all the iron between the parts, dark on dark, and no surface is left plain. Cream marble plates, blank. Round sockets with ivory enamel faces, blank. At each end, a large sphere of deep red glass set straight into a heavy ornate iron rim, with no stand, faintly glowing from within. Kneeling on the bar's bottom ledge at the left sphere's outer side, carved in deep relief in the same dark iron, a grown veiled woman in long robes with a folded feathered wing, one arm wrapped across the front of the sphere and the other laid over its top; mirroring her at the right sphere, carved the same way, a grown hooded figure with small curved horns and a folded bat wing, holding the right sphere the same way. Beside each sphere, a tall arched well, empty and black, and a long marble plate above a two by two grid of four small rectangular dark iron plates and a dark panel. In the middle, a round marble medallion between four small round ivory buttons, two on each side, and below them a row of seven square sockets, each empty and black. No text, no letters.",
+  },
   "battle-bar-duel": {
     page: [1536, 200],
     size: [2432, 320],
