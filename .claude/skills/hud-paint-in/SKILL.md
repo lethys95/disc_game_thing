@@ -94,6 +94,13 @@ Look at every seed yourself, the full piece and a close crop of the figures:
 - Happy accidents are allowed when they read as meant (the 3×3 panes came out as stained glass: an empty squad slot
   now shows lit glass).
 
+### Repair, don't reroll
+When a seed holds the layout but one part is broken (hands, a merged plate), repaint just that part:
+`pnpm tsx scripts/art/hud-inpaint.ts <repair>` (a repair names the source, boxes in page units, strengths and a
+prompt for that part only). Mask only the broken part, not its frame; hold the repaint to the piece's depth greybox
+(`depth` in the repair) so rims and edges survive; and name what must stay the same size ("a sphere that fills its
+rim edge to edge"), or it shrinks. Separate repairs on one piece can be combined.
+
 ## 5. Lay the real content over it
 Make a mock page: the game's screen as the backdrop (`pnpm tsx scripts/art/hud-backdrop.ts <out.png> "?map&seed=3"`
 renders a route at 1536×864 with its HTML interface hidden), the painted piece at its size, and the game's real text and portraits placed into the windows at the greybox coordinates. This is the test

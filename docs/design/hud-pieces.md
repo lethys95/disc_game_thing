@@ -486,3 +486,12 @@ of four small rectangular dark iron plates" and the middle ones "buttons" fixed 
 Seed 3 is the pick: both figures kneel on the ledge, the angel's hands on the glass, the horned figure's bat wing
 folded. Portraits fit the painted openings (left x 237–304, right x 1227–1298, y 22–176). The right card keeps the
 left's reading order; only its plates mirror.
+
+**Wider arches, dull light, and repairing the hands** (the user: the portrait frames "too small and can't fit the
+characters"; "all the models' hands and arms are messed up"; run it with "dull lighting" and "dull lighting, no
+stone", then inpaint what's broken): the arches 40% wider (`battle-bar-duel-dull`, `-nostone`; the first greyboxes
+authored in rem, their source `art/greybox/battle-bar-duel-dull/greybox.py`). "Dull lighting" calmed the highlights a
+little; "no stone" changed almost nothing. Inpainting (`scripts/art/hud-inpaint.ts`, masked image to image) in three
+tries: the whole corner (the hands improved, the globes lost their rims); only the arms and hands held to the bar's
+depth greybox (`depthInpaint`; rims kept, spheres shrank); the same with the sphere told to fill its rim (both hands
+on the glass, arms that read). The best left and right repairs combine, being separate regions.
