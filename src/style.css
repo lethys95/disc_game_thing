@@ -663,7 +663,7 @@ body.formulas .formula { display: inline; }
 /* The health's number sits on the dark centre of an engraved silver seal (assets/ui/icon-seal.webp). */
 .unit-sheet .seal {
   position: relative; display: grid; place-items: center; flex: none; width: 2.5rem; height: 2.5rem; border-radius: 50%;
-  background: var(--ui-icon-seal) center / contain no-repeat; color: var(--ink); font: 700 0.95rem var(--display); text-shadow: 0 1px 0.15rem #000;
+  background: var(--ui-icon-seal) center / contain no-repeat; color: #f2e8d6; font: 700 0.95rem var(--display); text-shadow: 0 1px 0.15rem #000;
 }
 /* A shield is a second, pale seal pressed against the health's. */
 .unit-sheet .seal .shield-seal {
