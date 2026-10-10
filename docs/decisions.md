@@ -341,3 +341,10 @@ checked on a kit sheet of the picks at their in-game sizes, and the battle scree
 the visual target the other screens follow. Gothic fantasy stays, by degree: the user, "It's not a bool, it's a
 gradient", so warm materials sit beside the iron and one small built-in angel is allowed. Claude runs and judges the
 rounds without asking between them ("You don't need my accept of everything").
+
+## Krea-2 stays the art model; the Qwen models are dropped (2026-10-10, the user)
+For the box-out-and-paint-in test Claude downloaded Qwen-Image 2.1 and Qwen-Image-Edit-2511. 2.1 is licensed for
+non-commercial use only, so every asset made with it would have to be catalogued and replaced if disc were ever sold:
+"That's debt. We're not taking that." Edit-2511 (Apache) was "virtually unusable". Krea-2 painted the same greybox
+nearly as well at strength 0.55. What the test found is the method (a value greybox carries the layout, the prompt
+carries the materials), not a model.

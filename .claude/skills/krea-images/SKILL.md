@@ -73,11 +73,8 @@ before saying anything about the images. For the user, put a sheet in `shots/` (
   that sounds like a title screen gets garbled lettering of the prompt's own words.
 - Architecture for UI pieces: ask for "a straight-on architectural elevation" (2026-10-10). Parapets, arcades,
   pinnacles and buttresses came out flat, square on and gothic; carved panels never did.
-- Other local models (downloaded 2026-10-10, in ComfyUI's models folders): **Qwen-Image 2.1** (turbo and base, 7B,
-  `qwen3vl_8b_bf16` encoder, its own VAE, a union ControlNet; non-commercial licence) and **Qwen-Image-Edit-2511**
-  (fp8mixed, `qwen_2.5_vl_7b_fp8_scaled`, `qwen_image_vae`, an 8-step Lightning LoRA; Apache 2.0). Both edit an
-  image by instruction and take extra reference images. For a layout drawn as a greybox they hold it exactly where
-  Krea-2's image to image drifts above strength ~0.55. Edit-2511 wants its full 20 steps at cfg 4 (the Lightning LoRA
-  speckles and glosses). Graph shapes: ComfyUI's templates `image_qwen_image_2_1_image_edit.json` and
-  `image_qwen_image_edit_2511.json`. No committed generator wraps them yet; the column probe ran from scratch scripts.
+- Krea-2 is the art model (the user, 2026-10-10). Qwen-Image 2.1 was tried and dropped: its licence is
+  non-commercial, and art made with it would have to be catalogued and replaced one day ("That's debt. We're not
+  taking that"). Qwen-Image-Edit-2511 (Apache) was too poor. For a layout drawn as a greybox, Krea-2's image to image
+  holds it up to strength ~0.55; above that it drifts.
 
