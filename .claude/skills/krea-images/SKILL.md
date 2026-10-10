@@ -64,3 +64,10 @@ before saying anything about the images. For the user, put a sheet in `shots/` (
 - Krea-2 Turbo runs at cfg 1, where negative prompts do nothing; a negative needs `cfg` above 1, and cfg 3 already
   burns the image (`scripts/art/comfy.ts`).
 - Style words in prompts are the user's call (memory: no-silent-style): probe framings, don't bake one in.
+- What Krea-2 does with a bare scene prompt (the title probe, 2026-10-10: seven prompts from "gothic fantasy epic game
+  start screen", each built on the last, fixed seeds): it brings its own composition (framing, depth, a focal point,
+  warm against cold), so a painting's prompt should leave it room rather than list contents. Word weight dilutes as a
+  prompt grows (the first words stopped working past ~40 words and came back when it was cut). Strong levers: "layered
+  values from a dark foreground to a luminous distance", "a single clear focal point", named colours. "Rival powers"
+  plus three accents gave each side its own colour. "War" and "ruin" desaturate unless colour is named. Anything
+  that sounds like a title screen gets garbled lettering of the prompt's own words.

@@ -253,3 +253,10 @@ there". Right: its objects were the HUD's own inventory on a table, and its empt
 through. The chrome's rules (objects only, no mood) were applied to a painting, which needs a subject and a
 composition from what the game is about. The title painting starts over from that, not from props.
 
+
+**What the tool does with a bare scene (the user's probe, 2026-10-10):** seven prompts from "gothic fantasy epic game
+start screen", each built on the last, no contents named (`shots/title-probe.html`; the lessons are in the
+`krea-images` skill). The model composes on its own when it is left room; the first words fade as a prompt grows;
+"layered values from a dark foreground to a luminous distance" gives depth and a focal point; "rival powers" with
+three accents gives each side its colour. Left alone, "gothic fantasy epic" means armoured armies and a giant, so the
+title painting needs disc's own subject; this only says how to ask for it.
