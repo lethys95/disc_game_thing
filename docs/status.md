@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-10 (the HUD kit reset: the one-painting screens taken out, pieces next, one by one)
+**Updated:** 2026-10-10 (the HUD: a plan from how HUDs are made; every piece in painted rounds)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): the alpha is the three playable factions (Jilliath,
@@ -24,13 +24,12 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
   13 picked with portraits installed (`roster.md`); deferred by the user until they have an overview: the Guardian,
   Empyreal, Torturer, Archon, Cleric, Fanatic and the fire casters. Lessons in the `unit-concepts` skill.
 - **Armor is a percentage with diminishing returns** (the user; #75, `testing/percent-armor`).
-- **The HUD kit, reset (2026-10-10)** (`in-progress/ui-kit-grotesques`; `design/hud-kit.md`'s reset note). Night
-  one painted each screen as one picture; the user found too many angels and tombstones, everything grey, content at
-  an angle, less readable, the map worse. Now: the map back as it was, plain panels where the steles stood, the codex
-  a flat book; the paint script deleted. The references re-read element by element (`reference_material/elements.md`,
-  with how the prompts went grey). Next: pieces made one by one from short prompts (`design/hud-pieces.md`), the user
-  doing the cuts. Kept from the kit: the layouts (turn order in the beam, sockets, the card's instruments as silver
-  emblems, documents on parchment) and words under a held right-click.
+- **The HUD kit, reset and replanned (2026-10-10)** (`in-progress/ui-kit-grotesques`). Night one's one-painting
+  screens are out (too many angels and tombstones, grey, content at an angle, less readable). The plan
+  (`design/hud-pieces.md`): how HUDs are made elsewhere, a style guide (material means role), every piece from its own
+  short painted prompt (`scripts/art/hud-pieces.ts`, `shots/hud-pieces.html` with a kit sheet of picks), the user doing
+  the cuts, the battle assembled first as the visual target. The battle's card and log are parchment on a roller in
+  stand-in values until the cuts come. Elements of the references: `reference_material/elements.md`.
 - **The Grove's Water is now Wellspring.**
 - **Unreal 5 as a parallel track** (the user: "UE is the king of 3d"; `ongoing/unreal-port`), in its own repo,
   `../disc_unreal`. three.js keeps the pace; Unreal follows as a view, with this repo's TypeScript rules as the only
@@ -38,8 +37,8 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
   the `?fight` arena in Unreal looks nearly the same as three.js with today's assets (`disc_unreal/shots/`).
 
 ## Next
-0. **The HUD pieces, one by one** (Claude's; the user reads the prompts and does the cuts): `design/hud-pieces.md`, prompts in
-   `scripts/art/hud-pieces.ts`, candidates on `shots/hud-pieces.html`; the first test is four pieces.
+0. **The HUD pieces** (Claude runs and judges the rounds; the user cuts the picks into `art/cut/ui/<piece>.png`): the
+   plan's steps in `design/hud-pieces.md`; next the kit sheet, then the battle assembled from the cuts.
 1. **Finish Jilliath's concepts** with the user (the open nine), then portraits from the picks.
 2. **The other factions' missing units** (the alpha needs all three): Nexus melee tier 3, the Grove's mage line, and
    the rest on the board; then their concept art the same way.

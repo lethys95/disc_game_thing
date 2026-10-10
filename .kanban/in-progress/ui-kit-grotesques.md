@@ -167,3 +167,17 @@
   Test 1 (plate, parchment, seal, bell): colour and clean edges, but studio-photo pristine. Round 2 added a phrase of
   finish and of ornament to each, made both plain and "painted": both read as game interface. Waiting on the user:
   photographic or painted (questions #14), and a read of the other prompts; then the rest, and the user's cuts.
+- **The user's read of round 2 (2026-10-10):** "We're not going to take that much of a granular process where you have
+  to ask for everything." An angel is fine "small inbuilt into the hud [...] just not towering"; "be very careful you
+  don't think in ultimates here. It's not a bool, it's a gradient." Gothic fantasy stays, but not every surface "gray
+  cold stone". r3 (painted) best for plate, seal, bell; the r1 plates "boring". "Try to continue longer next time. You
+  don't need my accept of everything." And: find how others build HUDs, "All we need is a coherent plan on how to make
+  a proper implementation."
+- **The plan (2026-10-10):** `docs/design/hud-pieces.md` now opens with how HUDs are made elsewhere (layout first,
+  hierarchy by urgency, a visual target then a style guide then the kit, drift between pieces made one by one, nine
+  slices, atomic design, tokens, diegesis), what each means here, and a seven-step plan: style guide, atoms in painted
+  rounds judged by Claude, a kit sheet of the picks at in-game size against drift, the battle assembled first from the
+  cuts as the visual target, then the other screens, faction swaps, polish. Painted is the default with one light (upper
+  left); an angel corbel added under the map's turn plate. The battle's card and log are parchment on a roller in
+  stand-in values meanwhile. All 17 remaining pieces generating, painted.
+
