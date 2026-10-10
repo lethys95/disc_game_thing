@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-10 (the map's interface is the painted column)
+**Updated:** 2026-10-10 (the battle's bottom bar is the painted duel bar)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): the alpha is the three playable factions (Jilliath,
@@ -37,8 +37,9 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
   the `?fight` arena in Unreal looks nearly the same as three.js with today's assets (`disc_unreal/shots/`).
 
 ## Next
-0. **The HUD, screen by screen** (`hud-paint-in` skill): the map column is in the game (2026-10-10); next the battle
-   screen the same way, then the Capitol. The column's socket glyphs are borrowed emblems for now.
+0. **The HUD, screen by screen** (`hud-paint-in` skill): the map column and the battle bar are in the game
+   (2026-10-10). Next: the map column's hands repaired, then the Capitol. Open in the battle: a right-click on a unit
+   on the field opening its sheet, the turn order still on the interim beam.
 1. **Finish Jilliath's concepts** with the user (the open nine), then portraits from the picks.
 2. **The other factions' missing units** (the alpha needs all three): Nexus melee tier 3, the Grove's mage line, and
    the rest on the board; then their concept art the same way.

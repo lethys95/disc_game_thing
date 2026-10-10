@@ -14,26 +14,21 @@
   <body>
     <div id="stage"></div>
     <div id="battlehud" hidden>
-      <div id="beam">
-        <div id="turns"></div>
-        <div id="beamhang">
-          <button id="resolve" class="object hourglass" hidden></button>
-          <button id="auto" class="object puppet" hidden></button>
-        </div>
+      <div id="beam"><div id="turns"></div></div>
+      <!-- One painted bar (assets/ui/battle/bar.webp, the hud-paint-in skill): the acting unit at its left end, the unit
+           under the pointer at its right, the round and the commands in the middle. -->
+      <div id="battlebar">
+        <div id="cardleft" class="unitcard"></div>
+        <div id="cardright" class="unitcard"></div>
+        <div id="round"></div>
+        <button id="resolve" class="knob"></button>
+        <button id="auto" class="knob"></button>
+        <button id="tarot-icon" class="knob"></button>
+        <button id="unroll" class="knob" aria-label="Battle log"></button>
+        <div id="actions"></div>
       </div>
-      <div id="sill">
-        <div id="card" hidden></div>
-        <div id="bottom">
-          <div id="rules" hidden></div>
-          <div id="hint"></div>
-          <div id="actions"></div>
-        </div>
-        <button id="tarot-icon" hidden></button>
-        <div id="logstele">
-          <button id="unroll" title="Unroll the whole log"></button>
-          <div id="log"></div>
-        </div>
-      </div>
+      <div id="bottom"><div id="rules" hidden></div><div id="hint"></div></div>
+      <div id="logstele" hidden><div id="log"></div></div>
     </div>
     <div id="banner" hidden></div>
     <div id="tarot" hidden></div>

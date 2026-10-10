@@ -363,3 +363,14 @@ column has no window for (the opened spells, other cities, a second meeting) sit
 page asks dark-mode extensions to leave it alone (Dark Reader inverted the type on the marble). Socket glyphs are
 the city tabs' emblems for now. The column is 50rem tall (the screen's height at the default interface scale, so it follows
 the scale setting); its windows are shares of the painting, the panes measured from the painting's pixels.
+
+## The battle's bottom bar is one painted bar, the acting unit and the hovered unit mirrored (2026-10-10, the user's design)
+The sill, the stone card, the log block and the hanging hourglass and marionette are gone. One painted bar
+(`assets/ui/battle/bar.webp`) runs along the bottom: the acting unit at its left end, the unit under the pointer (or
+the pinned one) at its right, each a red health globe that drains from the top (a copy of the painting with only its
+glass emptied, so the kneeling figures holding the globes are never cut), the portrait in an arch, the name plate, four
+stats and the effects; the round on a medallion in the middle, Resolve now, Auto-battle, the tarot cards and the log
+on four knobs, the ability sockets in the painted wells below. A held right-click on a portrait opens the whole sheet
+(health, stats, every ability with its grids). The log opens over the field on demand (the user's first option). The
+camera aims short of the field so it sits clear of the bar. The bar is 88.89rem wide, the screen's width at 16:9; a
+wider screen shows a dark band beyond its ends.

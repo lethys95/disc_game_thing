@@ -21,8 +21,7 @@ piece-by-piece replacements exist; the stele, the log block, the angels, the bel
 removed outright.
 | File | What it was |
 |---|---|
-| `battle/beam.webp`, `battle/sill.webp` | the battle's top and bottom bands |
-| `battle/hourglass.webp`, `battle/marionette.webp` | Resolve now and Auto-battle, hanging from the beam |
+| `battle/beam.webp` | the battle's top band, the turn order on it |
 | `battle/recess.webp` | a recessed panel frame: the sockets and the light-rim panels, nine-sliced |
 | `battle/plaque.webp` | a marble plate in an iron rim |
 | `capitol/rail.webp` | the Capitol's right column with its four niches (its angel masked out in CSS) |
@@ -31,4 +30,5 @@ removed outright.
 ## Painted in (the `hud-paint-in` skill)
 | File | Source |
 |---|---|
+| `battle/bar.webp`, `battle/bar-drained.webp` | `scripts/art/hud-paint-in.ts battle-bar-duel-dull-nostone`, seed 3, its figures' arms and hands repaired by `scripts/art/hud-inpaint.ts duel-hands-full` (strength 0.55, seed 3 left, seed 2 right, combined); the drained copy by `scripts/art/hud_drain.py`: the battle's bottom bar, its windows filled by the game's HTML |
 | `map/column.webp` | `scripts/art/hud-paint-in.ts map-column-duality`, seed 2 (Krea-2 with its depth Control LoRA, from `art/greybox/map-column-duality/`), 576×1664, uncut: the map's right-hand column, its windows filled by the game's HTML |

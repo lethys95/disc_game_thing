@@ -557,7 +557,7 @@ export class App implements KeyLayer {
     const pinned = this.pinned && battle.units[this.pinned]?.alive ? this.pinned : null;
     this.hud.renderTurns(battle, playerSide);
     this.hud.renderTarotStatus(battle, playerSide);
-    this.hud.renderCard(battle, inspected?.id ?? pinned ?? currentId, playerSide, pinned !== null && !inspected);
+    this.hud.renderCards(battle, currentId, inspected?.id ?? pinned, playerSide, pinned !== null && !inspected);
     this.hud.renderActions(battle, playerSide, this.playerOptions(), this.selected, this.playersTurn(), this.overloaded);
     this.hud.renderAuto(this.playerSide !== null && !battle.outcome, this.auto);
     this.hud.showOutcome(battle, playerSide, this.bannerButtons(battle));

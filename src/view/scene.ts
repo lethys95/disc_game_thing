@@ -138,9 +138,10 @@ const ARENA_PROPS: Readonly<Record<Terrain, readonly { kind: keyof typeof TERRAI
 
 export class BattleScene {
   readonly scene = new THREE.Scene();
+  /** Aimed short of the field's middle, so the field sits high on the screen, clear of the bottom bar. */
   readonly pose: CameraPose = {
-    position: new THREE.Vector3(-2.4, 8.2, 10.4),
-    target: new THREE.Vector3(0.4, 0.4, -0.6),
+    position: new THREE.Vector3(-2.94, 8.2, 12.53),
+    target: new THREE.Vector3(-0.14, 0.4, 1.53),
     minDistance: 8,
     maxDistance: 22,
   };

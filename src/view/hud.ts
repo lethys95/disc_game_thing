@@ -79,15 +79,18 @@ function place(unit: BattleUnit): string {
 }
 
 /**
- * The battle's interface as one piece of architecture around the field (`docs/design/hud-kit.md`): a beam across the
- * top carrying the turn order, a sill along the bottom with the ability sockets, the unit card as a stele rising from
- * its left end and the log as a shorter one at its right.
+ * The battle's interface: the turn order on the beam across the top, and one painted bar along the bottom
+ * (`docs/design/hud-pieces.md`, "The battle bar"): the acting unit at its left end and the unit under the pointer at its
+ * right, each its health globe, portrait, name and stats; the round, the four commands and the ability sockets between.
+ * The log opens over the field on demand.
  */
 export class Hud {
   private turnsKey = "";
   private readonly battlehud = byId("battlehud");
   private readonly turns = byId("turns");
-  private readonly card = byId("card");
+  private readonly cardLeft = byId("cardleft");
+  private readonly cardRight = byId("cardright");
+  private readonly round = byId("round");
   private readonly actions = byId("actions");
   private readonly rules = byId("rules");
   private readonly hint = byId("hint");
@@ -120,7 +123,9 @@ export class Hud {
       object.addEventListener("mouseenter", () => this.hover(object.dataset["hint"] ?? null));
       object.addEventListener("mouseleave", () => this.hover(null));
     }
-    byId("unroll").addEventListener("click", () => this.unrollLog(!this.logStele.classList.contains("open")));
+    const unroll = byId("unroll");
+    explain(unroll, "Battle log", "Click to open the whole battle's log; click again to close it.");
+    unroll.addEventListener("click", () => this.unrollLog(this.logStele.hidden === true));
     this.fan = new TarotFan(this.tarot, (sound) => handlers.onCue(sound));
     this.tarotIcon.addEventListener("click", () => {
       if (this.fan.showing) return this.fan.close();
@@ -142,7 +147,8 @@ export class Hud {
   setVisible(visible: boolean): void {
     this.battlehud.hidden = !visible;
     if (!visible) {
-      this.card.hidden = true;
+      this.cardLeft.replaceChildren();
+      this.cardRight.replaceChildren();
       this.banner.hidden = true;
       this.unrollLog(false);
       this.hideTarot();
@@ -155,9 +161,10 @@ export class Hud {
     this.hint.textContent = name ?? this.hintText;
   }
 
-  /** The log's stele shows its last lines; unrolled, the whole battle reads as a scroll. */
+  /** The log opens over the field, the whole battle on parchment; closed, it takes no room. */
   private unrollLog(open: boolean): void {
-    this.logStele.classList.toggle("open", open);
+    this.logStele.hidden = !open;
+    byId("unroll").classList.toggle("selected", open);
     this.log.scrollTop = this.log.scrollHeight;
   }
 
@@ -240,7 +247,8 @@ export class Hud {
     if (key === this.turnsKey) return;
     this.turnsKey = key;
     this.turns.replaceChildren();
-    this.turns.appendChild(explain(element("div", "round", roman(battle.round)), `Round ${battle.round}`, "The acting unit's face is in the medallion; the next ones follow in the arches to its right."));
+    this.round.textContent = roman(battle.round);
+    explain(this.round, `Round ${battle.round}`, "The faces along the top act in turn, the first one now.");
     upcoming.forEach((unit, index) => {
       const niche = element("div", `niche side${unit.side}${index === 0 ? " now" : ""}`);
       niche.style.setProperty("--arch", String(index - 1));
@@ -252,57 +260,15 @@ export class Hud {
     });
   }
 
-  renderCard(battle: Battle, unitId: string | null, playerSide: Side | null, pinned = false): void {
-    const unit = unitId ? battle.units[unitId] : undefined;
-    this.card.hidden = !unit;
-    if (!unit) return;
-    const stats = effectiveStats(battle, unit.id);
-    const def = UNITS[unit.defId];
-    this.card.replaceChildren();
-    // The monument: the angel on the stele's top holds the portrait in her frame (the portrait shows through the
-    // painting's opening, behind it); the plate set in the stone says who.
-    const window = element("div", "window");
-    window.appendChild(art({ kind: "portrait", id: unit.defId, frame: "bust" }, "niche-portrait"));
-    this.card.appendChild(window);
-    if (pinned) this.card.appendChild(explain(element("span", "pin"), "Pinned", "This card stays put. Click the unit again to release it."));
-    // The plate: the name, the tier's numeral at its left end, a crown for a leader, a band of the side's colour; the
-    // words (whose, where it stands) wait under a held right-click.
-    const tier = def?.tier ?? 1;
-    const plate = element("div", `plate side${unit.side}`);
-    if (unit.leader) plate.appendChild(element("span", "crown", "♛"));
-    plate.append(element("span", "tier", roman(tier)), element("span", "name", unit.name));
-    this.card.appendChild(explain(plate, unitLabel(unit, playerSide), `Tier ${tier}${unit.leader ? ", leading its warband" : ""}. Stands ${place(unit)}.`));
-
-    // Everything with words sits in the stele's recessed panel, so the carving around it never runs behind text.
-    const inset = element("div", "inset");
-    inset.appendChild(instruments(unit, stats, def?.spellCharges));
-    // Secret effects (a Justiciar's mark) show only to the side that applied them.
-    const shown = unit.effects.filter((e) => sees(battle, playerSide, e.def, e.source));
-    if (shown.length > 0) {
-      const effects = element("div", "effects");
-      for (const effect of shown) {
-        const tag = element("span", `effect ${effect.def}`);
-        tag.append(art({ kind: "effect", id: effect.def }, "tiny"), effectLabel(effect));
-        explain(tag, effectLabel(effect), effectDef(effect.def).describe(effect));
-        effects.appendChild(tag);
-      }
-      inset.appendChild(effects);
-    }
-    // The abilities as tiles, icon and name; the rules and targeting grids wait under a held right-click (rule 7).
-    const abilities = element("ul", "abilities");
-    for (const ref of unitAbilities(battle, unit.id)) {
-      const behavior = BEHAVIORS[ref.id];
-      if (!behavior || (behavior.kind === "active" && behavior.tags.includes("common"))) continue;
-      const name = ref.name ?? behavior.name;
-      const tile = element("li", `tile ${behavior.kind}`);
-      tile.append(art({ kind: "ability", id: ref.id }, "tile-icon"), element("span", "name", name));
-      const charges = chargesOf(ref);
-      if (charges !== undefined) tile.appendChild(beads(charges - (unit.chargesUsed[ref.id] ?? 0), charges));
-      const head = [element("span", "name", name), ...(charges !== undefined ? [element("span", "charges", ` ${charges - (unit.chargesUsed[ref.id] ?? 0)}/${charges}`)] : [])];
-      abilities.appendChild(explainWith(tile, name, abilityRow(unit.defId, ref, head, stats.abilityPower)));
-    }
-    inset.appendChild(abilities);
-    this.card.appendChild(inset);
+  /**
+   * The bar's two ends: the acting unit at the left, the unit under the pointer (or the pinned one) at the right. An end
+   * with no unit shows its globe emptied.
+   */
+  renderCards(battle: Battle, actingId: string | null, inspectedId: string | null, playerSide: Side | null, pinned: boolean): void {
+    const acting = actingId ? battle.units[actingId] : undefined;
+    const other = inspectedId && inspectedId !== actingId ? battle.units[inspectedId] : undefined;
+    unitCard(this.cardLeft, battle, acting, "left", playerSide, false);
+    unitCard(this.cardRight, battle, other, "right", playerSide, pinned && other !== undefined);
   }
 
   /**
@@ -443,6 +409,116 @@ export class Hud {
       this.banner.append(button, " ");
     }
   }
+}
+
+/** The bar is 88.89 by 11.57rem (1536 by 200 at 1080p); its globes' glass in its own rem, measured on the painting. */
+const BAR = { width: 88.889, height: 11.574 } as const;
+const GLOBES = {
+  left: { left: 4.05, right: 11.57, top: 1.97, bottom: 9.14 },
+  right: { left: 75.23, right: 84.49, top: 1.85, bottom: 9.14 },
+} as const;
+
+/**
+ * One end of the bar: the globe drains from the top as health falls (a copy of the painting with only its red glass
+ * emptied, shown above the level, so the figure holding the globe is never cut), the number in the open glass, the
+ * portrait in the arch (a held right-click: the whole sheet), the name, four stats and the effects.
+ */
+function unitCard(card: HTMLElement, battle: Battle, unit: BattleUnit | undefined, end: "left" | "right", playerSide: Side | null, pinned: boolean): void {
+  card.replaceChildren();
+  const stats = unit ? effectiveStats(battle, unit.id) : undefined;
+  const share = unit && stats && unit.alive ? Math.max(0, Math.min(1, unit.hp / stats.maxHp)) : 0;
+  const g = GLOBES[end];
+  const level = g.bottom - (g.bottom - g.top) * share;
+  const drain = element("div", "drain");
+  drain.style.clipPath = `inset(${g.top}rem ${BAR.width - g.right}rem ${BAR.height - level}rem ${g.left}rem)`;
+  card.appendChild(drain);
+  if (!unit || !stats) return;
+
+  const globe = element("div", "globe");
+  const shieldLine = stats.shield > 0 ? [`Shield ${unit.shield} of ${stats.shield}: it takes hits before health does.`] : [];
+  card.appendChild(explain(globe, unit.alive ? `Health ${unit.hp} of ${stats.maxHp}` : "Fallen", ...shieldLine));
+  const number = element("div", "hpnum", unit.alive ? String(unit.hp) : "");
+  if (!unit.alive) number.appendChild(skull());
+  if (stats.shield > 0 && unit.shield > 0) number.appendChild(element("span", "shield", `+${unit.shield}`));
+  card.appendChild(number);
+
+  const def = UNITS[unit.defId];
+  const portrait = element("div", "arch");
+  portrait.appendChild(art({ kind: "portrait", id: unit.defId, frame: "bust" }, "card-portrait"));
+  card.appendChild(explainWith(portrait, unitLabel(unit, playerSide), unitSheet(battle, unit, stats, def?.spellCharges, playerSide)));
+
+  const tier = def?.tier ?? 1;
+  const plate = element("div", `plate side${unit.side}`);
+  if (unit.leader) plate.appendChild(element("span", "crown", "♛"));
+  plate.append(element("span", "tier", roman(tier)), element("span", "name", unit.name));
+  if (pinned) plate.appendChild(explain(element("span", "pin"), "Pinned", "This card stays put. Click the unit again to release it."));
+  card.appendChild(explain(plate, unitLabel(unit, playerSide), `Tier ${tier}${unit.leader ? ", leading its warband" : ""}. Stands ${place(unit)}.`));
+
+  const actions = actionsPerRound(stats.initiative);
+  const fourth = def?.spellCharges !== undefined
+    ? explain(element("span", "badge charges"), `Spell charges ${unit.spellCharges} of ${def.spellCharges}`, "Its spells spend them. They come back after the battle.")
+    : hitsBadge(stats);
+  if (def?.spellCharges !== undefined) fourth?.appendChild(cells(unit.spellCharges, def.spellCharges));
+  const slots = [
+    badge("armor", "Armor", stats.armor, unit.base.armor, stats.armor > 0 ? `Takes ${armorReduction(stats.armor)}% off each hit.` : "No armor: hits land in full."),
+    badge("initiative", "Initiative", stats.initiative, unit.base.initiative, `${actions} action${actions === 1 ? "" : "s"} a round, one stud each.`, actions),
+    badge("power", "Ability power", stats.abilityPower, unit.base.abilityPower, "Its abilities' numbers grow with it."),
+    fourth,
+  ];
+  slots.forEach((content, i) => {
+    const slot = element("div", `stat s${i}`);
+    if (content) slot.appendChild(content);
+    card.appendChild(slot);
+  });
+
+  const effects = element("div", "effects");
+  for (const effect of unit.effects.filter((e) => sees(battle, playerSide, e.def, e.source))) {
+    const tag = element("span", `effect ${effect.def}`);
+    tag.append(art({ kind: "effect", id: effect.def }, "tiny"), effectLabel(effect));
+    explain(tag, effectLabel(effect), effectDef(effect.def).describe(effect));
+    effects.appendChild(tag);
+  }
+  card.appendChild(effects);
+}
+
+/** The damage-dealt change from effects, as a stat, or nothing when there is none. */
+function hitsBadge(stats: Stats): HTMLElement | null {
+  const hits = hitChange(stats);
+  if (!hits) return null;
+  const dealt = element("span", `badge hits ${stats.hitBonus + stats.hitPercent > 0 ? "up" : "down"}`);
+  dealt.append(element("span", "shape"), element("span", "value", hits.replace(" to its hits", "")));
+  return explain(dealt, "Damage dealt", `${capitalize(hits)}, from its effects.`);
+}
+
+/** The whole sheet, read under a held right-click on the portrait: the instruments, the effects, every ability. */
+function unitSheet(battle: Battle, unit: BattleUnit, stats: Stats, battery: number | undefined, playerSide: Side | null): HTMLElement {
+  const sheet = element("div", "unit-sheet");
+  sheet.appendChild(instruments(unit, stats, battery));
+  // Secret effects (a Justiciar's mark) show only to the side that applied them.
+  const shown = unit.effects.filter((e) => sees(battle, playerSide, e.def, e.source));
+  if (shown.length > 0) {
+    const effects = element("div", "effects");
+    for (const effect of shown) {
+      const tag = element("span", `effect ${effect.def}`);
+      tag.append(art({ kind: "effect", id: effect.def }, "tiny"), effectLabel(effect));
+      effects.appendChild(tag);
+      effects.appendChild(element("div", "note", effectDef(effect.def).describe(effect)));
+    }
+    sheet.appendChild(effects);
+  }
+  const abilities = element("ul", "abilities");
+  for (const ref of unitAbilities(battle, unit.id)) {
+    const behavior = BEHAVIORS[ref.id];
+    if (!behavior || (behavior.kind === "active" && behavior.tags.includes("common"))) continue;
+    const name = ref.name ?? behavior.name;
+    const charges = chargesOf(ref);
+    const head = [element("span", "name", name), ...(charges !== undefined ? [element("span", "charges", ` ${charges - (unit.chargesUsed[ref.id] ?? 0)}/${charges}`)] : [])];
+    const item = element("li", `tile ${behavior.kind}`);
+    item.appendChild(abilityRow(unit.defId, ref, head, stats.abilityPower));
+    abilities.appendChild(item);
+  }
+  sheet.appendChild(abilities);
+  return sheet;
 }
 
 /** A unit's abilities it acts with (not its passives), in its own order. */
