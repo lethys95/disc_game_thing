@@ -244,3 +244,12 @@ Every remaining piece once, painted (68 candidates). Claude's read:
   right by the style guide: an ability socket is pressed.
 - **Round 6:** the coins with a crown and the band with domed rivets came out right; picked. Every piece has a
   pick now.
+
+## The still life is withdrawn (2026-10-10, the user)
+"what we're trying to create is a vibrant yet dark universe [...] epic conflicts between abstract factions [...] But
+what we have on our front screen is a plain table. One side is completely empty which gives a view of imbalance. And
+on the other, there are just 5 regular items [...] I don't know what any of these components mean or why they're
+there". Right: its objects were the HUD's own inventory on a table, and its empty half was the menu's room showing
+through. The chrome's rules (objects only, no mood) were applied to a painting, which needs a subject and a
+composition from what the game is about. The title painting starts over from that, not from props.
+
