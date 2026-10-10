@@ -87,6 +87,16 @@ const REPAIRS: Readonly<Record<string, Repair>> = {
       "Game interface art in soft even light: a dark iron relief, everything carved in the same old dark worn iron, no skin, no flesh. " +
       "A kneeling angel's hand laid flat against her breast beside a disc of amber glass, a well formed hand with four slender fingers held together and a thumb, the folds of her iron sleeve at the wrist. No text, no letters.",
   },
+  /** The column's third arm, down the globe's left rim to a hand at its foot: painted out (the user, 2026-10-10). */
+  "column-third-arm": {
+    source: "art/candidates/ui/inpaint/column-hands-2/column-hands-2-d55-2.png",
+    page: [300, 864],
+    boxes: [[100, 762, 46, 58]],
+    denoise: [0.65, 0.8],
+    prompt:
+      "Game interface art in soft even light: the lower left of a large disc of deep orange amber glass, glowing softly from within, " +
+      "set in a heavy round rim of old dark worn iron that curves around it. Only glass and the iron rim, nothing in front of the glass: no arm, no hand, no figure. No text, no letters.",
+  },
 };
 
 const [name, ...rest] = process.argv.slice(2);
