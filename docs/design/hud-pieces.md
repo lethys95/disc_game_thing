@@ -507,3 +507,6 @@ box over all four hands, also caught the succubus's face (it came out as pale sk
 second, one small box per hand and a prompt that keeps everything iron ("no skin, no flesh") and the glass "deep
 orange amber", changed only the hands (`column-hands-2`, strength 0.55, seed 2, in the game). The lesson for the skill:
 a box per broken part, never one box over a face.
+The angel's near hand at her chest was still broken (the user); the per-hand boxes had missed it. Asked for alone
+(`column-angel-hand`), Krea-2 drew no hand at that size in twelve tries and folded her sleeve over it instead; seed 1
+at 0.55 reads as a draped arm at her breast, nothing malformed, and is in the game.

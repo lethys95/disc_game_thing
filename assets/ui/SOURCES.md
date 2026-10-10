@@ -31,4 +31,4 @@ removed outright.
 | File | Source |
 |---|---|
 | `battle/bar.webp`, `battle/bar-drained.webp` | `scripts/art/hud-paint-in.ts battle-bar-duel-dull-nostone`, seed 3, its figures' arms and hands repaired by `scripts/art/hud-inpaint.ts duel-hands-full` (strength 0.55, seed 3 left, seed 2 right, combined); the drained copy by `scripts/art/hud_drain.py`: the battle's bottom bar, its windows filled by the game's HTML |
-| `map/column.webp` | `scripts/art/hud-paint-in.ts map-column-duality`, seed 2 (Krea-2 with its depth Control LoRA, from `art/greybox/map-column-duality/`), its figures' hands repaired by `scripts/art/hud-inpaint.ts column-hands-2` (strength 0.55, seed 2), 576×1664, uncut: the map's right-hand column, its windows filled by the game's HTML |
+| `map/column.webp` | `scripts/art/hud-paint-in.ts map-column-duality`, seed 2 (Krea-2 with its depth Control LoRA, from `art/greybox/map-column-duality/`), its figures' hands repaired by `scripts/art/hud-inpaint.ts column-hands-2` (strength 0.55, seed 2) and `column-angel-hand` (0.55, seed 1), 576×1664, uncut: the map's right-hand column, its windows filled by the game's HTML |
