@@ -104,3 +104,11 @@ Sixteen candidates from the first short prompts (`shots/hud-pieces.html`). What 
   phrase of each, still short.
 - **Photographic or painted is the user's call** (style). Round 2 makes every piece twice, as is and with "Painted as
   game interface art." added, side by side.
+
+## Round 2 (2026-10-10): finish and ornament added
+The same four pieces, each prompt with one phrase of finish and one of ornament (the plate's ends became small cast
+leaf scrolls holding the amber studs, the bell got an engraved band of leaves and a handle worn pale), and each made
+twice: as is, and with "Painted as game interface art." Both read as game interface now. As is, they are closer to
+photographs: aged marble, a real bronze bell. Painted, they are more stylised: crackled marble with rust-brown iron,
+heavier wear. That choice is the user's. Every other piece's prompt has the same two phrases added since, and nothing
+else has been generated: the user reads them first.
