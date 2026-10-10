@@ -1,10 +1,11 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import sharp from "sharp";
-import { inpaint } from "#scripts/art/comfy";
+import { depthInpaint, inpaint } from "#scripts/art/comfy";
 
 /**
  * Repairs part of a painted HUD piece (the `hud-paint-in` skill, after judging): a masked image to image over the
- * named boxes; everything outside the mask is kept exactly. Boxes are in the layout's page px.
+ * named boxes; everything outside the mask is kept exactly. Boxes are in the layout's page px. With a depth map (the
+ * piece's depth greybox) the repaint is held to the piece's structure, so a box may cross a rim without losing it.
  *
  *     pnpm tsx scripts/art/hud-inpaint.ts <repair> [seed…]     (candidates into art/candidates/ui/inpaint/<repair>/)
  */
@@ -15,6 +16,7 @@ interface Repair {
   readonly boxes: readonly (readonly [number, number, number, number])[];
   readonly denoise: readonly number[];
   readonly prompt: string;
+  readonly depth?: { readonly map: string; readonly strength: number };
 }
 
 const REPAIRS: Readonly<Record<string, Repair>> = {
@@ -24,6 +26,17 @@ const REPAIRS: Readonly<Record<string, Repair>> = {
     page: [1536, 200],
     boxes: [[0, 0, 200, 200], [1336, 0, 200, 200]],
     denoise: [0.55, 0.7],
+    prompt:
+      "Game interface art, a dark iron bar in soft even light. At the left end, carved in deep relief in old worn blackened iron, a grown veiled woman in long robes with a folded feathered wing, kneeling on a ledge, both hands laid flat and gently on a large sphere of deep red glass, her arms and hands well formed, each hand with five fingers. " +
+      "At the right end, mirroring her, carved the same way, a grown hooded figure with small curved horns and a folded bat wing, kneeling, both hands laid flat on another sphere of deep red glass, arms and hands well formed. No text, no letters.",
+  },
+  /** The same, only the arms and hands, held to the bar's depth greybox (the first try repainted the globes' rims away). */
+  "duel-hands-held": {
+    source: "art/candidates/ui/paint-in/battle-bar-duel-dull-nostone/battle-bar-duel-dull-nostone-3.png",
+    page: [1536, 200],
+    boxes: [[50, 25, 115, 115], [1371, 25, 115, 115]],
+    denoise: [0.55, 0.7],
+    depth: { map: "art/greybox/battle-bar-duel-dull-nostone/depth.png", strength: 1 },
     prompt:
       "Game interface art, a dark iron bar in soft even light. At the left end, carved in deep relief in old worn blackened iron, a grown veiled woman in long robes with a folded feathered wing, kneeling on a ledge, both hands laid flat and gently on a large sphere of deep red glass, her arms and hands well formed, each hand with five fingers. " +
       "At the right end, mirroring her, carved the same way, a grown hooded figure with small curved horns and a folded bat wing, kneeling, both hands laid flat on another sphere of deep red glass, arms and hands well formed. No text, no letters.",
@@ -46,7 +59,8 @@ await sharp(Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${width}
 for (const denoise of repair.denoise) {
   for (const seed of seeds) {
     const started = Date.now();
-    const png = await inpaint({ prompt: repair.prompt, seed, source: repair.source, mask, denoise }, `disc/inpaint-${name}`);
+    const job = { prompt: repair.prompt, seed, source: repair.source, mask, denoise };
+    const png = repair.depth ? await depthInpaint({ ...job, depth: repair.depth.map, depthStrength: repair.depth.strength }, `disc/inpaint-${name}`) : await inpaint(job, `disc/inpaint-${name}`);
     const file = `${out}/${name}-d${Math.round(denoise * 100)}-${seed}.png`;
     await writeFile(file, png);
     console.log(`${file} (${((Date.now() - started) / 1000).toFixed(1)} s)`);

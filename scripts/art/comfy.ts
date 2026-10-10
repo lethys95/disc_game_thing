@@ -37,6 +37,12 @@ export interface InpaintJob {
   readonly denoise: number;
 }
 
+/** An inpainting held to a depth map (a piece's depth greybox) through the Krea-2 depth Control LoRA, so the repainted part keeps its structure. */
+export interface DepthInpaintJob extends InpaintJob {
+  readonly depth: string;
+  readonly depthStrength: number;
+}
+
 /** Repaints all of `source` (a PNG path, already at the output size) toward the prompt; lower denoise keeps more. */
 export interface Img2ImgJob {
   readonly prompt: string;
@@ -95,7 +101,7 @@ function krea2Graph(job: Job, prefix: string): Graph {
  * into the mask (`SetLatentNoiseMask`), and the decoded result is pasted back through the mask, since a VAE round trip
  * would otherwise shift every pixel of the image slightly.
  */
-function inpaintGraph(job: InpaintJob, source: string, mask: string, prefix: string): Graph {
+function inpaintGraph(job: InpaintJob, source: string, mask: string, prefix: string, model: Input = ["unet", 0]): Graph {
   return {
     ...loaders(job.prompt),
     negative: { class_type: "ConditioningZeroOut", inputs: { conditioning: ["positive", 0] } },
@@ -106,7 +112,7 @@ function inpaintGraph(job: InpaintJob, source: string, mask: string, prefix: str
     sample: {
       class_type: "KSampler",
       inputs: {
-        model: ["unet", 0], positive: ["positive", 0], negative: ["negative", 0], latent_image: ["latent", 0],
+        model, positive: ["positive", 0], negative: ["negative", 0], latent_image: ["latent", 0],
         seed: job.seed, steps: KREA2_TURBO.steps, cfg: KREA2_TURBO.cfg, sampler_name: "euler", scheduler: "simple", denoise: job.denoise,
       },
     },
@@ -165,6 +171,22 @@ function paintInGraph(job: PaintInJob, values: string, depth: string, prefix: st
   };
 }
 
+function depthInpaintGraph(job: DepthInpaintJob, source: string, mask: string, depth: string, prefix: string): Graph {
+  return {
+    ...inpaintGraph(job, source, mask, prefix, ["apply", 0]),
+    depth: { class_type: "LoadImage", inputs: { image: depth } },
+    control: {
+      class_type: "Krea2ControlImageEncode",
+      inputs: {
+        control_image: ["depth", 0], vae: ["vae", 0], resize: "match_latent_size", upscale_method: "lanczos", crop: "center",
+        channel_mode: "grayscale", normalize: "per_image_minmax", invert: false, batch_mode: "independent_images", latent: ["encode", 0],
+      },
+    },
+    lora: { class_type: "Krea2ControlLoRALoader", inputs: { model: ["unet", 0], lora_name: "krea2-depth-control-lora.safetensors", strength: job.depthStrength } },
+    apply: { class_type: "Krea2ControlApply", inputs: { model: ["lora", 0], control_latent: ["control", 0] } },
+  };
+}
+
 interface OutputFile {
   readonly filename: string;
   readonly subfolder: string;
@@ -199,6 +221,11 @@ export async function generate(job: Job, prefix: string): Promise<Uint8Array> {
 /** Runs one inpainting and returns the PNG bytes. */
 export async function inpaint(job: InpaintJob, prefix: string): Promise<Uint8Array> {
   return run(inpaintGraph(job, await upload(job.source), await upload(job.mask), prefix));
+}
+
+/** Runs one depth-held inpainting and returns the PNG bytes. */
+export async function depthInpaint(job: DepthInpaintJob, prefix: string): Promise<Uint8Array> {
+  return run(depthInpaintGraph(job, await upload(job.source), await upload(job.mask), await upload(job.depth), prefix));
 }
 
 /** Runs one image-to-image and returns the PNG bytes. */
