@@ -218,3 +218,12 @@ Every remaining piece once, painted (68 candidates). Claude's read:
   together. Two outliers: the sealed band's iron was greyer and more pitted than the frame's (now the frame's
   smooth blackened iron), and there was too much crimson (seal, ribbon, gem, rose window, arch glass, leather). Red
   means Jilliath and commit; the toggle gem moves to amber, the interface's candlelight.
+
+## Round 4 (2026-10-10): the remakes, and the angel corbel
+- **Fixed:** the plate's face asked "smooth and evenly pale with a few faint grey veins" and is calm enough to read
+  text on now; the parchment asked "smooth and unfolded" lost its fold cross; the rail is a riveted band; the roller a
+  slim walnut rod with brass acorns; the vial's lower cap carries engraved leaves.
+- **The angel corbel:** a small angel's head and wings in pale limestone with gilded feathers, holding up a ledge.
+  Small and built in, the way the user allowed one.
+- **The socket still fails:** every candidate's opening is a shape (a cross, notches, a step). Asked next as a small
+  square picture frame with a plain flat black square inside.
