@@ -361,3 +361,8 @@ turn disc. Given our own plate and frame picks as reference images, it takes on 
 kit held together by references, as the guides describe. On the map with real content in its windows it reads as one
 structure. Its licence is non-commercial only (question #14); Qwen-Image-Edit-2511 (Apache 2.0) gets the same test.
 The page: `shots/column-probe.html`.
+
+**Qwen-Image-Edit-2511 (Apache 2.0), the same test.** With its 8-step Lightning LoRA it came out glossy and speckled
+with orange noise. At its documented 20 steps and guidance 4, without the LoRA (about 97 s an image), it is clean: the
+layout holds, the angels are reliefs beside the End turn disc, and the iron leans warmer, bronze-tinted. A little more
+rendered and glossier than Qwen-Image 2.1, which reads more painted. It is the model whose output can ship.
