@@ -38,6 +38,10 @@ next piece where it ended, not where it began:
   screen does and give it a figure or object doing that, then build the architecture around it.
 - **Functions as things.** The door is the way out (the user: "people already associate a door with leaving"); a tab is
   an orb in the window. Look for the object that already means the function before drawing a button.
+- **No pattern as the ground.** A repeated motif over a whole wall (the quatrefoil diaper) reads as a fence (the user:
+  "not like gothic architecture"). Disciples II and III never cover a large area with a pattern: big areas are
+  parchment, marble, a picture or weathered masonry in shadow; ornament sits on frames, piers and borders; a lattice is
+  at most a small framed inset; scale varies from one big carved thing down to studs (`hud-pieces.md`, "Surfaces").
 - **Round and pointed, not boxed.** Rose windows, arches, gables, round buttons. Avoid stacks of rectangles.
 - **Contrast of materials.** Pale weathered stone figures and portals against dark iron, marble plates, red and amber
   glass, warm wood. Never one material.

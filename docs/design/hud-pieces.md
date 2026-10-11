@@ -752,3 +752,21 @@ the foot, the growth panel as a parchment on turned rollers. Painted at 1.4× th
 split each pane into four, so the panes were repainted three by three (`jilliath-garrison-panes`, the greybox grid laid
 in, 0.72 seed 3). In the game as one painting the judged layout's size, anchored to the column; on screens narrower
 than it the wall scales to fit (`--wall-fit`, set with the interface size). `shots/jilliath-garrison.html`.
+
+## Surfaces, read from Disciples II and III (2026-10-11)
+The user on the garrison wall: "We have too much of that pattern. It's all over the place [...] It looks like a fence
+actually, not like gothic architecture", and to read Disciples II or III for "just how much deviation there is in their
+material". Looked again at `d2-city-garrison`, `d2-capital-empire`, `d2-hero-inventory`, `d2-training-camp`,
+`d2-city-development-undead`, `d3-capital-building`, `d3-battle`:
+- **No surface pattern covers a large area.** A lattice appears only inside small framed insets (the training camp's
+  three square grilles), never as the ground of a screen.
+- **The large areas are calm materials or pictures:** a parchment sheet (the garrison is one sheet on a rod, its grids
+  only corner marks), cream marble panels for text, a painting of a place (the city, a training ground, a nave), a
+  dark plain field (Disciples III's panel interiors).
+- **Ornament sits on structure:** heavy carving on frames, the central pier, the command wheel, the borders; seams are
+  marked by diamond studs. Between the structural members the material rests.
+- **Scale varies:** one or two big carved things per screen (a pier with a large stone face, a statue in a nave), then
+  frames, then studs. Our diaper put one tiny unit everywhere, so nothing has scale.
+- **Stone shows its masonry:** chunky weathered blocks at the bottom of the screens, irregular, warm grey, in shadow.
+So: the ground of a wall is large weathered masonry in shadow, or plain; iron is for frames, bands and studs; a lattice,
+if any, is an inset; big areas are parchment, marble or pictures.
