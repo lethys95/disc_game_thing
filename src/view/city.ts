@@ -127,11 +127,11 @@ export class CityScreen implements KeyLayer {
 
   /**
    * The column at the right edge, in the map column's place (`docs/design/capitol-elements.md`): which city and the purse
-   * at its top, the tabs as labelled rows (a city shows only the tabs it has), Back to the map at its foot. Flat values,
-   * unless the player's faction has painted it (the Capitol's, `styles/skin-*.css`).
+   * at its top, the tabs as labelled rows (a city shows only the tabs it has), Back to the map at its foot. A greybox in
+   * flat values until the layout is judged.
    */
   private column(world: World, side: PlayerId, city: City, current: CityTab): HTMLElement {
-    const column = element("div", `screen-column${city.kind === "capitol" ? " capitol" : ""}`);
+    const column = element("div", "screen-column");
     column.appendChild(element("div", "plate name", cityName(city)));
     const player = playerOf(world, side);
     const purse = explain(element("div", "plate purse"), "Gold", "What your realm holds. Everything here is paid in it.");

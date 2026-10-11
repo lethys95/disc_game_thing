@@ -32,10 +32,3 @@ removed outright.
 | `battle/bar.webp`, `battle/bar-drained.webp` | `scripts/art/hud-paint-in.ts battle-bar-duel-dull-nostone`, seed 3, its figures' arms and hands repaired by `scripts/art/hud-inpaint.ts duel-hands-full` (strength 0.55, seed 3 left, seed 2 right, combined); the drained copy by `scripts/art/hud_drain.py`: the battle's bottom bar, its windows filled by the game's HTML |
 | `battle/turns.webp` | `scripts/art/hud-paint-in.ts turn-strip`, seed 1, from `art/greybox/turn-strip/`, its black background keyed to transparency (alpha from the painting's own luminance): the battle's turn order, the faces behind its openings |
 | `map/column.webp` | `scripts/art/hud-paint-in.ts map-column-duality`, seed 2 (Krea-2 with its depth Control LoRA, from `art/greybox/map-column-duality/`), its figures' hands repaired by `scripts/art/hud-inpaint.ts column-hands-2` (strength 0.55, seed 2) and its stray third arm painted out by `column-third-arm` (0.65, seed 4), 576×1664, uncut: the map's right-hand column, its windows filled by the game's HTML |
-
-## Jilliath's skin (2026-10-11, the `hud-paint-in` skill, on the judged greybox layout)
-| File | Piece, seed | Cut |
-|---|---|---|
-| `jilliath/capitol-column.webp` | `jilliath-capitol-column`, 3 | whole, 576 × 1664 |
-| `jilliath/frame.webp` | `jilliath-frame`, 4 | rebuilt as a seamless nine-slice by `art/greybox/jilliath-frame/nine_slice.py` |
-| `jilliath/marble.webp` | cut from `jilliath/capitol-column.webp`'s name plate | 486 × 68, for the screen's own plates |

@@ -681,11 +681,3 @@ the review's causes answered:
   repeated, so the garrison, the city's panel and the tab frame are framed by the same painting at any size. This
   answers the blur (one texel density) and the mismatched segments (one frame, not a wall per tab). The content stays
   the flat components (squad tiles, rows, trees).
-
-**First round** (6 seeds each): the column held in seeds 1 to 3 (seeds 4 and 5 left the cathedral a flat silhouette, 6
-broke the layout); seed 3 is in the game, its parts measured from its pixels (within 2 page px of the greybox). The
-frame held in five of six; seed 4 is in the game, rebuilt as a seamless nine-slice (`nine_slice.py`: the top-left
-corner mirrored, corners ending where the quatrefoil run is symmetric, edges cut to whole repeats). At the first width
-the quatrefoils shrank into a chain; a third wider they read. The screen's own plates take marble cut from the column.
-Scoped to a Jilliath player (`body[data-skin]`, `styles/skin-jilliath.css`); the greybox setting shows the flat layout.
-Write-up: `shots/jilliath-capitol.html`.
