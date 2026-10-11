@@ -42,6 +42,7 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
    (`shots/warband-greybox.html`), all sharing one column, one unit sheet, one squad tile, one branch chooser. A Greybox
    setting draws the still-painted pieces (map column, battle bar, turn order) flat. Next: the map column and battle
    bar by job, then title and menus; paint after a layout is judged, per faction skin. Glass rests.
+   **Right after the UI pass:** the code review's findings 1–3 (`todo/code-review`), before any new unit is built.
 1. **Finish Jilliath's concepts** with the user (the open nine), then portraits from the picks.
 2. **The other factions' missing units** (the alpha needs all three): Nexus melee tier 3, the Grove's mage line, and
    the rest on the board; then their concept art the same way.
