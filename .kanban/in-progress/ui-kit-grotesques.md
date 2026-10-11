@@ -294,3 +294,7 @@
 - **In stone (2026-10-11):** the user: the diaper "looks like a fence actually, not like gothic architecture". Garrison
   and column now weathered masonry, iron only on frames (`shots/jilliath-garrison-2.html`). No overworld ambience in
   the Capitol.
+- **Open (2026-10-11):** the garrison's plain masonry reads unthemed (it came from Claude's greybox and prompt, not
+  inpainting); the user will sketch the garrison as they did the column (template `shots/garrison-sketch-template.png`).
+  The wall cuts off on wide screens: apply the skill's "Wider screens" step (ornament-only end extensions) once the
+  painting is settled.
