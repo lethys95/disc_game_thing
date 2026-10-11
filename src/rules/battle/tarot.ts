@@ -197,6 +197,19 @@ export function checkTarot(ctx: Ctx, hands: readonly TarotHand[], events: readon
 }
 
 /**
+ * Tarot after a unit's action: the open cards checked against what the action did, then, for each enemy that died, the
+ * hand its traits draw (Omen: kills during his action draw more). The engine calls this once per action.
+ */
+export function tarotAfterAction(ctx: Ctx, hands: TarotHand[], events: readonly BattleEvent[], actor: string, seed: number): void {
+  checkTarot(ctx, hands, events, actor);
+  const draws = Math.max(0, ...ctx.traits(actor).map((t) => t.hooks.drawsOnKill?.(ctx, t.self) ?? 0));
+  if (draws <= 0) return;
+  const side = ctx.unit(actor).side;
+  const kills = events.filter((e) => e.type === "death" && ctx.unit(e.unitId).side !== side).length;
+  for (let i = 0; i < kills; i++) drawHand(ctx, hands, actor, draws, seed);
+}
+
+/**
  * A fresh hand mid-fight (Omen: kills during his action draw more): dealt from the battle's seed and the number of hands
  * so far, so it's as fixed as the first.
  */

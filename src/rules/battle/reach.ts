@@ -42,7 +42,7 @@ function probe(defId: string, col: Col, dead: Dead): Battle {
   const userId = `0.0.${col}`;
   const lies = (id: string) => id !== userId && (dead === "all" || (dead === "centres" && id.endsWith(".1.1")));
   const units = Object.fromEntries(Object.entries(battle.units).map(([id, u]) => [id, lies(id) ? { ...u, alive: false, hp: 0 } : u]));
-  return { ...battle, units, current: { unitId: userId, freeUsed: [], mainTaken: false, bonusAttacks: [], hysteriaTriggers: 0, penaltyMultiplier: 1 } };
+  return { ...battle, units, current: { unitId: userId, freeUsed: [], mainTaken: false, bonusOwed: 0, bonusGranted: 0, bonusIndex: 0 } };
 }
 
 const rowOf = (side: 0 | 1, row: Row): number => (side === 1 ? 2 - row : 3 + row);

@@ -394,3 +394,14 @@ chrome for every race). The user: what we're painting is "basically the Jilliath
 at tainted glass and church stuff probably doesn't make too much sense." So the painted chrome is the faction's skin;
 the layouts, components and greyboxes are shared. This is why interface-first matters more: a layout is tested once and
 painted three times, and the box-out method makes a skin a prompt and a round of repairs per layout, not a redesign.
+
+## The engine names no mechanic, guarded by a test; tarot stays a battle system (2026-10-11)
+The code review found mechanics back in the engine. Fixed: Hysteria's counters are now the engine's general extra
+attacks (`Slot.bonusOwed/bonusGranted/bonusIndex`, `Ctx.grantBonusAttack`), the doubling and the cap living in
+Hysteria and Fanaticism; Judgement's flag is a general record (`BattleUnit.lastTurnDealt`); a hit carries the effects it
+lays (`Packet.riders`), so the damage code no longer names bleed. `tests/boundaries.test.ts` fails when the engine, the
+damage pipeline, the traits' plumbing or the battle AI name an ability or effect id.
+Tarot keeps its own field and hooks: it's a card game laid over the whole fight (like the turn order), not a unit's
+mechanic, and its hooks are the way units take part (Omen, the Soothsayer). What moved: the Omen draw loop into
+`tarot.ts` (one call from the engine), and the player's preview no longer carries the other side's tarot hands (they
+could show what an enemy card pays). The user can overrule.

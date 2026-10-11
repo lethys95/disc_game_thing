@@ -74,7 +74,7 @@ describe("the faith side: holy", () => {
     expect(legalActions(fresh).map((a) => a.abilityId)).not.toContain("judgement");
     const { battle: judged } = playUntil(
       battle,
-      (b) => b.current?.unitId === "0.0.1" && unit(b, "1.0.0").struck,
+      (b) => b.current?.unitId === "0.0.1" && unit(b, "1.0.0").lastTurnDealt > 0,
       (id) => (id === "1.0.0" ? ["attack", "0.0.1"] : id === "1.0.2" ? ["defend"] : null),
     );
     expect(affectedBy(judged, "judgement", "1.0.0")).toEqual(["1.0.0"]);

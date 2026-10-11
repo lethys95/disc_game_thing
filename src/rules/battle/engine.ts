@@ -1,7 +1,7 @@
 import { behavior, chargesOf, paramsOf } from "#rules/abilities/index";
 import { BATTLE_ROUND_LIMIT, INITIATIVE_PER_ACTION } from "#rules/balance";
 import { hit, lose } from "#rules/battle/damage";
-import { checkTarot, dealHand, drawHand } from "#rules/battle/tarot";
+import { checkTarot, dealHand, tarotAfterAction } from "#rules/battle/tarot";
 import { allTraits, buildTraits, traitsOn } from "#rules/battle/traits";
 import type {
   AbilityRef,
@@ -85,7 +85,7 @@ export function createBattle(sides: readonly [readonly Placement[], readonly Pla
         fled: false,
         corpse: "intact",
         spellCharges: def.spellCharges ?? 0,
-        struck: false,
+        lastTurnDealt: 0,
         leader: leader ?? false,
       };
     }
@@ -213,8 +213,11 @@ export function applyAction(battle: Battle, action: Action): Step {
   if (self.params["charges"] !== undefined) ctx.consumeCharge(unitId, action.abilityId);
   ctx.unit(unitId).spellCharges -= option.spellCost;
 
-  const bonus = slot.bonusAttacks.shift();
-  slot.penaltyMultiplier = bonus ?? 1;
+  const isBonus = slot.bonusOwed > 0;
+  if (isBonus) {
+    slot.bonusOwed -= 1;
+    slot.bonusIndex = slot.bonusGranted - slot.bonusOwed;
+  }
   ctx.emit({ type: "ability", unitId, abilityId: action.abilityId, targets: casts.flatMap((c) => c.affected), enhancement });
   // A cancel (Counter) spoils the whole cast, copies included.
   const cancelled =
@@ -223,25 +226,18 @@ export function applyAction(battle: Battle, action: Action): Step {
   else for (const cast of casts) found.resolve(ctx, self, cast);
   // Once per action, whatever it hit: only the actor's own hits count (a Backlash landing now is another unit's).
   const own = ctx.tally.get(unitId);
-  if (own && own.dealt > 0) ctx.unit(unitId).struck = true;
+  if (own) ctx.unit(unitId).lastTurnDealt += own.dealt;
   if (own && ctx.unit(unitId).alive) for (const t of [...traitsOn(ctx, unitId)]) t.hooks.afterAttack?.(ctx, t.self, own.dealt, own.kills);
-  slot.penaltyMultiplier = 1;
+  slot.bonusIndex = 0;
 
-  if (bonus === undefined && choice.cost === "free") slot.freeUsed.push(action.abilityId);
-  if (bonus === undefined && choice.cost === "main") slot.mainTaken = true;
+  if (!isBonus && choice.cost === "free") slot.freeUsed.push(action.abilityId);
+  if (!isBonus && choice.cost === "main") slot.mainTaken = true;
   if (found.reschedules) {
     draft.queue.push(unitId);
     draft.waitedThisPass.push(unitId);
   }
 
-  checkTarot(ctx, draft.tarot, events, unitId);
-  // Kills during this action, by the actor or a card it set off, may draw more cards (Omen).
-  const draws = Math.max(0, ...traitsOn(ctx, unitId).map((t) => t.hooks.drawsOnKill?.(ctx, t.self) ?? 0));
-  if (draws > 0) {
-    const side = ctx.unit(unitId).side;
-    const kills = events.filter((e) => e.type === "death" && ctx.unit(e.unitId).side !== side).length;
-    for (let i = 0; i < kills; i++) drawHand(ctx, draft.tarot, unitId, draws, draft.seed);
-  }
+  tarotAfterAction(ctx, draft.tarot, events, unitId, draft.seed);
   checkOutcome(ctx);
   if (draft.current && slotIsOver(ctx, slot)) {
     draft.current = null;
@@ -277,7 +273,7 @@ function cloneBattle(battle: Battle): Battle {
     actionsThisRound: { ...battle.actionsThisRound },
     queue: [...battle.queue],
     waitedThisPass: [...battle.waitedThisPass],
-    current: slot ? { ...slot, freeUsed: [...slot.freeUsed], bonusAttacks: [...slot.bonusAttacks] } : null,
+    current: slot ? { ...slot, freeUsed: [...slot.freeUsed] } : null,
     tarot: battle.tarot.map((h) => ({ ...h })),
   };
 }
@@ -285,7 +281,7 @@ function cloneBattle(battle: Battle): Battle {
 function slotIsOver(ctx: Ctx, slot: Slot): boolean {
   if (!ctx.unit(slot.unitId).alive) return true;
   const options = legal(ctx);
-  if (slot.mainTaken) return slot.bonusAttacks.length === 0 || options.length === 0;
+  if (slot.mainTaken) return slot.bonusOwed === 0 || options.length === 0;
   return !hasMainAction(options);
 }
 
@@ -304,7 +300,7 @@ function legal(ctx: Ctx): LegalAbility[] {
   const slot = battle.current;
   if (!slot || battle.outcome) return [];
   const unitId = slot.unitId;
-  const bonusMode = slot.bonusAttacks.length > 0;
+  const bonusMode = slot.bonusOwed > 0;
 
   const allowed = new Set(ctx.abilityIds(unitId).filter((id) => behavior(id).kind === "active"));
   if (bonusMode) for (const id of allowed) if (!ctx.hasTag(id, "attack")) allowed.delete(id);
@@ -376,7 +372,7 @@ function advance(ctx: Ctx): void {
     const unit = ctx.unit(next);
     if (!unit.alive) continue;
     ctx.emit({ type: "turnStart", unitId: next });
-    unit.struck = false;
+    unit.lastTurnDealt = 0;
     expire(ctx, "untilSourceTurn", (_u, e) => e.source === next);
 
     let skip = false;
@@ -399,7 +395,7 @@ function advance(ctx: Ctx): void {
       ctx.emit({ type: "skipped", unitId: next, reason: "lostTurn" });
       continue;
     }
-    battle.current = { unitId: next, freeUsed: [], mainTaken: false, bonusAttacks: [], hysteriaTriggers: 0, penaltyMultiplier: 1 };
+    battle.current = { unitId: next, freeUsed: [], mainTaken: false, bonusOwed: 0, bonusGranted: 0, bonusIndex: 0 };
     if (!hasMainAction(legal(ctx))) {
       battle.current = null;
       ctx.emit({ type: "skipped", unitId: next, reason: "noActions" });
@@ -662,6 +658,12 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
       if (dead.alive || dead.corpse !== "intact") return;
       dead.corpse = state;
       for (const t of [...allTraits(ctx)]) t.hooks.remains?.(ctx, t.self, unitId, state);
+    },
+    grantBonusAttack: (unitId) => {
+      const slot = ctx.battle.current;
+      if (slot?.unitId !== unitId) return;
+      slot.bonusOwed += 1;
+      slot.bonusGranted += 1;
     },
     consumeCharge: (unitId, abilityId) => {
       if (chargesLeft(ctx, unitId, abilityId) <= 0) return false;

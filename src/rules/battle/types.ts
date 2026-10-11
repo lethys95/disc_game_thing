@@ -119,8 +119,8 @@ export interface BattleUnit {
   corpse: "intact" | "used" | "destroyed";
   /** Spell charges left this battle. */
   spellCharges: number;
-  /** Its most recent turn dealt damage (Judgement strikes the enemies who did). */
-  struck: boolean;
+  /** Damage its most recent turn dealt, reset when its next turn starts. */
+  lastTurnDealt: number;
   /** Leads its squad on the map. No combat effect (canon: elevation grants no stat boost); shown to the player. */
   readonly leader: boolean;
 }
@@ -129,11 +129,12 @@ export interface Slot {
   readonly unitId: string;
   freeUsed: string[];
   mainTaken: boolean;
-  /** Extra attacks owed this slot (Hysteria); each entry is the self-damage multiplier for that attack. */
-  bonusAttacks: number[];
-  hysteriaTriggers: number;
-  /** Self-damage multiplier of the attack being resolved right now. */
-  penaltyMultiplier: number;
+  /** Extra attacks owed this turn (`Ctx.grantBonusAttack`); while any are owed, only attack abilities may be used. */
+  bonusOwed: number;
+  /** Extra attacks granted this turn so far. */
+  bonusGranted: number;
+  /** Which extra attack is resolving: 0 for the turn's own actions, then 1, 2… */
+  bonusIndex: number;
 }
 
 export interface Battle {
@@ -230,8 +231,8 @@ export interface Packet {
   amount: number;
   readonly type: DamageType;
   readonly tags: readonly Tag[];
-  /** Split off by conversion stages; applied as bleed instead of as a hit. */
-  bleed: number;
+  /** Effects the hit lays on its target as it lands, split off by conversion stages (Domination's bleed). */
+  riders: EffectSeed[];
   /** Armor this hit ignores (a siege-trained attack goes through a city's fortification). */
   pierce: number;
 }
@@ -441,6 +442,8 @@ export interface Ctx {
   spendCorpse(unitId: string, state: "used" | "destroyed"): void;
   /** Uses one charge of the unit's ability; false when none are left. */
   consumeCharge(unitId: string, abilityId: string): boolean;
+  /** Owes the unit whose turn it is one more attack this turn; nothing if it isn't that unit's turn. */
+  grantBonusAttack(unitId: string): void;
   /** Ability ids the unit has, including ones granted by traits. */
   abilityIds(unitId: string): string[];
   /** The unit's own ref for an ability, or the granted one (with its params), or a bare `{ id }`. */

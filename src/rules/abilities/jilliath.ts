@@ -262,7 +262,7 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
     defaults: { power: 25 },
     scales: ["power"],
     choices: (ctx, self) => {
-      const guilty = ctx.living(opponent(ctx.unit(self.unitId).side)).filter((u) => u.struck);
+      const guilty = ctx.living(opponent(ctx.unit(self.unitId).side)).filter((u) => u.lastTurnDealt > 0);
       const first = guilty[0];
       return first ? [at(first, guilty.map((u) => u.id), "main")] : [];
     },
@@ -485,7 +485,8 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
       "Takes self-damage equal to half the damage it deals.",
     hooks: {
       afterAttack: (ctx, self, dealt) => {
-        const multiplier = ctx.battle.current?.penaltyMultiplier ?? 1;
+        // Hysteria's extra attacks double it each time: the first ×2, the second ×4.
+        const multiplier = 2 ** (ctx.battle.current?.bonusIndex ?? 0);
         ctx.lose(self.unitId, Math.floor((dealt / 2) * multiplier), self.unitId);
       },
     },
@@ -500,9 +501,8 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
     hooks: {
       afterAttack: (ctx, self, _dealt, kills) => {
         const slot = ctx.battle.current;
-        if (kills === 0 || slot === null || slot.unitId !== self.unitId || slot.hysteriaTriggers >= 2) return;
-        slot.hysteriaTriggers += 1;
-        slot.bonusAttacks.push(2 ** slot.hysteriaTriggers);
+        if (kills === 0 || slot === null || slot.unitId !== self.unitId || slot.bonusGranted >= 2) return;
+        ctx.grantBonusAttack(self.unitId);
       },
     },
   },
@@ -543,7 +543,8 @@ export const jilliath: Readonly<Record<string, Behavior>> = {
     hooks: {
       convert: (_ctx, self, packet) => {
         const bleed = Math.floor(packet.amount * (self.params["share"] ?? 0));
-        packet.bleed += bleed;
+        if (bleed <= 0) return;
+        packet.riders.push({ def: "bleeding", source: packet.source, amount: bleed });
         packet.amount -= bleed;
       },
     },

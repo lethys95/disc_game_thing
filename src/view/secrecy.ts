@@ -28,9 +28,10 @@ export function masked(events: readonly BattleEvent[], battle: Battle, playerSid
   });
 }
 
-/** The battle as the player knows it: without the other side's secret effects. */
+/** The battle as the player knows it: without the other side's secret effects and tarot cards. */
 export function asKnown(battle: Battle, playerSide: Side | null): Battle {
   if (playerSide === null) return battle;
   const units = Object.fromEntries(Object.entries(battle.units).map(([id, u]) => [id, { ...u, effects: u.effects.filter((e) => sees(battle, playerSide, e.def, e.source)) }]));
-  return { ...battle, units };
+  // The other side's tarot cards stay secret: what they ask and pay mustn't show in a preview of the player's action.
+  return { ...battle, units, tarot: battle.tarot.filter((h) => h.side === playerSide) };
 }

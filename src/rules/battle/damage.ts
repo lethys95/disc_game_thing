@@ -19,11 +19,11 @@ export function hit(ctx: Ctx, sourceId: string, targetIds: readonly string[], sp
     if (!ctx.unit(targetId).alive) continue;
     // Read again for each target: a one-shot mark that fired on the first target is gone for the next.
     const own = traitsOn(ctx, sourceId);
-    const packet: Packet = { source: sourceId, target: targetId, amount: spec.power, type: spec.type, tags: spec.tags, bleed: 0, pierce: 0 };
+    const packet: Packet = { source: sourceId, target: targetId, amount: spec.power, type: spec.type, tags: spec.tags, riders: [], pierce: 0 };
     for (const t of own) t.hooks.outgoing?.(ctx, t.self, packet);
     for (const t of own) t.hooks.convert?.(ctx, t.self, packet);
     const taken = receive(ctx, packet);
-    if (packet.bleed > 0) ctx.addEffect(targetId, { def: "bleeding", source: sourceId, amount: packet.bleed });
+    for (const rider of packet.riders) ctx.addEffect(targetId, rider);
     tally.dealt += taken;
     if (!ctx.unit(targetId).alive) tally.kills += 1;
     for (const t of own) t.hooks.afterHit?.(ctx, t.self, targetId, taken);

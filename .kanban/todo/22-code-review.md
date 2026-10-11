@@ -25,3 +25,5 @@
 - **Order (the user, 2026-10-11):** "Lets continue this streak with the UI, but the very next thing after UI should be
   fixing 1-3. However, 1-3 are very important, so we want to see them done before we add new units." Findings 1–3
   come right after the current UI pass and before any new unit is built; 4–5 can follow.
+- **Finding 1, done (2026-10-11):** Hysteria, Judgement and bleed out of the engine; the guard test; tarot kept as a
+  battle system with its draw loop in `tarot.ts` and the preview leak closed (`decisions.md`).
