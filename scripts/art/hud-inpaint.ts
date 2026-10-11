@@ -100,11 +100,24 @@ const REPAIRS: Readonly<Record<string, Repair>> = {
     page: [300, 864],
     boxes: [],
     mask: "art/masks/map-column-glass.png",
-    denoise: [0.8],
+    denoise: [0.8, 0.95],
     depth: { map: "art/greybox/map-column-duality/depth.png", strength: 1 },
     prompt:
       "Game interface art in soft even light: a gothic stained glass window seen straight on, the grey lead cames and iron bars exactly where they are. " +
       "Jilliath's scheme, analogous with light: about two thirds of the pieces deep ruby red, about a quarter warm amber gold set as a regular pattern among them, and a few small pieces of pale clear straw glass as points of light; the border strips alternate ruby and amber." +
+      " Real medieval cathedral glass with light shining through it: every piece of glass one clean, even, saturated colour from edge to edge, luminous and translucent, brightest at its centre, separated by dark lead lines; no grey, no black or muddy patches inside the glass. No text, no letters.",
+  },
+  /** The analogous scheme with a lighter red: deep ruby painted dark and mottled at any strength (ruby is a dark glass). */
+  "glass-scarlet-light": {
+    source: "art/candidates/ui/inpaint/column-third-arm/column-third-arm-d65-4.png",
+    page: [300, 864],
+    boxes: [],
+    mask: "art/masks/map-column-glass.png",
+    denoise: [0.8, 0.95],
+    depth: { map: "art/greybox/map-column-duality/depth.png", strength: 1 },
+    prompt:
+      "Game interface art in soft even light: a gothic stained glass window seen straight on, the grey lead cames and iron bars exactly where they are. " +
+      "Jilliath's scheme, analogous with light: about two thirds of the pieces bright clear scarlet red, a light vermilion that glows with the light behind it,, about a quarter warm amber gold set as a regular pattern among them, and a few small pieces of pale clear straw glass as points of light; the border strips alternate scarlet and amber." +
       " Real medieval cathedral glass with light shining through it: every piece of glass one clean, even, saturated colour from edge to edge, luminous and translucent, brightest at its centre, separated by dark lead lines; no grey, no black or muddy patches inside the glass. No text, no letters.",
   },
   /** The map column's window in a scheme with reasons (hud-pieces.md, "Colour in the glass"). Ruby 60, amber 30, a deep ultramarine accent 10 in the border. Exact glass mask. */
@@ -113,7 +126,7 @@ const REPAIRS: Readonly<Record<string, Repair>> = {
     page: [300, 864],
     boxes: [],
     mask: "art/masks/map-column-glass.png",
-    denoise: [0.8],
+    denoise: [0.8, 0.95],
     depth: { map: "art/greybox/map-column-duality/depth.png", strength: 1 },
     prompt:
       "Game interface art in soft even light: a gothic stained glass window seen straight on, the grey lead cames and iron bars exactly where they are. " +
@@ -126,7 +139,7 @@ const REPAIRS: Readonly<Record<string, Repair>> = {
     page: [300, 864],
     boxes: [],
     mask: "art/masks/map-column-glass.png",
-    denoise: [0.8],
+    denoise: [0.8, 0.95],
     depth: { map: "art/greybox/map-column-duality/depth.png", strength: 1 },
     prompt:
       "Game interface art in soft even light: a gothic stained glass window seen straight on, the grey lead cames and iron bars exactly where they are. " +

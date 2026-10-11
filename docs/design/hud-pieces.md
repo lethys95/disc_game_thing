@@ -658,3 +658,8 @@ here, and not just 'I want more colors'." The first glass probe was more colours
 - **The tear** (the user: "this strange tear in the colors"): the first probes repainted a rectangle, so its corners
   spilled glass over the iron around the arch and the border strips lost their leads in places. Now the repair uses an
   exact mask of the glass (`art/masks/glass_mask.py`).
+- **Rounds with the exact mask:** the tear is gone in every seed (the iron around the arch untouched). Chartres came
+  out clean and luminous; the three ruby schemes came out blotchy, dark and mottled. Repainting harder (0.95) didn't
+  help, so it is not inherited from the old glass: the model paints "deep ruby" as a dark streaky glass, which is
+  true to real ruby glass and to colour: red transmits little light, which is why cathedrals set it in small pieces
+  against a blue ground. Next: the same scheme with a lighter, glowing scarlet (`glass-scarlet-light`).
