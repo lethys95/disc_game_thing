@@ -681,3 +681,13 @@ the review's causes answered:
   repeated, so the garrison, the city's panel and the tab frame are framed by the same painting at any size. This
   answers the blur (one texel density) and the mismatched segments (one frame, not a wall per tab). The content stays
   the flat components (squad tiles, rows, trees).
+
+**Rejected (the user, 2026-10-11):** "It's way worse than what we had before in the painted rendition before the
+greybox. There is no soul or character in this whatsoever." And: "You didn't use any of the reference material did
+you?" It didn't: the skill's first step (read a reference's structure; `reference_material/elements.md` is the
+catalogue of materials, colours and objects written as prompt vocabulary) was skipped, and the prompts repeated night
+one's failure as that catalogue traces it ("How night one's HUD came out grey"): one material (blackened iron, a little
+marble), "old, worn, matte", no objects with jobs, no warm materials, no accent but small amber studs; the frame a
+uniform iron chain. Fixing the review's faults (Norse ornament, blur, seams, the seal) by subtraction took out what
+gave the earlier rendition its character: figures doing something, coloured glass, objects. Reverted. Kept for later:
+the nine-slice idea for one shared frame at one density.

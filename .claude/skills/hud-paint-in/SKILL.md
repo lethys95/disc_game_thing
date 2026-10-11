@@ -29,6 +29,13 @@ flat values and judged by the user there. This skill's value and depth greyboxes
 not invented with the painting.
 
 ## 1. Read a reference for its structure, not its look
+**Never skip this step.** The user, 2026-10-11, rejecting a round painted without it: "There is no soul or character in
+this whatsoever [...] You didn't use any of the reference material did you?" Open the reference images and
+`reference_material/elements.md` (materials, colours, objects, written as prompt vocabulary) every round, and check the
+prompt against its "How night one's HUD came out grey" list: more than one material, warm ones among them, small
+saturated accents repeated, objects with jobs. Fixing a review's faults by taking things out leaves a sterile piece;
+replace what goes with something that has character.
+
 Take one reference screen the user points at (`reference_material/`, `elements.md`) and write down how it is
 built, the way `hud-pieces.md` "How the Disciples II map column is built" does:
 - What is one object, and where does it meet the screen's edges?

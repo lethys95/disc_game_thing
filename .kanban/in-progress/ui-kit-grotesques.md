@@ -272,3 +272,5 @@
   screen's boxes, gothic blind tracery, a cathedral front carved low under the tabs, Back as a plate) and one panel
   frame used as a nine-slice border round every panel (`jilliath-frame`), both at the column's density.
   `docs/design/hud-pieces.md`, "Jilliath's Capitol on the judged layout".
+- **Rejected (the user, 2026-10-11):** "way worse than what we had before [...] no soul or character", painted without
+  the reference material. Reverted; the cause and the skill's new rule in `hud-pieces.md`.
