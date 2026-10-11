@@ -48,11 +48,15 @@ function reachOf(route: readonly string[], tier: number, commitment: Readonly<Re
   return reach;
 }
 
+/** Which way a line's tree grows: down from its root at the top, or across from its root at the left. */
+type TreeLayout = "down" | "across";
+
 /**
- * Elbow lines from each parent's bottom to its children's tops: down, across, down; lit along the unlocked branches. Drawn once the grid has its size
- * (and again when it changes), since the cells' places come from the layout.
+ * Branches from each parent's portrait to its children's, elbowed (down a tree: down, across, down; across one: across,
+ * down, across), lit along the unlocked branches. Drawn once the grid has its size (and again when it changes), since
+ * the portraits' places come from the layout.
  */
-function connectors(grid: HTMLElement, links: readonly (readonly [HTMLElement, HTMLElement, boolean])[]): SVGSVGElement {
+function connectors(grid: HTMLElement, links: readonly (readonly [HTMLElement, HTMLElement, boolean])[], layout: TreeLayout): SVGSVGElement {
   const svg = document.createElementNS(SVG, "svg");
   svg.classList.add("connectors");
   const draw = () => {
@@ -60,15 +64,23 @@ function connectors(grid: HTMLElement, links: readonly (readonly [HTMLElement, H
     svg.setAttribute("viewBox", `0 0 ${box.width} ${box.height}`);
     svg.replaceChildren();
     for (const [child, parent, lit] of links) {
-      const from = parent.getBoundingClientRect();
-      const to = child.getBoundingClientRect();
-      const x1 = from.left + from.width / 2 - box.left;
-      const y1 = from.bottom - box.top;
-      const x2 = to.left + to.width / 2 - box.left;
-      const y2 = to.top - box.top;
-      const mid = (y1 + y2) / 2;
+      // Down a tree a branch leaves below the parent's name; across one, from its portrait's side.
+      const from = (layout === "down" ? parent : (parent.querySelector(".thumb") ?? parent)).getBoundingClientRect();
+      const to = (child.querySelector(".thumb") ?? child).getBoundingClientRect();
       const path = document.createElementNS(SVG, "path");
-      path.setAttribute("d", `M ${x1} ${y1} V ${mid} H ${x2} V ${y2}`);
+      if (layout === "down") {
+        const x1 = from.left + from.width / 2 - box.left;
+        const y1 = from.bottom - box.top;
+        const x2 = to.left + to.width / 2 - box.left;
+        const y2 = to.top - box.top;
+        path.setAttribute("d", `M ${x1} ${y1} V ${(y1 + y2) / 2} H ${x2} V ${y2}`);
+      } else {
+        const x1 = from.right - box.left;
+        const y1 = from.top + from.height / 2 - box.top;
+        const x2 = to.left - box.left;
+        const y2 = to.top + to.height / 2 - box.top;
+        path.setAttribute("d", `M ${x1} ${y1} H ${(x1 + x2) / 2} V ${y2} H ${x2}`);
+      }
       if (lit) path.classList.add("lit");
       svg.appendChild(path);
     }
@@ -83,6 +95,7 @@ function connectors(grid: HTMLElement, links: readonly (readonly [HTMLElement, H
  */
 export class ResearchPanel {
   private tab: ResearchTab = "general";
+  private layout: TreeLayout = "down";
 
   constructor(
     private readonly host: HTMLElement,
@@ -131,11 +144,24 @@ export class ResearchPanel {
       }
       return { tabs, body: column };
     }
-    // Each line grows down from its tier-1 unit at the top (user, 2026-09-27: "more tree like"): a column per route
-    // to the top of the tree; a unit two routes share sits once, over the first of them.
+    // The two layouts side by side until the user picks one (todo/proper-trees): a toggle above the trees.
+    const layouts = element("div", "tree-layouts");
+    for (const [id, label] of [["down", "Top down"], ["across", "Left to right"]] as const) {
+      const button = element("button", `layout${this.layout === id ? " selected" : ""}`, label);
+      button.addEventListener("click", () => {
+        this.layout = id;
+        this.rerender();
+      });
+      layouts.appendChild(button);
+    }
+    column.appendChild(layouts);
+    // Each line grows from its tier-1 unit (user, 2026-09-27: "more tree like"): a lane per route to the end of the
+    // tree; a unit two routes share sits once, over the first of them.
+    const across = this.layout === "across";
     for (const lines of rootsOf(tab).map(routes)) {
-      const grid = element("div", "tree down");
-      grid.style.gridTemplateColumns = `repeat(${lines.length}, minmax(0, 1fr))`;
+      const grid = element("div", `tree line ${this.layout}`);
+      if (across) grid.style.gridTemplateRows = `repeat(${lines.length}, auto)`;
+      else grid.style.gridTemplateColumns = `repeat(${lines.length}, minmax(0, 1fr))`;
       // Each node by its route from the root, so a child finds the cell its parent was drawn in.
       const cells = new Map<string, HTMLElement>();
       const links: [child: HTMLElement, parent: HTMLElement, lit: boolean][] = [];
@@ -151,12 +177,13 @@ export class ResearchPanel {
           // A unit shared by the routes to its right spans them.
           const span = lines.slice(col).findIndex((other) => other.slice(0, tier + 1).join() !== route.slice(0, tier + 1).join());
           if (tier === 0) cell.classList.add("root");
-          cell.style.gridRow = `${tier + 1}`;
-          cell.style.gridColumn = `${col + 1} / span ${span === -1 ? lines.length - col : span}`;
+          const lane = `${col + 1} / span ${span === -1 ? lines.length - col : span}`;
+          cell.style.gridRow = across ? lane : `${tier + 1}`;
+          cell.style.gridColumn = across ? `${tier + 1}` : lane;
           grid.appendChild(cell);
         });
       });
-      grid.appendChild(connectors(grid, links));
+      grid.appendChild(connectors(grid, links, this.layout));
       column.appendChild(grid);
     }
     return { tabs, body: column };

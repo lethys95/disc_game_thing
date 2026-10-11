@@ -55,10 +55,10 @@
 .city-content { flex: 1; min-width: 0; display: flex; flex-direction: column; min-height: 0; overflow-y: auto; }
 .city-content > .city-body { flex: 1; min-height: 0; }
 /* Research trees top-down: tier 1 at the top, branches spreading below; elbow lines join each node to its parent. */
-.screen .tree.down { gap: 1.625rem 0.625rem; align-items: start; position: relative; }
-.screen .tree.down svg.connectors { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
-.screen .tree.down svg.connectors path { fill: none; stroke: var(--gold-dim); stroke-width: 2; opacity: 0.7; }
-.screen .tree.down .node { position: relative; align-items: center; text-align: center; }
-.screen .tree.down .node .head { flex-direction: column; align-items: center; }
-.screen .tree.down .node .head .thumb { width: 3.25rem; height: 3.25rem; }
-.screen .tree.down .node { justify-self: center; width: min(100%, 14.375rem); box-sizing: border-box; }
+.screen .tree.line { gap: 1.625rem 0.625rem; align-items: start; position: relative; }
+.screen .tree.line svg.connectors { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.screen .tree.line svg.connectors path { fill: none; stroke: var(--gold-dim); stroke-width: 2; opacity: 0.7; }
+.screen .tree.line .node { position: relative; align-items: center; text-align: center; }
+.screen .tree.line .node .head { flex-direction: column; align-items: center; }
+.screen .tree.line .node .head .thumb { width: 3.25rem; height: 3.25rem; }
+.screen .tree.line .node { justify-self: center; width: min(100%, 14.375rem); box-sizing: border-box; }
