@@ -7,7 +7,7 @@ _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail:
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): a first complete version, far off (the board's README
 lists what it needs). Many tracks at once: unit designs come from sessions with the user; meanwhile Claude moves faction
-interfaces, 3D figures, the map's look, tools and music installs.
+interfaces, the map's look, tools and music installs.
 
 ## Where we are
 A playable map game for 2–6 players (hotseat viewer vs AIs) with Jilliath, Ral-Vitahl and the Sylvan; tribes (bandits,

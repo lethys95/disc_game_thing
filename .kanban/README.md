@@ -10,8 +10,8 @@ that looks right, and a game playable from the title to victory. Balance comes o
 **How the work flows.** Many tracks run at once. Unit and faction designs are the user's and come from theorycrafting
 sessions together, which take time ("The unit designs are bottlenecked by me being able to come up with ideas. Other
 tasks are more approachable by you"). Claude keeps the other tracks moving meanwhile: faction interfaces (paint-ins on
-the judged greyboxes), 3D figures, tools, the map's look, installing the user's music, and preparing material for the
-design sessions. Nothing waits on one track.
+the judged greyboxes), tools, the map's look, installing the user's music, and preparing material for the design
+sessions. 3D figures are the user's (Tripo, once most units exist, `eventually/3d-figures`); Claude integrates them. Nothing waits on one track.
 
 One story per markdown file. Status = which directory the file is in. Moving a story = `mv`. `ls .kanban/*/` is the
 board view; `pnpm board` renders it to `shots/board.html` (served over Tailscale at `/shots/board.html`).
