@@ -46,7 +46,7 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
    Paint after a layout is judged, per faction skin. Glass rests. The code review is handled (`testing/code-review`).
    Jilliath's Capitol paint-in: round 1 rejected ("no soul or character"), reverted; round 4 from the user's sketch
    and idea (round buttons on a rose window, a stone angel channelling them, a leave symbol button), the column first
-   (`shots/jilliath-capitol-6.html`: two renditions, the door the way out).
+   (`shots/jilliath-capitol-6.html`): the user picked the inpainted rendition; the door is the way out.
    **Mana is one kind** (the user's call; `testing/mana-colours`, `decisions.md`): one number per player, the faction's
    colour only its accent. Save 35.
 1. **Finish Jilliath's concepts** with the user (the open nine), then portraits from the picks.

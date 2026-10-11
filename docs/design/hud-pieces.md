@@ -740,3 +740,6 @@ inpaint again, (2) all of it painted again with more elements.
   gable, the portal and door, and a lit candle on an iron stand each side. In the game.
 - The door is the way out in the skin: a clip-path over the painted door, warm light on hover; no symbol.
   `shots/jilliath-capitol-6.html`.
+- **Picked (the user):** "I think the inpainted one works. Center these symbols and enlargen a bit. Remove labels, let
+  the icons do the talking." Rendition 1 is in the game; each emblem centred on its measured marble face (about 41
+  page px), a fifth larger, the names visually hidden.
