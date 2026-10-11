@@ -14,6 +14,9 @@ interface Repair {
   readonly source: string;
   readonly page: readonly [number, number];
   readonly boxes: readonly (readonly [number, number, number, number])[];
+  /** A drawn mask (white is repainted) in place of the boxes, at the source's size, for parts no box fits (a window's
+   * glass between its leads). */
+  readonly mask?: string;
   readonly denoise: readonly number[];
   readonly prompt: string;
   readonly depth?: { readonly map: string; readonly strength: number };
@@ -56,7 +59,8 @@ const REPAIRS: Readonly<Record<string, Repair>> = {
   "glass-chartres": {
     source: "art/candidates/ui/inpaint/column-third-arm/column-third-arm-d65-4.png",
     page: [300, 864],
-    boxes: [[26, 212, 248, 270]],
+    boxes: [],
+    mask: "art/masks/map-column-glass.png",
     denoise: [0.75, 0.9],
     depth: { map: "art/greybox/map-column-duality/depth.png", strength: 1 },
     prompt:
@@ -68,7 +72,8 @@ const REPAIRS: Readonly<Record<string, Repair>> = {
   "glass-jewels": {
     source: "art/candidates/ui/inpaint/column-third-arm/column-third-arm-d65-4.png",
     page: [300, 864],
-    boxes: [[26, 212, 248, 270]],
+    boxes: [],
+    mask: "art/masks/map-column-glass.png",
     denoise: [0.75, 0.9],
     depth: { map: "art/greybox/map-column-duality/depth.png", strength: 1 },
     prompt:
@@ -80,13 +85,53 @@ const REPAIRS: Readonly<Record<string, Repair>> = {
   "glass-ember": {
     source: "art/candidates/ui/inpaint/column-third-arm/column-third-arm-d65-4.png",
     page: [300, 864],
-    boxes: [[26, 212, 248, 270]],
+    boxes: [],
+    mask: "art/masks/map-column-glass.png",
     denoise: [0.75, 0.9],
     depth: { map: "art/greybox/map-column-duality/depth.png", strength: 1 },
     prompt:
       "Game interface art in soft even light: a gothic stained glass window seen straight on, glowing with light from behind, the grey lead cames and iron bars exactly where they are. " +
       "Ember and sky: the nine square panes warm ruby red, crimson and gold amber, set inside a border of deep sapphire blue strips, the tracery head deep blue with gold and ruby pieces, so the warm centre glows against the cool blue around it." +
       " Real medieval cathedral glass: each square pane is made of several smaller leaded pieces with faint painted detail, the colours clear, saturated and luminous, not murky. No text, no letters.",
+  },
+  /** The map column's window in a scheme with reasons (hud-pieces.md, "Colour in the glass"). Analogous with light: ruby 60, amber 30, pale straw 10. Exact glass mask. */
+  "glass-ruby-light": {
+    source: "art/candidates/ui/inpaint/column-third-arm/column-third-arm-d65-4.png",
+    page: [300, 864],
+    boxes: [],
+    mask: "art/masks/map-column-glass.png",
+    denoise: [0.8],
+    depth: { map: "art/greybox/map-column-duality/depth.png", strength: 1 },
+    prompt:
+      "Game interface art in soft even light: a gothic stained glass window seen straight on, the grey lead cames and iron bars exactly where they are. " +
+      "Jilliath's scheme, analogous with light: about two thirds of the pieces deep ruby red, about a quarter warm amber gold set as a regular pattern among them, and a few small pieces of pale clear straw glass as points of light; the border strips alternate ruby and amber." +
+      " Real medieval cathedral glass with light shining through it: every piece of glass one clean, even, saturated colour from edge to edge, luminous and translucent, brightest at its centre, separated by dark lead lines; no grey, no black or muddy patches inside the glass. No text, no letters.",
+  },
+  /** The map column's window in a scheme with reasons (hud-pieces.md, "Colour in the glass"). Ruby 60, amber 30, a deep ultramarine accent 10 in the border. Exact glass mask. */
+  "glass-ruby-blue": {
+    source: "art/candidates/ui/inpaint/column-third-arm/column-third-arm-d65-4.png",
+    page: [300, 864],
+    boxes: [],
+    mask: "art/masks/map-column-glass.png",
+    denoise: [0.8],
+    depth: { map: "art/greybox/map-column-duality/depth.png", strength: 1 },
+    prompt:
+      "Game interface art in soft even light: a gothic stained glass window seen straight on, the grey lead cames and iron bars exactly where they are. " +
+      "Jilliath's scheme, with a cool accent: about two thirds of the pieces deep ruby red, about a quarter warm amber gold, and a few small pieces of very deep ultramarine blue only in the border strips and the tracery head, so the warm centre glows against them." +
+      " Real medieval cathedral glass with light shining through it: every piece of glass one clean, even, saturated colour from edge to edge, luminous and translucent, brightest at its centre, separated by dark lead lines; no grey, no black or muddy patches inside the glass. No text, no letters.",
+  },
+  /** The map column's window in a scheme with reasons (hud-pieces.md, "Colour in the glass"). Ruby on pale white grisaille, a little amber. Exact glass mask. */
+  "glass-ruby-white": {
+    source: "art/candidates/ui/inpaint/column-third-arm/column-third-arm-d65-4.png",
+    page: [300, 864],
+    boxes: [],
+    mask: "art/masks/map-column-glass.png",
+    denoise: [0.8],
+    depth: { map: "art/greybox/map-column-duality/depth.png", strength: 1 },
+    prompt:
+      "Game interface art in soft even light: a gothic stained glass window seen straight on, the grey lead cames and iron bars exactly where they are. " +
+      "Jilliath's scheme, ruby on light: about half the pieces deep ruby red, set against a ground of pale warm white and clear straw glass, with a few small amber gold pieces; like grisaille glass with ruby, light and solemn." +
+      " Real medieval cathedral glass with light shining through it: every piece of glass one clean, even, saturated colour from edge to edge, luminous and translucent, brightest at its centre, separated by dark lead lines; no grey, no black or muddy patches inside the glass. No text, no letters.",
   },
   /** The garrison wall's effigy: one forearm stood up from his chest and the other was lost; hands folded, as asked. */
   "garrison-effigy": {
@@ -191,9 +236,11 @@ const { width = 0, height = 0 } = await sharp(repair.source).metadata();
 const sx = width / repair.page[0];
 const sy = height / repair.page[1];
 const rects = repair.boxes.map(([x, y, w, h]) => `<rect x="${x * sx}" y="${y * sy}" width="${w * sx}" height="${h * sy}" fill="#fff"/>`).join("");
-const mask = `${out}/mask.png`;
-// A soft edge, so the repainted part blends into what is kept.
-await sharp(Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}"><rect width="100%" height="100%" fill="#000"/>${rects}</svg>`)).blur(6).png().toFile(mask);
+const mask = repair.mask ?? `${out}/mask.png`;
+if (!repair.mask) {
+  // A soft edge, so the repainted part blends into what is kept.
+  await sharp(Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}"><rect width="100%" height="100%" fill="#000"/>${rects}</svg>`)).blur(6).png().toFile(mask);
+}
 for (const denoise of repair.denoise) {
   for (const seed of seeds) {
     const started = Date.now();

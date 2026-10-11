@@ -638,3 +638,23 @@ The review is recorded in full on the story (`in-progress/ui-kit-grotesques`). W
   (`glass-chartres`, `glass-jewels`, `glass-ember`). All read as stained glass at once, where the red read as murk. The
   model subdivided each pane into smaller leaded pieces, which keeps the 3×3 legible only because the tiles cover the
   panes. Waiting on the user's pick.
+
+## Colour in the glass, with reasons (2026-10-11)
+The user: "Can we try to take our color theory hat on as well? Maybe there are some correct colors to choose from
+here, and not just 'I want more colors'." The first glass probe was more colours, not a scheme. What decides it:
+- **The canon** (`art.md`): "Muted world, one loud color [...] At a glance, color means allegiance and magic." The
+  chrome is the muted world; the glass is where the loud colour may live, so it is the faction's accent.
+- **Colours already taken as signals:** eight player colours (red, teal, blue, violet, gold, orange, green, white),
+  health red, the gold of what is lit or selected. A many-coloured window claims every allegiance at once and lets
+  health and selection drown in it. Teal in a Jilliath window would read as Nexus.
+- **Why the old glass read as murk, not glass:** not its hue but its values. Stained glass reads as glass through
+  transmitted light: clean, saturated pieces, light centres, each piece one even colour, hard dark leads between. Ours
+  had grey-black patches inside the panes and no light points.
+- **A scheme with proportions** (60/30/10): the faction's colour dominant, a neighbour on the wheel second
+  (analogous, so it stays one allegiance), a small accent of light or of a split-complementary that no player owns in
+  that hue (a deep ultramarine, not the player blue's mid value).
+- **Per faction:** the window is the faction's skin. Jilliath: ruby, amber, pale straw light. Ral-Vitahl and the
+  Sylvan get their own when their skins are painted.
+- **The tear** (the user: "this strange tear in the colors"): the first probes repainted a rectangle, so its corners
+  spilled glass over the iron around the arch and the border strips lost their leads in places. Now the repair uses an
+  exact mask of the glass (`art/masks/glass_mask.py`).
