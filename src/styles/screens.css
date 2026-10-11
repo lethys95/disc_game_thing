@@ -1,0 +1,195 @@
+/* The full screens in a game: the city, the garrison, the frame, the leader, equipment, offers. */
+
+/* The full screens in a game (the Capitol and every city, a leader, a structure, a meeting of warbands): a painted
+   column at the right edge and the content beside it (the city painting, the garrison wall or the frame), all fixed. */
+.screen { padding: 4.6rem 1.2rem 1rem; }
+
+/* A city's screen: the city painting full screen, no header (the user, 2026-10-10: the header "doesn't need to be in every
+   screen"), meeting the column at the right edge (assets/ui/capitol/column.webp, the hud-paint-in skill), the map
+   column's sibling: 50rem tall like it, its windows placed as shares of the painting (300 by 864). */
+#capitol:has(.screen-column) { padding-top: 1.2rem; padding-right: calc(50rem * 300 / 864 + 1.2rem); }
+#capitol .city-scene { position: absolute; left: 0; top: 0; right: calc(50rem * 300 / 864); bottom: 0; z-index: -1; overflow: hidden; }
+#capitol .city-scene.behind::after { content: ""; position: absolute; inset: 0; background: rgba(8, 7, 7, 0.6); }
+.city-painting { position: absolute; inset: 0; background: #0b0a0c center / cover no-repeat; animation: city-drift 40s ease-in-out infinite alternate; }
+@keyframes city-drift { from { transform: scale(1.06) translate(-1.5%, 0.5%); } to { transform: scale(1.14) translate(1.5%, -1%); } }
+/* The city screen's column and garrison as a greybox in flat values (`docs/design/capitol-elements.md`), until the
+   layout is judged and painted: chrome a dark low-contrast value, what is read or pressed light, wells black. */
+:root { --gbx-chrome: #2e2a27; --gbx-edge: #4b453f; --gbx-plate: #d8d0c1; --gbx-ink: #241c15; --gbx-well: #0d0b0a; --gbx-lit: #e8c36c; --gbx-light: #e6dccb; --gbx-muted: #a99d8b; }
+.screen-column {
+  position: fixed; right: 0; top: 0; height: 50rem; aspect-ratio: 300 / 864; z-index: 2; box-sizing: border-box;
+  display: flex; flex-direction: column; gap: 0.7rem; padding: 0.9rem; background: var(--gbx-chrome); box-shadow: inset 0.25rem 0 0 var(--gbx-edge), -0.5rem 0 1.2rem rgba(0, 0, 0, 0.7);
+}
+.screen-column button { margin: 0; border: 0; font: inherit; cursor: pointer; }
+.screen-column .plate { display: flex; align-items: center; justify-content: center; gap: 0.3rem; white-space: nowrap; background: var(--gbx-plate); color: var(--gbx-ink); }
+.screen-column .plate.name { height: 2.6rem; font: 700 1.5rem var(--display); letter-spacing: 0.05em; }
+.screen-column .purses { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.screen-column .plate.purse, .screen-column .plate.mana-plate { height: 1.9rem; font: 700 1.05rem var(--display); cursor: help; }
+.screen-column .plate .gold, .screen-column .plate .mana { color: var(--gbx-ink); }
+.screen-column .tabs { display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.6rem; }
+.screen .screen-column .tab { display: flex; align-items: center; gap: 0.7rem; height: 3rem; padding: 0 0.8rem; background: var(--gbx-well); color: var(--gbx-light); font: 700 1.1rem var(--display); text-align: left; box-shadow: inset 0 0 0 1px var(--gbx-edge); }
+.screen-column .tab .glyph { width: 1.8rem; height: 1.8rem; background: center / contain no-repeat; filter: brightness(1.1) sepia(0.3); }
+.screen-column .tab .icon-city { background-image: var(--ui-icon-city); } .screen-column .tab .icon-garrison { background-image: var(--ui-icon-garrison); }
+.screen-column .tab .icon-research { background-image: var(--ui-icon-research); } .screen-column .tab .icon-spells { background-image: var(--ui-icon-spells); }
+.screen-column .tab:hover { box-shadow: inset 0 0 0 1px var(--gbx-lit); }
+.screen .screen-column .tab.selected { background: var(--gbx-lit); color: var(--gbx-ink); box-shadow: none; }
+.screen-column .tab.selected .glyph { filter: brightness(0.3); }
+.screen-column .back { margin-top: auto; height: 2.6rem; background: var(--gbx-plate); color: var(--gbx-ink); font: 700 1.05rem var(--display); }
+.screen-column .back:hover { background: #f0e8d8; box-shadow: 0 0 0.8rem rgba(232, 195, 108, 0.6); }
+
+/* The garrison tab: the two grids side by side the heart of it, the city's growth beside them, the fallen under them
+   when there are any. The squad tile keeps the map's size. */
+.garrison-board { position: fixed; top: 0; left: 0; right: calc(50rem * 300 / 864); height: 50rem; z-index: 1; box-sizing: border-box; display: grid; grid-template-columns: 1fr 22rem; gap: 1.2rem; padding: 1.4rem; background: rgba(12, 10, 9, 0.55); color: var(--gbx-light); }
+/* Narrower than 3:2 the grids and the growth panel don't fit side by side: the growth panel goes under the grids. */
+@media (max-aspect-ratio: 3/2) {
+  .garrison-board { grid-template-columns: 1fr; grid-template-rows: auto auto; align-content: start; overflow-y: auto; }
+  .garrison-board .main { justify-content: start; }
+}
+.garrison-board .section { font: 700 1.05rem var(--display); margin: 0 0 0.4rem; color: var(--gbx-light); }
+.garrison-board .note { color: var(--gbx-muted); font-size: 0.72rem; margin: 0; }
+.garrison-board .main { display: flex; flex-direction: column; justify-content: center; gap: 1.2rem; min-width: 0; }
+.garrison-board .squads { display: flex; gap: 2rem; justify-content: center; padding: 1.2rem; background: var(--gbx-chrome); box-shadow: inset 0 0 0 1px var(--gbx-edge); }
+.garrison-board .squad-grid > .section { text-align: center; padding: 0.3rem 0.6rem; white-space: nowrap; background: var(--gbx-plate); color: var(--gbx-ink); }
+.garrison-board .squad-grid .grid { grid-template-rows: repeat(3, var(--squad-tile)) auto; padding: 0.5rem; background: var(--gbx-well); }
+.garrison-board .squad-grid .row-label { grid-row: 4; padding-top: 0.25rem; color: var(--gbx-muted); }
+.garrison-board .squad-grid.vacant .grid { width: calc(3 * var(--squad-tile) + 0.8rem); height: calc(3 * var(--squad-tile) + 0.8rem + 1rem); box-sizing: content-box; opacity: 0.35; }
+.garrison-board .squad-grid .cell { background: #1a1614; }
+.garrison-board .squad-grid .cell.open:hover { background: #2a231d; }
+.garrison-board .grid-details { display: flex; gap: 0.4rem; justify-content: center; margin-top: 0.5rem; }
+.garrison-board .graveyard { padding: 0.9rem 1.2rem; background: var(--gbx-chrome); box-shadow: inset 0 0 0 1px var(--gbx-edge); }
+.garrison-board .graveyard .fallen-row { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 0.6rem; }
+.garrison-board .graveyard .fallen { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
+.garrison-board .graveyard .squad-tile { width: var(--squad-tile); height: var(--squad-tile); }
+.garrison-board .graveyard .squad-tile[draggable="true"] { cursor: grab; }
+.garrison-board .graveyard .price { font-size: 0.8rem; }
+.garrison-board .hint { text-align: center; color: var(--gbx-muted); font-size: 0.75rem; }
+.garrison-board .growth { display: flex; flex-direction: column; gap: 0.5rem; padding: 1rem; overflow-y: auto; background: var(--gbx-chrome); box-shadow: inset 0 0 0 1px var(--gbx-edge); }
+.garrison-board .growth .section:not(:first-child) { margin-top: 0.8rem; }
+.garrison-board .growth .row { display: grid; grid-template-columns: 1fr auto; gap: 0.15rem 0.6rem; align-items: center; padding: 0.55rem 0.7rem; background: var(--gbx-well); }
+.garrison-board .growth .row .name { font: 700 1rem var(--display); }
+.garrison-board .growth .row .note { grid-column: 1; }
+.garrison-board .growth .row > :last-child { grid-column: 2; grid-row: 1 / span 2; }
+.garrison-board .order, .garrison-board .grid-details button {
+  margin: 0; padding: 0.35rem 0.75rem; border: 0; background: var(--gbx-plate); color: var(--gbx-ink); font: 700 0.85rem var(--display); white-space: nowrap; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 0.2rem;
+}
+.garrison-board .order .gold { color: var(--gbx-ink); }
+.garrison-board .order:hover:not(:disabled), .garrison-board .grid-details button:hover:not(:disabled) { background: #f0e8d8; box-shadow: 0 0 0.6rem rgba(232, 195, 108, 0.6); }
+.garrison-board .order:disabled, .garrison-board .grid-details button:disabled { background: #6b645b; color: #2c2722; cursor: default; }
+.garrison-board .done { color: var(--gbx-muted); }
+
+/* The frame the Research and Spells tabs, the leader's screen, the structures and a meeting fill (view/frames.ts), as
+   a greybox in flat values (`docs/design/capitol-elements.md`, "The frame"): the screen's name on a plate, the content
+   scrolling in a dark field, left of the column. */
+.tab-frame {
+  position: fixed; top: 0; left: 0; right: calc(50rem * 300 / 864); height: 50rem; z-index: 1; box-sizing: border-box;
+  display: flex; flex-direction: column; gap: 1rem; padding: 1.2rem 1.4rem; background: var(--gbx-chrome); color: var(--gbx-light);
+}
+.tab-frame > .title { align-self: center; min-width: 22rem; padding: 0.45rem 2rem; text-align: center; background: var(--gbx-plate); color: var(--gbx-ink); font: 700 1.35rem var(--display); letter-spacing: 0.05em; }
+.tab-frame > .field { flex: 1; min-height: 0; overflow-y: auto; padding: 1.2rem 1.4rem; background: var(--gbx-well); box-shadow: inset 0 0 0 1px var(--gbx-edge); }
+.tab-frame .note { color: var(--gbx-muted); font-size: 0.75rem; }
+.tab-frame .spells-tab { padding: 0; max-width: 48rem; margin: 0; }
+/* Tabs on the field's top edge, browser-style: the open one the field's own colour, joined to it; one without a line
+   yet dark. The field's top edge meets them. */
+/* The tabs touch the field (the frame's gap cancelled) and overlap its top edge by a pixel, so the open one joins it. */
+.tab-frame > .frame-tabs { display: flex; gap: 0.3rem; padding: 0 0.8rem; margin-bottom: calc(-1rem - 1px); position: relative; z-index: 1; }
+#capitol .tab-frame .frame-tabs button.tab {
+  height: 2.5rem; padding: 0 1.4rem; border: 0; border-radius: 0.45rem 0.45rem 0 0; background: #1d1a17; color: var(--gbx-muted);
+  font: 700 1rem var(--display); cursor: pointer; box-shadow: inset 0 1px 0 var(--gbx-edge), inset 1px 0 0 var(--gbx-edge), inset -1px 0 0 var(--gbx-edge);
+}
+#capitol .tab-frame .frame-tabs button.tab:not(.selected):hover:not(:disabled) { background: #27231f; color: var(--gbx-light); }
+#capitol .tab-frame .frame-tabs button.tab.selected { background: var(--gbx-well); color: var(--gbx-light); box-shadow: inset 0 2px 0 var(--gbx-lit), inset 1px 0 0 var(--gbx-edge), inset -1px 0 0 var(--gbx-edge); }
+#capitol .tab-frame .frame-tabs button.tab:disabled { opacity: 0.4; cursor: default; }
+/* The research tree: each unit a portrait you click, the unlocked branches lit with their lines, a branch to choose
+   plain, what lies below an undecided fork quieter, a closed branch greyed. */
+.tab-frame .tree.down svg.connectors path { stroke: var(--gbx-edge); stroke-width: 3; opacity: 1; }
+.tab-frame .tree.down svg.connectors path.lit { stroke: var(--gbx-lit); }
+.tab-frame .tree.down .node {
+  display: flex; flex-direction: column; align-items: center; gap: 0.3rem; justify-self: center; width: auto; padding: 0.45rem 0.6rem 0.5rem;
+  border: 0; background: var(--gbx-chrome); color: var(--gbx-light); font: inherit; cursor: pointer; box-shadow: inset 0 0 0 1px var(--gbx-edge);
+}
+.tab-frame .tree.down .node .thumb { width: 4.5rem; height: 4.5rem; margin: 0; background-size: cover; background-position: 50% 15%; box-shadow: 0 0 0 2px var(--gbx-edge); font-size: 1.2rem; }
+.tab-frame .tree.down .node .name { font: 700 0.95rem var(--display); }
+.tab-frame .tree.down .node .pips { display: flex; gap: 0.25rem; }
+.tab-frame .tree.down .node .pip { width: 0.5rem; height: 0.5rem; transform: rotate(45deg); box-shadow: inset 0 0 0 1px var(--gbx-muted); }
+.tab-frame .tree.down .node .pip.bought { background: var(--gbx-lit); box-shadow: none; }
+.tab-frame .tree.down .node.unlocked { box-shadow: inset 0 0 0 1px var(--gbx-lit); }
+.tab-frame .tree.down .node.unlocked .thumb { box-shadow: 0 0 0 2px var(--gbx-lit); }
+.tab-frame .tree.down .node.pending { opacity: 0.7; }
+/* A branch waiting to be chosen: a dashed warm outline, so the screen's one permanent decision stands out at rest. */
+.tab-frame .tree.down .node.choosable { box-shadow: none; outline: 2px dashed var(--gbx-lit); outline-offset: -2px; }
+.tab-frame .tree.down .node.closed { opacity: 0.3; filter: grayscale(1); cursor: default; }
+.tab-frame .tree.down .node:not(.closed):hover { background: #3a342e; }
+.tab-frame .tree.down .node:not(.closed):hover .thumb { box-shadow: 0 0 0 2px #fff4e0, 0 0 0.8rem rgba(232, 195, 108, 0.7); }
+.tab-frame .research-row, .tab-frame .spell-row { border-bottom: 1px solid var(--gbx-edge); padding: 0.6rem 0; }
+/* A fork's branches as cards: the portrait it leads to, its name, the dichotomy; the clicked one marked. */
+.branch-cards { display: flex; gap: 0.8rem; justify-content: center; margin-top: 0.9rem; }
+.dialog .branch-card {
+  display: flex; flex-direction: column; align-items: center; gap: 0.25rem; width: 8.5rem; padding: 0.6rem 0.5rem 0.55rem; border: 0;
+  background: var(--gbx-well); color: var(--gbx-light); cursor: pointer; box-shadow: inset 0 0 0 1px var(--gbx-edge); font: inherit;
+}
+.dialog .branch-card .thumb { width: 6rem; height: 6rem; margin: 0; background-size: cover; background-position: 50% 15%; font-size: 1.4rem; }
+.dialog .branch-card .name { font: 700 1.05rem var(--display); }
+.dialog .branch-card .label { font-size: 0.75rem; color: var(--gbx-muted); }
+.dialog .branch-card.marked { box-shadow: inset 0 0 0 2px var(--gbx-lit); }
+.dialog .branch-card:hover:not(:disabled) { background: #2a241f; box-shadow: inset 0 0 0 2px #fff4e0, 0 0 0.8rem rgba(232, 195, 108, 0.5); }
+.dialog .branch-card:disabled { opacity: 0.45; cursor: default; }
+/* A dialog over a screen (view/dialog.ts): a question or a choice, its actions, Close. */
+.dialog-veil { position: fixed; inset: 0; z-index: 45; display: grid; place-items: center; background: rgba(6, 5, 5, 0.55); }
+.dialog { min-width: 24rem; max-width: 34rem; padding: 1.2rem 1.4rem 1.1rem; background: var(--gbx-chrome); color: var(--gbx-light); box-shadow: inset 0 0 0 1px var(--gbx-edge), 0 0.8rem 2rem rgba(0, 0, 0, 0.8); }
+.dialog .title { font: 700 1.35rem var(--display); margin-bottom: 0.5rem; }
+.dialog .body { font-size: 0.85rem; line-height: 1.45; color: var(--gbx-light); }
+.dialog .body .bought { margin-top: 0.4rem; color: var(--gbx-muted); }
+.dialog .actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; justify-content: flex-end; }
+.dialog button { margin: 0; padding: 0.45rem 0.9rem; border: 0; font: 700 0.9rem var(--display); cursor: pointer; display: inline-flex; align-items: center; gap: 0.2rem; }
+.dialog .dialog-action { background: var(--gbx-lit); color: var(--gbx-ink); }
+.dialog .dialog-action .gold { color: var(--gbx-ink); }
+.dialog .dialog-action:hover:not(:disabled) { background: #f2d68a; }
+.dialog .dialog-action:disabled { background: #6b645b; color: #2c2722; cursor: default; }
+.dialog .dialog-close { background: var(--gbx-plate); color: var(--gbx-ink); }
+.dialog .dialog-close:hover { background: #f0e8d8; }
+/* The frame's buttons: light plates, dimmed when they can't be used. */
+.tab-frame button.small, .tab-frame button.action:not(.tab) {
+  margin: 0.2rem 0 0; padding: 0.35rem 0.75rem; border: 0; border-image: none; background: var(--gbx-plate); color: var(--gbx-ink); filter: none;
+  font: 700 0.82rem var(--display); white-space: nowrap; cursor: pointer;
+}
+.tab-frame button.small .gold, .tab-frame button.action .gold { color: var(--gbx-ink); }
+.tab-frame button.small:hover:not(:disabled) { background: #f0e8d8; box-shadow: 0 0 0.6rem rgba(232, 195, 108, 0.6); filter: none; }
+.tab-frame button.small:disabled { background: #6b645b; color: #2c2722; filter: none; cursor: default; }
+
+/* The warband's column (view/warband-column.ts) is the screen column (above) with the warband's 3×3 under the purses. */
+.warband-column .warband-grid { display: grid; grid-template-columns: repeat(3, var(--squad-tile)); grid-template-rows: repeat(3, var(--squad-tile)); gap: 0.35rem; justify-content: center; padding: 0.6rem; background: var(--gbx-well); }
+.warband-column .warband-grid .squad-tile { background: #1a1614; }
+/* The leader tree in the frame: skills as nodes you click (as research's), their ranks as pips, a skill whose needs
+   aren't met dimmed. */
+.tab-frame .leader-tree { display: grid; gap: 0.8rem 1rem; align-items: start; }
+.tab-frame .leader-tree .node.skill {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 0.3rem; padding: 0.7rem 0.85rem; border: 0; text-align: left;
+  background: var(--gbx-chrome); color: var(--gbx-light); font: inherit; cursor: pointer; box-shadow: inset 0 0 0 1px var(--gbx-edge);
+}
+.tab-frame .leader-tree .node.skill .name { font: 700 1.05rem var(--display); }
+.tab-frame .leader-tree .node.skill .text { font-size: 0.8rem; color: var(--gbx-muted); }
+.tab-frame .leader-tree .pips { display: flex; gap: 0.3rem; }
+.tab-frame .leader-tree .pip { width: 0.55rem; height: 0.55rem; transform: rotate(45deg); box-shadow: inset 0 0 0 1px var(--gbx-muted); }
+.tab-frame .leader-tree .pip.bought { background: var(--gbx-lit); box-shadow: none; }
+.tab-frame .leader-tree .node.learned { box-shadow: inset 0 0 0 1px var(--gbx-lit); }
+.tab-frame .leader-tree .node.pending { opacity: 0.45; }
+.tab-frame .leader-tree .node.full { cursor: default; }
+.tab-frame .leader-tree .node:not(.full):hover { background: #3a342e; }
+/* The equipment: a row per slot, then the bag. */
+.tab-frame .equipment { margin: 0; max-width: 52rem; gap: 0; }
+.tab-frame .equipment .section { margin: 0.4rem 0 0.4rem; }
+.tab-frame .equipment .section:not(:first-child) { margin-top: 1.2rem; }
+.tab-frame .equipment .slot-row { display: grid; grid-template-columns: 8rem 12rem 1fr auto; gap: 0.8rem; align-items: center; padding: 0.55rem 0; border-bottom: 1px solid var(--gbx-edge); }
+.tab-frame .equipment .slot-row:not(:has(.slot-name)) { grid-template-columns: 12rem 1fr auto; }
+.tab-frame .equipment .slot-name { width: auto; color: var(--gbx-muted); font-size: 0.8rem; }
+.tab-frame .equipment .item { font: 700 1rem var(--display); }
+.tab-frame .equipment .slot-row.empty .note { opacity: 0.5; }
+/* A mercenary camp's hires, as the recruit menu's offers. */
+.tab-frame .offers { display: flex; flex-wrap: wrap; gap: 0.8rem; }
+.tab-frame .offers .offer { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; width: 7.5rem; padding: 0.5rem 0.4rem; border: 0; background: var(--gbx-chrome); color: var(--gbx-light); cursor: pointer; font: 600 0.8rem var(--text); box-shadow: inset 0 0 0 1px var(--gbx-edge); }
+.tab-frame .offers .offer .squad-tile { width: 6rem; height: 6rem; }
+.tab-frame .offers .offer .name { font: 700 0.9rem var(--display); text-align: center; line-height: 1.15; }
+.tab-frame .offers .offer:hover { box-shadow: inset 0 0 0 2px var(--gbx-lit); }
+.tab-frame .offers .offer.refused { opacity: 0.4; cursor: default; }
+.tab-frame .offers .offer.refused:hover { box-shadow: inset 0 0 0 1px var(--gbx-edge); }
+.tab-frame .offer { display: flex; flex-direction: column; gap: 0.3em; }

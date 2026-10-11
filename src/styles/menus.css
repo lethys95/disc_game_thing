@@ -1,0 +1,80 @@
+/* New game, menus, explanations, saves, labels in the world. */
+
+/* New game: the faction cards and the options are tablets (the battle's block, as on the full screens), the screen's
+   name a marble plaque, the choices plaques that light. Faction emblems, enamel discs and March as a held object are
+   the kit's later step (design/hud-kit.md). */
+#newgame .setup-header .title {
+  display: inline-block; padding: 0 1.4rem; line-height: 1.6rem; border: 0.5rem solid transparent; border-image: var(--ui-battle-plaque) 26 fill / 0.5rem stretch;
+  color: var(--gb-ink); font-size: 1.6rem; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3); filter: drop-shadow(0 0.1rem 0.15rem rgba(0, 0, 0, 0.7));
+}
+#newgame .setup-header .subtitle { margin-top: 0.3rem; }
+/* The light rim (the recess frame), so the cards, the options and March fit one screen. */
+#newgame .panel {
+  border: solid transparent; border-width: 1rem 0.8rem 1.35rem 0.52rem; background: #222021 padding-box; box-shadow: none;
+  border-image: var(--ui-battle-recess) 29 23 39 15 / 1rem 0.8rem 1.35rem 0.52rem stretch; filter: drop-shadow(0 0.4rem 0.6rem rgba(0, 0, 0, 0.55));
+}
+#newgame button.faction-card { padding: 0.3rem 0.8rem 0.5rem 1rem; opacity: 1; filter: brightness(0.62) drop-shadow(0 0.4rem 0.6rem rgba(0, 0, 0, 0.55)); }
+#newgame button.faction-card:hover { filter: brightness(0.85) drop-shadow(0 0.4rem 0.6rem rgba(0, 0, 0, 0.55)); }
+#newgame button.faction-card.selected { box-shadow: none; filter: brightness(1.05) drop-shadow(0 0 0.9rem rgba(232, 195, 108, 0.45)); }
+#newgame .newgame-options { padding: 0.4rem 1rem; }
+#newgame .newgame-options button.doctrine, #newgame .newgame-options button.small {
+  border: 0.42rem solid transparent; border-image: var(--ui-battle-plaque) 26 fill / 0.42rem stretch; padding: 0.05rem 0.6rem;
+  color: var(--gb-ink); background: none; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3); filter: brightness(0.7);
+}
+#newgame .newgame-options button.doctrine:hover, #newgame .newgame-options button.small:hover { filter: brightness(0.9); }
+#newgame .newgame-options button.doctrine.selected { filter: brightness(1.05) drop-shadow(0 0 0.4rem rgba(232, 195, 108, 0.75)); color: var(--gb-ink); }
+
+/* Menus and settings (design/hud-kit.md): a light-rim panel (the recess frame) with its title on a plaque; toggles are
+   gem lamps that light with candlelight, sliders an iron knob in a groove, the speed choices plaques that light. */
+#menu.panel {
+  border: solid transparent; border-width: 1rem 0.8rem 1.35rem 0.52rem; padding: 0.9rem 1.4rem; background: #222021 padding-box;
+  border-image: var(--ui-battle-recess) 29 23 39 15 / 1rem 0.8rem 1.35rem 0.52rem stretch; box-shadow: 0 0.6rem 1.6rem rgba(0, 0, 0, 0.7);
+}
+#menu .title {
+  align-self: flex-start; padding: 0 1.1rem; line-height: 1.6rem; border: 0.5rem solid transparent; border-image: var(--ui-battle-plaque) 26 fill / 0.5rem stretch;
+  color: var(--gb-ink); font-size: 1.4rem; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+#menu .check-row input[type="checkbox"] {
+  appearance: none; flex: none; width: 1rem; height: 1rem; margin: 0; border-radius: 50%; cursor: pointer;
+  background: radial-gradient(circle at 35% 30%, #4a4440, #1c1917 70%); box-shadow: inset 0 0 0 0.12rem #4f4c48, 0 0 0 0.06rem #000;
+}
+#menu .check-row input[type="checkbox"]:checked {
+  background: radial-gradient(circle at 35% 30%, #fff1c0, #e8c36c 45%, #7a5414 85%); box-shadow: inset 0 0 0 0.12rem #6b6864, 0 0 0.5rem rgba(232, 195, 108, 0.75);
+}
+#menu input.slider { appearance: none; height: 0.45rem; border-radius: 0.25rem; background: #121110; box-shadow: inset 0 0.1rem 0.2rem #000, 0 1px 0 rgba(255, 255, 255, 0.08); cursor: pointer; }
+#menu input.slider::-webkit-slider-thumb {
+  appearance: none; width: 1.1rem; height: 1.1rem; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #c9c4bb, #6b6864 50%, #2a2826 90%); box-shadow: 0 0.1rem 0.25rem #000;
+}
+#menu input.slider::-moz-range-thumb {
+  width: 1.1rem; height: 1.1rem; border: 0; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #c9c4bb, #6b6864 50%, #2a2826 90%); box-shadow: 0 0.1rem 0.25rem #000;
+}
+#menu .segmented button {
+  border: 0.42rem solid transparent; border-image: var(--ui-battle-plaque) 26 fill / 0.42rem stretch; padding: 0.05rem 0.6rem;
+  color: var(--gb-ink); background: none; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3); filter: brightness(0.7);
+}
+#menu .segmented button:hover { filter: brightness(0.9); }
+#menu .segmented button.selected { filter: brightness(1.05) drop-shadow(0 0 0.4rem rgba(232, 195, 108, 0.75)); color: var(--gb-ink); }
+
+/* The explanations are documents: written on the parchment, in ink (design/hud-kit.md, materials). */
+#peek.panel { border: 0; border-image: none; background: var(--gb-parchment) var(--ui-codex-parchment) center / cover; box-shadow: 0 0.4rem 1rem rgba(0, 0, 0, 0.75); --ink: #2b2219; --muted: #6e5d49; --rule: rgba(72, 52, 32, 0.4); color: var(--ink); }
+#peek .cell.filled { background: rgba(72, 52, 32, 0.12); }
+#peek .scaled { color: #7a4a10; border-bottom-color: rgba(122, 74, 16, 0.6); }
+#peek .formula { color: #6a5a40; }
+
+/* Saved games are documents: each a parchment strip, written in ink, its choices in red ink. */
+#menu .save-row:has(> .save-text) {
+  margin: 0.2rem 0; padding: 0.35rem 0.7rem; border: 0; color: #2b2219; box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.6);
+  background: var(--gb-parchment) var(--ui-codex-parchment) center / cover;
+}
+#menu .save-row:has(> .save-text) .note { color: #6e5d49; }
+#menu .save-row:has(> .save-text) button.small { border: 0; border-image: none; background: none; padding: 0 0.2rem; color: #7d2418; font: 600 0.8rem var(--text); text-decoration: underline; text-underline-offset: 0.2em; filter: none; }
+#menu .save-row:has(> .save-text) button.small:hover { color: #2b2219; }
+
+/* Labels in the world are small pennants (design/hud-kit.md): the name in pale thread on dark cloth, the owner's colour
+   as a band along the bottom (the label's own colour, kept as currentColor), a swallowtail at the end. */
+.leader-label, .site-label {
+  -webkit-text-fill-color: var(--ink); padding: 0.05rem 0.8rem 0.08rem 0.45rem; border: 0; border-bottom: 0.18rem solid currentColor;
+  background: linear-gradient(#2c241f, #17120f); clip-path: polygon(0 0, 100% 0, calc(100% - 0.42rem) 50%, 100% 100%, 0 100%);
+  font: 600 0.66rem var(--text); text-shadow: 0 1px 0 #000;
+}
+.site-label.neutral { -webkit-text-fill-color: #b9b0a2; }

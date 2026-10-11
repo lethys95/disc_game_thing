@@ -41,3 +41,8 @@
   overrule: `isSave` checks only the header by design (the save version, pinned to the world's shape by a snapshot
   test, vouches for the rest; validating the whole world would be a large parser for no gain), and the dated "the user,
   …" comments, which quote the design intent a rule comes from (the *why*), not a task or a fix.
+- **Finding 4 (2026-10-11):** done: `style.css` split by screen into `src/styles/` in cascade order (screenshots
+  pixel-identical before and after), unused tokens deleted, the last px in rem. Declined: mirroring the right card's
+  coordinates (they're measurements of the painting, and its globes aren't symmetric) and converting ~219 raw colours
+  or merging `--gb-*`/`--gbx-*` now (the faction skins will re-theme these screens; converting first is churn).
+  **All five findings handled.**

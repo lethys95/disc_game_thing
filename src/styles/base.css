@@ -1,0 +1,53 @@
+/* Tokens, the page, health bars. */
+
+:root {
+  --ink: #d9cfbd;
+  --muted: #8d8373;
+  --panel: rgba(14, 12, 12, 0.82);
+  --edge: #5a4a36;
+  --blood: #c0281c;
+  --side0: #cbbd9f;
+  --side1: #6f6964;
+  --display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --text: Inter, system-ui, sans-serif;
+  --rule: #2c2622;
+  --line: #3a2e28;
+  --gold: #d9b36a;
+  --gold-dim: #9b7c52;
+  --gold-light: #e6d2a6;
+  --well: #231c1a;
+  --field: #171311;
+  --field-dark: #141110;
+  --hp-fill: linear-gradient(#8e1e16, #5e130e);
+}
+
+[hidden] { display: none !important; }
+
+html, body { margin: 0; height: 100%; background: #0b0a0c; color: var(--ink); font: 0.8125rem/1.4 var(--text); overflow: hidden; }
+#stage { position: fixed; inset: 0; }
+#stage canvas { display: block; }
+.labels { position: absolute; inset: 0; pointer-events: none; }
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--edge);
+  box-shadow: 0 0 0 1px #000, 0 0.5rem 1.875rem rgba(0, 0, 0, 0.6);
+  border-radius: 2px;
+}
+
+.chip {
+  padding: 0.1875rem 0.5rem; font-size: 0.6875rem; background: var(--panel); border: 1px solid var(--rule); border-bottom-width: 0.1875rem;
+  color: var(--muted); white-space: nowrap;
+}
+
+/* Health bars: one look everywhere; each place sets only its size. */
+.hp { position: relative; background: var(--well); }
+.hp .fill { position: absolute; inset: 0 auto 0 0; background: var(--hp-fill); }
+button.action {
+  font: 700 1rem var(--display); letter-spacing: 0.03em; color: var(--ink); background: linear-gradient(#211b18, var(--field-dark));
+  border: 1px solid var(--edge); padding: 0.4375rem 1rem; cursor: pointer; min-width: 5.625rem;
+}
+button.action:hover { border-color: var(--gold-dim); }
+button.action.selected { border-color: var(--blood); box-shadow: 0 0 0.75rem rgba(192, 40, 28, 0.5); }
+button.action .tag { font: 600 0.5625rem var(--text); text-transform: uppercase; letter-spacing: 0.1em; margin-left: 0.375rem; color: var(--gold); vertical-align: middle; }
+button.action .key { font: 600 0.5625rem var(--text); margin-left: 0.375rem; padding: 0 0.1875rem; border: 1px solid #5a4a36; color: var(--muted); vertical-align: middle; }

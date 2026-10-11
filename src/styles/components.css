@@ -1,0 +1,45 @@
+/* Shared components: the unit sheet, the squad tile. */
+
+/* A unit's sheet, the held right-click everywhere (view/unit-sheet.ts; Disciples II's unit card the model): the peek's
+   parchment hangs from a rod; the portrait framed at the left with the name under it, the numbers a list of labels
+   and values at the right, the abilities below. */
+#peek:has(.unit-sheet-card) { width: 27rem; padding: 1.4rem 1.1rem 0.9rem; }
+#peek:has(.unit-sheet-card) > .title { display: none; }
+.unit-sheet-card { position: relative; color: var(--ink); }
+.unit-sheet-card .rod {
+  position: absolute; left: -1.6rem; right: -1.6rem; top: -1.95rem; height: 0.55rem; border-radius: 0.3rem;
+  background: linear-gradient(#5a4430, #2a1d12); box-shadow: 0 0.15rem 0.3rem rgba(0, 0, 0, 0.6);
+}
+.unit-sheet-card .rod::before, .unit-sheet-card .rod::after { content: ""; position: absolute; top: -0.25rem; width: 1rem; height: 1rem; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #8a7356, #2a1d12); }
+.unit-sheet-card .rod::before { left: -0.4rem; } .unit-sheet-card .rod::after { right: -0.4rem; }
+.unit-sheet-card .top { display: grid; grid-template-columns: 9rem 1fr; gap: 1rem; align-items: start; }
+.unit-sheet-card .sheet-portrait { display: block; width: 9rem; height: 9rem; margin: 0; background-size: cover; background-position: 50% 15%; box-shadow: 0 0 0 0.2rem #2a1d12, 0 0 0 0.32rem #8a7356; font-size: 1.6rem; }
+.unit-sheet-card .sheet-name { margin-top: 0.55rem; text-align: center; font: 700 1.15rem/1.1 var(--display); }
+.unit-sheet-card .facts { display: grid; grid-template-columns: auto 1fr; gap: 0.18rem 0.8rem; margin: 0; font-size: 0.78rem; }
+.unit-sheet-card .facts dt { font-weight: 600; color: var(--muted); }
+.unit-sheet-card .facts dd { margin: 0; font-weight: 600; }
+.unit-sheet-card .sheet-effects { margin-top: 0.6rem; display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.72rem; }
+.unit-sheet-card .sheet-effects .tag { display: inline-flex; align-items: center; gap: 0.25rem; margin-right: 0.4rem; font-weight: 700; color: #7a2418; }
+.unit-sheet-card .sheet-abilities { margin-top: 0.7rem; padding-top: 0.55rem; border-top: 1px solid var(--rule); display: flex; flex-direction: column; gap: 0.45rem; }
+#peek .unit-sheet-card .ability-row { margin-top: 0; grid-template-columns: auto minmax(0, 1fr) auto; }
+#peek .unit-sheet-card .ability-row > .art.ability-icon { display: block; width: 2.2rem; height: 2.2rem; }
+#peek .unit-sheet-card .ability-row .body .name { display: inline; font: 700 0.85rem var(--display); color: var(--ink); }
+#peek .unit-sheet-card .ability-row .text { display: block; }
+.unit-sheet-card .ability-row .body .charges { font-size: 0.7rem; color: var(--muted); }
+#peek .unit-sheet-card .targeting-grid .cell { width: 0.45rem; height: 0.45rem; min-height: 0; padding: 0; border-style: solid; }
+.unit-sheet-card .sheet-mark { margin-top: 0.3rem; font-size: 0.7rem; color: var(--muted); }
+
+/* The squad tile (view/squad-tile.ts), one for every squad grid: the portrait covers it, cropped to the face, never
+   stretched; a crown for the leader; health a line at its foot. One size where the screen is free to choose it, the
+   map column's (--squad-tile), so a portrait crops the same everywhere. */
+:root { --squad-tile: 3.75rem; }
+/* Where two grids sit side by side to trade units (a city, two warbands meeting), the tile is larger (the user,
+   2026-10-11); still square, so a portrait crops the same. */
+.garrison-board, .tab-frame .city-body { --squad-tile: 5rem; }
+/* Zero specificity, so a container that places its tiles absolutely (the columns' panes) keeps that. */
+:where(.squad-tile) { position: relative; box-sizing: border-box; overflow: hidden; }
+.squad-tile .tile-art { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; background-size: cover; background-position: 50% 15%; display: grid; place-items: center; font: 700 1.2rem var(--display); }
+.squad-tile .crown { position: absolute; left: 0.2rem; top: 0.1rem; font-size: 0.8rem; color: #e8c36c; text-shadow: 0 0 0.15rem #000; }
+.squad-tile .tile-hp { position: absolute; left: 0; right: 0; bottom: 0; height: 0.3rem; background: rgba(0, 0, 0, 0.75); }
+.squad-tile .tile-hp .fill { position: absolute; inset: 0 auto 0 0; background: var(--gb-health); }
+.squad-tile.fallen .tile-art { filter: grayscale(1) brightness(0.45); }

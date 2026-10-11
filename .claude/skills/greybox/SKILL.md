@@ -40,14 +40,14 @@ user values a view into the city).
 
 ## 3. Build it in the game, in flat values
 - The real screen, the real content, the real actions: no mock. Everything clickable works.
-- Flat values only: the `--gbx-*` tokens in `src/style.css` (chrome dark and low in contrast; what is read or pressed
+- Flat values only: the `--gbx-*` tokens in `src/styles/screens.css` (chrome dark and low in contrast; what is read or pressed
   light; wells black; the open or lit state the warm light). No ornament, no figures, no paintings except the world in
   the window.
 - Fixed edges stay fixed across screens (the right-edge column, in the map column's place).
 - Sizes in rem (`pnpm sizes`); text and labels plain.
 
 ## 4. Check every state
-- Settings → Display → "Greybox interface" (`settings.greybox`, `body.greybox` in `src/style.css`) draws every
+- Settings → Display → "Greybox interface" (`settings.greybox`, `body.greybox` in `src/styles/greybox.css`) draws every
   painted piece flat at the same places, so a painted screen can be judged as a layout too. A painted piece added later
   gets its `body.greybox` overrides.
 - `pnpm verify`; update playtests whose selectors the layout changed.

@@ -1,0 +1,71 @@
+/* Tablets and the codex's book. */
+
+/* The tablets. */
+.screen .panel { padding: 1.5rem 1.2rem 1rem; background: var(--plain-fill); border: 1px solid var(--plain-edge); border-image: none; box-shadow: var(--plain-shadow); }
+.screen .panel > .section:first-child {
+  width: fit-content; margin: -2.25rem auto 0.6rem; padding: 0 1rem; line-height: 1.4rem;
+  border: 0.45rem solid transparent; border-image: var(--ui-battle-plaque) 26 fill / 0.45rem stretch; color: var(--gb-ink); font: 700 1.05rem var(--display);
+}
+/* One scroller per screen, so names can cross their tablets' top edges. */
+.screen .panel { overflow: visible; }
+.screen .city-content { padding-top: 0.6rem; }
+
+/* The codex as a book (design/hud-kit.md; the user accepted it, 2026-10-09): an open book lying on the carved wall,
+   the list on its left page and the entry on its right, in ink on parchment. The shelves are a chapter line at the top
+   of the left page; the kinds of entry are marble plaques on the wall above the book that light, with Back. */
+#codex { display: block; padding: 0; --page-ink: #2b2219; --page-muted: #6e5d49; --page-rubric: #7d2418; --page-rule: rgba(72, 52, 32, 0.32); }
+#codex .codex-header { position: absolute; left: 1.2rem; right: 1.2rem; top: 0.75rem; height: 2.6rem; display: flex; align-items: center; gap: 0.5rem; }
+#codex .codex-header .title, #codex .codex-header .tabs button {
+  height: 2.45rem; box-sizing: border-box; padding: 0 1rem; display: flex; align-items: center; white-space: nowrap;
+  border: 0.5rem solid transparent; border-image: var(--ui-battle-plaque) 26 fill / 0.5rem stretch; color: var(--gb-ink); background: none;
+  font: 700 1.05rem var(--display); letter-spacing: 0.03em; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3); filter: drop-shadow(0 0.1rem 0.15rem rgba(0, 0, 0, 0.7));
+}
+#codex .codex-header .title { font-size: 1.35rem; padding: 0 1.3rem; }
+#codex .codex-header .tabs { display: flex; gap: 0.5rem; flex: 1; justify-content: center; }
+#codex .codex-header .tabs button { cursor: pointer; filter: brightness(0.72) drop-shadow(0 0.1rem 0.15rem rgba(0, 0, 0, 0.7)); }
+#codex .codex-header .tabs button:hover { filter: brightness(0.9) drop-shadow(0 0.1rem 0.15rem rgba(0, 0, 0, 0.7)); }
+#codex .codex-header .tabs button.selected { filter: brightness(1.05) drop-shadow(0 0 0.5rem rgba(232, 195, 108, 0.75)); color: var(--gb-ink); }
+
+/* The book lies square to the player (the user, 2026-10-10: a book at an angle "defeats usability"): two flat pages
+   of parchment in a dark leather binding, the spine a shadow between them; the angled painted book retired. */
+#codex .codex-body, #credits .credits-page {
+  position: absolute; top: 4.2rem; bottom: 1.2rem; left: 50%; width: min(80rem, 96vw); transform: translateX(-50%); box-sizing: border-box;
+  border: 1rem solid #2e1d16; border-radius: 0.5rem; box-shadow: inset 0 0 0 0.12rem #5a3b2a, 0 0.8rem 1.6rem rgba(0, 0, 0, 0.7);
+  background: linear-gradient(90deg, transparent calc(50% - 1.6rem), rgba(60, 40, 22, 0.35) 50%, transparent calc(50% + 1.6rem)), var(--gb-parchment) var(--ui-codex-parchment) center / cover;
+  color: var(--page-ink);
+}
+#codex .codex-body { display: grid; grid-template-columns: 1fr 1fr; column-gap: 4.6rem; padding: 2rem 2.4rem; }
+#codex:has(.codex-shelves) .codex-list { padding-top: 3.4rem; }
+#codex .codex-shelves {
+  position: absolute; z-index: 1; top: 6.4rem; left: calc(50% - min(40rem, 48vw) + 3.4rem); width: calc(min(40rem, 48vw) - 6rem); display: flex; flex-direction: column; align-items: flex-start; gap: 0.3rem;
+}
+/* Each entry opens with a rubric capital. */
+#codex .codex-top .heading .name::first-letter { color: var(--page-rubric); }
+#codex .shelf-group { gap: 0.15rem 0.9rem; }
+#codex .shelf-group + .shelf-group { padding-left: 0; border-left: 0; }
+#codex .shelf-group .label { color: var(--page-muted); font-size: 0.62rem; margin-right: 0.2rem; }
+#codex .shelf-group button { border: 0; background: none; padding: 0; color: var(--page-ink); font: 700 0.95rem var(--display); filter: none; cursor: pointer; }
+#codex .shelf-group button:hover { color: var(--page-rubric); }
+#codex .shelf-group button.selected { color: var(--page-rubric); text-decoration: underline; text-underline-offset: 0.2em; filter: none; }
+
+#codex .codex-list, #codex .codex-page { border: 0; border-image: none; background: none; box-shadow: none; padding: 0; min-height: 0; filter: none; color: var(--page-ink); }
+#codex .codex-search { background: transparent; border: 0; border-bottom: 1px solid var(--page-rule); color: var(--page-ink); padding: 0.3rem 0.1rem; font-size: 0.9rem; }
+#codex .codex-search::placeholder { color: var(--page-muted); }
+#codex .codex-search:focus { border-bottom-color: var(--page-rubric); }
+#codex .codex-group { color: var(--page-rubric); border-bottom-color: var(--page-rule); }
+#codex button.codex-row { background: none; border: 0; border-bottom: 1px solid var(--page-rule); margin: 0; padding: 0.3rem 0.3rem; color: var(--page-ink); }
+#codex button.codex-row:hover { background: rgba(120, 80, 40, 0.08); }
+#codex button.codex-row.selected { background: rgba(125, 36, 24, 0.1); color: var(--page-rubric); }
+#codex button.codex-row .tier { color: var(--page-muted); }
+#codex .codex-top .subtitle, #codex .codex-top .stats .name, #codex .codex-page .note, #codex .codex-lines .label, #codex .codex-page .abilities .text { color: var(--page-muted); }
+#codex .codex-page > .text { color: var(--page-ink); }
+#codex .codex-page .abilities { border-top-color: var(--page-rule); }
+#codex .codex-page .abilities li { border-bottom-color: var(--page-rule); }
+#codex .codex-page .abilities .passive .name { color: #5d4c38; }
+#codex button.codex-link { color: var(--page-ink); }
+#codex button.codex-link:hover { color: var(--page-rubric); }
+#codex .codex-lines .chip { border-color: var(--page-rule); color: var(--page-muted); }
+#codex .codex-lines button { border: 0; border-image: none; background: none; padding: 0; color: var(--page-rubric); font: 600 0.8rem var(--text); text-decoration: underline; text-underline-offset: 0.2em; filter: none; }
+#codex .codex-lines button:hover { color: var(--page-ink); }
+#codex .scaled { color: #8a4e10; border-bottom-color: rgba(138, 78, 16, 0.5); }
+#codex .ability-row > .art.ability-icon { border-color: #6e5d49; }

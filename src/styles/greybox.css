@@ -1,0 +1,106 @@
+/* The greybox setting, and the screens greyboxed by job in flat values. */
+
+/* The greybox setting (Settings → Display; the `greybox` skill): every painted piece drawn in flat values at the same
+   places, without its painting, so a layout can be judged without the paint. Screens already greyboxed are unchanged. */
+body.greybox #mapcolumn { background: var(--gbx-chrome); box-shadow: inset 0.25rem 0 0 var(--gbx-edge), -0.5rem 0 1.2rem rgba(0, 0, 0, 0.7); }
+body.greybox #mapgold, body.greybox #mapmana, body.greybox #mapcolumn .plate, body.greybox #mapturn { background: var(--gbx-plate); }
+body.greybox #mapmenu, body.greybox #mapcommands .socket, body.greybox #endturn { background-color: var(--gbx-plate); color: var(--gbx-ink); text-shadow: none; }
+body.greybox #mapspells { background: var(--gbx-lit); }
+body.greybox #mapsquad .pane { background: var(--gbx-well); box-shadow: inset 0 0 0 1px var(--gbx-edge); }
+body.greybox #battlebar::before { background: var(--gbx-chrome); box-shadow: inset 0 0.25rem 0 var(--gbx-edge), 0 -0.35rem 1rem rgba(0, 0, 0, 0.7); }
+body.greybox .unitcard > .drain { background: none; }
+body.greybox .unitcard > .globe { background: linear-gradient(to top, var(--gb-health) calc(var(--share, 0) * 100%), var(--gbx-well) 0); box-shadow: inset 0 0 0 2px var(--gbx-edge); }
+body.greybox .unitcard > .arch { background: var(--gbx-well); }
+body.greybox .unitcard > .plate { background: var(--gbx-plate); text-shadow: none; }
+body.greybox .unitcard > .effects { background: var(--gbx-well); }
+body.greybox #round { background: var(--gbx-plate); }
+body.greybox #battlebar .knob { background: var(--gbx-plate); }
+body.greybox #actions .socket { background: var(--gbx-well); box-shadow: inset 0 0 0 1px var(--gbx-edge); }
+body.greybox #turnstrip { background: var(--gbx-chrome); box-shadow: inset 0 -0.2rem 0 var(--gbx-edge); }
+body.greybox #turnstrip::after { display: none; }
+body.greybox #mapcolumn #endturn { background-color: var(--gbx-plate); }
+body.greybox #mapspells::after { content: "Spells"; display: grid; place-items: center; height: 100%; color: var(--gbx-ink); font: 700 0.9rem var(--display); }
+/* In the greybox the sockets and knobs say what they do (their painted glyphs stand in for words until they're
+   unmistakable; docs/design/map-elements.md). */
+body.greybox #mapcommands .socket .glyph, body.greybox #mapcolumn #endturn { background-image: none; }
+body.greybox #mapcommands .socket.tree::after { content: "Leader"; }
+body.greybox #mapcommands .socket.here::after { content: "Here"; }
+body.greybox #mapcolumn #endturn::after { content: "End turn"; }
+body.greybox #mapcommands .socket::after, body.greybox #mapcolumn #endturn::after { position: absolute; inset: 0; display: grid; place-items: center; font: 700 0.62rem/1 var(--display); color: var(--gbx-ink); text-align: center; }
+body.greybox #battlebar .knob::before { content: none; }
+body.greybox #resolve::after { content: "Resolve"; } body.greybox #auto::after { content: "Auto"; } body.greybox #unroll::after { content: "Log"; }
+body.greybox #battlebar .knob { font: 700 0.5rem/1 var(--display); }
+.unitcard > .vacant { pointer-events: none; }
+body:not(.greybox) .unitcard > .vacant { display: none; }
+body.greybox .unitcard > .vacant { background: none; box-shadow: inset 0 0 0 1px var(--gbx-edge); }
+
+/* The title, the new game and the menu as a greybox in flat values (docs/design/front-elements.md): no stone
+   backdrop, plaques or frames; the parade of units stays, the world in the window. */
+#title, #newgame { background: #12100e; }
+.title-menu .gap { height: 0.9rem; }
+.title-menu button.action {
+  height: 2.6rem; padding: 0; border: 0; border-image: none; filter: none; background: var(--gbx-plate); color: var(--gbx-ink);
+  font: 700 1.15rem var(--display); letter-spacing: 0.03em; text-shadow: none;
+}
+.title-menu button.action.quiet { height: 2.1rem; background: var(--gbx-chrome); color: var(--gbx-light); font-size: 1rem; box-shadow: inset 0 0 0 1px var(--gbx-edge); }
+.title-menu button.action:hover { filter: none; background: #f0e8d8; box-shadow: 0 0 0.8rem rgba(232, 195, 108, 0.6); }
+.title-menu button.action.quiet:hover { background: #3a342e; color: var(--gbx-light); }
+
+#newgame .setup-header .title { border: 0; border-image: none; background: var(--gbx-plate); color: var(--gbx-ink); padding: 0.3rem 2rem; text-shadow: none; filter: none; }
+#newgame .panel { border: 0; border-image: none; background: var(--gbx-chrome); box-shadow: inset 0 0 0 1px var(--gbx-edge); filter: none; }
+#newgame button.faction-card { filter: none; opacity: 0.75; border: 0; border-image: none; background: var(--gbx-chrome); box-shadow: inset 0 0 0 1px var(--gbx-edge); }
+#newgame button.faction-card:hover { filter: none; opacity: 0.95; }
+#newgame button.faction-card.selected { filter: none; opacity: 1; box-shadow: inset 0 0 0 2px var(--gbx-lit), 0 0 1rem rgba(232, 195, 108, 0.35); }
+#newgame .newgame-options button.doctrine, #newgame .newgame-options button.small, #newgame button.action {
+  border: 0; border-image: none; filter: none; background: var(--gbx-well); color: var(--gbx-light); box-shadow: inset 0 0 0 1px var(--gbx-edge); padding: 0.3rem 0.8rem;
+}
+#newgame .newgame-options button.doctrine:hover, #newgame .newgame-options button.small:hover, #newgame button.action:hover { filter: none; box-shadow: inset 0 0 0 1px var(--gbx-lit); }
+#newgame .newgame-options button.doctrine.selected { filter: none; background: var(--gbx-lit); color: var(--gbx-ink); box-shadow: none; }
+#newgame button.action.fight { background: var(--gbx-lit); color: var(--gbx-ink); box-shadow: none; }
+
+#menu.panel { border: 0; border-image: none; background: var(--gbx-chrome); color: var(--gbx-light); box-shadow: inset 0 0 0 1px var(--gbx-edge), 0 0.8rem 2rem rgba(0, 0, 0, 0.8); }
+#menu .title { border: 0; border-image: none; background: none; color: var(--gbx-light); padding: 0; text-shadow: none; filter: none; }
+#menu button.action, #menu button.small, #menu .segmented button {
+  border: 0; border-image: none; filter: none; background: var(--gbx-plate); color: var(--gbx-ink); padding: 0.4rem 0.9rem; text-shadow: none; font: 700 0.9rem var(--display);
+}
+#menu button.action:hover, #menu button.small:hover, #menu .segmented button:hover { filter: none; background: #f0e8d8; }
+#menu .segmented button { background: var(--gbx-well); color: var(--gbx-light); box-shadow: inset 0 0 0 1px var(--gbx-edge); }
+#menu .segmented button.selected { filter: none; background: var(--gbx-lit); color: var(--gbx-ink); box-shadow: none; }
+#menu .save-row:has(> .save-text) { background: var(--gbx-well); color: var(--gbx-light); padding: 0.5rem 0.8rem; border: 0; box-shadow: inset 0 0 0 1px var(--gbx-edge); }
+#menu .save-row:has(> .save-text) .note { color: var(--gbx-muted); }
+#menu .save-row:has(> .save-text) button.small { background: var(--gbx-plate); color: var(--gbx-ink); padding: 0.25rem 0.6rem; text-decoration: none; }
+#menu .frame-tabs { display: flex; gap: 0.3rem; margin: 0.6rem 0 0; }
+#menu .frame-tabs button.tab { height: 2.3rem; padding: 0 1.2rem; border: 0; border-radius: 0.45rem 0.45rem 0 0; background: #1d1a17; color: var(--gbx-muted); font: 700 1rem var(--display); cursor: pointer; box-shadow: inset 0 1px 0 var(--gbx-edge), inset 1px 0 0 var(--gbx-edge), inset -1px 0 0 var(--gbx-edge); }
+#menu .frame-tabs button.tab.selected { background: var(--gbx-well); color: var(--gbx-light); box-shadow: inset 0 2px 0 var(--gbx-lit), inset 1px 0 0 var(--gbx-edge), inset -1px 0 0 var(--gbx-edge); }
+#menu .frame-tabs button.tab:not(.selected):hover { color: var(--gbx-light); }
+#menu .settings-pane { display: flex; flex-direction: column; gap: 0.5rem; padding: 1rem 1.1rem; min-height: 18rem; background: var(--gbx-well); box-shadow: inset 0 0 0 1px var(--gbx-edge); }
+#menu .settings-pane .save-row { border-bottom-color: var(--gbx-edge); }
+#menu .settings-pane > button.small { align-self: flex-start; }
+
+/* The skirmish's grids and recruit list with the shared squad tile (as the recruit menu), flat values. */
+#setup .squad .grid { grid-template-columns: repeat(3, var(--squad-tile)); justify-content: center; gap: 0.35rem; }
+#setup .squad .cell { width: var(--squad-tile); height: var(--squad-tile); padding: 0; border: 0; background: var(--gbx-well); box-shadow: inset 0 0 0 1px var(--gbx-edge); }
+#setup .squad .cell .squad-tile { width: 100%; height: 100%; }
+#setup .squad .cell:hover { box-shadow: inset 0 0 0 2px var(--gbx-lit); }
+#setup .palette { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 0.5rem; }
+#setup .palette > .title, #setup .palette > .subtitle { flex-basis: 100%; }
+#setup .palette .recruit { flex-direction: column; flex-wrap: nowrap; align-items: center; gap: 0.2rem; width: 5.8rem; padding: 0.4rem 0.3rem; border: 0; border-image: none; filter: none; background: var(--gbx-well); color: var(--gbx-light); box-shadow: inset 0 0 0 1px var(--gbx-edge); cursor: pointer; }
+#setup .palette .recruit .squad-tile { width: 4.6rem; height: 4.6rem; }
+#setup .palette .recruit .name { font: 700 0.85rem var(--display); text-align: center; line-height: 1.1; }
+#setup .palette .recruit .tier { font-size: 0.7rem; color: var(--gbx-muted); }
+#setup .palette .recruit.selected { box-shadow: inset 0 0 0 2px var(--gbx-lit); }
+#setup { background: #12100e; }
+#setup .panel { border: 0; border-image: none; background: var(--gbx-chrome); box-shadow: inset 0 0 0 1px var(--gbx-edge); filter: none; }
+#setup button.doctrine, #setup button.small, #setup button.action, #setup button.faction {
+  border: 0; border-image: none; filter: none; background: var(--gbx-well); color: var(--gbx-light); box-shadow: inset 0 0 0 1px var(--gbx-edge); padding: 0.3rem 0.8rem;
+}
+#setup button.doctrine:hover, #setup button.small:hover, #setup button.action:hover { filter: none; box-shadow: inset 0 0 0 1px var(--gbx-lit); }
+#setup button.doctrine.selected, #setup button.small.selected, #setup button.faction.selected { filter: none; background: var(--gbx-lit); color: var(--gbx-ink); box-shadow: none; }
+#setup button.action.fight { background: var(--gbx-lit); color: var(--gbx-ink); box-shadow: none; }
+#codex { background: #12100e; }
+#codex .codex-header .title, #codex .codex-header .tabs button { border: 0; border-image: none; filter: none; background: var(--gbx-chrome); color: var(--gbx-light); box-shadow: inset 0 0 0 1px var(--gbx-edge); text-shadow: none; }
+#codex .codex-header .title { background: var(--gbx-plate); color: var(--gbx-ink); box-shadow: none; }
+#codex .codex-header .tabs button:hover { filter: none; box-shadow: inset 0 0 0 1px var(--gbx-lit); }
+#codex .codex-header .tabs button.selected { filter: none; background: var(--gbx-lit); color: var(--gbx-ink); box-shadow: none; }
+#codex .codex-header button.action, #credits button.action { border: 0; border-image: none; filter: none; background: var(--gbx-plate); color: var(--gbx-ink); padding: 0.4rem 1rem; }
+#credits { background: #12100e; }

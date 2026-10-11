@@ -1,0 +1,228 @@
+/* The battle: the bar, the turn order, sockets, the log, the moments, figures' bars. */
+
+/* The battle's interface: the painted bar and turn order (the hud-paint-in skill), the recess and the plaque still
+   interim pieces from the scrapped one-painting HUD (assets/ui/SOURCES.md); the rest is drawn in the materials'
+   values: iron is structure, marble speaks names and numbers, parchment holds documents, candlelight is state. */
+:root {
+  --gb-stone-lo: #242321;
+  --gb-iron: #6b6864;
+  --gb-iron-hi: #96918a;
+  --gb-marble: #c6c2b8;
+  --gb-ink: #26221e;
+  --gb-parchment: #cfc1a1;
+  --gb-light: #e8c36c;
+  --gb-health: #a32a20;
+  --gb-shield: #a8dcd8;
+  --gb-magic: #4fd8cf;
+  /* The plain panel every retired painted piece fell back to (2026-10-10), until its own piece is made. */
+  --plain-fill: rgba(14, 12, 11, 0.94);
+  --plain-edge: #4a3c2e;
+  --plain-shadow: inset 0 0 0 0.2rem rgba(0, 0, 0, 0.55), 0 0.5rem 1.2rem rgba(0, 0, 0, 0.6);
+  /* Stand-ins in the pieces' own values (docs/design/hud-pieces.md, the style guide) until their cuts exist: a sheet to
+     read is parchment with dark ink, the rod it hangs from turned honey wood. */
+  --sheet: radial-gradient(ellipse at 50% 45%, #d9c7a0 55%, #c2a87a 100%);
+  --sheet-ink: #2a2119;
+  --sheet-muted: #5e4e3b;
+  --sheet-rule: #a68c64;
+  --moment: "Grenze Gotisch", var(--display);
+
+}
+#battlehud { position: fixed; inset: 0; z-index: 2; pointer-events: none; }
+/* The scene darkens toward the bar. */
+#battlehud::before { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 16rem; background: linear-gradient(transparent, rgba(6, 5, 5, 0.82)); }
+#turnstrip, #battlebar, #logstele { pointer-events: auto; }
+
+/* The turn order: a strip hanging from the top edge's middle (assets/ui/battle/turns.webp, painted from
+   art/greybox/turn-strip/ by the hud-paint-in skill; its black keyed out), 870 by 104 in the painting's own pixels: the
+   acting unit's face in the large niche at its left, the next eleven in the small ones. The faces sit behind the
+   painting, a little larger than its openings, so the rims frame them; an empty niche shows the field. */
+#turnstrip {
+  --u: calc(50rem / 864);
+  position: absolute; left: 50%; top: 0; width: calc(870 * var(--u)); height: calc(104 * var(--u)); transform: translateX(-50%);
+  filter: drop-shadow(0 0.3rem 0.4rem rgba(0, 0, 0, 0.6));
+}
+#turnstrip::after { content: ""; position: absolute; inset: 0; background: var(--ui-battle-turns) 0 0 / 100% 100% no-repeat; pointer-events: none; }
+#turns { position: absolute; inset: 0; }
+#turns .niche {
+  position: absolute; left: calc((138 + var(--arch) * 65.9) * var(--u)); top: calc(13 * var(--u)); width: calc(57 * var(--u)); height: calc(66 * var(--u));
+  overflow: hidden; border-radius: calc(28 * var(--u)) calc(28 * var(--u)) 0 0; background: #0d0b0a; cursor: default;
+}
+#turns .niche.now { left: calc(30 * var(--u)); top: calc(5 * var(--u)); width: calc(84 * var(--u)); height: calc(72 * var(--u)); border-radius: calc(42 * var(--u)) calc(42 * var(--u)) 0 0; }
+#turns .niche .art { width: 100%; height: 100%; margin: 0; }
+#turns .niche .art.portrait { background-size: 170%; background-position: 50% 6%; }
+#turns .niche .art.placeholder { font-size: 0.8rem; border: 0; color: var(--gb-marble); background: #1b1715; }
+#turns .niche:hover { filter: brightness(1.25); }
+/* Allegiance is enamel: a band of the side's colour along the foot of each face. */
+#turns .niche .band { position: absolute; left: 0; right: 0; bottom: calc(3 * var(--u)); height: calc(4 * var(--u)); }
+#turns .niche.side0 .band { background: var(--side0); }
+#turns .niche.side1 .band { background: var(--side1); }
+
+/* The bar (assets/ui/battle/bar.webp, painted from art/greybox/battle-bar-duel-dull-nostone/ by the hud-paint-in
+   skill; docs/design/hud-pieces.md, "The battle bar"). 88.89 by 11.57rem, the screen's width at 16:9 and the default
+   interface scale; every window inside it is placed in its own rem, measured on the painting. Beyond its ends, past
+   the painted extensions (21:9), the band behind it continues dark. */
+#battlebar {
+  position: absolute; left: 50%; bottom: 0; width: 88.889rem; height: 11.574rem; transform: translateX(-50%);
+}
+/* The painting, and beyond each end painted segments of tracery and spires that only a screen wider than 16:9 shows (Warcraft III's
+   way; the user, 2026-10-10): the same painting widened by inpainting its ends (assets/ui/battle/bar-wide.webp). */
+#battlebar::before {
+  content: ""; position: absolute; top: 0; bottom: 0; left: -18.72rem; right: -18.72rem; z-index: -1;
+  background: var(--ui-battle-bar-wide) 0 0 / 100% 100% no-repeat; box-shadow: 0 -0.35rem 1rem rgba(0, 0, 0, 0.7);
+}
+#battlehud { background: linear-gradient(to top, #0d0b0a 11.574rem, transparent 11.574rem); }
+#battlebar button { margin: 0; padding: 0; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; }
+/* Each end is an overlay the size of the bar; only its parts take the pointer. */
+.unitcard { position: absolute; inset: 0; pointer-events: none; }
+.unitcard > * { position: absolute; pointer-events: auto; }
+/* The drained copy, clipped above the health level by the script; the figures are the same in both, so never cut. */
+.unitcard > .drain { inset: 0; pointer-events: none; background: var(--ui-battle-bar-drained) 0 0 / 100% 100% no-repeat; }
+.unitcard > .globe { top: 1.97rem; width: 7.52rem; height: 7.17rem; border-radius: 50%; cursor: help; }
+#cardleft > .globe { left: 4.05rem; } #cardright > .globe { left: 75.23rem; }
+.unitcard > .hpnum { top: 6.83rem; width: 6.37rem; display: flex; justify-content: center; align-items: baseline; gap: 0.2rem; pointer-events: none; font: 700 1.5rem var(--display); color: #fff2ea; text-shadow: 0 0 0.3rem #000, 0 0 0.6rem #000; }
+#cardleft > .hpnum { left: 4.17rem; } #cardright > .hpnum { left: 76.16rem; }
+.unitcard > .hpnum .shield { font: 700 0.8rem var(--text); color: var(--gb-shield); }
+.unitcard > .hpnum .skull { width: 1.6rem; height: 1.6rem; }
+/* The portrait fills the arch's painted opening, cropped, never stretched. */
+.unitcard > .arch { top: 1.39rem; width: 6.19rem; height: 8.91rem; overflow: hidden; border-radius: 3.1rem 3.1rem 0 0; }
+#cardleft > .arch { left: 12.56rem; } #cardright > .arch { left: 70.14rem; }
+.unitcard > .arch .art { width: 100%; height: 100%; margin: 0; background-size: cover; background-position: 50% 12%; font-size: 1.4rem; }
+/* The name plate: the name (its tier is on the held sheet), a crown for a leader, a line of the side's colour at its
+   foot. Dark ink with a pale halo, so the marble's veins don't run through the letters. */
+.unitcard > .plate {
+  top: 0.98rem; width: 10.42rem; height: 2.03rem; display: flex; align-items: center; justify-content: center; gap: 0.35rem; cursor: help;
+  color: #160f0a; font: 700 1.2rem/1 var(--display); letter-spacing: 0.02em; white-space: nowrap;
+  text-shadow: 0 0 0.25rem rgba(245, 238, 225, 0.95), 0 0 0.1rem rgba(245, 238, 225, 0.9);
+}
+#cardleft > .plate { left: 19.79rem; } #cardright > .plate { left: 58.68rem; }
+.unitcard > .plate .crown { color: #6a5420; }
+.unitcard > .plate::after { content: ""; position: absolute; left: 0.8rem; right: 0.8rem; bottom: 0.18rem; height: 0.12rem; }
+.unitcard > .plate.side0::after { background: var(--side0); }
+.unitcard > .plate.side1::after { background: var(--side1); }
+.unitcard > .plate .pin { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--gb-light); box-shadow: 0 0 0.3rem rgba(232, 195, 108, 0.8); }
+/* The four stats on the dark iron plates, light on dark: armour, initiative / power, the fourth (charges or hits). */
+/* The painting's four plates came out in two values; one dark backing makes them read as one kind. */
+.unitcard > .stat { width: 4.63rem; height: 1.5rem; display: flex; align-items: center; justify-content: center; border-radius: 0.3rem; background: rgba(18, 15, 13, 0.72); box-shadow: inset 0 0 0.25rem rgba(0, 0, 0, 0.8); }
+#cardleft > .stat.s0, #cardleft > .stat.s2 { left: 19.79rem; } #cardleft > .stat.s1, #cardleft > .stat.s3 { left: 25.58rem; }
+#cardright > .stat.s0, #cardright > .stat.s2 { left: 58.68rem; } #cardright > .stat.s1, #cardright > .stat.s3 { left: 64.47rem; }
+.unitcard > .stat.s0, .unitcard > .stat.s1 { top: 3.59rem; } .unitcard > .stat.s2, .unitcard > .stat.s3 { top: 5.79rem; }
+.unitcard .badge { display: flex; align-items: center; gap: 0.25rem; cursor: help; }
+.unitcard .badge .shape { flex: none; width: 0.95rem; height: 0.95rem; background: center / contain no-repeat; filter: brightness(1.5) sepia(0.3); }
+.unitcard .badge.armor .shape { background-image: var(--ui-icon-armor); }
+.unitcard .badge.initiative .shape { background-image: var(--ui-icon-initiative); }
+.unitcard .badge.power .shape { background-image: var(--ui-icon-power); }
+.unitcard .badge.hits .shape { background-image: var(--ui-icon-hits); }
+.unitcard .badge .value { font: 700 0.9rem var(--display); color: #e6dccb; line-height: 1; text-shadow: 0 1px 2px #000; }
+.unitcard .badge .value.up { color: var(--gb-light); }
+.unitcard .badge .value.down { color: #e07060; }
+.unitcard .badge .studs { font-size: 0.4rem; color: var(--gb-light); letter-spacing: 0.03em; }
+.unitcard .badge.charges .cells { display: flex; gap: 0.12rem; }
+.unitcard .badge.charges .cell { width: 0.42rem; height: 0.7rem; }
+/* The effects on the dark panel under the stats. */
+.unitcard > .effects { top: 8.25rem; width: 10.02rem; max-height: 2.25rem; padding: 0 0.2rem; display: flex; flex-wrap: wrap; align-content: center; gap: 0.2rem; overflow: hidden; }
+#cardleft > .effects { left: 19.99rem; } #cardright > .effects { left: 58.88rem; }
+.unitcard .effect { display: inline-flex; align-items: center; gap: 0.2rem; padding: 0 0.3rem; font: 600 0.6rem/1.5 var(--text); color: #e0a090; border: 1px solid #6a4a3a; cursor: help; }
+.unitcard .effect .art.tiny { width: 0.8rem; height: 0.8rem; margin: 0; }
+/* The middle: the round on the marble medallion, the four commands on their ivory faces. */
+#round { position: absolute; left: 42.53rem; top: 1.13rem; width: 3.94rem; height: 3.94rem; border-radius: 50%; display: grid; place-items: center; cursor: help; font: 700 1.6rem var(--display); color: #241c15; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35); }
+#battlebar .knob { position: absolute; top: 1.85rem; width: 2.03rem; height: 2.03rem; border-radius: 50%; display: grid; place-items: center; font: 700 0.85rem var(--display); color: #2a1d12; }
+#resolve { left: 35.35rem; } #auto { left: 38.91rem; } #tarot-icon { left: 48.0rem; } #unroll { left: 51.53rem; }
+#resolve::before { content: "»"; font-size: 1.2rem; } #auto::before { content: "A"; } #unroll::before { content: "☰"; }
+#battlebar .knob:hover { box-shadow: 0 0 0 0.15rem rgba(232, 195, 108, 0.7); }
+#battlebar .knob.selected { box-shadow: 0 0 0.6rem 0.2rem rgba(232, 195, 108, 0.8); }
+#battlebar .knob[hidden] { display: none; }
+#tarot-icon { overflow: hidden; }
+#tarot-icon .mini-card { width: 0.7rem; height: 1.2rem; margin: 0 -0.2rem; border-radius: 0.1rem; border: 1px solid #3a2c20; background: center / cover #120e0d; }
+/* An ability's rules in the peek: its row as the codex shows it, grids beside the text. */
+#peek .ability-row { margin-top: 0.35rem; }
+#peek .ability-row > .art.ability-icon { display: none; }
+#peek .ability-row .body .name { display: none; }
+#peek .ability-row .text { color: var(--muted); font-size: 0.75rem; }
+#peek:has(.ability-row) { width: auto; max-width: 30rem; }
+
+/* The ability sockets in the bar's seven painted wells; the hint above the bar on the dark, the rules of the hovered
+   socket on a slip above it. */
+#bottom { position: absolute; left: 50%; bottom: 12.2rem; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; pointer-events: none; }
+#hint { min-height: 1.4rem; font: 500 1.0625rem var(--display); color: var(--ink); text-align: center; text-shadow: 0 1px 0.2rem #000; white-space: nowrap; }
+#actions { position: absolute; left: 32.87rem; top: 6.08rem; display: flex; gap: 1.06rem; }
+#actions .flip {
+  position: absolute; top: 0.5rem; width: 1rem; height: 1.43rem; padding: 0; border: 0; border-radius: 0.2rem; cursor: pointer;
+  background: rgba(18, 15, 13, 0.85); color: var(--gb-light); font: 700 1.1rem/1 var(--display); box-shadow: 0 0 0 0.06rem rgba(232, 195, 108, 0.5);
+}
+#actions .flip.prev { left: -1.35rem; } #actions .flip.next { right: -1.35rem; }
+#actions .flip:hover:not(:disabled) { color: #fff4e0; box-shadow: 0 0 0 0.08rem rgba(232, 195, 108, 0.9); }
+#actions .flip:disabled { opacity: 0.3; cursor: default; }
+#actions .socket { position: relative; flex: none; width: 2.43rem; height: 2.43rem; box-sizing: border-box; }
+#actions .socket:hover { filter: brightness(1.25); }
+/* Selected: lit from within and pressed a little deeper. No halo. */
+#actions .socket.selected { transform: translateY(0.06rem); }
+#actions .socket.selected .well::after { content: ""; position: absolute; inset: 0; box-shadow: inset 0 0 0.9rem rgba(232, 195, 108, 0.75); pointer-events: none; }
+#actions button.ability { position: relative; display: block; width: 100%; height: 100%; min-width: 0; padding: 0; background: none; border: 0; cursor: pointer; }
+#actions .socket .well { position: absolute; inset: 0; overflow: hidden; }
+#actions .socket .well .art.fill { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; background-size: cover; font-size: 1.2rem; }
+#actions .socket .well .name { display: none; position: absolute; left: 0; right: 0; bottom: 0; padding: 0.7rem 0.2rem 0.2rem; font: 700 0.75rem var(--display); line-height: 1.05; color: var(--ink); text-align: center; background: linear-gradient(transparent, rgba(0, 0, 0, 0.88)); }
+#actions .socket.dark .well { filter: grayscale(1) brightness(0.32); }
+/* While the player waits, the sockets stay, empty, carved with the faction's sigil (a plain ring for now). */
+#actions .socket.empty { background: radial-gradient(circle, transparent 0 30%, rgba(150, 145, 138, 0.35) 32% 38%, transparent 40%) padding-box; }
+#actions .socket.dark { cursor: help; }
+#actions .socket .slot { position: absolute; top: 0.1rem; left: 0.25rem; font: 700 0.62rem var(--text); color: var(--ink); text-shadow: 0 1px 2px #000; }
+/* Hanging from the socket's lower rim: the key's tag, the uses as beads; the spell cost as cells beside it. */
+#actions .socket .key { position: absolute; left: 50%; top: calc(100% + 0.25rem); transform: translateX(-50%); padding: 0 0.3rem; font: 700 0.62rem var(--text); color: var(--gb-ink); background: var(--gb-iron-hi); }
+#actions .socket .key::before { content: ""; position: absolute; left: 50%; bottom: 100%; width: 0.1rem; height: 0.45rem; background: var(--gb-iron); }
+#actions .socket .uses { position: absolute; left: 0.1rem; top: calc(100% + 0.25rem); display: flex; gap: 0.15rem; }
+#actions .socket .bead { width: 0.48rem; height: 0.48rem; border-radius: 50%; background: var(--gb-light); }
+#actions .socket .bead.spent { background: var(--gb-stone-lo); box-shadow: inset 0 0 0 0.08rem var(--gb-iron); }
+#actions .socket .cells { position: absolute; right: -0.65rem; top: 0.4rem; display: flex; flex-direction: column; gap: 0.12rem; }
+.cells .cell { width: 0.42rem; height: 0.62rem; background: var(--gb-magic); box-shadow: 0 0 0.3rem rgba(79, 216, 207, 0.6); }
+.cells .cell.spent { background: var(--gb-stone-lo); box-shadow: inset 0 0 0 0.08rem var(--gb-iron); }
+/* The overload toggle: a gem on the socket's rim, lit when on. */
+#actions .socket button.overload {
+  position: absolute; right: -0.55rem; top: -0.55rem; width: 1.35rem; height: 1.35rem; padding: 0; border-radius: 50%; cursor: pointer;
+  font: 700 0.55rem var(--text); color: var(--muted); background: var(--gb-stone-lo); border: 0.15rem solid var(--gb-iron);
+}
+#actions .socket button.overload.on { color: var(--gb-ink); background: var(--gb-magic); box-shadow: 0 0 0.6rem rgba(79, 216, 207, 0.7); }
+#rules { position: absolute; left: 50%; bottom: 100%; z-index: 3; margin-bottom: 0.3rem; pointer-events: auto; transform: translateX(-50%); width: max-content; max-width: 34rem; }
+#rules .slip { padding: 0.6rem 0.9rem 0.7rem; color: var(--gb-ink); background: var(--gb-parchment) var(--ui-codex-parchment) center / cover; box-shadow: 0 0.4rem 1rem rgba(0, 0, 0, 0.75); }
+#rules .slip .name { font: 700 1.05rem var(--display); }
+#rules .slip .charges, #rules .slip .text, #rules .slip .targeting-grid .label { color: #4a3f30; }
+#rules .slip .why { margin-top: 0.35rem; font-size: 0.68rem; font-style: italic; color: #6a2a1e; }
+#rules .slip .scaled { color: #7a4a10; border-bottom-color: rgba(122, 74, 16, 0.6); }
+#rules .slip .formula { color: #6a5a40; }
+
+/* The log, opened from its knob: the whole battle on parchment, over the field above the bar's right end. */
+#logstele {
+  position: absolute; right: 1rem; bottom: 12.2rem; z-index: 4; width: 24rem; height: calc(100vh - 17rem); box-sizing: border-box; padding: 0.75rem 0.9rem;
+  background: var(--sheet); box-shadow: 0 0.5rem 1.2rem rgba(0, 0, 0, 0.6);
+}
+#log { height: 100%; overflow-y: auto; font-size: 0.72rem; line-height: 1.35; color: var(--sheet-muted); }
+#log .entry.roundStart { margin-top: 0.3rem; padding-top: 0.2rem; border-top: 1px solid var(--sheet-rule); color: var(--sheet-ink); font: 700 0.9rem var(--display); }
+#log .entry.death { color: #8a2418; }
+#log .entry.heal { color: #7a5a14; }
+#log .entry.battleEnd { color: var(--sheet-ink); font: 700 1rem var(--display); }
+
+/* Battle's end: a moment, the emblem as its keystone and the title in the moments' face. */
+/* The moments (a battle's end, the game's end) share one layout on the kit's tablet: a keystone on its top edge, the
+   title in the moment face, the choices plaques with a seal pressed at each one's start. */
+#banner, #mapbanner {
+  position: fixed; left: 50%; top: 40%; z-index: 5; transform: translate(-50%, -50%); padding: 1.2rem 2.2rem 0.5rem; text-align: center;
+  padding: 2.8rem 3rem 1.4rem; background: var(--plain-fill); border: 1px solid var(--plain-edge); box-shadow: var(--plain-shadow);
+}
+/* Until each faction's emblem takes its place, the keystone is the card's silver seal. */
+#banner::before, #mapbanner::before { content: ""; position: absolute; left: 50%; top: -2.3rem; width: 4.6rem; height: 4.6rem; margin-left: -2.3rem; background: var(--ui-icon-seal) center / contain no-repeat; filter: drop-shadow(0 0.2rem 0.4rem rgba(0, 0, 0, 0.7)); }
+#banner .title, #mapbanner .title { font: 700 3.8rem var(--moment); letter-spacing: 0.03em; color: var(--gb-marble); }
+#banner .subtitle, #mapbanner .subtitle { margin-bottom: 1.2rem; color: var(--muted); }
+#banner button.action, #mapbanner button.action {
+  position: relative; padding: 0.1rem 0.9rem 0.1rem 1.8rem; color: var(--gb-ink); background: none; filter: brightness(0.85);
+  border: 0.42rem solid transparent; border-image: var(--ui-battle-plaque) 26 fill / 0.42rem stretch; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+#banner button.action:hover, #mapbanner button.action:hover { filter: brightness(1.05) drop-shadow(0 0 0.4rem rgba(232, 195, 108, 0.7)); }
+#banner button.action::before, #mapbanner button.action::before { content: ""; position: absolute; left: 0.2rem; top: 50%; width: 1.05rem; height: 1.05rem; margin-top: -0.525rem; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #c0402c, #8a2418 55%, #4a0c06); }
+
+/* Over each figure: a slim red channel (the same red on both sides; allegiance is position and cloth). */
+.hpbar { position: relative; width: 3.4rem; height: 0.32rem; background: var(--gb-stone-lo); border: 1px solid #000; }
+.hpbar .fill { position: absolute; inset: 0 auto 0 0; background: var(--gb-health); }
+.hpbar .shield { position: absolute; left: 0; top: -0.3rem; height: 0.2rem; background: repeating-linear-gradient(90deg, var(--gb-shield) 0 0.45rem, transparent 0.45rem 0.55rem); }
+/* A caster's spell charges over its bar, as cells. */
+.hpbar .charges { position: absolute; left: 50%; bottom: 0.55rem; transform: translateX(-50%); display: flex; gap: 0.12rem; }
+.hpbar .charges .pip { width: 0.32rem; height: 0.5rem; background: var(--gb-magic); box-shadow: 0 0 0.25rem rgba(79, 216, 207, 0.6); }
+.hpbar .charges .pip.spent { background: var(--gb-stone-lo); box-shadow: inset 0 0 0 0.07rem var(--gb-iron); }
