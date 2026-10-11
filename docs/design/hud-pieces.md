@@ -538,3 +538,39 @@ dark iron with light lettering, her veil and robes named iron. Seed 1 is in the 
 and a hand on the ring, the abbess with the key and a hand on it. The screen has no beam now: the city painting runs
 to the column, the name plate, purse and tier at its top, the four tab niches (the open one lit), the facts, and Back
 to the map as the seal. The meeting of two warbands (no city) keeps its header.
+
+## The Capitol's tabs (2026-10-11, the `hud-paint-in` skill)
+The user: "go ahead" on the handover's next step. **The references' structure** (Disciples II,
+`reference_material/disciples/notes.md`): the garrison is a sheet with two squad grids side by side, empty slots as
+corner marks; the development tree's connectors are iron girders, locked buildings washed out (better: sealed);
+functions sit on the objects they belong to. **For disc**, two layouts, both filling the screen left of the column
+(1236×864 page px), so the column stays the one place the tabs are chosen:
+- **The garrison wall** (`capitol-garrison`): the tier and the nodes on two dark panels along the top, each with its
+  order (Upgrade, Invest) as an ivory button; the garrison and a visiting warband as two pointed lancet windows of nine
+  panes, as the map column shows a warband (a squad is a window), each with a dark strip for back, middle and front and
+  a marble plate for its name and count below; under both a dark well for orders (recruit, resurrect, elevate, the
+  selected unit's details); on the right, behind an upright band, the graveyard as a tall pointed recess under a plate,
+  over a tomb chest with a recumbent knight carved on its lid (the screen's figure: the fallen lie here). The column's
+  figures are the mason and the abbess; the effigy is new, not a repeat.
+- **The tab frame** (`capitol-tab`), for research and spells: what they hold changes shape (a tree as long as the
+  branch, a list), so it paints only what stays: a marble title plate and one large dark field with a moulded lip.
+  Research's tree draws its connectors and locks in the game's HTML, on Disciples II's ideas.
+
+**The garrison wall, first round** (6 seeds): the layout held in all six: two pointed lancet windows with tracery and
+nine panes each, painted as stained glass in red and amber; the plates; the crypt; the knight on his tomb chest; dense
+scrollwork and knotwork between. The ivory buttons came out as small marble plates (wide enough in seed 6 for "Tier
+II · 300"). Every seed painted an extra lead down each window's middle column, a central mullion as real lancets
+have, making four columns of panes; and each knight raised one forearm and lost the other. Seed 6 is the pick: hands
+repaired to meet palm to palm in prayer, as tomb effigies hold them (`garrison-effigy`, 0.55, seed 2); the extra lead
+removed held to the depth greybox (`garrison-leads`), which left each middle pane in two colours with a seam, so the
+middle column is repainted whole, one amber per pane (`garrison-middle-panes`, 0.7, seed 2: three clean columns, in the game). In the game the units sit in the panes:
+an empty pane stays lit glass with four corner marks (Disciples II's empty slots), a unit gets a dark backing so its
+name reads; the selected unit's details and orders fill the well below. Narrower than 16:9 the wall scales down to the
+width beside the column (its text in em of a unit tied to the painting) rather than lose its left side; wider, the
+city painting shows to its left.
+
+**The tab frame:** round 1 held (a marble plate, one dark field) but read as a thin border round a blank slab, the
+grey slab the user warned of, beside a wall this rich. Round 2 (`capitol-tab-2`): a faint interlace of rings drawn in
+the field in both greyboxes (low in values, shallow in depth), a heavier lip, round bosses at the field's corners. All
+four seeds hold; the pattern came out a little stronger than "faint" but text over it reads. Seed 1 is in the game.
+Research's connectors are drawn as iron rods (thicker, iron-coloured, a shadow).

@@ -10,7 +10,7 @@ import { element, gold, mana, orderButton } from "#view/dom";
 /** The Capitol's Spells tab: the faction's spells, to learn for gold. A spell tree comes later (pillars.md). */
 export function spellsTab(world: World, side: PlayerId, mayAct: boolean, act: (action: WorldAction) => void): HTMLElement {
   const player = playerOf(world, side);
-  const panel = element("div", "spells-tab panel");
+  const panel = element("div", "spells-tab");
   panel.appendChild(element("div", "note", "Spells are cast on the map and paid in mana. These are placeholders until the real ones are designed."));
   for (const spell of spellsOf(player.faction)) {
     const row = element("div", "spell-row");

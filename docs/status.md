@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-11 (handover: three painted HUD pieces in the game; the Capitol's tab panels next)
+**Updated:** 2026-10-11 (the Capitol's tabs painted: the garrison wall and the research/spells frame)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): the alpha is the three playable factions (Jilliath,
@@ -33,21 +33,21 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
   drain behind their figures via `scripts/art/hud_drain.py`, round and four knobs, sockets in painted wells, unit
   sheet on a held right-click on the portrait, log on demand, painted extensions for wide monitors), **the Capitol
   column** (no beam; name, purse, tier, four tab niches, facts, Back to the map as a seal held by a mason and an
-  abbess). Krea-2 is the only art model (Qwen dropped: licence, quality). Pages for the user go in `shots/` over
+  abbess), **the Capitol's tabs** (2026-10-11; `shots/capitol-tabs.html`): the garrison as one wall (tier and nodes
+  with their orders on ivory buttons, the garrison and a visiting warband as two stained-glass windows of nine panes,
+  an orders well, the graveyard over a knight's tomb), research and spells in one frame (title plate, interlaced
+  field). Paintings scale down beside the column on screens narrower than 16:9. Krea-2 is the only art model (Qwen dropped: licence, quality). Pages for the user go in `shots/` over
   Tailscale, never claude.ai artifacts.
 - **The Grove's Water is now Wellspring.**
-- **Unreal 5 as a parallel track** (the user: "UE is the king of 3d"; `ongoing/unreal-port`), in its own repo,
-  `../disc_unreal`. three.js keeps the pace; Unreal follows as a view, with this repo's TypeScript rules as the only
-  rules. Work here goes on as before; the Unreal repo reads this one and never writes to it. Step 1 is done there:
-  the `?fight` arena in Unreal looks nearly the same as three.js with today's assets (`disc_unreal/shots/`).
+- **Unreal 5 as a parallel track** (`ongoing/unreal-port`), in its own repo, `../disc_unreal`, reading this one and
+  never writing to it; three.js keeps the pace. Step 1 done there: the `?fight` arena nearly matches three.js.
 
 ## Next
-0. **The HUD, screen by screen** (`hud-paint-in` skill). Next: **the Capitol's tab panels** (garrison grids and
-   graveyard, research tree, spells; still interim tablets): one painted frame for a tab's content, with the
-   Disciples II ideas in `reference_material/disciples/notes.md` (research connectors as iron rods, empty cells as
-   corner marks, locked research sealed). Then the leader and structure screens (still on the interim beam), the
-   battle's turn order (interim beam), title and menus. Open in the battle: right-click on a field unit to open its
-   sheet; real glyphs for the knobs (», A, ☰ are stand-ins); screens narrower than 16:9 crop the bar's ends.
+0. **The HUD, screen by screen** (`hud-paint-in` skill). Next: **the leader and structure screens** (still on the
+   interim beam and tablets), then the battle's turn order (interim beam), title and menus. Open: research's locked
+   branches only dim (a seal, Disciples II's idea, not yet); the Capitol paintings are ~1:1 at 1080p, a little soft
+   at 1440p. In the battle: right-click on a field unit to open its sheet; real glyphs for the knobs (», A, ☰ are
+   stand-ins); screens narrower than 16:9 crop the bar's ends.
 1. **Finish Jilliath's concepts** with the user (the open nine), then portraits from the picks.
 2. **The other factions' missing units** (the alpha needs all three): Nexus melee tier 3, the Grove's mage line, and
    the rest on the board; then their concept art the same way.

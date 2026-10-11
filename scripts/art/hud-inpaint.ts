@@ -52,6 +52,39 @@ const REPAIRS: Readonly<Record<string, Repair>> = {
       "Game interface art, a dark iron bar in soft even light. At the left end, carved in deep relief in old worn blackened iron, a grown veiled woman in long robes with a folded feathered wing, kneeling on a ledge, both hands laid flat and gently on a large sphere of deep red glass that fills its round iron rim edge to edge, her arms and hands well formed, each hand with five fingers. " +
       "At the right end, mirroring her, carved the same way, a grown hooded figure with small curved horns and a folded bat wing, kneeling, both hands laid flat on another sphere of deep red glass that fills its rim edge to edge, arms and hands well formed. No text, no letters.",
   },
+  /** The garrison wall's effigy: one forearm stood up from his chest and the other was lost; hands folded, as asked. */
+  "garrison-effigy": {
+    source: "art/candidates/ui/paint-in/capitol-garrison/capitol-garrison-6.png",
+    page: [1236, 864],
+    boxes: [[958, 694, 110, 70]],
+    denoise: [0.55, 0.7],
+    depth: { map: "art/greybox/capitol-garrison/depth.png", strength: 1 },
+    prompt:
+      "Game interface art in soft even light: a dark iron relief, everything carved in the same old dark worn iron, matte, no skin, no flesh. " +
+      "A recumbent knight effigy in plate armour lying on his back on the lid of a tomb chest, both arms bent so that his two gauntleted hands meet palm to palm in prayer, resting flat on his chest, nothing raised above him. No text, no letters.",
+  },
+  /** The garrison windows: an extra lead down each window's middle column made four columns of panes, not three. */
+  "garrison-leads": {
+    source: "art/candidates/ui/inpaint/garrison-effigy/garrison-effigy-d55-2.png",
+    page: [1236, 864],
+    boxes: [[202, 330, 20, 296], [619, 330, 20, 296]],
+    denoise: [0.55, 0.7],
+    depth: { map: "art/greybox/capitol-garrison/depth.png", strength: 1 },
+    prompt:
+      "Game interface art in soft even light: stained glass panes in deep red and amber held by grey lead cames in a dark iron window. " +
+      "Each pane is one whole piece of glass across this strip, with no upright lead line through it; only the horizontal lead cames run straight across. No text, no letters.",
+  },
+  /** The leads repair left each middle pane in two colours with a seam; the whole middle column repainted, one colour per pane. */
+  "garrison-middle-panes": {
+    source: "art/candidates/ui/inpaint/garrison-effigy/garrison-effigy-d55-2.png",
+    page: [1236, 864],
+    boxes: [[161, 334, 101, 289], [579, 334, 101, 289]],
+    denoise: [0.7, 0.85],
+    depth: { map: "art/greybox/capitol-garrison/depth.png", strength: 1 },
+    prompt:
+      "Game interface art in soft even light: a column of three square panes of stained glass stacked in a dark iron window, held by grey lead cames along their edges only. " +
+      "Each pane is one whole piece of deep amber glass, a single even colour from edge to edge, with no line, seam or split down its middle. No text, no letters.",
+  },
   /** The map column's foot: the angel's and the succubus's hands around the End turn gem (the user, 2026-10-10). */
   "column-hands": {
     source: "art/candidates/ui/paint-in/map-column-duality/map-column-duality-2.png",

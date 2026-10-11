@@ -199,3 +199,7 @@
   field hud is good enough for now"), the Capitol column (round 2, seed 1). Next: the Capitol's tab panels, then the
   leader and structure screens. Everything in `docs/design/hud-pieces.md` and the `hud-paint-in` skill.
 
+- **The Capitol's tabs (2026-10-11, the user: "go ahead"):** the garrison tab as one painted wall (`capitol-garrison`,
+  seed 6; the effigy's hands and the windows' middle panes repaired by inpainting), research and spells in one frame
+  (`capitol-tab-2`, seed 1, after round 1 read as a blank slab). In the game, verified at 720p to 1440p, 21:9 and 5:4.
+  Write-up: `shots/capitol-tabs.html`; record in `docs/design/hud-pieces.md`. Next: the leader and structure screens.

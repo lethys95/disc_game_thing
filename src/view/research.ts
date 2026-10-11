@@ -63,7 +63,7 @@ export class ResearchPanel {
   ) {}
 
   render(world: World, side: PlayerId, mayAct: boolean): HTMLElement {
-    const column = element("div", "capitol-trees panel");
+    const column = element("div", "capitol-trees");
     column.appendChild(element("div", "section", "Capitol research"));
     for (const research of RESEARCH) {
       const row = element("div", "research-row");

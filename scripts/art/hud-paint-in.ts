@@ -43,6 +43,30 @@ const LAYOUTS: Readonly<Record<string, Layout>> = {
     depthStrength: 1,
     prompt: "A tall vertical game interface column seen straight on, painted as game interface art, in soft even light without glare, dull lighting. Blackened cast iron, old and worn, its sections joined by thin iron bands with a small faceted amber stud at each end. Every surface is densely worked: interlaced knotwork, scrolling ironwork, small rosettes and tracery cover all the iron between the parts, dark on dark, and no surface is left plain. Cream marble plates, blank. At the top a long marble plate and two small marble plates below it. In the middle, a two by two grid of four tall arched niches, each empty and dark, with a round ivory enamel boss inside each niche, blank; below them three long dark iron plates stacked. At the foot, a large round seal of deep red wax in a heavy ornate iron ring, held between two grown figures carved in deep relief in the same old dark iron, matte: on the left a kneeling hooded mason with a hammer at his belt, one hand on the ring, on the right a kneeling abbess holding a large key, one hand on the ring, her veil and robes the same dark iron as the rest. No text, no letters.",
   },
+  /** The Capitol's garrison tab (hud-pieces.md, "The Capitol's tabs"): tier and nodes, two squad windows, orders, the graveyard. */
+  "capitol-garrison": {
+    page: [1236, 864],
+    size: [1280, 896],
+    denoise: 0.7,
+    depthStrength: 1,
+    prompt: "A wide game interface wall seen straight on, painted as game interface art, in soft even light without glare, dull lighting. Blackened cast iron, old and worn, its sections joined by thin iron bands with a small faceted amber stud at each end. Every surface is densely worked: interlaced knotwork, scrolling ironwork, small rosettes and tracery cover all the iron between the parts, dark on dark, and no surface is left plain. Along the top, two long dark recessed iron panels, empty, each with a rectangular ivory enamel button at its right end, blank. Below them, side by side, two gothic lancet windows of lead and stained glass in deep red and amber, each with tracery glass in its pointed head and a three by three grid of nine square panes below, each pane empty and black; below each window a narrow dark iron strip and a long cream marble plate, blank. Under both windows, a long dark recessed panel, empty. On the right, behind an upright iron band, a tall pointed arched recess, empty and black, under a cream marble plate, blank, and at its foot a tomb chest of the same dark iron with a recumbent figure lying on its lid, a grown knight carved in deep relief, hands folded on his chest, old and worn, matte, with no polish and no highlights. No text, no letters.",
+  },
+  /** The frame for the Capitol's research and spells tabs: a title plate and one dark field the content scrolls in. */
+  "capitol-tab": {
+    page: [1236, 864],
+    size: [1280, 896],
+    denoise: 0.7,
+    depthStrength: 1,
+    prompt: "A wide game interface frame seen straight on, painted as game interface art, in soft even light without glare, dull lighting. Blackened cast iron, old and worn, its sections joined by thin iron bands with a small faceted amber stud at each end. Every surface of the frame is densely worked: interlaced knotwork, scrolling ironwork, small rosettes and tracery cover all the iron around the parts, dark on dark, and no surface of the frame is left plain. At the top centre, a long cream marble plate, blank. Below it, filling almost the whole frame, one large dark recessed panel, flat, smooth and empty, framed by a heavy moulded iron lip. No text, no letters.",
+  },
+  /** The tab frame, round 2 (round 1: a thin border round a blank slab): a faint interlace in the field, a heavier frame, corner bosses. */
+  "capitol-tab-2": {
+    page: [1236, 864],
+    size: [1280, 896],
+    denoise: 0.7,
+    depthStrength: 1,
+    prompt: "A wide game interface frame seen straight on, painted as game interface art, in soft even light without glare, dull lighting. Blackened cast iron, old and worn, its sections joined by thin iron bands with a small faceted amber stud at each end. Every surface of the frame is densely worked: interlaced knotwork, scrolling ironwork, small rosettes and tracery cover all the iron around the parts, dark on dark, and no surface of the frame is left plain. At the top centre, a long cream marble plate, blank. Below it, filling most of the frame, one large recessed panel of darker iron framed by a heavy moulded iron lip, with a round iron boss at each of its four corners; the panel's surface is covered in a shallow, faint interlace of rings, very low in contrast, dark on dark, and otherwise empty. No text, no letters.",
+  },
   /** The battle's bottom bar (hud-pieces.md, "The battle bar"): the card, the round and the sockets, the log. */
   "battle-bar": {
     page: [1536, 200],
