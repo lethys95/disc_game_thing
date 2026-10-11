@@ -34,38 +34,6 @@ export function markText(mark: Mark): string {
   return `${text} From ${from}.`;
 }
 
-/** With a commitment, the row also shows XP toward the next form. */
-export function memberRow(m: SquadMember, leader: Leader | undefined, commitment?: Commitment): HTMLElement {
-  const row = element("div", "member");
-  row.appendChild(element("span", "name", `${isLeaderOf(m, leader) ? "♛ " : ""}${unitName(m.defId)}${m.level > 0 ? ` · level ${m.level}` : ""}`));
-  const max = maxHpOf(m, leader);
-  const bar = element("div", "hp");
-  const fill = element("div", "fill");
-  fill.style.width = `${(100 * m.hp) / max}%`;
-  bar.append(fill, element("span", "value", m.hp > 0 ? `${m.hp} / ${max}` : "Fallen: revive at the Capitol"));
-  row.appendChild(bar);
-  const perLevel = xpToLevel(m.defId);
-  if (commitment && perLevel !== null) {
-    const xp = element("div", "xp");
-    const xpFill = element("div", "fill");
-    xpFill.style.width = `${(100 * Math.min(m.xp, perLevel)) / perLevel}%`;
-    xp.append(xpFill, element("span", "value", `XP ${m.xp} / ${perLevel} → level ${m.level + 1}`));
-    row.appendChild(xp);
-  }
-  const needed = xpToEvolve(m.defId);
-  if (commitment && needed !== null) {
-    const next = nextForm(m.defId, commitment);
-    const xp = element("div", `xp${m.xp >= needed ? " ready" : ""}`);
-    const xpFill = element("div", "fill");
-    xpFill.style.width = `${(100 * Math.min(m.xp, needed)) / needed}%`;
-    const label = next ? `XP ${m.xp} / ${needed} → ${unitName(next)}` : m.xp >= needed ? "Ready: choose a branch to evolve" : `XP ${m.xp} / ${needed} → (branch not chosen)`;
-    xp.append(xpFill, element("span", "value", label));
-    row.appendChild(xp);
-  }
-  for (const mark of recordOf(m, leader)) row.appendChild(element("div", "mark", markText(mark)));
-  return row;
-}
-
 /** What buffs add to its damaging hits, if anything: "+10 to its hits", "+25% to its hits". */
 export function hitChange(s: Stats): string {
   const parts = [s.hitPercent !== 0 ? `${s.hitPercent > 0 ? "+" : ""}${s.hitPercent}%` : "", s.hitBonus !== 0 ? `${s.hitBonus > 0 ? "+" : ""}${s.hitBonus}` : ""].filter((p) => p);

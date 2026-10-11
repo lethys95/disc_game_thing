@@ -1,9 +1,9 @@
 import type { Tile } from "#rules/battle/types";
 import { FACTION_ROOTS, GUARDIAN_ID } from "#rules/units/index";
-import { CITY_ARMOR_PER_TIER, CITY_HEALING_PER_TIER, CITY_MAX_TIER, CITY_SLOTS, NODE_MAX_LEVEL } from "#rules/balance";
+import { CITY_HEALING_PER_TIER, CITY_MAX_TIER, CITY_SLOTS, NODE_MAX_LEVEL } from "#rules/balance";
 import { raisesDeadAt, cityUpgradeCost, elevateProblem, investNodeProblem, nodeInvestCost, recruitCost, recruitProblem, upgradeCityProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem } from "#rules/world/economy";
 import { capacityOf, transferProblem } from "#rules/world/squads";
-import { member, playerOf, cityById, leaderById, leaderUnit, nodesOf, tribeRecruitsOf } from "#rules/world/state";
+import { member, playerOf, wallArmorOf, cityById, leaderById, leaderUnit, nodesOf, tribeRecruitsOf } from "#rules/world/state";
 import { NODES } from "#rules/nodes";
 import { CITY_RESURRECTION_PREMIUM } from "#rules/research";
 import type { City, PlayerId, SquadMember, SquadRef, World, WorldAction } from "#rules/world/state";
@@ -268,7 +268,7 @@ export class CityScreen implements KeyLayer {
     const panel = element("div", "growth");
     panel.appendChild(element("div", "section", "The city"));
     const tier = element("div", "row tier");
-    const armor = CITY_ARMOR_PER_TIER * (city.tier - 1);
+    const armor = wallArmorOf(world, city);
     tier.append(element("div", "name", `Tier ${roman(city.tier)}`), element("div", "note", `${CITY_SLOTS[city.tier] ?? 0} places · defenders +${armor} armor · heals ${Math.round(CITY_HEALING_PER_TIER * city.tier * 100)}% a turn`));
     if (city.tier < CITY_MAX_TIER) {
       const next = city.tier + 1;
@@ -276,7 +276,7 @@ export class CityScreen implements KeyLayer {
         orderButton("order", [`Tier ${roman(next)} · `, gold(cityUpgradeCost(world, city))], {
           mayAct,
           problem: upgradeCityProblem(world, city.id),
-          explain: `Tier ${next}: ${CITY_SLOTS[next] ?? 0} places; defenders get +${CITY_ARMOR_PER_TIER * (next - 1)} armor; units resting here heal ${Math.round(CITY_HEALING_PER_TIER * next * 100)}% a turn.`,
+          explain: `Tier ${next}: ${CITY_SLOTS[next] ?? 0} places; defenders get +${wallArmorOf(world, city, next)} armor; units resting here heal ${Math.round(CITY_HEALING_PER_TIER * next * 100)}% a turn.`,
           give: () => this.options.act({ type: "upgradeCity", cityId: city.id }),
         }),
       );

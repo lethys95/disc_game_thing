@@ -7,7 +7,7 @@
      `BattleUnit`; `damage.ts` names `"bleeding"`. Against `architecture.md`. Fix: generic per-side/per-slot trait state
      and a "pending choice" hook; a test that fails when engine/damage/AI name an ability or effect id.
   2. **Rules text written by hand outside battle repeats numbers and is already wrong:** Hatchet "for 30" (scales with
-     ability power), Cathedral "heal 30", Foundry's formula twice; the city screen's wall armor misses the Quarry's.
+     ability power), Cathedral "heal 30", Foundry's formula twice; the city screen's wall armor missed the Quarry's (fixed 2026-10-11: `wallArmorOf` in rules).
      Fix: `describe` from own data for items, spells, nodes, research; rules functions (`wallArmorOf`) for the view.
   3. **A faction's content in ~8 string-keyed registries:** `UNITS` merged by spread with no duplicate or key/id check,
      presets picked by ternary chains, `effects.ts` (981 lines) holding every faction. Fix: an integrity test, presets as

@@ -1,4 +1,4 @@
-import { levelBonus } from "#rules/balance";
+import { CITY_ARMOR_PER_TIER, levelBonus } from "#rules/balance";
 import type { Battle, EffectSeed, Side, Tile } from "#rules/battle/types";
 import type { Commitment } from "#rules/forks";
 import type { PlayerColor } from "#rules/world/colors";
@@ -515,6 +515,11 @@ export function giftsOf(world: World, city: City, gift: Exclude<keyof CityGifts,
     const at = NODES[n.kind].city?.[gift];
     return at ? [at(n.level)] : [];
   });
+}
+
+/** The armor a city's walls give its defenders at a tier: the tier's own and its nodes' (a Quarry's). */
+export function wallArmorOf(world: World, city: City, tier = city.tier): number {
+  return CITY_ARMOR_PER_TIER * (tier - 1) + giftsOf(world, city, "wallArmor").reduce((a, b) => a + b, 0);
 }
 
 /** The tribe units a city can recruit (a Tribal outpost), besides its holder's own. */

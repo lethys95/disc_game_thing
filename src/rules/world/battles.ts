@@ -1,5 +1,4 @@
 import { autoplay } from "#rules/ai";
-import { CITY_ARMOR_PER_TIER } from "#rules/balance";
 import { sameHex } from "#rules/hex";
 import { createBattle, NO_CONTEXT } from "#rules/battle/engine";
 import { seedOf } from "#rules/battle/tarot";
@@ -15,7 +14,7 @@ import { isLeaderOf, placementOf } from "#rules/world/record";
 import type { MoveTarget } from "#rules/world/movement";
 import { updateVision } from "#rules/world/vision";
 import { bury, clearLair, settleWarbands } from "#rules/world/fate";
-import { alive, cityById, giftsOf, lairById, leaderAt, leaderById, nodesOf, playerOf, unitId } from "#rules/world/state";
+import { alive, cityById, lairById, wallArmorOf, leaderAt, leaderById, nodesOf, playerOf, unitId } from "#rules/world/state";
 import type { City, Defender, Enchantment, Engagement, Leader, PlayerId, SquadMember, World, WorldEvent, WorldStep } from "#rules/world/state";
 
 /**
@@ -53,7 +52,7 @@ function defendedCity(world: World, defender: Defender, player: PlayerId | null)
 /** The armor a defender gets from a city's walls: a garrison always, a warband only in its own city. */
 function wallsFor(world: World, defender: Defender, player: PlayerId | null): number {
   const city = defendedCity(world, defender, player);
-  return city ? CITY_ARMOR_PER_TIER * (city.tier - 1) + giftsOf(world, city, "wallArmor").reduce((a, b) => a + b, 0) : 0;
+  return city ? wallArmorOf(world, city) : 0;
 }
 
 /** What the city's nodes give the defenders behind its walls (a Bell tower's warning). */
