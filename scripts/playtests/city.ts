@@ -2,13 +2,15 @@ import type { Playtest } from "#scripts/playtests/harness";
 
 const city: Playtest = {
   name: "city",
-  about: "open on the city view, go to the garrison, drag a unit into it, recruit, peek at a unit, Escape out",
+  about: "open on the city view (the Capitol theme playing), go to the garrison, drag a unit into it, recruit, peek at a unit, Escape out (the map theme back)",
   async run(t) {
     await t.open("/?map&seed=1&capitol");
     // The Capitol opens on its city view: a painting of the city in a frame, the tab rail on the right.
     const painting = await t.page.locator("#capitol .city-painting").evaluate((el) => getComputedStyle(el).backgroundImage);
     if (!painting.startsWith("url(")) t.fail(`the city view shows no painting: ${painting}`);
     await t.shot("playtest-city-home");
+    const inside = await t.page.evaluate(() => window.discDebug.loopMusic());
+    if (inside !== "music/jilliath/capitol") t.fail(`the Capitol should play its theme: ${inside}`);
     await t.page.click("#capitol .screen-column .tab.garrison");
     const grids = t.page.locator("#capitol .squad-grid");
     const titles = () => grids.locator(".section").allTextContents();
@@ -45,6 +47,8 @@ const city: Playtest = {
     await t.shot("playtest-city");
     await t.page.keyboard.press("Escape");
     await t.page.locator("#capitol").waitFor({ state: "hidden", timeout: 2000 }).catch(() => t.fail("Escape didn't close the city screen"));
+    const outside = await t.page.evaluate(() => window.discDebug.loopMusic());
+    if (outside !== "music/jilliath/map") t.fail(`back on the map, the map theme should play: ${outside}`);
   },
 };
 

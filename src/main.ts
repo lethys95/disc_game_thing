@@ -135,7 +135,7 @@ function showTitle(): void {
       });
     },
   });
-  sound.mapMusic("jilliath");
+  sound.mapMusic("jilliath", "map");
   sound.ambience(null);
 }
 
@@ -209,6 +209,7 @@ if (params.has("debug")) {
       homeNodeHex: (side: 0 | 1) => campaign.homeNodeHex(side),
       log: () => [...document.querySelectorAll("#log .entry")].map((e) => e.textContent),
       music: () => sound.battleMusicNow(),
+      loopMusic: () => sound.loopMusicNow(),
       /** What waits for the player's input now, so playtests wait on state rather than on time. */
       awaiting: (): "battle" | "map" | null => (app.playersTurn() ? "battle" : campaign.myTurn() ? "map" : null),
     },

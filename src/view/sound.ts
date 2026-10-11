@@ -20,8 +20,8 @@ export const resolve = (chain: readonly string[]): string | undefined => chain.f
 const REPEAT_MS = 60;
 
 /**
- * Music: `assets/audio/music/<faction>/map.ogg` and `battle-<n>.ogg`. On the map, your faction's theme, looping
- * (user, 2026-09-27). In battle, both sides' themes play at once and the side that's winning is the one heard (user,
+ * Music: `assets/audio/music/<faction>/map.ogg`, `capitol.ogg` and `battle-<n>.ogg`. On the map, your faction's theme,
+ * looping (user, 2026-09-27); in your Capitol, its Capitol theme where it has one. In battle, both sides' themes play at once and the side that's winning is the one heard (user,
  * 2026-10-03: a tug of war), each drawing its tracks from its faction's bucket (`view/bucket.ts`).
  */
 export type Track = string;
@@ -121,10 +121,11 @@ export class Sound {
     });
   }
 
-  /** A faction's map theme; any faction's if it has none yet. */
-  mapMusic(faction: string): void {
-    const tracks = musicTracks().filter((t) => t.endsWith("/map"));
-    this.music(tracks.find((t) => t === `${faction}/map`) ?? tracks[0] ?? null);
+  /** A faction's theme for the map or its Capitol; its map theme where it has no Capitol theme, any faction's if none. */
+  mapMusic(faction: string, where: "map" | "capitol"): void {
+    const tracks = musicTracks();
+    const maps = tracks.filter((t) => t.endsWith("/map"));
+    this.music(tracks.find((t) => t === `${faction}/${where}`) ?? maps.find((t) => t === `${faction}/map`) ?? maps[0] ?? null);
   }
 
   /**
@@ -159,6 +160,11 @@ export class Sound {
     this.stopVoices();
     this.wantBattle = null;
     this.loop(this.musicLoop, track === null ? null : `music/${track}`);
+  }
+
+  /** The looping music asked for now (`music/jilliath/map`), for playtests; null in battle or silence. */
+  loopMusicNow(): string | null {
+    return this.musicLoop.want;
   }
 
   /** The battle music now, for playtests: whose theme is heard, and each side's track. */

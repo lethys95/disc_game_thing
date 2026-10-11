@@ -52,6 +52,7 @@ interface Debug {
   homeNodeHex(player: number): Hex | null;
   log(): string[];
   music(): { lead: 0 | 1; tracks: [string | null, string | null] } | null;
+  loopMusic(): string | null;
   awaiting(): "battle" | "map" | null;
 }
 

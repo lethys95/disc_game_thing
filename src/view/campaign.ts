@@ -113,6 +113,8 @@ export class Campaign implements KeyLayer {
   private readonly panning = new Set<string>();
   /** The city (or meeting warbands) whose screen is open. */
   private place: Place | null = null;
+  /** Whether the Capitol theme is the one asked for: changed only as the Capitol opens or closes. */
+  private inCapitol = false;
   private leaderOpen: string | null = null;
   private readonly leaderScreen = new LeaderScreen(byId("leaderscreen"), {
     act: (action) => void this.act(action),
@@ -334,7 +336,8 @@ export class Campaign implements KeyLayer {
   private enterMap(): void {
     const world = this.world;
     if (!world) return;
-    this.sound.mapMusic(playerOf(world, this.viewer).faction);
+    this.inCapitol = false;
+    this.sound.mapMusic(playerOf(world, this.viewer).faction, "map");
     this.sound.ambience(["ambience/map"]);
     // Outside battles, --side0 is you and --side1 your first opponent.
     const you = playerOf(world, this.viewer).color;
@@ -563,6 +566,11 @@ export class Campaign implements KeyLayer {
     else {
       this.place = null;
       this.cityScreen.hide();
+    }
+    const inCapitol = valid === true && place.kind === "city" && capitolOf(world, this.viewer)?.id === place.cityId;
+    if (inCapitol !== this.inCapitol) {
+      this.inCapitol = inCapitol;
+      this.sound.mapMusic(playerOf(world, this.viewer).faction, inCapitol ? "capitol" : "map");
     }
   }
 
