@@ -3,7 +3,7 @@ import { FACTION_ROOTS, GUARDIAN_ID } from "#rules/units/index";
 import { CITY_ARMOR_PER_TIER, CITY_HEALING_PER_TIER, CITY_MAX_TIER, CITY_SLOTS, NODE_MAX_LEVEL } from "#rules/balance";
 import { raisesDeadAt, cityUpgradeCost, elevateProblem, investNodeProblem, nodeInvestCost, recruitCost, recruitProblem, upgradeCityProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem } from "#rules/world/economy";
 import { capacityOf, transferProblem } from "#rules/world/squads";
-import { playerOf, cityById, leaderById, leaderUnit, nodesOf, tribeRecruitsOf } from "#rules/world/state";
+import { member, playerOf, cityById, leaderById, leaderUnit, nodesOf, tribeRecruitsOf } from "#rules/world/state";
 import { NODES } from "#rules/nodes";
 import { CITY_RESURRECTION_PREMIUM } from "#rules/research";
 import type { City, PlayerId, SquadMember, SquadRef, World, WorldAction } from "#rules/world/state";
@@ -11,7 +11,8 @@ import { button, element, gold, orderButton, roman } from "#view/dom";
 import { explain } from "#view/explain";
 import { unitName } from "#view/members";
 import { ResearchPanel } from "#view/research";
-import { squadGrid } from "#view/squad-grid";
+import { FALLEN_DRAG, squadGrid } from "#view/squad-grid";
+import { squadTile } from "#view/squad-tile";
 import { spellsTab } from "#view/spells";
 import { tabFrame } from "#view/frames";
 import { warbandColumn } from "#view/warband-column";
@@ -40,21 +41,12 @@ const TABS: Readonly<Record<CityTab, { readonly label: string; readonly glyph: s
 };
 
 
-const GRID_HINT = "Drag units between the grids; dropping on a unit swaps the two. Click an empty tile to recruit. Click a unit for its details.";
+const GRID_HINT = "Drag units between the grids; dropping on a unit swaps the two. Click an empty place to recruit. Hold right-click on a unit for its sheet.";
 
 const isCityTab = (key: string): key is CityTab => key in TABS;
 
 /** Placeholder city names until the user names them. */
 export const cityName = (city: City): string => (city.kind === "capitol" ? "Capitol" : `City ${city.id.replace("city", "")}`);
-
-/** The city's tier, on the column's plate. */
-function tierPlate(city: City): HTMLElement {
-  return explain(
-    element("div", "plate tier", `Tier ${roman(city.tier)}`),
-    `Tier ${city.tier}`,
-    `${CITY_SLOTS[city.tier] ?? 0} garrison slots · heals ${Math.round(CITY_HEALING_PER_TIER * city.tier * 100)}% a turn · defenders +${CITY_ARMOR_PER_TIER * (city.tier - 1)} armor`,
-  );
-}
 
 /**
  * A city's screen (pillars.md, "Cities"; the user's layout, `design/capitol-screen.md`): it opens on the city itself
@@ -128,39 +120,27 @@ export class CityScreen implements KeyLayer {
   }
 
   /**
-   * The column at the right edge (assets/ui/capitol/column.webp, the hud-paint-in skill; Disciples II's capital keeps
-   * the map's column with its compartments swapped): the city's name, the purse and the tier, the four tabs in their
-   * niches (the open one lit; one the city lacks stays dark), three facts, and Back to the map as the seal the mason and
-   * the abbess hold.
+   * The column at the right edge, in the map column's place (`docs/design/capitol-elements.md`): which city and the purse
+   * at its top, the tabs as labelled rows (a city shows only the tabs it has), Back to the map at its foot. A greybox in
+   * flat values until the layout is judged.
    */
   private column(world: World, side: PlayerId, city: City, current: CityTab): HTMLElement {
     const column = element("div", "city-column");
     column.appendChild(element("div", "plate name", cityName(city)));
-    column.appendChild(explain(element("div", "plate purse"), "Gold", "What your realm holds."));
-    column.lastElementChild?.appendChild(gold(playerOf(world, side).gold));
-    column.appendChild(tierPlate(city));
+    const purse = explain(element("div", "plate purse"), "Gold", "What your realm holds. Everything here is paid in it.");
+    purse.appendChild(gold(playerOf(world, side).gold));
+    column.appendChild(purse);
+    const tabs = element("div", "tabs");
     for (const [id, tab] of Object.entries(TABS)) {
-      if (!isCityTab(id)) continue;
-      const held = !tab.capitolOnly || city.kind === "capitol";
-      const niche = button(`niche ${id}${id === current ? " selected" : ""}`, [element("span", held ? `glyph icon-${tab.icon}` : "glyph")], () => {
+      if (!isCityTab(id) || (tab.capitolOnly && city.kind !== "capitol")) continue;
+      const row = button(`tab ${id}${id === current ? " selected" : ""}`, [element("span", `glyph icon-${tab.icon}`), element("span", "label", tab.label)], () => {
         this.tab = id;
         this.rerender();
       });
-      niche.setAttribute("aria-label", tab.label);
-      niche.disabled = !held;
-      column.appendChild(held ? explain(niche, tab.label) : explain(niche, tab.label, "Only the Capitol has it."));
+      tabs.appendChild(row);
     }
-    const defenders = city.garrison.filter((m) => m.defId !== GUARDIAN_ID).length;
-    const visitor = world.leaders.find((l) => l.player === side && sameHex(l.hex, city.hex));
-    const facts = [
-      `${defenders} in the garrison${city.kind === "capitol" ? " + Guardian" : ""}`,
-      visitor ? `${unitName(leaderUnit(visitor)?.defId ?? "")}'s warband here` : "No warband visiting",
-      nodesOf(world, city).map((n) => `${NODES[n.kind].name} ${n.level}`).join(" · ") || "No nodes",
-    ];
-    facts.forEach((fact, i) => column.appendChild(element("div", `fact f${i}`, fact)));
-    const back = button("seal", [], () => this.options.close());
-    back.setAttribute("aria-label", "Back to the map");
-    column.appendChild(explain(back, "Back to the map", "Escape does the same."));
+    column.appendChild(tabs);
+    column.appendChild(explain(button("back", "Back to the map", () => this.options.close()), "Back to the map", "Escape does the same."));
     return column;
   }
 
@@ -190,32 +170,26 @@ export class CityScreen implements KeyLayer {
   }
 
   /**
-   * A city's garrison as one painted wall (assets/ui/capitol/garrison.webp, the hud-paint-in skill): the tier and the
-   * nodes along the top, each with its order on an ivory button; the garrison and a visiting warband as two windows of
-   * nine panes; a well under them for the selected unit's orders; the graveyard in the recess over the tomb chest.
+   * A city's garrison (`docs/design/capitol-elements.md`): the garrison and a warband standing in the city side by side,
+   * the heart of the screen; the city's growth (its tier, its nodes) beside them; the fallen under them, only when there
+   * are any; the selected unit's orders under its grid; the hint line at the foot. A greybox in flat values.
    */
   private garrisonWall(world: World, side: PlayerId, place: Place, city: City, mayAct: boolean): HTMLElement {
-    const wall = element("div", "garrison-wall");
-    wall.append(this.fortifications(world, city, mayAct), this.nodes(world, city, mayAct));
-    const squads = this.squads(world, side, place);
-    squads.forEach((squad, i) => {
-      const grid = squadGrid(squad, this.gridOptions(world, side, city, mayAct));
-      grid.classList.add(`w${i}`);
-      wall.appendChild(grid);
-    });
-    if (squads.length === 1) {
-      const vacant = element("div", "squad-grid w1 vacant");
-      vacant.appendChild(element("div", "section", "No warband visiting"));
-      wall.appendChild(vacant);
+    const board = element("div", "garrison-board");
+    const squads = element("div", "squads");
+    for (const squad of this.squads(world, side, place)) squads.appendChild(squadGrid(squad, this.gridOptions(world, side, city, mayAct)));
+    if (squads.childElementCount === 1) {
+      const vacant = element("div", "squad-grid vacant");
+      vacant.append(element("div", "section", "No warband here"), element("div", "grid"));
+      squads.appendChild(vacant);
     }
-    wall.appendChild(element("div", "orders-hint", GRID_HINT));
-    if (raisesDeadAt(world, side, city)) wall.appendChild(this.graveyard(world, side, city, mayAct));
-    else {
-      const crypt = element("div", "graveyard");
-      crypt.append(element("div", "section", "Graveyard"), element("div", "note", "Resurrection here needs the Capitol's research (Research tab: Resurrection in cities)."));
-      wall.appendChild(crypt);
-    }
-    return wall;
+    const main = element("div", "main");
+    main.appendChild(squads);
+    const fallen = this.graveyard(world, side, city, mayAct);
+    if (fallen) main.appendChild(fallen);
+    main.appendChild(element("div", "hint", GRID_HINT));
+    board.append(main, this.growth(world, city, mayAct));
+    return board;
   }
 
   private rerender(): void {
@@ -235,7 +209,7 @@ export class CityScreen implements KeyLayer {
     const ref: SquadRef = { kind: "garrison", cityId: city.id };
     const garrison: GridSquad = { ref, title: "Garrison", squad: city.garrison, leader: undefined, capacity: capacityOf(world, ref) };
     const visitor = world.leaders.find((l) => l.player === side && sameHex(l.hex, city.hex));
-    return visitor ? [garrison, warband(visitor.id, `Visiting: ${leaderName(visitor.id)}'s warband`)] : [garrison];
+    return visitor ? [garrison, warband(visitor.id, `${leaderName(visitor.id)}'s warband`)] : [garrison];
   }
 
   /** `side`: the player whose screen this is (not whose turn: during the AI's turn it's still yours). */
@@ -270,6 +244,13 @@ export class CityScreen implements KeyLayer {
             : [];
         return [...recruits, ...raised];
       },
+      raise:
+        city && raisesDeadAt(world, side, city)
+          ? {
+              problem: (index: number, to: SquadRef, tile: Tile) => resurrectProblem(world, index, to, tile),
+              run: (index: number, to: SquadRef, tile: Tile) => this.options.act({ type: "resurrect", index, into: to, tile }),
+            }
+          : null,
       unitChoices: (ref: SquadRef, member: SquadMember): GridChoice[] =>
         ref.kind === "garrison" && city?.kind === "capitol" && member.defId !== GUARDIAN_ID
           ? [{ label: "Elevate to leader", problem: elevateProblem(world, member.tile), run: () => this.options.act({ type: "elevate", tile: member.tile }) }]
@@ -277,81 +258,93 @@ export class CityScreen implements KeyLayer {
     };
   }
 
-  /** The nodes that feed this city (the nearest city owns a node), and investing in them: the first on the panel's button. */
-  private nodes(world: World, city: City, mayAct: boolean): HTMLElement {
-    const panel = element("div", "head-panel nodes");
-    const text = element("div", "text");
-    panel.appendChild(text);
-    const owned = nodesOf(world, city);
-    if (owned.length === 0) text.append(element("div", "name", "Nodes"), element("div", "note", "No nodes feed this city."));
-    owned.forEach((node, i) => {
-      const def = NODES[node.kind];
-      const line = element("div", "node-line");
-      line.append(element("span", "name", `${def.name} ${roman(node.level)}`), element("span", "note", def.describe(node.level)));
-      text.appendChild(line);
-      if (node.level >= NODE_MAX_LEVEL) return;
-      const invest = orderButton(i === 0 ? "order" : "order inline", ["Invest · ", gold(nodeInvestCost(node))], {
-        mayAct,
-        problem: investNodeProblem(world, node.id),
-        explain: `${def.name} ${roman(node.level + 1)}: ${def.describe(node.level + 1)}.`,
-        give: () => this.options.act({ type: "investNode", nodeId: node.id }),
-      });
-      if (i === 0) panel.appendChild(invest);
-      else line.appendChild(invest);
-    });
-    return panel;
-  }
-
-  /** The city's tier and its upgrade. */
-  private fortifications(world: World, city: City, mayAct: boolean): HTMLElement {
-    const panel = element("div", "head-panel fortifications");
+  /**
+   * How the city grows: its tier with what it gives and the next tier's price, then every node that feeds it (the nearest
+   * city owns a node) with what it yields and its Invest. A list, so a city with many nodes fits.
+   */
+  private growth(world: World, city: City, mayAct: boolean): HTMLElement {
+    const panel = element("div", "growth");
+    panel.appendChild(element("div", "section", "The city"));
+    const tier = element("div", "row tier");
     const armor = CITY_ARMOR_PER_TIER * (city.tier - 1);
-    const text = element("div", "text");
-    text.append(element("div", "name", `Tier ${roman(city.tier)}`), element("div", "note", `${CITY_SLOTS[city.tier] ?? 0} garrison slots · defenders +${armor} armor · heals ${Math.round(CITY_HEALING_PER_TIER * city.tier * 100)}% a turn`));
-    panel.appendChild(text);
+    tier.append(element("div", "name", `Tier ${roman(city.tier)}`), element("div", "note", `${CITY_SLOTS[city.tier] ?? 0} places · defenders +${armor} armor · heals ${Math.round(CITY_HEALING_PER_TIER * city.tier * 100)}% a turn`));
     if (city.tier < CITY_MAX_TIER) {
       const next = city.tier + 1;
-      panel.appendChild(
+      tier.appendChild(
         orderButton("order", [`Tier ${roman(next)} · `, gold(cityUpgradeCost(world, city))], {
           mayAct,
           problem: upgradeCityProblem(world, city.id),
-          explain: `Tier ${next}: ${CITY_SLOTS[next] ?? 0} garrison slots; the garrison and a warband defending here get +${CITY_ARMOR_PER_TIER * (next - 1)} armor; units resting here heal ${Math.round(CITY_HEALING_PER_TIER * next * 100)}% a turn.`,
+          explain: `Tier ${next}: ${CITY_SLOTS[next] ?? 0} places; defenders get +${CITY_ARMOR_PER_TIER * (next - 1)} armor; units resting here heal ${Math.round(CITY_HEALING_PER_TIER * next * 100)}% a turn.`,
           give: () => this.options.act({ type: "upgradeCity", cityId: city.id }),
         }),
       );
-    } else panel.appendChild(element("div", "order done", "Fully upgraded"));
+    } else tier.appendChild(element("div", "note done", "Highest tier"));
+    panel.appendChild(tier);
+    panel.appendChild(element("div", "section", "Nodes"));
+    const owned = nodesOf(world, city);
+    if (owned.length === 0) panel.appendChild(element("div", "note", "No nodes feed this city."));
+    for (const node of owned) {
+      const def = NODES[node.kind];
+      const row = element("div", "row node");
+      row.append(element("div", "name", `${def.name} ${roman(node.level)}`), element("div", "note", def.describe(node.level)));
+      if (node.level < NODE_MAX_LEVEL) {
+        row.appendChild(
+          orderButton("order", ["Invest · ", gold(nodeInvestCost(node))], {
+            mayAct,
+            problem: investNodeProblem(world, node.id),
+            explain: `${def.name} ${roman(node.level + 1)}: ${def.describe(node.level + 1)}.`,
+            give: () => this.options.act({ type: "investNode", nodeId: node.id }),
+          }),
+        );
+      } else row.appendChild(element("div", "note done", "Highest level"));
+      panel.appendChild(row);
+    }
     return panel;
   }
 
-  /** The fallen: warband leaders to revive here, and units to resurrect by clicking an empty tile. */
-  private graveyard(world: World, side: PlayerId, city: City, mayAct: boolean): HTMLElement {
-    const column = element("div", "graveyard");
-    column.appendChild(element("div", "section", "Graveyard"));
-    if (city.kind !== "capitol") column.appendChild(element("div", "note", `Researched: resurrecting here costs ${Math.round((CITY_RESURRECTION_PREMIUM - 1) * 100)}% more.`));
-    const list = element("div", "fallen-list");
-    column.appendChild(list);
-    // Fallen leaders are revived at the Capitol only.
+  /**
+   * The fallen, only when there are any: each a greyed tile with its price, dragged onto an empty place to raise it, as
+   * units are dragged between the grids; fallen leaders revived at the Capitol with a button. A city without the
+   * Capitol's research shows them but can't raise them.
+   */
+  private graveyard(world: World, side: PlayerId, city: City, mayAct: boolean): HTMLElement | null {
     const lost = city.kind === "capitol" ? world.leaders.filter((l) => l.player === side && l.fellOnTurn !== null) : [];
+    const dead = playerOf(world, side).graveyard;
+    if (lost.length === 0 && dead.length === 0) return null;
+    const raises = raisesDeadAt(world, side, city);
+    const strip = element("div", "graveyard");
+    const note = raises
+      ? `Drag one onto an empty place to raise it. The price drops each turn you wait.${city.kind === "capitol" ? "" : ` Here it costs ${Math.round((CITY_RESURRECTION_PREMIUM - 1) * 100)}% more.`}`
+      : "Raising the fallen here needs the Capitol's research (Resurrection in cities).";
+    strip.append(element("div", "section", "The fallen"), element("div", "note", note));
+    const row = element("div", "fallen-row");
     for (const leader of lost) {
       const own = leaderUnit(leader);
-      const problem = reviveProblem(world, leader.id);
-      const row = element("div", "fallen");
-      row.appendChild(element("span", "name", `♛ ${unitName(own?.defId ?? "")}, a warband's leader · ${reviveCost(world, leader) ?? 0} gold`));
-      row.appendChild(
-        orderButton("small", "Revive", {
+      const item = element("div", "fallen leader");
+      item.append(squadTile(own ? { ...own, hp: 0 } : undefined, leader));
+      item.appendChild(
+        orderButton("order", ["Revive · ", gold(reviveCost(world, leader) ?? 0)], {
           mayAct,
-          problem,
+          problem: reviveProblem(world, leader.id),
           explain: "Returns at 1 HP and leads its warband again. The price drops each turn you wait.",
           give: () => this.options.act({ type: "revive", leaderId: leader.id }),
         }),
       );
-      list.appendChild(row);
+      row.appendChild(item);
     }
-    playerOf(world, side).graveyard.forEach((fallen, index) => {
-      list.appendChild(element("div", "fallen", `${unitName(fallen.defId)} · ${resurrectionCost(world, side, index, city) ?? 0} gold`));
+    dead.forEach((one, index) => {
+      const item = element("div", "fallen");
+      const tile = squadTile({ ...member(one.defId, { row: 0, col: 0 }), level: one.level, hp: 0 }, undefined);
+      tile.draggable = mayAct && raises;
+      tile.addEventListener("dragstart", (e) => {
+        e.dataTransfer?.setData(FALLEN_DRAG, String(index));
+        if (e.dataTransfer) e.dataTransfer.effectAllowed = "move";
+      });
+      item.append(tile, element("div", "price", raises ? "" : "—"));
+      if (raises) item.lastElementChild?.appendChild(gold(resurrectionCost(world, side, index, city) ?? 0));
+      row.appendChild(item);
     });
-    const empty = playerOf(world, side).graveyard.length === 0 && lost.length === 0;
-    column.appendChild(element("div", "note", empty ? "Nobody has fallen yet." : "Resurrect by clicking an empty tile. The price drops each turn you wait."));
-    return column;
+    strip.appendChild(row);
+    return strip;
   }
 }

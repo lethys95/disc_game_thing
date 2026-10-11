@@ -2,7 +2,6 @@ import type { Tile } from "#rules/battle/types";
 import { COLS, ROWS, sameTile } from "#rules/battle/grid";
 import type { Leader, SquadMember, SquadRef } from "#rules/world/state";
 import { element } from "#view/dom";
-import { memberRow } from "#view/members";
 import { squadTile } from "#view/squad-tile";
 
 /** One squad shown as its 3×3 grid (front row first). */
@@ -31,7 +30,12 @@ export interface GridOptions {
   /** A unit selected in some grid (to show its details and actions), or null. */
   readonly selected: { readonly ref: SquadRef; readonly tile: Tile } | null;
   readonly select: (selection: { ref: SquadRef; tile: Tile } | null) => void;
+  /** Raising one of the fallen dragged from the graveyard onto an empty place, where the screen has a graveyard. */
+  readonly raise: { readonly problem: (index: number, to: SquadRef, tile: Tile) => string | null; readonly run: (index: number, to: SquadRef, tile: Tile) => void } | null;
 }
+
+/** The drag payload of one of the fallen, dragged from the graveyard: its place in the player's graveyard. */
+export const FALLEN_DRAG = "application/x-disc-fallen";
 
 const ROW_NAMES = ["Front", "Middle", "Back"] as const;
 /** Laid out as the battle shows your side (user, 2026-09-27): the back row on the left, the front on the right. */
@@ -121,6 +125,18 @@ export function squadGrid(side: GridSquad, options: GridOptions): HTMLElement {
       cell.addEventListener("drop", (e) => {
         e.preventDefault();
         cell.classList.remove("over");
+        const refuse = (problem: string) => {
+          cell.title = problem;
+          cell.classList.add("refused");
+          window.setTimeout(() => cell.classList.remove("refused"), 600);
+        };
+        const fallen = Number(e.dataTransfer?.getData(FALLEN_DRAG) || NaN);
+        if (Number.isInteger(fallen) && options.raise) {
+          const problem = options.raise.problem(fallen, side.ref, tile);
+          if (problem) refuse(problem);
+          else options.raise.run(fallen, side.ref, tile);
+          return;
+        }
         const dragged = readDragged(e);
         if (!dragged || (sameRef(dragged.ref, side.ref) && sameTile(dragged.tile, tile))) return;
         const problem = options.moveProblem(dragged.ref, dragged.tile, side.ref, tile);
@@ -137,12 +153,12 @@ export function squadGrid(side: GridSquad, options: GridOptions): HTMLElement {
   }
   panel.appendChild(grid);
 
-  // The selected unit's details and what can be done with it.
+  // What can be done with the selected unit; its numbers are on its sheet (a held right-click).
   const chosen = options.selected && sameRef(options.selected.ref, side.ref) ? side.squad.find((m) => options.selected && sameTile(m.tile, options.selected.tile)) : undefined;
-  if (chosen) {
+  const orders = chosen ? options.unitChoices(side.ref, chosen) : [];
+  if (chosen && orders.length > 0) {
     const details = element("div", "grid-details");
-    details.appendChild(memberRow(chosen, side.leader));
-    for (const choice of options.unitChoices(side.ref, chosen)) {
+    for (const choice of orders) {
       const button = element("button", "small", choice.label);
       button.disabled = !options.mayAct || choice.problem !== null;
       button.title = choice.problem ?? "";

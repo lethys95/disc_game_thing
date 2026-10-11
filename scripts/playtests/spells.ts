@@ -5,13 +5,13 @@ const spells: Playtest = {
   about: "learn a spell in the Capitol's Spells tab, then aim it on the map and cast it on our own warband",
   async run(t) {
     await t.open("/?map&seed=1&capitol&mana=50");
-    await t.page.click("#capitol .niche.spells");
+    await t.page.click("#capitol .city-column .tab.spells");
     await t.page.locator(".spell-row", { hasText: "Bless warband" }).locator("button").click();
     await t.shot("playtest-spells-tab");
     const learned = await t.page.locator(".spell-row", { hasText: "Bless warband" }).textContent();
     t.log(`spells tab: ${learned}`);
     if (!learned?.includes("Learned")) t.fail("the spell wasn't learned");
-    await t.page.click("#capitol .seal");
+    await t.page.click("#capitol .city-column .back");
 
     await t.page.click("#mapspells");
     await t.page.locator(".spell-bar button", { hasText: "Bless warband" }).click();

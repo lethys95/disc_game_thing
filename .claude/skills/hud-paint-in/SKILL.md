@@ -148,3 +148,12 @@ live part with its overlay on before calling a mock done.
 - Long prompts carrying the layout in words; mood words; shared material lines (night one's grey).
 - Krea-2's image to image alone above strength ~0.55; depth alone.
 - The style-reference LoRA together with depth and values: it took the materials and broke the layout.
+
+## Before step 2: a job for every element, and the greybox judged in the game
+The user, 2026-10-11: "try greyboxing, but being especially aware of what those elements are supposed to do. Like if
+you're boxing out a button, what is that button and why is it relevant." Before drawing a box, write the screen's
+element table (`docs/design/capitol-elements.md` is the first): what the screen is for, ranked by how often; then each
+element, what it does, why it's there, and the verdict (keep, cut, merge, show only when needed). Then build the layout
+in the game in flat values with the real content, and let the user judge it there before anything is painted. The
+first painted Capitol skipped this, and the review found facts that repeated the screen, a seal that said nothing, and
+grids of another size.
