@@ -57,3 +57,9 @@ tusks; a huge cave bear with mange and old arrowheads in its hide; a churning cl
 branch; Old Grey, a giant pale wolf with a torn ear and a mane of frost-white fur.
 
 **Status:** in game as `grey_wolf`, `boar`, `cave_bear`, `carrion_murder`, `old_grey` (`?fight=wild`); not on the map.
+
+## Concept log (Claude; every image in `art/candidates/units/neutrals/wild/`)
+**Round one (2026-10-11):** the turnaround frame stood every animal up as a beast-man: armoured boar-men, werewolves,
+a crow-headed man. The bears read as bears but stand upright; only the antlered Old Grey's side view is a real
+quadruped. The frame ("a character turnaround … T-pose or a clear standing pose") pulls bodies human, as the skill
+warns. **Round two:** a creature frame of its own (four legs, no clothing, not upright).

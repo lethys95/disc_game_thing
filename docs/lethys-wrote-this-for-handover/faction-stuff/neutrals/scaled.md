@@ -56,3 +56,9 @@ the naga a serpent body below a gaunt armored torso, coiled; the shedskin traili
 medusa veiled in verdigris bronze, her snakes lifting the veil.
 
 **Status:** in game as `scaleblade`, `spitter`, `naga_coiler`, `shedskin`, `medusa` (`?fight=scaled`); not on the map.
+
+## Concept log (Claude; every image in `art/candidates/units/neutrals/scaled/`)
+**Round one (2026-10-11):** the medusas (crowned with a bare stone-grey face; veiled in verdigris) and the nagas
+(a hooded armoured coiler; a pale banded one in a great coil) are strong; the scaleblades split well (crested and
+armoured; white-striped with a reed kilt); the frilled spitter, its frill spread like a ruff, is the standout. The
+Shedskin missed in both readings: robed lizards with no shed skin to be seen. **Round two:** the shed skin first.

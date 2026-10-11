@@ -944,6 +944,139 @@ const MELEE_JOBS = [
   { id: "chosen-zweihander-props", prompt: prop(CHOSEN_ZWEIHANDER, KNIGHT_3D), width: 2048, height: 832 },
 ];
 
+
+/**
+ * Five tribes Claude pitched at the user's invitation (2026-10-11: "playing around with neutral factions [...] There's
+ * room to be creative"): `faction-stuff/neutrals/{wildlife,tuskclans,scaled,centaurs,barbarians}.md`. Round one: two
+ * readings per unit, each built around one standout feature; turnarounds only, hands empty (weapons get prop sheets
+ * once a unit is picked). Every subject is Claude's.
+ */
+const tribeLine = (materials: string) =>
+  `Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: ${materials}. Serious, adult, not cartoonish.`;
+const WILD_3D = tribeLine("matted fur, scarred hide, bristles, cracked tusk and bone, mud");
+const TUSK_3D = tribeLine("scarred grey-green hide, rusted iron, boiled leather, bone, coarse frayed cloth, moss");
+const SCALED_3D = tribeLine("dull scales, verdigris bronze, reed and bone, wet dark leather, tarnished gold");
+const HERD_3D = tribeLine("dusty horse hide and hair, braided manes, bone beads, painted ochre, worn leather, horn");
+const CLAN_3D = tribeLine("thick furs, boiled leather, blackened iron, blue woad, bone charms, coarse wool with the weave visible");
+const jobs = (
+  entries: Readonly<Record<string, { readonly subject: string; readonly pose?: string }>>,
+  materials: string,
+) => Object.entries(entries).map(([id, { subject, pose }]) => ({ id: `${id}-turnaround`, prompt: turnaround(subject, materials, pose) }));
+
+const WILD = {
+  "grey-wolf-scarred": { subject: "A grey wolf, a real animal, lean and long-legged, its grey fur ragged and matted, a muzzle crossed with old white scars, one ear torn, ribs showing under the pelt, pale hungry eyes.", pose: CLEAR_POSE },
+  "grey-wolf-ashen": { subject: "A gaunt wolf with ash-dark fur greying at the muzzle and a ridge of bristling hackles down its spine, a broken collar of rusted iron chain still around its neck, long yellowed fangs.", pose: CLEAR_POSE },
+  "boar-tusks": { subject: "A great wild boar, a real animal, black bristles standing up along a humped back, two long yellowed tusks cracked at the tips, small furious eyes, a body heavy and low, caked with dried mud and old arrow scars.", pose: CLEAR_POSE },
+  "boar-plated": { subject: "A huge old boar whose shoulders are armoured in thick scarred hide like plates, broken spear shafts still stuck in its back, one tusk snapped short, the other long and curled.", pose: CLEAR_POSE },
+  "cave-bear-mangy": { subject: "A cave bear, a real animal, enormous and shaggy, its brown fur patchy with mange, old arrowheads and a broken spear lodged in its hide, a heavy scarred head, long curved claws.", pose: CLEAR_POSE },
+  "cave-bear-grey": { subject: "A colossal grey cave bear with a hump of muscle over its shoulders, moss and lichen grown into its fur, a face of old scars and one clouded blind eye, claws like black hooks.", pose: CLEAR_POSE },
+  "carrion-murder-branch": { subject: "A murder of carrion crows as one model: a dozen ragged black crows clustered on and around a gnarled dead branch with a scrap of torn cloth hanging from it, wings half spread, beaks open.", pose: CLEAR_POSE },
+  "carrion-murder-great": { subject: "One huge carrion crow the size of a man, ragged black feathers falling out in patches, a pale bald neck like a vulture's, a long cracked beak, a necklace of small bones caught around its neck.", pose: CLEAR_POSE },
+  "old-grey-frost": { subject: "Old Grey, the alpha: a giant wolf twice a man's height at the shoulder, a mane of frost-white fur, one torn ear, a muzzle scarred white, eyes pale as ice, an old wolf of terrible size.", pose: CLEAR_POSE },
+  "old-grey-antlers": { subject: "Old Grey, the alpha: a huge pale wolf with the shed antlers of a great stag tangled and grown into the fur of its neck like a crown, a long grey mane, scarred and ancient.", pose: CLEAR_POSE },
+};
+
+const TUSK = {
+  "goblin-cutthroat-hood": { subject: "A goblin cutthroat: small and wiry, long ears and a sharp hooked nose under a deep ragged hood, grey-green skin, a grin of filed teeth, scraps of stolen armour strapped on with rope, many small knife sheaths across the chest, hands empty and open." },
+  "goblin-cutthroat-mask": { subject: "A goblin cutthroat: thin and stooped, its face hidden behind a crude mask carved from a human skull, a cloak stitched from mismatched hides, bare grey-green arms covered in tally scars, hands empty and open." },
+  "orc-ravager-chains": { subject: "An orc ravager: heavy, broad and grey-green, a jutting jaw with two lower tusks capped in iron, a shaved head with a black braided topknot, rusted chains wrapped around one arm, a hide kilt, a chest of ritual scars, hands empty and open." },
+  "orc-ravager-trophies": { subject: "An orc ravager: tall and scarred, tusks yellowed and broken, crude iron plates on the shoulders hung with trophies of teeth and finger bones, a belt of skulls, dark warpaint across the eyes, hands empty and open." },
+  "troll-mossy": { subject: "A troll: gaunt and very tall with long arms that reach its knees, grey-green warty hide covered in moss and lichen, a long hooked nose, lank black hair, deep wounds on its chest visibly knitting closed with new pink flesh, bare long-clawed hands.", pose: CLEAR_POSE },
+  "troll-bog": { subject: "A bog troll: hunched and huge, rubbery dark hide streaked with swamp weed, a jutting underbite with tusks, a back crusted with barnacle-like growths, scars where limbs have grown back thinner and paler than the rest, bare clawed hands.", pose: CLEAR_POSE },
+  "goblin-hexer-bones": { subject: "A goblin hexer: a hunched old goblin shaman under a cloak of crow feathers and rat skulls, a necklace of finger bones, painted white face markings, a pouch of fungus at the belt, one eye milky, hands empty and open." },
+  "goblin-hexer-mushroom": { subject: "A goblin hexer: a scrawny goblin wearing a huge dried mushroom cap as a hat, glowing pale spores drifting from it, a robe of patched sackcloth, bone fetishes tied in its hair, hands empty and open." },
+  "ogre-warchief-totem": { subject: "An ogre warchief: a huge hulk with a small head and a heavy underbite, a rusted chain shirt stretched over a vast belly, a clan totem of skulls and horns strapped to its back rising above its head, iron rings in its ears, hands empty and open." },
+  "ogre-warchief-crown": { subject: "An ogre warchief: massive and scarred, wearing a crude crown hammered from a stolen church bell, a cloak of stitched bear hides, a belt of iron trophies, one eye sewn shut, hands empty and open." },
+};
+
+const SCALED = {
+  "scaleblade-crested": { subject: "A lizardman warrior: tall and lean, a long tail, a head with a high crest of spines, dull green-brown scales, armour of bronze scales and reed, a shell pauldron, bone beads on the wrists, hands empty and open." },
+  "scaleblade-painted": { subject: "A lizardman warrior: wiry and stooped forward, dark scales painted with white clay stripes, a bone mask over the snout, a kilt of woven reeds, a bronze collar, hands empty and open." },
+  "spitter-sac": { subject: "A lizardman spitter: thin and long-necked, a swollen pale throat sac glistening with venom, yellow eyes, mottled scales, a cloak of reed mats, small bone darts in a belt, hands empty and open." },
+  "spitter-frilled": { subject: "A lizardman spitter: a small lizard-folk with a wide frill of thin skin around its neck, half raised, its mouth dripping green venom, a hide wrap, hands empty and open." },
+  "naga-coiler-armored": { subject: "A naga: a gaunt armoured torso and head with a hooded cobra neck rising from a long thick serpent body coiled beneath it, dull green scales, bronze scale plates on the chest, hands empty and open.", pose: CLEAR_POSE },
+  "naga-coiler-pale": { subject: "A naga: a pale, sinuous man-like torso joined to an enormous banded serpent body in a loose coil, a narrow serpent face with slit eyes, tarnished gold rings in the scales, hands empty and open.", pose: CLEAR_POSE },
+  "shedskin-mantle": { subject: "A lizardman scale-priest: old and thin, trailing a whole moulted lizard skin over its shoulders like a translucent mantle, a staff-less figure in a robe of reeds, a bronze disc on its brow, hands empty and open." },
+  "shedskin-flaking": { subject: "A lizardman scale-priest whose old skin is peeling away in long pale strips to show new bright scales beneath, bone and shell talismans, a sash of dried herbs, hands empty and open." },
+  "medusa-veiled": { subject: "A medusa: a tall woman with a serpent's lower body, veiled in a corroded verdigris bronze veil, living snakes for hair lifting the veil, a gown of dark scales, gold bands on her arms, hands empty and open.", pose: CLEAR_POSE },
+  "medusa-crowned": { subject: "A medusa: a woman with grey-green scaled skin, a crown of writhing snakes, a cracked stone-white face like a statue, a long serpent tail, a breastplate of tarnished gold, hands empty and open.", pose: CLEAR_POSE },
+};
+
+const HERD = {
+  "outrider-javelins": { subject: "A centaur outrider: a lean dun horse body and a wiry human torso, braided hair with bone beads, a horse-hide cloak, painted ochre stripes on the flanks, a quiver strapped to the horse back, hands empty and open.", pose: CLEAR_POSE },
+  "outrider-dusty": { subject: "A centaur outrider: a small fast steppe horse body with a shaggy winter coat, a rider torso wrapped in dusty scarves, a fur hat, leather bracers, hands empty and open.", pose: CLEAR_POSE },
+  "lancer-barded": { subject: "A centaur lancer: a heavy dark horse body barded in scale armour of horn plates, a broad human torso in a leather cuirass, a helm with a horsehair crest, hands empty and open.", pose: CLEAR_POSE },
+  "lancer-painted": { subject: "A centaur lancer: a tall grey horse body painted with red handprints, a muscular torso with a bone breastplate, long black braids, a horn helm, hands empty and open.", pose: CLEAR_POSE },
+  "hoofbreaker-iron": { subject: "A centaur hoofbreaker: a massive draft-horse body with huge feathered hooves shod in iron, a thick-necked brawler torso, a shaved head, heavy leather bracers studded with iron, hands empty and open.", pose: CLEAR_POSE },
+  "hoofbreaker-scarred": { subject: "A centaur hoofbreaker: a scarred bay horse body, iron rings on the hooves, a bare scarred torso with a broken nose, a heavy mane of hair down the back, hands empty and open.", pose: CLEAR_POSE },
+  "starseer-blind": { subject: "A centaur starseer: an old grey mare's body, an aged woman's torso, a cloth blindfold over her eyes, star charts tattooed in dark ink down her flanks, strings of bone beads, hands empty and open.", pose: CLEAR_POSE },
+  "starseer-antlers": { subject: "A centaur starseer: a white horse body dappled with pale spots like stars, an ascetic torso wrapped in pale wool, a headdress of antlers hung with small bronze discs, hands empty and open.", pose: CLEAR_POSE },
+  "herd-khan-trophies": { subject: "A centaur herd-khan: a huge black horse body, a broad scarred torso in a coat of bronze scales, a mane of trophies braided into the hair, a fur mantle, a gold torc, hands empty and open.", pose: CLEAR_POSE },
+  "herd-khan-skullhelm": { subject: "A centaur herd-khan: a powerful roan horse body, a torso in layered leather and horn plates, a helm made from a horse skull, a red war cloak, hands empty and open.", pose: CLEAR_POSE },
+};
+
+const CLANS = {
+  "berserker-bearpelt": { subject: "A barbarian berserker: a huge bare-chested man under a bear pelt worn as a hood, the bear's head over his own, blue woad spirals on his arms, a wild red beard, scarred knuckles, hands empty and open." },
+  "berserker-woad": { subject: "A barbarian berserker woman: tall and muscled, her head shaved at the sides with a long braid, her face and arms painted solid blue woad, a wolf-fur kilt, iron rings on her arms, hands empty and open." },
+  "spearwarden-shield": { subject: "A barbarian spearwarden: a broad, steady warrior in a mail shirt under furs, an iron helm with cheek guards, a round shield strapped on his back, a grey beard in two braids, hands empty and open." },
+  "spearwarden-hide": { subject: "A barbarian spearwarden: a tall woman in layered boiled leather and a cloak of white winter fox, a nasal helm, a bronze torc, a quiet hard face, hands empty and open." },
+  "hunter-winter": { subject: "A barbarian hunter: lean, in pale winter hides with the fur turned in, a hood of white wolf fur, a quiver of grey-fletched arrows on the back, snow goggles of carved bone with slits, hands empty and open." },
+  "hunter-antlered": { subject: "A barbarian hunter: wiry, wearing a deer skull with antlers as a hood, a brown fur cloak, a leather bracer on one forearm, woad dots across the cheeks, hands empty and open." },
+  "shamaness-handprints": { subject: "A barbarian shamaness: an older woman with long grey braids, red handprints painted across her face and chest, a cloak of raven feathers, bone charms and small antlers hanging from her belt, hands empty and open." },
+  "shamaness-bones": { subject: "A barbarian shamaness: a gaunt young woman with white-painted eyelids, a headdress of a ram's skull with curling horns, a robe of patched furs hung with runes carved in bone, hands empty and open." },
+  "warlord-iron": { subject: "A barbarian warlord: a towering chieftain in scaled blackened iron over furs, a helm with great curving horns, a cloak of a white bear's hide, a heavy gold torc, a scar through one eye, hands empty and open." },
+  "warlord-skulls": { subject: "A barbarian warlord: a massive woman in a mail hauberk and a cloak of wolf pelts, a crown of iron spikes, skulls of enemies hung at her belt, blue woad across her brow, hands empty and open." },
+};
+
+const WILD_JOBS = jobs(WILD, WILD_3D);
+const TUSK_JOBS = jobs(TUSK, TUSK_3D);
+const SCALED_JOBS = jobs(SCALED, SCALED_3D);
+const HERD_JOBS = jobs(HERD, HERD_3D);
+const CLAN_JOBS = jobs(CLANS, CLAN_3D);
+
+
+/**
+ * Round two (Claude's read of round one, 2026-10-12): the turnaround frame stood every animal up as an armoured
+ * beast-man, so the Wild gets a creature frame of its own (four legs, no clothing); the Shedskin leads with its shed
+ * skin (round one dropped it); one outrider came out a rider on a horse and one hoofbreaker with a horse's head, and
+ * centaurs carry no saddle.
+ */
+const creature = (subject: string, materials: string) =>
+  "A creature turnaround sheet of a 3D game creature model: the same four-legged animal shown three times side by side at the same size, in a front view, a side view from the left, and a back view, " +
+  "standing on all four legs in the same neutral pose, like a sculpted and textured asset shown in a modelling program, each view whole from nose to tail. " +
+  `${subject} It is a real wild animal, standing on four legs, not a humanoid, not upright, with no clothing, no armour and no straps. ${materials} ` +
+  "Flat, even, shadowless lighting from all sides, like a texture reference: no cast or painted shadows, no dark recesses. A plain flat light grey background, no ground, no text, no labels.";
+const CENTAUR = "A centaur: from the waist down the whole body of a horse on four legs, joined at the waist to a human torso with a human head and face; no rider and no saddle.";
+
+const WILD_2: Readonly<Record<string, string>> = {
+  "grey-wolf-r2-scarred": "A grey wolf, lean and long-legged, its grey fur ragged and matted, a muzzle crossed with old white scars, one ear torn, ribs showing under the pelt, pale hungry eyes.",
+  "grey-wolf-r2-chain": "A gaunt dark wolf greying at the muzzle, a ridge of bristling hackles down its spine, a broken length of rusted chain hanging from a collar around its neck, long yellowed fangs.",
+  "boar-r2-tusks": "A great wild boar, black bristles standing up along a humped back, two long yellowed tusks cracked at the tips, small furious eyes, a heavy low body caked with dried mud and old arrow scars.",
+  "boar-r2-spears": "A huge old boar with shoulders of thick scarred hide, the broken shafts of two spears still stuck in its back, one tusk snapped short and the other long and curled.",
+  "cave-bear-r2-mangy": "An enormous shaggy cave bear on all fours, brown fur patchy with mange, old arrowheads and a broken spear shaft lodged in its hide, a heavy scarred head, long curved claws.",
+  "cave-bear-r2-grey": "A colossal grey cave bear on all fours with a hump of muscle over its shoulders, moss and lichen grown into its fur, one clouded blind eye, black hooked claws.",
+  "carrion-murder-r2-branch": "Not one animal but a model of a whole flock: a dozen ragged black carrion crows perched along a gnarled dead branch that rests on the ground, wings half spread, beaks open, a torn strip of cloth caught on the branch.",
+  "carrion-murder-r2-mound": "Not one animal but a model of a whole flock: a mound of ragged black carrion crows crowded together on the ground, wings spread and overlapping, many heads and open beaks, loose black feathers.",
+  "old-grey-r2-frost": "Old Grey, a giant wolf twice the height of a man at the shoulder, a mane of frost-white fur, one torn ear, a muzzle scarred white, eyes pale as ice: an old wolf of terrible size.",
+  "old-grey-r2-antlers": "Old Grey, a huge pale wolf with the shed antlers of a great stag tangled into the fur of its neck like a crown, a long grey mane, scarred and ancient.",
+};
+const WILD_2_JOBS = Object.entries(WILD_2).map(([id, subject]) => ({ id: `${id}-turnaround`, prompt: creature(subject, WILD_3D) }));
+
+const SCALED_2_JOBS = jobs(
+  {
+    "shedskin-r2-cloak": { subject: "A lizardman scale-priest: hanging from its shoulders and trailing on the ground behind it, a whole pale translucent moulted lizard skin, empty, still in the shape of a lizard with its limbs and tail, worn as a cloak; beneath it an old thin lizardman in a reed kilt, a bronze disc on its brow, hands empty and open." },
+    "shedskin-r2-peeling": { subject: "A lizardman scale-priest in the middle of shedding: long pale papery strips of old skin peeling off its arms, chest and face, and bright new green scales showing beneath them; shell and bone talismans on cords, a reed kilt, hands empty and open." },
+  },
+  SCALED_3D,
+);
+const HERD_2_JOBS = jobs(
+  {
+    "outrider-r2-dusty": { subject: `${CENTAUR} An outrider: a small fast shaggy steppe-horse body, a wiry torso wrapped in dusty scarves, a fur hat, leather bracers, a quiver strapped to its horse back, hands empty and open.`, pose: CLEAR_POSE },
+    "hoofbreaker-r2-scarred": { subject: `${CENTAUR} A hoofbreaker: a scarred bay draft-horse body with iron rings on its huge hooves, a bare scarred human torso with a broken nose and a heavy mane of hair down the back, hands empty and open.`, pose: CLEAR_POSE },
+  },
+  HERD_3D,
+);
+
 /** Each group of jobs has its own folder, so one group's run doesn't mix into another's manifest. */
 const GROUPS = [
   { dir: "art/candidates/units/grove", jobs: GROVE_JOBS },
@@ -957,6 +1090,14 @@ const GROUPS = [
   { dir: "art/candidates/units/jilliath/angels", jobs: ANGEL_JOBS },
   { dir: "art/candidates/units/jilliath/priests", jobs: PRIEST_JOBS },
   { dir: "art/candidates/units/jilliath/melee", jobs: MELEE_JOBS },
+  { dir: "art/candidates/units/neutrals/wild", jobs: WILD_JOBS },
+  { dir: "art/candidates/units/neutrals/tusk", jobs: TUSK_JOBS },
+  { dir: "art/candidates/units/neutrals/scaled", jobs: SCALED_JOBS },
+  { dir: "art/candidates/units/neutrals/herd", jobs: HERD_JOBS },
+  { dir: "art/candidates/units/neutrals/clans", jobs: CLAN_JOBS },
+  { dir: "art/candidates/units/neutrals/wild", jobs: WILD_2_JOBS },
+  { dir: "art/candidates/units/neutrals/scaled", jobs: SCALED_2_JOBS },
+  { dir: "art/candidates/units/neutrals/herd", jobs: HERD_2_JOBS },
 ];
 
 const args = process.argv.slice(2);

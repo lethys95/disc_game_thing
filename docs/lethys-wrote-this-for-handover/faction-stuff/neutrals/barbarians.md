@@ -56,3 +56,10 @@ bear pelt with two axes; the spearwarden behind a round shield; the hunter in wh
 shamaness with bone charms, a staff of antlers and red handprints; the warlord in scaled iron with a great axe.
 
 **Status:** in game as `berserker`, `spearwarden`, `hunter`, `shamaness`, `warlord` (`?fight=clans`); not on the map.
+
+## Concept log (Claude; every image in `art/candidates/units/neutrals/clans/`)
+**Round one (2026-10-11):** all ten hold: the red-bearded berserker under a bear's head, the woad-faced woman with a
+shaved head and braid; the hunter under a white wolf hood with a quiver, the one in an antlered deer skull; the
+shamaness in a ram's skull, the grey-braided one with red handprints and a raven cloak; the spearwardens (a grey-bearded
+shieldbearer; a woman under white fox fur); the horned warlord in a white bear's hide, the iron-crowned woman with
+skulls at her belt. All dark furs: they hold together as a tribe, and the props (axes, spears, bows) come next.

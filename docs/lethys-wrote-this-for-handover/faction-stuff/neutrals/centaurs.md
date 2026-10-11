@@ -53,3 +53,10 @@ heavy-hoofed with iron-shod feet; the starseer old, blindfolded, star charts tat
 mane of trophies and a long lance.
 
 **Status:** in game as `outrider`, `lancer`, `hoofbreaker`, `starseer`, `herd_khan` (`?fight=herd`); not on the map.
+
+## Concept log (Claude; every image in `art/candidates/units/neutrals/herd/`)
+**Round one (2026-10-11):** centaurs came out well bodied. The blindfolded starseer with star charts tattooed down her
+grey flank is the standout; the antlered one with hanging discs, the khan in a horse-skull helm, the painted lancer
+with red handprints, and the woman outrider with ochre stripes read apart. Misses: the dusty outrider came out as a
+rider on a horse, the scarred hoofbreaker with a horse's head on a human torso, and most wear saddles, which centaurs
+wouldn't. **Round two:** those two again, the body named first and "no saddle".

@@ -59,3 +59,11 @@ small, wiry and hooded, in stolen scraps; the troll gaunt, long-armed and mossy,
 hulk in a chain shirt with a clan totem of skulls on its back.
 
 **Status:** in game as `goblin_cutthroat`, `orc_ravager`, `troll`, `goblin_hexer`, `ogre_warchief` (`?fight=tusk`); not on the map.
+
+## Concept log (Claude; every image in `art/candidates/units/neutrals/tusk/`)
+**Round one (2026-10-11):** the strongest tribe on the first try. Each reads apart: the hooded cutthroat in stolen
+plates and the skull-masked one in a patchwork cloak; the hexer under crow feathers with rat skulls, and the one under
+a huge spore-shedding mushroom cap (the most interesting); the topknot orc with chains and the horned orc hung with
+skulls; the bog troll with barnacle growths (one view draws a stray arm) and the gaunt, long-armed mossy troll (the
+Icewind Dale troll); the ogre in a bell crown and the ogre under a totem of skulls. My picks if you want them: mossy
+troll, mushroom hexer, totem ogre, chained orc, skull-masked cutthroat.
