@@ -623,3 +623,18 @@ The review is recorded in full on the story (`in-progress/ui-kit-grotesques`). W
   tested kit, then the look); the user prefers the map column's grid.
 - **The glass reads as murky red:** "deep red and amber" in every prompt. Real windows read as glass through many
   coordinated colours in their pieces.
+
+## Components first (2026-10-11, after the review)
+- **One unit sheet** (`view/unit-sheet.ts`) for every held right-click: the garrison and meeting grids, the map
+  column, research nodes, the fork prompt, mercenaries, and the battle bar's portrait (which had its own instruments
+  layout). Disciples II's unit card as the model: the peek's parchment hung from a rod, the portrait framed at the left
+  with the name under it, the numbers as labels and values at the right, the abilities below. Flat, not painted.
+- **One squad tile** (`view/squad-tile.ts`) for every 3×3 grid: the portrait covering a square tile, a crown, a line of
+  health, the sheet on a held right-click, no name. A square crops a portrait the same at any size, so screens may size
+  the tile to their room (`--squad-tile` by default, the map column's); the mismatch the user saw came from panes of
+  different shapes and portraits that didn't cover them.
+- **Glass probe** (`shots/glass-probe.html`): the map column's window repainted in three palettes (Chartres blue with
+  ruby and gold; jewel colours; a warm centre in a blue border) by depth-held inpainting of the glass alone
+  (`glass-chartres`, `glass-jewels`, `glass-ember`). All read as stained glass at once, where the red read as murk. The
+  model subdivided each pane into smaller leaded pieces, which keeps the 3×3 legible only because the tiles cover the
+  panes. Waiting on the user's pick.

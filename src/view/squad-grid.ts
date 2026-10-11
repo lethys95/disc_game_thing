@@ -1,11 +1,9 @@
 import type { Tile } from "#rules/battle/types";
 import { COLS, ROWS, sameTile } from "#rules/battle/grid";
 import type { Leader, SquadMember, SquadRef } from "#rules/world/state";
-import { isLeaderOf, maxHpOf } from "#rules/world/record";
-import { art } from "#view/art";
 import { element } from "#view/dom";
-import { memberCard, memberRow, unitName } from "#view/members";
-import { showPeek } from "#view/peek";
+import { memberRow } from "#view/members";
+import { squadTile } from "#view/squad-tile";
 
 /** One squad shown as its 3×3 grid (front row first). */
 export interface GridSquad {
@@ -100,34 +98,20 @@ export function squadGrid(side: GridSquad, options: GridOptions): HTMLElement {
       const tile: Tile = { row, col };
       const member = side.squad.find((m) => sameTile(m.tile, tile));
       const isSelected = options.selected !== null && sameRef(options.selected.ref, side.ref) && sameTile(options.selected.tile, tile);
-      const cell = element("div", `cell${member ? " filled" : ""}${isSelected ? " selected" : ""}`);
+      const cell = squadTile(member, side.leader);
+      cell.classList.add("cell");
       if (member) {
-        cell.appendChild(art({ kind: "portrait", id: member.defId, frame: "icon" }, "thumb"));
-        const lead = isLeaderOf(member, side.leader);
-        cell.appendChild(element("div", "name", `${lead ? "♛ " : ""}${unitName(member.defId)}${member.level > 0 ? ` ${member.level}` : ""}`));
-        const bar = element("div", "hp");
-        const fill = element("div", "fill");
-        fill.style.width = `${(100 * member.hp) / maxHpOf(member, side.leader)}%`;
-        bar.appendChild(fill);
-        cell.appendChild(bar);
+        cell.classList.add("filled");
+        cell.classList.toggle("selected", isSelected);
         cell.draggable = options.mayAct;
         cell.addEventListener("dragstart", (e) => {
           e.dataTransfer?.setData("application/x-disc-unit", JSON.stringify({ ref: side.ref, tile }));
           if (e.dataTransfer) e.dataTransfer.effectAllowed = "move";
         });
         cell.addEventListener("click", () => options.select(isSelected ? null : { ref: side.ref, tile }));
-        // Hold right-click for the unit's card: its numbers now, armor included (released on pointerup).
-        cell.addEventListener("contextmenu", (e) => e.preventDefault());
-        cell.addEventListener("pointerdown", (e) => {
-          if (e.button !== 2) return;
-          const peek = document.getElementById("peek");
-          if (peek) showPeek(peek, [memberCard(member, side.leader)], e.clientX, e.clientY);
-        });
-      } else {
-        cell.appendChild(element("div", "empty", options.mayAct ? "+" : ""));
-        cell.addEventListener("click", () => {
-          if (options.mayAct) openMenu(cell, options.emptyChoices(side.ref, tile));
-        });
+      } else if (options.mayAct) {
+        cell.classList.add("open");
+        cell.addEventListener("click", () => openMenu(cell, options.emptyChoices(side.ref, tile)));
       }
       cell.addEventListener("dragover", (e) => {
         e.preventDefault();

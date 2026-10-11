@@ -11,6 +11,7 @@ import { art } from "#view/art";
 import { miniStack, TarotFan } from "#view/tarot-hand";
 import type { CardCue, FanCard } from "#view/tarot-hand";
 import { byId, element, roman, skull } from "#view/dom";
+import { unitSheet } from "#view/unit-sheet";
 import { explain, explainWith } from "#view/explain";
 import { sees } from "#view/secrecy";
 import type { Settings } from "#view/settings";
@@ -466,7 +467,7 @@ function unitCard(card: HTMLElement, battle: Battle, unit: BattleUnit | undefine
   const def = UNITS[unit.defId];
   const portrait = element("div", "arch");
   portrait.appendChild(art({ kind: "portrait", id: unit.defId, frame: "bust" }, "card-portrait"));
-  card.appendChild(explainWith(portrait, unitLabel(unit, playerSide), unitSheet(battle, unit, stats, def?.spellCharges, playerSide)));
+  card.appendChild(explainWith(portrait, unitLabel(unit, playerSide), battleSheet(battle, unit, stats, def?.spellCharges, playerSide)));
 
   const tier = def?.tier ?? 1;
   const plate = element("div", `plate side${unit.side}`);
@@ -512,85 +513,32 @@ function hitsBadge(stats: Stats): HTMLElement | null {
 }
 
 /** The whole sheet, read under a held right-click on the portrait: the instruments, the effects, every ability. */
-function unitSheet(battle: Battle, unit: BattleUnit, stats: Stats, battery: number | undefined, playerSide: Side | null): HTMLElement {
-  const sheet = element("div", "unit-sheet");
-  sheet.appendChild(instruments(unit, stats, battery));
+function battleSheet(battle: Battle, unit: BattleUnit, stats: Stats, battery: number | undefined, playerSide: Side | null): HTMLElement {
   // Secret effects (a Justiciar's mark) show only to the side that applied them.
-  const shown = unit.effects.filter((e) => sees(battle, playerSide, e.def, e.source));
-  if (shown.length > 0) {
-    const effects = element("div", "effects");
-    for (const effect of shown) {
-      const tag = element("span", `effect ${effect.def}`);
+  const effects = unit.effects
+    .filter((e) => sees(battle, playerSide, e.def, e.source))
+    .map((effect) => {
+      const row = element("div", `effect ${effect.def}`);
+      const tag = element("span", "tag");
       tag.append(art({ kind: "effect", id: effect.def }, "tiny"), effectLabel(effect));
-      effects.appendChild(tag);
-      effects.appendChild(element("div", "note", effectDef(effect.def).describe(effect)));
-    }
-    sheet.appendChild(effects);
-  }
-  const abilities = element("ul", "abilities");
-  for (const ref of unitAbilities(battle, unit.id)) {
-    const behavior = BEHAVIORS[ref.id];
-    if (!behavior || (behavior.kind === "active" && behavior.tags.includes("common"))) continue;
-    const name = ref.name ?? behavior.name;
-    const charges = chargesOf(ref);
-    const head = [element("span", "name", name), ...(charges !== undefined ? [element("span", "charges", ` ${charges - (unit.chargesUsed[ref.id] ?? 0)}/${charges}`)] : [])];
-    const item = element("li", `tile ${behavior.kind}`);
-    item.appendChild(abilityRow(unit.defId, ref, head, stats.abilityPower));
-    abilities.appendChild(item);
-  }
-  sheet.appendChild(abilities);
-  return sheet;
+      row.append(tag, element("span", "note", effectDef(effect.def).describe(effect)));
+      return row;
+    });
+  return unitSheet({
+    defId: unit.defId, leader: unit.leader, level: 0, hp: unit.alive ? unit.hp : 0, maxHp: stats.maxHp, shield: stats.shield > 0 ? unit.shield : 0,
+    armor: stats.armor, initiative: stats.initiative, abilityPower: stats.abilityPower, hits: hitChange(stats),
+    spellCharges: battery !== undefined ? { now: unit.spellCharges, max: battery } : null, xp: null,
+    abilities: unitAbilities(battle, unit.id).map((ref) => {
+      const charges = chargesOf(ref);
+      return { ref, charges: charges !== undefined ? `${charges - (unit.chargesUsed[ref.id] ?? 0)}/${charges}` : "" };
+    }),
+    effects, marks: [],
+  });
 }
 
 /** A unit's abilities it acts with (not its passives), in its own order. */
 function activeAbilities(battle: Battle, unitId: string): AbilityRef[] {
   return unitAbilities(battle, unitId).filter((ref) => BEHAVIORS[ref.id]?.kind === "active");
-}
-
-/**
- * The card's instruments: each value its own shape (`docs/design/hud-kit.md`). Health is a channel with the current
- * number in a seal; armour a shield, initiative an hourglass with a stud per action, ability power a rayed disc, spell
- * charges a row of cells.
- */
-function instruments(unit: BattleUnit, stats: Stats, battery: number | undefined): HTMLElement {
-  const box = element("div", "instruments");
-  const health = element("div", "health");
-  const seal = element("span", "seal", unit.alive ? String(unit.hp) : "");
-  if (!unit.alive) seal.appendChild(skull());
-  if (stats.shield > 0) seal.appendChild(element("span", "shield-seal", String(unit.shield)));
-  const channel = element("div", "channel");
-  const fill = element("div", "fill");
-  fill.style.width = `${(100 * unit.hp) / stats.maxHp}%`;
-  channel.appendChild(fill);
-  if (stats.shield > 0) {
-    const band = element("div", "shield");
-    band.style.width = `${(100 * unit.shield) / stats.shield}%`;
-    channel.appendChild(band);
-  }
-  health.append(seal, channel, element("span", "max", unit.alive ? String(stats.maxHp) : ""));
-  const shieldLine = stats.shield > 0 ? [`Shield ${unit.shield} of ${stats.shield}: it takes hits before health does.`] : [];
-  explain(health, unit.alive ? `Health ${unit.hp} of ${stats.maxHp}` : "Fallen", ...shieldLine);
-  box.appendChild(health);
-
-  const badges = element("div", "badges");
-  const actions = actionsPerRound(stats.initiative);
-  badges.append(
-    badge("armor", "Armor", stats.armor, unit.base.armor, stats.armor > 0 ? `Takes ${armorReduction(stats.armor)}% off each hit.` : "No armor: hits land in full."),
-    badge("initiative", "Initiative", stats.initiative, unit.base.initiative, `${actions} action${actions === 1 ? "" : "s"} a round, one stud each.`, actions),
-    badge("power", "Ability power", stats.abilityPower, unit.base.abilityPower, "Its abilities' numbers grow with it."),
-  );
-  if (battery !== undefined) {
-    badges.appendChild(explain(element("span", "badge charges"), `Spell charges ${unit.spellCharges} of ${battery}`, "Its spells spend them. They come back after the battle."));
-    badges.lastElementChild?.appendChild(cells(unit.spellCharges, battery));
-  }
-  const hits = hitChange(stats);
-  if (hits) {
-    const dealt = element("span", `badge hits ${stats.hitBonus + stats.hitPercent > 0 ? "up" : "down"}`);
-    dealt.append(element("span", "shape"), element("span", "value", hits.replace(" to its hits", "")));
-    badges.appendChild(explain(dealt, "Damage dealt", `${capitalize(hits)}, from its effects.`));
-  }
-  box.appendChild(badges);
-  return box;
 }
 
 /** A value in its shape, lit when raised and red when lowered against the unit's own. What it means: hold right-click. */

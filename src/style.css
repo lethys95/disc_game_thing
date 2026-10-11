@@ -50,7 +50,6 @@ button.action.selected { border-color: var(--blood); box-shadow: 0 0 0.75rem rgb
 button.action .tag { font: 600 0.5625rem var(--text); text-transform: uppercase; letter-spacing: 0.1em; margin-left: 0.375rem; color: var(--gold); vertical-align: middle; }
 button.action .key { font: 600 0.5625rem var(--text); margin-left: 0.375rem; padding: 0 0.1875rem; border: 1px solid #5a4a36; color: var(--muted); vertical-align: middle; }
 
-
 /* Tarot (the user, 2026-10-05): cards floating in a fan at the centre, to flick through like a hand of cards. */
 #tarot {
   position: fixed; inset: 0; z-index: 6; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.125rem;
@@ -256,7 +255,6 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 #menu .menu-footer { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.625rem; }
 #menu .hidden-file { display: none; }
 
-
 .gold { display: inline-flex; align-items: center; gap: 0.25rem; color: #e8c46a; }
 .coin { display: inline-block; width: 1em; height: 1em; vertical-align: -0.12em; }
 .coin svg { width: 100%; height: 100%; display: block; }
@@ -265,15 +263,6 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 .squad .swatch { width: 1.25rem; height: 1.25rem; min-width: 0; padding: 0; border: 2px solid #1a1614; cursor: pointer; }
 .squad .swatch.selected { border-color: #f1eadb; box-shadow: 0 0 0 1px #000; }
 .squad .swatch:disabled { opacity: 0.25; cursor: default; }
-
-
-.def-card { width: 17.5rem; }
-.def-card .title { font: 700 1.25rem var(--display); }
-.def-card .subtitle { color: var(--muted); font-size: 0.6875rem; margin-bottom: 0.375rem; }
-.def-card .stats { font-size: 0.6875rem; margin: 0.25rem 0 0.5rem; clear: both; }
-.def-card .ability { margin: 0.375rem 0; }
-.def-card .ability .name { font: 700 0.875rem var(--display); }
-.def-card .ability .text { font-size: 0.6875rem; color: var(--muted); }
 #forkprompt .note { color: var(--muted); font-size: 0.6875rem; }
 #peek { z-index: 30; }
 
@@ -281,17 +270,14 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 .city-body { display: flex; min-height: 0; flex: 1; }
 .city-body .grids { flex: 1; display: flex; flex-wrap: wrap; gap: 1.75rem; align-content: flex-start; padding: 0.875rem 1.125rem; overflow-y: auto; }
 .city-body .grids > .note { flex-basis: 100%; color: var(--muted); font-size: 0.6875rem; }
-.squad-grid .grid { display: grid; grid-template-columns: repeat(3, 6.5rem); gap: 0.375rem; }
+.squad-grid .grid { display: grid; grid-template-columns: repeat(3, var(--squad-tile)); gap: 0.4rem; }
+.squad-grid .cell { width: var(--squad-tile); height: var(--squad-tile); box-shadow: inset 0 0 0 1px var(--line); background: #120f0d; cursor: pointer; }
+.squad-grid .cell.filled { cursor: grab; }
+.squad-grid .cell.selected { box-shadow: inset 0 0 0 2px #e0c070, 0 0 0.6rem rgba(224, 192, 112, 0.6); }
+.squad-grid .cell.over { box-shadow: inset 0 0 0 2px var(--gold); }
+.squad-grid .cell.refused { box-shadow: inset 0 0 0 2px var(--blood); }
+.squad-grid .cell.open:hover { box-shadow: inset 0 0 0 1px #e0c070; background: #1d1813; }
 .squad-grid .row-label { text-align: center; align-self: end; color: var(--muted); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.08em; }
-.squad-grid .cell { height: 5.75rem; border: 1px dashed var(--line); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.1875rem; cursor: pointer; background: #120f0d; }
-.squad-grid .cell.filled { border-style: solid; background: #1c1714; cursor: grab; }
-.squad-grid .cell.selected { border-color: #e0c070; box-shadow: 0 0 0 1px #e0c070; }
-.squad-grid .cell.over { border-color: var(--gold); background: #2a2118; }
-.squad-grid .cell.refused { border-color: var(--blood); background: #2a1210; }
-.squad-grid .cell .art.thumb { width: 2.75rem; height: 2.75rem; margin: 0; }
-.squad-grid .cell .name { font: 600 0.6875rem var(--text); text-align: center; line-height: 1.1; padding: 0 0.25rem; }
-.squad-grid .cell .hp { width: 80%; height: 0.25rem; }
-.squad-grid .cell .empty { color: #5a4a36; font: 700 1.375rem var(--display); }
 .squad-grid .grid-details { margin-top: 0.625rem; max-width: 23.75rem; }
 .squad-grid .grid-details button { margin: 0.25rem 0.25rem 0 0; }
 .grid-menu { position: fixed; z-index: 40; display: flex; flex-direction: column; gap: 0.25rem; padding: 0.5rem; min-width: 13.75rem; }
@@ -346,8 +332,6 @@ button.action.selected:not(.ability), button.small.selected, button.doctrine.sel
 /* Carved stone behind the full screens where no painting fills them (the user: "a lot of blind spots"). */
 .screen, #setup { background: #0a0909 var(--ui-backdrop, none) repeat; background-size: 16rem; }
 
-#capitol .squad-grid .grid { grid-template-columns: repeat(3, 5.75rem); }
-#capitol .squad-grid .cell { height: 5.25rem; }
 
 /* Every other panel has the HUD kit's light rim (the battle's recess frame); the full screens' tablets, the codex's
    book and the documents' parchment are set per screen below. */
@@ -356,14 +340,12 @@ button.action.selected:not(.ability), button.small.selected, button.doctrine.sel
   background: #222021 padding-box; box-shadow: 0 0.5rem 1.2rem rgba(0, 0, 0, 0.6); border-radius: 0;
 }
 
-
 #setup { overflow-y: auto; }
 #setup .panel { border-width: 0.75rem; border-image-width: 0.875rem; }
 #setup { padding: 0.5rem 1.125rem; gap: 0.375rem; }
 #setup .setup-header .title { font-size: 1.875rem; line-height: 1.1; }
 #setup button.action.fight { font-size: 1.1875rem; padding: 0 1.875rem; }
 #setup button.doctrine { border-width: 0.375rem; border-image-width: 0.375rem 0.875rem; padding: 0 0.625rem; }
-
 
 /* The frame-rate readout (a setting) for judging performance on real hardware. */
 .fps-meter {
@@ -532,7 +514,6 @@ body.formulas .formula { display: inline; }
   --roller: linear-gradient(#5a3a1c, #b98a4e 35%, #e0b878 50%, #8a5e2e 75%, #3e2812);
   --moment: "Grenze Gotisch", var(--display);
 
-
 }
 #battlehud { position: fixed; inset: 0; z-index: 2; pointer-events: none; }
 /* The scene darkens toward the bar. */
@@ -563,8 +544,6 @@ body.formulas .formula { display: inline; }
 #turns .niche .band { position: absolute; left: 0; right: 0; bottom: calc(3 * var(--u)); height: calc(4 * var(--u)); }
 #turns .niche.side0 .band { background: var(--side0); }
 #turns .niche.side1 .band { background: var(--side1); }
-
-
 
 /* The bar (assets/ui/battle/bar.webp, painted from art/greybox/battle-bar-duel-dull-nostone/ by the hud-paint-in
    skill; docs/design/hud-pieces.md, "The battle bar"). 88.89 by 11.57rem, the screen's width at 16:9 and the default
@@ -642,62 +621,6 @@ body.formulas .formula { display: inline; }
 #battlebar .knob[hidden] { display: none; }
 #tarot-icon { overflow: hidden; }
 #tarot-icon .mini-card { width: 0.7rem; height: 1.2rem; margin: 0 -0.2rem; border-radius: 0.1rem; border: 1px solid #3a2c20; background: center / cover #120e0d; }
-
-/* The whole sheet of a unit, read under a held right-click on its portrait. */
-#peek:has(.unit-sheet) { width: 22rem; }
-.unit-sheet .abilities { list-style: none; margin: 0.5rem 0 0; padding: 0.4rem 0 0; border-top: 1px solid var(--rule); display: flex; flex-direction: column; gap: 0.45rem; }
-.unit-sheet .abilities .tile.passive .name { font-style: italic; }
-.unit-sheet .effects { margin-top: 0.4rem; }
-.unit-sheet .effect { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.7rem; color: #e0a090; }
-.unit-sheet .effects .note { color: var(--muted); font-size: 0.7rem; margin-bottom: 0.25rem; }
-/* The peek's formation cells are taller; the sheet's grids keep the codex's size. */
-#peek .unit-sheet .targeting-grid .cell { width: 0.5rem; height: 0.5rem; min-height: 0; padding: 0; border-style: solid; }
-#peek .unit-sheet .ability-row { margin-top: 0; }
-#peek .unit-sheet .ability-row .body .name { display: inline; font: 700 0.85rem var(--display); color: var(--ink); }
-/* The instruments: each value its own shape. */
-.unit-sheet .instruments { margin: 0 0 0.3rem; }
-.unit-sheet .health { display: flex; align-items: center; gap: 0.35rem; }
-/* The health's number sits on the dark centre of an engraved silver seal (assets/ui/icon-seal.webp). */
-.unit-sheet .seal {
-  position: relative; display: grid; place-items: center; flex: none; width: 2.5rem; height: 2.5rem; border-radius: 50%;
-  background: var(--ui-icon-seal) center / contain no-repeat; color: #f2e8d6; font: 700 0.95rem var(--display); text-shadow: 0 1px 0.15rem #000;
-}
-/* A shield is a second, pale seal pressed against the health's. */
-.unit-sheet .seal .shield-seal {
-  position: absolute; right: -0.65rem; bottom: -0.45rem; min-width: 1.5rem; height: 1.5rem; padding: 0 0.15rem; border-radius: 0.75rem; box-sizing: border-box;
-  display: grid; place-items: center; font: 700 0.62rem var(--text); color: var(--gb-ink); background: var(--gb-shield); border: 0.12rem solid var(--gb-iron);
-}
-.unit-sheet .seal .skull { width: 1.5rem; height: 1.5rem; }
-.unit-sheet .channel { position: relative; flex: 1; height: 0.75rem; background: var(--gb-stone-lo); border: 0.1rem solid var(--gb-iron); box-shadow: inset 0 0.15rem 0.25rem rgba(0, 0, 0, 0.8); }
-.unit-sheet .channel .fill { position: absolute; inset: 0 auto 0 0; background: var(--gb-health); }
-.unit-sheet .channel .shield { position: absolute; left: 0; top: -0.4rem; height: 0.25rem; background: repeating-linear-gradient(90deg, var(--gb-shield) 0 0.6rem, transparent 0.6rem 0.75rem); }
-.unit-sheet .max { color: var(--muted); font: 600 0.75rem var(--display); }
-.unit-sheet .health { cursor: help; }
-.unit-sheet .badges { display: grid; grid-template-columns: 1fr 1fr; gap: 0.32rem 0.4rem; margin-top: 0.5rem; }
-.unit-sheet .badge { display: flex; align-items: center; gap: 0.22rem; cursor: help; }
-/* Each value's shape is an engraved silver emblem, the Capitol tabs' metal (assets/ui/icon-*.webp). */
-.unit-sheet .badge .shape { flex: none; width: 1.15rem; height: 1.15rem; background: center / contain no-repeat; }
-.unit-sheet .badge.armor .shape { background-image: var(--ui-icon-armor); }
-.unit-sheet .badge.initiative .shape { background-image: var(--ui-icon-initiative); }
-.unit-sheet .badge.power .shape { background-image: var(--ui-icon-power); }
-.unit-sheet .badge .value { font: 700 0.85rem var(--display); color: var(--ink); line-height: 1; }
-.unit-sheet .badge .value.up { color: #7a5410; }
-.unit-sheet .badge .value.down { color: #8a2418; }
-.unit-sheet .badge .studs { font-size: 0.45rem; color: #7a5410; letter-spacing: 0.03em; }
-.unit-sheet .badge.hits .shape { background-image: var(--ui-icon-hits); }
-.unit-sheet .badge.hits.up .value { color: #7a5410; }
-.unit-sheet .badge.hits.down .value { color: #8a2418; }
-.unit-sheet .effects { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-bottom: 0.4rem; }
-.unit-sheet .effect { padding: 1px 0.375rem; font-size: 0.65rem; color: #7a2418; border: 1px solid var(--sheet-rule); cursor: help; }
-/* A rod between the instruments and the abilities, with a boss at its middle. */
-.unit-sheet .abilities { position: relative; flex: 1; min-height: 0; overflow-y: auto; list-style: none; margin: 0; padding: 0.5rem 0 0; border-top: 0.1rem solid var(--sheet-rule); }
-.unit-sheet .abilities .tile { position: relative; display: flex; align-items: center; gap: 0.35rem; padding: 0.12rem 0; cursor: help; }
-.unit-sheet .abilities .tile .art.tile-icon { flex: none; width: 1.5rem; height: 1.5rem; margin: 0; font-size: 0.6rem; border: 0.1rem solid #3a2c20; background-size: cover; }
-.unit-sheet .abilities .tile .name { font: 700 0.82rem var(--display); line-height: 1.05; }
-.unit-sheet .abilities .tile.passive .name { color: var(--muted); font-weight: 500; font-style: italic; }
-.unit-sheet .abilities .tile .uses { display: flex; gap: 0.15rem; margin-left: auto; }
-.unit-sheet .abilities .tile .bead { width: 0.42rem; height: 0.42rem; border-radius: 50%; background: #b8862a; box-shadow: inset 0 0 0 0.08rem #5a3e10; }
-.unit-sheet .abilities .tile .bead.spent { background: none; box-shadow: inset 0 0 0 0.08rem var(--sheet-muted); }
 /* An ability's rules in the peek: its row as the codex shows it, grids beside the text. */
 #peek .ability-row { margin-top: 0.35rem; }
 #peek .ability-row > .art.ability-icon { display: none; }
@@ -740,8 +663,6 @@ body.formulas .formula { display: inline; }
 #actions .socket .cells { position: absolute; right: -0.65rem; top: 0.4rem; display: flex; flex-direction: column; gap: 0.12rem; }
 .cells .cell { width: 0.42rem; height: 0.62rem; background: var(--gb-magic); box-shadow: 0 0 0.3rem rgba(79, 216, 207, 0.6); }
 .cells .cell.spent { background: var(--gb-stone-lo); box-shadow: inset 0 0 0 0.08rem var(--gb-iron); }
-.unit-sheet .badge.charges .cells { display: flex; gap: 0.15rem; }
-.unit-sheet .badge.charges .cell { width: 0.55rem; height: 0.85rem; }
 /* The overload toggle: a gem on the socket's rim, lit when on. */
 #actions .socket button.overload {
   position: absolute; right: -0.55rem; top: -0.55rem; width: 1.35rem; height: 1.35rem; padding: 0; border-radius: 50%; cursor: pointer;
@@ -755,7 +676,6 @@ body.formulas .formula { display: inline; }
 #rules .slip .why { margin-top: 0.35rem; font-size: 0.68rem; font-style: italic; color: #6a2a1e; }
 #rules .slip .scaled { color: #7a4a10; border-bottom-color: rgba(122, 74, 16, 0.6); }
 #rules .slip .formula { color: #6a5a40; }
-
 
 /* The log, opened from its knob: the whole battle on parchment, over the field above the bar's right end. */
 #logstele {
@@ -831,11 +751,6 @@ body.formulas .formula { display: inline; }
 #mapsquad .pane.x0 { --x: 47.4; --w: 63.6; } #mapsquad .pane.x1 { --x: 118.2; --w: 64.6; } #mapsquad .pane.x2 { --x: 189; --w: 63.6; }
 #mapsquad .pane.y0 { --y: 266.3; --h: 64.5; } #mapsquad .pane.y1 { --y: 336.4; --h: 66; } #mapsquad .pane.y2 { --y: 408.1; --h: 63.9; }
 #mapsquad .pane.empty { box-shadow: none; }
-#mapsquad .pane .art { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; background-size: cover; background-position: 50% 15%; display: grid; place-items: center; font: 700 1.2rem var(--display); }
-#mapsquad .pane .crown { position: absolute; left: 0.2rem; top: 0.1rem; font-size: 0.8rem; color: #e8c36c; text-shadow: 0 0 0.15rem #000; }
-#mapsquad .pane-hp { position: absolute; left: 0; right: 0; bottom: 0; height: 0.3rem; background: rgba(0, 0, 0, 0.75); }
-#mapsquad .pane-hp .fill { position: absolute; inset: 0 auto 0 0; background: var(--gb-health); }
-#mapsquad .pane.fallen .art { filter: grayscale(1) brightness(0.45); }
 #mapsquad .pane:not(.empty):hover { box-shadow: inset 0 0 0 0.125rem #e8c36c; }
 /* The three sockets: the leader tree, End turn (raised, in the middle), what can be done here. The glyph is the
    engraved emblem; End turn's is an hourglass. */
@@ -955,19 +870,14 @@ body.formulas .formula { display: inline; }
     linear-gradient(#c9b48a, #c9b48a) 100% 100% / 0.7em 2px, linear-gradient(#c9b48a, #c9b48a) 100% 100% / 2px 0.7em;
   background-repeat: no-repeat; opacity: 0.85;
 }
-.garrison-wall .squad-grid .cell .empty { color: rgba(240, 220, 180, 0.55); }
 #capitol .garrison-wall .squad-grid .cell.filled { background-color: rgba(12, 10, 9, 0.78); opacity: 1; box-shadow: inset 0 0 0 1px rgba(201, 180, 138, 0.45); }
 #capitol .garrison-wall .squad-grid .cell.selected { box-shadow: inset 0 0 0 2px #e0c070, 0 0 0.6em rgba(224, 192, 112, 0.6); }
 #capitol .garrison-wall .squad-grid .cell.over { background-color: rgba(60, 44, 24, 0.75); }
 #capitol .garrison-wall .squad-grid .cell.refused { background-color: rgba(70, 18, 14, 0.8); }
-.garrison-wall .squad-grid .cell .name { color: var(--light); }
 .garrison-wall .squad-grid > .section {
   left: calc(var(--px) * var(--u)); top: calc(680 * var(--u)); width: calc(278 * var(--u)); height: calc(38 * var(--u));
   display: flex; align-items: center; justify-content: center; white-space: nowrap; color: var(--ink); font: 700 0.95em var(--display); text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
 }
-.garrison-wall .squad-grid .cell .name { font-size: 0.6875em; }
-.garrison-wall .squad-grid .cell .art.thumb { width: calc(47.5 * var(--u)); height: calc(47.5 * var(--u)); }
-.garrison-wall .squad-grid .cell .empty { font-size: 1.375em; }
 .garrison-wall button.small { font-size: 0.6875em; }
 /* The orders well: the selected unit's details and orders, or how the grids work. */
 .garrison-wall .squad-grid .grid-details, .garrison-wall .orders-hint {
@@ -1041,11 +951,6 @@ body.formulas .formula { display: inline; }
 .warband-column .pane.x0 { --x: 29.2; --w: 76; } .warband-column .pane.x1 { --x: 112.5; --w: 75.5; } .warband-column .pane.x2 { --x: 195.8; --w: 75; }
 .warband-column .pane.y0 { --y: 274.5; --h: 74.5; } .warband-column .pane.y1 { --y: 353.6; --h: 78.7; } .warband-column .pane.y2 { --y: 437.5; --h: 78.6; }
 .warband-column .pane.empty { box-shadow: none; }
-.warband-column .pane .art { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; background-size: cover; background-position: 50% 15%; display: grid; place-items: center; font: 700 1.2rem var(--display); }
-.warband-column .pane .crown { position: absolute; left: 0.2rem; top: 0.1rem; font-size: 0.8rem; color: #e8c36c; text-shadow: 0 0 0.15rem #000; }
-.warband-column .pane-hp { position: absolute; left: 0; right: 0; bottom: 0; height: 0.3rem; background: rgba(0, 0, 0, 0.75); }
-.warband-column .pane-hp .fill { position: absolute; inset: 0 auto 0 0; background: var(--gb-health); }
-.warband-column .pane.fallen .art { filter: grayscale(1) brightness(0.45); }
 .warband-column .fact { --x: 18; --w: 264; --h: 25; font: 600 0.72rem var(--text); color: #e6dccb; text-shadow: 0 1px 2px #000; }
 .warband-column .fact.f0 { --y: 557; } .warband-column .fact.f1 { --y: 592; } .warband-column .fact.f2 { --y: 628; }
 .warband-column .seal { --x: 98; --y: 718; --w: 104; --h: 104; border-radius: 50%; }
@@ -1204,3 +1109,43 @@ body.formulas .formula { display: inline; }
   font: 600 0.66rem var(--text); text-shadow: 0 1px 0 #000;
 }
 .site-label.neutral { -webkit-text-fill-color: #b9b0a2; }
+
+/* A unit's sheet, the held right-click everywhere (view/unit-sheet.ts; Disciples II's unit card the model): the peek's
+   parchment hangs from a rod; the portrait framed at the left with the name under it, the numbers a list of labels
+   and values at the right, the abilities below. */
+#peek:has(.unit-sheet-card) { width: 27rem; padding: 1.4rem 1.1rem 0.9rem; }
+#peek:has(.unit-sheet-card) > .title { display: none; }
+.unit-sheet-card { position: relative; color: var(--ink); }
+.unit-sheet-card .rod {
+  position: absolute; left: -1.6rem; right: -1.6rem; top: -1.95rem; height: 0.55rem; border-radius: 0.3rem;
+  background: linear-gradient(#5a4430, #2a1d12); box-shadow: 0 0.15rem 0.3rem rgba(0, 0, 0, 0.6);
+}
+.unit-sheet-card .rod::before, .unit-sheet-card .rod::after { content: ""; position: absolute; top: -0.25rem; width: 1rem; height: 1rem; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #8a7356, #2a1d12); }
+.unit-sheet-card .rod::before { left: -0.4rem; } .unit-sheet-card .rod::after { right: -0.4rem; }
+.unit-sheet-card .top { display: grid; grid-template-columns: 9rem 1fr; gap: 1rem; align-items: start; }
+.unit-sheet-card .sheet-portrait { display: block; width: 9rem; height: 9rem; margin: 0; background-size: cover; background-position: 50% 15%; box-shadow: 0 0 0 0.2rem #2a1d12, 0 0 0 0.32rem #8a7356; font-size: 1.6rem; }
+.unit-sheet-card .sheet-name { margin-top: 0.55rem; text-align: center; font: 700 1.15rem/1.1 var(--display); }
+.unit-sheet-card .facts { display: grid; grid-template-columns: auto 1fr; gap: 0.18rem 0.8rem; margin: 0; font-size: 0.78rem; }
+.unit-sheet-card .facts dt { font-weight: 600; color: var(--muted); }
+.unit-sheet-card .facts dd { margin: 0; font-weight: 600; }
+.unit-sheet-card .sheet-effects { margin-top: 0.6rem; display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.72rem; }
+.unit-sheet-card .sheet-effects .tag { display: inline-flex; align-items: center; gap: 0.25rem; margin-right: 0.4rem; font-weight: 700; color: #7a2418; }
+.unit-sheet-card .sheet-abilities { margin-top: 0.7rem; padding-top: 0.55rem; border-top: 1px solid var(--rule); display: flex; flex-direction: column; gap: 0.45rem; }
+#peek .unit-sheet-card .ability-row { margin-top: 0; grid-template-columns: auto minmax(0, 1fr) auto; }
+#peek .unit-sheet-card .ability-row > .art.ability-icon { display: block; width: 2.2rem; height: 2.2rem; }
+#peek .unit-sheet-card .ability-row .body .name { display: inline; font: 700 0.85rem var(--display); color: var(--ink); }
+#peek .unit-sheet-card .ability-row .text { display: block; }
+.unit-sheet-card .ability-row .body .charges { font-size: 0.7rem; color: var(--muted); }
+#peek .unit-sheet-card .targeting-grid .cell { width: 0.45rem; height: 0.45rem; min-height: 0; padding: 0; border-style: solid; }
+.unit-sheet-card .sheet-mark { margin-top: 0.3rem; font-size: 0.7rem; color: var(--muted); }
+
+/* The squad tile (view/squad-tile.ts), one for every squad grid: the portrait covers it, cropped to the face, never
+   stretched; a crown for the leader; health a line at its foot. One size where the screen is free to choose it, the
+   map column's (--squad-tile), so a portrait crops the same everywhere. */
+:root { --squad-tile: 3.75rem; }
+.squad-tile { position: relative; box-sizing: border-box; overflow: hidden; }
+.squad-tile .tile-art { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; background-size: cover; background-position: 50% 15%; display: grid; place-items: center; font: 700 1.2rem var(--display); }
+.squad-tile .crown { position: absolute; left: 0.2rem; top: 0.1rem; font-size: 0.8rem; color: #e8c36c; text-shadow: 0 0 0.15rem #000; }
+.squad-tile .tile-hp { position: absolute; left: 0; right: 0; bottom: 0; height: 0.3rem; background: rgba(0, 0, 0, 0.75); }
+.squad-tile .tile-hp .fill { position: absolute; inset: 0 auto 0 0; background: var(--gb-health); }
+.squad-tile.fallen .tile-art { filter: grayscale(1) brightness(0.45); }

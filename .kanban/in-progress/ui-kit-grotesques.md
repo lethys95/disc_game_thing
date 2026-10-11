@@ -246,3 +246,11 @@
   looking at is in fact stained glass [...] ours is like murky red", where real stained glass has "multiple colors in
   between segments in a coordinated way"; "we can absolutely use stained glass [...] But I do wonder if we couldn't
   do more with it".
+- **The user on the plan (2026-10-11):** "Yes. Be careful not everything just turns grey with the gothic stuff. But
+  otherwise give it a shot. I'd prepare yourself that this process of creating and then scrapping repeatedly is
+  probably going to happen a lot, so I hope we'll learn something from it in each iteration." Order: components first
+  (one squad tile, the unit card, the tree), screens greyboxed with real content for the user to judge, then paint
+  (gothic ornament, not knotwork; many-coloured glass; matched density; designed joints). Alongside: the map column's
+  window repainted in a few glass palettes for the user to pick.
+- **The user (2026-10-11):** "I'm pretty confident in the boxout strategy we've learnt by the way, but maybe having a
+  segment upscaling step after that is the next part in that chain." Box out, paint in, then segment upscaling.

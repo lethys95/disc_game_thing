@@ -1,7 +1,5 @@
 import { itemById } from "#rules/items";
 import { NODES } from "#rules/nodes";
-import { BEHAVIORS, elementsOf } from "#rules/abilities/index";
-import { abilityRow } from "#view/ability-text";
 import { effectDef } from "#rules/effects";
 import type { Commitment } from "#rules/forks";
 import { nextForm, xpToEvolve, xpToLevel } from "#rules/progression";
@@ -12,9 +10,8 @@ import { isLeaderOf, maxHpOf, placementOf, recordOf } from "#rules/world/record"
 import { ownStats } from "#rules/battle/engine";
 import type { Stats } from "#rules/battle/types";
 import type { Leader, Mark, SquadMember } from "#rules/world/state";
-import { art } from "#view/art";
 import { element } from "#view/dom";
-import { armorReduction } from "#rules/battle/damage";
+import { unitSheet } from "#view/unit-sheet";
 
 /** A squad member as the map's panels show it: name, health, progress, and its track record. */
 
@@ -69,47 +66,45 @@ export function memberRow(m: SquadMember, leader: Leader | undefined, commitment
   return row;
 }
 
-/** What a unit type is, before you have one: portrait, stats and abilities (for choosing a branch). */
 /** What buffs add to its damaging hits, if anything: "+10 to its hits", "+25% to its hits". */
 export function hitChange(s: Stats): string {
   const parts = [s.hitPercent !== 0 ? `${s.hitPercent > 0 ? "+" : ""}${s.hitPercent}%` : "", s.hitBonus !== 0 ? `${s.hitBonus > 0 ? "+" : ""}${s.hitBonus}` : ""].filter((p) => p);
   return parts.length > 0 ? `${parts.join(", ")} to its hits` : "";
 }
 
-/** `abilityPower`: what its abilities are described at (a veteran's is higher than its type's). */
-export function unitDefCard(defId: string, abilityPower?: number): HTMLElement {
+/** What a unit type is, before you have one (choosing a branch, a node in the research tree): its sheet at its own numbers. */
+export function unitDefCard(defId: string): HTMLElement {
   const def = UNITS[defId];
-  const card = element("div", "def-card");
-  if (!def) return card;
-  card.appendChild(art({ kind: "portrait", id: defId, frame: "bust" }, "card-portrait"));
-  card.append(element("div", "title", def.name), element("div", "subtitle", `Tier ${def.tier}`));
+  if (!def) return element("div", "unit-sheet-card");
   const s = def.stats;
-  const facts = [`${s.maxHp} HP`, s.shield > 0 ? `${s.shield} shield` : "", s.armor > 0 ? `${s.armor} armor (${armorReduction(s.armor)}%)` : "0 armor", `${s.initiative} initiative`, `${s.abilityPower} ability power`, elementsOf(def).length === 0 ? "" : `deals ${elementsOf(def).join(", ")}`];
-  if (def.spellCharges) facts.push(`${def.spellCharges} spell charges`);
-  card.appendChild(element("div", "stats", facts.filter((f) => f).join(" · ")));
-  for (const ref of def.abilities) {
-    const behavior = BEHAVIORS[ref.id];
-    if (!behavior || (behavior.kind === "active" && behavior.tags.includes("common"))) continue;
-    const item = element("div", "ability");
-    item.appendChild(abilityRow(defId, ref, [element("span", "name", ref.name ?? behavior.name)], abilityPower ?? s.abilityPower));
-    card.appendChild(item);
+  return unitSheet({
+    defId, leader: false, level: 0, hp: null, maxHp: s.maxHp, shield: s.shield, armor: s.armor, initiative: s.initiative, abilityPower: s.abilityPower,
+    hits: "", spellCharges: def.spellCharges ? { now: def.spellCharges, max: def.spellCharges } : null, xp: null,
+    abilities: def.abilities.map((ref) => ({ ref, charges: "" })), effects: [], marks: [],
+  });
+}
+
+/** Where a unit stands on its way to its next level or form, or null. */
+function xpLine(m: SquadMember, commitment: Commitment | undefined): string | null {
+  const needed = xpToEvolve(m.defId);
+  if (commitment && needed !== null) {
+    const next = nextForm(m.defId, commitment);
+    return next ? `${m.xp} / ${needed} → ${unitName(next)}` : m.xp >= needed ? "Ready: choose a branch" : `${m.xp} / ${needed}`;
   }
-  return card;
+  const perLevel = xpToLevel(m.defId);
+  return perLevel === null ? null : `${m.xp} / ${perLevel} → level ${m.level + 1}`;
 }
 
 /**
- * A squad member's card for the hold-right-click peek: its type's card with the numbers it would fight with now
- * (marks, levels and the leader tree included), its health, and its track record.
+ * A squad member's sheet for the held right-click: its numbers as it would fight now (marks, levels and the leader
+ * tree included), its health, its progress and its track record.
  */
-export function memberCard(m: SquadMember, leader: Leader | undefined): HTMLElement {
+export function memberCard(m: SquadMember, leader: Leader | undefined, commitment?: Commitment): HTMLElement {
   const s = ownStats(placementOf(m, leader));
-  const card = unitDefCard(m.defId, s.abilityPower);
   const def = UNITS[m.defId];
-  const facts = [`${m.hp} / ${maxHpOf(m, leader)} HP`, s.shield > 0 ? `${s.shield} shield` : "", s.armor > 0 ? `${s.armor} armor (${armorReduction(s.armor)}%)` : "0 armor", `${s.initiative} initiative`, `${s.abilityPower} ability power`, hitChange(s), def && elementsOf(def).length > 0 ? `deals ${elementsOf(def).join(", ")}` : ""];
-  if (def?.spellCharges) facts.push(`${def.spellCharges} spell charges`);
-  card.querySelector(".stats")?.replaceWith(element("div", "stats", facts.filter((f) => f).join(" · ")));
-  const title = card.querySelector(".title");
-  if (title) title.textContent = `${isLeaderOf(m, leader) ? "♛ " : ""}${unitName(m.defId)}${m.level > 0 ? ` · level ${m.level}` : ""}`;
-  for (const mark of recordOf(m, leader)) card.appendChild(element("div", "note", markText(mark)));
-  return card;
+  return unitSheet({
+    defId: m.defId, leader: isLeaderOf(m, leader), level: m.level, hp: m.hp, maxHp: maxHpOf(m, leader), shield: s.shield, armor: s.armor,
+    initiative: s.initiative, abilityPower: s.abilityPower, hits: hitChange(s), spellCharges: def?.spellCharges ? { now: def.spellCharges, max: def.spellCharges } : null,
+    xp: xpLine(m, commitment), abilities: (def?.abilities ?? []).map((ref) => ({ ref, charges: "" })), effects: [], marks: recordOf(m, leader).map(markText),
+  });
 }

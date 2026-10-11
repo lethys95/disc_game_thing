@@ -39,7 +39,7 @@ const city: Playtest = {
     await t.page.mouse.down({ button: "right" });
     const card = await t.page.locator("#peek").textContent();
     t.log(`peek: ${card?.slice(0, 80)}`);
-    if (!card?.includes("armor")) t.fail("holding right-click on a unit shows no card with its armor");
+    if (!card?.includes("Armor")) t.fail("holding right-click on a unit shows no card with its armor");
     await t.shot("playtest-city-peek");
     await t.page.mouse.up({ button: "right" });
     await t.shot("playtest-city");

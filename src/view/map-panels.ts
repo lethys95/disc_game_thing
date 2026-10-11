@@ -6,14 +6,13 @@ import { playerOf } from "#rules/world/state";
 import type { Leader, PlayerId, World } from "#rules/world/state";
 import { cityName } from "#view/city";
 import type { Place } from "#view/city";
-import { art } from "#view/art";
 import { button, buttonById, byId, element, movementPips } from "#view/dom";
-import { explain, explainWith } from "#view/explain";
+import { squadTile } from "#view/squad-tile";
+import { explain } from "#view/explain";
 import { STRUCTURES } from "#rules/structures";
 import { structureAt } from "#rules/world/structures";
 import { leaderName } from "#view/map-text";
-import { memberRow, unitName } from "#view/members";
-import { isLeaderOf, maxHpOf } from "#rules/world/record";
+import { unitName } from "#view/members";
 import { raisesDeadAt } from "#rules/world/economy";
 import { spellBar } from "#view/spells";
 
@@ -85,23 +84,13 @@ export class MapPanels {
       for (const col of [0, 1, 2] as const) {
         const m = leader.squad.find((u) => u.tile.row === row && u.tile.col === col);
         // The window shows the grid a quarter turned: a squad's back row (row 2) is its left column.
-        const cell = element("button", `pane x${2 - row} y${col}${m ? "" : " empty"}`);
+        const tile = squadTile(m, leader, commitment);
+        tile.classList.add("pane", `x${2 - row}`, `y${col}`);
         if (m) {
-          cell.appendChild(art({ kind: "portrait", id: m.defId, frame: "icon" }, "pane-art"));
-          if (isLeaderOf(m, leader)) cell.appendChild(element("span", "crown", "♛"));
-          const hp = element("span", "pane-hp");
-          const fill = element("span", "fill");
-          fill.style.width = `${(100 * m.hp) / maxHpOf(m, leader)}%`;
-          hp.appendChild(fill);
-          cell.appendChild(hp);
-          cell.classList.toggle("fallen", m.hp <= 0);
-          explainWith(cell, unitName(m.defId), memberRow(m, leader, commitment));
-          cell.addEventListener("click", () => this.actions.openLeader(leader.id));
-        } else {
-          cell.disabled = true;
-          explain(cell, "An empty place", "Recruit into it in a city.");
+          explain(tile, unitName(m.defId), "Click for the warband's leader screen. Hold right-click for its sheet.");
+          tile.addEventListener("click", () => this.actions.openLeader(leader.id));
         }
-        this.squad.appendChild(cell);
+        this.squad.appendChild(tile);
       }
     }
   }

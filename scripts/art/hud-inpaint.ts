@@ -52,6 +52,42 @@ const REPAIRS: Readonly<Record<string, Repair>> = {
       "Game interface art, a dark iron bar in soft even light. At the left end, carved in deep relief in old worn blackened iron, a grown veiled woman in long robes with a folded feathered wing, kneeling on a ledge, both hands laid flat and gently on a large sphere of deep red glass that fills its round iron rim edge to edge, her arms and hands well formed, each hand with five fingers. " +
       "At the right end, mirroring her, carved the same way, a grown hooded figure with small curved horns and a folded bat wing, kneeling, both hands laid flat on another sphere of deep red glass that fills its rim edge to edge, arms and hands well formed. No text, no letters.",
   },
+  /** The map column's window in another glass (the user, 2026-10-11: ours reads "murky red"; real windows use many colours in coordination). Chartres blue: cobalt ground, ruby and gold through it, emerald accents. */
+  "glass-chartres": {
+    source: "art/candidates/ui/inpaint/column-third-arm/column-third-arm-d65-4.png",
+    page: [300, 864],
+    boxes: [[26, 212, 248, 270]],
+    denoise: [0.75, 0.9],
+    depth: { map: "art/greybox/map-column-duality/depth.png", strength: 1 },
+    prompt:
+      "Game interface art in soft even light: a gothic stained glass window seen straight on, glowing with light from behind, the grey lead cames and iron bars exactly where they are. " +
+      "Chartres blue: the window's ground a deep luminous cobalt blue, with ruby red and gold yellow pieces set through it in a regular pattern, a few small emerald green pieces; the border strips alternate ruby and gold; the tracery head blue with gold and ruby." +
+      " Real medieval cathedral glass: each square pane is made of several smaller leaded pieces with faint painted detail, the colours clear, saturated and luminous, not murky. No text, no letters.",
+  },
+  /** The map column's window in another glass (the user, 2026-10-11: ours reads "murky red"; real windows use many colours in coordination). Jewel colours: the panes alternate sapphire, ruby, emerald, amber and violet. */
+  "glass-jewels": {
+    source: "art/candidates/ui/inpaint/column-third-arm/column-third-arm-d65-4.png",
+    page: [300, 864],
+    boxes: [[26, 212, 248, 270]],
+    denoise: [0.75, 0.9],
+    depth: { map: "art/greybox/map-column-duality/depth.png", strength: 1 },
+    prompt:
+      "Game interface art in soft even light: a gothic stained glass window seen straight on, glowing with light from behind, the grey lead cames and iron bars exactly where they are. " +
+      "Jewel colours in a coordinated pattern: the nine square panes alternate sapphire blue, ruby red, emerald green, amber gold and violet, no two neighbours alike, the centre pane gold; the border strips small pieces of every colour in turn; the tracery head ruby and sapphire around a gold centre." +
+      " Real medieval cathedral glass: each square pane is made of several smaller leaded pieces with faint painted detail, the colours clear, saturated and luminous, not murky. No text, no letters.",
+  },
+  /** The map column's window in another glass (the user, 2026-10-11: ours reads "murky red"; real windows use many colours in coordination). Ember and sky: warm ruby and gold panes inside a sapphire border and head. */
+  "glass-ember": {
+    source: "art/candidates/ui/inpaint/column-third-arm/column-third-arm-d65-4.png",
+    page: [300, 864],
+    boxes: [[26, 212, 248, 270]],
+    denoise: [0.75, 0.9],
+    depth: { map: "art/greybox/map-column-duality/depth.png", strength: 1 },
+    prompt:
+      "Game interface art in soft even light: a gothic stained glass window seen straight on, glowing with light from behind, the grey lead cames and iron bars exactly where they are. " +
+      "Ember and sky: the nine square panes warm ruby red, crimson and gold amber, set inside a border of deep sapphire blue strips, the tracery head deep blue with gold and ruby pieces, so the warm centre glows against the cool blue around it." +
+      " Real medieval cathedral glass: each square pane is made of several smaller leaded pieces with faint painted detail, the colours clear, saturated and luminous, not murky. No text, no letters.",
+  },
   /** The garrison wall's effigy: one forearm stood up from his chest and the other was lost; hands folded, as asked. */
   "garrison-effigy": {
     source: "art/candidates/ui/paint-in/capitol-garrison/capitol-garrison-6.png",
