@@ -666,3 +666,18 @@ here, and not just 'I want more colors'." The first glass probe was more colours
 - **Rested (the user, 2026-10-11):** scarlet read as glass, but not well enough to call the problem solved; the user
   concluded the model is weak at stained glass or the prompting is wrong, and that this is polish before its time. The
   original glass stays.
+
+## Jilliath's Capitol on the judged layout (2026-10-11)
+The greybox by job was judged ("I really enjoy what you did here"), so its layout is painted in Jilliath's skin, with
+the review's causes answered:
+- **Gothic ornament named outright:** blind tracery, cusped lancets, trefoils, quatrefoils, crockets. The greyboxes'
+  surface pattern is a blind arcade of lancets and a run of quatrefoils, no rings, so nothing reads as interlace.
+- **The column** (`jilliath-capitol-column`), the flat screen's boxes exactly: name plate, gold and mana plates, four
+  dark tab rows with an emblem socket each (the open tab is lit by the game, not painted), Back to the map as a marble
+  plate (no seal: the review asked why a seal was the exit). The room under the tabs carries the screen's subject: a
+  cathedral's west front carved low in a pointed blind arch, low in contrast so it sits behind.
+- **One frame for every panel** (`jilliath-frame`): a moulded border with a run of quatrefoils and corner bosses,
+  painted once at the column's density (2× the page) and used as a nine-slice border, corners fixed and edges
+  repeated, so the garrison, the city's panel and the tab frame are framed by the same painting at any size. This
+  answers the blur (one texel density) and the mismatched segments (one frame, not a wall per tab). The content stays
+  the flat components (squad tiles, rows, trees).

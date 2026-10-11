@@ -43,6 +43,30 @@ const LAYOUTS: Readonly<Record<string, Layout>> = {
     depthStrength: 1,
     prompt: "A tall vertical game interface column seen straight on, painted as game interface art, in soft even light without glare, dull lighting. Blackened cast iron, old and worn, its sections joined by thin iron bands with a small faceted amber stud at each end. Every surface is densely worked: interlaced knotwork, scrolling ironwork, small rosettes and tracery cover all the iron between the parts, dark on dark, and no surface is left plain. Cream marble plates, blank. At the top a long marble plate and two small marble plates below it. In the middle, a two by two grid of four tall arched niches, each empty and dark, with a round ivory enamel boss inside each niche, blank; below them three long dark iron plates stacked. At the foot, a large round seal of deep red wax in a heavy ornate iron ring, held between two grown figures carved in deep relief in the same old dark iron, matte: on the left a kneeling hooded mason with a hammer at his belt, one hand on the ring, on the right a kneeling abbess holding a large key, one hand on the ring, her veil and robes the same dark iron as the rest. No text, no letters.",
   },
+  /**
+   * Jilliath's Capitol column, laid out by job (capitol-elements.md): name, gold and mana, four tab rows, the screen's
+   * subject carved low, Back to the map as a plate. Gothic ornament named outright (blind tracery, cusped lancets,
+   * trefoils, crockets): "interlaced knotwork" read as Norse (the user's review, 2026-10-11).
+   */
+  "jilliath-capitol-column": {
+    page: [300, 864],
+    size: [576, 1664],
+    denoise: 0.7,
+    depthStrength: 1,
+    prompt: "A tall vertical game interface column seen straight on, painted as game interface art, in soft even light without glare, dull lighting. Blackened cast iron, old and worn, matte, divided by thin moulded iron ledges with a small faceted amber stud at each end. Behind the parts, gothic blind tracery in low relief, dark on dark: rows of narrow cusped lancet arches, trefoils and quatrefoils, crockets along the edges. Cream marble plates, blank: one long plate at the top, two small plates below it, one long plate at the foot. Between them, four long dark recessed iron panels stacked, each with a small round socket at its left end holding an ivory enamel face, blank. In the middle, a tall pointed blind arch, and inside it the west front of a gothic cathedral carved in low relief in the same dark iron, with twin spires, a rose window and a pointed portal, old and worn, matte, with no polish and no highlights. No text, no letters.",
+  },
+  /**
+   * Jilliath's panel frame, one painting used as a nine-slice border round every panel left of the column (the
+   * garrison, the city's panel, the tab frame), at the column's density: the user's review found the wall twice as
+   * blurred as the column and the two not joined.
+   */
+  "jilliath-frame": {
+    page: [480, 320],
+    size: [960, 640],
+    denoise: 0.7,
+    depthStrength: 1,
+    prompt: "A rectangular game interface frame seen straight on, painted as game interface art, in soft even light without glare, dull lighting. A moulded frame of blackened cast iron, old and worn, matte. Along all four sides a running band of small gothic quatrefoils in low relief, dark on dark, between a thin outer roll moulding and a thin inner lip. At each corner a square iron boss with a small faceted amber stud. Inside the frame, a flat black empty field. No text, no letters.",
+  },
   /** The battle's turn order (hud-pieces.md, "The turn order"): a strip hanging from the top edge, the acting unit large at its left. */
   "turn-strip": {
     page: [870, 104],
