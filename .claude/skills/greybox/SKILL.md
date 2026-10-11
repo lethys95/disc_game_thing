@@ -31,8 +31,8 @@ Questions that cut:
 - Does it say what it does? An object standing for a command (a seal for "back") needs a label until it is unmistakable.
 - Is the same thing done the same way everywhere? (Raising the fallen became a drag, like moving units.)
 - Does its empty state need space? (No one fallen: no graveyard.)
-- Is it the shared component? (The squad tile, the unit sheet on a held right-click; the same size everywhere unless
-  the user says otherwise.)
+- Is it the shared component? (The squad tile, the unit sheet on a held right-click. The tile has two sizes: the map's
+  for a single grid, a larger one wherever two grids trade units, the user's rule; always square.)
 - Does a number belong here or on the held right-click? (Tier, HP and armor left the research nodes.)
 
 An element without a job is flagged for the user, not cut silently: their reasons count (the City tab stays because the

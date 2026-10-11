@@ -24,7 +24,7 @@ So the squads are the screen; growth is a side panel; the fallen appear only whe
 | City tab (the painting) | shows the city | the user's home view (`capitol-screen.md`, a); it does nothing else today | **keep** (the user, 2026-10-11: "HoMM5 and HoMM3, etc have them too. They're nice and give a view into the city. I value them"): its job is the view into the city |
 | Back to the map | leaves | every visit ends here | keep as a plainly labelled button, always in the same place (bottom of the column); Escape does the same. Not a seal: a seal said nothing about what it does |
 | Fact plates (garrison count, warband here, nodes) | repeat numbers shown elsewhere on the screen | nothing they say isn't on the grids or the growth panel | **cut** |
-| Garrison grid | the city's defenders, 3×3 | the main job: arrange, recruit | keep, the squad tile, the same size as on the map |
+| Garrison grid | the city's defenders, 3×3 | the main job: arrange, recruit | keep, the squad tile; larger than on the map wherever two grids trade (the user, 2026-10-11: "slightly larger tiles on screens where there are two grids in general"), still square |
 | Warband grid | the warband standing in the city | the other half of arranging | keep beside the garrison; when none is here, a quiet empty frame that says so, so the screen keeps its shape |
 | Grid title and count ("Garrison 2/4") | whose grid, how many places it has | capacity decides whether you can recruit | keep, one line over each grid |
 | Row labels (Back, Middle, Front) | which column is which row | placement matters in battle (melee in front) | keep, small, under the grid |

@@ -7,6 +7,14 @@ const structures: Playtest = {
     await t.open("/?map&seed=1&structure=merchant");
     const purse = async () => Number((await t.page.textContent("#structurescreen .purse"))?.trim());
     const start = await purse();
+    // The warband's nine panes sit in the column's window, not in the page's flow.
+    const strays = await t.page.evaluate(() => {
+      const column = document.querySelector("#structurescreen .warband-column")?.getBoundingClientRect();
+      const panes = [...document.querySelectorAll("#structurescreen .warband-column .pane")].map((p) => p.getBoundingClientRect());
+      return column ? panes.filter((p) => p.top < column.top + column.height * 0.25 || p.bottom > column.top + column.height * 0.65).length : -1;
+    });
+    t.log(`panes outside the window: ${strays}`);
+    if (strays !== 0) t.fail(`${strays} of the warband's panes are outside the column's window`);
     await t.page.locator("#structurescreen .spell-row", { hasText: "Healing potion" }).first().locator("button", { hasText: "Buy" }).click();
     await t.page.waitForFunction((g) => Number(document.querySelector("#structurescreen .purse")?.textContent?.trim()) !== g, start, { timeout: 5000 });
     const afterBuy = await purse();

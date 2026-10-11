@@ -1096,7 +1096,11 @@ body.formulas .formula { display: inline; }
    stretched; a crown for the leader; health a line at its foot. One size where the screen is free to choose it, the
    map column's (--squad-tile), so a portrait crops the same everywhere. */
 :root { --squad-tile: 3.75rem; }
-.squad-tile { position: relative; box-sizing: border-box; overflow: hidden; }
+/* Where two grids sit side by side to trade units (a city, two warbands meeting), the tile is larger (the user,
+   2026-10-11); still square, so a portrait crops the same. */
+.garrison-board, .tab-frame .city-body { --squad-tile: 5rem; }
+/* Zero specificity, so a container that places its tiles absolutely (the columns' panes) keeps that. */
+:where(.squad-tile) { position: relative; box-sizing: border-box; overflow: hidden; }
 .squad-tile .tile-art { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; background-size: cover; background-position: 50% 15%; display: grid; place-items: center; font: 700 1.2rem var(--display); }
 .squad-tile .crown { position: absolute; left: 0.2rem; top: 0.1rem; font-size: 0.8rem; color: #e8c36c; text-shadow: 0 0 0.15rem #000; }
 .squad-tile .tile-hp { position: absolute; left: 0; right: 0; bottom: 0; height: 0.3rem; background: rgba(0, 0, 0, 0.75); }
