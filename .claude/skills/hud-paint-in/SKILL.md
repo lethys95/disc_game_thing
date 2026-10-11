@@ -28,6 +28,30 @@ A layout is painted only after the `greybox` skill: every element's job written 
 flat values and judged by the user there. This skill's value and depth greyboxes are drawn from that judged layout,
 not invented with the painting.
 
+## 0c. What the Capitol column taught (2026-10-11, six rounds to an accepted piece)
+The column the user accepted (`shots/jilliath-capitol-6.html`, the record in `hud-pieces.md`) took six rounds. Start the
+next piece where it ended, not where it began:
+- **Exact only where the player reads or presses.** Plates, buttons, panes, text fields are drawn exactly at the judged
+  layout's coordinates. Everything else is a soft, blurred mass (a figure, an arch, a portal) that the model makes its
+  own. Exact boxes everywhere gave a square, soulless piece ("very very boring [...] Everything is very square").
+- **One subject that does the screen's job.** The angel reaching up to the tab orbs is the column's heart. Ask what the
+  screen does and give it a figure or object doing that, then build the architecture around it.
+- **Functions as things.** The door is the way out (the user: "people already associate a door with leaving"); a tab is
+  an orb in the window. Look for the object that already means the function before drawing a button.
+- **Round and pointed, not boxed.** Rose windows, arches, gables, round buttons. Avoid stacks of rectangles.
+- **Contrast of materials.** Pale weathered stone figures and portals against dark iron, marble plates, red and amber
+  glass, warm wood. Never one material.
+- **Everything belongs to the wall.** Free-standing objects painted in front (the pinnacles) read as "ejecting
+  themselves out in a different dimension". Carve things into the surface or set them in it.
+- **Keep the accepted, change the rest by inpainting.** Once a seed is liked, repaint only what changes: a mask that
+  follows the new shapes, never a rectangle across the piece. Where a repeated pattern must be repainted, draw it into
+  the depth map at the piece's scale and phase, or the model re-invents it larger (the diaper came back four times
+  bigger).
+- **Start from the old prompts.** Every accepted and rejected prompt is in `scripts/art/hud-paint-in.ts` and
+  `hud-inpaint.ts`; the old paintings are in git history. The accepted column's vocabulary (diaper, rose window, pale
+  stone angel, crocketed gable, portal) is the Jilliath kit; reuse it so the screen reads as one place.
+- **One piece, one link, then the next round.** Show each round's page before stacking another.
+
 ## 1. Read a reference for its structure, not its look
 **Never skip this step.** The user, 2026-10-11, rejecting a round painted without it: "There is no soul or character in
 this whatsoever [...] You didn't use any of the reference material did you?" Open the reference images and
