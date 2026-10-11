@@ -53,7 +53,8 @@ user values a view into the city).
   reverted before the commit (`git diff --stat` on the touched files shows nothing).
 - Gestures tested end to end (the drag that raises a fallen unit, and the purse that paid for it).
 - 720p, 1080p, 1440p; a narrow (5:4) and a wide (21:9) screen.
-- Known traps: a global button rule can override a selected tab's colour (raise the selector); a hover rule can hide
+- Known traps: a held right-click sheet must open above any menu or prompt it explains (the peek is at the top of the
+  stack); a global button rule can override a selected tab's colour (raise the selector); a hover rule can hide
   the selected state (exclude `.selected` from hover).
 
 ## 5. Show it
