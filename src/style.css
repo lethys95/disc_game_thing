@@ -1203,3 +1203,46 @@ body.greybox #battlebar .knob { font: 700 0.5rem/1 var(--display); }
 .unitcard > .vacant { pointer-events: none; }
 body:not(.greybox) .unitcard > .vacant { display: none; }
 body.greybox .unitcard > .vacant { background: none; box-shadow: inset 0 0 0 1px var(--gbx-edge); }
+
+/* The title, the new game and the menu as a greybox in flat values (docs/design/front-elements.md): no stone
+   backdrop, plaques or frames; the parade of units stays, the world in the window. */
+#title, #newgame { background: #12100e; }
+.title-menu .gap { height: 0.9rem; }
+.title-menu button.action {
+  height: 2.6rem; padding: 0; border: 0; border-image: none; filter: none; background: var(--gbx-plate); color: var(--gbx-ink);
+  font: 700 1.15rem var(--display); letter-spacing: 0.03em; text-shadow: none;
+}
+.title-menu button.action.quiet { height: 2.1rem; background: var(--gbx-chrome); color: var(--gbx-light); font-size: 1rem; box-shadow: inset 0 0 0 1px var(--gbx-edge); }
+.title-menu button.action:hover { filter: none; background: #f0e8d8; box-shadow: 0 0 0.8rem rgba(232, 195, 108, 0.6); }
+.title-menu button.action.quiet:hover { background: #3a342e; color: var(--gbx-light); }
+
+#newgame .setup-header .title { border: 0; border-image: none; background: var(--gbx-plate); color: var(--gbx-ink); padding: 0.3rem 2rem; text-shadow: none; filter: none; }
+#newgame .panel { border: 0; border-image: none; background: var(--gbx-chrome); box-shadow: inset 0 0 0 1px var(--gbx-edge); filter: none; }
+#newgame button.faction-card { filter: none; opacity: 0.75; border: 0; border-image: none; background: var(--gbx-chrome); box-shadow: inset 0 0 0 1px var(--gbx-edge); }
+#newgame button.faction-card:hover { filter: none; opacity: 0.95; }
+#newgame button.faction-card.selected { filter: none; opacity: 1; box-shadow: inset 0 0 0 2px var(--gbx-lit), 0 0 1rem rgba(232, 195, 108, 0.35); }
+#newgame .newgame-options button.doctrine, #newgame .newgame-options button.small, #newgame button.action {
+  border: 0; border-image: none; filter: none; background: var(--gbx-well); color: var(--gbx-light); box-shadow: inset 0 0 0 1px var(--gbx-edge); padding: 0.3rem 0.8rem;
+}
+#newgame .newgame-options button.doctrine:hover, #newgame .newgame-options button.small:hover, #newgame button.action:hover { filter: none; box-shadow: inset 0 0 0 1px var(--gbx-lit); }
+#newgame .newgame-options button.doctrine.selected { filter: none; background: var(--gbx-lit); color: var(--gbx-ink); box-shadow: none; }
+#newgame button.action.fight { background: var(--gbx-lit); color: var(--gbx-ink); box-shadow: none; }
+
+#menu.panel { border: 0; border-image: none; background: var(--gbx-chrome); color: var(--gbx-light); box-shadow: inset 0 0 0 1px var(--gbx-edge), 0 0.8rem 2rem rgba(0, 0, 0, 0.8); }
+#menu .title { border: 0; border-image: none; background: none; color: var(--gbx-light); padding: 0; text-shadow: none; filter: none; }
+#menu button.action, #menu button.small, #menu .segmented button {
+  border: 0; border-image: none; filter: none; background: var(--gbx-plate); color: var(--gbx-ink); padding: 0.4rem 0.9rem; text-shadow: none; font: 700 0.9rem var(--display);
+}
+#menu button.action:hover, #menu button.small:hover, #menu .segmented button:hover { filter: none; background: #f0e8d8; }
+#menu .segmented button { background: var(--gbx-well); color: var(--gbx-light); box-shadow: inset 0 0 0 1px var(--gbx-edge); }
+#menu .segmented button.selected { filter: none; background: var(--gbx-lit); color: var(--gbx-ink); box-shadow: none; }
+#menu .save-row:has(> .save-text) { background: var(--gbx-well); color: var(--gbx-light); padding: 0.5rem 0.8rem; border: 0; box-shadow: inset 0 0 0 1px var(--gbx-edge); }
+#menu .save-row:has(> .save-text) .note { color: var(--gbx-muted); }
+#menu .save-row:has(> .save-text) button.small { background: var(--gbx-plate); color: var(--gbx-ink); padding: 0.25rem 0.6rem; text-decoration: none; }
+#menu .frame-tabs { display: flex; gap: 0.3rem; margin: 0.6rem 0 0; }
+#menu .frame-tabs button.tab { height: 2.3rem; padding: 0 1.2rem; border: 0; border-radius: 0.45rem 0.45rem 0 0; background: #1d1a17; color: var(--gbx-muted); font: 700 1rem var(--display); cursor: pointer; box-shadow: inset 0 1px 0 var(--gbx-edge), inset 1px 0 0 var(--gbx-edge), inset -1px 0 0 var(--gbx-edge); }
+#menu .frame-tabs button.tab.selected { background: var(--gbx-well); color: var(--gbx-light); box-shadow: inset 0 2px 0 var(--gbx-lit), inset 1px 0 0 var(--gbx-edge), inset -1px 0 0 var(--gbx-edge); }
+#menu .frame-tabs button.tab:not(.selected):hover { color: var(--gbx-light); }
+#menu .settings-pane { display: flex; flex-direction: column; gap: 0.5rem; padding: 1rem 1.1rem; min-height: 18rem; background: var(--gbx-well); box-shadow: inset 0 0 0 1px var(--gbx-edge); }
+#menu .settings-pane .save-row { border-bottom-color: var(--gbx-edge); }
+#menu .settings-pane > button.small { align-self: flex-start; }

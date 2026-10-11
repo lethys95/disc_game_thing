@@ -39,7 +39,7 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
 ## Next
 0. **The HUD, interface first** (the user's review, 2026-10-11; `in-progress/ui-kit-grotesques`; the `greybox` skill).
    Greyboxed by job: the Capitol (`shots/capitol-greybox.html`), the leader's and structures' screens
-   (`shots/warband-greybox.html`), all sharing one column, one unit sheet, one squad tile, one branch chooser. A Greybox
+   (`shots/warband-greybox.html`), the title, new game and menu (`shots/front-greybox.html`), all sharing one column, one unit sheet, one squad tile, one branch chooser. A Greybox
    setting draws the still-painted pieces (map column, battle bar, turn order) flat. Next: the map column and battle
    bar by job, then title and menus; paint after a layout is judged, per faction skin. Glass rests.
    **Right after the UI pass:** the code review's findings 1–3 (`todo/code-review`), before any new unit is built.

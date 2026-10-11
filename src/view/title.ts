@@ -33,11 +33,13 @@ export class TitleScreen {
     if (choices.resume) menu.appendChild(button("action", "Continue", choices.resume));
     menu.append(
       button("action", "New game", choices.newGame),
-      button("action", "Skirmish", choices.skirmish),
       button("action", "Load game", choices.load),
-      button("action", "Codex", choices.codex),
-      button("action", "Settings", choices.settings),
-      button("action", "Credits", choices.credits),
+      button("action", "Skirmish", choices.skirmish),
+      // The rare ones, below a gap (docs/design/front-elements.md).
+      element("div", "gap"),
+      button("action quiet", "Codex", choices.codex),
+      button("action quiet", "Settings", choices.settings),
+      button("action quiet", "Credits", choices.credits),
     );
     panel.appendChild(menu);
     this.root.append(parade, panel);

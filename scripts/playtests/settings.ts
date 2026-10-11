@@ -8,22 +8,29 @@ const settings: Playtest = {
       await t.page.click("#mapmenu");
       await t.page.locator("#menu button", { hasText: "Settings" }).click();
     };
-    const defendKey = () => t.page.locator("#menu .save-row", { hasText: "Defend" }).locator(".key").textContent();
+    const tab = (name: string) => t.page.locator("#menu .frame-tabs button", { hasText: name }).click();
+    const defendKey = async () => {
+      await tab("Hotkeys");
+      return t.page.locator("#menu .save-row", { hasText: "Defend" }).locator(".key").textContent();
+    };
 
     await t.open("/?map&seed=1");
     await openSettings();
+    await tab("Hotkeys");
     await t.page.locator("#menu .save-row", { hasText: "Defend" }).locator("button").click();
     await t.page.keyboard.press("x");
+    await tab("Game");
     await t.page.locator("#menu .segmented button", { hasText: "Fastest" }).click();
+    await tab("Display");
     await t.page.locator("#menu label", { hasText: "Show the frame rate" }).locator("input").check();
     await t.page.waitForSelector(".fps-meter");
     t.log(`after remap: Defend ${await defendKey()}`);
-    await t.page.locator("#menu label", { hasText: "Show the frame rate" }).scrollIntoViewIfNeeded();
     await t.shot("playtest-settings");
 
     await t.open("/?map&seed=1");
     await openSettings();
     const kept = await defendKey();
+    await tab("Game");
     const speed = await t.page.locator("#menu .segmented button.selected").textContent();
     t.log(`after reload: Defend ${kept}, speed ${speed}`);
     if (kept !== "X") t.fail(`the remapped key wasn't kept: ${kept}`);

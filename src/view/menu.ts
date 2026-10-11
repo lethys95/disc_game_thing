@@ -3,6 +3,7 @@ import type { Save } from "#rules/save";
 import { FACTIONS } from "#rules/factions";
 import { BEHAVIORS } from "#rules/abilities/index";
 import { element } from "#view/dom";
+import { closeDialog, openDialog } from "#view/dialog";
 import { ANIMATION_SPEEDS, assignable, CAMERA_RANGE, DEFAULT_SETTINGS, remappable, SPEED_ORDER, UI_SCALE_RANGE, withHotkey } from "#view/settings";
 import type { Settings } from "#view/settings";
 import { AUTOSAVE_ID, exportSave } from "#view/saves";
@@ -27,6 +28,7 @@ const describe = (save: Save) => {
 export class GameMenu implements KeyLayer {
   private message = "";
   private page: "game" | "settings" = "game";
+  private settingsTab: "game" | "sound" | "hotkeys" | "display" = "game";
   private settingsOnly = false;
   /** The ability whose new key the menu is waiting for. */
   private capturing: string | null = null;
@@ -43,7 +45,9 @@ export class GameMenu implements KeyLayer {
   /** While it waits for a new hotkey, it takes any key. */
   key(e: KeyboardEvent): boolean {
     if (this.capturing !== null) this.captured(e.key);
-    else if (e.key === "Escape") this.hide();
+    else if (e.key === "Escape") {
+      if (!closeDialog(this.root)) this.hide();
+    }
     else return false;
     return true;
   }
@@ -86,7 +90,10 @@ export class GameMenu implements KeyLayer {
     this.root.replaceChildren();
     this.root.appendChild(element("div", "title", "Settings"));
 
-    this.root.appendChild(element("div", "section", "Animation speed"));
+    // The sections as tabs, so nothing scrolls (docs/design/front-elements.md, "Settings").
+    const panes = { game: element("div", "settings-pane"), sound: element("div", "settings-pane"), hotkeys: element("div", "settings-pane"), display: element("div", "settings-pane") };
+    const { game, sound, hotkeys, display } = panes;
+    game.appendChild(element("div", "section", "Animation speed"));
     const speeds = element("div", "segmented");
     for (const id of SPEED_ORDER) {
       const button = element("button", `small${data.speed === id ? " selected" : ""}`, ANIMATION_SPEEDS[id].label);
@@ -96,9 +103,8 @@ export class GameMenu implements KeyLayer {
       });
       speeds.appendChild(button);
     }
-    this.root.append(speeds, element("div", "note", "Also how long the AI pauses between its moves."));
+    game.append(speeds, element("div", "note", "Also how long the AI pauses between its moves."));
 
-    this.root.appendChild(element("div", "section", "Sound"));
     for (const [field, label] of [["masterVolume", "Master volume"], ["effectsVolume", "Effects"], ["musicVolume", "Music"]] as const) {
       const row = element("label", "slider-row");
       const slider = element("input", "slider");
@@ -113,10 +119,10 @@ export class GameMenu implements KeyLayer {
         value.textContent = `${Math.round(Number(slider.value) * 100)}%`;
       });
       row.append(element("span", "name", label), slider, value);
-      this.root.appendChild(row);
+      sound.appendChild(row);
     }
 
-    this.root.appendChild(element("div", "section", "Camera"));
+    game.appendChild(element("div", "section", "Camera"));
     for (const [field, label] of [["rotate", "Rotation speed"], ["zoom", "Zoom speed"]] as const) {
       const row = element("label", "slider-row");
       const slider = element("input", "slider");
@@ -131,10 +137,9 @@ export class GameMenu implements KeyLayer {
         value.textContent = `${Number(slider.value).toFixed(2)}×`;
       });
       row.append(element("span", "name", label), slider, value);
-      this.root.appendChild(row);
+      game.appendChild(row);
     }
 
-    this.root.appendChild(element("div", "section", "Hotkeys"));
     for (const abilityId of remappable()) {
       const row = element("div", "save-row");
       const key = settings.keyFor(abilityId);
@@ -146,18 +151,17 @@ export class GameMenu implements KeyLayer {
         this.render();
       });
       row.appendChild(change);
-      this.root.appendChild(row);
+      hotkeys.appendChild(row);
     }
-    this.root.appendChild(element("div", "note", "A key already in use swaps with the one you're changing. Digits are kept for the ability slots."));
+    hotkeys.appendChild(element("div", "note", "A key already in use swaps with the one you're changing. Digits are kept for the ability slots."));
     const slots = element("label", "check-row");
     const box = element("input", "check");
     box.type = "checkbox";
     box.checked = data.slotKeys;
     box.addEventListener("change", () => settings.update({ ...settings.data, slotKeys: box.checked }));
     slots.append(box, element("span", "", "Keys 1–9 choose the battle's ability buttons by position"));
-    this.root.appendChild(slots);
+    hotkeys.appendChild(slots);
 
-    this.root.appendChild(element("div", "section", "Display"));
     const scaleRow = element("label", "slider-row");
     const scale = element("input", "slider");
     scale.type = "range";
@@ -170,38 +174,50 @@ export class GameMenu implements KeyLayer {
     // Applied on release: resizing the menu under a dragged slider would move the slider.
     scale.addEventListener("change", () => settings.update({ ...settings.data, uiScale: Number(scale.value) }));
     scaleRow.append(element("span", "name", "Interface size"), scale, scaleValue);
-    this.root.append(scaleRow, element("div", "note", "On top of the automatic size, which follows the window's height."));
+    display.append(scaleRow, element("div", "note", "On top of the automatic size, which follows the window's height."));
     const bounce = element("label", "check-row");
     const bounceBox = element("input", "check");
     bounceBox.type = "checkbox";
     bounceBox.checked = data.bounceLight;
     bounceBox.addEventListener("change", () => settings.update({ ...settings.data, bounceLight: bounceBox.checked }));
     bounce.append(bounceBox, element("span", "", "Bounce light on the map (the costliest effect: turn it off if the map runs slowly)"));
-    this.root.appendChild(bounce);
+    display.appendChild(bounce);
     const meter = element("label", "check-row");
     const meterBox = element("input", "check");
     meterBox.type = "checkbox";
     meterBox.checked = data.showFrameRate;
     meterBox.addEventListener("change", () => settings.update({ ...settings.data, showFrameRate: meterBox.checked }));
     meter.append(meterBox, element("span", "", "Show the frame rate (frames per second, triangles and the graphics backend, in a corner)"));
-    this.root.appendChild(meter);
+    display.appendChild(meter);
     const formulas = element("label", "check-row");
     const formulasBox = element("input", "check");
     formulasBox.type = "checkbox";
     formulasBox.checked = data.showFormulas;
     formulasBox.addEventListener("change", () => settings.update({ ...settings.data, showFormulas: formulasBox.checked }));
     formulas.append(formulasBox, element("span", "", "Show formulas in ability text: how each number grew from the unit's ability power, e.g. \"54 (18% × 300)\""));
-    this.root.appendChild(formulas);
+    display.appendChild(formulas);
     const grey = element("label", "check-row");
     const greyBox = element("input", "check");
     greyBox.type = "checkbox";
     greyBox.checked = data.greybox;
     greyBox.addEventListener("change", () => settings.update({ ...settings.data, greybox: greyBox.checked }));
     grey.append(greyBox, element("span", "", "Greybox interface: the interface in flat values without its paintings, to judge the layout"));
-    this.root.appendChild(grey);
+    display.appendChild(grey);
     const full = element("button", "small", document.fullscreenElement ? "Leave fullscreen" : "Fullscreen");
     full.addEventListener("click", () => void this.toggleFullscreen());
-    this.root.appendChild(full);
+    display.appendChild(full);
+
+    const bar = element("div", "frame-tabs");
+    for (const [id, label] of [["game", "Game"], ["sound", "Sound"], ["hotkeys", "Hotkeys"], ["display", "Display"]] as const) {
+      const tab = element("button", `tab${this.settingsTab === id ? " selected" : ""}`, label);
+      tab.addEventListener("click", () => {
+        this.settingsTab = id;
+        this.capturing = null;
+        this.render();
+      });
+      bar.appendChild(tab);
+    }
+    this.root.append(bar, panes[this.settingsTab]);
 
     const footer = element("div", "menu-footer");
     const reset = element("button", "action", "Restore defaults");
@@ -272,10 +288,18 @@ export class GameMenu implements KeyLayer {
         row.append(load, out);
       }
       const remove = element("button", "small", "Delete");
-      remove.addEventListener("click", () => {
-        store.remove(entry.id);
-        this.render();
-      });
+      remove.addEventListener("click", () =>
+        openDialog(this.root, "Delete this save?", [entry.save ? describe(entry.save) : "", " It can't be undone."], [
+          {
+            label: "Delete",
+            problem: null,
+            run: () => {
+              store.remove(entry.id);
+              this.render();
+            },
+          },
+        ]),
+      );
       row.appendChild(remove);
       this.root.appendChild(row);
     }
@@ -290,11 +314,19 @@ export class GameMenu implements KeyLayer {
 
     const footer = element("div", "menu-footer");
     if (current !== null) {
-      const fresh = element("button", "action", "New game");
-      fresh.addEventListener("click", () => {
-        this.hide();
-        this.options.newGame();
-      });
+      const fresh = element("button", "action", "Leave for a new game");
+      fresh.addEventListener("click", () =>
+        openDialog(this.root, "Leave this game?", ["Play since your last save is lost. The autosave is made at the start of each of your turns."], [
+          {
+            label: "Leave for a new game",
+            problem: null,
+            run: () => {
+              this.hide();
+              this.options.newGame();
+            },
+          },
+        ]),
+      );
       footer.appendChild(fresh);
     }
     const open = element("button", "action", "Settings");
