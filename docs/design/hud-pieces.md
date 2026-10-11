@@ -770,3 +770,7 @@ material". Looked again at `d2-city-garrison`, `d2-capital-empire`, `d2-hero-inv
 - **Stone shows its masonry:** chunky weathered blocks at the bottom of the screens, irregular, warm grey, in shadow.
 So: the ground of a wall is large weathered masonry in shadow, or plain; iron is for frames, bands and studs; a lattice,
 if any, is an inset; big areas are parchment, marble or pictures.
+- **In stone (2026-10-11):** the garrison repainted whole (`jilliath-garrison-2` seed 2: masonry in shadow, iron only round
+  the windows; the panes stayed three by three). The accepted column kept, its lattice repainted to masonry by mask
+  (`jilliath-capitol-stone` d82-1, then `-rest` d88-2, `-arms` d85-1 and `-flanks` d85-1 for what remained by the
+  angel's arms and the gable). `shots/jilliath-garrison-2.html`.

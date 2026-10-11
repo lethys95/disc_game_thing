@@ -115,6 +115,27 @@ const REPAIRS: Readonly<Record<string, Repair>> = {
     prompt:
       "Game interface art, a wall of large old dressed stone blocks seen straight on, warm dark grey, weathered, in deep shadow, plain, with no pattern on it. No lattice. No text, no letters.",
   },
+  /** The lattice still between the angel's raised arms (the glow made it read as coloured to the mask), a box between them only. */
+  "jilliath-capitol-stone-arms": {
+    source: "art/candidates/ui/inpaint/jilliath-capitol-stone-rest2/jilliath-capitol-stone-rest2-d95-2.png",
+    page: [300, 864],
+    boxes: [[138, 334, 32, 50]],
+    denoise: [0.85, 0.95],
+    depth: { map: "art/greybox/jilliath-capitol-stone/depth.png", strength: 0.8 },
+    prompt:
+      "Game interface art, a wall of large old dressed stone blocks seen straight on, warm dark grey, weathered, plain, with no pattern on it, softly lit by a warm golden glow from above. No lattice. No text, no letters.",
+  },
+  /** The lattice just outside the angel's raised arms, masked to the lattice (`rest.py`, the flanks line in its doc). */
+  "jilliath-capitol-stone-flanks": {
+    source: "art/candidates/ui/inpaint/jilliath-capitol-stone-arms/jilliath-capitol-stone-arms-d85-1.png",
+    page: [300, 864],
+    boxes: [],
+    mask: "art/greybox/jilliath-capitol-stone/flanks-mask.png",
+    denoise: [0.85, 0.95],
+    depth: { map: "art/greybox/jilliath-capitol-stone/depth.png", strength: 0.8 },
+    prompt:
+      "Game interface art, a wall of large old dressed stone blocks seen straight on, warm dark grey, weathered, plain, with no pattern on it, softly lit by a warm golden glow from above. No lattice. No text, no letters.",
+  },
   /** The duel bar's figures: arms and hands came out malformed (the user, 2026-10-10). */
   "duel-hands": {
     source: "art/candidates/ui/paint-in/battle-bar-duel-dull-nostone/battle-bar-duel-dull-nostone-3.png",

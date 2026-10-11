@@ -291,3 +291,6 @@
 - **The garrison wall (2026-10-11):** lancet windows as the squad grids, stone knights, a crypt, the growth on a hung
   parchment; one round and a pane repair. `shots/jilliath-garrison.html`. Next: the graveyard in the crypt, then the
   research and spells frame.
+- **In stone (2026-10-11):** the user: the diaper "looks like a fence actually, not like gothic architecture". Garrison
+  and column now weathered masonry, iron only on frames (`shots/jilliath-garrison-2.html`). No overworld ambience in
+  the Capitol.

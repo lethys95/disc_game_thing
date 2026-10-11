@@ -47,7 +47,7 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
    Jilliath's Capitol paint-in: round 1 rejected ("no soul or character"), reverted; round 4 from the user's sketch
    and idea (round buttons on a rose window, a stone angel channelling them, a leave symbol button), the column first
    (`shots/jilliath-capitol-6.html`): the user picked the inpainted rendition; the door is the way out.
-   The garrison wall painted the same way (`shots/jilliath-garrison.html`).
+   The garrison wall painted the same way, both now in masonry (`shots/jilliath-garrison-2.html`).
    **Mana is one kind** (the user's call; `testing/mana-colours`, `decisions.md`): one number per player, the faction's
    colour only its accent. Save 35.
 1. **Finish Jilliath's concepts** with the user (the open nine), then portraits from the picks.
