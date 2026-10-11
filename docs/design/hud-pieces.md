@@ -717,3 +717,10 @@ face a diaper of quatrefoils in a diamond lattice; the saint and pinnacles repla
 weathered stone against the iron, wings across the column, arms raised to the window, a faint golden glow at her
 hands. Five of six held; seed 4 is in the game. The bottom button's label sits beside it, clear of her hands.
 `shots/jilliath-capitol-4.html`.
+
+**The base (2026-10-11).** The user on round 4: "Muuuch better. There's really only one thing left [...] It looks like
+she's standing on a stool right now [...] we can't just have a bunch of nothing there. Maybe that's where those spires
+can be? Think about something gothic we haven't shown yet." Repainted by inpainting only the base of seed 4
+(`jilliath-capitol-base`, sketch, depth and mask by `art/greybox/jilliath-capitol-base/make.py`): a pale stone portal
+with stepped arches framing the leave button (the way out as a door), a crocketed gable whose peak carries a corbel of
+leaves she stands on, two iron pinnacles with small flying buttresses. The pick is d90-1. `shots/jilliath-capitol-5.html`.

@@ -36,4 +36,4 @@ removed outright.
 ## Jilliath's skin (2026-10-11, the `hud-paint-in` skill, on the judged greybox layout)
 | File | Piece, seed | Cut |
 |---|---|---|
-| `jilliath/capitol-column.webp` | `jilliath-capitol-column-4`, 4 | whole, 576 × 1664 |
+| `jilliath/capitol-column.webp` | `jilliath-capitol-column-4`, 4, its base repainted by `jilliath-capitol-base` d90-1 (`scripts/art/hud-inpaint.ts`) | whole, 576 × 1664 |

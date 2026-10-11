@@ -4,7 +4,7 @@
    painting's own pixels, as measured from it. */
 body[data-skin="jilliath"]:not(.greybox) { --pg: calc(50rem / 864); }
 
-/* The Capitol's column (assets/ui/jilliath/capitol-column.webp, jilliath-capitol-column-4 seed 4, after the user's
+/* The Capitol's column (assets/ui/jilliath/capitol-column.webp, jilliath-capitol-column-4 seed 4 with its base repainted (jilliath-capitol-base d90-1), after the user's
    sketch): the tabs are four round buttons on the rim of a rose window an angel reaches up to, the leave button under
    her altar. */
 body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol {
@@ -34,7 +34,7 @@ body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab.selected { 
 body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab.selected .label { color: var(--gbx-lit); }
 body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab.selected .glyph { filter: none; }
 /* Leaving: the round button under the altar, its symbol on the marble face. */
-body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .back { --x: 135; --y: 787; --w: 37; --h: 37; display: grid; place-items: center; border-radius: 50%; color: #241c15; }
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .back { --x: 135; --y: 790; --w: 37; --h: 37; display: grid; place-items: center; border-radius: 50%; color: #241c15; }
 body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .back svg { width: 62%; height: 62%; }
 body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .back:hover { box-shadow: 0 0 0 2px rgba(232, 195, 108, 0.6), 0 0 1rem rgba(232, 195, 108, 0.5); }
 /* The bottom button's name goes beside it: under it are the angel's hands. */

@@ -23,6 +23,22 @@ interface Repair {
 }
 
 const REPAIRS: Readonly<Record<string, Repair>> = {
+  /**
+   * What round 4's angel stands on (the user, 2026-10-11: "It looks like she's standing on a stool [...] Maybe that's
+   * where those spires can be?"): a foliage corbel crowning a crocketed gable over a pointed portal that frames the
+   * leave button, pinnacles beside her with small flying buttresses. Sketched into seed 4 and held to its own depth
+   * map (`art/greybox/jilliath-capitol-base/make.py`); the angel and the button are outside the mask.
+   */
+  "jilliath-capitol-base": {
+    source: "art/greybox/jilliath-capitol-base/source.png",
+    page: [300, 864],
+    boxes: [],
+    mask: "art/greybox/jilliath-capitol-base/mask.png",
+    denoise: [0.8, 0.9],
+    depth: { map: "art/greybox/jilliath-capitol-base/depth.png", strength: 0.9 },
+    prompt:
+      "Game interface art, the lower part of a tall dark iron column seen straight on, in soft even light without glare. Behind everything, blackened cast iron covered in a gothic diaper of small quatrefoils in a diamond lattice, dark on dark, old and worn. In the middle, a gothic church portal carved in pale weathered stone: a deep pointed doorway with moulded arches stepping inward, dark inside, a round ivory enamel button in an iron socket in its depths, under a steep gable with crockets climbing its edges, the gable's peak carrying a carved stone corbel of curling leaves on which a statue stands. On each side, a slender gothic pinnacle of dark iron with a crocketed spire and a finial, each joined to the portal by a small flying buttress. Old and worn, matte, with no polish. No text, no letters.",
+  },
   /** The duel bar's figures: arms and hands came out malformed (the user, 2026-10-10). */
   "duel-hands": {
     source: "art/candidates/ui/paint-in/battle-bar-duel-dull-nostone/battle-bar-duel-dull-nostone-3.png",

@@ -282,3 +282,5 @@
   `shots/jilliath-capitol-3.html`. Waiting on the user.
 - **Round 4 (2026-10-11), the angel** (the user's idea): a pale stone angel, wings spread, channelling the tab orbs;
   a diaper face. `shots/jilliath-capitol-4.html`. Waiting on the user.
+- **The base (2026-10-11):** under the angel, a portal framing the leave button, a crocketed gable and corbel she
+  stands on, pinnacles with flying buttresses (inpainted into round 4). `shots/jilliath-capitol-5.html`.
