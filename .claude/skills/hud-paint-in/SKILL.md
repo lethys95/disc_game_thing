@@ -51,6 +51,9 @@ next piece where it ended, not where it began:
   follows the new shapes, never a rectangle across the piece. Where a repeated pattern must be repainted, draw it into
   the depth map at the piece's scale and phase, or the model re-invents it larger (the diaper came back four times
   bigger).
+- **An accepted piece is frozen.** Never repaint any part of a piece the user accepted to match a later one (the
+  column's diaper repainted to masonry was rolled back: "you were not supposed to touch the angel or what's behind
+  her"). Ask first.
 - **Start from the old prompts.** Every accepted and rejected prompt is in `scripts/art/hud-paint-in.ts` and
   `hud-inpaint.ts`; the old paintings are in git history. The accepted column's vocabulary (diaper, rose window, pale
   stone angel, crocketed gable, portal) is the Jilliath kit; reuse it so the screen reads as one place.

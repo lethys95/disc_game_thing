@@ -774,3 +774,6 @@ if any, is an inset; big areas are parchment, marble or pictures.
   the windows; the panes stayed three by three). The accepted column kept, its lattice repainted to masonry by mask
   (`jilliath-capitol-stone` d82-1, then `-rest` d88-2, `-arms` d85-1 and `-flanks` d85-1 for what remained by the
   angel's arms and the gable). `shots/jilliath-garrison-2.html`.
+- **The column's masonry rolled back (the user):** "you were not supposed to touch the angel or what's behind her"; the
+  repaint laid "unthemed low-res bricks" behind her. The accepted column (the door rendition, emblems centred) is back,
+  its diaper included. An accepted piece is not repainted to match a later one without asking.
