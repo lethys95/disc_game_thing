@@ -79,6 +79,42 @@ const REPAIRS: Readonly<Record<string, Repair>> = {
     prompt:
       "Game interface art, part of a gothic stained glass window in soft even light: a grid of exactly nine large square panes, three across and three down, in heavy dark lead cames, each pane one single unbroken piece of glowing red or amber glass with a little mottling, the colours mixed across the grid. No text, no letters.",
   },
+  /**
+   * The accepted Capitol column with its diaper replaced by masonry in shadow, matching the garrison's round 2 (the
+   * user: the pattern "was already a bit much to look at on the right side"); the masonry is laid into the source and
+   * the depth at the garrison's block size (`art/greybox/jilliath-capitol-stone/make.py`).
+   */
+  "jilliath-capitol-stone": {
+    source: "art/greybox/jilliath-capitol-stone/source.png",
+    page: [300, 864],
+    boxes: [],
+    mask: "art/greybox/jilliath-capitol-stone/mask.png",
+    denoise: [0.7, 0.82],
+    depth: { map: "art/greybox/jilliath-capitol-stone/depth.png", strength: 0.8 },
+    prompt:
+      "Game interface art, a wall of large old dressed stone blocks in irregular courses seen straight on, warm dark grey, weathered and chipped, each block a little different, in deep shadow, plain, with no pattern on it, in soft even light. No lattice. No text, no letters.",
+  },
+  /** The stone column's last lattice: between the angel's arms and at the gable's shoulders, held to the masonry depth. */
+  "jilliath-capitol-stone-rest": {
+    source: "art/candidates/ui/inpaint/jilliath-capitol-stone/jilliath-capitol-stone-d82-1.png",
+    page: [300, 864],
+    boxes: [[134, 318, 32, 58], [90, 598, 28, 54], [182, 598, 28, 54]],
+    denoise: [0.75, 0.88],
+    depth: { map: "art/greybox/jilliath-capitol-stone/depth.png", strength: 0.8 },
+    prompt:
+      "Game interface art, a wall of large old dressed stone blocks seen straight on, warm dark grey, weathered, in deep shadow, plain, with no pattern on it. No lattice. No text, no letters.",
+  },
+  /** The stone column's lattice that the first pass left beside the angel's arms and the gable, masked to the lattice itself (`art/greybox/jilliath-capitol-stone/rest.py`). */
+  "jilliath-capitol-stone-rest2": {
+    source: "art/candidates/ui/inpaint/jilliath-capitol-stone-rest/jilliath-capitol-stone-rest-d88-2.png",
+    page: [300, 864],
+    boxes: [],
+    mask: "art/greybox/jilliath-capitol-stone/rest-mask.png",
+    denoise: [0.85, 0.95],
+    depth: { map: "art/greybox/jilliath-capitol-stone/depth.png", strength: 0.8 },
+    prompt:
+      "Game interface art, a wall of large old dressed stone blocks seen straight on, warm dark grey, weathered, in deep shadow, plain, with no pattern on it. No lattice. No text, no letters.",
+  },
   /** The duel bar's figures: arms and hands came out malformed (the user, 2026-10-10). */
   "duel-hands": {
     source: "art/candidates/ui/paint-in/battle-bar-duel-dull-nostone/battle-bar-duel-dull-nostone-3.png",

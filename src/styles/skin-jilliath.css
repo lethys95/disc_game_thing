@@ -38,8 +38,7 @@ body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .back {
 body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .back svg { display: none; }
 body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .back:hover { background: radial-gradient(ellipse at 50% 70%, rgba(255, 196, 110, 0.32), rgba(255, 170, 80, 0.08) 70%); }
 
-/* The garrison wall (assets/ui/jilliath/garrison.webp, jilliath-garrison seed 2 with its panes repainted three by
-   three): one painting the size of the judged layout (1236 x 864 page px at 1080p), anchored to the column, so every
+/* The garrison wall (assets/ui/jilliath/garrison.webp, jilliath-garrison-2 seed 2: masonry, no lattice): one painting the size of the judged layout (1236 x 864 page px at 1080p), anchored to the column, so every
    part of the flat layout lands in its painted place: the squads in the windows' panes (an empty place shows the lit
    glass), their names on the marble plates, the city's growth on the hanging parchment. */
 body[data-skin="jilliath"]:not(.greybox) #capitol .garrison-board {
