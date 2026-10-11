@@ -51,6 +51,9 @@ function reachOf(route: readonly string[], tier: number, commitment: Readonly<Re
 /** Which way a line's tree grows: down from its root at the top, or across from its root at the left. */
 type TreeLayout = "down" | "across";
 
+/** The deepest tier a line reaches (tier 5, the longest lines). */
+const TREE_TIERS = 5;
+
 /**
  * Branches from each parent's portrait to its children's, elbowed (down a tree: down, across, down; across one: across,
  * down, across), lit along the unlocked branches. Drawn once the grid has its size (and again when it changes), since
@@ -160,7 +163,11 @@ export class ResearchPanel {
     const across = this.layout === "across";
     for (const lines of rootsOf(tab).map(routes)) {
       const grid = element("div", `tree line ${this.layout}`);
-      if (across) grid.style.gridTemplateRows = `repeat(${lines.length}, auto)`;
+      // Across: a column per tier up to the deepest a line can reach, so every tab's tiers line up; the branches share the height.
+      if (across) {
+        grid.style.gridTemplateRows = `repeat(${lines.length}, minmax(0, 1fr))`;
+        grid.style.gridTemplateColumns = `repeat(${TREE_TIERS}, minmax(0, 1fr))`;
+      }
       else grid.style.gridTemplateColumns = `repeat(${lines.length}, minmax(0, 1fr))`;
       // Each node by its route from the root, so a child finds the cell its parent was drawn in.
       const cells = new Map<string, HTMLElement>();

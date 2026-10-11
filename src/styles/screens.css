@@ -118,7 +118,11 @@
 .tab-frame .tree.line .node.choosable .thumb { outline: 2px dashed var(--gbx-lit); outline-offset: 0.3rem; }
 .tab-frame .tree.line .node.closed { opacity: 0.3; filter: grayscale(1); cursor: default; }
 .tab-frame .tree.line .node:not(.closed):hover .thumb { box-shadow: 0 0 0 2px #fff4e0, 0 0 0.8rem rgba(232, 195, 108, 0.7); }
-.tab-frame .tree.line.across { gap: 0.8rem 3.5rem; justify-content: start; }
+/* Across, the tree fills the field: tiers spread over its width, branches share its height. */
+.tab-frame .capitol-trees:has(.tree.across) { display: flex; flex-direction: column; min-height: 100%; }
+.tab-frame .tree.line.across { flex: 1; gap: 1rem 0; min-height: 24rem; }
+.tab-frame .tree.line.across .node .thumb { width: 5.75rem; height: 5.75rem; }
+.tab-frame .tree.line.across .node .name { font-size: 1.05rem; }
 .tab-frame .tree.line.down { gap: 2.2rem 0.6rem; }
 .tab-frame .tree.line svg.connectors path { stroke-width: 4; }
 .tab-frame .tree-layouts { display: flex; gap: 0.3rem; justify-content: flex-end; margin: -0.4rem 0 0.4rem; }

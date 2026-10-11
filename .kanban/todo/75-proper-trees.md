@@ -11,3 +11,7 @@
 - **Compare first (the user, 2026-10-11):** top-down against left-to-right. Claude raised it because the lines already
   run off the bottom at 720p and the screen is wider than tall; the user: "maybe not a bad idea. I think we should
   compare." Build both, show them side by side, the user picks.
+- **Round 1 built (2026-10-11):** portraits on branches in both layouts, a toggle to compare (`shots/trees.html`). The
+  user: "Left to right might be fine, but right now there's a lot of real estate not really being used [...] Maybe it'll
+  be good once nudged into place." Round 2: across fills the field (five tier columns over its width, branches sharing
+  its height, larger portraits). Waiting on the pick; then the toggle goes and the leader tree follows.
