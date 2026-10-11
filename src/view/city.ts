@@ -16,7 +16,7 @@ import { squadTile } from "#view/squad-tile";
 import { spellsTab } from "#view/spells";
 import { tabFrame } from "#view/frames";
 import { warbandColumn } from "#view/warband-column";
-import type { GridChoice, GridSquad } from "#view/squad-grid";
+import type { GridChoice, GridSquad, RecruitChoice } from "#view/squad-grid";
 import { sameHex } from "#rules/hex";
 import type { KeyLayer } from "#view/input";
 import { cityViewUrl } from "#view/art";
@@ -226,24 +226,14 @@ export class CityScreen implements KeyLayer {
         this.selected = null;
         this.options.act({ type: "transfer", from, fromTile, to, toTile });
       },
-      emptyChoices: (ref: SquadRef, tile: Tile): GridChoice[] => {
+      recruits: (ref: SquadRef, tile: Tile): RecruitChoice[] =>
         // The faction's own first tiers, then what a Tribal outpost offers here.
-        const offered = [...FACTION_ROOTS[playerOf(world, side).faction], ...(city ? tribeRecruitsOf(world, city) : [])];
-        const recruits = offered.map((defId) => ({
-          label: `Recruit ${unitName(defId)} · ${recruitCost(defId) ?? 0} gold`,
+        [...FACTION_ROOTS[playerOf(world, side).faction], ...(city ? tribeRecruitsOf(world, city) : [])].map((defId) => ({
+          defId,
+          price: recruitCost(defId) ?? 0,
           problem: recruitProblem(world, defId, ref, tile),
           run: () => this.options.act({ type: "recruit", defId, into: ref, tile }),
-        }));
-        const raised =
-          city && raisesDeadAt(world, side, city)
-            ? playerOf(world, side).graveyard.map((fallen, index) => ({
-                label: `Resurrect ${unitName(fallen.defId)} · ${resurrectionCost(world, side, index, city) ?? 0} gold`,
-                problem: resurrectProblem(world, index, ref, tile),
-                run: () => this.options.act({ type: "resurrect", index, into: ref, tile }),
-              }))
-            : [];
-        return [...recruits, ...raised];
-      },
+        })),
       raise:
         city && raisesDeadAt(world, side, city)
           ? {

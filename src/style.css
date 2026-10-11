@@ -206,7 +206,6 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 .screen .node .branch { font-size: 0.6875rem; color: var(--muted); }
 .screen .node .branch.chosen { color: var(--gold); }
 .screen .node .upgrade.bought { font-size: 0.6875rem; color: #c9b88e; }
-#capitol button.small { font-size: 0.6875rem; padding: 0.1875rem 0.375rem; }
 .screen .member { display: grid; grid-template-columns: 1fr auto; gap: 2px 0.375rem; align-items: center; margin-bottom: 0.375rem; }
 .screen .member .hp { grid-column: 1; height: 0.75rem; border: 1px solid var(--line); }
 .screen .member .hp .value { position: relative; display: block; text-align: center; font-size: 0.625rem; line-height: 0.75rem; }
@@ -280,8 +279,17 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 .squad-grid .row-label { text-align: center; align-self: end; color: var(--muted); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.08em; }
 .squad-grid .grid-details { margin-top: 0.625rem; max-width: 23.75rem; }
 .squad-grid .grid-details button { margin: 0.25rem 0.25rem 0 0; }
-.grid-menu { position: fixed; z-index: 40; display: flex; flex-direction: column; gap: 0.25rem; padding: 0.5rem; min-width: 13.75rem; }
-.grid-menu button { text-align: left; }
+/* The recruit menu by an empty place: each unit on offer as its squad tile, its name and price under it. */
+.grid-menu { position: fixed; z-index: 40; padding: 0.7rem 0.8rem 0.8rem; background: var(--gbx-chrome); color: var(--gbx-light); box-shadow: inset 0 0 0 1px var(--gbx-edge), 0 0.5rem 1.2rem rgba(0, 0, 0, 0.7); }
+.grid-menu .title { font: 700 1rem var(--display); margin-bottom: 0.5rem; }
+.grid-menu .note { color: var(--gbx-muted); font-size: 0.75rem; }
+.grid-menu .offers { display: flex; gap: 0.6rem; }
+.grid-menu .offer { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; width: 5.6rem; padding: 0.4rem 0.3rem; border: 0; background: var(--gbx-well); color: var(--gbx-light); cursor: pointer; font: 600 0.78rem var(--text); }
+.grid-menu .offer .squad-tile { width: 5rem; height: 5rem; }
+.grid-menu .offer .name { font: 700 0.85rem var(--display); text-align: center; line-height: 1.1; }
+.grid-menu .offer:hover { box-shadow: inset 0 0 0 2px var(--gbx-lit); }
+.grid-menu .offer.refused { opacity: 0.4; cursor: default; }
+.grid-menu .offer.refused:hover { box-shadow: none; }
 
 .research-row { display: grid; grid-template-columns: 13.75rem 1fr auto; gap: 0.75rem; align-items: center; padding: 0.375rem 0; border-bottom: 1px solid var(--rule); }
 .research-row .name { font: 700 0.9375rem var(--display); }
@@ -817,6 +825,11 @@ body.formulas .formula { display: inline; }
 /* The garrison tab: the two grids side by side the heart of it, the city's growth beside them, the fallen under them
    when there are any. The squad tile keeps the map's size. */
 .garrison-board { position: fixed; top: 0; left: 0; right: calc(50rem * 300 / 864); height: 50rem; z-index: 1; box-sizing: border-box; display: grid; grid-template-columns: 1fr 22rem; gap: 1.2rem; padding: 1.4rem; background: rgba(12, 10, 9, 0.55); color: var(--gbx-light); }
+/* Narrower than 3:2 the grids and the growth panel don't fit side by side: the growth panel goes under the grids. */
+@media (max-aspect-ratio: 3/2) {
+  .garrison-board { grid-template-columns: 1fr; grid-template-rows: auto auto; align-content: start; overflow-y: auto; }
+  .garrison-board .main { justify-content: start; }
+}
 .garrison-board .section { font: 700 1.05rem var(--display); margin: 0 0 0.4rem; color: var(--gbx-light); }
 .garrison-board .note { color: var(--gbx-muted); font-size: 0.72rem; margin: 0; }
 .garrison-board .main { display: flex; flex-direction: column; justify-content: center; gap: 1.2rem; min-width: 0; }
@@ -850,40 +863,38 @@ body.formulas .formula { display: inline; }
 .garrison-board .order:disabled, .garrison-board .grid-details button:disabled { background: #6b645b; color: #2c2722; cursor: default; }
 .garrison-board .done { color: var(--gbx-muted); }
 
-/* Narrower than 16:9 the frame scales down to the width left beside the column rather than lose its left side. */
-.tab-frame { --u: min(50rem / 864, (100vw - 50rem * 300 / 864) / 1236); font-size: calc(17.28 * var(--u)); }
-/* The Research and Spells tabs in one painted frame left of the column (assets/ui/capitol/tab.webp, 1236 by 864): the
-   tab's name on the plate, the content scrolling in the field. */
+/* The frame the Research and Spells tabs, the leader's screen, the structures and a meeting fill (view/frames.ts), as
+   a greybox in flat values (`docs/design/capitol-elements.md`, "The frame"): the screen's name on a plate, the content
+   scrolling in a dark field, left of the column. */
 .tab-frame {
-  position: fixed; top: 0; right: calc(50rem * 300 / 864); height: calc(864 * var(--u)); width: calc(1236 * var(--u)); z-index: 1;
-  background: var(--ui-capitol-tab) 0 0 / 100% 100% no-repeat;
+  position: fixed; top: 0; left: 0; right: calc(50rem * 300 / 864); height: 50rem; z-index: 1; box-sizing: border-box;
+  display: flex; flex-direction: column; gap: 1rem; padding: 1.2rem 1.4rem; background: var(--gbx-chrome); color: var(--gbx-light);
 }
-.tab-frame > * { position: absolute; box-sizing: border-box; }
-.tab-frame > .title {
-  left: calc(var(--tx) * var(--u)); top: calc(var(--ty) * var(--u)); width: calc(var(--tw) * var(--u)); height: calc(var(--th) * var(--u));
-  display: flex; align-items: center; justify-content: center; color: #241c15; font: 700 1.35em var(--display); letter-spacing: 0.05em; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+.tab-frame > .title { align-self: center; min-width: 22rem; padding: 0.45rem 2rem; text-align: center; background: var(--gbx-plate); color: var(--gbx-ink); font: 700 1.35rem var(--display); letter-spacing: 0.05em; }
+.tab-frame > .field { flex: 1; min-height: 0; overflow-y: auto; padding: 1.2rem 1.4rem; background: var(--gbx-well); box-shadow: inset 0 0 0 1px var(--gbx-edge); }
+.tab-frame .note { color: var(--gbx-muted); font-size: 0.75rem; }
+.tab-frame .spells-tab { padding: 0; max-width: 48rem; margin: 0; }
+/* The research tabs: labelled, the open one lit, one without a line yet dark. */
+.tab-frame .capitol-trees > .tabs { display: flex; gap: 0.4rem; margin-bottom: 0.9rem; }
+#capitol .tab-frame .capitol-trees > .tabs button.tab { height: 2.3rem; padding: 0 1.1rem; border: 0; background: var(--gbx-chrome); color: var(--gbx-light); font: 700 1rem var(--display); cursor: pointer; box-shadow: inset 0 0 0 1px var(--gbx-edge); }
+#capitol .tab-frame .capitol-trees > .tabs button.tab:not(.selected):hover:not(:disabled) { box-shadow: inset 0 0 0 1px var(--gbx-lit); }
+#capitol .tab-frame .capitol-trees > .tabs button.tab.selected { background: var(--gbx-lit); color: var(--gbx-ink); box-shadow: none; }
+#capitol .tab-frame .capitol-trees > .tabs button.tab:disabled { opacity: 0.35; cursor: default; }
+/* The research tree: nodes as flat plates on the dark field, joined by plain lines; a closed branch dims. */
+.tab-frame .tree.down svg.connectors path { stroke: var(--gbx-edge); stroke-width: 3; opacity: 1; }
+.tab-frame .node { background: var(--gbx-chrome); border: 0; box-shadow: inset 0 0 0 1px var(--gbx-edge); color: var(--gbx-light); }
+.tab-frame .node .head .thumb { width: 4rem; height: 4rem; margin: 0; background-size: cover; background-position: 50% 15%; }
+.tab-frame .node .branch.chosen { color: var(--gbx-lit); font-weight: 700; }
+.tab-frame .node .upgrade.bought { color: var(--gbx-muted); }
+.tab-frame .research-row, .tab-frame .spell-row { border-bottom: 1px solid var(--gbx-edge); padding: 0.6rem 0; }
+/* The frame's buttons: light plates, dimmed when they can't be used. */
+.tab-frame button.small, .tab-frame button.action:not(.tab) {
+  margin: 0.2rem 0 0; padding: 0.35rem 0.75rem; border: 0; border-image: none; background: var(--gbx-plate); color: var(--gbx-ink); filter: none;
+  font: 700 0.82rem var(--display); white-space: nowrap; cursor: pointer;
 }
-.tab-frame > .field {
-  left: calc(var(--fx) * var(--u)); top: calc(var(--fy) * var(--u)); width: calc(var(--fw) * var(--u)); height: calc(var(--fh) * var(--u));
-  overflow-y: auto; padding: 1em 1.4em; color: #e6dccb;
-}
-.tab-frame { --tx: 421; --ty: 16; --tw: 394; --th: 56; --fx: 64; --fy: 126; --fw: 1110; --fh: 690; }
-.tab-frame .spells-tab { padding: 0; }
-.tab-frame .screen .note, .tab-frame .note { color: #b8ab96; }
-/* The research tabs: marble plaques on the iron, the open one lit, one without a line yet dark. */
-.tab-frame .capitol-trees > .tabs { display: flex; gap: 0.5em; margin-bottom: 0.9em; }
-.tab-frame .capitol-trees > .tabs button.tab {
-  height: 2.2em; box-sizing: border-box; padding: 0 1em; display: flex; align-items: center; white-space: nowrap; cursor: pointer;
-  border: 0.45em solid transparent; border-image: var(--ui-battle-plaque) 26 fill / 0.45em stretch; background: none; color: var(--gb-ink);
-  font: 700 1em var(--display); letter-spacing: 0.03em; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
-  filter: brightness(0.72) drop-shadow(0 0.1em 0.15em rgba(0, 0, 0, 0.7));
-}
-.tab-frame .capitol-trees > .tabs button.tab:not(.selected):hover:not(:disabled) { filter: brightness(0.95) drop-shadow(0 0.1em 0.15em rgba(0, 0, 0, 0.7)); }
-.tab-frame .capitol-trees > .tabs button.tab.selected { filter: brightness(1.15) drop-shadow(0 0 0.35em rgba(255, 205, 120, 0.95)) drop-shadow(0 0 0.15em rgba(255, 205, 120, 0.9)); }
-.tab-frame .capitol-trees > .tabs button.tab:disabled { filter: brightness(0.3) grayscale(1); cursor: default; }
-/* The research tree: nodes as dark plates, joined by iron rods; a closed branch dims. */
-.tab-frame .tree.down svg.connectors path { stroke: #6b5f52; stroke-width: 4; opacity: 1; filter: drop-shadow(0 1px 0 #000); }
-.tab-frame .node { background: rgba(14, 12, 10, 0.9); border-color: #4e4236; box-shadow: 0 0.15em 0.4em rgba(0, 0, 0, 0.6); }
+.tab-frame button.small .gold, .tab-frame button.action .gold { color: var(--gbx-ink); }
+.tab-frame button.small:hover:not(:disabled) { background: #f0e8d8; box-shadow: 0 0 0.6rem rgba(232, 195, 108, 0.6); filter: none; }
+.tab-frame button.small:disabled { background: #6b645b; color: #2c2722; filter: none; cursor: default; }
 
 /* The warband's column at the right edge of the leader's and the structures' screens (assets/ui/warband/column.webp,
    the hud-paint-in skill), the map and Capitol columns' sibling, its windows placed as shares of the painting (300 by

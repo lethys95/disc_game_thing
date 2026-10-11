@@ -26,7 +26,7 @@ const city: Playtest = {
 
     const purseBefore = Number((await t.page.textContent("#capitol .purse"))?.trim());
     await cell(0, 2, 0).click();
-    await t.page.locator(".grid-menu button", { hasText: "Recruit Congregant" }).click();
+    await t.page.locator(".grid-menu .offer", { hasText: "Congregant" }).click();
     await garrisonHas(start + 2).catch(() => t.fail("the recruit didn't arrive"));
     const purse = await t.page.textContent("#capitol .purse");
     t.log(`after recruit: ${(await titles()).join(" | ")} · gold ${purse}`);

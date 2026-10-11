@@ -178,7 +178,7 @@ export class ResearchPanel {
       }
       const problem = upgradeProblem(world, upgrade.id);
       node.appendChild(
-        orderButton("small upgrade", `Upgrade: ${upgrade.label} · ${upgrade.price} gold`, {
+        orderButton("small upgrade", [`${upgrade.label} · `, gold(upgrade.price)], {
           mayAct: mayAct && open,
           problem,
           explain: `Every unit that becomes a ${unitName(defId)} from now on gets this. Units you already have don't.`,

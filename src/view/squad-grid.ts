@@ -1,7 +1,9 @@
 import type { Tile } from "#rules/battle/types";
 import { COLS, ROWS, sameTile } from "#rules/battle/grid";
+import { member } from "#rules/world/state";
 import type { Leader, SquadMember, SquadRef } from "#rules/world/state";
-import { element } from "#view/dom";
+import { element, gold } from "#view/dom";
+import { unitName } from "#view/members";
 import { squadTile } from "#view/squad-tile";
 
 /** One squad shown as its 3×3 grid (front row first). */
@@ -13,7 +15,15 @@ export interface GridSquad {
   readonly capacity: number;
 }
 
-/** Something to do with an empty tile (recruit, resurrect) or with a unit (elevate). */
+/** A unit that can be recruited into an empty place, its price, and what stops it (null: nothing). */
+export interface RecruitChoice {
+  readonly defId: string;
+  readonly price: number;
+  readonly problem: string | null;
+  readonly run: () => void;
+}
+
+/** Something to do with a unit (elevate). */
 export interface GridChoice {
   readonly label: string;
   readonly problem: string | null;
@@ -25,7 +35,7 @@ export interface GridOptions {
   /** Why a unit can't be moved there (null: it can); moving onto a unit swaps the two. */
   readonly moveProblem: (from: SquadRef, fromTile: Tile, to: SquadRef, toTile: Tile) => string | null;
   readonly move: (from: SquadRef, fromTile: Tile, to: SquadRef, toTile: Tile) => void;
-  readonly emptyChoices: (ref: SquadRef, tile: Tile) => readonly GridChoice[];
+  readonly recruits: (ref: SquadRef, tile: Tile) => readonly RecruitChoice[];
   readonly unitChoices: (ref: SquadRef, member: SquadMember) => readonly GridChoice[];
   /** A unit selected in some grid (to show its details and actions), or null. */
   readonly selected: { readonly ref: SquadRef; readonly tile: Tile } | null;
@@ -63,22 +73,30 @@ function readDragged(event: DragEvent): Dragged | null {
   return null;
 }
 
-/** A small menu under a tile: what can go there. Closes on any choice or click elsewhere. */
-function openMenu(anchor: HTMLElement, choices: readonly GridChoice[]): void {
+/**
+ * The recruit menu by an empty place (`docs/design/capitol-elements.md`): each unit on offer as the squad tile it will
+ * be, its name and price under it, its sheet on a held right-click; one that can't be had dimmed, the reason on hover.
+ * Closes on a choice or a click elsewhere.
+ */
+function openRecruits(anchor: HTMLElement, choices: readonly RecruitChoice[]): void {
   document.querySelector(".grid-menu")?.remove();
-  const menu = element("div", "grid-menu panel");
-  if (choices.length === 0) menu.appendChild(element("div", "note", "Nothing can go here."));
+  const menu = element("div", "grid-menu");
+  menu.appendChild(element("div", "title", "Recruit into this place"));
+  if (choices.length === 0) menu.appendChild(element("div", "note", "No one can be recruited here."));
+  const list = element("div", "offers");
   for (const choice of choices) {
-    const item = element("button", "small", choice.label);
-    item.disabled = choice.problem !== null;
-    item.title = choice.problem ?? "";
+    const item = element("button", `offer${choice.problem ? " refused" : ""}`);
+    item.append(squadTile(member(choice.defId, { row: 0, col: 0 }), undefined), element("span", "name", unitName(choice.defId)), gold(choice.price));
+    item.title = choice.problem ?? `Recruit a ${unitName(choice.defId)}. Hold right-click for its sheet.`;
     item.addEventListener("click", (e) => {
       e.stopPropagation();
+      if (choice.problem) return;
       menu.remove();
       choice.run();
     });
-    menu.appendChild(item);
+    list.appendChild(item);
   }
+  menu.appendChild(list);
   const box = anchor.getBoundingClientRect();
   document.body.appendChild(menu);
   // Measured once it's in the page: its size follows the UI scale.
@@ -115,7 +133,7 @@ export function squadGrid(side: GridSquad, options: GridOptions): HTMLElement {
         cell.addEventListener("click", () => options.select(isSelected ? null : { ref: side.ref, tile }));
       } else if (options.mayAct) {
         cell.classList.add("open");
-        cell.addEventListener("click", () => openMenu(cell, options.emptyChoices(side.ref, tile)));
+        cell.addEventListener("click", () => openRecruits(cell, options.recruits(side.ref, tile)));
       }
       cell.addEventListener("dragover", (e) => {
         e.preventDefault();

@@ -44,3 +44,49 @@ So the squads are the screen; growth is a side panel; the fallen appear only whe
   nodes) to their right; the graveyard as a strip under the grids when it has anyone; orders and the hint line under
   everything.
 - Research and Spells keep their frame.
+
+## The recruit menu
+Opened by clicking an empty place in a grid. **What it's for:** putting a new unit into that place: choosing who, and
+whether it's affordable (every recruit is a decision about gold and about the squad's shape).
+
+| Element | What it does | Why it's there | Verdict |
+|---|---|---|---|
+| The units on offer (the faction's first tiers, then what a Tribal outpost here offers) | recruit that unit into this place | the job | keep, each as the squad tile (the face the unit will have in the grid), its name and price under it; held right-click opens its sheet, so you see what you're buying |
+| Price | what it costs | the decision | under each unit, with the coin |
+| Why not (can't afford, no room) | says what stops it | without it a dimmed choice is a puzzle | the unit dimmed, the reason on hover |
+| "Resurrect X" entries | raise a fallen unit here | duplicated the graveyard | **cut**: the fallen are raised by dragging them from their strip, one way to do one thing; the strip shows whenever there are any |
+| Stone slab buttons, the menu's frame | none | old kit | flat values |
+| Title | says what this is | the menu opens over the grid | "Recruit into this place" |
+
+## Research (the Capitol)
+**What it's for**, most often first: buying upgrades for a unit type (gold, every few turns); choosing a fork's branch
+ahead of time (free, permanent; the evolve prompt asks too, when a unit is ready); seeing what a line can become
+(planning); the Capitol's own research (rare; one item now).
+
+| Element | What it does | Why it's there | Verdict |
+|---|---|---|---|
+| Tabs: General, Melee, Support, Mage, Joker | switch between the Capitol's research and each archetype's lines | the lines don't fit together | keep; one without a line yet stays visible but dark (the Joker lines are designed later) |
+| Explanatory note | how branches and upgrades work | teaches once | keep, one line |
+| Tree of a line | each unit in its line from tier 1 down, joined to what it comes from | planning, and where each upgrade sits | keep; drawn as real trees later (`todo/proper-trees`) |
+| Node: portrait, name | which unit | recognition | keep |
+| Node: ×count | how many you own | whether an upgrade is worth its gold now | keep, beside the name |
+| Node: numbers (tier, HP, hits, armor) | | already cut: the held right-click shows the sheet | — |
+| Choose branch | commits every unit of that kind to this branch | the fork decision | on each branch of an undecided fork, the branch's own name; after: "Chosen" on one, the other dimmed |
+| Upgrade | buys a bonus for every future unit of this type | the most frequent job here | a button with what it gives and its price; bought ones say so, dimmed in a closed branch |
+| General: research rows | name, what it does, Research and its price, or done | the Capitol's own research | keep as rows |
+
+## Spells (the Capitol)
+**What it's for:** learning spells for gold, which are then cast on the map with mana (the spell book in the map
+column).
+
+| Element | What it does | Why it's there | Verdict |
+|---|---|---|---|
+| Note ("placeholders until the real ones are designed") | says these aren't final | honest, for now | keep until the user designs spells (`todo/spells`) |
+| Spell rows: name, mana per cast, what it does | which spell, what it costs to use | the decision to learn | keep |
+| Learn and its gold price, or Learned | learns it | the job | a button; learned ones say so |
+
+## The frame
+Research, Spells, the leader's screen, the structures and the meeting share the frame (`view/frames.ts`): a title and
+a field the content scrolls in. Its job is to say which screen this is and hold content that changes shape. Painted
+Jilliath's way it read as Norse (the user's review); greyboxed it is a plain title plate and a dark field, for all of
+them until they are judged and painted.
