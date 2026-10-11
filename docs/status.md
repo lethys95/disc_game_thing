@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-11 (the Capitol's tabs, the leader's and structures' screens, the battle's turn order: painted)
+**Updated:** 2026-10-11 (after the user's review: components first, the Capitol greyboxed by job)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): the alpha is the three playable factions (Jilliath,
@@ -37,10 +37,11 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
   never writing to it; three.js keeps the pace. Step 1 done there: the `?fight` arena nearly matches three.js.
 
 ## Next
-0. **The HUD, screen by screen** (`hud-paint-in` skill). Every game screen is painted. Next: **the title and the
-   menus** (title, new game, settings, saves, codex still on the interim kit). Open: research's locked branches only
-   dim; the warband panes don't mark a unit ready to evolve; the Capitol paintings a little soft at 1440p. In battle:
-   right-click a field unit for its sheet; real glyphs for the knobs; narrower than 16:9 crops the bar's ends.
+0. **The HUD, interface first** (the user's review, 2026-10-11; `in-progress/ui-kit-grotesques`). Done: one unit
+   sheet and one squad tile everywhere; the Capitol greyboxed by job (`design/capitol-elements.md`,
+   `shots/capitol-greybox.html`), waiting on the user's read. Next: the recruit menu, research and spells, the
+   meeting, then the other screens the same way; paint only after a layout is judged, per faction skin (each faction
+   paints the shared layouts its own way). Glass rests.
 1. **Finish Jilliath's concepts** with the user (the open nine), then portraits from the picks.
 2. **The other factions' missing units** (the alpha needs all three): Nexus melee tier 3, the Grove's mage line, and
    the rest on the board; then their concept art the same way.
