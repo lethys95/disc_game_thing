@@ -263,3 +263,8 @@
   it rest for now [...] this might be us polishing, and maybe we're not at that stage right now anyway." The map
   column keeps its original glass. Kept for later: the exact glass mask (`art/masks/glass_mask.py`, the fix for the
   tear) and the colour reasoning (`hud-pieces.md`, "Colour in the glass"); `shots/glass-probe.html` has the rounds.
+- **The UI pass by job, done (2026-10-11):** every screen greyboxed with the `greybox` skill: the Capitol, the
+  leader's and structures' screens, the map column and battle bar (kept, labelled in the greybox setting), the title,
+  new game, menu and settings, the skirmish and the codex. Pages: `shots/capitol-greybox.html`,
+  `shots/warband-greybox.html`, `shots/front-greybox.html`. Waiting on the user's read; painting comes per faction
+  skin after. Next on the board: the code review's findings 1–3 (`todo/code-review`), before any new unit.

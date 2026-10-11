@@ -1,5 +1,3 @@
-import { BEHAVIORS, elementsOf, strongestHitOf } from "#rules/abilities/index";
-import { abilityPlain } from "#view/ability-text";
 import type { Placement } from "#rules/battle/engine";
 import { STARTING_LEADERSHIP } from "#rules/balance";
 import { allowedUnits, squadProblems } from "#rules/forks";
@@ -14,11 +12,11 @@ const PLAYABLE = Object.keys(FACTIONS).filter((f): f is Playable => f in FACTION
 import type { Playable } from "#rules/units/index";
 import { fallbackColor, PLAYER_COLORS } from "#rules/world/colors";
 import type { PlayerColor } from "#rules/world/colors";
-import { art } from "#view/art";
+import { squadTile } from "#view/squad-tile";
+import { member } from "#rules/world/state";
 import { colorPair, COLOR_HEX, COLOR_NAMES } from "#view/colors";
 import { FORMATIONS, PRESETS } from "#rules/units/presets";
 import { element } from "#view/dom";
-import { armorReduction } from "#rules/battle/damage";
 
 export type Squads = readonly [readonly Placement[], readonly Placement[]];
 
@@ -208,7 +206,9 @@ export class Setup {
       for (const row of rows) {
         const tile = { row, col };
         const placed = this.squads[side].find((p) => sameTile(p.tile, tile));
-        const cell = element("button", `cell${row === 0 ? " front" : ""}${placed ? " filled" : ""}`, placed ? (UNITS[placed.defId]?.name ?? placed.defId) : "");
+        const cell = element("button", `cell${row === 0 ? " front" : ""}${placed ? " filled" : ""}`);
+        // The shared squad tile: the face, its sheet on a held right-click (a plain right-click still removes it).
+        if (placed) cell.appendChild(squadTile(member(placed.defId, tile), undefined));
         cell.title = placed ? "Click to replace with the selected unit, right-click to remove" : "Click to place the selected unit";
         cell.addEventListener("click", (e) => {
           e.stopPropagation();
@@ -236,20 +236,8 @@ export class Setup {
       const def = UNITS[defId];
       if (!def) continue;
       const card = element("button", `recruit${this.brush === defId ? " selected" : ""}`);
-      card.appendChild(art({ kind: "portrait", id: defId, frame: "icon" }, "thumb"));
-      const head = element("div", "head");
-      head.append(element("span", "name", def.name), element("span", "tier", `tier ${def.tier}`));
-      card.appendChild(head);
-      card.appendChild(
-        element("div", "stats", `${def.stats.maxHp} HP${def.stats.shield > 0 ? ` · ${def.stats.shield} shield` : ""} · hits ${strongestHitOf(def)}${elementsOf(def).length === 0 ? "" : ` (${elementsOf(def).join(", ")})`} · ${def.stats.armor} armor (${armorReduction(def.stats.armor)}%) · ${def.stats.initiative} init`),
-      );
-      const special = def.abilities.filter((a) => {
-        const b = BEHAVIORS[a.id];
-        return !(b?.kind === "active" && b.tags.includes("common"));
-      });
-      const label = (a: (typeof special)[number]) => a.name ?? BEHAVIORS[a.id]?.name ?? a.id;
-      card.appendChild(element("div", "abilities", special.map(label).join(" · ")));
-      card.title = special.map((a) => `${label(a)}: ${abilityPlain(a, def.stats.abilityPower)}`).join("\n");
+      // As the recruit menu: the tile it will be, its name and tier; its sheet on a held right-click.
+      card.append(squadTile(member(defId, { row: 0, col: 0 }), undefined), element("span", "name", def.name), element("span", "tier", `tier ${def.tier}`));
       card.addEventListener("click", (e) => {
         e.stopPropagation();
         this.brush = this.brush === defId ? null : defId;

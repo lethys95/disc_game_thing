@@ -47,3 +47,8 @@ Rarely: change a preference. Five sections in one long scroll.
 | Sections: Animation speed, Sound, Camera, Hotkeys, Display | | | **tabs**, browser-style as in research, so nothing scrolls: Game (speed, camera), Sound, Hotkeys, Display |
 | Notes under settings ("also how long the AI pauses", the hotkey swap rule) | say what a setting does | it isn't obvious | keep, one line each |
 | Restore defaults, Back | | | keep in the footer |
+
+## The skirmish and the codex
+- **Skirmish:** its two grids and its recruit list use the shared squad tile (the recruit menu's way: the face, name and
+  tier; the sheet on a held right-click in place of a stats line); a plain right-click on a placed unit still removes it.
+- **Codex:** the flat book the user accepted stays; its header plates and the screen's backdrop went flat.
