@@ -280,3 +280,5 @@
 - **Round 3 (2026-10-11), from the user's sketch:** round tab buttons on a rose window, a veiled saint reaching up,
   pinnacles, leaving as a round symbol button (`view/leave.ts`, every column); loose greyboxes.
   `shots/jilliath-capitol-3.html`. Waiting on the user.
+- **Round 4 (2026-10-11), the angel** (the user's idea): a pale stone angel, wings spread, channelling the tab orbs;
+  a diaper face. `shots/jilliath-capitol-4.html`. Waiting on the user.

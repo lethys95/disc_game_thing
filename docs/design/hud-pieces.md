@@ -709,3 +709,11 @@ great arch, pinnacles, a veiled saint on an altar between columns and a low arch
 more freedom (denoise 0.75, depth 0.9). Five of six seeds held; seed 3 is in the game: the tabs as marble buttons with
 emblems and small labels, the open one glowing; leaving as a round button with a doorway-and-arrow symbol
 (`view/leave.ts`, used on every column). `shots/jilliath-capitol-3.html`.
+
+**Round 4 (2026-10-11), the angel.** The user on round 3: "That works better. Try a rendition where the background
+stuff are not those pill shaped things, and have the person in the middle be a hot angel with widespread wings,
+reaching up as if channeling the orbs at the window." (`jilliath-capitol-column-4`): round 3's exact parts in place; the
+face a diaper of quatrefoils in a diamond lattice; the saint and pinnacles replaced by a grown woman angel in pale
+weathered stone against the iron, wings across the column, arms raised to the window, a faint golden glow at her
+hands. Five of six held; seed 4 is in the game. The bottom button's label sits beside it, clear of her hands.
+`shots/jilliath-capitol-4.html`.

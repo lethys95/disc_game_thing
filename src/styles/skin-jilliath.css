@@ -4,8 +4,9 @@
    painting's own pixels, as measured from it. */
 body[data-skin="jilliath"]:not(.greybox) { --pg: calc(50rem / 864); }
 
-/* The Capitol's column (assets/ui/jilliath/capitol-column.webp, jilliath-capitol-column-3 seed 3, after the user's
-   sketch): the tabs are four round buttons on the rim of a rose window, the leave button sits under the saint's altar. */
+/* The Capitol's column (assets/ui/jilliath/capitol-column.webp, jilliath-capitol-column-4 seed 4, after the user's
+   sketch): the tabs are four round buttons on the rim of a rose window an angel reaches up to, the leave button under
+   her altar. */
 body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol {
   display: block; padding: 0; background: var(--ui-jilliath-capitol-column) 0 0 / 100% 100% no-repeat; box-shadow: -0.5rem 0 1.2rem rgba(0, 0, 0, 0.7);
 }
@@ -15,14 +16,14 @@ body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol :is(.plate, .tab
   width: calc(var(--w) * var(--pg)); height: calc(var(--h) * var(--pg)); margin: 0; padding: 0; background: none; box-shadow: none;
 }
 body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .plate.name { --x: 20; --y: 15; --w: 260; --h: 44; }
-body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .plate.purse { --x: 20; --y: 70; --w: 120; --h: 36; }
-body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .plate.mana-plate { --x: 160; --y: 70; --w: 120; --h: 36; }
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .plate.purse { --x: 20; --y: 69; --w: 120; --h: 37; }
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .plate.mana-plate { --x: 162; --y: 69; --w: 120; --h: 37; }
 /* A tab is the round marble button; its emblem on the face, its name on a small dark label under it. */
 body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab { --w: 36; --h: 36; display: grid; place-items: center; border-radius: 50%; overflow: visible; }
-body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab:nth-child(1) { --x: 132; --y: 133; }
-body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab:nth-child(2) { --x: 64; --y: 203; }
-body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab:nth-child(3) { --x: 201; --y: 204; }
-body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab:nth-child(4) { --x: 132; --y: 276; }
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab:nth-child(1) { --x: 133; --y: 129; }
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab:nth-child(2) { --x: 64; --y: 200; }
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab:nth-child(3) { --x: 203; --y: 198; }
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab:nth-child(4) { --x: 132; --y: 270; }
 body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab .glyph { width: calc(30 * var(--pg)); height: calc(30 * var(--pg)); filter: none; }
 body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab .label {
   position: absolute; top: calc(100% + 2 * var(--pg)); left: 50%; transform: translateX(-50%); padding: 0.05rem 0.4rem; white-space: nowrap;
@@ -33,6 +34,8 @@ body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab.selected { 
 body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab.selected .label { color: var(--gbx-lit); }
 body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab.selected .glyph { filter: none; }
 /* Leaving: the round button under the altar, its symbol on the marble face. */
-body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .back { --x: 135; --y: 793; --w: 36; --h: 36; display: grid; place-items: center; border-radius: 50%; color: #241c15; }
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .back { --x: 135; --y: 787; --w: 37; --h: 37; display: grid; place-items: center; border-radius: 50%; color: #241c15; }
 body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .back svg { width: 62%; height: 62%; }
 body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .back:hover { box-shadow: 0 0 0 2px rgba(232, 195, 108, 0.6), 0 0 1rem rgba(232, 195, 108, 0.5); }
+/* The bottom button's name goes beside it: under it are the angel's hands. */
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab:nth-child(4) .label { top: 50%; left: calc(100% + 5 * var(--pg)); transform: translateY(-50%); }

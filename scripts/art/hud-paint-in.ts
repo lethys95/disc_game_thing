@@ -81,6 +81,18 @@ const LAYOUTS: Readonly<Record<string, Layout>> = {
     prompt: "A tall vertical game interface column seen straight on, painted as game interface art, in soft even light without glare, dull lighting. Blackened cast iron, old and worn, joined by thin iron bands with small faceted amber studs. Every surface is densely worked: scrolling ironwork, small rosettes, gothic tracery and quatrefoils, dark on dark. At the top, a long cream marble plate and two small cream marble plates below it, blank. Below them, under a great pointed arch, a round rose window of red and amber stained glass, with four round ivory enamel buttons set around it in heavy iron sockets, blank. Tall gothic pinnacles with crockets rise at both sides. Below the window, a tall veiled saint in long flowing robes, carved in deep relief in the same dark iron, stands on an altar between two slender columns, one hand raised up toward the window, the other holding a tall staff, old and worn, matte, with no polish. Under the altar, inside a low pointed arch, one round ivory enamel button in a heavy iron socket, blank. No text, no letters.",
   },
   /**
+   * Jilliath's Capitol column, round 4 (the user: no "pill shaped things" behind, and "a hot angel with widespread
+   * wings, reaching up as if channeling the orbs at the window"): round 3's exact parts, a diaper face, the angel in
+   * pale stone against the dark iron (the references' material contrast).
+   */
+  "jilliath-capitol-column-4": {
+    page: [300, 864],
+    size: [576, 1664],
+    denoise: 0.75,
+    depthStrength: 0.9,
+    prompt: "A tall vertical game interface column seen straight on, painted as game interface art, in soft even light without glare. Blackened cast iron, old and worn, joined by thin iron bands with small faceted amber studs, its face covered in a gothic diaper of small quatrefoils in a diamond lattice, dark on dark. At the top, a long cream marble plate and two small cream marble plates below it, blank. Below them, under a great pointed arch, a round rose window of red and amber stained glass, with four round ivory enamel buttons set around it in heavy iron sockets, blank. Below the window, a beautiful grown woman angel carved in pale weathered stone, her great feathered wings spread wide to both sides of the column, both arms raised high toward the window with open hands, as if drawing light from the four buttons, a faint golden glow between her hands and the glass, her long robes flowing, standing on an iron altar. Under the altar, inside a low pointed arch, one round ivory enamel button in a heavy iron socket, blank. No text, no letters.",
+  },
+  /**
    * Jilliath's panel frame, one painting used as a nine-slice border round every panel left of the column (the
    * garrison, the city's panel, the tab frame), at the column's density: the user's review found the wall twice as
    * blurred as the column and the two not joined.
