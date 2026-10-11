@@ -27,6 +27,9 @@ export interface FactionDef {
   readonly about: string;
 }
 
+/** The playable factions, in the order the screens offer them. */
+export const PLAYABLE: readonly Playable[] = ["jilliath", "nexus", "grove"];
+
 export const FACTIONS: Readonly<Record<Playable, FactionDef>> = {
   jilliath: {
     name: "Jilliath",

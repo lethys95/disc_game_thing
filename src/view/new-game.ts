@@ -1,5 +1,5 @@
 import { commitmentOf } from "#rules/forks";
-import { FACTIONS } from "#rules/factions";
+import { FACTIONS, PLAYABLE } from "#rules/factions";
 import { defaultMapSize, isMapSize, MAP_SIZES } from "#rules/map";
 import type { MapSize } from "#rules/map";
 import type { Playable } from "#rules/units/index";
@@ -16,7 +16,6 @@ export interface NewGameHandlers {
   onBack(): void;
 }
 
-const PLAYABLE = Object.keys(FACTIONS).filter((f): f is Playable => f in FACTIONS);
 
 /** Maps have room for six Capitols (the ring's corners). */
 const MAX_OPPONENTS = 5;

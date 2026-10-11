@@ -5,10 +5,8 @@ import type { SquadProblem } from "#rules/forks";
 import { COLS, ROWS, sameTile } from "#rules/battle/grid";
 import type { Side, Tile } from "#rules/battle/types";
 import { UNITS } from "#rules/units/index";
-import { FACTIONS } from "#rules/factions";
+import { FACTIONS, PLAYABLE } from "#rules/factions";
 
-/** Every playable faction, in the order the setup offers them. */
-const PLAYABLE = Object.keys(FACTIONS).filter((f): f is Playable => f in FACTIONS);
 import type { Playable } from "#rules/units/index";
 import { fallbackColor, PLAYER_COLORS } from "#rules/world/colors";
 import type { PlayerColor } from "#rules/world/colors";

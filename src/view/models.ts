@@ -20,7 +20,6 @@ export const modelUrl = (chain: readonly string[]): string | null => {
 
 /** Ground textures for hex tops, `assets/ground/<terrain>-<n>.webp`, loaded once each. */
 const GROUND = import.meta.glob<string>("/assets/ground/*.webp", { eager: true, query: "?url", import: "default" });
-export const GROUND_VARIANTS = 3;
 
 export class GroundTextures {
   private readonly loader = new THREE.TextureLoader();

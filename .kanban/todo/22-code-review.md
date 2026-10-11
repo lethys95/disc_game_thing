@@ -36,3 +36,8 @@
   presets are one record per faction with `presetOf`, the ternary chains gone; `effects.ts` split into `effects/` by
   faction (`shared.ts` for the shapes), the `fortifies` flag gone; `factions.ts` says what adding a faction takes;
   architecture and engineering docs updated. Findings 1–3 done; 4 (CSS) and 5 (conventions) remain.
+- **Finding 5 (2026-10-11):** done: one typed `PLAYABLE` list (`factions.ts`) for the three copies of a filter that cast,
+  `GROUND_VARIANTS` and `MANA_NAMES` deleted, the docs' drift fixed (in finding 3's commit). Declined, for the user to
+  overrule: `isSave` checks only the header by design (the save version, pinned to the world's shape by a snapshot
+  test, vouches for the rest; validating the whole world would be a large parser for no gain), and the dated "the user,
+  …" comments, which quote the design intent a rule comes from (the *why*), not a task or a fix.
