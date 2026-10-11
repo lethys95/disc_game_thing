@@ -109,6 +109,21 @@ ornament-only extension for each end, set the finished painting between them on 
 (`art/greybox/battle-bar-wide/compose.py`, the `battle-bar-wide` repair). The game shows the wide painting behind the
 bar's parts; narrower screens crop the extensions.
 
+## 4b. Match the density, then upscale by segment
+The user, 2026-10-11: "I'm pretty confident in the boxout strategy [...] maybe having a segment upscaling step after
+that is the next part in that chain." Pieces shown side by side must carry the same pixels per screen pixel, or one
+reads blurred next to the other (the Capitol's garrison wall at 1.04× beside its column at 1.9×). Paint every piece at
+the same density, about 2× its 1080p page size, and where a piece is too large to paint at that size in one go, upscale
+it segment by segment (`maybe/upscalers`). Interface first, though: a piece is painted only after its layout has been
+tested in the game in flat values with the real content (the review of 2026-10-11).
+
+## 4c. Gothic, not knotwork, and not grey
+"Interlaced knotwork" is Celtic and Norse; it came from these prompts and read as Norse to the user. Gothic ornament is
+tracery, trefoils and quatrefoils, crockets, finials, pinnacles, cusped arches, fleurons, diaper and blind arcading. And
+the user's warning: "Be careful not everything just turns grey with the gothic stuff." Colour lives in the glass (many
+coordinated colours, not one red), the marble, the gems and the paintings; keep the iron dark but never let a whole
+piece go one grey.
+
 ## 5. Lay the real content over it
 Make a mock page: the game's screen as the backdrop (`pnpm tsx scripts/art/hud-backdrop.ts <out.png> "?map&seed=3"`
 renders a route at 1536×864 with its HTML interface hidden), the painted piece at its size, and the game's real text and portraits placed into the windows at the greybox coordinates. This is the test
