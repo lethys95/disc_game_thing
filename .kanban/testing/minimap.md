@@ -14,3 +14,5 @@
   explored terrain in flat values, cities and warbands as you know them, the screen's footprint as a frame, a click
   moves the camera. In the bottom-left corner; whether it moves into the column is for the repaint. Waiting for the
   user to look.
+- 2026-10-11: the user: "I do want them as small marks. Otherwise this is good." Lairs (diamonds, while guarded)
+  and structures (triangles) added, neutral by shape and value.

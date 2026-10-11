@@ -10,6 +10,8 @@ import type { MapView } from "#view/map";
 const TERRAIN_FILL: Readonly<Record<Terrain, string>> = { plain: "#55513f", forest: "#2f3e2b", hills: "#6b5f4a", mountain: "#8a857c", water: "#26394a" };
 const UNEXPLORED = "#141210";
 const NEUTRAL = "#9a948a";
+const INK = "#0d0b0a";
+const LIGHT = "#e6dccb";
 
 /**
  * The overworld's minimap (`docs/design/map-elements.md`, "The minimap"): the land as you have explored it, cities in
@@ -75,11 +77,21 @@ export class Minimap {
       g.fillStyle = explored.has(hexKey(tile.hex)) ? TERRAIN_FILL[tile.terrain] : UNEXPLORED;
       this.hex(g, p.x * scale + this.fit.x, p.z * scale + this.fit.z, radius);
     });
+    // Neutral places have no hue (every hue is a player's): lairs dark with a light rim, structures light with a dark one.
+    for (const lair of known.lairs) {
+      if (lair.guards.length === 0) continue;
+      const p = this.at(hexPosition(lair.hex));
+      this.mark(g, [[0, -1], [0.75, 0], [0, 1], [-0.75, 0]], p, scale * 0.85, INK, LIGHT);
+    }
+    for (const structure of known.structures) {
+      const p = this.at(hexPosition(structure.hex));
+      this.mark(g, [[0, -0.9], [0.85, 0.6], [-0.85, 0.6]], p, scale * 0.85, LIGHT, INK);
+    }
     const colorOf = (owner: PlayerId | null) => (owner === null ? NEUTRAL : COLOR_HEX[known.players[owner]?.color ?? "white"]);
     for (const city of known.cities) {
       const p = this.at(hexPosition(city.hex));
       const half = scale * (city.kind === "capitol" ? 1.3 : 0.9);
-      g.fillStyle = "#0d0b0a";
+      g.fillStyle = INK;
       g.fillRect(p.x - half - 1.5, p.y - half - 1.5, half * 2 + 3, half * 2 + 3);
       g.fillStyle = colorOf(city.owner);
       g.fillRect(p.x - half, p.y - half, half * 2, half * 2);
@@ -91,7 +103,7 @@ export class Minimap {
       g.fillStyle = colorOf(leader.player);
       g.fill();
       g.lineWidth = Math.max(1, scale * 0.25);
-      g.strokeStyle = "#0d0b0a";
+      g.strokeStyle = INK;
       g.stroke();
     }
     this.lastFrame = "";
@@ -100,6 +112,19 @@ export class Minimap {
 
   private at(point: THREE.Vector3): { x: number; y: number } {
     return { x: point.x * this.fit.scale + this.fit.x, y: point.z * this.fit.scale + this.fit.z };
+  }
+
+  /** A small outlined shape, its corners in units of `size` around `at`. */
+  private mark(g: CanvasRenderingContext2D, corners: readonly (readonly [number, number])[], at: { x: number; y: number }, size: number, fill: string, rim: string): void {
+    g.beginPath();
+    for (const [x, y] of corners) g.lineTo(at.x + x * size, at.y + y * size);
+    g.closePath();
+    g.fillStyle = fill;
+    g.fill();
+    g.lineWidth = Math.max(1, size * 0.3);
+    g.lineJoin = "round";
+    g.strokeStyle = rim;
+    g.stroke();
   }
 
   private hex(g: CanvasRenderingContext2D, x: number, y: number, r: number): void {
