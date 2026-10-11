@@ -454,7 +454,11 @@ function unitCard(card: HTMLElement, battle: Battle, unit: BattleUnit | undefine
   const drain = element("div", "drain");
   drain.style.clipPath = `inset(${g.top}rem ${BAR.width - g.right}rem ${BAR.height - level}rem ${g.left}rem)`;
   card.appendChild(drain);
-  if (!unit || !stats) return;
+  if (!unit || !stats) {
+    // An end with no unit keeps its places (the painting shows them emptied; the greybox draws them as outlines).
+    for (const part of ["globe", "arch", "plate", "effects"]) card.appendChild(element("div", `${part} vacant`));
+    return;
+  }
 
   const globe = element("div", "globe");
   // The greybox setting draws the globe flat, filled to this share.
