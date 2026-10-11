@@ -44,8 +44,8 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
    user: "this is good"). Research trees left to right (the user's pick); the leader tree drawn
    the same way (`testing/proper-trees`, `shots/trees.html`). Jilliath's Capitol theme plays in the Capitol.
    Paint after a layout is judged, per faction skin. Glass rests. The code review is handled (`testing/code-review`).
-   Jilliath's Capitol paint-in: round 1 rejected ("no soul or character"), reverted; round 2 brings the old painted
-   detail onto the judged layout, the column first (`shots/jilliath-capitol-2.html`).
+   Jilliath's Capitol paint-in: round 1 rejected ("no soul or character"), reverted; round 3 from the user's sketch
+   (round buttons on a rose window, a saint, a leave symbol button), the column first (`shots/jilliath-capitol-3.html`).
    **Mana is one kind** (the user's call; `testing/mana-colours`, `decisions.md`): one number per player, the faction's
    colour only its accent. Save 35.
 1. **Finish Jilliath's concepts** with the user (the open nine), then portraits from the picks.

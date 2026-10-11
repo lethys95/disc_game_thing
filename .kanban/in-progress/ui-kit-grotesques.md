@@ -277,3 +277,6 @@
 - **Round 2 (2026-10-11):** the old painted Capitol's detail on the judged layout, the column first
   (`jilliath-capitol-column-2` seed 4: stained glass, the mason and the abbess holding Back to the map).
   `shots/jilliath-capitol-2.html`. Waiting on the user before the garrison.
+- **Round 3 (2026-10-11), from the user's sketch:** round tab buttons on a rose window, a veiled saint reaching up,
+  pinnacles, leaving as a round symbol button (`view/leave.ts`, every column); loose greyboxes.
+  `shots/jilliath-capitol-3.html`. Waiting on the user.

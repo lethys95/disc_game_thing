@@ -3,6 +3,7 @@ import { playerOf } from "#rules/world/state";
 import type { Leader, World } from "#rules/world/state";
 import { button, element, gold } from "#view/dom";
 import { explain } from "#view/explain";
+import { leaveButton } from "#view/leave";
 import { leaderName } from "#view/map-text";
 import { squadTile } from "#view/squad-tile";
 
@@ -45,6 +46,6 @@ export function warbandColumn(world: World, leader: Leader, tabs: readonly Colum
     for (const tab of tabs) rows.appendChild(button(`tab${tab.selected ? " selected" : ""}`, [element("span", "label", tab.label)], () => select(tab.id)));
     column.appendChild(rows);
   }
-  column.appendChild(explain(button("back", "Back to the map", close), "Back to the map", "Escape does the same."));
+  column.appendChild(leaveButton(close));
   return column;
 }

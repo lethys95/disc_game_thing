@@ -10,6 +10,7 @@ import type { City, PlayerId, SquadMember, SquadRef, World, WorldAction } from "
 import { button, element, gold, mana, orderButton, roman } from "#view/dom";
 import { FACTIONS } from "#rules/factions";
 import { explain } from "#view/explain";
+import { leaveButton } from "#view/leave";
 import { unitName } from "#view/members";
 import { ResearchPanel } from "#view/research";
 import { FALLEN_DRAG, squadGrid } from "#view/squad-grid";
@@ -151,7 +152,7 @@ export class CityScreen implements KeyLayer {
       tabs.appendChild(row);
     }
     column.appendChild(tabs);
-    column.appendChild(explain(button("back", "Back to the map", () => this.options.close()), "Back to the map", "Escape does the same."));
+    column.appendChild(leaveButton(() => this.options.close()));
     return column;
   }
 

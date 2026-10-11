@@ -68,6 +68,19 @@ const LAYOUTS: Readonly<Record<string, Layout>> = {
     prompt: "A tall vertical game interface column seen straight on, painted as game interface art, in soft even light without glare, dull lighting. Blackened cast iron, old and worn, its sections joined by thin iron bands with a small faceted amber stud at each end. Every surface is densely worked: scrolling ironwork, small rosettes, gothic tracery and quatrefoils cover all the iron between the parts, dark on dark, and no surface is left plain. Cream marble plates, blank. At the top a long marble plate and two small marble plates below it. Below them, four long dark recessed iron panels stacked, each with a round ivory enamel boss in a small arched niche at its left end, blank. In the middle, a gothic lancet window of lead and stained glass in deep red and amber, with tracery glass in its pointed head and tall leaded panes below. At the foot, a cream marble plate, blank, held between two grown figures carved in deep relief in the same old dark iron, matte: on the left a kneeling hooded mason with a hammer at his belt, one hand on the plate, on the right a kneeling abbess holding a large key, one hand on the plate, her veil and robes the same dark iron as the rest. No text, no letters.",
   },
   /**
+   * Jilliath's Capitol column, round 3, after the user's sketch: the tabs as four round buttons in a ring round a rose
+   * window under a great arch, a veiled saint on an altar between columns reaching up to them, pinnacles at the sides,
+   * a round leave button at the foot. Round 2 "very very boring still. Everything is very square"; only the pressed
+   * and read parts are exact in the greyboxes, the rest loose masses.
+   */
+  "jilliath-capitol-column-3": {
+    page: [300, 864],
+    size: [576, 1664],
+    denoise: 0.75,
+    depthStrength: 0.9,
+    prompt: "A tall vertical game interface column seen straight on, painted as game interface art, in soft even light without glare, dull lighting. Blackened cast iron, old and worn, joined by thin iron bands with small faceted amber studs. Every surface is densely worked: scrolling ironwork, small rosettes, gothic tracery and quatrefoils, dark on dark. At the top, a long cream marble plate and two small cream marble plates below it, blank. Below them, under a great pointed arch, a round rose window of red and amber stained glass, with four round ivory enamel buttons set around it in heavy iron sockets, blank. Tall gothic pinnacles with crockets rise at both sides. Below the window, a tall veiled saint in long flowing robes, carved in deep relief in the same dark iron, stands on an altar between two slender columns, one hand raised up toward the window, the other holding a tall staff, old and worn, matte, with no polish. Under the altar, inside a low pointed arch, one round ivory enamel button in a heavy iron socket, blank. No text, no letters.",
+  },
+  /**
    * Jilliath's panel frame, one painting used as a nine-slice border round every panel left of the column (the
    * garrison, the city's panel, the tab frame), at the column's density: the user's review found the wall twice as
    * blurred as the column and the two not joined.

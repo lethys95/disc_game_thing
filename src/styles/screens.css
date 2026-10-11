@@ -33,7 +33,9 @@
 .screen-column .tab:hover { box-shadow: inset 0 0 0 1px var(--gbx-lit); }
 .screen .screen-column .tab.selected { background: var(--gbx-lit); color: var(--gbx-ink); box-shadow: none; }
 .screen-column .tab.selected .glyph { filter: brightness(0.3); }
-.screen-column .back { margin-top: auto; height: 2.6rem; background: var(--gbx-plate); color: var(--gbx-ink); font: 700 1.05rem var(--display); }
+/* Leaving: a round button with the leave symbol at the column's foot (view/leave.ts). */
+.screen-column .back { margin-top: auto; align-self: center; display: grid; place-items: center; width: 3.2rem; height: 3.2rem; padding: 0; border-radius: 50%; background: var(--gbx-plate); color: var(--gbx-ink); }
+.screen-column .back svg { width: 1.7rem; height: 1.7rem; }
 .screen-column .back:hover { background: #f0e8d8; box-shadow: 0 0 0.8rem rgba(232, 195, 108, 0.6); }
 
 /* The garrison tab: the two grids side by side the heart of it, the city's growth beside them, the fallen under them

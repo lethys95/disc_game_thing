@@ -699,3 +699,13 @@ word, "interlaced knotwork" swapped for tracery and quatrefoils, on the judged l
 marble, four tab rows with ivory bosses, a red and amber stained glass lancet window under them, the mason and the
 abbess holding Back to the map as a labelled plate. All six seeds held; seed 4 is in the game, column only.
 `shots/jilliath-capitol-2.html`.
+
+**Round 3 (2026-10-11), from the user's sketch.** On round 2: "definitely more functional, but it's also very very
+boring still. Everything is very square", Back to the map should be "a button which symbol shows that you're leaving",
+and the greyboxes were "too specific". The user drew the column: round tab buttons in a cluster, a figure below reaching
+up to them, gothic pattern at the sides, arches at top and bottom. So (`jilliath-capitol-column-3`): only what is read
+or pressed is exact (plates, four round buttons on the rim of a red and amber rose window, a round leave button); the
+great arch, pinnacles, a veiled saint on an altar between columns and a low arch are soft blurred masses, with a little
+more freedom (denoise 0.75, depth 0.9). Five of six seeds held; seed 3 is in the game: the tabs as marble buttons with
+emblems and small labels, the open one glowing; leaving as a round button with a doorway-and-arrow symbol
+(`view/leave.ts`, used on every column). `shots/jilliath-capitol-3.html`.
