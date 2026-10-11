@@ -15,3 +15,6 @@
   user: "Left to right might be fine, but right now there's a lot of real estate not really being used [...] Maybe it'll
   be good once nudged into place." Round 2: across fills the field (five tier columns over its width, branches sharing
   its height, larger portraits). Waiting on the pick; then the toggle goes and the leader tree follows.
+- 2026-10-11, round 3: the user, on left to right, wanted it to use the vertical space better. The portraits now grow
+  with the room their branch and tier get (about 190 px at 1080p with three branches, from 128), set from script
+  since container query heights resolve to zero in that grid. `shots/trees.html`. Still waiting on the pick.
