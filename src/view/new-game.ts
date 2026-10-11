@@ -104,7 +104,7 @@ export class NewGame {
         faces,
         element("div", "name", def.name),
         element("div", "epithet", def.epithet),
-        element("div", "traits", `${def.identity} · ${def.mana} mana · ${def.difficulty}`),
+        element("div", "traits", `${def.identity} · ${def.difficulty}`),
         element("div", "about", def.about),
       );
       factions.appendChild(card);

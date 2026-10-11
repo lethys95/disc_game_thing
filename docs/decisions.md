@@ -110,7 +110,7 @@ The Etherborn's Negate can go on an ally, so "hidden from the bearer's side" no 
 Fork labels name the side of a faction's duality a branch stands for (Faith preserves/consumes, Scheme/Overload). Later forks (the Zealot's Punisher/Fanatic, the Justiciar's Etherborn/Backlasher) come from one side, so a label there adds a term the faction doesn't hold; they show by unit name only.
 
 **2026-09-26 — Spells: a canon system with placeholder spells (M25).**
-Pillars fix overworld spells paid in typed mana, aimed at an ally, an enemy, a tile or an area. Built: typed mana per faction color, mana from the Capitol and a mana node, learning at the Capitol, casting at anything in sight (fog applies), once per spell per turn. A spell is data (`rules/spells.ts`): a target kind, a radius, and an effect that is either map damage (lethal since 2026-09-27, the user's call: it kills as a battle would) or an enchantment: an effect seed a warband, or a city's defenders, bring into battles for a number of turns (the architecture's "overworld spells buffing a warband for N world turns"). The four spells are placeholders after each faction's stated direction, awaiting the user's designs (#51).
+Pillars fix overworld spells paid in mana, aimed at an ally, an enemy, a tile or an area. Built: one kind of mana (typed by faction colour until 2026-10-11, below), mana from the Capitol and a mana node, learning at the Capitol, casting at anything in sight (fog applies), once per spell per turn. A spell is data (`rules/spells.ts`): a target kind, a radius, and an effect that is either map damage (lethal since 2026-09-27, the user's call: it kills as a battle would) or an enchantment: an effect seed a warband, or a city's defenders, bring into battles for a number of turns (the architecture's "overworld spells buffing a warband for N world turns"). The four spells are placeholders after each faction's stated direction, awaiting the user's designs (#51).
 
 **2026-09-26 — Sims are smoke tests until both factions have their lines (user).**
 Jilliath had only its melee line, so cross-faction win counts compared a melee-only army with three lines and said nothing about balance. Until both factions have their lines, `sim:world` answers "do games end, does the AI act, does nothing crash", and nothing more.
@@ -405,3 +405,10 @@ Tarot keeps its own field and hooks: it's a card game laid over the whole fight 
 mechanic, and its hooks are the way units take part (Omen, the Soothsayer). What moved: the Omen draw loop into
 `tarot.ts` (one call from the engine), and the player's preview no longer carries the other side's tarot hands (they
 could show what an enemy card pays). The user can overrule.
+
+## Mana is one kind (2026-10-11, the user)
+The pillars said "typed mana", and the game kept a purse per colour, but a player only ever earned and spent their own,
+so the colours did nothing. Laid out as four options (typed nodes after D2's crystals, colours that behave differently,
+mana beyond spells), the user: "I just think the colored mana types is sort of arbitrary and annoying. I might say
+pass and turn into a singular." A player's mana is one number; a spell costs mana, whoever's it is. A faction's colour
+stays its accent (art.md): its magic glows in it and its mana gem is drawn in it. Save 35.

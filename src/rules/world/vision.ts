@@ -4,7 +4,6 @@ import type { Hex } from "#rules/hex";
 import type { MapTile, WorldMap } from "#rules/map";
 import { NODES } from "#rules/nodes";
 import { emptyMemory, nodesHeldBy, playerOf } from "#rules/world/state";
-import { noMana } from "#rules/factions";
 import type { Player, PlayerId, World } from "#rules/world/state";
 
 /**
@@ -108,7 +107,7 @@ function hidden(p: Player): Player {
   return {
     ...p,
     gold: 0,
-    mana: noMana(),
+    mana: 0,
     commitment: {},
     graveyard: [],
     upgrades: [],

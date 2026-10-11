@@ -1,4 +1,4 @@
-import { describeSpell, manaColorOf, spellById, spellsOf } from "#rules/spells";
+import { describeSpell, spellById, spellsOf } from "#rules/spells";
 import { FACTIONS } from "#rules/factions";
 import { learnSpellProblem } from "#rules/world/spells";
 import { playerOf } from "#rules/world/state";
@@ -16,7 +16,7 @@ export function spellsTab(world: World, side: PlayerId, mayAct: boolean, act: (a
     const row = element("div", "spell-row");
     const text = element("div", "spell-text");
     const head = element("div", "name", spell.name);
-    head.append(" · ", mana(spell.cost, manaColorOf(spell, player.faction)), " per cast");
+    head.append(" · ", mana(spell.cost, FACTIONS[player.faction].accent), " per cast");
     text.append(head, element("div", "note", describeSpell(spell)));
     row.appendChild(text);
     if (player.spells.includes(spell.id)) row.appendChild(element("div", "note", "Learned"));
@@ -34,7 +34,7 @@ function readyProblem(world: World, side: PlayerId, id: string): string | null {
   const player = playerOf(world, side);
   const spell = spellById(id);
   if (player.cast.includes(id)) return "already cast this turn";
-  if (player.mana[manaColorOf(spell, player.faction)] < spell.cost) return "not enough mana";
+  if (player.mana < spell.cost) return "not enough mana";
   return null;
 }
 
@@ -44,13 +44,12 @@ export function spellBar(world: World, side: PlayerId, mayAct: boolean, casting:
   if (player.spells.length === 0) return null;
   const bar = element("div", "spell-bar");
   const title = element("div", "title", "Spells ");
-  const color = FACTIONS[player.faction].mana;
-  title.appendChild(mana(player.mana[color], color));
+  title.appendChild(mana(player.mana, FACTIONS[player.faction].accent));
   bar.appendChild(title);
   for (const id of player.spells) {
     const spell = spellById(id);
     const problem = readyProblem(world, side, id);
-    bar.appendChild(orderButton(`small${casting === id ? " selected" : ""}`, [`${spell.name} · `, mana(spell.cost, manaColorOf(spell, player.faction))], { mayAct, problem, explain: describeSpell(spell), give: () => pick(casting === id ? null : id) }));
+    bar.appendChild(orderButton(`small${casting === id ? " selected" : ""}`, [`${spell.name} · `, mana(spell.cost, FACTIONS[player.faction].accent)], { mayAct, problem, explain: describeSpell(spell), give: () => pick(casting === id ? null : id) }));
   }
   return bar;
 }

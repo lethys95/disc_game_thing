@@ -1,4 +1,4 @@
-import type { ManaColor } from "#rules/factions";
+import type { Accent } from "#rules/factions";
 /** Small DOM helpers shared by the HTML panels. */
 
 export function element<K extends keyof HTMLElementTagNameMap>(tag: K, className: string, text?: string): HTMLElementTagNameMap[K] {
@@ -76,14 +76,14 @@ export function gold(amount: number | string, className = ""): HTMLElement {
   return el;
 }
 
-/** Each mana color on screen: the faction's accent (art.md). */
-const MANA_HEX: Readonly<Record<ManaColor, string>> = { red: "#d0402e", teal: "#2bb8ad", green: "#5e9a3a" };
+/** Mana on screen, in the faction's accent (art.md). */
+const MANA_HEX: Readonly<Record<Accent, string>> = { red: "#d0402e", teal: "#2bb8ad", green: "#5e9a3a" };
 
-/** An amount of mana with a gem of its color in front. */
-export function mana(amount: number | string, color: ManaColor): HTMLElement {
+/** An amount of mana with a gem in the faction's accent in front. */
+export function mana(amount: number | string, accent: Accent): HTMLElement {
   const el = element("span", "mana");
   const icon = element("span", "gem");
-  icon.innerHTML = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1 L14 7 L8 15 L2 7 Z" fill="${MANA_HEX[color]}" stroke="#111" stroke-width="0.8"/><path d="M8 1 L11 7 L8 15" fill="#fff" opacity="0.25"/></svg>`;
+  icon.innerHTML = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1 L14 7 L8 15 L2 7 Z" fill="${MANA_HEX[accent]}" stroke="#111" stroke-width="0.8"/><path d="M8 1 L11 7 L8 15" fill="#fff" opacity="0.25"/></svg>`;
   el.append(icon, `${amount}`);
   return el;
 }

@@ -65,7 +65,7 @@ Animation speed, camera feel, hotkeys; kept per browser.
 Up to six players on a map from the setup screen; you against several AIs.
 
 ## M25 — Spells and mana ✅ (2026-09-26)
-The canon overworld spell system with placeholder spells (#51): typed mana, learning at the Capitol, casting on the map.
+The canon overworld spell system with placeholder spells (#51): mana, learning at the Capitol, casting on the map.
 
 ## M29 — The user's playtest of 2026-09-27 (done except 9, 17)
 1. [x] Resurrection in cities: it may work, but nothing on screen says so (graveyard and labels in cities after the research).

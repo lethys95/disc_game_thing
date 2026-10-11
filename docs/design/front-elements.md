@@ -22,7 +22,7 @@ Choose your faction (the decision), then your colour, your opponents and the map
 
 | Element | What it does | Why it's there | Verdict |
 |---|---|---|---|
-| Faction cards: two units, name, house, play style, mana, difficulty, a paragraph | choose the faction | the decision | keep; the chosen one lit |
+| Faction cards: two units, name, house, play style, difficulty, a paragraph (the mana colour left with typed mana, 2026-10-11) | choose the faction | the decision | keep; the chosen one lit |
 | Your colour | your banners | telling sides apart | keep, swatches |
 | Opponents: a row each, its colour, its faction, Remove; Add an opponent | who you play against | | keep |
 | Map size | | | keep |

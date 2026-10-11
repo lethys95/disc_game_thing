@@ -10,7 +10,6 @@ import { freeRevival, learnProblem, movementOf, squadHealingOf } from "#rules/wo
 import { maxHpOf } from "#rules/world/record";
 import { CITY_RESURRECTION_PREMIUM, RESEARCH } from "#rules/research";
 import { UPGRADES, upgradesFor } from "#rules/upgrades";
-import { FACTIONS } from "#rules/factions";
 import { playerOf, alive, neutralGroup, capitolOf, cityById, cityOfNode, giftsOf, leaderAt, leaderById, leaderUnit, member, nodesHeldBy, nodesOf, tribeAt, tribeRecruitsOf } from "#rules/world/state";
 import type { Enchantment, PlayerId, City, Leader, MapNode, Mark, SquadMember, SquadRef, Strength, World, WorldEvent } from "#rules/world/state";
 import { capacityOf, cityOfSquad, ownerOf, squadAt } from "#rules/world/squads";
@@ -237,7 +236,7 @@ export function elevateProblem(world: World, tile: Tile): string | null {
 }
 
 
-/** Mana per turn, in the player's own color: a trickle from the Capitol, more from mana nodes. */
+/** Mana per turn: a trickle from the Capitol, more from mana nodes. */
 export function manaIncome(world: World, side: PlayerId): number {
   return (capitolOf(world, side) ? CAPITOL_MANA : 0) + nodesHeldBy(world, side).reduce((sum, n) => sum + NODES[n.kind].mana(n.level), 0);
 }
@@ -247,7 +246,7 @@ export function startTurn(world: World, events: WorldEvent[]): void {
   const earned = income(world, side);
   const player = playerOf(world, side);
   player.gold += earned;
-  player.mana[FACTIONS[player.faction].mana] += manaIncome(world, side);
+  player.mana += manaIncome(world, side);
   player.cast = [];
   for (const { squad, leader } of squadsOf(world, side)) {
     const home = world.cities.find((c) => c.owner === side && (leader === undefined ? squad === c.garrison : sameHex(leader.hex, c.hex)));

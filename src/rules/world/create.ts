@@ -11,7 +11,6 @@ import type { Playable } from "#rules/units/index";
 import { hexDistance } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { startTurn } from "#rules/world/economy";
-import { noMana } from "#rules/factions";
 import { updateVision } from "#rules/world/vision";
 import type { PlayerColor } from "#rules/world/colors";
 import { DUNGEON_REWARDS, emptyMemory, member, neutralGroup, strengthAt, tribeAt } from "#rules/world/state";
@@ -80,7 +79,7 @@ export function createWorld(seed: number, setups: readonly PlayerSetup[], size: 
       upgrades: [],
       research: [],
       eliminated: false,
-      mana: noMana(),
+      mana: 0,
       spells: [],
       cast: [],
       explored: [],

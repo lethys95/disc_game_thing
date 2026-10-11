@@ -3,16 +3,16 @@ import type { Playable } from "#rules/units/index";
 import type { PlayerColor } from "#rules/world/colors";
 
 /**
- * What a faction is, beyond its units: its name, its mana color (factions/*.md), and the player color it takes by
- * default. Adding a faction: its entry here, its units and lines (`units/<faction>.ts`, joined in `units/index.ts`), its
+ * What a faction is, beyond its units: its name, its accent (art.md), and the player color it takes by default. Adding a faction: its entry here, its units and lines (`units/<faction>.ts`, joined in `units/index.ts`), its
  * preset squads (`units/presets.ts`), its abilities and effects, and its figures in the view.
  */
-export type ManaColor = "red" | "teal" | "green";
+/** A faction's one loud colour (art.md): its magic glows in it, and its mana is shown in it. Mana itself is one kind. */
+export type Accent = "red" | "teal" | "green";
 
 export interface FactionDef {
   /** The user's names (docs/design/factions/). */
   readonly name: string;
-  readonly mana: ManaColor;
+  readonly accent: Accent;
   readonly color: PlayerColor;
   /**
    * How much of its base stats a unit gains per level past the end of its line, in percent (pillars.md). The Grove
@@ -33,7 +33,7 @@ export const PLAYABLE: readonly Playable[] = ["jilliath", "nexus", "grove"];
 export const FACTIONS: Readonly<Record<Playable, FactionDef>> = {
   jilliath: {
     name: "Jilliath",
-    mana: "red",
+    accent: "red",
     color: "red",
     levelBonusPercent: LEVEL_BONUS_PERCENT,
     epithet: "The Inquisition",
@@ -43,7 +43,7 @@ export const FACTIONS: Readonly<Record<Playable, FactionDef>> = {
   },
   nexus: {
     name: "Ral-Vitahl",
-    mana: "teal",
+    accent: "teal",
     color: "teal",
     levelBonusPercent: LEVEL_BONUS_PERCENT,
     epithet: "The Nexus",
@@ -53,7 +53,7 @@ export const FACTIONS: Readonly<Record<Playable, FactionDef>> = {
   },
   grove: {
     name: "Sylvan",
-    mana: "green",
+    accent: "green",
     color: "green",
     levelBonusPercent: LEVEL_BONUS_PERCENT * 1.5,
     epithet: "The Grove",
@@ -63,5 +63,3 @@ export const FACTIONS: Readonly<Record<Playable, FactionDef>> = {
   },
 };
 
-/** A purse of every mana color, empty. */
-export const noMana = (): Record<ManaColor, number> => ({ red: 0, teal: 0, green: 0 });

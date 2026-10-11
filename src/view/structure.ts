@@ -1,5 +1,6 @@
+import { FACTIONS } from "#rules/factions";
 import { describeItem, itemById } from "#rules/items";
-import { describeSpell, manaColorOf, spellById } from "#rules/spells";
+import { describeSpell, spellById } from "#rules/spells";
 import { hireCost, MERCHANT_STAPLES, resalePrice, STRUCTURES } from "#rules/structures";
 import { maxHpOf } from "#rules/world/record";
 import { member, playerOf } from "#rules/world/state";
@@ -128,7 +129,7 @@ export class StructureScreen implements KeyLayer {
       const spell = spellById(id);
       const text = element("div", "spell-text");
       const head = element("div", "name", spell.name);
-      head.append(" · ", mana(spell.cost, manaColorOf(spell, faction)), " per cast");
+      head.append(" · ", mana(spell.cost, FACTIONS[faction].accent), " per cast");
       text.append(head, element("div", "note", describeSpell(spell)));
       const row = element("div", "spell-row");
       row.appendChild(text);

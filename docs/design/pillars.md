@@ -103,7 +103,7 @@ Units evolve through tiers at XP thresholds, cheaper than D2 (whose last tiers w
 - Neutral unit designs don't exist yet. Until they do, placeholders are plainly labelled and marked for replacement (pending user OK, questions.md).
 
 ## Spells
-Overworld spells, cast on the map (HoMM3-ish), paid in typed mana. Not combat abilities. Targets: ally, enemy, empty tile, area.
+Overworld spells, cast on the map (HoMM3-ish), paid in mana: one kind for everyone (the user, 2026-10-11: coloured mana types are "sort of arbitrary and annoying"; the faction colours stay as art). Not combat abilities. Targets: ally, enemy, empty tile, area.
 
 ## Not porting from D2
 Morale · rod arc system · thief class (RNG; may return as leader upgrade paths) · corruption/purification · Capitol invincibility · faction player limits · hidden timers ("surprise, you were on a clock").

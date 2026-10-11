@@ -271,11 +271,11 @@ export class Campaign implements KeyLayer {
     this.render();
   }
 
-  /** Screenshots and playtests: we start with this much mana of every color (to try spells). */
+  /** Screenshots and playtests: we start with this much mana (to try spells). */
   startingMana(amount: number): void {
     const world = this.world;
     if (!world) return;
-    this.world = { ...world, players: world.players.map((p, id) => (id === this.viewer ? { ...p, mana: { red: amount, teal: amount, green: amount } } : p)) };
+    this.world = { ...world, players: world.players.map((p, id) => (id === this.viewer ? { ...p, mana: amount } : p)) };
     this.render();
   }
 
@@ -515,9 +515,8 @@ export class Campaign implements KeyLayer {
     this.turn.dataset["mover"] = yours ? "you" : "enemy";
     this.turn.classList.toggle("theirs", !yours);
     explain(this.turn, `Turn ${world.turn}`, yours ? "Your move." : "The enemy moves.");
-    const color = FACTIONS[playerOf(world, this.viewer).faction].mana;
     this.goldPlate.replaceChildren(gold(playerOf(world, this.viewer).gold), element("span", "income", ` +${income(world, this.viewer)}`));
-    this.manaPlate.replaceChildren(mana(playerOf(world, this.viewer).mana[color], color), element("span", "income", ` +${manaIncome(world, this.viewer)}`));
+    this.manaPlate.replaceChildren(mana(playerOf(world, this.viewer).mana, FACTIONS[playerOf(world, this.viewer).faction].accent), element("span", "income", ` +${manaIncome(world, this.viewer)}`));
     explain(this.goldPlate, "Gold", `${income(world, this.viewer)} more at the start of your next turn.`);
     explain(this.manaPlate, "Mana", `${manaIncome(world, this.viewer)} more at the start of your next turn.`);
     this.endTurn.disabled = !this.myTurn();

@@ -1,6 +1,6 @@
 import { hexDistance, hexKey, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
-import { manaColorOf, spellById } from "#rules/spells";
+import { spellById } from "#rules/spells";
 import type { SpellDef } from "#rules/spells";
 import { isLeaderOf } from "#rules/world/record";
 import { alive, capitolOf, playerOf } from "#rules/world/state";
@@ -53,7 +53,7 @@ export function castProblem(world: World, id: string, at: Hex): string | null {
   const spell = spellById(id);
   if (!player.spells.includes(id)) return "not learned";
   if (player.cast.includes(id)) return "already cast this turn";
-  if (player.mana[manaColorOf(spell, player.faction)] < spell.cost) return "not enough mana";
+  if (player.mana < spell.cost) return "not enough mana";
   if (!sightOf(world, side).has(hexKey(at))) return "out of sight";
   if (!fits(world, side, spell, at)) return "not a valid target";
   return null;
@@ -88,7 +88,7 @@ export function castSpell(world: World, id: string, at: Hex, events: WorldEvent[
   const side = world.activePlayer;
   const player = playerOf(world, side);
   const spell = spellById(id);
-  player.mana[manaColorOf(spell, player.faction)] -= spell.cost;
+  player.mana -= spell.cost;
   player.cast.push(id);
   const effect = spell.effect;
   if (effect.kind === "damage") {

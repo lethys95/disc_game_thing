@@ -2,13 +2,13 @@ import { FACTIONS } from "#rules/factions";
 import type { Playable } from "#rules/units/index";
 
 /**
- * Player colors (user, 2026-09-26: like WC3 and AoE2). They mark who owns what; a faction's mana color stays in its
- * art and magic. Cosmetic, but part of the world so saves keep them.
+ * Player colors (user, 2026-09-26: like WC3 and AoE2). They mark who owns what; a faction's accent stays in its art and
+ * magic. Cosmetic, but part of the world so saves keep them.
  */
 export const PLAYER_COLORS = ["red", "teal", "blue", "violet", "gold", "orange", "green", "white"] as const;
 export type PlayerColor = (typeof PLAYER_COLORS)[number];
 
-/** Each faction's own color first (its mana color); a later player of the same faction gets the next free one. */
+/** Each faction's own color first (its accent); a later player of the same faction gets the next free one. */
 
 export function defaultColors(factions: readonly Playable[]): PlayerColor[] {
   const colors: PlayerColor[] = [];

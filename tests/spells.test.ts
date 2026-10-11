@@ -17,7 +17,7 @@ const three: Placement[] = COLS.map((col) => ({ defId: "congregant", tile: { row
 /** Player 0 plays `faction`, rich in gold and mana, and knows every spell of its faction. */
 function world(faction: "jilliath" | "nexus", spells: string[]): World {
   const w = createWorld(1, twoPlayers([three, three], [{}, {}], [faction, "jilliath"]));
-  return { ...w, players: w.players.map((p, i) => (i === 0 ? { ...p, gold: 1000, mana: { red: 100, teal: 100, green: 100 }, spells } : p)) };
+  return { ...w, players: w.players.map((p, i) => (i === 0 ? { ...p, gold: 1000, mana: 100, spells } : p)) };
 }
 
 
@@ -26,7 +26,7 @@ describe("mana and learning", () => {
   test("a Capitol yields its owner's color each turn", () => {
     const w = createWorld(1, twoPlayers([three, three], [{}, {}], ["jilliath", "nexus"]));
     const next = applyWorldAction(w, { type: "endTurn" }).world;
-    expect(playerOf(next, 1).mana).toEqual({ red: 0, teal: CAPITOL_MANA, green: 0 });
+    expect(playerOf(next, 1).mana).toBe(CAPITOL_MANA);
   });
 
   test("learning costs gold, only at a Capitol, only your faction's spells", () => {
@@ -51,7 +51,7 @@ describe("casting", () => {
     expect(leaderById(cast, "leader1").squad.map((m) => m.hp)).toEqual([60, 60]);
     expect(playerOf(cast, 1).graveyard.map((f) => f.defId)).toEqual(["congregant"]);
     expect(step.events).toContainEqual({ type: "fell", player: 1, defId: "congregant" });
-    expect(playerOf(cast, 0).mana.teal).toBe(100 - spellById("lightning_strike").cost);
+    expect(playerOf(cast, 0).mana).toBe(100 - spellById("lightning_strike").cost);
     expect(castProblem(cast, "lightning_strike", enemyHex)).toBe("already cast this turn");
   });
 

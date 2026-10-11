@@ -136,9 +136,8 @@ export class CityScreen implements KeyLayer {
     const player = playerOf(world, side);
     const purse = explain(element("div", "plate purse"), "Gold", "What your realm holds. Everything here is paid in it.");
     purse.appendChild(gold(player.gold));
-    const color = FACTIONS[player.faction].mana;
     const reserve = explain(element("div", "plate mana-plate"), "Mana", "What your spells are cast with, on the map.");
-    reserve.appendChild(mana(player.mana[color], color));
+    reserve.appendChild(mana(player.mana, FACTIONS[player.faction].accent));
     const purses = element("div", "purses");
     purses.append(purse, reserve);
     column.appendChild(purses);

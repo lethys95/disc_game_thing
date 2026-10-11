@@ -1,11 +1,9 @@
 import type { EffectSeed } from "#rules/battle/types";
 import { effectDef } from "#rules/effects";
 import type { Playable } from "#rules/units/index";
-import { FACTIONS } from "#rules/factions";
-import type { ManaColor } from "#rules/factions";
 
 /**
- * Overworld spells (pillars.md, "Spells": cast on the map, HoMM3-ish, paid in typed mana, not combat abilities;
+ * Overworld spells (pillars.md, "Spells": cast on the map, HoMM3-ish, paid in mana, not combat abilities;
  * targets an ally, an enemy, an empty tile or an area). The system is canon; **every spell here is a provisional
  * placeholder** following each faction's direction (factions/*.md: Jilliath targets infrastructure, Ral-Vitahl
  * mostly nukes) until the user designs the real ones (provisional.md). Names are plain descriptions, not lore.
@@ -26,8 +24,6 @@ export interface SpellDef {
   readonly name: string;
   /** A faction's spells are learned at its Capitol; neutral ones are bought from a mage merchant. */
   readonly faction: Playable | "neutral";
-  /** "own": cast with the caster's own faction color (neutral spells). */
-  readonly mana: ManaColor | "own";
   /** Mana per cast. */
   readonly cost: number;
   /** Gold to learn it, at the Capitol or a mage merchant (a spell tree comes later, pillars.md). */
@@ -43,7 +39,6 @@ export const SPELLS: readonly SpellDef[] = [
     id: "break_walls",
     name: "Break walls",
     faction: "jilliath",
-    mana: "red",
     cost: 60,
     learnCost: 200,
     target: "enemyCity",
@@ -54,7 +49,6 @@ export const SPELLS: readonly SpellDef[] = [
     id: "bless_warband",
     name: "Bless warband",
     faction: "jilliath",
-    mana: "red",
     cost: 45,
     learnCost: 150,
     target: "ownWarband",
@@ -65,7 +59,6 @@ export const SPELLS: readonly SpellDef[] = [
     id: "lightning_strike",
     name: "Lightning strike",
     faction: "nexus",
-    mana: "teal",
     cost: 45,
     learnCost: 150,
     target: "enemyGroup",
@@ -76,7 +69,6 @@ export const SPELLS: readonly SpellDef[] = [
     id: "lightning_storm",
     name: "Lightning storm",
     faction: "nexus",
-    mana: "teal",
     cost: 75,
     learnCost: 250,
     target: "area",
@@ -88,7 +80,6 @@ export const SPELLS: readonly SpellDef[] = [
     id: "firebolt",
     name: "Firebolt",
     faction: "neutral",
-    mana: "own",
     cost: 40,
     learnCost: 200,
     target: "enemyGroup",
@@ -99,7 +90,6 @@ export const SPELLS: readonly SpellDef[] = [
     id: "harden_warband",
     name: "Harden warband",
     faction: "neutral",
-    mana: "own",
     cost: 40,
     learnCost: 200,
     target: "ownWarband",
@@ -116,8 +106,6 @@ export function spellById(id: string): SpellDef {
 
 export const spellsOf = (faction: Playable | "neutral"): SpellDef[] => SPELLS.filter((s) => s.faction === faction);
 
-/** The mana color a player of `faction` pays this spell in. */
-export const manaColorOf = (spell: SpellDef, faction: Playable): ManaColor => (spell.mana === "own" ? FACTIONS[faction].mana : spell.mana);
 
 const TARGETS: Readonly<Record<SpellTarget, string>> = {
   enemyGroup: "An enemy warband or neutral group in sight",

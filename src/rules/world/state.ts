@@ -7,7 +7,6 @@ import type { Hex } from "#rules/hex";
 import type { WorldMap } from "#rules/map";
 import { NODES } from "#rules/nodes";
 import type { CityGifts, NodeKind } from "#rules/nodes";
-import type { ManaColor } from "#rules/factions";
 import { UNITS } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
 import type { Hire } from "#rules/structures";
@@ -69,7 +68,7 @@ export interface Player {
   /** Out of the game: its Guardian fell. */
   eliminated: boolean;
   /** Mana by color (pillars.md, "Spells"); a player earns its own faction's color. */
-  mana: Record<ManaColor, number>;
+  mana: number;
   /** Spells learned at the Capitol (`rules/spells.ts`). */
   spells: string[];
   /** Spells cast this turn: each once per turn. */

@@ -1,4 +1,4 @@
-# What red, teal and green mana mean in practice
+# What red, teal and green mana mean in practice (decided: one mana)
 
 - **What:** Decide what each faction's mana colour means in play, beyond a label on the new game's faction cards (RED
   MANA, TEAL MANA, GREEN MANA): how mana is earned (nodes, income), what it buys (spells now; anything else?), whether
@@ -14,3 +14,5 @@
 - 2026-10-11: today only a player's own colour is ever earned and spent, so the colours do nothing in play. Options
   laid out in `shots/mana-colours.html` (one mana; typed nodes; colours that behave differently; mana beyond spells);
   Claude suggests typed nodes. Waiting on the user (`questions.md` #7).
+- 2026-10-11, the user: "I just think the colored mana types is sort of arbitrary and annoying. I might say pass and
+  turn into a singular." Mana is one kind (`decisions.md`); the faction's colour stays its accent. Save 35.
