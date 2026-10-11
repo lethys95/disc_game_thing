@@ -37,11 +37,11 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
   never writing to it; three.js keeps the pace. Step 1 done there: the `?fight` arena nearly matches three.js.
 
 ## Next
-0. **The HUD, interface first** (the user's review, 2026-10-11; `in-progress/ui-kit-grotesques`). Done: one unit
-   sheet and one squad tile everywhere; the Capitol greyboxed by job (`design/capitol-elements.md`,
-   `shots/capitol-greybox.html`), waiting on the user's read. Next: the recruit menu, research and spells, the
-   meeting, then the other screens the same way; paint only after a layout is judged, per faction skin (each faction
-   paints the shared layouts its own way). Glass rests.
+0. **The HUD, interface first** (the user's review, 2026-10-11; `in-progress/ui-kit-grotesques`; the `greybox` skill).
+   Greyboxed by job: the Capitol (`shots/capitol-greybox.html`), the leader's and structures' screens
+   (`shots/warband-greybox.html`), all sharing one column, one unit sheet, one squad tile, one branch chooser. A Greybox
+   setting draws the still-painted pieces (map column, battle bar, turn order) flat. Next: the map column and battle
+   bar by job, then title and menus; paint after a layout is judged, per faction skin. Glass rests.
 1. **Finish Jilliath's concepts** with the user (the open nine), then portraits from the picks.
 2. **The other factions' missing units** (the alpha needs all three): Nexus melee tier 3, the Grove's mage line, and
    the rest on the board; then their concept art the same way.

@@ -9,7 +9,9 @@ import { element, gold, mana, orderButton } from "#view/dom";
 import { tabFrame } from "#view/frames";
 import { warbandColumn } from "#view/warband-column";
 import type { KeyLayer } from "#view/input";
-import { memberCard } from "#view/members";
+import { unitName } from "#view/members";
+import { squadTile } from "#view/squad-tile";
+import { equipmentPanel } from "#view/equipment";
 
 export interface StructureScreenOptions {
   readonly act: (action: WorldAction) => void;
@@ -18,6 +20,9 @@ export interface StructureScreenOptions {
 
 /** A warband visiting a map structure (`rules/structures.ts`): what it offers in the frame, the warband's column on the right. */
 export class StructureScreen implements KeyLayer {
+  private tab: "offer" | "equipment" = "offer";
+  private shownAt = "";
+
   constructor(
     private readonly root: HTMLElement,
     private readonly options: StructureScreenOptions,
@@ -39,13 +44,16 @@ export class StructureScreen implements KeyLayer {
   }
 
   show(world: World, leader: Leader, structure: Structure, mayAct: boolean): void {
+    const at = `${leader.id}:${structure.kind}`;
+    if (this.shownAt !== at) this.tab = "offer";
+    this.shownAt = at;
     this.root.hidden = false;
     this.root.replaceChildren();
+    const name = STRUCTURES[structure.kind].name;
     const offer = element("div", "offer");
-    offer.appendChild(element("div", "note", STRUCTURES[structure.kind].describe));
     switch (structure.kind) {
       case "mercenaries":
-        offer.append(...this.hires(world, leader, structure, mayAct));
+        offer.appendChild(this.hires(world, leader, structure, mayAct));
         break;
       case "merchant":
         offer.append(...this.wares(world, leader, structure, mayAct));
@@ -54,24 +62,34 @@ export class StructureScreen implements KeyLayer {
         offer.append(...this.spells(world, leader, structure, mayAct));
         break;
     }
-    this.root.append(warbandColumn(world, leader, () => this.options.close()), tabFrame(STRUCTURES[structure.kind].name, offer, null));
+    const tabs = [
+      { id: "offer", label: name, selected: this.tab === "offer" },
+      { id: "equipment", label: "Equipment", selected: this.tab === "equipment" },
+    ];
+    const select = (id: string) => {
+      this.tab = id === "equipment" ? "equipment" : "offer";
+      this.show(world, leader, structure, mayAct);
+    };
+    const body = this.tab === "offer" ? offer : equipmentPanel(world, leader, mayAct, this.options.act);
+    this.root.append(warbandColumn(world, leader, tabs, select, () => this.options.close()), tabFrame(this.tab === "offer" ? name : "Equipment", body, null));
   }
 
-  private hires(world: World, leader: Leader, camp: MercenaryCamp, mayAct: boolean): HTMLElement[] {
-    return camp.stock.map((hire, index) => {
-      const row = element("div", "offer-row");
+  /** The hires as the recruit menu shows recruits: the tile each will be, its name, level and price; its sheet on a held right-click. */
+  private hires(world: World, leader: Leader, camp: MercenaryCamp, mayAct: boolean): HTMLElement {
+    const row = element("div", "offers");
+    camp.stock.forEach((hire, index) => {
       const recruit = { ...member(hire.defId, { row: 0, col: 0 }), level: hire.level };
-      row.appendChild(memberCard({ ...recruit, hp: maxHpOf(recruit, undefined) }, undefined));
-      row.appendChild(
-        orderButton("small", ["Hire · ", gold(hireCost(hire))], {
-          mayAct,
-          problem: hireProblem(world, leader.id, index),
-          explain: "Joins the warband at full health, on the first free spot for its kind.",
-          give: () => this.options.act({ type: "hire", leaderId: leader.id, index }),
-        }),
-      );
-      return row;
+      const problem = mayAct ? hireProblem(world, leader.id, index) : "not your turn";
+      const item = element("button", `offer${problem ? " refused" : ""}`);
+      item.append(squadTile({ ...recruit, hp: maxHpOf(recruit, undefined) }, undefined), element("span", "name", `${unitName(hire.defId)}${hire.level > 0 ? ` · level ${hire.level}` : ""}`), gold(hireCost(hire)));
+      item.title = problem ?? "Hire: it joins the warband at full health, on the first free spot for its kind. Hold right-click for its sheet.";
+      item.addEventListener("click", () => {
+        if (!problem) this.options.act({ type: "hire", leaderId: leader.id, index });
+      });
+      row.appendChild(item);
     });
+    if (camp.stock.length === 0) row.appendChild(element("div", "note", "No one left to hire."));
+    return row;
   }
 
   private wares(world: World, leader: Leader, merchant: Merchant, mayAct: boolean): HTMLElement[] {

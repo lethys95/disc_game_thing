@@ -7,14 +7,14 @@ const structures: Playtest = {
     await t.open("/?map&seed=1&structure=merchant");
     const purse = async () => Number((await t.page.textContent("#structurescreen .purse"))?.trim());
     const start = await purse();
-    // The warband's nine panes sit in the column's window, not in the page's flow.
+    // The warband's nine tiles sit in its column.
     const strays = await t.page.evaluate(() => {
       const column = document.querySelector("#structurescreen .warband-column")?.getBoundingClientRect();
-      const panes = [...document.querySelectorAll("#structurescreen .warband-column .pane")].map((p) => p.getBoundingClientRect());
-      return column ? panes.filter((p) => p.top < column.top + column.height * 0.25 || p.bottom > column.top + column.height * 0.65).length : -1;
+      const panes = [...document.querySelectorAll("#structurescreen .warband-column .squad-tile")].map((p) => p.getBoundingClientRect());
+      return column && panes.length === 9 ? panes.filter((p) => p.left < column.left || p.right > column.right || p.top < column.top || p.bottom > column.bottom).length : -1;
     });
     t.log(`panes outside the window: ${strays}`);
-    if (strays !== 0) t.fail(`${strays} of the warband's panes are outside the column's window`);
+    if (strays !== 0) t.fail(`the warband's tiles aren't all in its column (${strays})`);
     await t.page.locator("#structurescreen .spell-row", { hasText: "Healing potion" }).first().locator("button", { hasText: "Buy" }).click();
     await t.page.waitForFunction((g) => Number(document.querySelector("#structurescreen .purse")?.textContent?.trim()) !== g, start, { timeout: 5000 });
     const afterBuy = await purse();

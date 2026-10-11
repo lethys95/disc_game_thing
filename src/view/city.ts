@@ -107,7 +107,7 @@ export class CityScreen implements KeyLayer {
       this.root.appendChild(this.window(world, city, tab));
       this.root.appendChild(this.column(world, side, city, tab));
     } else if (place.kind === "meet") {
-      this.root.append(warbandColumn(world, leaderById(world, place.a), () => this.options.close()), tabFrame("Warbands meet", this.garrison(world, side, place, city, mayAct), null));
+      this.root.append(warbandColumn(world, leaderById(world, place.a), [], () => undefined, () => this.options.close()), tabFrame("Warbands meet", this.garrison(world, side, place, city, mayAct), null));
       return;
     }
 
@@ -131,7 +131,7 @@ export class CityScreen implements KeyLayer {
    * flat values until the layout is judged.
    */
   private column(world: World, side: PlayerId, city: City, current: CityTab): HTMLElement {
-    const column = element("div", "city-column");
+    const column = element("div", "screen-column");
     column.appendChild(element("div", "plate name", cityName(city)));
     const player = playerOf(world, side);
     const purse = explain(element("div", "plate purse"), "Gold", "What your realm holds. Everything here is paid in it.");

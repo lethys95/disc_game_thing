@@ -7,3 +7,6 @@
   have to look at all the time." Collect further cut explanations here as screens are greyboxed.
 - **Done when:** The user decides how a tutorial should work; the collected texts have a home.
 - **Who:** The user decides; Claude builds.
+- **More cut texts (2026-10-11):** the leader tree ("A point for every 100 XP this leader earns while it leads. A skill
+  needs the skills to its left first."); each structure's description (the mercenary camp, the merchant, the mage
+  merchant: `rules/structures.ts`).
