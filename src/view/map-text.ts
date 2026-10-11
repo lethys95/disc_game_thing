@@ -7,7 +7,7 @@ import { cityById, lairById, leaderAt, playerOf } from "#rules/world/state";
 import type { Leader, PlayerId, World, WorldEvent } from "#rules/world/state";
 import { sightOf } from "#rules/world/vision";
 import { castProblem, spellVictims } from "#rules/world/spells";
-import { spellById } from "#rules/spells";
+import { describeSpell, spellById } from "#rules/spells";
 import { itemById } from "#rules/items";
 import { unitName } from "#view/members";
 import { STRUCTURES } from "#rules/structures";
@@ -64,7 +64,7 @@ export function hintText({ known, player, leader, hovered, plan, forecast }: Hin
 export function castHint(world: World, spellId: string, hovered: Hex | null): string {
   const spell = spellById(spellId);
   const problem = hovered ? castProblem(world, spellId, hovered) : null;
-  if (!hovered || problem) return `${spell.name}: ${spell.describe} Click a highlighted hex; right-click or Esc to stop.${problem && hovered ? ` (Here: ${problem}.)` : ""}`;
+  if (!hovered || problem) return `${spell.name}: ${describeSpell(spell)} Click a highlighted hex; right-click or Esc to stop.${problem && hovered ? ` (Here: ${problem}.)` : ""}`;
   if (spell.effect.kind === "damage") {
     const units = spellVictims(world, spellId, hovered).flat().filter((m) => m.hp > 0).length;
     const amount = spell.effect.amount;

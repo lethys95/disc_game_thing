@@ -1,4 +1,5 @@
 import type { EffectSeed } from "#rules/battle/types";
+import { effectDef } from "#rules/effects";
 import type { Playable } from "#rules/units/index";
 import { FACTIONS } from "#rules/factions";
 import type { ManaColor } from "#rules/factions";
@@ -9,8 +10,6 @@ import type { ManaColor } from "#rules/factions";
  * placeholder** following each faction's direction (factions/*.md: Jilliath targets infrastructure, Ral-Vitahl
  * mostly nukes) until the user designs the real ones (provisional.md). Names are plain descriptions, not lore.
  */
-
-export const MANA_NAMES: Readonly<Record<ManaColor, string>> = { red: "red mana", teal: "teal mana", green: "green mana" };
 
 /** What a spell can be aimed at: someone else's group (a warband, or neutrals in a lair), one of yours, a city, or an area. */
 export type SpellTarget = "enemyGroup" | "ownWarband" | "enemyCity" | "area";
@@ -37,7 +36,6 @@ export interface SpellDef {
   /** For area spells: how far around the chosen hex it reaches. */
   readonly radius: number;
   readonly effect: SpellEffect;
-  readonly describe: string;
 }
 
 export const SPELLS: readonly SpellDef[] = [
@@ -51,7 +49,6 @@ export const SPELLS: readonly SpellDef[] = [
     target: "enemyCity",
     radius: 0,
     effect: { kind: "enchant", effect: { def: "sundered", amount: 4 }, turns: 3 },
-    describe: "An enemy or neutral city in sight: its defenders fight with 4 less armor for 3 turns.",
   },
   {
     id: "bless_warband",
@@ -63,7 +60,6 @@ export const SPELLS: readonly SpellDef[] = [
     target: "ownWarband",
     radius: 0,
     effect: { kind: "enchant", effect: { def: "extra_damage", amount: 10 }, turns: 2 },
-    describe: "One of your warbands: its units deal 10 more damage in battles for 2 turns.",
   },
   {
     id: "lightning_strike",
@@ -75,7 +71,6 @@ export const SPELLS: readonly SpellDef[] = [
     target: "enemyGroup",
     radius: 0,
     effect: { kind: "damage", amount: 30 },
-    describe: "An enemy warband or neutral group in sight: each of its units loses 30 HP.",
   },
   {
     id: "lightning_storm",
@@ -87,7 +82,6 @@ export const SPELLS: readonly SpellDef[] = [
     target: "area",
     radius: 1,
     effect: { kind: "damage", amount: 15 },
-    describe: "A hex in sight and its neighbours: every unit of every enemy warband and neutral group there loses 15 HP.",
   },
   // Sold by mage merchants (user, 2026-09-27); plain placeholders (#54).
   {
@@ -100,7 +94,6 @@ export const SPELLS: readonly SpellDef[] = [
     target: "enemyGroup",
     radius: 0,
     effect: { kind: "damage", amount: 20 },
-    describe: "An enemy warband or neutral group in sight: each of its units loses 20 HP.",
   },
   {
     id: "harden_warband",
@@ -112,7 +105,6 @@ export const SPELLS: readonly SpellDef[] = [
     target: "ownWarband",
     radius: 0,
     effect: { kind: "enchant", effect: { def: "extra_armor", amount: 5 }, turns: 2 },
-    describe: "One of your warbands: its units have 5 more armor in battles for 2 turns.",
   },
 ];
 
@@ -126,3 +118,20 @@ export const spellsOf = (faction: Playable | "neutral"): SpellDef[] => SPELLS.fi
 
 /** The mana color a player of `faction` pays this spell in. */
 export const manaColorOf = (spell: SpellDef, faction: Playable): ManaColor => (spell.mana === "own" ? FACTIONS[faction].mana : spell.mana);
+
+const TARGETS: Readonly<Record<SpellTarget, string>> = {
+  enemyGroup: "An enemy warband or neutral group in sight",
+  ownWarband: "One of your warbands",
+  enemyCity: "An enemy or neutral city in sight",
+  area: "A hex in sight",
+};
+
+/** A spell's rules text, computed from its target and effect, so its numbers can't drift from the rule. */
+export function describeSpell(spell: SpellDef): string {
+  const where = spell.target === "area" && spell.radius > 0 ? `${TARGETS.area} and every hex within ${spell.radius}` : TARGETS[spell.target];
+  const who = spell.target === "area" ? "every unit of every enemy warband and neutral group there" : spell.target === "enemyCity" ? "its defenders" : "each of its units";
+  if (spell.effect.kind === "damage") return `${where}: ${who} loses ${spell.effect.amount} HP.`;
+  const seed = spell.effect.effect;
+  const what = effectDef(seed.def).describe({ def: seed.def, source: null, stacks: seed.stacks ?? 1, amount: seed.amount ?? 0 });
+  return `${where}: ${who} fight${spell.target === "enemyCity" ? "" : "s"} with ${what.replace(/\.$/, "")} for ${spell.effect.turns} turns.`;
+}

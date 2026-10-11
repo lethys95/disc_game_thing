@@ -10,14 +10,14 @@ export interface ResearchDef {
   readonly describe: string;
 }
 
+/** What resurrecting outside the Capitol costs, relative to the Capitol's price. */
+export const CITY_RESURRECTION_PREMIUM = 1.25;
+
 export const RESEARCH: readonly ResearchDef[] = [
   {
     id: "city_resurrection",
     name: "Resurrection in cities",
     cost: 400,
-    describe: "Resurrect fallen units in any city you hold, not only at the Capitol, for 25% more.",
+    describe: `Resurrect fallen units in any city you hold, not only at the Capitol, for ${Math.round((CITY_RESURRECTION_PREMIUM - 1) * 100)}% more.`,
   },
 ];
-
-/** What resurrecting outside the Capitol costs, relative to the Capitol's price. */
-export const CITY_RESURRECTION_PREMIUM = 1.25;

@@ -1,4 +1,6 @@
+import { behavior, paramsOf } from "#rules/abilities/index";
 import type { EffectSeed } from "#rules/battle/types";
+import { effectDef } from "#rules/effects";
 
 /**
  * Items (pillars.md: elevation grants equipment slots; dungeons reward treasure items; the Ankh). The slots are the
@@ -35,7 +37,6 @@ export interface ItemDef {
   readonly revivesFree: boolean;
   /** A consumable's use (potions); absent for items that are worn or just carried. */
   readonly use?: ItemUse;
-  readonly describe: string;
 }
 
 export const ITEMS: readonly ItemDef[] = [
@@ -48,7 +49,6 @@ export const ITEMS: readonly ItemDef[] = [
     worn: [{ def: "carries", ability: { id: "tarot", params: { cards: 4 } } }],
     banner: [],
     revivesFree: false,
-    describe: "The leader carries Tarot 4: as each fight begins, its side draws four tarot cards and picks one in secret.",
   },
   // The user's (2026-09-27); prices provisional.
   {
@@ -59,7 +59,6 @@ export const ITEMS: readonly ItemDef[] = [
     worn: [{ def: "carries", ability: { id: "throw_hatchet" } }],
     banner: [],
     revivesFree: false,
-    describe: "Once per combat, the leader throws it at any enemy for 30.",
   },
   {
     id: "outlaws_pocketwatch",
@@ -69,7 +68,6 @@ export const ITEMS: readonly ItemDef[] = [
     worn: [{ def: "pocketwatch", amount: 5 }],
     banner: [],
     revivesFree: false,
-    describe: "The leader's attacks deal +5, and +10 more against a target that still has shield.",
   },
   {
     id: "ankh",
@@ -79,7 +77,6 @@ export const ITEMS: readonly ItemDef[] = [
     worn: [],
     banner: [],
     revivesFree: true,
-    describe: "If its leader falls, reviving it costs nothing. Used up when it does.",
   },
   {
     id: "iron_helm",
@@ -89,7 +86,6 @@ export const ITEMS: readonly ItemDef[] = [
     worn: [{ def: "extra_armor", amount: 5 }],
     banner: [],
     revivesFree: false,
-    describe: "The leader has +5 armor.",
   },
   {
     id: "plate_armor",
@@ -99,7 +95,6 @@ export const ITEMS: readonly ItemDef[] = [
     worn: [{ def: "extra_armor", amount: 8 }],
     banner: [],
     revivesFree: false,
-    describe: "The leader has +8 armor.",
   },
   {
     id: "swift_charm",
@@ -109,7 +104,6 @@ export const ITEMS: readonly ItemDef[] = [
     worn: [{ def: "extra_initiative", amount: 10 }],
     banner: [],
     revivesFree: false,
-    describe: "The leader has +10 initiative.",
   },
   {
     id: "war_banner",
@@ -119,7 +113,6 @@ export const ITEMS: readonly ItemDef[] = [
     worn: [],
     banner: [{ def: "extra_damage", amount: 5 }],
     revivesFree: false,
-    describe: "Every unit of the warband deals +5 damage.",
   },
   // Potions: the merchant's staples (user, 2026-09-27: "resurrection potions or healing potions"); numbers provisional (#54).
   {
@@ -131,7 +124,6 @@ export const ITEMS: readonly ItemDef[] = [
     banner: [],
     revivesFree: false,
     use: { kind: "healWarband", amount: 50 },
-    describe: "Use on the map: every living unit of the warband heals 50 HP. Used up.",
   },
   {
     id: "resurrection_potion",
@@ -142,7 +134,6 @@ export const ITEMS: readonly ItemDef[] = [
     banner: [],
     revivesFree: false,
     use: { kind: "raiseFallen" },
-    describe: "Use on the map: your most recently fallen unit rises into this warband at 1 HP, wherever it stands. Used up.",
   },
 ];
 
@@ -150,4 +141,25 @@ export function itemById(id: string): ItemDef {
   const item = ITEMS.find((i) => i.id === id);
   if (!item) throw new Error(`unknown item: ${id}`);
   return item;
+}
+
+/** What one carried effect or ability does: the ability's own text, or the effect's. */
+function seedText(seed: EffectSeed, abilityPower: number): string {
+  if (seed.ability) return `carries ${behavior(seed.ability.id).name}. ${behavior(seed.ability.id).describe(paramsOf(seed.ability, abilityPower))}`;
+  return effectDef(seed.def).describe({ def: seed.def, source: null, stacks: seed.stacks ?? 1, amount: seed.amount ?? 0 });
+}
+
+/**
+ * An item's rules text, computed from what it carries (as effects' and abilities' are), so its numbers can't drift from
+ * the rule. `abilityPower`: the leader's, for an ability it carries whose numbers grow with it (100 when there's none).
+ */
+export function describeItem(item: ItemDef, abilityPower: number): string {
+  const parts = [
+    ...item.worn.map((seed) => (seed.ability ? `The leader ${seedText(seed, abilityPower)}` : `The leader: ${seedText(seed, abilityPower)}`)),
+    ...item.banner.map((seed) => `Every unit of the warband: ${seedText(seed, abilityPower)}`),
+  ];
+  if (item.use?.kind === "healWarband") parts.push(`Use on the map: every living unit of the warband heals ${item.use.amount} HP. Used up.`);
+  if (item.use?.kind === "raiseFallen") parts.push("Use on the map: your most recently fallen unit rises into this warband at 1 HP, wherever it stands. Used up.");
+  if (item.revivesFree) parts.push("If its leader falls, reviving it costs nothing. Used up when it does.");
+  return parts.join(" ");
 }

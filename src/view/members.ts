@@ -52,6 +52,12 @@ export function unitDefCard(defId: string): HTMLElement {
   });
 }
 
+/** The ability power the leader's own unit fights with: what its carried abilities' numbers grow with. */
+export function leaderAbilityPower(leader: Leader): number {
+  const own = leader.squad.find((m) => isLeaderOf(m, leader));
+  return own ? ownStats(placementOf(own, leader)).abilityPower : 100;
+}
+
 /** Where a unit stands on its way to its next level or form, or null. */
 function xpLine(m: SquadMember, commitment: Commitment | undefined): string | null {
   const needed = xpToEvolve(m.defId);

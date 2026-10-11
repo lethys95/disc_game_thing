@@ -1,5 +1,5 @@
-import { itemById } from "#rules/items";
-import { manaColorOf, spellById } from "#rules/spells";
+import { describeItem, itemById } from "#rules/items";
+import { describeSpell, manaColorOf, spellById } from "#rules/spells";
 import { hireCost, MERCHANT_STAPLES, resalePrice, STRUCTURES } from "#rules/structures";
 import { maxHpOf } from "#rules/world/record";
 import { member, playerOf } from "#rules/world/state";
@@ -9,7 +9,7 @@ import { element, gold, mana, orderButton } from "#view/dom";
 import { tabFrame } from "#view/frames";
 import { warbandColumn } from "#view/warband-column";
 import type { KeyLayer } from "#view/input";
-import { unitName } from "#view/members";
+import { leaderAbilityPower, unitName } from "#view/members";
 import { squadTile } from "#view/squad-tile";
 import { equipmentPanel } from "#view/equipment";
 
@@ -95,7 +95,7 @@ export class StructureScreen implements KeyLayer {
   private wares(world: World, leader: Leader, merchant: Merchant, mayAct: boolean): HTMLElement[] {
     const offer = (id: string) => {
       const item = itemById(id);
-      return this.row(item.name, item.describe, orderButton("small", ["Buy · ", gold(item.price)], {
+      return this.row(item.name, describeItem(item, leaderAbilityPower(leader)), orderButton("small", ["Buy · ", gold(item.price)], {
         mayAct,
         problem: buyItemProblem(world, leader.id, id),
         explain: item.use ? "Into the leader's bag; use it from the leader's screen." : "Into the leader's bag; put it on from the leader's screen.",
@@ -111,7 +111,7 @@ export class StructureScreen implements KeyLayer {
     for (const id of leader.bag) {
       const item = itemById(id);
       rows.push(
-        this.row(item.name, item.describe, orderButton("small", ["Sell · ", gold(resalePrice(item.price))], {
+        this.row(item.name, describeItem(item, leaderAbilityPower(leader)), orderButton("small", ["Sell · ", gold(resalePrice(item.price))], {
           mayAct,
           problem: sellItemProblem(world, leader.id, id),
           explain: "Half its price.",
@@ -129,7 +129,7 @@ export class StructureScreen implements KeyLayer {
       const text = element("div", "spell-text");
       const head = element("div", "name", spell.name);
       head.append(" · ", mana(spell.cost, manaColorOf(spell, faction)), " per cast");
-      text.append(head, element("div", "note", spell.describe));
+      text.append(head, element("div", "note", describeSpell(spell)));
       const row = element("div", "spell-row");
       row.appendChild(text);
       if (playerOf(world, leader.player).spells.includes(id)) row.appendChild(element("div", "note", "Learned"));

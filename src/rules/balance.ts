@@ -39,6 +39,9 @@ export const CITY_SIGHT = 1;
 export const CAPITOL_SIGHT = 2;
 export const STARTING_GOLD = 100;
 export const CAPITOL_INCOME = 50;
+/** The ability power most units have; rules text shown without a unit (a node's, a shop's) is computed at it. */
+export const BASE_ABILITY_POWER = 100;
+
 export const MINE_INCOME = 25;
 /**
  * Share of max HP restored at the start of its side's turn to every unit resting in a city it holds (the garrison and

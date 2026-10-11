@@ -27,3 +27,7 @@
   come right after the current UI pass and before any new unit is built; 4–5 can follow.
 - **Finding 1, done (2026-10-11):** Hysteria, Judgement and bleed out of the engine; the guard test; tarot kept as a
   battle system with its draw loop in `tarot.ts` and the preview leak closed (`decisions.md`).
+- **Finding 2, done (2026-10-11):** items (`describeItem`, at the leader's ability power), spells (`describeSpell`), nodes
+  (their marks' and gifts' own numbers), research (its constant) compute their text; the city screen's wall armor reads
+  `wallArmorOf`; `tests/rules-text.test.ts` guards it. Effects lost their "(from a Foundry)" suffixes, which the unit
+  sheet's track record already says.
