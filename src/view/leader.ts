@@ -113,6 +113,6 @@ export class LeaderScreen implements KeyLayer {
     tree.appendChild(grid);
     const sheet = element("div", "leader-sheet");
     sheet.append(tree, this.equipment(world, leader, mayAct));
-    this.root.append(warbandColumn(world, leader, () => this.options.close()), tabFrame("Leader tree", sheet));
+    this.root.append(warbandColumn(world, leader, () => this.options.close()), tabFrame("Leader tree", sheet, null));
   }
 }

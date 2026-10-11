@@ -54,7 +54,7 @@ export class StructureScreen implements KeyLayer {
         offer.append(...this.spells(world, leader, structure, mayAct));
         break;
     }
-    this.root.append(warbandColumn(world, leader, () => this.options.close()), tabFrame(STRUCTURES[structure.kind].name, offer));
+    this.root.append(warbandColumn(world, leader, () => this.options.close()), tabFrame(STRUCTURES[structure.kind].name, offer, null));
   }
 
   private hires(world: World, leader: Leader, camp: MercenaryCamp, mayAct: boolean): HTMLElement[] {

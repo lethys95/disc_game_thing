@@ -1,6 +1,6 @@
 import { member, playerOf } from "#rules/world/state";
-import { allowedUnits, isFork } from "#rules/forks";
-import { ARCHETYPES, EVOLUTIONS, FACTION_ROOTS, LINE_ARCHETYPE, UNITS } from "#rules/units/index";
+import { isFork } from "#rules/forks";
+import { ARCHETYPES, EVOLUTIONS, FACTION_ROOTS, LINE_ARCHETYPE } from "#rules/units/index";
 import type { Archetype } from "#rules/units/index";
 import { upgradesFor } from "#rules/upgrades";
 import { RESEARCH } from "#rules/research";
@@ -8,6 +8,7 @@ import { chooseBranchProblem, researchProblem, squadsOf, upgradeProblem } from "
 import type { PlayerId, World, WorldAction } from "#rules/world/state";
 import { art } from "#view/art";
 import { element, gold, orderButton } from "#view/dom";
+import { openDialog } from "#view/dialog";
 import { memberCard, unitName } from "#view/members";
 import { showPeek } from "#view/peek";
 import { maxHpOf } from "#rules/world/record";
@@ -26,17 +27,37 @@ function routes(defId: string): string[][] {
 const SVG = "http://www.w3.org/2000/svg";
 
 /**
- * Elbow lines from each parent's bottom to its children's tops: down, across, down. Drawn once the grid has its size
+ * Where a unit stands on its line for this player: unlocked (every branch above it chosen its way, or none to choose),
+ * choosable (the branch of a fork not yet decided), pending (below an undecided fork), closed (another branch was
+ * chosen above it).
+ */
+type Reach = "unlocked" | "choosable" | "pending" | "closed";
+
+function reachOf(route: readonly string[], tier: number, commitment: Readonly<Record<string, string>>): Reach {
+  let reach: Reach = "unlocked";
+  for (let i = 1; i <= tier; i++) {
+    const parent = route[i - 1] ?? "";
+    const here = route[i] ?? "";
+    if (!isFork(parent)) continue;
+    const chosen = commitment[parent];
+    if (chosen !== undefined && chosen !== here) return "closed";
+    if (chosen === undefined) reach = reach === "unlocked" && i === tier ? "choosable" : "pending";
+  }
+  return reach;
+}
+
+/**
+ * Elbow lines from each parent's bottom to its children's tops: down, across, down; lit along the unlocked branches. Drawn once the grid has its size
  * (and again when it changes), since the cells' places come from the layout.
  */
-function connectors(grid: HTMLElement, links: readonly (readonly [HTMLElement, HTMLElement])[]): SVGSVGElement {
+function connectors(grid: HTMLElement, links: readonly (readonly [HTMLElement, HTMLElement, boolean])[]): SVGSVGElement {
   const svg = document.createElementNS(SVG, "svg");
   svg.classList.add("connectors");
   const draw = () => {
     const box = grid.getBoundingClientRect();
     svg.setAttribute("viewBox", `0 0 ${box.width} ${box.height}`);
     svg.replaceChildren();
-    for (const [child, parent] of links) {
+    for (const [child, parent, lit] of links) {
       const from = parent.getBoundingClientRect();
       const to = child.getBoundingClientRect();
       const x1 = from.left + from.width / 2 - box.left;
@@ -46,6 +67,7 @@ function connectors(grid: HTMLElement, links: readonly (readonly [HTMLElement, H
       const mid = (y1 + y2) / 2;
       const path = document.createElementNS(SVG, "path");
       path.setAttribute("d", `M ${x1} ${y1} V ${mid} H ${x2} V ${y2}`);
+      if (lit) path.classList.add("lit");
       svg.appendChild(path);
     }
   };
@@ -61,20 +83,24 @@ export class ResearchPanel {
   private tab: ResearchTab = "general";
 
   constructor(
+    private readonly host: HTMLElement,
     private readonly act: (action: WorldAction) => void,
     private readonly rerender: () => void,
   ) {}
 
-  render(world: World, side: PlayerId, mayAct: boolean): HTMLElement {
+  /**
+   * The tabs (General, then a tab per archetype, browser-style on top of the field, outside what scrolls) and the open
+   * tab's content: the Capitol's research, or each line's tree (`docs/design/capitol-elements.md`, "Research").
+   */
+  render(world: World, side: PlayerId, mayAct: boolean): { readonly tabs: HTMLElement; readonly body: HTMLElement } {
     const column = element("div", "capitol-trees");
     const faction = playerOf(world, side).faction;
     const commitment = playerOf(world, side).commitment;
-    const allowed = allowedUnits(faction, commitment);
     const owned = squadsOf(world, side).flatMap((h) => h.squad);
     const roots = FACTION_ROOTS[faction];
     const rootsOf = (archetype: Archetype) => roots.filter((r) => LINE_ARCHETYPE[r] === archetype);
     const tab: ResearchTab = this.tab === "general" || rootsOf(this.tab).length > 0 ? this.tab : "general";
-    const tabs = element("div", "tabs");
+    const tabs = element("div", "frame-tabs");
     const tabButton = (id: ResearchTab, label: string, title: string, held: boolean) => {
       const button = element("button", `tab${id === tab ? " selected" : ""}`, label);
       button.disabled = !held;
@@ -90,7 +116,6 @@ export class ResearchPanel {
       const lines = rootsOf(archetype);
       tabButton(archetype, ARCHETYPE_NAMES[archetype], lines.length === 0 ? `No ${ARCHETYPE_NAMES[archetype].toLowerCase()} line yet.` : lines.map((r) => `${unitName(r)} line`).join(", "), lines.length > 0);
     }
-    column.appendChild(tabs);
     if (tab === "general") {
       for (const research of RESEARCH) {
         const row = element("div", "research-row");
@@ -102,26 +127,25 @@ export class ResearchPanel {
         }
         column.appendChild(row);
       }
-      return column;
+      return { tabs, body: column };
     }
-    column.appendChild(element("div", "note", "Choosing a branch is free and permanent for every unit of that kind. Upgrades reach units that become that type after you buy them. Hold right-click on a unit for its card."));
     // Each line grows down from its tier-1 unit at the top (user, 2026-09-27: "more tree like"): a column per route
     // to the top of the tree; a unit two routes share sits once, over the first of them.
-    const trees = rootsOf(tab).map(routes);
-    for (const lines of trees) {
+    for (const lines of rootsOf(tab).map(routes)) {
       const grid = element("div", "tree down");
       grid.style.gridTemplateColumns = `repeat(${lines.length}, minmax(0, 1fr))`;
       // Each node by its route from the root, so a child finds the cell its parent was drawn in.
       const cells = new Map<string, HTMLElement>();
-      const links: [child: HTMLElement, parent: HTMLElement][] = [];
+      const links: [child: HTMLElement, parent: HTMLElement, lit: boolean][] = [];
       lines.forEach((route, col) => {
         route.forEach((defId, tier) => {
           const shared = col > 0 && lines[col - 1]?.slice(0, tier + 1).join() === route.slice(0, tier + 1).join();
           if (shared) return;
-          const cell = this.node(world, side, defId, route[tier - 1], allowed.includes(defId), owned.filter((m) => m.defId === defId).length, mayAct);
+          const reach = reachOf(route, tier, commitment);
+          const cell = this.node(world, side, defId, route[tier - 1], reach, owned.filter((m) => m.defId === defId).length, mayAct);
           cells.set(route.slice(0, tier + 1).join(), cell);
           const parent = cells.get(route.slice(0, tier).join());
-          if (tier > 0 && parent) links.push([cell, parent]);
+          if (tier > 0 && parent) links.push([cell, parent, reach === "unlocked"]);
           // A unit shared by the routes to its right spans them.
           const span = lines.slice(col).findIndex((other) => other.slice(0, tier + 1).join() !== route.slice(0, tier + 1).join());
           if (tier === 0) cell.classList.add("root");
@@ -133,59 +157,62 @@ export class ResearchPanel {
       grid.appendChild(connectors(grid, links));
       column.appendChild(grid);
     }
-    return column;
+    return { tabs, body: column };
   }
 
-  private node(world: World, side: PlayerId, defId: string, parent: string | undefined, open: boolean, count: number, mayAct: boolean): HTMLElement {
-    const def = UNITS[defId];
-    const node = element("div", `node${open ? "" : " closed"}`);
-    const head = element("div", "head");
-    head.append(art({ kind: "portrait", id: defId, frame: "icon" }, "thumb"), element("div", "name", `${unitName(defId)}${count > 0 ? ` ×${count}` : ""}`));
-    node.appendChild(head);
-    // Its numbers are on its card, under a held right-click (released on pointerup), not on the node.
-    if (def) {
-      node.addEventListener("contextmenu", (e) => e.preventDefault());
-      node.addEventListener("pointerdown", (e) => {
-        const peek = document.getElementById("peek");
-        if (e.button !== 2 || !peek) return;
-        const fresh = member(defId, { row: 0, col: 0 });
-        showPeek(peek, [memberCard({ ...fresh, hp: maxHpOf(fresh, undefined) }, undefined)], e.clientX, e.clientY);
-      });
+  /**
+   * A unit on its line: its portrait is the way in. A branch not yet chosen asks to confirm the choice; an unlocked unit
+   * opens its upgrades; a closed one is greyed and does nothing. Its numbers are on its sheet, a held right-click.
+   */
+  private node(world: World, side: PlayerId, defId: string, parent: string | undefined, reach: Reach, count: number, mayAct: boolean): HTMLElement {
+    const node = element("button", `node ${reach}`);
+    node.appendChild(art({ kind: "portrait", id: defId, frame: "icon" }, "thumb"));
+    node.appendChild(element("div", "name", `${unitName(defId)}${count > 0 ? ` ×${count}` : ""}`));
+    const upgrades = upgradesFor(defId);
+    const bought = playerOf(world, side).upgrades;
+    if (upgrades.length > 0) {
+      const pips = element("div", "pips");
+      for (const upgrade of upgrades) pips.appendChild(element("span", `pip${bought.includes(upgrade.id) ? " bought" : ""}`));
+      node.appendChild(pips);
     }
-    const commitment = playerOf(world, side).commitment;
-    if (parent && isFork(parent)) {
-      // Only the duality fork is labelled; later forks go by the unit's name.
-      const label = EVOLUTIONS[parent]?.find((e) => e.to === defId)?.label || unitName(defId);
-      const chosen = commitment[parent];
-      if (chosen === defId) node.appendChild(element("div", "branch chosen", `Chosen: ${label}`));
-      else if (chosen !== undefined) node.appendChild(element("div", "branch", `Closed: ${label}`));
-      else {
-        const problem = chooseBranchProblem(world, parent, defId);
-        node.appendChild(
-          orderButton("small", `Choose: ${label}`, {
-            mayAct,
-            problem,
-            explain: `Free. Permanent: every ${unitName(parent)} in your army will become a ${unitName(defId)}.`,
-            give: () => this.act({ type: "choose", fork: parent, to: defId }),
-          }),
-        );
-      }
-    }
-    for (const upgrade of upgradesFor(defId)) {
-      if (playerOf(world, side).upgrades.includes(upgrade.id)) {
-        node.appendChild(element("div", "upgrade bought", `✓ ${upgrade.label}`));
-        continue;
-      }
-      const problem = upgradeProblem(world, upgrade.id);
-      node.appendChild(
-        orderButton("small upgrade", [`${upgrade.label} · `, gold(upgrade.price)], {
-          mayAct: mayAct && open,
-          problem,
-          explain: `Every unit that becomes a ${unitName(defId)} from now on gets this. Units you already have don't.`,
-          give: () => this.act({ type: "upgrade", upgrade: upgrade.id }),
-        }),
-      );
-    }
+    node.disabled = reach === "closed";
+    node.title = reach === "closed" ? "No longer reachable: another branch was chosen." : reach === "choosable" ? "Click to choose this branch." : "Click for its upgrades.";
+    node.addEventListener("click", () => {
+      if (reach === "choosable" && parent) this.confirmBranch(world, parent, defId, mayAct);
+      else if (reach !== "closed") this.upgradeDialog(world, side, defId, mayAct);
+    });
+    // Its numbers are on its sheet, under a held right-click (released on pointerup).
+    node.addEventListener("contextmenu", (e) => e.preventDefault());
+    node.addEventListener("pointerdown", (e) => {
+      const peek = document.getElementById("peek");
+      if (e.button !== 2 || !peek) return;
+      const fresh = member(defId, { row: 0, col: 0 });
+      showPeek(peek, [memberCard({ ...fresh, hp: maxHpOf(fresh, undefined) }, undefined)], e.clientX, e.clientY);
+    });
     return node;
+  }
+
+  private confirmBranch(world: World, fork: string, to: string, mayAct: boolean): void {
+    const label = EVOLUTIONS[fork]?.find((e) => e.to === to)?.label || unitName(to);
+    const others = (EVOLUTIONS[fork] ?? []).filter((e) => e.to !== to).map((e) => unitName(e.to));
+    const problem = mayAct ? chooseBranchProblem(world, fork, to) : "not your turn";
+    openDialog(this.host, `Choose ${label}?`, [
+      `Every ${unitName(fork)} in your army will become a ${unitName(to)}. It's free and permanent${others.length > 0 ? `: the ${others.join(" and ")} branch closes` : ""}.`,
+    ], [{ label: `Choose ${label}`, problem, run: () => this.act({ type: "choose", fork, to }) }]);
+  }
+
+  private upgradeDialog(world: World, side: PlayerId, defId: string, mayAct: boolean): void {
+    const upgrades = upgradesFor(defId);
+    const bought = playerOf(world, side).upgrades;
+    const lines: (string | Node)[] = upgrades.length === 0 ? ["It has no upgrades."] : [`Every unit that becomes a ${unitName(defId)} from now on gets these. Units you already have don't.`];
+    for (const upgrade of upgrades.filter((u) => bought.includes(u.id))) lines.push(element("div", "bought", `✓ ${upgrade.label}`));
+    openDialog(
+      this.host,
+      unitName(defId),
+      lines,
+      upgrades
+        .filter((u) => !bought.includes(u.id))
+        .map((upgrade) => ({ label: [`Buy ${upgrade.label} · `, gold(upgrade.price)], problem: mayAct ? upgradeProblem(world, upgrade.id) : "not your turn", run: () => this.act({ type: "upgrade", upgrade: upgrade.id }) })),
+    );
   }
 }

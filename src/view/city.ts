@@ -7,7 +7,8 @@ import { member, playerOf, cityById, leaderById, leaderUnit, nodesOf, tribeRecru
 import { NODES } from "#rules/nodes";
 import { CITY_RESURRECTION_PREMIUM } from "#rules/research";
 import type { City, PlayerId, SquadMember, SquadRef, World, WorldAction } from "#rules/world/state";
-import { button, element, gold, orderButton, roman } from "#view/dom";
+import { button, element, gold, mana, orderButton, roman } from "#view/dom";
+import { FACTIONS } from "#rules/factions";
 import { explain } from "#view/explain";
 import { unitName } from "#view/members";
 import { ResearchPanel } from "#view/research";
@@ -15,6 +16,7 @@ import { FALLEN_DRAG, squadGrid } from "#view/squad-grid";
 import { squadTile } from "#view/squad-tile";
 import { spellsTab } from "#view/spells";
 import { tabFrame } from "#view/frames";
+import { closeDialog } from "#view/dialog";
 import { warbandColumn } from "#view/warband-column";
 import type { GridChoice, GridSquad, RecruitChoice } from "#view/squad-grid";
 import { sameHex } from "#rules/hex";
@@ -64,7 +66,7 @@ export class CityScreen implements KeyLayer {
     private readonly root: HTMLElement,
     private readonly options: CityScreenOptions,
   ) {
-    this.research = new ResearchPanel(options.act, () => this.rerender());
+    this.research = new ResearchPanel(root, options.act, () => this.rerender());
   }
 
   open(): boolean {
@@ -74,7 +76,8 @@ export class CityScreen implements KeyLayer {
   /** Escape closes the screen. */
   key(e: KeyboardEvent): boolean {
     if (e.key !== "Escape") return false;
-    this.options.close();
+    // Escape closes an open dialog first, then the screen.
+    if (!closeDialog(this.root)) this.options.close();
     return true;
   }
 
@@ -104,7 +107,7 @@ export class CityScreen implements KeyLayer {
       this.root.appendChild(this.window(world, city, tab));
       this.root.appendChild(this.column(world, side, city, tab));
     } else if (place.kind === "meet") {
-      this.root.append(warbandColumn(world, leaderById(world, place.a), () => this.options.close()), tabFrame("Warbands meet", this.garrison(world, side, place, city, mayAct)));
+      this.root.append(warbandColumn(world, leaderById(world, place.a), () => this.options.close()), tabFrame("Warbands meet", this.garrison(world, side, place, city, mayAct), null));
       return;
     }
 
@@ -114,8 +117,11 @@ export class CityScreen implements KeyLayer {
     this.root.appendChild(layout);
 
     if (tab === "home" && city) return;
-    if (tab === "research") content.appendChild(tabFrame(TABS.research.label, this.research.render(world, side, mayAct)));
-    else if (tab === "spells") content.appendChild(tabFrame(TABS.spells.label, spellsTab(world, side, mayAct, this.options.act)));
+    if (tab === "research") {
+      const research = this.research.render(world, side, mayAct);
+      content.appendChild(tabFrame(TABS.research.label, research.body, research.tabs));
+    }
+    else if (tab === "spells") content.appendChild(tabFrame(TABS.spells.label, spellsTab(world, side, mayAct, this.options.act), null));
     else content.appendChild(this.garrison(world, side, place, city, mayAct));
   }
 
@@ -127,9 +133,15 @@ export class CityScreen implements KeyLayer {
   private column(world: World, side: PlayerId, city: City, current: CityTab): HTMLElement {
     const column = element("div", "city-column");
     column.appendChild(element("div", "plate name", cityName(city)));
+    const player = playerOf(world, side);
     const purse = explain(element("div", "plate purse"), "Gold", "What your realm holds. Everything here is paid in it.");
-    purse.appendChild(gold(playerOf(world, side).gold));
-    column.appendChild(purse);
+    purse.appendChild(gold(player.gold));
+    const color = FACTIONS[player.faction].mana;
+    const reserve = explain(element("div", "plate mana-plate"), "Mana", "What your spells are cast with, on the map.");
+    reserve.appendChild(mana(player.mana[color], color));
+    const purses = element("div", "purses");
+    purses.append(purse, reserve);
+    column.appendChild(purses);
     const tabs = element("div", "tabs");
     for (const [id, tab] of Object.entries(TABS)) {
       if (!isCityTab(id) || (tab.capitolOnly && city.kind !== "capitol")) continue;

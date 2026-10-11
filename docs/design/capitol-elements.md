@@ -20,6 +20,7 @@ So the squads are the screen; growth is a side panel; the fallen appear only whe
 |---|---|---|---|
 | City name | says which city this is | a player holds several cities | keep, small, top of the column |
 | Purse | the gold you hold | every action here costs gold; the price and what you have must be read together | keep, next to the name |
+| Mana | the faction's mana you hold | spells are learned here and cast with it; the user (2026-10-11): "show mana in the capitol view outside of just the spells screen as well. I don't think that's too much noise" | keep, beside the purse on every tab |
 | Tabs: City, Garrison, Research, Spells | switch what the screen shows | the Capitol does four things, a city two | keep, **labelled** (icons alone don't say what they open); the open one unmistakable; a city's missing tabs not shown at all |
 | City tab (the painting) | shows the city | the user's home view (`capitol-screen.md`, a); it does nothing else today | **keep** (the user, 2026-10-11: "HoMM5 and HoMM3, etc have them too. They're nice and give a view into the city. I value them"): its job is the view into the city |
 | Back to the map | leaves | every visit ends here | keep as a plainly labelled button, always in the same place (bottom of the column); Escape does the same. Not a seal: a seal said nothing about what it does |
@@ -65,14 +66,13 @@ ahead of time (free, permanent; the evolve prompt asks too, when a unit is ready
 
 | Element | What it does | Why it's there | Verdict |
 |---|---|---|---|
-| Tabs: General, Melee, Support, Mage, Joker | switch between the Capitol's research and each archetype's lines | the lines don't fit together | keep; one without a line yet stays visible but dark (the Joker lines are designed later) |
-| Explanatory note | how branches and upgrades work | teaches once | keep, one line |
-| Tree of a line | each unit in its line from tier 1 down, joined to what it comes from | planning, and where each upgrade sits | keep; drawn as real trees later (`todo/proper-trees`) |
-| Node: portrait, name | which unit | recognition | keep |
+| Tabs: General, Melee, Support, Mage, Joker | switch between the Capitol's research and each archetype's lines | the lines don't fit together | browser tabs on top of the field, outside what scrolls (the user, 2026-10-11: "just 5 items you can flip between instead of them being inside the treeview"); the open tab joins the field; one without a line yet dark |
+| Explanatory note | how branches and upgrades work | teaches once | **cut** (the user: "something you get in a tutorial, not something you have to look at all the time"; `maybe/tutorial`) |
+| Tree of a line | each unit in its line from tier 1 down, joined to what it comes from | planning, and where each upgrade sits | keep; the branches you have unlocked lit, their joining lines too; branches no longer reachable greyed; drawn as real trees later (`todo/proper-trees`) |
+| Node: portrait, name | which unit, and the way in | recognition; clicking it is the action | the portrait plainly clickable (it lights on hover); one choice of branch asks to confirm (free, permanent, the other branch closes); an unlocked one opens its upgrades. Replaces the Choose buttons (the user: "a bit obnoxious") |
 | Node: ×count | how many you own | whether an upgrade is worth its gold now | keep, beside the name |
-| Node: numbers (tier, HP, hits, armor) | | already cut: the held right-click shows the sheet | — |
-| Choose branch | commits every unit of that kind to this branch | the fork decision | on each branch of an undecided fork, the branch's own name; after: "Chosen" on one, the other dimmed |
-| Upgrade | buys a bonus for every future unit of this type | the most frequent job here | a button with what it gives and its price; bought ones say so, dimmed in a closed branch |
+| Node: upgrades bought | which of its upgrades you have | at a glance, without opening it | a small pip per upgrade, filled when bought |
+| Choose branch, Upgrade buttons on the node | | moved into the click: confirm or the upgrade dialog | **cut** from the node |
 | General: research rows | name, what it does, Research and its price, or done | the Capitol's own research | keep as rows |
 
 ## Spells (the Capitol)
