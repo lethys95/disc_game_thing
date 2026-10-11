@@ -56,6 +56,18 @@ const LAYOUTS: Readonly<Record<string, Layout>> = {
     prompt: "A tall vertical game interface column seen straight on, painted as game interface art, in soft even light without glare, dull lighting. Blackened cast iron, old and worn, matte, divided by thin moulded iron ledges with a small faceted amber stud at each end. Behind the parts, gothic blind tracery in low relief, dark on dark: rows of narrow cusped lancet arches, trefoils and quatrefoils, crockets along the edges. Cream marble plates, blank: one long plate at the top, two small plates below it, one long plate at the foot. Between them, four long dark recessed iron panels stacked, each with a small round socket at its left end holding an ivory enamel face, blank. In the middle, a tall pointed blind arch, and inside it the west front of a gothic cathedral carved in low relief in the same dark iron, with twin spires, a rose window and a pointed portal, old and worn, matte, with no polish and no highlights. No text, no letters.",
   },
   /**
+   * Jilliath's Capitol column, round 2: the judged layout's parts, with the painted Capitol's detail back (its prompt,
+   * `capitol-column-2`, with "interlaced knotwork" swapped for gothic tracery): a stained glass lancet window under the
+   * tabs, the mason and the abbess holding the Back plate. Round 1 kept the layout and lost the character.
+   */
+  "jilliath-capitol-column-2": {
+    page: [300, 864],
+    size: [576, 1664],
+    denoise: 0.7,
+    depthStrength: 1,
+    prompt: "A tall vertical game interface column seen straight on, painted as game interface art, in soft even light without glare, dull lighting. Blackened cast iron, old and worn, its sections joined by thin iron bands with a small faceted amber stud at each end. Every surface is densely worked: scrolling ironwork, small rosettes, gothic tracery and quatrefoils cover all the iron between the parts, dark on dark, and no surface is left plain. Cream marble plates, blank. At the top a long marble plate and two small marble plates below it. Below them, four long dark recessed iron panels stacked, each with a round ivory enamel boss in a small arched niche at its left end, blank. In the middle, a gothic lancet window of lead and stained glass in deep red and amber, with tracery glass in its pointed head and tall leaded panes below. At the foot, a cream marble plate, blank, held between two grown figures carved in deep relief in the same old dark iron, matte: on the left a kneeling hooded mason with a hammer at his belt, one hand on the plate, on the right a kneeling abbess holding a large key, one hand on the plate, her veil and robes the same dark iron as the rest. No text, no letters.",
+  },
+  /**
    * Jilliath's panel frame, one painting used as a nine-slice border round every panel left of the column (the
    * garrison, the city's panel, the tab frame), at the column's density: the user's review found the wall twice as
    * blurred as the column and the two not joined.

@@ -331,6 +331,7 @@ export class Campaign implements KeyLayer {
     this.world = null;
     this.busy = false;
     this.hud.hidden = true;
+    delete document.body.dataset["skin"];
   }
 
   private enterMap(): void {
@@ -339,6 +340,8 @@ export class Campaign implements KeyLayer {
     this.inCapitol = false;
     this.sound.mapMusic(playerOf(world, this.viewer).faction, "map");
     this.sound.ambience(["ambience/map"]);
+    // The interface wears your faction's skin where one is painted (`styles/skin-*.css`).
+    document.body.dataset["skin"] = playerOf(world, this.viewer).faction;
     // Outside battles, --side0 is you and --side1 your first opponent.
     const you = playerOf(world, this.viewer).color;
     applySideColors(document.documentElement, [you, world.players.find((_, id) => id !== this.viewer)?.color ?? fallbackColor(you)]);

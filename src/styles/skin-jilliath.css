@@ -1,0 +1,31 @@
+/* Jilliath's skin: the painted pieces over the judged greybox layout (docs/design/hud-pieces.md, "Jilliath's Capitol on
+   the judged layout"), for a Jilliath player (body[data-skin], set by the campaign). The greybox setting turns it off.
+   --pg is one of the column painting's 300 x 864 pixels: the column is 50rem tall, so its parts are placed in the
+   painting's own pixels, as measured from it. */
+body[data-skin="jilliath"]:not(.greybox) { --pg: calc(50rem / 864); }
+
+/* The Capitol's column (assets/ui/jilliath/capitol-column.webp, jilliath-capitol-column-2 seed 4). */
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol {
+  display: block; padding: 0; background: var(--ui-jilliath-capitol-column) 0 0 / 100% 100% no-repeat; box-shadow: -0.5rem 0 1.2rem rgba(0, 0, 0, 0.7);
+}
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol :is(.purses, .tabs) { display: contents; }
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol :is(.plate, .tab, .back) {
+  position: absolute; box-sizing: border-box; left: calc(var(--x) * var(--pg)); top: calc(var(--y) * var(--pg));
+  width: calc(var(--w) * var(--pg)); height: calc(var(--h) * var(--pg)); margin: 0; background: none; box-shadow: none;
+}
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .plate.name { --x: 19; --y: 16; --w: 263; --h: 46; }
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .plate.purse { --x: 19; --y: 74; --w: 122; --h: 32; }
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .plate.mana-plate { --x: 160; --y: 74; --w: 122; --h: 32; }
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab { --x: 15; --w: 270; --h: 51; padding: 0 0 0 calc(15 * var(--pg)); gap: calc(14 * var(--pg)); color: var(--gbx-light); text-shadow: 0 1px 0.15rem #000; }
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab:nth-child(1) { --y: 128; }
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab:nth-child(2) { --y: 187; }
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab:nth-child(3) { --y: 246; }
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab:nth-child(4) { --y: 304; }
+/* The emblem sits on the painted ivory boss (centred at x 43 of the painting). */
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab .glyph { width: calc(28 * var(--pg)); height: calc(28 * var(--pg)); filter: none; }
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab:hover { box-shadow: inset 0 0 0 2px rgba(232, 195, 108, 0.45); }
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab.selected { color: var(--gbx-lit); box-shadow: inset 0 0 0 2px var(--gbx-lit), inset 0 0 1.4rem rgba(232, 195, 108, 0.3); }
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab.selected .glyph { filter: none; }
+/* Back to the map: the marble plate the mason and the abbess hold. */
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .back { --x: 71; --y: 806; --w: 157; --h: 50; color: var(--gbx-ink); font-size: 0.95rem; }
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .back:hover { box-shadow: inset 0 0 1.2rem rgba(232, 195, 108, 0.55); }

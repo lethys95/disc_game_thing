@@ -274,3 +274,6 @@
   `docs/design/hud-pieces.md`, "Jilliath's Capitol on the judged layout".
 - **Rejected (the user, 2026-10-11):** "way worse than what we had before [...] no soul or character", painted without
   the reference material. Reverted; the cause and the skill's new rule in `hud-pieces.md`.
+- **Round 2 (2026-10-11):** the old painted Capitol's detail on the judged layout, the column first
+  (`jilliath-capitol-column-2` seed 4: stained glass, the mason and the abbess holding Back to the map).
+  `shots/jilliath-capitol-2.html`. Waiting on the user before the garrison.

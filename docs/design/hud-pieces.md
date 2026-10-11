@@ -691,3 +691,11 @@ marble), "old, worn, matte", no objects with jobs, no warm materials, no accent 
 uniform iron chain. Fixing the review's faults (Norse ornament, blur, seams, the seal) by subtraction took out what
 gave the earlier rendition its character: figures doing something, coloured glass, objects. Reverted. Kept for later:
 the nine-slice idea for one shared frame at one density.
+
+**Round 2 (2026-10-11), the old detail on the judged layout** (`jilliath-capitol-column-2`): the user, on round 1:
+"The faults were less so the contents and more that they weren't designed around the actual use case [...] Now we have
+the frame, and we have none of the details." So the painted Capitol's prompt (`capitol-column-2`) nearly word for
+word, "interlaced knotwork" swapped for tracery and quatrefoils, on the judged layout's geometry: the name and purses on
+marble, four tab rows with ivory bosses, a red and amber stained glass lancet window under them, the mason and the
+abbess holding Back to the map as a labelled plate. All six seeds held; seed 4 is in the game, column only.
+`shots/jilliath-capitol-2.html`.
