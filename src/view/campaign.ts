@@ -446,14 +446,15 @@ export class Campaign implements KeyLayer {
     this.busy = false;
     const engagement = step.world.engagement;
     if (engagement) {
-      this.hud.hidden = true;
-      await this.stage.tween(400, () => {});
       if (!playersIn(engagement).includes(this.viewer)) {
-        // Not our fight (other players, or one against neutrals): resolve it off-screen, as D2 does, and report it.
+        // Not our fight (other players, or one against neutrals): resolve it off-screen, as D2 does, and report it;
+        // the map and its interface stay up.
         const result = await this.ai.resolve(engagement.battle);
         this.afterBattle(result, generation);
         return;
       }
+      this.hud.hidden = true;
+      await this.stage.tween(400, () => {});
       const side: Side = engagement.players[0] === this.viewer ? 0 : 1;
       this.app.fight(engagement.battle, side, battleColors(step.world, engagement.players), battleSetting(step.world, engagement), (battle) => this.afterBattle(battle, generation));
       return;

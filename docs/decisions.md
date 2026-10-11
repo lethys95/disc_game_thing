@@ -381,3 +381,9 @@ screens now do the same: the city painting runs full screen to a painted column 
 (`assets/ui/capitol/column.webp`) with the city's name, gold and tier, the four tabs as niches, three facts, and Back to
 the map as a wax seal two figures hold. The interim beam and rail are gone from it (the user: the header "doesn't need
 to be in every screen"). The tabs' panels (garrison, research, spells) are still the interim tablets.
+
+## A healer hovering itself falls back to its heal, as over any ally (2026-10-11)
+Until a player picks an ability, hovering a tile the default attack can't reach uses the first ability that can (a
+heal over an ally). The acting unit itself was excepted, so a stray click couldn't spend a self-heal; the user found it
+inconsistent ("if the healer hovers over themselves, then they do not default into healing action"). The exception
+is gone, and the socket of the ability a click would use is the one lit, so the fallback shows.

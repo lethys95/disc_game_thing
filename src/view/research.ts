@@ -1,4 +1,4 @@
-import { playerOf } from "#rules/world/state";
+import { member, playerOf } from "#rules/world/state";
 import { allowedUnits, isFork } from "#rules/forks";
 import { ARCHETYPES, EVOLUTIONS, FACTION_ROOTS, LINE_ARCHETYPE, UNITS } from "#rules/units/index";
 import type { Archetype } from "#rules/units/index";
@@ -8,11 +8,14 @@ import { chooseBranchProblem, researchProblem, squadsOf, upgradeProblem } from "
 import type { PlayerId, World, WorldAction } from "#rules/world/state";
 import { art } from "#view/art";
 import { element, gold, orderButton } from "#view/dom";
-import { strongestHitOf } from "#rules/abilities/index";
-import { unitName } from "#view/members";
-import { armorReduction } from "#rules/battle/damage";
+import { memberCard, unitName } from "#view/members";
+import { showPeek } from "#view/peek";
+import { maxHpOf } from "#rules/world/record";
 
 const ARCHETYPE_NAMES: Readonly<Record<Archetype, string>> = { melee: "Melee", support: "Support", mage: "Mage", joker: "Joker" };
+
+/** The tab rail: the Capitol's own research, then a tab per line archetype. */
+type ResearchTab = "general" | Archetype;
 
 /** Every route from `defId` to the top of its tree. */
 function routes(defId: string): string[][] {
@@ -55,7 +58,7 @@ function connectors(grid: HTMLElement, links: readonly (readonly [HTMLElement, H
  * with its fork choices and unit-type upgrades.
  */
 export class ResearchPanel {
-  private tab: Archetype | null = null;
+  private tab: ResearchTab = "general";
 
   constructor(
     private readonly act: (action: WorldAction) => void,
@@ -64,42 +67,47 @@ export class ResearchPanel {
 
   render(world: World, side: PlayerId, mayAct: boolean): HTMLElement {
     const column = element("div", "capitol-trees");
-    column.appendChild(element("div", "section", "Capitol research"));
-    for (const research of RESEARCH) {
-      const row = element("div", "research-row");
-      row.append(element("div", "name", research.name), element("div", "note", research.describe));
-      if (playerOf(world, side).research.includes(research.id)) row.appendChild(element("div", "done", "✓ Done"));
-      else {
-        const problem = researchProblem(world, research.id);
-        row.appendChild(orderButton("small", ["Research · ", gold(research.cost)], { mayAct, problem, explain: "", give: () => this.act({ type: "research", research: research.id }) }));
-      }
-      column.appendChild(row);
-    }
-    column.appendChild(element("div", "section", "Evolution"));
-    column.appendChild(element("div", "note", "Choosing a branch is free and permanent for every unit of that kind. Upgrades reach units that become that type after you buy them."));
     const faction = playerOf(world, side).faction;
     const commitment = playerOf(world, side).commitment;
     const allowed = allowedUnits(faction, commitment);
     const owned = squadsOf(world, side).flatMap((h) => h.squad);
     const roots = FACTION_ROOTS[faction];
     const rootsOf = (archetype: Archetype) => roots.filter((r) => LINE_ARCHETYPE[r] === archetype);
-    const tab = this.tab && rootsOf(this.tab).length > 0 ? this.tab : ARCHETYPES.find((a) => rootsOf(a).length > 0);
+    const tab: ResearchTab = this.tab === "general" || rootsOf(this.tab).length > 0 ? this.tab : "general";
     const tabs = element("div", "tabs");
-    for (const archetype of ARCHETYPES) {
-      const lines = rootsOf(archetype);
-      const button = element("button", `action${archetype === tab ? " selected" : ""}`, ARCHETYPE_NAMES[archetype]);
-      button.disabled = lines.length === 0;
-      button.title = lines.length === 0 ? `No ${ARCHETYPE_NAMES[archetype].toLowerCase()} line yet.` : lines.map((r) => `${unitName(r)} line`).join(", ");
+    const tabButton = (id: ResearchTab, label: string, title: string, held: boolean) => {
+      const button = element("button", `tab${id === tab ? " selected" : ""}`, label);
+      button.disabled = !held;
+      button.title = title;
       button.addEventListener("click", () => {
-        this.tab = archetype;
+        this.tab = id;
         this.rerender();
       });
       tabs.appendChild(button);
+    };
+    tabButton("general", "General", "The Capitol's own research.", true);
+    for (const archetype of ARCHETYPES) {
+      const lines = rootsOf(archetype);
+      tabButton(archetype, ARCHETYPE_NAMES[archetype], lines.length === 0 ? `No ${ARCHETYPE_NAMES[archetype].toLowerCase()} line yet.` : lines.map((r) => `${unitName(r)} line`).join(", "), lines.length > 0);
     }
     column.appendChild(tabs);
+    if (tab === "general") {
+      for (const research of RESEARCH) {
+        const row = element("div", "research-row");
+        row.append(element("div", "name", research.name), element("div", "note", research.describe));
+        if (playerOf(world, side).research.includes(research.id)) row.appendChild(element("div", "done", "✓ Done"));
+        else {
+          const problem = researchProblem(world, research.id);
+          row.appendChild(orderButton("small", ["Research · ", gold(research.cost)], { mayAct, problem, explain: "", give: () => this.act({ type: "research", research: research.id }) }));
+        }
+        column.appendChild(row);
+      }
+      return column;
+    }
+    column.appendChild(element("div", "note", "Choosing a branch is free and permanent for every unit of that kind. Upgrades reach units that become that type after you buy them. Hold right-click on a unit for its card."));
     // Each line grows down from its tier-1 unit at the top (user, 2026-09-27: "more tree like"): a column per route
     // to the top of the tree; a unit two routes share sits once, over the first of them.
-    const trees = (tab ? rootsOf(tab) : []).map(routes);
+    const trees = rootsOf(tab).map(routes);
     for (const lines of trees) {
       const grid = element("div", "tree down");
       grid.style.gridTemplateColumns = `repeat(${lines.length}, minmax(0, 1fr))`;
@@ -134,7 +142,16 @@ export class ResearchPanel {
     const head = element("div", "head");
     head.append(art({ kind: "portrait", id: defId, frame: "icon" }, "thumb"), element("div", "name", `${unitName(defId)}${count > 0 ? ` ×${count}` : ""}`));
     node.appendChild(head);
-    if (def) node.appendChild(element("div", "stats", `Tier ${def.tier} · ${def.stats.maxHp} HP · hits ${strongestHitOf(def)} · ${def.stats.armor} armor (${armorReduction(def.stats.armor)}%)`));
+    // Its numbers are on its card, under a held right-click (released on pointerup), not on the node.
+    if (def) {
+      node.addEventListener("contextmenu", (e) => e.preventDefault());
+      node.addEventListener("pointerdown", (e) => {
+        const peek = document.getElementById("peek");
+        if (e.button !== 2 || !peek) return;
+        const fresh = member(defId, { row: 0, col: 0 });
+        showPeek(peek, [memberCard({ ...fresh, hp: maxHpOf(fresh, undefined) }, undefined)], e.clientX, e.clientY);
+      });
+    }
     const commitment = playerOf(world, side).commitment;
     if (parent && isFork(parent)) {
       // Only the duality fork is labelled; later forks go by the unit's name.

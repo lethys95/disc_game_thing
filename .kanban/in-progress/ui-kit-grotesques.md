@@ -209,3 +209,40 @@
 - **The turn order (2026-10-11):** a strip hanging from the top's middle (`turn-strip`, seed 1, keyed out), the faces
   behind its openings; the warbands' meeting moved to the warband column; night one's beam deleted. Write-up:
   `shots/turn-order.html`. Next: the title and the menus.
+- **The user's review of the day (2026-10-11)**, after "I'm not sure if i should go back and give you critique or if
+  I should just continue to let you sprint". In their numbering:
+  1. Capitol: "a lot of noise. The difference in quality between elements is very clear" (the wall blurred next to
+     the column: the left painting is larger than the right; "I'd do segment upscaling"); "very difficult to see
+     what's going on, and I'd argue some elements are just too much"; the cut between wall and column shows "the two
+     images are not connected".
+  2. The interlace bands: "more norse than gothic". 3. The tomb effigy: "a bit bizarre".
+  4. Names as text in the garrison tiles are noise: "the images are enough", details on a held right-click.
+  5. Portraits don't cover the tile; "This tile component should be the same one we're using in all of these grids
+     [...] We need modularity"; changing dimensions between grids means noise.
+  6. Cut the column's facts segment; why a seal as the exit button?
+  7. The tab frame's top band: Norse again. 8. Research: a cutoff at the frame's edge. 9. Segments that "clearly
+     don't fit together" (frame against column).
+  10. Research tree nodes cram too much (tier, HP, hits, armor): hold right-click for the unit's card; Disciples II's
+      unit cards as inspiration (in the reference material).
+  11. The field's ring pattern: Norse. Idea: WoW-like specs, a background image per line/spec.
+  12. The Avatar of Vengeance icon is cut off. 13. "Capitol research" sits on every research tab: General should be
+      its own tab. 14. The tab buttons fuse with the background.
+  15. The graveyard "seems more complicated than it needs to be". 16. The ivory order buttons need a hover change.
+  17. The nodes panel reads as if the Capitol holds one gold mine; cities should have more nodes, upgradable in
+      different ways.
+  18. The map column flickers between turns (disappears briefly when the turn comes back).
+  19. The turn strip: "better than it was before, and the game is more readable now. good".
+  20. The bar's unit name: the tier doesn't belong in the title; the name is hard to read (font and colour).
+  21. Unclear why some stat panels are lighter than others. 22. The knobs in the bar: "the right choice. Good job".
+  23. More than seven abilities: arrows to flip through, shown only when needed.
+  24. -37 over the head and -37 in the hint line is redundant; keep the one over the head.
+  25. Healers default to healing when hovering allies but not when hovering themselves; and it isn't clear that
+      hovering an ally switched to healing.
+  26. The map's city box looks odd.
+  Overall: "it's getting better", but drifting from the style in places, and "stumbling into one of the lessons [...]
+  creating the designs around the UI that they had tested and knew worked. Here we've instead created the designs
+  first, and then try to fit the UI into the design" (the Capitol's grids against the map column's; the user prefers
+  the map column's). Stained glass: "I'm not really sure whether or not our audience would buy that what they're
+  looking at is in fact stained glass [...] ours is like murky red", where real stained glass has "multiple colors in
+  between segments in a coordinated way"; "we can absolutely use stained glass [...] But I do wonder if we couldn't
+  do more with it".

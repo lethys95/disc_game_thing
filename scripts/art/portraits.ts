@@ -491,7 +491,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     strengths: T_POSED,
     picked: {
       card: "avatar_of_vengeance-card-d90.png",
-      crops: { bust: { from: "card", size: 0.405, x: 0.481, y: 0.386 }, icon: { from: "card", size: 0.187, x: 0.474, y: 0.369 } },
+      crops: { bust: { from: "card", size: 0.405, x: 0.481, y: 0.386 }, icon: { from: "card", size: 0.24, x: 0.48, y: 0.325 } },
     },
   },
 };

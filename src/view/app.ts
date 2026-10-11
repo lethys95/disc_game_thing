@@ -39,9 +39,6 @@ interface Outcome {
   spared: boolean;
 }
 
-const change = (t: Outcome): string =>
-  [t.harm > 0 ? `−${t.harm}` : "", t.heal > 0 ? `+${t.heal}` : "", t.shield > 0 ? `−${t.shield} shield` : ""].filter((s) => s).join(" ");
-
 const markOf = (unitId: string, t: Outcome): PreviewMark => ({ unitId, ...t });
 
 interface Preview {
@@ -326,15 +323,13 @@ export class App implements KeyLayer {
 
   /**
    * The option a click on the hovered tile would use. Until the player picks one, a tile the default can't reach
-   * falls back to the first plain, non-basic ability that can (a support's shield on an ally, its attack on an enemy).
-   * Never onto the acting unit itself, so a stray click can't spend a self-heal.
+   * falls back to the first plain, non-basic ability that can (a support's shield on an ally, its attack on an enemy),
+   * the acting unit itself included, as for any ally.
    */
   private targetOption(): LegalAbility | undefined {
     const selected = this.selectedOption();
     const hovered = this.hovered;
     if (this.chosen || !hovered || selected?.choices.some((c) => matches(c, hovered))) return selected;
-    const self = this.battle?.current ? this.battle.units[this.battle.current.unitId] : undefined;
-    if (self && hovered.side === self.side && sameTile(hovered.tile, self.tile)) return selected;
     return this.playerOptions().find((o) => o.enhancement.kind === "none" && !o.tags.includes("common") && o.choices.some((c) => matches(c, hovered))) ?? selected;
   }
 
@@ -499,7 +494,8 @@ export class App implements KeyLayer {
       const unit = battle.units[unitId];
       if (!unit) continue;
       marks.push(markOf(unitId, t));
-      parts.push(`${unitLabel(unit, this.playerSide)} ${change(t)}${t.dies ? ", dies" : t.spared ? ", spared" : ""}`);
+      // The numbers and deaths show over the heads; the hint line only names who is hit.
+      parts.push(unitLabel(unit, this.playerSide));
     }
     this.preview = { key, marks, summary: parts.join(" · ") };
     return this.preview;
@@ -558,7 +554,8 @@ export class App implements KeyLayer {
     this.hud.renderTurns(battle, playerSide);
     this.hud.renderTarotStatus(battle, playerSide);
     this.hud.renderCards(battle, currentId, inspected?.id ?? pinned, playerSide, pinned !== null && !inspected);
-    this.hud.renderActions(battle, playerSide, this.playerOptions(), this.selected, this.playersTurn(), this.overloaded);
+    // The socket lit is the ability a click would use now, so falling back to a heal over an ally shows.
+    this.hud.renderActions(battle, playerSide, this.playerOptions(), option ? optionKey(option) : this.selected, this.playersTurn(), this.overloaded);
     this.hud.renderAuto(this.playerSide !== null && !battle.outcome, this.auto);
     this.hud.showOutcome(battle, playerSide, this.bannerButtons(battle));
     this.hud.setHint(preview?.summary ? `${option?.name}: ${preview.summary}` : this.hint(option));

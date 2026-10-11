@@ -68,6 +68,8 @@ const ROW_NAMES = ["front", "middle", "back"] as const;
 /** How many faces the turn order shows: the large niche and the eleven small ones right of it. */
 const TURN_SLOTS = 12;
 const COL_NAMES = ["left", "centre", "right"] as const;
+/** The ability sockets the bar's sill has room for. */
+const SOCKETS = 7;
 
 export function unitLabel(unit: BattleUnit, playerSide: Side | null): string {
   const owner = playerSide === null ? `Side ${unit.side + 1}` : unit.side === playerSide ? "Your" : "Enemy";
@@ -104,6 +106,8 @@ export class Hud {
   private readonly fan: TarotFan;
   private tarotEntries: FanCard[] = [];
   private tarotKeyShown = "";
+  /** Which seven of the acting unit's abilities the sill shows, for a unit with more than seven. */
+  private socketPage: { unitId: string; page: number } = { unitId: "", page: 0 };
   /** The socket under the pointer: re-renders replace the sockets, and its rules must stay up. */
   private ruled: string | null = null;
   /** The hint line's own text, and what names a hovered object in its place (`setHint`). */
@@ -291,10 +295,27 @@ export class Hud {
     const buttons = actionButtons(options);
     const power = effectiveStats(battle, unit.id).abilityPower;
     const refs = activeAbilities(battle, unit.id);
-    for (const ref of refs) {
+    // The sill holds seven sockets; a unit with more pages through them with two arrows, shown only then.
+    if (this.socketPage.unitId !== unit.id) this.socketPage = { unitId: unit.id, page: 0 };
+    const pages = Math.ceil(refs.length / SOCKETS);
+    const page = Math.min(this.socketPage.page, pages - 1);
+    for (const ref of refs.slice(page * SOCKETS, (page + 1) * SOCKETS)) {
       const index = buttons.findIndex((b) => b.abilityId === ref.id);
       const shown = buttons[index];
       this.actions.appendChild(shown ? this.socket(battle, unit, options, shown, index, selected, overloaded) : this.darkSocket(unit, ref, power));
+    }
+    if (pages > 1) {
+      const flip = (to: number, side: string, glyph: string) => {
+        const arrow = element("button", `flip ${side}`, glyph);
+        arrow.disabled = to < 0 || to >= pages;
+        arrow.setAttribute("aria-label", side === "prev" ? "Previous abilities" : "More abilities");
+        arrow.addEventListener("click", () => {
+          this.socketPage = { unitId: unit.id, page: to };
+          this.renderActions(battle, playerSide, options, selected, enabled, overloaded);
+        });
+        return arrow;
+      };
+      this.actions.append(flip(page - 1, "prev", "‹"), flip(page + 1, "next", "›"));
     }
     const ruled = refs.find((ref) => ref.id === this.ruled);
     this.showRules(ruled ? rulesSlip(unit, ruled, power, buttons.some((b) => b.abilityId === ruled.id)) : null);
@@ -450,7 +471,7 @@ function unitCard(card: HTMLElement, battle: Battle, unit: BattleUnit | undefine
   const tier = def?.tier ?? 1;
   const plate = element("div", `plate side${unit.side}`);
   if (unit.leader) plate.appendChild(element("span", "crown", "♛"));
-  plate.append(element("span", "tier", roman(tier)), element("span", "name", unit.name));
+  plate.appendChild(element("span", "name", unit.name));
   if (pinned) plate.appendChild(explain(element("span", "pin"), "Pinned", "This card stays put. Click the unit again to release it."));
   card.appendChild(explain(plate, unitLabel(unit, playerSide), `Tier ${tier}${unit.leader ? ", leading its warband" : ""}. Stands ${place(unit)}.`));
 
