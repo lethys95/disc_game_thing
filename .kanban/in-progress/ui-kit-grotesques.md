@@ -254,3 +254,7 @@
   window repainted in a few glass palettes for the user to pick.
 - **The user (2026-10-11):** "I'm pretty confident in the boxout strategy we've learnt by the way, but maybe having a
   segment upscaling step after that is the next part in that chain." Box out, paint in, then segment upscaling.
+- **The user (2026-10-11):** "what we're creating now, is basically the Jilliath HUD, right? Like if I'm sylvan, then
+  looking at tainted glass and church stuff probably doesn't make too much sense. So we'll probably go through a lot of
+  this again with other styles." Everything painted so far is Jilliath's skin; Ral-Vitahl and the Sylvan get their own
+  full skins on the same layouts and components (`hud-kit.md`, "Faction skins"). Screens outside a game stay neutral.

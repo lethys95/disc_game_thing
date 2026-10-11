@@ -387,3 +387,10 @@ Until a player picks an ability, hovering a tile the default attack can't reach 
 heal over an ally). The acting unit itself was excepted, so a stray click couldn't spend a self-heal; the user found it
 inconsistent ("if the healer hovers over themselves, then they do not default into healing action"). The exception
 is gone, and the socket of the ability a click would use is the one lit, so the fallback shows.
+
+## Each faction paints the whole HUD in its own style (2026-10-11)
+`hud-kit.md` planned shared stone and iron with a few pieces swapped per faction (Disciples II keeps one neutral
+chrome for every race). The user: what we're painting is "basically the Jilliath HUD [...] if I'm sylvan, then looking
+at tainted glass and church stuff probably doesn't make too much sense." So the painted chrome is the faction's skin;
+the layouts, components and greyboxes are shared. This is why interface-first matters more: a layout is tested once and
+painted three times, and the box-out method makes a skin a prompt and a round of repairs per layout, not a redesign.

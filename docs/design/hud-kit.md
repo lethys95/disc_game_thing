@@ -204,6 +204,13 @@ call; the look works without it.
 - *Moments:* battle end and game end use the shared moment layout.
 
 ## Faction skins
+**Superseded in scope (the user, 2026-10-11):** "what we're creating now, is basically the Jilliath HUD, right? Like
+if I'm sylvan, then looking at tainted glass and church stuff probably doesn't make too much sense. So we'll probably go
+through a lot of this again with other styles." The whole painted chrome is the faction's skin, not a few swapped
+pieces: Jilliath's iron, tracery and stained glass are Jilliath's alone. What is shared is the structure: the layouts,
+the components (squad tile, unit sheet, trees) and the greyboxes; each faction paints them in its own materials. The
+lists below remain the starting motifs for each faction's skin.
+
 The skin follows the player at the screen. Everything else is shared, so each faction is a small set of large pieces,
 not a kit of small ones (P14):
 - the cast, and the object the end-turn figure holds
