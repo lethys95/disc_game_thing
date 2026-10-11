@@ -604,3 +604,22 @@ the black showing through, which suits: the painting is keyed out (alpha from it
 gone), laid over the faces, so its rims frame them and an empty niche shows the field. Seed 1 is in the game (tracery
 in the spandrels; a plain band along its top). Faces are now 3.3rem wide in the small niches, 4.9rem in the large.
 With the beam gone, the warbands' meeting moved onto the warband column and the frame too; no screen uses the beam.
+
+## The user's review of the day, and what caused it (2026-10-11)
+The review is recorded in full on the story (`in-progress/ui-kit-grotesques`). Where the problems came from:
+- **"Norse, not gothic"** (the bands, the frame's top, the field): Claude's prompts. Every layout since the dense
+  battle bar asks for "interlaced knotwork, scrolling ironwork, small rosettes and tracery"; knotwork is Celtic and
+  Norse ornament, and the greyboxes' ring pattern (drawn to keep surfaces from being plain) is an interlace of rings,
+  which the field painted literally. Gothic's own ornament is tracery, trefoils and quatrefoils, crockets, finials,
+  pinnacles, cusped arches, fleurons, diaper and blind arcading.
+- **The blur against the column:** texel density. The columns are painted at 576 px for 300 page px (1.9×), the
+  garrison wall and the frame at 1280 for 1236 (1.04×): side by side, one is twice as sharp. The user: segment
+  upscaling (`maybe/upscalers`).
+- **The cut between wall and column:** two paintings that meet edge to edge with nothing to join them; the map
+  column has a whole screen edge to itself, the Capitol screen has a seam in its middle.
+- **Grids in different sizes:** the map column, the garrison windows and the warband column each lay out a squad in
+  their own pane sizes, so portraits crop differently in each and the garrison's tiles carry names and corner marks the
+  map's don't. Painting first and fitting the interface after is the lesson the research warned of (layout first, a
+  tested kit, then the look); the user prefers the map column's grid.
+- **The glass reads as murky red:** "deep red and amber" in every prompt. Real windows read as glass through many
+  coordinated colours in their pieces.
