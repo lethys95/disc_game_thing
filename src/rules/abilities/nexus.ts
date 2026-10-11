@@ -1,5 +1,5 @@
 import { areaChoices, at, rangedChoices, single, spellCost } from "#rules/abilities/core";
-import { MUTATED_PER_STACK } from "#rules/effects";
+import { MUTATED_PER_STACK } from "#rules/effects/nexus";
 import { opponent } from "#rules/battle/grid";
 import type { Behavior } from "#rules/battle/types";
 

@@ -10,7 +10,7 @@ import type { WorldAction } from "#rules/world/state";
 import { commitmentOf } from "#rules/forks";
 import { UNITS } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
-import { GROVE_PRESETS, NEXUS_PRESETS, PRESETS } from "#rules/units/presets";
+import { presetOf } from "#rules/units/presets";
 import { defaultMapSize, isMapSize } from "#rules/map";
 
 /**
@@ -23,14 +23,7 @@ const parse = (spec: string): { faction: Playable; key: string } => {
   if (head === "nexus" || head === "grove") return { faction: head, key: tail ?? "uncommitted" };
   return { faction: "jilliath", key: head };
 };
-const isJilliathPreset = (key: string): key is keyof typeof PRESETS => key in PRESETS;
-const isNexusPreset = (key: string): key is keyof typeof NEXUS_PRESETS => key in NEXUS_PRESETS;
-const isGrovePreset = (key: string): key is keyof typeof GROVE_PRESETS => key in GROVE_PRESETS;
-const squadOf = (s: { faction: Playable; key: string }) => {
-  if (s.faction === "nexus") return isNexusPreset(s.key) ? NEXUS_PRESETS[s.key] : NEXUS_PRESETS.uncommitted;
-  if (s.faction === "grove") return isGrovePreset(s.key) ? GROVE_PRESETS[s.key] : GROVE_PRESETS.uncommitted;
-  return isJilliathPreset(s.key) ? PRESETS[s.key] : PRESETS.uncommitted;
-};
+const squadOf = (s: { faction: Playable; key: string }) => presetOf(s.faction, s.key);
 
 const seeds = process.argv.slice(2).map(Number);
 const verbose = process.env["VERBOSE"] === "1";

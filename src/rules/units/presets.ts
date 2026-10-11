@@ -10,7 +10,7 @@ const at = (defId: string, row: Row, col: Col): Placement => ({ defId, tile: { r
  * unable to reach the enemy from the back row) lost to every other opening squad and made Jilliath the weakest
  * faction in whole AI games (the audit, 2026-10-06; provisional #70).
  */
-export const PRESETS: Readonly<Record<"uncommitted" | "congregants" | "preserve" | "punishment" | "sacrifice" | "holy" | "fire" | "guardian" | "vengeance", readonly Placement[]>> = {
+const JILLIATH_PRESETS = {
   uncommitted: [
     at("congregant", 0, 0), at("congregant", 0, 1), at("congregant", 0, 2),
     at("seraph", 2, 0), at("acolyte", 2, 1),
@@ -47,10 +47,10 @@ export const PRESETS: Readonly<Record<"uncommitted" | "congregants" | "preserve"
     at("zealot", 0, 0), at("fanatic", 0, 1), at("zealot", 0, 2),
     at("paragon", 2, 0), at("empyreal", 2, 1), at("reclaimer", 2, 2),
   ],
-};
+} as const satisfies Readonly<Record<string, readonly Placement[]>>;
 
 /** Nexus formations, made of its units. Not canon. */
-export const NEXUS_PRESETS: Readonly<Record<"uncommitted" | "scheme" | "overload" | "etherborn" | "backlasher" | "maelstrom", readonly Placement[]>> = {
+const NEXUS_PRESETS = {
   uncommitted: [
     at("custodian", 0, 0), at("custodian", 0, 1), at("custodian", 0, 2),
     at("technician", 2, 0), at("apprentice", 2, 1),
@@ -75,15 +75,24 @@ export const NEXUS_PRESETS: Readonly<Record<"uncommitted" | "scheme" | "overload
     at("mutant", 0, 0), at("custodian", 0, 1), at("mutant", 0, 2),
     at("technician", 2, 0), at("maelstrom", 2, 1),
   ],
-};
+} as const satisfies Readonly<Record<string, readonly Placement[]>>;
 
 
 /** The Grove: its melee line and the first of its backline (user, 2026-09-29). */
-export const GROVE_PRESETS = {
+const GROVE_PRESETS = {
   uncommitted: [at("sproutling", 0, 0), at("sproutling", 0, 1), at("sproutling", 0, 2), at("grove_support_1", 2, 0), at("grove_mage_1", 2, 2)],
   regrowth: [at("regrowth_2", 0, 0), at("regrowth_2", 0, 2), at("regrowth_3", 0, 1), at("psychopomp", 2, 0), at("grove_mage_1", 2, 2)],
   decay: [at("moldling", 0, 0), at("deadwood", 0, 1), at("moldling", 0, 2), at("decay_support_2", 2, 0), at("grove_mage_1", 2, 2)],
 } as const satisfies Readonly<Record<string, readonly Placement[]>>;
+
+/** Every playable faction's preset squads, its `uncommitted` one the squad a map game starts with. */
+export const PRESETS = { jilliath: JILLIATH_PRESETS, nexus: NEXUS_PRESETS, grove: GROVE_PRESETS } as const satisfies Readonly<Record<Playable, { readonly uncommitted: readonly Placement[] }>>;
+
+/** A faction's preset by name, or its starting squad when it has none of that name. */
+export function presetOf(faction: Playable, name: string): readonly Placement[] {
+  const set: Readonly<Record<string, readonly Placement[]>> = PRESETS[faction];
+  return set[name] ?? PRESETS[faction].uncommitted;
+}
 
 /** A bandit group using all four of the user's bandit units. The formation is not canon. */
 export const BANDIT_GROUP: readonly Placement[] = [
@@ -111,11 +120,11 @@ export const CARNIVAL_GROUP: readonly Placement[] = [
 /** The setup screen's formation presets per faction, named after the branches they took. */
 export const FORMATIONS: Readonly<Record<Playable, readonly { readonly name: string; readonly squad: readonly Placement[] }[]>> = {
   jilliath: [
-    { name: "Congregants with a support and a mage", squad: PRESETS.uncommitted },
-    { name: "Congregants", squad: PRESETS.congregants },
-    { name: "Faith", squad: PRESETS.preserve },
-    { name: "Fanaticism: Punisher", squad: PRESETS.punishment },
-    { name: "Fanaticism: Fanatic", squad: PRESETS.sacrifice },
+    { name: "Congregants with a support and a mage", squad: JILLIATH_PRESETS.uncommitted },
+    { name: "Congregants", squad: JILLIATH_PRESETS.congregants },
+    { name: "Faith", squad: JILLIATH_PRESETS.preserve },
+    { name: "Fanaticism: Punisher", squad: JILLIATH_PRESETS.punishment },
+    { name: "Fanaticism: Fanatic", squad: JILLIATH_PRESETS.sacrifice },
   ],
   nexus: [
     { name: "Tier 1", squad: NEXUS_PRESETS.uncommitted },

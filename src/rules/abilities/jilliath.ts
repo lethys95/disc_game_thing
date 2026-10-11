@@ -1,6 +1,6 @@
 import { auraSource, at, rangedChoices, single, uses } from "#rules/abilities/core";
 import { PUNISHMENT_MAX_STACKS } from "#rules/balance";
-import { PUNISHED_PER_STACK } from "#rules/effects";
+import { PUNISHED_PER_STACK } from "#rules/effects/jilliath";
 import { adjacent, COLS, frontLine, meleeTargets, occupant, opponent } from "#rules/battle/grid";
 import type { Behavior, Ctx, Row, TargetChoice, TraitSelf } from "#rules/battle/types";
 

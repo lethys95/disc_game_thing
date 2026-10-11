@@ -1,7 +1,8 @@
 import { member, playerOf } from "#rules/world/state";
 import { isFork } from "#rules/forks";
-import { ARCHETYPES, EVOLUTIONS, FACTION_ROOTS, LINE_ARCHETYPE } from "#rules/units/index";
-import type { Archetype } from "#rules/units/index";
+import { EVOLUTIONS, FACTION_ROOTS, LINE_ARCHETYPE } from "#rules/units/index";
+import { ARCHETYPES } from "#rules/units/types";
+import type { Archetype } from "#rules/units/types";
 import { upgradesFor } from "#rules/upgrades";
 import { RESEARCH } from "#rules/research";
 import { chooseBranchProblem, researchProblem, squadsOf, upgradeProblem } from "#rules/world/economy";

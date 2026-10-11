@@ -31,3 +31,8 @@
   (their marks' and gifts' own numbers), research (its constant) compute their text; the city screen's wall armor reads
   `wallArmorOf`; `tests/rules-text.test.ts` guards it. Effects lost their "(from a Foundry)" suffixes, which the unit
   sheet's track record already says.
+- **Finding 3, done (2026-10-11):** each faction's units file holds its units, roots, costs, line kinds and evolutions
+  (`FactionUnits`), joined with a duplicate guard; `tests/catalogue.test.ts` checks keys, evolutions, roots and abilities;
+  presets are one record per faction with `presetOf`, the ternary chains gone; `effects.ts` split into `effects/` by
+  faction (`shared.ts` for the shapes), the `fortifies` flag gone; `factions.ts` says what adding a faction takes;
+  architecture and engineering docs updated. Findings 1–3 done; 4 (CSS) and 5 (conventions) remain.

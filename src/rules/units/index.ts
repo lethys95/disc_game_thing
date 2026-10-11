@@ -1,8 +1,9 @@
 import type { Faction, UnitDef } from "#rules/battle/types";
-import { GROVE_UNITS } from "#rules/units/grove";
-import { JILLIATH_UNITS } from "#rules/units/jilliath";
+import { GROVE } from "#rules/units/grove";
+import { JILLIATH } from "#rules/units/jilliath";
 import { NEUTRAL_UNITS } from "#rules/units/neutral";
-import { NEXUS_UNITS } from "#rules/units/nexus";
+import { NEXUS } from "#rules/units/nexus";
+import type { Archetype, Evolution, FactionUnits } from "#rules/units/types";
 
 /**
  * Every faction unit can retreat (the user's design: surrender is a default action, and a unit that must not flee
@@ -11,84 +12,30 @@ import { NEXUS_UNITS } from "#rules/units/nexus";
 const canRetreat = (units: Readonly<Record<string, UnitDef>>): Record<string, UnitDef> =>
   Object.fromEntries(Object.entries(units).map(([id, def]) => [id, { ...def, abilities: [...def.abilities, { id: "retreat" }] }]));
 
-export const UNITS: Readonly<Record<string, UnitDef>> = { ...canRetreat(JILLIATH_UNITS), ...canRetreat(NEXUS_UNITS), ...canRetreat(GROVE_UNITS), ...NEUTRAL_UNITS };
+export type Playable = Exclude<Faction, "neutral">;
+
+/** Each playable faction's units and their lines (`units/<faction>.ts`). */
+const FACTION_UNITS: Readonly<Record<Playable, FactionUnits>> = { jilliath: JILLIATH, nexus: NEXUS, grove: GROVE };
+
+/** Records joined into one; an id that two of them share is refused rather than silently overwritten. */
+function joined<T>(records: readonly Readonly<Record<string, T>>[]): Readonly<Record<string, T>> {
+  const all: Record<string, T> = {};
+  for (const record of records) {
+    for (const [id, value] of Object.entries(record)) {
+      if (id in all) throw new Error(`"${id}" is defined twice`);
+      all[id] = value;
+    }
+  }
+  return all;
+}
+
+const factions = Object.values(FACTION_UNITS);
+
+export const UNITS: Readonly<Record<string, UnitDef>> = joined([...factions.map((f) => canRetreat(f.units)), NEUTRAL_UNITS]);
 
 export const GUARDIAN_ID = "capitol_guardian";
 
-export type Playable = Exclude<Faction, "neutral">;
-
-
-/**
- * Each playable faction's tier-1 units: what it recruits (tier 1 only, as in D2; higher tiers come from
- * evolution) and where its evolution tree starts.
- */
-export const FACTION_ROOTS: Readonly<Record<Playable, readonly string[]>> = {
-  jilliath: ["congregant", "seraph", "acolyte"],
-  nexus: ["custodian", "technician", "apprentice"],
-  grove: ["sproutling", "grove_support_1", "grove_mage_1"],
-};
-
-/**
- * The kinds of line a faction's units come in (D2's archetypes, which the user pointed to). The fourth is a joker:
- * a concept unique to each faction (user, 2026-09-27), none designed yet.
- */
-export const ARCHETYPES = ["melee", "support", "mage", "joker"] as const;
-export type Archetype = (typeof ARCHETYPES)[number];
-
-/** Which kind of line each tier-1 unit starts (user: the melee lines, the Technician supports, the Apprentice casts). */
-export const LINE_ARCHETYPE: Readonly<Record<string, Archetype>> = { congregant: "melee", seraph: "support", acolyte: "mage", custodian: "melee", technician: "support", apprentice: "mage", sproutling: "melee", grove_support_1: "support", grove_mage_1: "mage" };
-
-/** Canon: the Congregant costs 40 gold. The Nexus prices are provisional ("costly", quality over quantity). */
-export const RECRUIT_COST: Readonly<Record<string, number>> = { congregant: 40, seraph: 50, acolyte: 60, custodian: 60, technician: 50, apprentice: 60, sproutling: 45, grove_support_1: 50, grove_mage_1: 60 };
-
-/** One step up an evolution tree. */
-export interface Evolution {
-  readonly to: string;
-  /**
-   * At the faction's duality fork, the side this branch stands for (docs/design/dichotomies.md). Later forks go
-   * unlabelled: both branches come from the same side (user, 2026-09-26).
-   */
-  readonly label?: string;
-}
-
-/**
- * Evolution trees. A unit with more than one evolution is a **fork**: the owner chooses a branch once, for free,
- * and every unit of that kind follows it (docs/design/pillars.md). Forks are independent of each other.
- */
-export const EVOLUTIONS: Readonly<Record<string, readonly Evolution[]>> = {
-  // The canon Jilliath melee tree (docs/design/units/jilliath-melee-line.md).
-  congregant: [{ to: "paladin", label: "Faith" }, { to: "zealot", label: "Fanaticism" }],
-  paladin: [{ to: "templar" }],
-  templar: [{ to: "immortal" }],
-  zealot: [{ to: "punisher" }, { to: "fanatic" }],
-  punisher: [{ to: "torturer" }],
-  fanatic: [{ to: "chosen" }],
-  chosen: [{ to: "avatar_of_vengeance" }],
-  // The Jilliath support line, angels (faction-stuff/jilliath/support.md): guardian vs vengeance.
-  seraph: [{ to: "emissary", label: "Faith" }, { to: "paragon", label: "Fanaticism" }],
-  emissary: [{ to: "guardian" }],
-  guardian: [{ to: "shepherd" }],
-  shepherd: [{ to: "godkin" }],
-  paragon: [{ to: "empyreal" }, { to: "reclaimer" }],
-  // The Jilliath mage line (faction-stuff/jilliath/mage.md): holy vs fire; the fire side forks again at tier 4.
-  acolyte: [{ to: "cleric", label: "Faith" }, { to: "doomsayer", label: "Fanaticism" }],
-  cleric: [{ to: "pontiff" }],
-  pontiff: [{ to: "archon" }],
-  doomsayer: [{ to: "jilliath_fire_3" }],
-  jilliath_fire_3: [{ to: "jilliath_fire_4" }, { to: "jilliath_martyr_4" }],
-  // Ral-Vitahl: scheme vs overload, chosen per line (user, 2026-09-25).
-  custodian: [{ to: "cyclops", label: "Scheme" }, { to: "mutant", label: "Overload" }],
-  apprentice: [{ to: "justiciar", label: "Scheme" }, { to: "thaumaturge", label: "Overload" }],
-  // Tier 3 mages (user, 2026-09-26).
-  justiciar: [{ to: "etherborn" }, { to: "backlasher" }],
-  thaumaturge: [{ to: "maelstrom" }],
-  // The Grove's melee line: life and death (user, 2026-09-29).
-  sproutling: [{ to: "regrowth_2", label: "Regrowth" }, { to: "moldling", label: "Decay" }],
-  regrowth_2: [{ to: "regrowth_3" }],
-  moldling: [{ to: "deadwood" }],
-  // Regrowth ends at tier 3; Decay goes on to a tier 4 (user, 2026-09-29), in two kinds (user, 2026-10-04).
-  deadwood: [{ to: "bog_giant" }, { to: "mulch_gorger" }],
-  // The support forks into Spiritess (healing over time, then the Psychopomp's crowd control) and Decay (corpses).
-  grove_support_1: [{ to: "spiritess_2", label: "Spiritess" }, { to: "decay_support_2", label: "Decay" }],
-  spiritess_2: [{ to: "psychopomp" }],
-};
+export const FACTION_ROOTS: Readonly<Record<Playable, readonly string[]>> = { jilliath: JILLIATH.roots, nexus: NEXUS.roots, grove: GROVE.roots };
+export const LINE_ARCHETYPE: Readonly<Record<string, Archetype>> = joined(factions.map((f) => f.archetype));
+export const RECRUIT_COST: Readonly<Record<string, number>> = joined(factions.map((f) => f.recruitCost));
+export const EVOLUTIONS: Readonly<Record<string, readonly Evolution[]>> = joined(factions.map((f) => f.evolutions));

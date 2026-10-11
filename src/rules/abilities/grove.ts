@@ -1,6 +1,6 @@
 import { at, rangedChoices, single } from "#rules/abilities/core";
 import { wetten } from "#rules/abilities/keywords";
-import { WITHERBLOOM_CAP, wither } from "#rules/effects";
+import { WITHERBLOOM_CAP, wither } from "#rules/effects/grove";
 import { adjacent, frontLine, meleeTargets, opponent } from "#rules/battle/grid";
 import type { BattleUnit, Ctx } from "#rules/battle/types";
 import type { Behavior } from "#rules/battle/types";

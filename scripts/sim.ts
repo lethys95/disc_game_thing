@@ -5,7 +5,7 @@ import { PRESETS } from "#rules/units/presets";
 
 /** AI-vs-AI matrix of every preset against every preset (both seatings), for balance work. */
 const MAX_STEPS = 3000;
-const squads: Record<string, readonly Placement[]> = { ...PRESETS };
+const squads: Record<string, readonly Placement[]> = { ...PRESETS.jilliath };
 
 const rows: string[] = [];
 for (const [a, first] of Object.entries(squads)) {

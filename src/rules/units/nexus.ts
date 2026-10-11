@@ -1,8 +1,9 @@
 import { kit } from "#rules/units/kit";
 import type { UnitDef } from "#rules/battle/types";
+import type { FactionUnits } from "#rules/units/types";
 
 /** Ral-Vitahl (docs/design/units/nexus-tier1.md, docs/design/dichotomies.md). Mechanics are the user's; stats are provisional. */
-export const NEXUS_UNITS: Readonly<Record<string, UnitDef>> = {
+const UNITS: Readonly<Record<string, UnitDef>> = {
   custodian: {
     id: "custodian", name: "Custodian", faction: "nexus", tier: 1,
     stats: { maxHp: 60, shield: 65, armor: 0, initiative: 45, abilityPower: 100 },
@@ -67,5 +68,21 @@ export const NEXUS_UNITS: Readonly<Record<string, UnitDef>> = {
       { id: "combustion" }, { id: "bolt", params: { power: 5 } }, ...kit("defend", "wait"),
     ],
     spellCharges: 6,
+  },
+};
+
+export const NEXUS: FactionUnits = {
+  units: UNITS,
+  roots: ["custodian", "technician", "apprentice"],
+  // Provisional: "costly", quality over quantity.
+  recruitCost: { custodian: 60, technician: 50, apprentice: 60 },
+  archetype: { custodian: "melee", technician: "support", apprentice: "mage" },
+  evolutions: {
+    // Ral-Vitahl: scheme vs overload, chosen per line (user, 2026-09-25).
+    custodian: [{ to: "cyclops", label: "Scheme" }, { to: "mutant", label: "Overload" }],
+    apprentice: [{ to: "justiciar", label: "Scheme" }, { to: "thaumaturge", label: "Overload" }],
+    // Tier 3 mages (user, 2026-09-26).
+    justiciar: [{ to: "etherborn" }, { to: "backlasher" }],
+    thaumaturge: [{ to: "maelstrom" }],
   },
 };

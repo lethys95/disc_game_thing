@@ -88,12 +88,12 @@ Visibility lives on definitions (`secret` on the effect, `secretTarget` on the a
 
 ## Code layout
 ```
-src/rules/battle/   engine (turn flow, actions), damage pipeline, traits (hooks, registry, effect lifetimes), context
-src/rules/abilities/ core, jilliath, nexus, neutral (behaviors + passive traits)
-src/rules/effects.ts effect definitions
-src/rules/units/    catalogue by faction
-src/rules/units/presets.ts preset squads (setup, sims, tests)
+src/rules/battle/   engine (turn flow, actions), damage pipeline, traits (hooks, registry, effect lifetimes), reach, tarot
+src/rules/abilities/ behaviors + passive traits: core, keywords, jilliath, nexus, grove, neutral, gnolls, drawn, carnival
+src/rules/effects/  effect definitions, the same split (core, keywords, jilliath, nexus, grove, neutral, world); effects.ts joins them
+src/rules/units/    a file per faction: its units, roots, recruit costs, line kinds and evolutions; index.ts joins them
+src/rules/units/presets.ts preset squads per faction (setup, sims, tests)
 src/rules/world/    state, movement, economy, battles-to-world, fate (map deaths), vision (fog), spells, map AI
-src/rules/factions.ts, spells.ts, items.ts, nodes.ts, research.ts   content as data
+src/rules/factions.ts, spells.ts, items.ts, nodes.ts, research.ts   content as data, each computing its own rules text
 src/rules/balance.ts provisional numbers that aren't per-unit or per-ability params
 ```

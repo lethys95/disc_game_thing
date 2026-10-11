@@ -41,7 +41,7 @@ const PROBLEM_TEXT: Readonly<Record<SquadProblem, string>> = {
  * arena behind previews them live. Map games start from the new-game screen.
  */
 export class Setup {
-  private squads: [Placement[], Placement[]] = [[...PRESETS.preserve], [...PRESETS.punishment]];
+  private squads: [Placement[], Placement[]] = [[...PRESETS.jilliath.preserve], [...PRESETS.jilliath.punishment]];
   private formations: [string, string] = ["Faith", "Fanaticism: Punisher"];
   private factions: [Playable, Playable] = ["jilliath", "jilliath"];
   private colors: [PlayerColor, PlayerColor] = colorPair(["jilliath", "jilliath"]);

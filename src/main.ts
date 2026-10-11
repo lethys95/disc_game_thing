@@ -18,7 +18,7 @@ import { Codex } from "#view/codex";
 import { Credits } from "#view/credits";
 import type { Placement } from "#rules/battle/engine";
 import type { Save } from "#rules/save";
-import { BANDIT_GROUP, CARNIVAL_GROUP, DRAWN_GROUP, GNOLL_GROUP, GROVE_PRESETS, NEXUS_PRESETS, PRESETS } from "#rules/units/presets";
+import { BANDIT_GROUP, CARNIVAL_GROUP, DRAWN_GROUP, GNOLL_GROUP, presetOf, PRESETS } from "#rules/units/presets";
 import { ANIMATION_SPEEDS, rootFontSize, Settings } from "#view/settings";
 import { Sound } from "#view/sound";
 import { Stage } from "#view/stage";
@@ -139,7 +139,7 @@ function showTitle(): void {
   sound.ambience(null);
 }
 
-const presets = [PRESETS.preserve, PRESETS.punishment] as const;
+const presets = [PRESETS.jilliath.preserve, PRESETS.jilliath.punishment] as const;
 // Screenshots and playtests skip the setup screen.
 if (params.has("map")) {
   // `map=nexus|grove`: the first enemy's faction.
@@ -150,7 +150,7 @@ if (params.has("map")) {
   const colors = defaultColors(factions);
   const sizeParam = params.get("size") ?? "";
   campaign.start(
-    factions.map((faction, i) => ({ squad: faction === "nexus" ? NEXUS_PRESETS.uncommitted : faction === "grove" ? GROVE_PRESETS.uncommitted : PRESETS.uncommitted, faction, commitment: {}, color: colors[i] ?? "white" })),
+    factions.map((faction, i) => ({ squad: PRESETS[faction].uncommitted, faction, commitment: {}, color: colors[i] ?? "white" })),
     Number(params.get("seed") ?? 1),
     // `size=large`: a map size other than the default for the number of players.
     isMapSize(sizeParam) ? sizeParam : undefined,
@@ -167,9 +167,9 @@ if (params.has("map")) {
   const nexusKey = fight.startsWith("nexus:") ? fight.slice(6) : "uncommitted";
   const groveKey = fight.startsWith("grove:") ? fight.slice(6) : "uncommitted";
   const enemy = fight.startsWith("nexus")
-    ? nexusKey === "scheme" || nexusKey === "overload" ? NEXUS_PRESETS[nexusKey] : NEXUS_PRESETS.uncommitted
+    ? presetOf("nexus", nexusKey)
     : fight.startsWith("grove")
-      ? groveKey === "regrowth" || groveKey === "decay" ? GROVE_PRESETS[groveKey] : GROVE_PRESETS.uncommitted
+      ? presetOf("grove", groveKey)
       : fight === "bandits" ? BANDIT_GROUP : fight === "gnolls" ? GNOLL_GROUP : fight === "drawn" ? DRAWN_GROUP : fight === "carnival" ? CARNIVAL_GROUP : presets[1];
   // `terrain=forest`, `biome=desert`, `backdrop=capitol|city|dungeon`: fight somewhere other than open plains (screenshots).
   const terrain = params.get("terrain") ?? "plain";
@@ -184,8 +184,8 @@ if (params.has("map")) {
   const withTarot = (squad: readonly Placement[]): Placement[] =>
     squad.map((p, i) => (i === 0 && tarot > 0 ? { ...p, effects: [...(p.effects ?? []), { def: "carries", ability: { id: "tarot", params: { cards: tarot } } }] } : p));
   // `fight=mages`: the Jilliath mage line, holy against fire; `fight=angels`: its support line, guardian against vengeance.
-  const own = fight === "mages" ? PRESETS.holy : fight === "angels" ? PRESETS.guardian : presets[0];
-  const other = fight === "mages" ? PRESETS.fire : fight === "angels" ? PRESETS.vengeance : enemy;
+  const own = fight === "mages" ? PRESETS.jilliath.holy : fight === "angels" ? PRESETS.jilliath.guardian : presets[0];
+  const other = fight === "mages" ? PRESETS.jilliath.fire : fight === "angels" ? PRESETS.jilliath.vengeance : enemy;
   app.start([withTarot(own), withTarot(other)], params.get("auto") === "1" ? null : params.get("side") === "1" ? 1 : 0, colorPair(["jilliath", fight.startsWith("nexus") ? "nexus" : fight.startsWith("grove") ? "grove" : "jilliath"]), Number(params.get("steps") ?? 0), setting, Number(params.get("seed") ?? 0));
 } else if (params.has("skirmish")) {
   open(setup);

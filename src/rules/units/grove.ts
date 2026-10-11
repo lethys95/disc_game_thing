@@ -1,5 +1,6 @@
 import { kit } from "#rules/units/kit";
 import type { UnitDef } from "#rules/battle/types";
+import type { FactionUnits } from "#rules/units/types";
 
 /**
  * The Grove (Sylvan): its melee line, the user's design (2026-09-29, `faction-stuff/sylvan/melee.md`). The user named
@@ -7,7 +8,7 @@ import type { UnitDef } from "#rules/battle/types";
  * comes before the swamp; each tier kept its kit); "Regrowth 2/3" and the backline's names are placeholders. Stats are
  * provisional (`provisional.md` #57).
  */
-export const GROVE_UNITS: Readonly<Record<string, UnitDef>> = {
+const UNITS: Readonly<Record<string, UnitDef>> = {
   sproutling: {
     id: "sproutling", name: "Sproutling", faction: "grove", tier: 1,
     stats: { maxHp: 121, shield: 0, armor: 0, initiative: 45, abilityPower: 100 },
@@ -75,5 +76,23 @@ export const GROVE_UNITS: Readonly<Record<string, UnitDef>> = {
     id: "grove_mage_1", name: "Grove mage 1", faction: "grove", tier: 1,
     stats: { maxHp: 55, shield: 0, armor: 0, initiative: 45, abilityPower: 100 },
     abilities: kit("cycle", "defend", "wait"),
+  },
+};
+
+export const GROVE: FactionUnits = {
+  units: UNITS,
+  roots: ["sproutling", "grove_support_1", "grove_mage_1"],
+  recruitCost: { sproutling: 45, grove_support_1: 50, grove_mage_1: 60 },
+  archetype: { sproutling: "melee", grove_support_1: "support", grove_mage_1: "mage" },
+  evolutions: {
+    // The Grove's melee line: life and death (user, 2026-09-29).
+    sproutling: [{ to: "regrowth_2", label: "Regrowth" }, { to: "moldling", label: "Decay" }],
+    regrowth_2: [{ to: "regrowth_3" }],
+    moldling: [{ to: "deadwood" }],
+    // Regrowth ends at tier 3; Decay goes on to a tier 4 (user, 2026-09-29), in two kinds (user, 2026-10-04).
+    deadwood: [{ to: "bog_giant" }, { to: "mulch_gorger" }],
+    // The support forks into Spiritess (healing over time, then the Psychopomp's crowd control) and Decay (corpses).
+    grove_support_1: [{ to: "spiritess_2", label: "Spiritess" }, { to: "decay_support_2", label: "Decay" }],
+    spiritess_2: [{ to: "psychopomp" }],
   },
 };

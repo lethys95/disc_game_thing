@@ -1,8 +1,9 @@
 import { kit } from "#rules/units/kit";
 import type { UnitDef } from "#rules/battle/types";
+import type { FactionUnits } from "#rules/units/types";
 
 /** The Jilliath melee line (docs/design/units/jilliath-melee-line.md, canon; numbers first-pass). */
-export const JILLIATH_UNITS: Readonly<Record<string, UnitDef>> = {
+const UNITS: Readonly<Record<string, UnitDef>> = {
   congregant: {
     id: "congregant", name: "Congregant", faction: "jilliath", tier: 1,
     stats: { maxHp: 90, shield: 0, armor: 0, initiative: 50, abilityPower: 100 },
@@ -142,5 +143,35 @@ export const JILLIATH_UNITS: Readonly<Record<string, UnitDef>> = {
     id: "avatar_of_vengeance", name: "Avatar of Vengeance", faction: "jilliath", tier: 5,
     stats: { maxHp: 400, shield: 0, armor: 0, initiative: 60, abilityPower: 500 },
     abilities: [{ id: "attack", params: { power: 30 }, damageType: "fire" }, ...kit("defend", "wait", "fanaticism_aura")],
+  },
+};
+
+export const JILLIATH: FactionUnits = {
+  units: UNITS,
+  roots: ["congregant", "seraph", "acolyte"],
+  // Canon: the Congregant costs 40 gold; the others provisional.
+  recruitCost: { congregant: 40, seraph: 50, acolyte: 60 },
+  archetype: { congregant: "melee", seraph: "support", acolyte: "mage" },
+  evolutions: {
+    // The canon Jilliath melee tree (docs/design/units/jilliath-melee-line.md).
+    congregant: [{ to: "paladin", label: "Faith" }, { to: "zealot", label: "Fanaticism" }],
+    paladin: [{ to: "templar" }],
+    templar: [{ to: "immortal" }],
+    zealot: [{ to: "punisher" }, { to: "fanatic" }],
+    punisher: [{ to: "torturer" }],
+    fanatic: [{ to: "chosen" }],
+    chosen: [{ to: "avatar_of_vengeance" }],
+    // The Jilliath support line, angels (faction-stuff/jilliath/support.md): guardian vs vengeance.
+    seraph: [{ to: "emissary", label: "Faith" }, { to: "paragon", label: "Fanaticism" }],
+    emissary: [{ to: "guardian" }],
+    guardian: [{ to: "shepherd" }],
+    shepherd: [{ to: "godkin" }],
+    paragon: [{ to: "empyreal" }, { to: "reclaimer" }],
+    // The Jilliath mage line (faction-stuff/jilliath/mage.md): holy vs fire; the fire side forks again at tier 4.
+    acolyte: [{ to: "cleric", label: "Faith" }, { to: "doomsayer", label: "Fanaticism" }],
+    cleric: [{ to: "pontiff" }],
+    pontiff: [{ to: "archon" }],
+    doomsayer: [{ to: "jilliath_fire_3" }],
+    jilliath_fire_3: [{ to: "jilliath_fire_4" }, { to: "jilliath_martyr_4" }],
   },
 };

@@ -356,8 +356,6 @@ export interface EffectDef {
    * turns, "doesn't count as present". Alive all the same.
    */
   readonly absent?: boolean;
-  /** A city's walls: armor its bearer has from them, which siege-trained attackers ignore (Siege workshop). */
-  readonly fortifies?: boolean;
   /** What it does, from its own numbers; shown when hovering it. */
   describe(effect: EffectInstance): string;
 }

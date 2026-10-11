@@ -4,7 +4,8 @@ import type { PlayerColor } from "#rules/world/colors";
 
 /**
  * What a faction is, beyond its units: its name, its mana color (factions/*.md), and the player color it takes by
- * default. One record per faction, so adding one is one entry here plus its units.
+ * default. Adding a faction: its entry here, its units and lines (`units/<faction>.ts`, joined in `units/index.ts`), its
+ * preset squads (`units/presets.ts`), its abilities and effects, and its figures in the view.
  */
 export type ManaColor = "red" | "teal" | "green";
 
