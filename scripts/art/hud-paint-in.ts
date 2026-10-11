@@ -43,6 +43,14 @@ const LAYOUTS: Readonly<Record<string, Layout>> = {
     depthStrength: 1,
     prompt: "A tall vertical game interface column seen straight on, painted as game interface art, in soft even light without glare, dull lighting. Blackened cast iron, old and worn, its sections joined by thin iron bands with a small faceted amber stud at each end. Every surface is densely worked: interlaced knotwork, scrolling ironwork, small rosettes and tracery cover all the iron between the parts, dark on dark, and no surface is left plain. Cream marble plates, blank. At the top a long marble plate and two small marble plates below it. In the middle, a two by two grid of four tall arched niches, each empty and dark, with a round ivory enamel boss inside each niche, blank; below them three long dark iron plates stacked. At the foot, a large round seal of deep red wax in a heavy ornate iron ring, held between two grown figures carved in deep relief in the same old dark iron, matte: on the left a kneeling hooded mason with a hammer at his belt, one hand on the ring, on the right a kneeling abbess holding a large key, one hand on the ring, her veil and robes the same dark iron as the rest. No text, no letters.",
   },
+  /** The battle's turn order (hud-pieces.md, "The turn order"): a strip hanging from the top edge, the acting unit large at its left. */
+  "turn-strip": {
+    page: [870, 104],
+    size: [2688, 320],
+    denoise: 0.7,
+    depthStrength: 1,
+    prompt: "A long narrow horizontal game interface strip seen straight on, hanging from the top edge of the screen, painted as game interface art, in soft even light without glare, dull lighting. Blackened cast iron, old and worn, joined by an upright iron band with a small faceted amber stud. Every surface is densely worked: interlaced knotwork, scrolling ironwork and small rosettes cover all the iron between the niches, dark on dark, and no surface is left plain. At the left, one large arched niche, empty and black, in a heavy ornate iron rim; to its right, a row of eleven small arched niches of equal size, each empty and black, in thin iron rims. Along the bottom edge, small pointed iron pendant finials hang down between the niches, and a larger one under the large niche. A plain iron cap closes each end. Pure black background below and around the strip. No text, no letters.",
+  },
   /** The warband's column for the leader's and the structures' screens (hud-pieces.md, "The warband column"). */
   "warband-column": {
     page: [300, 864],

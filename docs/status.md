@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-11 (the Capitol's tabs, then the leader's and structures' screens, painted)
+**Updated:** 2026-10-11 (the Capitol's tabs, the leader's and structures' screens, the battle's turn order: painted)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): the alpha is the three playable factions (Jilliath,
@@ -29,18 +29,18 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
   (`scripts/art/hud-paint-in.ts`), repairs by depth-held inpainting (`hud-inpaint.ts`), the game's HTML in the
   windows. In the game: the map column, the battle bar, the Capitol column and its tabs (the garrison wall; one frame
   for research and spells; `shots/capitol-tabs.html`), and the leader's and structures' screens (one warband column,
-  the content in that frame; `shots/warband-screens.html`). Krea-2 is the only art model. Pages for the user go in
+  the content in that frame; `shots/warband-screens.html`), the battle's turn order as a strip hanging from the
+  top (`shots/turn-order.html`); night one's beam is gone. Krea-2 is the only art model. Pages for the user go in
   `shots/` over Tailscale, never claude.ai artifacts.
 - **The Grove's Water is now Wellspring.**
 - **Unreal 5 as a parallel track** (`ongoing/unreal-port`), in its own repo, `../disc_unreal`, reading this one and
   never writing to it; three.js keeps the pace. Step 1 done there: the `?fight` arena nearly matches three.js.
 
 ## Next
-0. **The HUD, screen by screen** (`hud-paint-in` skill). Every full screen is now painted. Next: **the battle's turn
-   order** (interim beam), then title and menus, the warbands' meeting (old header). Open: research's locked branches
-   only dim (a seal not yet); the warband panes don't mark a unit ready to evolve; the Capitol paintings are a little
-   soft at 1440p. In the battle: right-click a field unit for its sheet; real glyphs for the knobs; screens narrower
-   than 16:9 crop the bar's ends.
+0. **The HUD, screen by screen** (`hud-paint-in` skill). Every game screen is painted. Next: **the title and the
+   menus** (title, new game, settings, saves, codex still on the interim kit). Open: research's locked branches only
+   dim; the warband panes don't mark a unit ready to evolve; the Capitol paintings a little soft at 1440p. In battle:
+   right-click a field unit for its sheet; real glyphs for the knobs; narrower than 16:9 crops the bar's ends.
 1. **Finish Jilliath's concepts** with the user (the open nine), then portraits from the picks.
 2. **The other factions' missing units** (the alpha needs all three): Nexus melee tier 3, the Grove's mage line, and
    the rest on the board; then their concept art the same way.

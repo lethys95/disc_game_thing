@@ -21,7 +21,6 @@ piece-by-piece replacements exist; the stele, the log block, the angels, the bel
 removed outright.
 | File | What it was |
 |---|---|
-| `battle/beam.webp` | the battle's top band, the turn order on it |
 | `battle/recess.webp` | a recessed panel frame: the sockets and the light-rim panels, nine-sliced |
 | `battle/plaque.webp` | a marble plate in an iron rim |
 | `codex/parchment.webp` | a patch of painted page: the parchment of the codex, the rules slip and the explanations |
@@ -33,6 +32,7 @@ removed outright.
 | `battle/bar.webp`, `battle/bar-drained.webp` | `scripts/art/hud-paint-in.ts battle-bar-duel-dull-nostone`, seed 3, its figures' arms and hands repaired by `scripts/art/hud-inpaint.ts duel-hands-full` (strength 0.55, seed 3 left, seed 2 right, combined); the drained copy by `scripts/art/hud_drain.py`: the battle's bottom bar, its windows filled by the game's HTML |
 | `capitol/garrison.webp` | `scripts/art/hud-paint-in.ts capitol-garrison`, seed 6, from `art/greybox/capitol-garrison/`, the effigy's hands repaired by `scripts/art/hud-inpaint.ts garrison-effigy` (strength 0.55, seed 2) and each window's middle column of panes repainted whole by `garrison-middle-panes` (0.7, seed 2): the Capitol's garrison tab, its windows filled by the game's HTML |
 | `capitol/tab.webp` | `scripts/art/hud-paint-in.ts capitol-tab-2`, seed 1, from `art/greybox/capitol-tab-2/`: the frame of the Capitol's research and spells tabs |
+| `battle/turns.webp` | `scripts/art/hud-paint-in.ts turn-strip`, seed 1, from `art/greybox/turn-strip/`, its black background keyed to transparency (alpha from the painting's own luminance): the battle's turn order, the faces behind its openings |
 | `capitol/column.webp` | `scripts/art/hud-paint-in.ts capitol-column-2`, seed 1, from `art/greybox/capitol-column-2/`: the Capitol's right column, its windows filled by the game's HTML |
 | `warband/column.webp` | `scripts/art/hud-paint-in.ts warband-column`, seed 3, from `art/greybox/warband-column/`: the warband's right column on the leader's and the structures' screens, its windows filled by the game's HTML |
 | `map/column.webp` | `scripts/art/hud-paint-in.ts map-column-duality`, seed 2 (Krea-2 with its depth Control LoRA, from `art/greybox/map-column-duality/`), its figures' hands repaired by `scripts/art/hud-inpaint.ts column-hands-2` (strength 0.55, seed 2) and its stray third arm painted out by `column-third-arm` (0.65, seed 4), 576×1664, uncut: the map's right-hand column, its windows filled by the game's HTML |

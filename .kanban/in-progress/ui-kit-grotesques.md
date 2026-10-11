@@ -206,3 +206,6 @@
 - **The leader's and structures' screens (2026-10-11, the user: "Continue then."):** one warband column
   (`warband-column`, seed 3) for both, the content in the Capitol's tab frame; night one's beam is left only on the
   battle's turn order and the warbands' meeting. Write-up: `shots/warband-screens.html`. Next: the turn order.
+- **The turn order (2026-10-11):** a strip hanging from the top's middle (`turn-strip`, seed 1, keyed out), the faces
+  behind its openings; the warbands' meeting moved to the warband column; night one's beam deleted. Write-up:
+  `shots/turn-order.html`. Next: the title and the menus.

@@ -590,3 +590,17 @@ camp, Merchant, Mage merchant); the leader's tree sits beside the equipment and 
 lead (six columns), seeds 3 and 6 kept three. Seed 3 is in the game: well-formed hands, both figures reaching for the
 seal, the pilgrim standing. Panes, plates, facts and seal fitted to the painting as measured from its pixels. The
 units' XP now shows on hovering their pane (as on the map's column), no longer as a list.
+
+## The turn order (2026-10-11)
+The battle's last interim piece, night one's beam: a full-width arcade, mostly empty arches, a candle, faces 1.9rem
+wide at its right. **Now** (`turn-strip`): a strip hanging from the top edge's middle, the field showing on both
+sides (the HUD at the edges, the world in the window): the acting unit in a large arched niche at its left, the next
+eleven in a row of small niches, reading left to right; small pendant finials hang between them, so the strip's bottom
+edge breaks into the scene (Disciples II's thorns along its bar, here in disc's iron). No figures: the bar below
+carries the screen's. The round stays on the bar's medallion.
+
+**First round** (6 seeds): all held eleven equal niches and the large one. The model painted the niches as openings,
+the black showing through, which suits: the painting is keyed out (alpha from its own luminance, the black ground
+gone), laid over the faces, so its rims frame them and an empty niche shows the field. Seed 1 is in the game (tracery
+in the spandrels; a plain band along its top). Faces are now 3.3rem wide in the small niches, 4.9rem in the large.
+With the beam gone, the warbands' meeting moved onto the warband column and the frame too; no screen uses the beam.

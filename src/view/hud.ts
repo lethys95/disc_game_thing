@@ -65,7 +65,7 @@ export interface BannerButton {
 }
 
 const ROW_NAMES = ["front", "middle", "back"] as const;
-/** How many faces the beam's turn order shows: the medallion and the eleven arches right of it. */
+/** How many faces the turn order shows: the large niche and the eleven small ones right of it. */
 const TURN_SLOTS = 12;
 const COL_NAMES = ["left", "centre", "right"] as const;
 
@@ -79,7 +79,7 @@ function place(unit: BattleUnit): string {
 }
 
 /**
- * The battle's interface: the turn order on the beam across the top, and one painted bar along the bottom
+ * The battle's interface: the turn order hanging from the top edge, and one painted bar along the bottom
  * (`docs/design/hud-pieces.md`, "The battle bar"): the acting unit at its left end and the unit under the pointer at its
  * right, each its health globe, portrait, name and stats; the round, the four commands and the ability sockets between.
  * The log opens over the field on demand.
@@ -133,7 +133,7 @@ export class Hud {
     });
   }
 
-  /** The two objects hanging from the beam: an hourglass (resolve now) and a puppeteer's cross (the AI plays you). */
+  /** The bar's two knobs beside the round: resolve now, and the AI plays you. */
   renderAuto(available: boolean, on: boolean): void {
     this.auto.hidden = !available;
     this.resolve.hidden = !available;
@@ -231,9 +231,9 @@ export class Hud {
   }
 
   /**
-   * The turn order is the beam itself (`docs/design/hud-kit.md`): the acting unit's face in the medallion at its
-   * middle, the next ones in the arches of its arcade to the right, each over a band of its side's colour, the round's
-   * numeral on a plate under the medallion. Hovering one highlights the unit. Rebuilt only when the order changes, so a
+   * The turn order (`docs/design/hud-pieces.md`, "The turn order"): the acting unit's face in the strip's large niche,
+   * the next ones in the small niches to its right, each over a band of its side's colour; the round's numeral is on the
+   * bar's medallion. Hovering one highlights the unit. Rebuilt only when the order changes, so a
    * hovered portrait isn't replaced under the pointer.
    */
   renderTurns(battle: Battle, playerSide: Side | null): void {

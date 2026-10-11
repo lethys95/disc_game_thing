@@ -14,6 +14,7 @@ import { ResearchPanel } from "#view/research";
 import { squadGrid } from "#view/squad-grid";
 import { spellsTab } from "#view/spells";
 import { tabFrame } from "#view/frames";
+import { warbandColumn } from "#view/warband-column";
 import type { GridChoice, GridSquad } from "#view/squad-grid";
 import { sameHex } from "#rules/hex";
 import type { KeyLayer } from "#view/input";
@@ -46,10 +47,10 @@ const isCityTab = (key: string): key is CityTab => key in TABS;
 /** Placeholder city names until the user names them. */
 export const cityName = (city: City): string => (city.kind === "capitol" ? "Capitol" : `City ${city.id.replace("city", "")}`);
 
-/** The city's tier, in the beam's medallion: its one number. */
-function tierMedallion(city: City): HTMLElement {
+/** The city's tier, on the column's plate. */
+function tierPlate(city: City): HTMLElement {
   return explain(
-    element("div", "medallion", roman(city.tier)),
+    element("div", "plate tier", `Tier ${roman(city.tier)}`),
     `Tier ${city.tier}`,
     `${CITY_SLOTS[city.tier] ?? 0} garrison slots · heals ${Math.round(CITY_HEALING_PER_TIER * city.tier * 100)}% a turn · defenders +${CITY_ARMOR_PER_TIER * (city.tier - 1)} armor`,
   );
@@ -105,15 +106,14 @@ export class CityScreen implements KeyLayer {
     const city = place.kind === "city" ? cityById(world, place.cityId) : undefined;
     const tab: CityTab = city ? (TABS[this.tab].capitolOnly && city.kind !== "capitol" ? "home" : this.tab) : "garrison";
 
-    // A city's screen has its column at the right edge (the map column's sibling); a meeting of warbands, a header.
+    // A city's screen has its column at the right edge (the map column's sibling); a meeting of warbands, the first
+    // warband's column and both grids in the frame.
     if (city) {
       this.root.appendChild(this.window(world, city, tab));
       this.root.appendChild(this.column(world, side, city, tab));
-    } else {
-      const header = element("div", "capitol-header");
-      header.append(element("div", "title", "Warbands meet"), gold(playerOf(world, side).gold, "purse"));
-      header.appendChild(button("action", "Back to the map", () => this.options.close()));
-      this.root.appendChild(header);
+    } else if (place.kind === "meet") {
+      this.root.append(warbandColumn(world, leaderById(world, place.a), () => this.options.close()), tabFrame("Warbands meet", this.garrison(world, side, place, city, mayAct)));
+      return;
     }
 
     const layout = element("div", "city-layout");
@@ -138,10 +138,7 @@ export class CityScreen implements KeyLayer {
     column.appendChild(element("div", "plate name", cityName(city)));
     column.appendChild(explain(element("div", "plate purse"), "Gold", "What your realm holds."));
     column.lastElementChild?.appendChild(gold(playerOf(world, side).gold));
-    const tier = tierMedallion(city);
-    tier.className = "plate tier";
-    tier.textContent = `Tier ${roman(city.tier)}`;
-    column.appendChild(tier);
+    column.appendChild(tierPlate(city));
     for (const [id, tab] of Object.entries(TABS)) {
       if (!isCityTab(id)) continue;
       const held = !tab.capitolOnly || city.kind === "capitol";
@@ -170,7 +167,7 @@ export class CityScreen implements KeyLayer {
   /**
    * The city itself, the world in the window behind every tab: a painting of it from the inside (`assets/city/`),
    * drifting slowly, standing in for the montage the user wants (`docs/design/capitol-screen.md`). Its edges are the
-   * screen's, the beam's and the rail's; it has no frame of its own.
+   * screen's and the column's; it has no frame of its own.
    */
   private window(world: World, city: City, tab: CityTab): HTMLElement {
     const owner = city.owner === null ? null : playerOf(world, city.owner).faction;
@@ -185,7 +182,7 @@ export class CityScreen implements KeyLayer {
   private garrison(world: World, side: PlayerId, place: Place, city: City | undefined, mayAct: boolean): HTMLElement {
     if (city) return this.garrisonWall(world, side, place, city, mayAct);
     const body = element("div", "city-body");
-    const grids = element("div", "grids panel");
+    const grids = element("div", "grids");
     for (const squad of this.squads(world, side, place)) grids.appendChild(squadGrid(squad, this.gridOptions(world, side, city, mayAct)));
     grids.appendChild(element("div", "note", GRID_HINT));
     body.appendChild(grids);
