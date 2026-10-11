@@ -18,3 +18,5 @@
 - 2026-10-11, round 3: the user, on left to right, wanted it to use the vertical space better. The portraits now grow
   with the room their branch and tier get (about 190 px at 1080p with three branches, from 128), set from script
   since container query heights resolve to zero in that grid. `shots/trees.html`. Still waiting on the pick.
+- 2026-10-11, the user on round 3: "round 3's pictures are huge, which isn't necessary". Undone: round 2's size is back
+  (5.75rem portraits, branches over the full height); the user hadn't seen round 2 yet. Shown in `shots/trees.html`.

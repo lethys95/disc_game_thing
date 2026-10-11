@@ -120,9 +120,8 @@
 .tab-frame .tree.line .node:not(.closed):hover .thumb { box-shadow: 0 0 0 2px #fff4e0, 0 0 0.8rem rgba(232, 195, 108, 0.7); }
 /* Across, the tree fills the field: tiers spread over its width, branches share its height. */
 .tab-frame .capitol-trees:has(.tree.across) { display: flex; flex-direction: column; min-height: 100%; }
-/* Size-contained so the portraits view/research.ts fits to the grid can't grow the grid. */
-.tab-frame .tree.line.across { flex: 1; gap: 1rem 0; min-height: 24rem; contain: size; --thumb: 5.75rem; }
-.tab-frame .tree.line.across .node .thumb { width: var(--thumb); height: var(--thumb); font-size: calc(var(--thumb) / 4); }
+.tab-frame .tree.line.across { flex: 1; gap: 1rem 0; min-height: 24rem; }
+.tab-frame .tree.line.across .node .thumb { width: 5.75rem; height: 5.75rem; }
 .tab-frame .tree.line.across .node .name { font-size: 1.05rem; }
 .tab-frame .tree.line.down { gap: 2.2rem 0.6rem; }
 .tab-frame .tree.line svg.connectors path { stroke-width: 4; }

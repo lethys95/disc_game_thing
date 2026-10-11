@@ -55,17 +55,6 @@ type TreeLayout = "down" | "across";
 const TREE_TIERS = 5;
 
 /**
- * Across, the portraits grow with the room a branch and a tier get, less the name and pips under them. Set here, not
- * in CSS: container query heights resolve to zero inside this grid.
- */
-function fitPortraits(grid: HTMLElement): void {
-  const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
-  const rows = Number(grid.style.getPropertyValue("--rows")) || 1;
-  const room = Math.min(grid.clientHeight / rows - 3.5 * rem, grid.clientWidth / TREE_TIERS - 3 * rem);
-  grid.style.setProperty("--thumb", `${Math.max(5.75 * rem, Math.min(11 * rem, room))}px`);
-}
-
-/**
  * Branches from each parent's portrait to its children's, elbowed (down a tree: down, across, down; across one: across,
  * down, across), lit along the unlocked branches. Drawn once the grid has its size (and again when it changes), since
  * the portraits' places come from the layout.
@@ -74,7 +63,6 @@ function connectors(grid: HTMLElement, links: readonly (readonly [HTMLElement, H
   const svg = document.createElementNS(SVG, "svg");
   svg.classList.add("connectors");
   const draw = () => {
-    if (layout === "across") fitPortraits(grid);
     const box = grid.getBoundingClientRect();
     svg.setAttribute("viewBox", `0 0 ${box.width} ${box.height}`);
     svg.replaceChildren();
@@ -179,7 +167,6 @@ export class ResearchPanel {
       if (across) {
         grid.style.gridTemplateRows = `repeat(${lines.length}, minmax(0, 1fr))`;
         grid.style.gridTemplateColumns = `repeat(${TREE_TIERS}, minmax(0, 1fr))`;
-        grid.style.setProperty("--rows", String(lines.length));
       }
       else grid.style.gridTemplateColumns = `repeat(${lines.length}, minmax(0, 1fr))`;
       // Each node by its route from the root, so a child finds the cell its parent was drawn in.
