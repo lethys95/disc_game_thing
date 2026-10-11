@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-11 (mana is one kind; the minimap with lairs and structures; UI pass by job done)
+**Updated:** 2026-10-11 (Jilliath's Capitol theme; trees across sized to the field; mana is one kind)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): the alpha is the three playable factions (Jilliath,
@@ -41,7 +41,8 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
    Every screen greyboxed by job (`shots/capitol-greybox.html`, `warband-greybox.html`, `front-greybox.html`), all
    sharing one column, one unit sheet, one squad tile, one branch chooser; a Greybox setting draws the painted pieces
    flat. The overworld minimap (`shots/minimap-greybox.html`, `testing/minimap`; lairs and structures marked, the
-   user: "this is good"). Research trees: two layouts behind a toggle until the user picks (`todo/75-proper-trees`).
+   user: "this is good"). Research trees: two layouts behind a toggle until the user picks; left to right's portraits
+   now grow with the field (`todo/75-proper-trees`, `shots/trees.html`). Jilliath's Capitol theme plays in the Capitol.
    Paint after a layout is judged, per faction skin. Glass rests. The code review is handled (`testing/code-review`).
    **Mana is one kind** (the user's call; `testing/mana-colours`, `decisions.md`): one number per player, the faction's
    colour only its accent. Save 35.
