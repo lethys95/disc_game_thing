@@ -782,3 +782,7 @@ if any, is an inset; big areas are parchment, marble or pictures.
   out). It darkens and dramatizes, weathers the stone, adds small ornament (a trefoil band, studs at the panes); it
   doesn't change the composition: plain block courses stay, since the greybox asks for them. Seed 2 in the game.
   `shots/jilliath-garrison-3.html`.
+- **Units fitted to the painted panes (2026-10-11):** the user: "our grid is once again not conforming to the grid
+  sizes". The tiles were placed by the greybox's numbers, not the painting's (the skill's step 5, skipped). Measured
+  from seed 2: leads 88.5 page px apart across, 92.5 down; an 80 square tile centred in each pane, per window offsets
+  in `skin-jilliath.css`. Every new painting of the wall needs this measurement again.
