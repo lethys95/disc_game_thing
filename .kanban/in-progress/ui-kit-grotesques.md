@@ -271,4 +271,7 @@
 - **Jilliath's Capitol painted on the judged layout (2026-10-11):** the column (`jilliath-capitol-column`: the flat
   screen's boxes, gothic blind tracery, a cathedral front carved low under the tabs, Back as a plate) and one panel
   frame used as a nine-slice border round every panel (`jilliath-frame`), both at the column's density.
-  `docs/design/hud-pieces.md`, "Jilliath's Capitol on the judged layout".
+  `docs/design/hud-pieces.md`, "Jilliath's Capitol on the judged layout". In the game for a Jilliath
+  player: column seed 3, frame seed 4 round the garrison, growth, graveyard and tab-frame panels, marble on the
+  screen's plates. Write-up `shots/jilliath-capitol.html`. Next: the warband column the same way, then the tabs and
+  order buttons.

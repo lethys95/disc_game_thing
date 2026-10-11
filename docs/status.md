@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-11 (trees left to right, the leader tree too; Jilliath's Capitol theme; mana is one kind)
+**Updated:** 2026-10-11 (Jilliath's Capitol painted; trees left to right; Jilliath's Capitol theme; mana is one kind)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): a first complete version, far off (the board's README
@@ -44,6 +44,8 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
    user: "this is good"). Research trees left to right (the user's pick); the leader tree drawn
    the same way (`testing/proper-trees`, `shots/trees.html`). Jilliath's Capitol theme plays in the Capitol.
    Paint after a layout is judged, per faction skin. Glass rests. The code review is handled (`testing/code-review`).
+   **Jilliath's Capitol painted** on the judged layout (`shots/jilliath-capitol.html`): the column and one nine-slice
+   frame round every panel, for a Jilliath player (`styles/skin-jilliath.css`).
    **Mana is one kind** (the user's call; `testing/mana-colours`, `decisions.md`): one number per player, the faction's
    colour only its accent. Save 35.
 1. **Finish Jilliath's concepts** with the user (the open nine), then portraits from the picks.
