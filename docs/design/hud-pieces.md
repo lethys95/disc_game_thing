@@ -663,3 +663,6 @@ here, and not just 'I want more colors'." The first glass probe was more colours
   help, so it is not inherited from the old glass: the model paints "deep ruby" as a dark streaky glass, which is
   true to real ruby glass and to colour: red transmits little light, which is why cathedrals set it in small pieces
   against a blue ground. Next: the same scheme with a lighter, glowing scarlet (`glass-scarlet-light`).
+- **Rested (the user, 2026-10-11):** scarlet read as glass, but not well enough to call the problem solved; the user
+  concluded the model is weak at stained glass or the prompting is wrong, and that this is polish before its time. The
+  original glass stays.

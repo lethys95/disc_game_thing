@@ -258,3 +258,8 @@
   looking at tainted glass and church stuff probably doesn't make too much sense. So we'll probably go through a lot of
   this again with other styles." Everything painted so far is Jilliath's skin; Ral-Vitahl and the Sylvan get their own
   full skins on the same layouts and components (`hud-kit.md`, "Faction skins"). Screens outside a game stay neutral.
+- **Glass rests (2026-10-11, the user):** "this model is either just not good at creating stained glass, or we're
+  prompting it fundamentally wrong. Either way [...] we should just stick to the original attempt we had and just let
+  it rest for now [...] this might be us polishing, and maybe we're not at that stage right now anyway." The map
+  column keeps its original glass. Kept for later: the exact glass mask (`art/masks/glass_mask.py`, the fix for the
+  tear) and the colour reasoning (`hud-pieces.md`, "Colour in the glass"); `shots/glass-probe.html` has the rounds.
