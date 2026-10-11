@@ -5,9 +5,9 @@ _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail:
 **Updated:** 2026-10-11 (trees left to right, the leader tree too; Jilliath's Capitol theme; mana is one kind)
 
 ## Where we're going
-The board (`.kanban/`, `pnpm board` → `shots/board.html`): the alpha is the three playable factions (Jilliath,
-Ral-Vitahl, the Sylvan) with every unit line designed, built and painted, playable from the title to victory; then
-balance; then look and sound. Unit designs are the user's and gate the rest.
+The board (`.kanban/`, `pnpm board` → `shots/board.html`): a first complete version, far off (the board's README
+lists what it needs). Many tracks at once: unit designs come from sessions with the user; meanwhile Claude moves faction
+interfaces, 3D figures, the map's look, tools and music installs.
 
 ## Where we are
 A playable map game for 2–6 players (hotseat viewer vs AIs) with Jilliath, Ral-Vitahl and the Sylvan; tribes (bandits,
