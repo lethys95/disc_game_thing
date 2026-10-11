@@ -203,3 +203,6 @@
   seed 6; the effigy's hands and the windows' middle panes repaired by inpainting), research and spells in one frame
   (`capitol-tab-2`, seed 1, after round 1 read as a blank slab). In the game, verified at 720p to 1440p, 21:9 and 5:4.
   Write-up: `shots/capitol-tabs.html`; record in `docs/design/hud-pieces.md`. Next: the leader and structure screens.
+- **The leader's and structures' screens (2026-10-11, the user: "Continue then."):** one warband column
+  (`warband-column`, seed 3) for both, the content in the Capitol's tab frame; night one's beam is left only on the
+  battle's turn order and the warbands' meeting. Write-up: `shots/warband-screens.html`. Next: the turn order.

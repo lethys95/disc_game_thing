@@ -13,6 +13,7 @@ import { unitName } from "#view/members";
 import { ResearchPanel } from "#view/research";
 import { squadGrid } from "#view/squad-grid";
 import { spellsTab } from "#view/spells";
+import { tabFrame } from "#view/frames";
 import type { GridChoice, GridSquad } from "#view/squad-grid";
 import { sameHex } from "#rules/hex";
 import type { KeyLayer } from "#view/input";
@@ -52,18 +53,6 @@ function tierMedallion(city: City): HTMLElement {
     `Tier ${city.tier}`,
     `${CITY_SLOTS[city.tier] ?? 0} garrison slots · heals ${Math.round(CITY_HEALING_PER_TIER * city.tier * 100)}% a turn · defenders +${CITY_ARMOR_PER_TIER * (city.tier - 1)} armor`,
   );
-}
-
-/**
- * The painted frame the Research and Spells tabs fill (assets/ui/capitol/tab.webp, the hud-paint-in skill): the tab's
- * name on the marble plate, its content scrolling in the dark field.
- */
-function tabFrame(title: string, body: HTMLElement): HTMLElement {
-  const frame = element("div", "tab-frame");
-  const field = element("div", "field");
-  field.appendChild(body);
-  frame.append(element("div", "title", title), field);
-  return frame;
 }
 
 /**

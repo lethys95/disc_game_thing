@@ -30,7 +30,7 @@ import { LeaderScreen } from "#view/leader";
 import { HEX_STEP_MS } from "#view/map";
 import type { MapView } from "#view/map";
 import { MapPanels } from "#view/map-panels";
-import { castHint, hintText, leaderName, newsText } from "#view/map-text";
+import { castHint, hintText, newsText } from "#view/map-text";
 import { formation, groupAt, placeInfo, showPeek } from "#view/peek";
 import type { Stage } from "#view/stage";
 import type { Sound } from "#view/sound";
@@ -534,7 +534,7 @@ export class Campaign implements KeyLayer {
 
   private renderLeaderScreen(world: World): void {
     const leader = world.leaders.find((l) => l.id === this.leaderOpen && l.player === this.viewer);
-    if (leader) this.leaderScreen.show(world, leader, `${leaderName(leader)}, leader`, this.myTurn());
+    if (leader) this.leaderScreen.show(world, leader, this.myTurn());
     else this.leaderScreen.hide();
   }
 

@@ -198,8 +198,6 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 .capitol-header { display: flex; align-items: center; gap: 1.5rem; }
 .capitol-header .title { font: 700 2.25rem var(--display); letter-spacing: 0.06em; }
 .capitol-header .gold { font: 600 1.125rem var(--display); flex: 1; }
-.capitol-body { display: grid; grid-template-columns: 1fr 21.25rem; gap: 1rem; min-height: 0; flex: 1; }
-.capitol-trees, .capitol-hall { padding: 0.75rem 1rem; overflow-y: auto; }
 .screen .section { font: 700 1.125rem var(--display); margin: 0.75rem 0 0.375rem; }
 .screen .section:first-child { margin-top: 0; }
 .screen .note { color: var(--muted); font-size: 0.6875rem; margin: 0.25rem 0 0.5rem; }
@@ -213,7 +211,6 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 .screen .node .branch.chosen { color: var(--gold); }
 .screen .node .upgrade.bought { font-size: 0.6875rem; color: #c9b88e; }
 #capitol button.small { font-size: 0.6875rem; padding: 0.1875rem 0.375rem; }
-.screen .capitol-hall button.action { display: block; width: 100%; margin: 0.25rem 0; }
 .screen .member { display: grid; grid-template-columns: 1fr auto; gap: 2px 0.375rem; align-items: center; margin-bottom: 0.375rem; }
 .screen .member .hp { grid-column: 1; height: 0.75rem; border: 1px solid var(--line); }
 .screen .member .hp .value { position: relative; display: block; text-align: center; font-size: 0.625rem; line-height: 0.75rem; }
@@ -331,7 +328,7 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 
 .city-layout { display: flex; gap: 1rem; flex: 1; min-height: 0; }
 .city-content { flex: 1; min-width: 0; display: flex; flex-direction: column; min-height: 0; overflow-y: auto; }
-.city-content > .city-body, .city-content > .capitol-trees, .city-content > .spells-tab { flex: 1; min-height: 0; }
+.city-content > .city-body { flex: 1; min-height: 0; }
 /* Research trees top-down: tier 1 at the top, branches spreading below; elbow lines join each node to its parent. */
 .screen .tree.down { gap: 1.625rem 0.625rem; align-items: start; position: relative; }
 .screen .tree.down svg.connectors { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
@@ -1015,11 +1012,45 @@ body.formulas .formula { display: inline; }
   overflow-y: auto; padding: 1em 1.4em; color: #e6dccb;
 }
 .tab-frame { --tx: 421; --ty: 16; --tw: 394; --th: 56; --fx: 64; --fy: 126; --fw: 1110; --fh: 690; }
-.tab-frame .capitol-trees, .tab-frame .spells-tab { padding: 0; }
+.tab-frame .spells-tab { padding: 0; }
 .tab-frame .screen .note, .tab-frame .note { color: #b8ab96; }
 /* The research tree: nodes as dark plates, joined by iron rods; a closed branch dims. */
 .tab-frame .tree.down svg.connectors path { stroke: #6b5f52; stroke-width: 4; opacity: 1; filter: drop-shadow(0 1px 0 #000); }
 .tab-frame .node { background: rgba(14, 12, 10, 0.9); border-color: #4e4236; box-shadow: 0 0.15em 0.4em rgba(0, 0, 0, 0.6); }
+
+/* The warband's column at the right edge of the leader's and the structures' screens (assets/ui/warband/column.webp,
+   the hud-paint-in skill), the map and Capitol columns' sibling, its windows placed as shares of the painting (300 by
+   864): the leader's name, the purse and the count, the nine panes, three facts, Back to the map as the seal. */
+.warband-column {
+  position: fixed; right: 0; top: 0; height: 50rem; aspect-ratio: 300 / 864; z-index: 2;
+  background: var(--ui-warband-column) 0 0 / 100% 100% no-repeat; box-shadow: -0.5rem 0 1.2rem rgba(0, 0, 0, 0.7);
+}
+.warband-column > * { position: absolute; box-sizing: border-box; left: calc(var(--x) * 100% / 300); top: calc(var(--y) * 100% / 864); width: calc(var(--w) * 100% / 300); height: calc(var(--h) * 100% / 864); }
+.warband-column button { margin: 0; padding: 0; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; }
+.warband-column .plate, .warband-column .fact { display: flex; align-items: center; justify-content: center; gap: 0.3rem; white-space: nowrap; }
+.warband-column .plate { color: #241c15; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35); }
+.warband-column .plate .gold { color: #241c15; }
+.warband-column .plate.name { --x: 20; --y: 13; --w: 260; --h: 43; font: 700 1.25rem var(--display); letter-spacing: 0.03em; }
+.warband-column .plate.purse { --x: 21; --y: 86; --w: 119; --h: 35; font: 700 1rem var(--display); cursor: help; }
+.warband-column .plate.count { --x: 159; --y: 86; --w: 121; --h: 35; font: 700 1rem var(--display); cursor: help; }
+.warband-column .pane { overflow: hidden; box-shadow: inset 0 0 0 0.075rem rgba(0, 0, 0, 0.8); }
+.warband-column .pane.x0 { --x: 29.2; --w: 76; } .warband-column .pane.x1 { --x: 112.5; --w: 75.5; } .warband-column .pane.x2 { --x: 195.8; --w: 75; }
+.warband-column .pane.y0 { --y: 274.5; --h: 74.5; } .warband-column .pane.y1 { --y: 353.6; --h: 78.7; } .warband-column .pane.y2 { --y: 437.5; --h: 78.6; }
+.warband-column .pane.empty { box-shadow: none; }
+.warband-column .pane .art { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; background-size: cover; background-position: 50% 15%; display: grid; place-items: center; font: 700 1.2rem var(--display); }
+.warband-column .pane .crown { position: absolute; left: 0.2rem; top: 0.1rem; font-size: 0.8rem; color: #e8c36c; text-shadow: 0 0 0.15rem #000; }
+.warband-column .pane-hp { position: absolute; left: 0; right: 0; bottom: 0; height: 0.3rem; background: rgba(0, 0, 0, 0.75); }
+.warband-column .pane-hp .fill { position: absolute; inset: 0 auto 0 0; background: var(--gb-health); }
+.warband-column .pane.fallen .art { filter: grayscale(1) brightness(0.45); }
+.warband-column .fact { --x: 18; --w: 264; --h: 25; font: 600 0.72rem var(--text); color: #e6dccb; text-shadow: 0 1px 2px #000; }
+.warband-column .fact.f0 { --y: 557; } .warband-column .fact.f1 { --y: 592; } .warband-column .fact.f2 { --y: 628; }
+.warband-column .seal { --x: 98; --y: 718; --w: 104; --h: 104; border-radius: 50%; }
+.warband-column .seal:hover { box-shadow: 0 0 1.4rem 0.4rem rgba(220, 80, 60, 0.45); }
+/* The leader's sheet in the frame: the tree beside the equipment and the bag. */
+.tab-frame .leader-sheet { display: grid; grid-template-columns: 1fr 18em; gap: 1.6em; align-items: start; }
+.tab-frame .leader-sheet .equipment { margin: 0; }
+.tab-frame .leader-sheet .equipment .section:first-child { margin-top: 0; }
+.tab-frame .offer { display: flex; flex-direction: column; gap: 0.3em; }
 
 /* The tablets. */
 .screen .panel { padding: 1.5rem 1.2rem 1rem; background: var(--plain-fill); border: 1px solid var(--plain-edge); border-image: none; box-shadow: var(--plain-shadow); }
@@ -1029,7 +1060,6 @@ body.formulas .formula { display: inline; }
 }
 /* One scroller per screen, so names can cross their tablets' top edges. */
 .screen .panel { overflow: visible; }
-.screen .capitol-body { overflow-y: auto; align-items: start; padding-top: 0.6rem; }
 .screen .city-content { padding-top: 0.6rem; }
 
 /* The codex as a book (design/hud-kit.md; the user accepted it, 2026-10-09): an open book lying on the carved wall,

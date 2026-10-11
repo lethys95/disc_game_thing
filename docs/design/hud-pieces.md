@@ -574,3 +574,19 @@ grey slab the user warned of, beside a wall this rich. Round 2 (`capitol-tab-2`)
 the field in both greyboxes (low in values, shallow in depth), a heavier lip, round bosses at the field's corners. All
 four seeds hold; the pattern came out a little stronger than "faint" but text over it reads. Seed 1 is in the game.
 Research's connectors are drawn as iron rods (thicker, iron-coloured, a shadow).
+
+## The warband column: the leader's and the structures' screens (2026-10-11)
+The last full screens on night one's beam and tablets. **The reference's structure** again: Disciples II keeps one
+column and swaps its compartments by context. Both screens are about a warband (its leader's tree and gear; what a
+structure offers it), so **one column serves both** (`warband-column`), the map and Capitol columns' sibling: the
+leader's name on the long plate, the purse and the warband's count on the two small ones, the warband in a lancet window
+of nine panes (larger than the map's, the column's whole width), three dark fact plates (leadership and movement, the
+leader's XP and points, worn and carried items), and Back to the map as the seal at the foot. Its figures are new: a
+kneeling standard-bearer with a furled banner and a hooded pilgrim with a staff (the warband on the road), each
+reaching for the ring. The content goes in the Capitol's tab frame, its title the screen's name (Leader tree, Mercenary
+camp, Merchant, Mage merchant); the leader's tree sits beside the equipment and the bag.
+
+**First round** (6 seeds): plates, facts and figures held in all six; four seeds split every pane in two with an extra
+lead (six columns), seeds 3 and 6 kept three. Seed 3 is in the game: well-formed hands, both figures reaching for the
+seal, the pilgrim standing. Panes, plates, facts and seal fitted to the painting as measured from its pixels. The
+units' XP now shows on hovering their pane (as on the map's column), no longer as a list.

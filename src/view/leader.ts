@@ -1,11 +1,11 @@
-import { playerOf } from "#rules/world/state";
-import { equipProblem, LEADER_SKILLS, leadershipOf, movementOf, rankOf, unspentPoints } from "#rules/world/leaders";
+import { equipProblem, LEADER_SKILLS, rankOf } from "#rules/world/leaders";
 import { itemById, SLOT_CAPACITY, SLOT_NAMES } from "#rules/items";
 import type { EquipmentSlot } from "#rules/items";
 import { learnSkillProblem } from "#rules/world/economy";
 import type { Leader, World, WorldAction } from "#rules/world/state";
-import { button, element, orderButton } from "#view/dom";
-import { memberRow } from "#view/members";
+import { element, orderButton } from "#view/dom";
+import { tabFrame } from "#view/frames";
+import { warbandColumn } from "#view/warband-column";
 import type { KeyLayer } from "#view/input";
 import { useItemProblem } from "#rules/world/items";
 
@@ -82,16 +82,14 @@ export class LeaderScreen implements KeyLayer {
     this.root.hidden = true;
   }
 
-  show(world: World, leader: Leader, name: string, mayAct: boolean): void {
+  /**
+   * The warband's column at the right edge (its name, the nine panes, its facts, Back to the map), and in the frame the
+   * leader tree beside the equipment and the bag.
+   */
+  show(world: World, leader: Leader, mayAct: boolean): void {
     this.root.hidden = false;
     this.root.replaceChildren();
-    const points = unspentPoints(leader);
-    const header = element("div", "capitol-header");
-    header.append(element("div", "title", name), element("div", "gold", `${leader.experience} XP as leader · ${points} point${points === 1 ? "" : "s"} to spend`));
-    header.appendChild(button("action", "Back to the map", () => this.options.close()));
-
-    const tree = element("div", "capitol-trees panel");
-    tree.appendChild(element("div", "section", "Leader tree"));
+    const tree = element("div", "leader-tree");
     tree.appendChild(element("div", "note", "A point for every 100 XP this leader earns while it leads. A skill needs the skills to its left first."));
     const grid = element("div", "tree");
     const ids = Object.keys(LEADER_SKILLS);
@@ -113,15 +111,8 @@ export class LeaderScreen implements KeyLayer {
       grid.appendChild(node);
     }
     tree.appendChild(grid);
-
-    const side = element("div", "capitol-hall panel");
-    side.appendChild(element("div", "section", "Warband"));
-    side.appendChild(element("div", "note", `Leadership ${leadershipOf(leader)} · ${movementOf(leader)} movement per turn`));
-    for (const m of leader.squad) side.appendChild(memberRow(m, leader, playerOf(world, leader.player).commitment));
-    side.appendChild(this.equipment(world, leader, mayAct));
-
-    const body = element("div", "capitol-body");
-    body.append(tree, side);
-    this.root.append(header, body);
+    const sheet = element("div", "leader-sheet");
+    sheet.append(tree, this.equipment(world, leader, mayAct));
+    this.root.append(warbandColumn(world, leader, () => this.options.close()), tabFrame("Leader tree", sheet));
   }
 }

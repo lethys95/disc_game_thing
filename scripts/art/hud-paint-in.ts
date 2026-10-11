@@ -43,6 +43,14 @@ const LAYOUTS: Readonly<Record<string, Layout>> = {
     depthStrength: 1,
     prompt: "A tall vertical game interface column seen straight on, painted as game interface art, in soft even light without glare, dull lighting. Blackened cast iron, old and worn, its sections joined by thin iron bands with a small faceted amber stud at each end. Every surface is densely worked: interlaced knotwork, scrolling ironwork, small rosettes and tracery cover all the iron between the parts, dark on dark, and no surface is left plain. Cream marble plates, blank. At the top a long marble plate and two small marble plates below it. In the middle, a two by two grid of four tall arched niches, each empty and dark, with a round ivory enamel boss inside each niche, blank; below them three long dark iron plates stacked. At the foot, a large round seal of deep red wax in a heavy ornate iron ring, held between two grown figures carved in deep relief in the same old dark iron, matte: on the left a kneeling hooded mason with a hammer at his belt, one hand on the ring, on the right a kneeling abbess holding a large key, one hand on the ring, her veil and robes the same dark iron as the rest. No text, no letters.",
   },
+  /** The warband's column for the leader's and the structures' screens (hud-pieces.md, "The warband column"). */
+  "warband-column": {
+    page: [300, 864],
+    size: [576, 1664],
+    denoise: 0.7,
+    depthStrength: 1,
+    prompt: "A tall vertical game interface column seen straight on, painted as game interface art, in soft even light without glare, dull lighting. Blackened cast iron, old and worn, its sections joined by thin iron bands with a small faceted amber stud at each end. Every surface is densely worked: interlaced knotwork, scrolling ironwork, small rosettes and tracery cover all the iron between the parts, dark on dark, and no surface is left plain. Cream marble plates, blank. At the top a long marble plate and two small marble plates below it. In the middle, a gothic lancet window of lead and stained glass in deep red and amber, with tracery glass in its pointed head and a three by three grid of nine square panes below, each pane empty and black; below it three long dark iron plates stacked. At the foot, a large round seal of deep red wax in a heavy ornate iron ring, held between two grown figures carved in deep relief in the same old dark iron, matte: on the left a kneeling standard-bearer with a furled banner on a pole over his shoulder, one hand on the ring, on the right a kneeling hooded pilgrim leaning on a tall walking staff, one hand on the ring. No text, no letters.",
+  },
   /** The Capitol's garrison tab (hud-pieces.md, "The Capitol's tabs"): tier and nodes, two squad windows, orders, the graveyard. */
   "capitol-garrison": {
     page: [1236, 864],

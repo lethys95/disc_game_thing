@@ -1,22 +1,22 @@
 import { itemById } from "#rules/items";
 import { manaColorOf, spellById } from "#rules/spells";
 import { hireCost, MERCHANT_STAPLES, resalePrice, STRUCTURES } from "#rules/structures";
-import { leadershipOf } from "#rules/world/leaders";
 import { maxHpOf } from "#rules/world/record";
 import { member, playerOf } from "#rules/world/state";
 import type { Leader, MageMerchant, MercenaryCamp, Merchant, Structure, World, WorldAction } from "#rules/world/state";
 import { buyItemProblem, buySpellProblem, hireProblem, sellItemProblem } from "#rules/world/structures";
-import { button, element, gold, mana, orderButton } from "#view/dom";
+import { element, gold, mana, orderButton } from "#view/dom";
+import { tabFrame } from "#view/frames";
+import { warbandColumn } from "#view/warband-column";
 import type { KeyLayer } from "#view/input";
-import { leaderName } from "#view/map-text";
-import { memberCard, memberRow } from "#view/members";
+import { memberCard } from "#view/members";
 
 export interface StructureScreenOptions {
   readonly act: (action: WorldAction) => void;
   readonly close: () => void;
 }
 
-/** A warband visiting a map structure (`rules/structures.ts`): what it offers on the left, the warband on the right. */
+/** A warband visiting a map structure (`rules/structures.ts`): what it offers in the frame, the warband's column on the right. */
 export class StructureScreen implements KeyLayer {
   constructor(
     private readonly root: HTMLElement,
@@ -41,11 +41,7 @@ export class StructureScreen implements KeyLayer {
   show(world: World, leader: Leader, structure: Structure, mayAct: boolean): void {
     this.root.hidden = false;
     this.root.replaceChildren();
-    const header = element("div", "capitol-header");
-    header.append(element("div", "title", STRUCTURES[structure.kind].name), gold(playerOf(world, leader.player).gold, "purse"));
-    header.appendChild(button("action", "Back to the map", () => this.options.close()));
-
-    const offer = element("div", "capitol-trees panel");
+    const offer = element("div", "offer");
     offer.appendChild(element("div", "note", STRUCTURES[structure.kind].describe));
     switch (structure.kind) {
       case "mercenaries":
@@ -58,15 +54,7 @@ export class StructureScreen implements KeyLayer {
         offer.append(...this.spells(world, leader, structure, mayAct));
         break;
     }
-
-    const side = element("div", "capitol-hall panel");
-    side.appendChild(element("div", "section", `${leaderName(leader)}'s warband`));
-    side.appendChild(element("div", "note", `${leader.squad.length} / ${leadershipOf(leader)} units`));
-    for (const m of leader.squad) side.appendChild(memberRow(m, leader, playerOf(world, leader.player).commitment));
-
-    const body = element("div", "capitol-body");
-    body.append(offer, side);
-    this.root.append(header, body);
+    this.root.append(warbandColumn(world, leader, () => this.options.close()), tabFrame(STRUCTURES[structure.kind].name, offer));
   }
 
   private hires(world: World, leader: Leader, camp: MercenaryCamp, mayAct: boolean): HTMLElement[] {
