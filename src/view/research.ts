@@ -8,7 +8,8 @@ import { chooseBranchProblem, researchProblem, squadsOf, upgradeProblem } from "
 import type { PlayerId, World, WorldAction } from "#rules/world/state";
 import { art } from "#view/art";
 import { element, gold, orderButton } from "#view/dom";
-import { openDialog } from "#view/dialog";
+import { closeDialog, openDialog } from "#view/dialog";
+import { branchCards, branchText } from "#view/branches";
 import { memberCard, unitName } from "#view/members";
 import { showPeek } from "#view/peek";
 import { maxHpOf } from "#rules/world/record";
@@ -192,13 +193,14 @@ export class ResearchPanel {
     return node;
   }
 
+  /** The fork's branches to pick from, the clicked one marked: the same cards as the evolve prompt on the map. */
   private confirmBranch(world: World, fork: string, to: string, mayAct: boolean): void {
-    const label = EVOLUTIONS[fork]?.find((e) => e.to === to)?.label || unitName(to);
-    const others = (EVOLUTIONS[fork] ?? []).filter((e) => e.to !== to).map((e) => unitName(e.to));
     const problem = mayAct ? chooseBranchProblem(world, fork, to) : "not your turn";
-    openDialog(this.host, `Choose ${label}?`, [
-      `Every ${unitName(fork)} in your army will become a ${unitName(to)}. It's free and permanent${others.length > 0 ? `: the ${others.join(" and ")} branch closes` : ""}.`,
-    ], [{ label: `Choose ${label}`, problem, run: () => this.act({ type: "choose", fork, to }) }]);
+    const cards = branchCards(fork, to, problem, (picked) => {
+      closeDialog(this.host);
+      this.act({ type: "choose", fork, to: picked });
+    });
+    openDialog(this.host, `Choose a branch for the ${unitName(fork)}`, [branchText(fork), cards], []);
   }
 
   private upgradeDialog(world: World, side: PlayerId, defId: string, mayAct: boolean): void {

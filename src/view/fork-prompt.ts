@@ -1,16 +1,8 @@
-import { forkOptions } from "#rules/forks";
-import { EVOLUTIONS } from "#rules/units/index";
 import { waitingForks } from "#rules/world/economy";
 import type { PlayerId, World, WorldAction } from "#rules/world/state";
 import { element } from "#view/dom";
-import { unitDefCard, unitName } from "#view/members";
-import { showPeek } from "#view/peek";
-
-/** "Paladin (Faith)": a branch by the unit it leads to and the dichotomy it stands for. */
-function branchName(fork: string, to: string): string {
-  const label = EVOLUTIONS[fork]?.find((e) => e.to === to)?.label;
-  return label ? `${unitName(to)} (${label})` : unitName(to);
-}
+import { unitName } from "#view/members";
+import { branchCards, branchText } from "#view/branches";
 
 /**
  * A unit of the player's reached an undecided fork: ask now rather than let it sit at full XP unnoticed. "Decide
@@ -22,7 +14,6 @@ export class ForkPrompt {
 
   constructor(
     private readonly root: HTMLElement,
-    private readonly peek: HTMLElement,
     private readonly act: (action: WorldAction) => void,
     private readonly rerender: () => void,
   ) {}
@@ -33,24 +24,15 @@ export class ForkPrompt {
     if (fork === undefined) return;
     this.root.replaceChildren();
     this.root.appendChild(element("div", "title", `A ${unitName(fork)} is ready to evolve`));
-    this.root.appendChild(element("div", "subtitle", `Permanent: every ${unitName(fork)} in your army will take this branch.`));
-    for (const to of forkOptions(fork)) {
-      const choose = element("button", "action", branchName(fork, to));
-      choose.title = "Hold right-click to see what it is.";
-      choose.addEventListener("click", () => this.act({ type: "choose", fork, to }));
-      // Hold right-click on a branch to see the unit it leads to (released on pointerup, like the formation peek).
-      choose.addEventListener("contextmenu", (e) => e.preventDefault());
-      choose.addEventListener("pointerdown", (e) => {
-        if (e.button === 2) showPeek(this.peek, [unitDefCard(to)], e.clientX, e.clientY);
-      });
-      this.root.appendChild(choose);
-    }
-    this.root.appendChild(element("div", "note", "Hold right-click on a branch to see what it is."));
-    const later = element("button", "small", "Decide later");
+    this.root.appendChild(element("div", "body", branchText(fork)));
+    this.root.appendChild(branchCards(fork, null, null, (to) => this.act({ type: "choose", fork, to })));
+    const later = element("button", "dialog-close", "Decide later");
     later.addEventListener("click", () => {
       this.deferred.add(`${world.turn}:${fork}`);
       this.rerender();
     });
-    this.root.appendChild(later);
+    const actions = element("div", "actions");
+    actions.appendChild(later);
+    this.root.appendChild(actions);
   }
 }

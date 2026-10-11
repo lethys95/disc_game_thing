@@ -149,12 +149,9 @@ button.recruit .abilities { color: #b9a98c; font-size: 0.6875rem; }
 button.action.fight { font-size: 1.375rem; padding: 0.5rem 2.5rem; }
 button.action:disabled { opacity: 0.4; cursor: not-allowed; }
 
-#forkprompt {
-  position: fixed; left: 50%; top: 38%; transform: translate(-50%, -50%); text-align: center;
-  display: flex; flex-direction: column; gap: 0.5rem; padding: 1.25rem 2rem; max-width: 28.75rem;
-}
-#forkprompt .title { font: 700 1.75rem var(--display); letter-spacing: 0.04em; }
-#forkprompt .subtitle { color: var(--muted); margin-bottom: 0.5rem; }
+/* The evolve prompt: the dialog's look, the fork's branches as cards (view/branches.ts), the same as in research. */
+#forkprompt { position: fixed; left: 50%; top: 38%; transform: translate(-50%, -50%); z-index: 20; }
+#forkprompt[hidden] { display: none; }
 .leader-label { font: 600 0.6875rem var(--text); padding: 1px 0.375rem; background: rgba(10, 9, 9, 0.75); border: 1px solid var(--line); white-space: nowrap; }
 .leader-label.side0 { color: var(--side0); }
 .leader-label.side1 { color: var(--side1); }
@@ -263,7 +260,6 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 .squad .swatch { width: 1.25rem; height: 1.25rem; min-width: 0; padding: 0; border: 2px solid #1a1614; cursor: pointer; }
 .squad .swatch.selected { border-color: #f1eadb; box-shadow: 0 0 0 1px #000; }
 .squad .swatch:disabled { opacity: 0.25; cursor: default; }
-#forkprompt .note { color: var(--muted); font-size: 0.6875rem; }
 
 /* City screen and squad grids (view/city.ts, view/squad-grid.ts). */
 .city-body { display: flex; min-height: 0; flex: 1; }
@@ -902,10 +898,24 @@ body.formulas .formula { display: inline; }
 .tab-frame .tree.down .node.unlocked { box-shadow: inset 0 0 0 1px var(--gbx-lit); }
 .tab-frame .tree.down .node.unlocked .thumb { box-shadow: 0 0 0 2px var(--gbx-lit); }
 .tab-frame .tree.down .node.pending { opacity: 0.7; }
+/* A branch waiting to be chosen: a dashed warm outline, so the screen's one permanent decision stands out at rest. */
+.tab-frame .tree.down .node.choosable { box-shadow: none; outline: 2px dashed var(--gbx-lit); outline-offset: -2px; }
 .tab-frame .tree.down .node.closed { opacity: 0.3; filter: grayscale(1); cursor: default; }
 .tab-frame .tree.down .node:not(.closed):hover { background: #3a342e; }
 .tab-frame .tree.down .node:not(.closed):hover .thumb { box-shadow: 0 0 0 2px #fff4e0, 0 0 0.8rem rgba(232, 195, 108, 0.7); }
 .tab-frame .research-row, .tab-frame .spell-row { border-bottom: 1px solid var(--gbx-edge); padding: 0.6rem 0; }
+/* A fork's branches as cards: the portrait it leads to, its name, the dichotomy; the clicked one marked. */
+.branch-cards { display: flex; gap: 0.8rem; justify-content: center; margin-top: 0.9rem; }
+.dialog .branch-card {
+  display: flex; flex-direction: column; align-items: center; gap: 0.25rem; width: 8.5rem; padding: 0.6rem 0.5rem 0.55rem; border: 0;
+  background: var(--gbx-well); color: var(--gbx-light); cursor: pointer; box-shadow: inset 0 0 0 1px var(--gbx-edge); font: inherit;
+}
+.dialog .branch-card .thumb { width: 6rem; height: 6rem; margin: 0; background-size: cover; background-position: 50% 15%; font-size: 1.4rem; }
+.dialog .branch-card .name { font: 700 1.05rem var(--display); }
+.dialog .branch-card .label { font-size: 0.75rem; color: var(--gbx-muted); }
+.dialog .branch-card.marked { box-shadow: inset 0 0 0 2px var(--gbx-lit); }
+.dialog .branch-card:hover:not(:disabled) { background: #2a241f; box-shadow: inset 0 0 0 2px #fff4e0, 0 0 0.8rem rgba(232, 195, 108, 0.5); }
+.dialog .branch-card:disabled { opacity: 0.45; cursor: default; }
 /* A dialog over a screen (view/dialog.ts): a question or a choice, its actions, Close. */
 .dialog-veil { position: fixed; inset: 0; z-index: 45; display: grid; place-items: center; background: rgba(6, 5, 5, 0.55); }
 .dialog { min-width: 24rem; max-width: 34rem; padding: 1.2rem 1.4rem 1.1rem; background: var(--gbx-chrome); color: var(--gbx-light); box-shadow: inset 0 0 0 1px var(--gbx-edge), 0 0.8rem 2rem rgba(0, 0, 0, 0.8); }

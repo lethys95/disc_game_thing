@@ -8,3 +8,6 @@
   buildings with iron girders, so the tree belongs to the screen's architecture (`reference_material/disciples/notes.md`).
 - **Done when:** Both trees read as trees at a glance, in the game, and the user has looked.
 - **Who:** Claude builds (layout and drawing, the `hud-paint-in` skill where painted parts help); the user judges.
+- **Compare first (the user, 2026-10-11):** top-down against left-to-right. Claude raised it because the lines already
+  run off the bottom at 720p and the screen is wider than tall; the user: "maybe not a bad idea. I think we should
+  compare." Build both, show them side by side, the user picks.

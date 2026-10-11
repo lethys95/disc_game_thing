@@ -81,7 +81,7 @@ export class Campaign implements KeyLayer {
   private readonly hint = byId("maphint");
   private readonly endTurn = buttonById("endturn");
   private readonly peek = byId("peek");
-  private readonly forkPrompt = new ForkPrompt(byId("forkprompt"), this.peek, (action) => void this.act(action), () => this.render());
+  private readonly forkPrompt = new ForkPrompt(byId("forkprompt"), (action) => void this.act(action), () => this.render());
   private readonly panels = new MapPanels({
     select: (leaderId) => {
       this.selected = leaderId;
