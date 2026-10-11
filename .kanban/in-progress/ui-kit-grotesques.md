@@ -299,3 +299,5 @@
   Wide screens done (the wall extended to the left for 21:9).
 - **The garrison accepted with the style line (2026-10-11):** the user: "it's good enough like this now with the style
   changes"; units fitted to the painted panes; extended for 21:9.
+- **Open (2026-10-11):** the user on the 21:9 extension: "They don't fit." The strip doesn't match the wall well enough
+  at the joint. HUD rests for now (the user: "we've messed around with huds enough for now").
