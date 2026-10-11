@@ -217,6 +217,7 @@ if (params.has("debug")) {
       log: () => [...document.querySelectorAll("#log .entry")].map((e) => e.textContent),
       music: () => sound.battleMusicNow(),
       loopMusic: () => sound.loopMusicNow(),
+      ambience: () => sound.ambienceNow(),
       /** What waits for the player's input now, so playtests wait on state rather than on time. */
       awaiting: (): "battle" | "map" | null => (app.playersTurn() ? "battle" : campaign.myTurn() ? "map" : null),
     },

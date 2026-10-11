@@ -162,6 +162,11 @@ export class Sound {
     this.loop(this.musicLoop, track === null ? null : `music/${track}`);
   }
 
+  /** The ambience asked for now, for playtests; null when none plays. */
+  ambienceNow(): string | null {
+    return this.ambienceLoop.want;
+  }
+
   /** The looping music asked for now (`music/jilliath/map`), for playtests; null in battle or silence. */
   loopMusicNow(): string | null {
     return this.musicLoop.want;

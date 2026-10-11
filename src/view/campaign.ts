@@ -574,6 +574,8 @@ export class Campaign implements KeyLayer {
     if (inCapitol !== this.inCapitol) {
       this.inCapitol = inCapitol;
       this.sound.mapMusic(playerOf(world, this.viewer).faction, inCapitol ? "capitol" : "map");
+      // The overworld's wind doesn't belong inside the city (the user, 2026-10-11).
+      this.sound.ambience(inCapitol ? null : ["ambience/map"]);
     }
   }
 

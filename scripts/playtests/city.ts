@@ -11,6 +11,8 @@ const city: Playtest = {
     await t.shot("playtest-city-home");
     const inside = await t.page.evaluate(() => window.discDebug.loopMusic());
     if (inside !== "music/jilliath/capitol") t.fail(`the Capitol should play its theme: ${inside}`);
+    const wind = await t.page.evaluate(() => window.discDebug.ambience());
+    if (wind !== null) t.fail(`the map's ambience should stop in the Capitol: ${wind}`);
     await t.page.click("#capitol .screen-column .tab.garrison");
     const grids = t.page.locator("#capitol .squad-grid");
     const titles = () => grids.locator(".section").allTextContents();
@@ -49,6 +51,8 @@ const city: Playtest = {
     await t.page.locator("#capitol").waitFor({ state: "hidden", timeout: 2000 }).catch(() => t.fail("Escape didn't close the city screen"));
     const outside = await t.page.evaluate(() => window.discDebug.loopMusic());
     if (outside !== "music/jilliath/map") t.fail(`back on the map, the map theme should play: ${outside}`);
+    const windBack = await t.page.evaluate(() => window.discDebug.ambience());
+    if (windBack === null) t.fail("back on the map, its ambience should play again");
   },
 };
 

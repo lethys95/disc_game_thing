@@ -53,6 +53,7 @@ interface Debug {
   log(): string[];
   music(): { lead: 0 | 1; tracks: [string | null, string | null] } | null;
   loopMusic(): string | null;
+  ambience(): string | null;
   awaiting(): "battle" | "map" | null;
 }
 
