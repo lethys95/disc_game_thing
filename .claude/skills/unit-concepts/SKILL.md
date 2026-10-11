@@ -72,7 +72,12 @@ than the Custodian's 3D concepts is a stand-in to redo (the user, 2026-10-05).
   consistent style wise is pretty essential"). Cut to ~120 grim words, the same features came back dark, ornate and
   worn; moving the gothic line first changed little. Size cues ("large eyes set wide apart", "wide and bulky") push
   toward cartoon proportions. Each round's fixes go *into* a short description, not onto the end of a long one.
-- The turnaround frame pulls figures upright, even and human; single views escape it (the Mulch Gorger). For a body
+- The turnaround frame pulls figures upright, even and human; single views escape it (the Mulch Gorger).
+- **Animals need a frame of their own** (the Wild, 2026-10-11/12): in the character turnaround frame every wolf, boar
+  and crow stood up as an armoured beast-man, whatever the subject said. The `creature` frame in `concepts.ts`
+  ("a four-legged animal … standing on all four legs … no clothing, no armour, not upright") gave real animals at once.
+  But "four-legged animal" summons one: a flock of crows got a wolf beside it twice. A flock is a `flock` frame of its
+  own ("a single model of a flock of birds as one object … only crows"), which worked first time. For a body
   that must stay strange, a single view can go to Tripo alone.
 - A phrase meant as a mood can become the subject: "faces veiled, turned away" put hooded mourners on every card; "an
   object with no limbs" gave gothic women in dresses.
