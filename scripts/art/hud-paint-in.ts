@@ -129,6 +129,18 @@ const LAYOUTS: Readonly<Record<string, Layout>> = {
     prompt: "A wide game interface wall seen straight on, painted as game interface art, in soft even light without glare. A wall of large old dressed stone blocks in irregular courses, warm dark grey, weathered and chipped, each block a little different, mostly in deep shadow, plain, with no pattern on it. Side by side, two tall pointed gothic lancet windows of lead and stained glass in red and amber, each in a heavy moulded frame of black iron, with tracery and a small round rose in its pointed head, and below it a three by three grid of nine large square panes of glowing red and amber glass in heavy dark leads, under a long cream marble plate across the window, blank; small faceted amber studs where the iron frames join. Outside each window, in a tall narrow pointed niche, a grown armoured knight carved in pale weathered stone stands guard, the left one resting both hands on a tall shield, the right one holding a tall spear, old and worn, matte. Along the foot of the wall, a low arcade of small dark pointed arches like a crypt, their arches in pale stone. On the right, a tall sheet of old cream parchment, blank, hangs from two black iron hooks on a turned dark wooden roller, with a second roller weighting its foot. No lattice, no grid pattern on the wall. No text, no letters.",
   },
   /**
+   * The garrison, round 3: round 2's greyboxes (copied) and prompt with one change, the style line the unit art uses in
+   * front, its "desaturated" left out (night one's grey): the user, 2026-10-11, "Dark gothic fantasy. Add that and try
+   * again". Same seeds as round 2, for comparison.
+   */
+  "jilliath-garrison-3": {
+    page: [1236, 864],
+    size: [1728, 1216],
+    denoise: 0.75,
+    depthStrength: 0.9,
+    prompt: "Dark gothic fantasy in the manner of Disciples II's art: rich, brooding and ornate, with dark accents, grim. A wide game interface wall seen straight on, painted as game interface art, in soft even light without glare. A wall of large old dressed stone blocks in irregular courses, warm dark grey, weathered and chipped, each block a little different, mostly in deep shadow, plain, with no pattern on it. Side by side, two tall pointed gothic lancet windows of lead and stained glass in red and amber, each in a heavy moulded frame of black iron, with tracery and a small round rose in its pointed head, and below it a three by three grid of nine large square panes of glowing red and amber glass in heavy dark leads, under a long cream marble plate across the window, blank; small faceted amber studs where the iron frames join. Outside each window, in a tall narrow pointed niche, a grown armoured knight carved in pale weathered stone stands guard, the left one resting both hands on a tall shield, the right one holding a tall spear, old and worn, matte. Along the foot of the wall, a low arcade of small dark pointed arches like a crypt, their arches in pale stone. On the right, a tall sheet of old cream parchment, blank, hangs from two black iron hooks on a turned dark wooden roller, with a second roller weighting its foot. No lattice, no grid pattern on the wall. No text, no letters.",
+  },
+  /**
    * Jilliath's panel frame, one painting used as a nine-slice border round every panel left of the column (the
    * garrison, the city's panel, the tab frame), at the column's density: the user's review found the wall twice as
    * blurred as the column and the two not joined.

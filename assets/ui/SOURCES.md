@@ -37,4 +37,4 @@ removed outright.
 | File | Piece, seed | Cut |
 |---|---|---|
 | `jilliath/capitol-column.webp` | `jilliath-capitol-column-4`, 4, its base inpainted by `jilliath-capitol-door` d80-3 and `-door-edges` d70-2 (`scripts/art/hud-inpaint.ts`) | whole, 576 × 1664 |
-| `jilliath/garrison.webp` | `jilliath-garrison-2`, 2 (masonry, no lattice) | whole, 1728 × 1216 |
+| `jilliath/garrison.webp` | `jilliath-garrison-3`, 2 (round 2 with the style line) | whole, 1728 × 1216 |

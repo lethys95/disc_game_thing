@@ -777,3 +777,8 @@ if any, is an inset; big areas are parchment, marble or pictures.
 - **The column's masonry rolled back (the user):** "you were not supposed to touch the angel or what's behind her"; the
   repaint laid "unthemed low-res bricks" behind her. The accepted column (the door rendition, emblems centred) is back,
   its diaper included. An accepted piece is not repainted to match a later one without asking.
+- **The style line (2026-10-11):** the user asked to try the unit art's "Dark gothic fantasy in the manner of Disciples
+  II's art" on the garrison (`jilliath-garrison-3`, round 2's greyboxes and seeds, the line in front, "desaturated" left
+  out). It darkens and dramatizes, weathers the stone, adds small ornament (a trefoil band, studs at the panes); it
+  doesn't change the composition: plain block courses stay, since the greybox asks for them. Seed 2 in the game.
+  `shots/jilliath-garrison-3.html`.
