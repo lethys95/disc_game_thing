@@ -13,6 +13,8 @@ import { closeDialog, openDialog } from "#view/dialog";
 import { branchCards, branchText } from "#view/branches";
 import { memberCard, unitName } from "#view/members";
 import { showPeek } from "#view/peek";
+import { treeLines } from "#view/tree-lines";
+import type { TreeLink } from "#view/tree-lines";
 import { maxHpOf } from "#rules/world/record";
 
 const ARCHETYPE_NAMES: Readonly<Record<Archetype, string>> = { melee: "Melee", support: "Support", mage: "Mage", joker: "Joker" };
@@ -26,7 +28,6 @@ function routes(defId: string): string[][] {
   return next.length === 0 ? [[defId]] : next.flatMap((e) => routes(e.to).map((route) => [defId, ...route]));
 }
 
-const SVG = "http://www.w3.org/2000/svg";
 
 /**
  * Where a unit stands on its line for this player: unlocked (every branch above it chosen its way, or none to choose),
@@ -48,49 +49,9 @@ function reachOf(route: readonly string[], tier: number, commitment: Readonly<Re
   return reach;
 }
 
-/** Which way a line's tree grows: down from its root at the top, or across from its root at the left. */
-type TreeLayout = "down" | "across";
 
 /** The deepest tier a line reaches (tier 5, the longest lines). */
 const TREE_TIERS = 5;
-
-/**
- * Branches from each parent's portrait to its children's, elbowed (down a tree: down, across, down; across one: across,
- * down, across), lit along the unlocked branches. Drawn once the grid has its size (and again when it changes), since
- * the portraits' places come from the layout.
- */
-function connectors(grid: HTMLElement, links: readonly (readonly [HTMLElement, HTMLElement, boolean])[], layout: TreeLayout): SVGSVGElement {
-  const svg = document.createElementNS(SVG, "svg");
-  svg.classList.add("connectors");
-  const draw = () => {
-    const box = grid.getBoundingClientRect();
-    svg.setAttribute("viewBox", `0 0 ${box.width} ${box.height}`);
-    svg.replaceChildren();
-    for (const [child, parent, lit] of links) {
-      // Down a tree a branch leaves below the parent's name; across one, from its portrait's side.
-      const from = (layout === "down" ? parent : (parent.querySelector(".thumb") ?? parent)).getBoundingClientRect();
-      const to = (child.querySelector(".thumb") ?? child).getBoundingClientRect();
-      const path = document.createElementNS(SVG, "path");
-      if (layout === "down") {
-        const x1 = from.left + from.width / 2 - box.left;
-        const y1 = from.bottom - box.top;
-        const x2 = to.left + to.width / 2 - box.left;
-        const y2 = to.top - box.top;
-        path.setAttribute("d", `M ${x1} ${y1} V ${(y1 + y2) / 2} H ${x2} V ${y2}`);
-      } else {
-        const x1 = from.right - box.left;
-        const y1 = from.top + from.height / 2 - box.top;
-        const x2 = to.left - box.left;
-        const y2 = to.top + to.height / 2 - box.top;
-        path.setAttribute("d", `M ${x1} ${y1} H ${(x1 + x2) / 2} V ${y2} H ${x2}`);
-      }
-      if (lit) path.classList.add("lit");
-      svg.appendChild(path);
-    }
-  };
-  new ResizeObserver(draw).observe(grid);
-  return svg;
-}
 
 /**
  * The Capitol's Research tab (HoMM-style, docs/design/pillars.md): each line's evolution tree, in archetype tabs,
@@ -98,7 +59,6 @@ function connectors(grid: HTMLElement, links: readonly (readonly [HTMLElement, H
  */
 export class ResearchPanel {
   private tab: ResearchTab = "general";
-  private layout: TreeLayout = "down";
 
   constructor(
     private readonly host: HTMLElement,
@@ -147,31 +107,16 @@ export class ResearchPanel {
       }
       return { tabs, body: column };
     }
-    // The two layouts side by side until the user picks one (todo/proper-trees): a toggle above the trees.
-    const layouts = element("div", "tree-layouts");
-    for (const [id, label] of [["down", "Top down"], ["across", "Left to right"]] as const) {
-      const button = element("button", `layout${this.layout === id ? " selected" : ""}`, label);
-      button.addEventListener("click", () => {
-        this.layout = id;
-        this.rerender();
-      });
-      layouts.appendChild(button);
-    }
-    column.appendChild(layouts);
     // Each line grows from its tier-1 unit (user, 2026-09-27: "more tree like"): a lane per route to the end of the
     // tree; a unit two routes share sits once, over the first of them.
-    const across = this.layout === "across";
     for (const lines of rootsOf(tab).map(routes)) {
-      const grid = element("div", `tree line ${this.layout}`);
-      // Across: a column per tier up to the deepest a line can reach, so every tab's tiers line up; the branches share the height.
-      if (across) {
-        grid.style.gridTemplateRows = `repeat(${lines.length}, minmax(0, 1fr))`;
-        grid.style.gridTemplateColumns = `repeat(${TREE_TIERS}, minmax(0, 1fr))`;
-      }
-      else grid.style.gridTemplateColumns = `repeat(${lines.length}, minmax(0, 1fr))`;
+      const grid = element("div", "tree line");
+      // A column per tier up to the deepest a line can reach, so every tab's tiers line up; the branches share the height.
+      grid.style.gridTemplateRows = `repeat(${lines.length}, minmax(0, 1fr))`;
+      grid.style.gridTemplateColumns = `repeat(${TREE_TIERS}, minmax(0, 1fr))`;
       // Each node by its route from the root, so a child finds the cell its parent was drawn in.
       const cells = new Map<string, HTMLElement>();
-      const links: [child: HTMLElement, parent: HTMLElement, lit: boolean][] = [];
+      const links: TreeLink[] = [];
       lines.forEach((route, col) => {
         route.forEach((defId, tier) => {
           const shared = col > 0 && lines[col - 1]?.slice(0, tier + 1).join() === route.slice(0, tier + 1).join();
@@ -185,12 +130,12 @@ export class ResearchPanel {
           const span = lines.slice(col).findIndex((other) => other.slice(0, tier + 1).join() !== route.slice(0, tier + 1).join());
           if (tier === 0) cell.classList.add("root");
           const lane = `${col + 1} / span ${span === -1 ? lines.length - col : span}`;
-          cell.style.gridRow = across ? lane : `${tier + 1}`;
-          cell.style.gridColumn = across ? `${tier + 1}` : lane;
+          cell.style.gridRow = lane;
+          cell.style.gridColumn = `${tier + 1}`;
           grid.appendChild(cell);
         });
       });
-      grid.appendChild(connectors(grid, links, this.layout));
+      grid.appendChild(treeLines(grid, links));
       column.appendChild(grid);
     }
     return { tabs, body: column };

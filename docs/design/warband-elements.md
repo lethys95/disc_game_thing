@@ -32,7 +32,7 @@ the subject.
 | Explanatory note (a point per 100 XP, prerequisites) | teaches once | | **cut** to `maybe/tutorial` |
 | Skill node: name, what it does | the skill | planning | keep; the text stays on the node, the skills are few |
 | Rank | how far it's learned | | pips, filled per rank, as research's upgrades |
-| Requirements | which skills come first | | a skill whose needs aren't met is dimmed, its needs on hover (as research's pending) |
+| Requirements | which skills come first | | drawn as the research trees are: left to right, a skill in the column after its needs, on their row, a line from each need, lit once learned; a skill whose needs aren't met is dimmed, its needs on hover |
 | Learn button | spends a point | the job | **the node is the button**, as in research: click it, a dialog says what the next rank gives and asks to spend the point; learned ranks lit |
 
 ## Equipment

@@ -6,6 +6,8 @@ import { closeDialog, openDialog } from "#view/dialog";
 import { equipmentPanel } from "#view/equipment";
 import { tabFrame } from "#view/frames";
 import type { KeyLayer } from "#view/input";
+import { treeLines } from "#view/tree-lines";
+import type { TreeLink } from "#view/tree-lines";
 import { warbandColumn } from "#view/warband-column";
 
 export interface LeaderScreenOptions {
@@ -19,6 +21,22 @@ type LeaderTab = "tree" | "equipment";
 function depth(skill: string): number {
   const requires = LEADER_SKILLS[skill]?.requires ?? [];
   return requires.length === 0 ? 0 : 1 + Math.max(...requires.map(depth));
+}
+
+/**
+ * Each skill's row in the tree, from 1: the skills that need nothing in order, every other on the middle row of the
+ * skills it needs, or the next free row in its column.
+ */
+function rowsOf(ids: readonly string[]): Record<string, number> {
+  const rows: Record<string, number> = {};
+  for (const id of [...ids].sort((a, b) => depth(a) - depth(b))) {
+    const needs = (LEADER_SKILLS[id]?.requires ?? []).map((r) => rows[r] ?? 1);
+    const taken = (row: number) => Object.entries(rows).some(([other, r]) => r === row && depth(other) === depth(id));
+    let row = needs.length === 0 ? 1 : Math.round(needs.reduce((sum, r) => sum + r, 0) / needs.length);
+    while (taken(row)) row++;
+    rows[id] = row;
+  }
+  return rows;
 }
 
 /**
@@ -68,21 +86,25 @@ export class LeaderScreen implements KeyLayer {
   }
 
   /**
-   * The skills in columns by what they need: each node is the way in, as in research; a click asks to spend a point on
-   * its next rank. Learned ranks are pips; a skill whose needs aren't met is dimmed.
+   * The skills left to right by what they need, as the research trees grow: each in the column after its deepest need,
+   * on the row of the skills it needs, a line from each need, lit once it's learned. Each node is the way in: a click
+   * asks to spend a point on its next rank. Learned ranks are pips; a skill whose needs aren't met is dimmed.
    */
   private tree(world: World, leader: Leader, mayAct: boolean): HTMLElement {
     const grid = element("div", "tree leader-tree");
-    const ids = Object.keys(LEADER_SKILLS);
-    grid.style.gridTemplateColumns = `repeat(${1 + Math.max(...ids.map(depth))}, minmax(0, 1fr))`;
-    for (const id of ids) {
+    const rows = rowsOf(Object.keys(LEADER_SKILLS));
+    grid.style.gridTemplateColumns = `repeat(${1 + Math.max(...Object.keys(rows).map(depth))}, minmax(0, 1fr))`;
+    grid.style.gridTemplateRows = `repeat(${Math.max(...Object.values(rows))}, minmax(0, 1fr))`;
+    const nodes = new Map<string, HTMLElement>();
+    for (const [id, row] of Object.entries(rows)) {
       const skill = LEADER_SKILLS[id];
       if (!skill) continue;
       const rank = rankOf(leader, id);
       const met = skill.requires.every((r) => rankOf(leader, r) > 0);
       const node = element("button", `node skill${rank > 0 ? " learned" : ""}${met ? "" : " pending"}${rank >= skill.maxRank ? " full" : ""}`);
       node.style.gridColumn = `${depth(id) + 1}`;
-      node.style.gridRow = `${ids.filter((other) => depth(other) === depth(id)).indexOf(id) + 1}`;
+      node.style.gridRow = `${row}`;
+      nodes.set(id, node);
       const pips = element("div", "pips");
       for (let i = 0; i < skill.maxRank; i++) pips.appendChild(element("span", `pip${i < rank ? " bought" : ""}`));
       node.append(element("div", "name", skill.name), pips, element("div", "text", skill.describe));
@@ -96,6 +118,14 @@ export class LeaderScreen implements KeyLayer {
       });
       grid.appendChild(node);
     }
+    const links = Object.keys(rows).flatMap((id): TreeLink[] =>
+      (LEADER_SKILLS[id]?.requires ?? []).flatMap((need) => {
+        const child = nodes.get(id);
+        const parent = nodes.get(need);
+        return child && parent ? [[child, parent, rankOf(leader, need) > 0]] : [];
+      }),
+    );
+    grid.appendChild(treeLines(grid, links));
     return grid;
   }
 }

@@ -20,3 +20,6 @@
   since container query heights resolve to zero in that grid. `shots/trees.html`. Still waiting on the pick.
 - 2026-10-11, the user on round 3: "round 3's pictures are huge, which isn't necessary". Undone: round 2's size is back
   (5.75rem portraits, branches over the full height); the user hadn't seen round 2 yet. Shown in `shots/trees.html`.
+- 2026-10-11, the user: "Okay, I accept this one" (round 2, left to right). The toggle and top down are gone; the
+  leader tree follows (skills in columns by need, on their needs' rows, lines lit once learned), sharing the line
+  drawing (`view/tree-lines.ts`). The leader tree waits for the user's look.
