@@ -1,15 +1,20 @@
 import { carnival } from "#rules/abilities/carnival";
+import { clans } from "#rules/abilities/clans";
 import { core } from "#rules/abilities/core";
 import { drawn } from "#rules/abilities/drawn";
 import { gnolls } from "#rules/abilities/gnolls";
 import { grove } from "#rules/abilities/grove";
+import { herd } from "#rules/abilities/herd";
 import { jilliath } from "#rules/abilities/jilliath";
 import { keywords } from "#rules/abilities/keywords";
 import { neutral } from "#rules/abilities/neutral";
 import { nexus } from "#rules/abilities/nexus";
+import { scaled } from "#rules/abilities/scaled";
+import { tusk } from "#rules/abilities/tusk";
+import { wild } from "#rules/abilities/wild";
 import type { AbilityRef, Behavior, DamageType, Params, UnitDef } from "#rules/battle/types";
 
-const SETS: readonly Readonly<Record<string, Behavior>>[] = [core, keywords, jilliath, nexus, grove, neutral, gnolls, drawn, carnival];
+const SETS: readonly Readonly<Record<string, Behavior>>[] = [core, keywords, jilliath, nexus, grove, neutral, gnolls, drawn, carnival, wild, tusk, scaled, herd, clans];
 
 /** Every ability by id. Two sets naming the same id would silently replace one (it happened: the Jilliath support's Mend). */
 export const BEHAVIORS: Readonly<Record<string, Behavior>> = Object.assign({}, ...SETS);

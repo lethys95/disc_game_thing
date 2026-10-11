@@ -17,6 +17,7 @@ import { NewGame } from "#view/new-game";
 import { Codex } from "#view/codex";
 import { Credits } from "#view/credits";
 import type { Placement } from "#rules/battle/engine";
+import { TRIBES, neutralGroup } from "#rules/world/state";
 import type { Save } from "#rules/save";
 import { BANDIT_GROUP, CARNIVAL_GROUP, DRAWN_GROUP, GNOLL_GROUP, presetOf, PRESETS } from "#rules/units/presets";
 import { ANIMATION_SPEEDS, rootFontSize, Settings } from "#view/settings";
@@ -170,6 +171,11 @@ if (params.has("map")) {
   const structure = params.get("structure");
   if (structure) campaign.openStructure(structure);
 } else if (params.has("steps") || params.has("auto") || params.has("fight")) {
+  // `fight=wild|tusk|scaled|herd|clans` (or any tribe): the tribe in its strong camp's formation.
+  const tribeFight = (name: string): Placement[] | null => {
+    const tribe = TRIBES.find((t) => t === name);
+    return tribe ? neutralGroup(tribe, "strong").map((m) => ({ defId: m.defId, tile: m.tile })) : null;
+  };
   const fight = params.get("fight") ?? "";
   const nexusKey = fight.startsWith("nexus:") ? fight.slice(6) : "uncommitted";
   const groveKey = fight.startsWith("grove:") ? fight.slice(6) : "uncommitted";
@@ -177,7 +183,7 @@ if (params.has("map")) {
     ? presetOf("nexus", nexusKey)
     : fight.startsWith("grove")
       ? presetOf("grove", groveKey)
-      : fight === "bandits" ? BANDIT_GROUP : fight === "gnolls" ? GNOLL_GROUP : fight === "drawn" ? DRAWN_GROUP : fight === "carnival" ? CARNIVAL_GROUP : presets[1];
+      : fight === "bandits" ? BANDIT_GROUP : fight === "gnolls" ? GNOLL_GROUP : fight === "drawn" ? DRAWN_GROUP : fight === "carnival" ? CARNIVAL_GROUP : tribeFight(fight) ?? presets[1];
   // `terrain=forest`, `biome=desert`, `backdrop=capitol|city|dungeon`: fight somewhere other than open plains (screenshots).
   const terrain = params.get("terrain") ?? "plain";
   const backdrop = params.get("backdrop");

@@ -27,7 +27,10 @@ const TABS: readonly (readonly [Tab, string])[] = [["units", "Units"], ["abiliti
 
 
 /** The tribes' names are placeholders until the user names them (`faction-stuff/neutrals/`). */
-const TRIBE_NAMES: Readonly<Record<Tribe, string>> = { bandits: "Bandits", gnolls: "Gnolls", drawn: "The Drawn", carnival: "The carnival" };
+const TRIBE_NAMES: Readonly<Record<Tribe, string>> = {
+  bandits: "Bandits", gnolls: "Gnolls", drawn: "The Drawn", carnival: "The carnival",
+  wild: "The Wild", tusk: "The Tuskclans", scaled: "The Scaled", herd: "The Herd", clans: "The barbarian clans",
+};
 
 const isPlayable = (shelf: Shelf): shelf is Playable => shelf in FACTIONS;
 

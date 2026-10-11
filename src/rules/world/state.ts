@@ -325,8 +325,8 @@ export const emptyMemory = (): Memory => ({ cities: [], lairs: [], nodes: [], st
 
 export type Strength = "weak" | "medium" | "strong";
 
-/** The neutral peoples who guard camps and dungeons (`design/tribes.md`). The Drawn and the carnival aren't placed on the map yet. */
-export type Tribe = "bandits" | "gnolls" | "drawn" | "carnival";
+/** The neutral peoples who guard camps and dungeons (`design/tribes.md`). Only the bandits and gnolls are placed on the map yet. */
+export type Tribe = "bandits" | "gnolls" | "drawn" | "carnival" | "wild" | "tusk" | "scaled" | "herd" | "clans";
 
 type Group = { readonly level: number; readonly units: readonly [string, Tile][] };
 
@@ -412,9 +412,35 @@ const GROUPS: Readonly<Record<Tribe, Readonly<Record<Strength, Group>>>> = {
       ],
     },
   },
+  // Claude's five tribes at the user's invitation (2026-10-11, provisional #81): not on the map yet.
+  wild: {
+    weak: { level: 0, units: [["boar", { row: 0, col: 0 }], ["grey_wolf", { row: 0, col: 1 }], ["grey_wolf", { row: 1, col: 0 }], ["carrion_murder", { row: 1, col: 1 }]] },
+    medium: { level: 2, units: [["boar", { row: 0, col: 0 }], ["cave_bear", { row: 0, col: 1 }], ["grey_wolf", { row: 0, col: 2 }], ["grey_wolf", { row: 1, col: 0 }], ["carrion_murder", { row: 1, col: 1 }]] },
+    strong: { level: 4, units: [["cave_bear", { row: 0, col: 0 }], ["old_grey", { row: 0, col: 1 }], ["boar", { row: 0, col: 2 }], ["grey_wolf", { row: 1, col: 0 }], ["carrion_murder", { row: 1, col: 1 }], ["grey_wolf", { row: 1, col: 2 }]] },
+  },
+  tusk: {
+    weak: { level: 0, units: [["orc_ravager", { row: 0, col: 1 }], ["goblin_cutthroat", { row: 1, col: 0 }], ["goblin_hexer", { row: 1, col: 1 }], ["goblin_cutthroat", { row: 1, col: 2 }]] },
+    medium: { level: 2, units: [["orc_ravager", { row: 0, col: 0 }], ["troll", { row: 0, col: 1 }], ["goblin_cutthroat", { row: 1, col: 0 }], ["goblin_hexer", { row: 1, col: 1 }], ["goblin_cutthroat", { row: 1, col: 2 }]] },
+    strong: { level: 4, units: [["orc_ravager", { row: 0, col: 0 }], ["ogre_warchief", { row: 0, col: 1 }], ["troll", { row: 0, col: 2 }], ["goblin_cutthroat", { row: 1, col: 0 }], ["goblin_hexer", { row: 1, col: 1 }], ["goblin_cutthroat", { row: 1, col: 2 }]] },
+  },
+  scaled: {
+    weak: { level: 0, units: [["scaleblade", { row: 0, col: 0 }], ["scaleblade", { row: 0, col: 1 }], ["spitter", { row: 1, col: 0 }], ["shedskin", { row: 1, col: 1 }]] },
+    medium: { level: 2, units: [["scaleblade", { row: 0, col: 0 }], ["naga_coiler", { row: 0, col: 1 }], ["scaleblade", { row: 0, col: 2 }], ["spitter", { row: 1, col: 0 }], ["shedskin", { row: 1, col: 1 }]] },
+    strong: { level: 4, units: [["scaleblade", { row: 0, col: 0 }], ["naga_coiler", { row: 0, col: 1 }], ["scaleblade", { row: 0, col: 2 }], ["spitter", { row: 1, col: 0 }], ["medusa", { row: 1, col: 1 }], ["shedskin", { row: 1, col: 2 }]] },
+  },
+  herd: {
+    weak: { level: 0, units: [["lancer", { row: 0, col: 1 }], ["outrider", { row: 1, col: 0 }], ["outrider", { row: 1, col: 2 }], ["starseer", { row: 1, col: 1 }]] },
+    medium: { level: 2, units: [["lancer", { row: 0, col: 0 }], ["hoofbreaker", { row: 0, col: 1 }], ["outrider", { row: 1, col: 0 }], ["starseer", { row: 1, col: 1 }], ["outrider", { row: 1, col: 2 }]] },
+    strong: { level: 4, units: [["lancer", { row: 0, col: 0 }], ["herd_khan", { row: 0, col: 1 }], ["hoofbreaker", { row: 0, col: 2 }], ["outrider", { row: 1, col: 0 }], ["starseer", { row: 1, col: 1 }], ["outrider", { row: 1, col: 2 }]] },
+  },
+  clans: {
+    weak: { level: 0, units: [["berserker", { row: 0, col: 0 }], ["berserker", { row: 0, col: 1 }], ["hunter", { row: 1, col: 0 }], ["shamaness", { row: 1, col: 1 }]] },
+    medium: { level: 2, units: [["berserker", { row: 0, col: 0 }], ["spearwarden", { row: 0, col: 1 }], ["berserker", { row: 0, col: 2 }], ["hunter", { row: 1, col: 0 }], ["shamaness", { row: 1, col: 1 }]] },
+    strong: { level: 4, units: [["berserker", { row: 0, col: 0 }], ["warlord", { row: 0, col: 1 }], ["spearwarden", { row: 0, col: 2 }], ["hunter", { row: 1, col: 0 }], ["shamaness", { row: 1, col: 1 }], ["hunter", { row: 1, col: 2 }]] },
+  },
 };
 
-export const TRIBES: readonly Tribe[] = ["bandits", "gnolls", "drawn", "carnival"];
+export const TRIBES: readonly Tribe[] = ["bandits", "gnolls", "drawn", "carnival", "wild", "tusk", "scaled", "herd", "clans"];
 
 /** Every unit a tribe fields, in any of its groups, in order of first appearance. */
 export function tribeUnits(tribe: Tribe): string[] {
