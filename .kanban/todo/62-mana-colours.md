@@ -9,3 +9,8 @@
   colour (`art.md`), but what typing changes in play isn't designed. Pairs with `spells`.
 - **Done when:** The user has decided; the rules and the faction cards say it.
 - **Who:** The user decides; Claude lays out options and builds.
+
+## Notes
+- 2026-10-11: today only a player's own colour is ever earned and spent, so the colours do nothing in play. Options
+  laid out in `shots/mana-colours.html` (one mana; typed nodes; colours that behave differently; mana beyond spells);
+  Claude suggests typed nodes. Waiting on the user (`questions.md` #7).

@@ -23,5 +23,5 @@ Kept short: only what is the user's to decide, most blocking first. Answer inlin
 
 ## Rules
 6. **Biomes: node pools and tribes (your idea; the desert exists now, M77):** which nodes each biome's cities can spawn, and which tribe guards its camps. Rule effects only with care (you, 2026-09-30). Done provisionally for tribes: the desert's camps and dungeons are gnolls (#63); open: node pools, and whether the desert's tribal outposts should recruit gnolls. Claude's pitches for pools are in `design/brainstorm/biomes.md`, not canon.
-7. **Spells:** should mana nodes have a color of their own (D2's typed crystals), so capturing one gives that color? And what gates the spell tree: Capitol tier, research, mana spent? The real spells are yours to design whenever you like (placeholders now).
+7. **Spells:** what the mana colours mean in play: four options laid out in `shots/mana-colours.html` (card 62; Claude suggests typed mana nodes, D2's crystals held through cities). And what gates the spell tree: Capitol tier, research, mana spent? The real spells are yours to design whenever you like (placeholders now).
 8. **Items:** yours to design whenever you like (placeholders now); the merchant and dungeons sell and give whatever exists.

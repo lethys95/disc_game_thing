@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-11 (the overworld minimap; UI pass by job done; code review findings 1–3 fixed)
+**Updated:** 2026-10-11 (the minimap with lairs and structures; the mana colours' options; UI pass by job done)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): the alpha is the three playable factions (Jilliath,
@@ -38,13 +38,12 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
 
 ## Next
 0. **The HUD, interface first** (the user's review, 2026-10-11; `in-progress/ui-kit-grotesques`; the `greybox` skill).
-   Greyboxed by job: the Capitol (`shots/capitol-greybox.html`), the leader's and structures' screens
-   (`shots/warband-greybox.html`), the title, new game and menu (`shots/front-greybox.html`), the overworld minimap
-   (`shots/minimap-greybox.html`, `testing/minimap`), all sharing one column, one unit sheet, one squad tile, one branch chooser. A Greybox
-   setting draws the still-painted pieces (map column, battle bar, turn order) flat. Research trees: two layouts behind a
-   toggle until the user picks (`todo/75-proper-trees`). Next: the map column and battle
-   bar by job, then title and menus; paint after a layout is judged, per faction skin. Glass rests.
-   **The code review is handled** (`testing/code-review`): all five findings fixed or declined with reasons.
+   Every screen greyboxed by job (`shots/capitol-greybox.html`, `warband-greybox.html`, `front-greybox.html`), all
+   sharing one column, one unit sheet, one squad tile, one branch chooser; a Greybox setting draws the painted pieces
+   flat. The overworld minimap (`shots/minimap-greybox.html`, `testing/minimap`; lairs and structures marked, the
+   user: "this is good"). Research trees: two layouts behind a toggle until the user picks (`todo/75-proper-trees`).
+   Paint after a layout is judged, per faction skin. Glass rests. The code review is handled (`testing/code-review`).
+   **The mana colours** (`todo/62-mana-colours`): four options in `shots/mana-colours.html`, waiting on the user.
 1. **Finish Jilliath's concepts** with the user (the open nine), then portraits from the picks.
 2. **The other factions' missing units** (the alpha needs all three): Nexus melee tier 3, the Grove's mage line, and
    the rest on the board; then their concept art the same way.
