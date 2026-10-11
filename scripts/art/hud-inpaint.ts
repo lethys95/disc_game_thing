@@ -136,6 +136,21 @@ const REPAIRS: Readonly<Record<string, Repair>> = {
     prompt:
       "Game interface art, a wall of large old dressed stone blocks seen straight on, warm dark grey, weathered, plain, with no pattern on it, softly lit by a warm golden glow from above. No lattice. No text, no letters.",
   },
+  /**
+   * The garrison wall widened to the left for wide screens (the skill's "Wider screens"; the user: "extend the image"):
+   * a 576 page px extension in the wall's own language, inpainted in a 1280 px crop with the painting's edge as context
+   * (`art/greybox/jilliath-garrison-wide/compose.py`). The style line as on the accepted wall.
+   */
+  "jilliath-garrison-wide": {
+    source: "art/greybox/jilliath-garrison-wide/source.png",
+    page: [916, 870],
+    boxes: [],
+    mask: "art/greybox/jilliath-garrison-wide/mask.png",
+    denoise: [0.8, 0.92],
+    depth: { map: "art/greybox/jilliath-garrison-wide/depth.png", strength: 0.9 },
+    prompt:
+      "Dark gothic fantasy in the manner of Disciples II's art: rich, brooding and ornate, with dark accents, grim. A wide game interface wall seen straight on, painted as game interface art, in soft even light without glare. A wall of large old dressed stone blocks in irregular courses, warm dark grey, weathered and chipped, mostly in deep shadow. A tall blind gothic arch of black iron set into the wall, holding two narrow pointed blind lancets and a small round opening in its head, all dark and empty, with no glass. Below it a long pale stone ledge, and along the foot of the wall a low arcade of small dark pointed arches like a crypt, their arches in pale stone. No figures, no windows with glass. No text, no letters.",
+  },
   /** The duel bar's figures: arms and hands came out malformed (the user, 2026-10-10). */
   "duel-hands": {
     source: "art/candidates/ui/paint-in/battle-bar-duel-dull-nostone/battle-bar-duel-dull-nostone-3.png",

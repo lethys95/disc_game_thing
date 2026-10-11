@@ -296,5 +296,6 @@
   the Capitol.
 - **Open (2026-10-11):** the garrison's plain masonry reads unthemed (it came from Claude's greybox and prompt, not
   inpainting); the user will sketch the garrison as they did the column (template `shots/garrison-sketch-template.png`).
-  The wall cuts off on wide screens: apply the skill's "Wider screens" step (ornament-only end extensions) once the
-  painting is settled.
+  Wide screens done (the wall extended to the left for 21:9).
+- **The garrison accepted with the style line (2026-10-11):** the user: "it's good enough like this now with the style
+  changes"; units fitted to the painted panes; extended for 21:9.

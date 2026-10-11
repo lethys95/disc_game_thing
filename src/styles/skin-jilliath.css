@@ -72,3 +72,9 @@ body[data-skin="jilliath"]:not(.greybox) #capitol .garrison-board .squad-grid .g
 }
 body[data-skin="jilliath"]:not(.greybox) #capitol .garrison-board .squads > .squad-grid:nth-child(1) .grid { --dx: -17.5; --dy: 5; }
 body[data-skin="jilliath"]:not(.greybox) #capitol .garrison-board .squads > .squad-grid:nth-child(2) .grid { --dx: 18.7; --dy: 5; }
+/* Wider than 16:9 the wall continues to the left (assets/ui/jilliath/garrison-wide.webp, inpainted onto the wall's
+   edge: the skill's "Wider screens"), 576 page px, enough for 21:9; on narrower screens it lies off the left edge. */
+body[data-skin="jilliath"]:not(.greybox) #capitol .garrison-board::before {
+  content: ""; position: absolute; top: 0; bottom: 0; right: 100%; width: calc(576 * var(--pg));
+  background: var(--ui-jilliath-garrison-wide) 0 0 / 100% 100% no-repeat; pointer-events: none;
+}

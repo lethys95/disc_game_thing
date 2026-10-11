@@ -786,3 +786,8 @@ if any, is an inset; big areas are parchment, marble or pictures.
   sizes". The tiles were placed by the greybox's numbers, not the painting's (the skill's step 5, skipped). Measured
   from seed 2: leads 88.5 page px apart across, 92.5 down; an 80 square tile centred in each pane, per window offsets
   in `skin-jilliath.css`. Every new painting of the wall needs this measurement again.
+- **Wide screens (2026-10-11):** the user: "Can you extend the image please." The skill's "Wider screens": a 576 page px
+  extension (enough for 21:9) sketched in the wall's language (masonry, a blind lancet arch, the ledge, the crypt at
+  its rhythm), inpainted in a crop beside the wall's edge (`jilliath-garrison-wide` d92-2), its brightness matched to
+  the edge and the blocks by the knight shaded (`match.py`). Shown as a strip left of the wall. Wider than 21:9 the
+  city shows beyond it.
