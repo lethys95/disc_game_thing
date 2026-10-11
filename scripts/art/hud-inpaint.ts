@@ -65,6 +65,20 @@ const REPAIRS: Readonly<Record<string, Repair>> = {
     prompt:
       "Game interface art, dark blackened cast iron covered in a gothic diaper of small quatrefoils in a fine diamond lattice, dark on dark, old and worn, an even flat surface, matte. No text, no letters.",
   },
+  /**
+   * The garrison wall's squad windows back to three by three: every seed split each pane into smaller leaded pieces.
+   * The greybox's nine panes laid in (`art/greybox/jilliath-garrison-panes/make.py`) and held to the wall's depth.
+   */
+  "jilliath-garrison-panes": {
+    source: "art/greybox/jilliath-garrison-panes/source.png",
+    page: [1236, 864],
+    boxes: [],
+    mask: "art/greybox/jilliath-garrison-panes/mask.png",
+    denoise: [0.6, 0.72],
+    depth: { map: "art/greybox/jilliath-garrison/depth.png", strength: 1 },
+    prompt:
+      "Game interface art, part of a gothic stained glass window in soft even light: a grid of exactly nine large square panes, three across and three down, in heavy dark lead cames, each pane one single unbroken piece of glowing red or amber glass with a little mottling, the colours mixed across the grid. No text, no letters.",
+  },
   /** The duel bar's figures: arms and hands came out malformed (the user, 2026-10-10). */
   "duel-hands": {
     source: "art/candidates/ui/paint-in/battle-bar-duel-dull-nostone/battle-bar-duel-dull-nostone-3.png",

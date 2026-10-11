@@ -288,3 +288,6 @@
   tighter, the pattern held at its scale; (2) painted whole with a corbel, gable, portal and two candles, in the game.
   `shots/jilliath-capitol-6.html`. The user picked (1): in the game, emblems centred and larger, no labels. Next:
   the panels left of the column in this style.
+- **The garrison wall (2026-10-11):** lancet windows as the squad grids, stone knights, a crypt, the growth on a hung
+  parchment; one round and a pane repair. `shots/jilliath-garrison.html`. Next: the graveyard in the crypt, then the
+  research and spells frame.

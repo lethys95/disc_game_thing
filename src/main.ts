@@ -41,7 +41,14 @@ settings.follow((s) => stage.setFrameRate(s.showFrameRate));
 // Every card's rules text carries its formulas; the page shows them only when asked (CSS: `body.formulas`).
 settings.follow((s) => document.body.classList.toggle("formulas", s.showFormulas));
 settings.follow((s) => document.body.classList.toggle("greybox", s.greybox));
-const sizeInterface = () => (document.documentElement.style.fontSize = `${rootFontSize(window.innerHeight, settings.data.uiScale)}px`);
+const sizeInterface = () => {
+  const rem = rootFontSize(window.innerHeight, settings.data.uiScale);
+  document.documentElement.style.fontSize = `${rem}px`;
+  // A painted wall left of the screen column is 1236 x 864 page px at 50rem tall; on a screen too narrow for it the
+  // skins scale it down by this to fit beside the column (`styles/skin-*.css`).
+  const room = window.innerWidth - (50 * rem * 300) / 864;
+  document.documentElement.style.setProperty("--wall-fit", String(Math.min(1, room / ((50 * rem * 1236) / 864))));
+};
 settings.follow(sizeInterface);
 window.addEventListener("resize", sizeInterface);
 const sound = new Sound();

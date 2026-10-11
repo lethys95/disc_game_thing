@@ -743,3 +743,12 @@ inpaint again, (2) all of it painted again with more elements.
 - **Picked (the user):** "I think the inpainted one works. Center these symbols and enlargen a bit. Remove labels, let
   the icons do the talking." Rendition 1 is in the game; each emblem centred on its measured marble face (about 41
   page px), a fifth larger, the names visually hidden.
+
+## Jilliath's garrison wall (2026-10-11)
+The first panel after the column, painted by its lessons (`jilliath-garrison`): exact panes and plates at the judged
+layout's coordinates, loose masses for the rest. Each squad grid is the lower part of a lancet window with a rose in its
+head (an empty place shows lit glass), pale stone knights in niches either side (shield, spear), a crypt arcade along
+the foot, the growth panel as a parchment on turned rollers. Painted at 1.4× the page. All six seeds held; every seed
+split each pane into four, so the panes were repainted three by three (`jilliath-garrison-panes`, the greybox grid laid
+in, 0.72 seed 3). In the game as one painting the judged layout's size, anchored to the column; on screens narrower
+than it the wall scales to fit (`--wall-fit`, set with the interface size). `shots/jilliath-garrison.html`.
