@@ -194,4 +194,8 @@
 - **The column in the game (2026-10-10):** after the 3×3 squad window, adult angels, and the user's angel-and-succubus
   duality at the End turn gem ("this is near perfect"), and the `hud-paint-in` skill. The map's floating boxes are
   replaced by the painted column (`decisions.md`); `pnpm verify` passes, 720p to 1440p checked. Next: the battle.
+- **Handover (2026-10-11):** in the game: the map column (hands repaired, a stray third arm painted out), the battle
+  bar (the user's duel design; draining globes; wide-monitor extensions inpainted Warcraft III's way; "the battle
+  field hud is good enough for now"), the Capitol column (round 2, seed 1). Next: the Capitol's tab panels, then the
+  leader and structure screens. Everything in `docs/design/hud-pieces.md` and the `hud-paint-in` skill.
 

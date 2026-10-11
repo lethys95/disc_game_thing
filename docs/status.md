@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-10 (the battle's bottom bar is the painted duel bar)
+**Updated:** 2026-10-11 (handover: three painted HUD pieces in the game; the Capitol's tab panels next)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): the alpha is the three playable factions (Jilliath,
@@ -24,12 +24,17 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
   13 picked with portraits installed (`roster.md`); deferred by the user until they have an overview: the Guardian,
   Empyreal, Torturer, Archon, Cleric, Fanatic and the fire casters. Lessons in the `unit-concepts` skill.
 - **Armor is a percentage with diminishing returns** (the user; #75, `testing/percent-armor`).
-- **The HUD: box out, then paint in (2026-10-10)** (`in-progress/ui-kit-grotesques`; `design/hud-pieces.md`). After
-  the one-painting reset and a round of single pieces, the method that works: draw a layout as two greyboxes (values
-  and depth, `art/greybox/<layout>/`) and let Krea-2 paint them with its depth Control LoRA
-  (`scripts/art/hud-paint-in.ts`). The map's right-hand column, built the way Disciples II's is (one object, joined
-  sections, light only where you read or press, two small angels in relief holding End turn), holds its layout with
-  the game's real content in its windows: `shots/column-probe.html`. Qwen models tried and dropped (licence, quality).
+- **The HUD: box out, then paint in (2026-10-10/11)** (`in-progress/ui-kit-grotesques`; `design/hud-pieces.md`;
+  the procedure is the `hud-paint-in` skill). A layout is drawn as two greyboxes (values and depth,
+  `art/greybox/<layout>/`), Krea-2 paints them with its depth Control LoRA (`scripts/art/hud-paint-in.ts`), broken
+  parts are repaired by depth-held inpainting (`scripts/art/hud-inpaint.ts`), the game's HTML fills the windows. In
+  the game: **the map column** (3×3 squad in a stained-glass window, the angel and the succubus holding the spell-book
+  gem, End turn an hourglass socket), **the battle bar** (acting unit left, hovered unit right, red health globes that
+  drain behind their figures via `scripts/art/hud_drain.py`, round and four knobs, sockets in painted wells, unit
+  sheet on a held right-click on the portrait, log on demand, painted extensions for wide monitors), **the Capitol
+  column** (no beam; name, purse, tier, four tab niches, facts, Back to the map as a seal held by a mason and an
+  abbess). Krea-2 is the only art model (Qwen dropped: licence, quality). Pages for the user go in `shots/` over
+  Tailscale, never claude.ai artifacts.
 - **The Grove's Water is now Wellspring.**
 - **Unreal 5 as a parallel track** (the user: "UE is the king of 3d"; `ongoing/unreal-port`), in its own repo,
   `../disc_unreal`. three.js keeps the pace; Unreal follows as a view, with this repo's TypeScript rules as the only
@@ -37,9 +42,12 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
   the `?fight` arena in Unreal looks nearly the same as three.js with today's assets (`disc_unreal/shots/`).
 
 ## Next
-0. **The HUD, screen by screen** (`hud-paint-in` skill): the map column and the battle bar are in the game
-   (2026-10-10). Next: the map column's hands repaired, then the Capitol. Open in the battle: a right-click on a unit
-   on the field opening its sheet, the turn order still on the interim beam.
+0. **The HUD, screen by screen** (`hud-paint-in` skill). Next: **the Capitol's tab panels** (garrison grids and
+   graveyard, research tree, spells; still interim tablets): one painted frame for a tab's content, with the
+   Disciples II ideas in `reference_material/disciples/notes.md` (research connectors as iron rods, empty cells as
+   corner marks, locked research sealed). Then the leader and structure screens (still on the interim beam), the
+   battle's turn order (interim beam), title and menus. Open in the battle: right-click on a field unit to open its
+   sheet; real glyphs for the knobs (», A, ☰ are stand-ins); screens narrower than 16:9 crop the bar's ends.
 1. **Finish Jilliath's concepts** with the user (the open nine), then portraits from the picks.
 2. **The other factions' missing units** (the alpha needs all three): Nexus melee tier 3, the Grove's mage line, and
    the rest on the board; then their concept art the same way.
