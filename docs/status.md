@@ -36,6 +36,10 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
 - **Unreal 5 as a parallel track** (`ongoing/unreal-port`), in its own repo, `../disc_unreal`, reading this one and
   never writing to it; three.js keeps the pace. Step 1 done there: the `?fight` arena nearly matches three.js.
 
+**Five new neutral tribes** (the user's free hand, 2026-10-11; `testing/five-tribes`, `shots/tribes.html`): the Wild,
+the Tuskclans, the Scaled, the Herd, the barbarian clans; in the rules with tests, strong camps at 43–50% against the
+faction presets, on `?fight=` routes, not on the map yet; two concept rounds.
+
 ## Next
 0. **The HUD, interface first** (the user's review, 2026-10-11; `in-progress/ui-kit-grotesques`; the `greybox` skill).
    Every screen greyboxed by job (`shots/capitol-greybox.html`, `warband-greybox.html`, `front-greybox.html`), all
