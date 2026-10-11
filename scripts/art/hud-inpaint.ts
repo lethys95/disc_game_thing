@@ -39,6 +39,32 @@ const REPAIRS: Readonly<Record<string, Repair>> = {
     prompt:
       "Game interface art, the lower part of a tall dark iron column seen straight on, in soft even light without glare. Behind everything, blackened cast iron covered in a gothic diaper of small quatrefoils in a diamond lattice, dark on dark, old and worn. In the middle, a gothic church portal carved in pale weathered stone: a deep pointed doorway with moulded arches stepping inward, dark inside, a round ivory enamel button in an iron socket in its depths, under a steep gable with crockets climbing its edges, the gable's peak carrying a carved stone corbel of curling leaves on which a statue stands. On each side, a slender gothic pinnacle of dark iron with a crocketed spire and a finial, each joined to the portal by a small flying buttress. Old and worn, matte, with no polish. No text, no letters.",
   },
+  /**
+   * Round 4's base again, tighter (the user: the first base's pattern came back "about 4 times bigger" and its spires
+   * didn't belong; the door can be the way out): a leaf corbel on a crocketed gable over a stone portal with a closed
+   * oak door, no pinnacles, the diaper held at round 4's scale by the depth map (`art/greybox/jilliath-capitol-door/`).
+   */
+  "jilliath-capitol-door": {
+    source: "art/greybox/jilliath-capitol-door/source.png",
+    page: [300, 864],
+    boxes: [],
+    mask: "art/greybox/jilliath-capitol-door/mask.png",
+    denoise: [0.8, 0.9],
+    depth: { map: "art/greybox/jilliath-capitol-door/depth.png", strength: 0.9 },
+    prompt:
+      "Game interface art, the lower part of a tall dark iron column seen straight on, in soft even light without glare. Behind everything, blackened cast iron covered in a gothic diaper of small quatrefoils in a fine diamond lattice, dark on dark, old and worn. In the middle, a gothic church portal carved in pale weathered stone, its moulded arches stepping inward, holding a closed pointed door of dark oak planks with black iron strap hinges and a ring handle, under a steep stone gable with crockets climbing its edges, the gable's peak carrying a carved stone corbel of curling leaves on which a statue stands. Old and worn, matte, with no polish. No text, no letters.",
+  },
+  /** The door repaint's pick with the remnants of round 4's low iron arch beside the portal painted out, the diaper held. */
+  "jilliath-capitol-door-edges": {
+    source: "art/candidates/ui/inpaint/jilliath-capitol-door/jilliath-capitol-door-d80-3.png",
+    page: [300, 864],
+    boxes: [],
+    mask: "art/greybox/jilliath-capitol-door/edges-mask.png",
+    denoise: [0.7, 0.85],
+    depth: { map: "art/greybox/jilliath-capitol-door/depth.png", strength: 0.9 },
+    prompt:
+      "Game interface art, dark blackened cast iron covered in a gothic diaper of small quatrefoils in a fine diamond lattice, dark on dark, old and worn, an even flat surface, matte. No text, no letters.",
+  },
   /** The duel bar's figures: arms and hands came out malformed (the user, 2026-10-10). */
   "duel-hands": {
     source: "art/candidates/ui/paint-in/battle-bar-duel-dull-nostone/battle-bar-duel-dull-nostone-3.png",

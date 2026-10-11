@@ -284,3 +284,6 @@
   a diaper face. `shots/jilliath-capitol-4.html`. Waiting on the user.
 - **The base (2026-10-11):** under the angel, a portal framing the leave button, a crocketed gable and corbel she
   stands on, pinnacles with flying buttresses (inpainted into round 4). `shots/jilliath-capitol-5.html`.
+- **Two renditions with the door (2026-10-11):** the door is the way out (the user's find); (1) round 4 inpainted
+  tighter, the pattern held at its scale; (2) painted whole with a corbel, gable, portal and two candles, in the game.
+  `shots/jilliath-capitol-6.html`. Waiting on the user's pick.

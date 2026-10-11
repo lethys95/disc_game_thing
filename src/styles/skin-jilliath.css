@@ -4,9 +4,9 @@
    painting's own pixels, as measured from it. */
 body[data-skin="jilliath"]:not(.greybox) { --pg: calc(50rem / 864); }
 
-/* The Capitol's column (assets/ui/jilliath/capitol-column.webp, jilliath-capitol-column-4 seed 4 with its base repainted (jilliath-capitol-base d90-1), after the user's
-   sketch): the tabs are four round buttons on the rim of a rose window an angel reaches up to, the leave button under
-   her altar. */
+/* The Capitol's column (assets/ui/jilliath/capitol-column.webp, jilliath-capitol-column-5 seed 1, after the user's
+   sketch): the tabs are four round buttons on the rim of a rose window an angel reaches up to; the way out is the door
+   in the portal under her. */
 body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol {
   display: block; padding: 0; background: var(--ui-jilliath-capitol-column) 0 0 / 100% 100% no-repeat; box-shadow: -0.5rem 0 1.2rem rgba(0, 0, 0, 0.7);
 }
@@ -15,15 +15,15 @@ body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol :is(.plate, .tab
   position: absolute; box-sizing: border-box; left: calc(var(--x) * var(--pg)); top: calc(var(--y) * var(--pg));
   width: calc(var(--w) * var(--pg)); height: calc(var(--h) * var(--pg)); margin: 0; padding: 0; background: none; box-shadow: none;
 }
-body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .plate.name { --x: 20; --y: 15; --w: 260; --h: 44; }
-body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .plate.purse { --x: 20; --y: 69; --w: 120; --h: 37; }
-body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .plate.mana-plate { --x: 162; --y: 69; --w: 120; --h: 37; }
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .plate.name { --x: 20; --y: 16; --w: 264; --h: 45; }
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .plate.purse { --x: 20; --y: 69; --w: 119; --h: 37; }
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .plate.mana-plate { --x: 162; --y: 69; --w: 123; --h: 37; }
 /* A tab is the round marble button; its emblem on the face, its name on a small dark label under it. */
-body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab { --w: 36; --h: 36; display: grid; place-items: center; border-radius: 50%; overflow: visible; }
-body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab:nth-child(1) { --x: 133; --y: 129; }
-body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab:nth-child(2) { --x: 64; --y: 200; }
-body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab:nth-child(3) { --x: 203; --y: 198; }
-body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab:nth-child(4) { --x: 132; --y: 270; }
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab { --w: 40; --h: 40; display: grid; place-items: center; border-radius: 50%; overflow: visible; }
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab:nth-child(1) { --x: 130; --y: 128; }
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab:nth-child(2) { --x: 62; --y: 200; }
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab:nth-child(3) { --x: 200; --y: 200; }
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab:nth-child(4) { --x: 130; --y: 270; }
 body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab .glyph { width: calc(30 * var(--pg)); height: calc(30 * var(--pg)); filter: none; }
 body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab .label {
   position: absolute; top: calc(100% + 2 * var(--pg)); left: 50%; transform: translateX(-50%); padding: 0.05rem 0.4rem; white-space: nowrap;
@@ -33,9 +33,12 @@ body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab:hover { box
 body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab.selected { box-shadow: 0 0 0 3px var(--gbx-lit), 0 0 1rem rgba(232, 195, 108, 0.75); }
 body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab.selected .label { color: var(--gbx-lit); }
 body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab.selected .glyph { filter: none; }
-/* Leaving: the round button under the altar, its symbol on the marble face. */
-body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .back { --x: 135; --y: 790; --w: 37; --h: 37; display: grid; place-items: center; border-radius: 50%; color: #241c15; }
-body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .back svg { width: 62%; height: 62%; }
-body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .back:hover { box-shadow: 0 0 0 2px rgba(232, 195, 108, 0.6), 0 0 1rem rgba(232, 195, 108, 0.5); }
+/* Leaving: the painted door is the way out (the user: "people already associate a door with leaving"); no symbol, a
+   warm light from behind it on hover, as if it were opening. */
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .back {
+  --x: 115; --y: 718; --w: 71; --h: 146; clip-path: polygon(0 100%, 0 32%, 50% 0, 100% 32%, 100% 100%); transition: background 0.2s;
+}
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .back svg { display: none; }
+body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .back:hover { background: radial-gradient(ellipse at 50% 70%, rgba(255, 196, 110, 0.32), rgba(255, 170, 80, 0.08) 70%); }
 /* The bottom button's name goes beside it: under it are the angel's hands. */
 body[data-skin="jilliath"]:not(.greybox) .screen-column.capitol .tab:nth-child(4) .label { top: 50%; left: calc(100% + 5 * var(--pg)); transform: translateY(-50%); }

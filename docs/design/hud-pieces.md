@@ -724,3 +724,19 @@ can be? Think about something gothic we haven't shown yet." Repainted by inpaint
 (`jilliath-capitol-base`, sketch, depth and mask by `art/greybox/jilliath-capitol-base/make.py`): a pale stone portal
 with stepped arches framing the leave button (the way out as a door), a crocketed gable whose peak carries a corbel of
 leaves she stands on, two iron pinnacles with small flying buttresses. The pick is d90-1. `shots/jilliath-capitol-5.html`.
+
+**Two renditions with the door (2026-10-11).** The user on the first base: the background pattern came back "about 4
+times bigger", the spires were "visibly ejecting themselves out in a different dimension", and the find: "the portal
+having a door, means we don't even need an exit button. We just need to show the door". Asked for two: (1) the
+inpaint again, (2) all of it painted again with more elements.
+- **Why the pattern grew:** the mask covered the column's whole width and the depth map was flat there, so the model
+  re-invented the diaper at its own scale. Fix: a mask that follows the new shapes, and the diaper drawn into the depth
+  map at the greybox's scale and phase wherever something must be repainted.
+- **(1)** `jilliath-capitol-door` (0.8 seed 3), then `jilliath-capitol-door-edges` (0.7 seed 2) to paint out round 4's
+  surviving low arch: a stone portal with a closed oak door under a crocketed gable, no pinnacles; the corbel didn't
+  come through (she stands on the gable's peak). In the game its placements are round 4's tabs and the door at
+  x 114, y 729, 73 × 135.
+- **(2)** `jilliath-capitol-column-5` seed 1: round 4's prompt with the base from the start, a leaf corbel on a crocketed
+  gable, the portal and door, and a lit candle on an iron stand each side. In the game.
+- The door is the way out in the skin: a clip-path over the painted door, warm light on hover; no symbol.
+  `shots/jilliath-capitol-6.html`.
