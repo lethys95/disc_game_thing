@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-11 (UI pass by job done; code review findings 1–3 fixed)
+**Updated:** 2026-10-11 (the overworld minimap; UI pass by job done; code review findings 1–3 fixed)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): the alpha is the three playable factions (Jilliath,
@@ -39,8 +39,10 @@ check its exit code, not a grep of its output); `pnpm sizes` for any interface c
 ## Next
 0. **The HUD, interface first** (the user's review, 2026-10-11; `in-progress/ui-kit-grotesques`; the `greybox` skill).
    Greyboxed by job: the Capitol (`shots/capitol-greybox.html`), the leader's and structures' screens
-   (`shots/warband-greybox.html`), the title, new game and menu (`shots/front-greybox.html`), all sharing one column, one unit sheet, one squad tile, one branch chooser. A Greybox
-   setting draws the still-painted pieces (map column, battle bar, turn order) flat. Next: the map column and battle
+   (`shots/warband-greybox.html`), the title, new game and menu (`shots/front-greybox.html`), the overworld minimap
+   (`shots/minimap-greybox.html`, `testing/minimap`), all sharing one column, one unit sheet, one squad tile, one branch chooser. A Greybox
+   setting draws the still-painted pieces (map column, battle bar, turn order) flat. Research trees: two layouts behind a
+   toggle until the user picks (`todo/75-proper-trees`). Next: the map column and battle
    bar by job, then title and menus; paint after a layout is judged, per faction skin. Glass rests.
    **The code review is handled** (`testing/code-review`): all five findings fixed or declined with reasons.
 1. **Finish Jilliath's concepts** with the user (the open nine), then portraits from the picks.

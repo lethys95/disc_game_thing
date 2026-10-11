@@ -258,6 +258,21 @@ export class MapView {
     this.stage.glide(right, forward, this.radius * SIZE * 1.8);
   }
 
+  /** Where on the ground the map camera looks. */
+  lookingAt(): THREE.Vector3 {
+    return this.stage.lookingAt();
+  }
+
+  /** The ground the map camera sees left of `right` (-1 to 1 across the screen), as four corners (the minimap's frame). */
+  footprint(right: number): THREE.Vector3[] {
+    return this.stage.footprint(3, right);
+  }
+
+  /** Moves the map camera to look at a point on the ground (the minimap's jump). */
+  lookAt(point: THREE.Vector3): void {
+    this.stage.lookAt(point);
+  }
+
   /** Aims the camera at the land between the map's middle and `home`, keeping its angle; for the next `show`. */
   centerOn(home: Hex): void {
     const offset = CAMERA_OFFSET.clone();

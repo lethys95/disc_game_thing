@@ -40,3 +40,18 @@ hovered, see the turn order. Sometimes: hand the battle to the AI, resolve it at
 | Log | opens the battle's log | what happened | keep; ☰ a stand-in, labelled likewise |
 | Seven ability sockets, arrows past seven | the abilities; the one a click would use lit | the job | keep (done this session) |
 | Hint line | the chosen ability and its targets; the numbers over the heads | | keep (done) |
+
+## The minimap (2026-10-11, the user: "a task for creating a minimap in the overworld")
+**What it's for**, most often first: where am I looking (the camera on the whole map); where are my warbands and cities
+(finding one off screen); where is the enemy, as far as I know (the fog decides); jumping the camera somewhere (a click).
+Maps run up to Huge, many screens wide.
+
+| Element | What it does | Why it's there | Verdict |
+|---|---|---|---|
+| The land | every explored hex in its terrain's flat value; unexplored hexes dark | where things are, and what's still unknown | keep; terrain as values, not textures (it must read at a glance) |
+| Cities | a square in its holder's colour (neutral grey), larger for a Capitol | the places that matter most | keep |
+| Warbands | a dot in their player's colour: yours always, others only where you see them now | finding your own, spotting threats | keep; the fog is the rules' (`knownWorld`), never more |
+| The camera's view | a frame: the ground the screen shows, left of the column, its far edge held where the view meets the horizon | orientation | keep; a ring first, which misstated how much the camera sees |
+| A click | moves the camera there | the jump | keep; the camera keeps its angle |
+| Lairs, structures, nodes | | the map's labels show them; the minimap stays legible | **left out** for now |
+| Where it sits | | | the bottom-left corner of the map, clear of the column, the hint line centred between the two; the painted column has no window for it (Disciples II keeps its minimap at the top of its column: flagged for when the column is repainted) |

@@ -26,6 +26,7 @@ import { buttonById, byId, element, gold, mana } from "#view/dom";
 import { explain } from "#view/explain";
 import { Forecasts } from "#view/forecasts";
 import { ForkPrompt } from "#view/fork-prompt";
+import { Minimap } from "#view/minimap";
 import { LeaderScreen } from "#view/leader";
 import { HEX_STEP_MS } from "#view/map";
 import type { MapView } from "#view/map";
@@ -82,6 +83,7 @@ export class Campaign implements KeyLayer {
   private readonly endTurn = buttonById("endturn");
   private readonly peek = byId("peek");
   private readonly forkPrompt = new ForkPrompt(byId("forkprompt"), (action) => void this.act(action), () => this.render());
+  private readonly minimap: Minimap;
   private readonly panels = new MapPanels({
     select: (leaderId) => {
       this.selected = leaderId;
@@ -145,6 +147,7 @@ export class Campaign implements KeyLayer {
     private readonly options: CampaignOptions,
   ) {
     this.forecasts = new Forecasts(ai, () => this.render());
+    this.minimap = new Minimap(byId("minimap"), view, byId("mapcolumn"));
     const canvas = stage.renderer.domElement;
     // A city's home view lets the map show through (to look at the city); the map itself takes no orders then.
     canvas.addEventListener("pointermove", (e) => {
@@ -519,6 +522,7 @@ export class Campaign implements KeyLayer {
     explain(this.manaPlate, "Mana", `${manaIncome(world, this.viewer)} more at the start of your next turn.`);
     this.endTurn.disabled = !this.myTurn();
     this.panels.render(world, this.viewer, leader, this.casting, this.myTurn());
+    this.minimap.render(known, this.viewer, new Set(playerOf(world, this.viewer).explored));
     this.renderCityScreen(world);
     this.hint.textContent = casting && this.myTurn()
       ? castHint(known, casting, this.hovered)

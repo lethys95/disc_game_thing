@@ -163,6 +163,39 @@ export class Stage {
     this.controls.update();
   }
 
+  /** Where on the ground the camera looks. */
+  lookingAt(): THREE.Vector3 {
+    return this.controls.target.clone();
+  }
+
+  /**
+   * The ground the camera sees: where the screen's corners (bottom left, bottom right, top right, top left) meet the
+   * ground plane, the right edge at `right` across the screen (-1 to 1) where the interface covers the rest. A corner
+   * looking above the horizon is held at `reach` times the camera's distance from its target.
+   */
+  footprint(reach: number, right: number): THREE.Vector3[] {
+    const eye = this.camera.position;
+    const far = eye.distanceTo(this.controls.target) * reach;
+    const across = new THREE.Vector3().setFromMatrixColumn(this.camera.matrixWorld, 0);
+    const up = new THREE.Vector3().setFromMatrixColumn(this.camera.matrixWorld, 1);
+    const ahead = this.camera.getWorldDirection(new THREE.Vector3());
+    const tall = Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2));
+    return [[-1, -1], [right, -1], [right, 1], [-1, 1]].map(([x = 0, y = 0]) => {
+      const ray = ahead.clone().addScaledVector(across, x * tall * this.camera.aspect).addScaledVector(up, y * tall).normalize();
+      const along = ray.y < 0 ? -eye.y / ray.y : Infinity;
+      if (along * Math.hypot(ray.x, ray.z) < far) return eye.clone().addScaledVector(ray, along);
+      return eye.clone().setY(0).add(new THREE.Vector3(ray.x, 0, ray.z).setLength(far));
+    });
+  }
+
+  /** Moves the camera to look at a point on the ground, keeping its angle and distance. */
+  lookAt(point: THREE.Vector3): void {
+    const move = new THREE.Vector3(point.x - this.controls.target.x, 0, point.z - this.controls.target.z);
+    this.controls.target.add(move);
+    this.camera.position.add(move);
+    this.controls.update();
+  }
+
   /**
    * Sets the speed the camera glides over the ground at (world units per second; zero to stop). It eases into and
    * out of it rather than stepping. `limit` as for `pan`.

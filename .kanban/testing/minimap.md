@@ -8,3 +8,9 @@
 - **Done when:** It's in the game, greyboxed by job first (the `greybox` skill: where it sits in the map column or
   beside it, what it marks), and the user has looked.
 - **Who:** Claude builds; the user judges.
+
+## Notes
+- 2026-10-11: built, greyboxed by job (`docs/design/map-elements.md`, "The minimap"; `shots/minimap-greybox.html`):
+  explored terrain in flat values, cities and warbands as you know them, the screen's footprint as a frame, a click
+  moves the camera. In the bottom-left corner; whether it moves into the column is for the repaint. Waiting for the
+  user to look.

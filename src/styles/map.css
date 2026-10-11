@@ -61,5 +61,10 @@
 #mapextra .city-row .city-text { flex: 1; }
 #mapextra .city-row .name { font: 700 0.9375rem var(--display); }
 #mapextra .city-row .note { color: var(--muted); font-size: 0.6875rem; }
-#mapbottom { position: fixed; left: calc((100vw - 50rem * 300 / 864) / 2); bottom: 1.125rem; transform: translateX(-50%); text-align: center; }
+/* Centred between the minimap (14rem from the left edge) and the column. */
+#mapbottom { position: fixed; left: calc((14rem + 100vw - 50rem * 300 / 864) / 2); bottom: 1.125rem; transform: translateX(-50%); max-width: calc(100vw - 50rem * 300 / 864 - 16rem); text-align: center; }
 #maphint { font: 500 1.0625rem var(--display); text-shadow: 0 1px 0.1875rem #000; min-height: 1.375rem; }
+
+/* The minimap (view/minimap.ts; docs/design/map-elements.md): the bottom-left corner of the map, clear of the column. */
+#minimap { position: fixed; left: 1rem; bottom: 1rem; width: 13rem; height: 13rem; padding: 0.4rem; box-sizing: border-box; background: var(--gbx-chrome); box-shadow: inset 0 0 0 1px var(--gbx-edge), 0 0.4rem 1rem rgba(0, 0, 0, 0.6); }
+#minimap .minimap-canvas { display: block; width: 100%; height: 100%; cursor: pointer; background: var(--gbx-well); }
