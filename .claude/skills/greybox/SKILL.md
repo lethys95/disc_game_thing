@@ -47,6 +47,9 @@ user values a view into the city).
 - Sizes in rem (`pnpm sizes`); text and labels plain.
 
 ## 4. Check every state
+- Settings → Display → "Greybox interface" (`settings.greybox`, `body.greybox` in `src/style.css`) draws every
+  painted piece flat at the same places, so a painted screen can be judged as a layout too. A painted piece added later
+  gets its `body.greybox` overrides.
 - `pnpm verify`; update playtests whose selectors the layout changed.
 - Each state of the screen: empty, full, conditional sections present, a selected unit, a menu open, can't afford.
   States the routes can't reach get a temporary hook (a URL param and a campaign method), used for the screenshots and

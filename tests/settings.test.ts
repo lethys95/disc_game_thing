@@ -17,6 +17,7 @@ describe("settings", () => {
       bounceLight: true,
       showFrameRate: false,
       showFormulas: false,
+      greybox: false,
       uiScale: 1,
     });
     expect(parseSettings(JSON.stringify({ uiScale: 9 })).uiScale).toBe(1.6);

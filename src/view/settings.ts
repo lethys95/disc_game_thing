@@ -35,11 +35,13 @@ export interface SettingsData {
   readonly showFrameRate: boolean;
   /** Rules text writes out how each scaled number came about ("54 (18% × 300)"), not just the number. */
   readonly showFormulas: boolean;
+  /** The interface in flat values, without its paintings: the layout as greyboxed, for judging it (the `greybox` skill). */
+  readonly greybox: boolean;
   /** The interface's size on top of the automatic one (which follows the window's height): 1 is as made. */
   readonly uiScale: number;
 }
 
-export const DEFAULT_SETTINGS: SettingsData = { speed: "normal", rotate: 1, zoom: 1, hotkeys: {}, slotKeys: true, masterVolume: 0.8, effectsVolume: 1, musicVolume: 0.6, bounceLight: true, showFrameRate: false, showFormulas: false, uiScale: 1 };
+export const DEFAULT_SETTINGS: SettingsData = { speed: "normal", rotate: 1, zoom: 1, hotkeys: {}, slotKeys: true, masterVolume: 0.8, effectsVolume: 1, musicVolume: 0.6, bounceLight: true, showFrameRate: false, showFormulas: false, greybox: false, uiScale: 1 };
 
 /** The player's own UI scale stays within this range. */
 export const UI_SCALE_RANGE = { min: 0.6, max: 1.6 } as const;
@@ -82,6 +84,7 @@ export function parseSettings(text: string | null): SettingsData {
   const bounceLight: unknown = Reflect.get(parsed, "bounceLight");
   const showFrameRate: unknown = Reflect.get(parsed, "showFrameRate");
   const showFormulas: unknown = Reflect.get(parsed, "showFormulas");
+  const greybox: unknown = Reflect.get(parsed, "greybox");
   const uiScale: unknown = Reflect.get(parsed, "uiScale");
   const hotkeys: unknown = Reflect.get(parsed, "hotkeys");
   const keys: Record<string, string> = {};
@@ -100,6 +103,7 @@ export function parseSettings(text: string | null): SettingsData {
     bounceLight: typeof bounceLight === "boolean" ? bounceLight : DEFAULT_SETTINGS.bounceLight,
     showFrameRate: typeof showFrameRate === "boolean" ? showFrameRate : DEFAULT_SETTINGS.showFrameRate,
     showFormulas: typeof showFormulas === "boolean" ? showFormulas : DEFAULT_SETTINGS.showFormulas,
+    greybox: typeof greybox === "boolean" ? greybox : DEFAULT_SETTINGS.greybox,
     uiScale: typeof uiScale === "number" && Number.isFinite(uiScale) ? Math.min(UI_SCALE_RANGE.max, Math.max(UI_SCALE_RANGE.min, uiScale)) : DEFAULT_SETTINGS.uiScale,
   };
 }

@@ -40,6 +40,7 @@ settings.follow((s) => stage.setBounceLight(s.bounceLight));
 settings.follow((s) => stage.setFrameRate(s.showFrameRate));
 // Every card's rules text carries its formulas; the page shows them only when asked (CSS: `body.formulas`).
 settings.follow((s) => document.body.classList.toggle("formulas", s.showFormulas));
+settings.follow((s) => document.body.classList.toggle("greybox", s.greybox));
 const sizeInterface = () => (document.documentElement.style.fontSize = `${rootFontSize(window.innerHeight, settings.data.uiScale)}px`);
 settings.follow(sizeInterface);
 window.addEventListener("resize", sizeInterface);

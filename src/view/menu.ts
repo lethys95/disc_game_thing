@@ -192,6 +192,13 @@ export class GameMenu implements KeyLayer {
     formulasBox.addEventListener("change", () => settings.update({ ...settings.data, showFormulas: formulasBox.checked }));
     formulas.append(formulasBox, element("span", "", "Show formulas in ability text: how each number grew from the unit's ability power, e.g. \"54 (18% × 300)\""));
     this.root.appendChild(formulas);
+    const grey = element("label", "check-row");
+    const greyBox = element("input", "check");
+    greyBox.type = "checkbox";
+    greyBox.checked = data.greybox;
+    greyBox.addEventListener("change", () => settings.update({ ...settings.data, greybox: greyBox.checked }));
+    grey.append(greyBox, element("span", "", "Greybox interface: the interface in flat values without its paintings, to judge the layout"));
+    this.root.appendChild(grey);
     const full = element("button", "small", document.fullscreenElement ? "Leave fullscreen" : "Fullscreen");
     full.addEventListener("click", () => void this.toggleFullscreen());
     this.root.appendChild(full);

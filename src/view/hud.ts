@@ -457,6 +457,8 @@ function unitCard(card: HTMLElement, battle: Battle, unit: BattleUnit | undefine
   if (!unit || !stats) return;
 
   const globe = element("div", "globe");
+  // The greybox setting draws the globe flat, filled to this share.
+  globe.style.setProperty("--share", String(share));
   const shieldLine = stats.shield > 0 ? [`Shield ${unit.shield} of ${stats.shield}: it takes hits before health does.`] : [];
   card.appendChild(explain(globe, unit.alive ? `Health ${unit.hp} of ${stats.maxHp}` : "Fallen", ...shieldLine));
   const number = element("div", "hpnum", unit.alive ? String(unit.hp) : "");
