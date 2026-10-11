@@ -1077,6 +1077,20 @@ const HERD_2_JOBS = jobs(
   HERD_3D,
 );
 
+
+/**
+ * Round three, the crows alone (round two's creature frame drew a wolf beside them both times: "four-legged animal"
+ * summoned one). A model of a flock as one object, no other animal.
+ */
+const flock = (subject: string, materials: string) =>
+  "A turnaround sheet of a single 3D game model of a flock of birds as one object: the same model shown three times side by side at the same size, in a front view, a side view from the left, and a back view, " +
+  `like a sculpted and textured asset shown in a modelling program. ${subject} Only crows: no wolf, no other animal, no person. ${materials} ` +
+  "Flat, even, shadowless lighting from all sides, like a texture reference. A plain flat light grey background, no ground, no text, no labels.";
+const CROWS_3_JOBS = [
+  { id: "carrion-murder-r3-branch-turnaround", prompt: flock("A dozen ragged black carrion crows perched along a gnarled dead branch that stands upright on a small stump, wings half spread, beaks open, a torn strip of grey cloth caught on the branch.", WILD_3D) },
+  { id: "carrion-murder-r3-swirl-turnaround", prompt: flock("A churning column of ragged black carrion crows wheeling around a dead sapling, wings spread and overlapping, loose black feathers falling, many open beaks.", WILD_3D) },
+];
+
 /** Each group of jobs has its own folder, so one group's run doesn't mix into another's manifest. */
 const GROUPS = [
   { dir: "art/candidates/units/grove", jobs: GROVE_JOBS },
@@ -1098,6 +1112,7 @@ const GROUPS = [
   { dir: "art/candidates/units/neutrals/wild", jobs: WILD_2_JOBS },
   { dir: "art/candidates/units/neutrals/scaled", jobs: SCALED_2_JOBS },
   { dir: "art/candidates/units/neutrals/herd", jobs: HERD_2_JOBS },
+  { dir: "art/candidates/units/neutrals/wild", jobs: CROWS_3_JOBS },
 ];
 
 const args = process.argv.slice(2);

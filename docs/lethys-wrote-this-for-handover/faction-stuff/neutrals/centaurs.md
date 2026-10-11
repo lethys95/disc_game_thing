@@ -60,3 +60,6 @@ grey flank is the standout; the antlered one with hanging discs, the khan in a h
 with red handprints, and the woman outrider with ochre stripes read apart. Misses: the dusty outrider came out as a
 rider on a horse, the scarred hoofbreaker with a horse's head on a human torso, and most wear saddles, which centaurs
 wouldn't. **Round two:** those two again, the body named first and "no saddle".
+**Round two (2026-10-12):** both are centaurs now (a human torso on a horse's body, no rider). The dusty outrider
+still has a saddle, and the hoofbreaker came out as a woman rather than a scarred brute: judge them as they are, or
+I go again.

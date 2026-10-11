@@ -62,3 +62,6 @@ medusa veiled in verdigris bronze, her snakes lifting the veil.
 (a hooded armoured coiler; a pale banded one in a great coil) are strong; the scaleblades split well (crested and
 armoured; white-striped with a reed kilt); the frilled spitter, its frill spread like a ruff, is the standout. The
 Shedskin missed in both readings: robed lizards with no shed skin to be seen. **Round two:** the shed skin first.
+**Round two (2026-10-12):** the cloak reading shows the moulted skin hanging from it, limbs and tail dangling: odd, and
+the first time the idea reads. The peeling reading shows no peeling; the model won't draw skin coming away after two
+tries, so the cloak is the one to judge.

@@ -63,3 +63,11 @@ branch; Old Grey, a giant pale wolf with a torn ear and a mane of frost-white fu
 a crow-headed man. The bears read as bears but stand upright; only the antlered Old Grey's side view is a real
 quadruped. The frame ("a character turnaround … T-pose or a clear standing pose") pulls bodies human, as the skill
 warns. **Round two:** a creature frame of its own (four legs, no clothing, not upright).
+**Round two (2026-10-12):** the creature frame worked: real boars (the tusked one with long curled tusks; the spear
+shafts didn't come through on the other), real bears on all fours (grey with moss and a blind look; brown with old
+arrowheads), real wolves (the chained one with its broken chain; the scarred grey), and Old Grey both ways (antlered;
+frost-white, the clearest apart from the grey wolves). The crows failed again: "four-legged animal" in the frame drew a
+wolf beside the branch and on the mound of crows. **Round three:** a flock frame for the crows alone.
+**Round three (2026-10-12), the crows alone:** a frame for a flock as one object worked: a dead tree crowded with
+crows and a torn grey cloth (the branch reading, both seeds), and a churning column of wings around a sapling (the
+swirl). Every unit of the Wild now has a reading that's the animal itself.
