@@ -4,7 +4,7 @@ import type { Commitment } from "#rules/forks";
 import type { PlayerColor } from "#rules/world/colors";
 import { hexDistance, hexKey, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
-import type { WorldMap } from "#rules/map";
+import type { Biome, WorldMap } from "#rules/map";
 import { NODES } from "#rules/nodes";
 import type { CityGifts, NodeKind } from "#rules/nodes";
 import { UNITS } from "#rules/units/index";
@@ -456,12 +456,15 @@ export function neutralGroup(tribe: Tribe, strength: Strength): SquadMember[] {
 }
 
 /**
- * Who guards a camp or dungeon here: gnolls in the desert, bandits elsewhere (provisional #63; the user's idea of a
+ * Who guards a camp or dungeon here: the tribe of its biome (provisional #63, #82; the user's idea of a
  * tribe per biome, questions #6). Neutral cities keep bandit garrisons.
  */
 export function tribeAt(map: WorldMap, hex: Hex): Tribe {
-  return map.tiles[hexKey(hex)]?.biome === "desert" ? "gnolls" : "bandits";
+  return TRIBE_OF_BIOME[map.tiles[hexKey(hex)]?.biome ?? "temperate"];
 }
+
+/** Who guards each biome's camps and dungeons (provisional #63, #82; Claude's table, the biomes the user's). */
+const TRIBE_OF_BIOME: Readonly<Record<Biome, Tribe>> = { temperate: "bandits", desert: "gnolls", swamp: "scaled", tundra: "clans", haunted: "drawn" };
 
 /** Stronger the further from both Capitols: easy fights near home, harder ones in the middle. */
 export function strengthAt(map: WorldMap, hex: Hex, atLeast: Strength): Strength {

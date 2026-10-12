@@ -1,7 +1,8 @@
 import type { Hex } from "#rules/hex";
 import { hexDistance, hexKey } from "#rules/hex";
+import { BIOMES, PATCH_BIOMES } from "#rules/map";
 import type { Biome, Terrain, WorldMap } from "#rules/map";
-import { abs, attribute, float, floor, instancedBufferAttribute, max, mix, mx_fractal_noise_float, positionLocal, positionWorld, select, sin, smoothstep, step, texture, time, transformNormalToView, uniformArray, vec2, vec3 } from "three/tsl";
+import { abs, attribute, float, floor, int, instancedBufferAttribute, max, mix, mx_fractal_noise_float, positionLocal, positionWorld, select, sin, smoothstep, step, texture, time, transformNormalToView, uniformArray, vec2, vec3 } from "three/tsl";
 import * as THREE from "three/webgpu";
 import type { GroundTextures } from "#view/models";
 import { GROUND_LOOK, groundName } from "#view/models";
@@ -110,8 +111,8 @@ interface GroundSample {
   readonly weights: readonly [number, number, number, number];
   /** How much of the point is water (0..1). */
   readonly wet: number;
-  /** How much of the point is desert (0..1): the biomes blend along the same noisy edges as the terrains. */
-  readonly desert: number;
+  /** How much of the point is each patch biome (`PATCH_BIOMES`, 0..1): biomes blend along the same noisy edges as the terrains. */
+  readonly biomes: readonly [number, number, number, number];
   /** The hexes the sample drew from (for fog: a point is as explored as the hexes around it). */
   readonly hexes: readonly Hex[];
 }
@@ -139,7 +140,7 @@ export class GroundShape {
     const weights: [number, number, number, number] = [0, 0, 0, 0];
     let height = 0;
     let wet = 0;
-    let desert = 0;
+    const biomes: [number, number, number, number] = [0, 0, 0, 0];
     const hexes: Hex[] = [];
     for (const [dx, dz] of TAPS) {
       const hex = hexAt(wx + dx, wz + dz);
@@ -147,12 +148,14 @@ export class GroundShape {
       const terrain = this.terrainOf(hex);
       height += BASE_HEIGHT[terrain] + fbm(x * 1.7, z * 1.7, 37) * RELIEF[terrain];
       if (terrain === "water") wet += 1;
-      if (this.biomeOf(hex) === "desert") desert += 1;
+      const own = this.biomeOf(hex);
+      const patch = PATCH_BIOMES.findIndex((b) => b === own);
+      if (patch >= 0) biomes[patch] = (biomes[patch] ?? 0) + 1;
       const layer = LAYERS.indexOf(terrain === "water" ? UNDERWATER : terrain);
       weights[layer] = (weights[layer] ?? 0) + 1;
     }
     const n = TAPS.length;
-    return { height: height / n, weights: [weights[0] / n, weights[1] / n, weights[2] / n, weights[3] / n], wet: wet / n, desert: desert / n, hexes };
+    return { height: height / n, weights: [weights[0] / n, weights[1] / n, weights[2] / n, weights[3] / n], wet: wet / n, biomes: [biomes[0] / n, biomes[1] / n, biomes[2] / n, biomes[3] / n], hexes };
   }
 
   heightAt(x: number, z: number): number {
@@ -223,19 +226,22 @@ function hexEdgeNode(p: Vec2Node, hex: Vec2Node) {
   return float((SQRT3 / 2) * HEX_SIZE).sub(max(d.x, d.x.mul(0.5).add(d.y.mul(SQRT3 / 2))));
 }
 
-/** A texture sampled at two scales and rotations, mixed by slow noise, so its repeats don't line up. */
-function layerNode(tex: THREE.Texture, uv: Vec2Node) {
-  const a = texture(tex, uv).rgb;
+/** A ground (a layer of the grounds' array) sampled at two scales and rotations, mixed by slow noise, so its repeats don't line up. */
+function layerNode(grounds: THREE.DataArrayTexture, layer: number, uv: Vec2Node) {
+  const a = texture(grounds, uv).depth(int(layer)).rgb;
   const turned = vec2(uv.x.mul(0.8).add(uv.y.mul(0.6)), uv.x.mul(-0.6).add(uv.y.mul(0.8))).mul(0.73).add(0.37);
-  const b = texture(tex, turned).rgb;
+  const b = texture(grounds, turned).depth(int(layer)).rgb;
   const m = sin(uv.x.mul(1.3).add(sin(uv.y.mul(0.9)).mul(2))).mul(0.5).add(0.5);
   return mix(a, b, m.mul(0.6));
 }
 
 /** Grass tufts per square world unit, by the ground they grow on (plain, forest floor, hills, mountain). */
 const GRASS_DENSITY = [60, 16, 34, 0] as const;
-/** The desert grows a sparse fraction of that, dry and straw-colored (a tint on the green tufts). */
-const DESERT_GRASS = 0.12;
+/**
+ * How much of that grass each patch biome grows, and whether it's dry (straw-colored, a tint on the green tufts): the
+ * desert little, the swamp thick and green, the tundra and the haunted woods thin and dead.
+ */
+const PATCH_GRASS: readonly (readonly [number, boolean])[] = [[0.12, true], [1.2, false], [0.35, true], [0.45, true]];
 const DRY = new THREE.Color().setRGB(1.55, 1.05, 0.55);
 /** No grass right around a place (a city, a camp, a dungeon): its model stands on bare ground. */
 const CLEARING = 0.5;
@@ -295,6 +301,9 @@ export class Landscape {
   private readonly hexes: readonly Hex[];
   private readonly radius: number;
 
+  /** Every biome's grounds as one array texture (its own, so it's freed with the landscape). */
+  private readonly groundArray: THREE.DataArrayTexture;
+
   constructor(map: WorldMap, grounds: GroundTextures, highlightColors: Readonly<Record<Exclude<Highlight, "none">, THREE.Color>>) {
     this.shape = new GroundShape(map);
     this.hexes = Object.values(map.tiles).map((t) => t.hex);
@@ -313,17 +322,11 @@ export class Landscape {
     }
     this.state.flush();
 
-    const blank = new THREE.DataTexture(new Uint8Array([90, 110, 60, 255]), 1, 1);
-    blank.needsUpdate = true;
-    const layer = (terrain: (typeof LAYERS)[number], biome: Biome = "temperate") => {
-      const loaded = grounds.get(groundName(biome, terrain), 1) ?? grounds.get(terrain, 1);
-      if (!loaded) return blank;
-      loaded.wrapS = loaded.wrapT = THREE.RepeatWrapping;
-      // Re-upload only a texture that's already loaded (another screen used it unrepeated); a pending one uploads
-      // with its wrapping when it arrives, and flagging it now would make WebGPU read an image that isn't there.
-      if (loaded.image) loaded.needsUpdate = true;
-      return loaded;
-    };
+    // Every biome's four grounds in one array texture: layer = biome × 4 + terrain (`LAYERS` order).
+    const biomes = BIOMES;
+    const groundArray = grounds.array(biomes.flatMap((biome) => LAYERS.map((terrain) => [groundName(biome, terrain), terrain] as const)));
+    this.groundArray = groundArray;
+    const layer = (terrain: (typeof LAYERS)[number], biome: Biome) => biomes.indexOf(biome) * LAYERS.length + LAYERS.indexOf(terrain);
     const cellOf = (hex: Vec2Node) => texture(this.state.texture, hex.add(float(this.state.offset + 0.5)).div(float(this.state.width)));
 
     this.material = new THREE.MeshStandardNodeMaterial({ roughness: 0.95, metalness: 0 });
@@ -336,11 +339,18 @@ export class Landscape {
     const weights = attribute<"vec4">("groundWeights", "vec4");
     const w = weights.div(max(weights.x.add(weights.y).add(weights.z).add(weights.w), 0.001));
     const blend = (biome: Biome) =>
-      layerNode(layer("plain", biome), uv).mul(w.x)
-        .add(layerNode(layer("forest", biome), uv).mul(w.y).mul(biome === "temperate" ? 1.35 : 1))
-        .add(layerNode(layer("hills", biome), uv).mul(w.z))
-        .add(layerNode(layer("mountain", biome), uv).mul(w.w));
-    let ground = mix(blend("temperate"), blend("desert").mul(GROUND_LOOK.desert.tone), attribute<"float">("groundDesert", "float"));
+      layerNode(groundArray, layer("plain", biome), uv).mul(w.x)
+        .add(layerNode(groundArray, layer("forest", biome), uv).mul(w.y).mul(biome === "temperate" ? 1.35 : 1))
+        .add(layerNode(groundArray, layer("hills", biome), uv).mul(w.z))
+        .add(layerNode(groundArray, layer("mountain", biome), uv).mul(w.w));
+    // Each patch biome's ground, weighted by how much of the point it covers; the temperate land takes the rest.
+    const share = attribute<"vec4">("groundBiomes", "vec4");
+    const parts = [share.x, share.y, share.z, share.w];
+    let ground = blend("temperate").mul(float(1).sub(share.x.add(share.y).add(share.z).add(share.w)));
+    PATCH_BIOMES.forEach((biome, i) => {
+      const part = parts[i];
+      if (part) ground = ground.add(blend(biome).mul(GROUND_LOOK[biome].tone).mul(part));
+    });
     ground = ground.mul(mix(float(1), float(0.45), attribute<"float">("groundWet", "float")));
     // A pale, muddy shore where the land dips to the water.
     const shore = smoothstep(WATER_LEVEL + 0.07, WATER_LEVEL + 0.005, positionWorld.y);
@@ -409,7 +419,7 @@ export class Landscape {
         for (let cz = -1; cz < 1; cz += cell) {
           const probe = this.shape.sample(center.x + cx + cell / 2, center.z + cz + cell / 2);
           if (probe.wet > 0.01) continue;
-          const density = probe.weights.reduce((sum, w, i) => sum + w * (GRASS_DENSITY[i] ?? 0), 0) * (1 - probe.desert * (1 - DESERT_GRASS));
+          const density = probe.weights.reduce((sum, w, i) => sum + w * (GRASS_DENSITY[i] ?? 0), 0) * probe.biomes.reduce((left, part, i) => left - part * (1 - (PATCH_GRASS[i]?.[0] ?? 1)), 1);
           const count = Math.round(density * cell * cell);
           for (let i = 0; i < count; i++) {
             const x = center.x + cx + random() * cell;
@@ -417,7 +427,7 @@ export class Landscape {
             const own = hexAt(x, z);
             if (own.q !== hex.q || own.r !== hex.r) continue;
             if (places.some((p) => Math.hypot(p.x - x, p.z - z) < CLEARING)) continue;
-            blades.push({ x, z, y: this.shape.heightAt(x, z), height: 0.07 + random() * 0.08, turn: random() * Math.PI * 2, shade: 0.75 + random() * 0.45, dry: random() < probe.desert, hex });
+            blades.push({ x, z, y: this.shape.heightAt(x, z), height: 0.07 + random() * 0.08, turn: random() * Math.PI * 2, shade: 0.75 + random() * 0.45, dry: random() < probe.biomes.reduce((sum, part, i) => sum + (PATCH_GRASS[i]?.[1] ? part : 0), 0), hex });
           }
         }
       }
@@ -465,7 +475,7 @@ export class Landscape {
     const positions: number[] = [];
     const weights: number[] = [];
     const wet: number[] = [];
-    const desert: number[] = [];
+    const biomes: number[] = [];
     const hexOf: number[] = [];
     for (let row = 0; row <= rows; row++) {
       for (let col = 0; col <= columns; col++) {
@@ -475,7 +485,7 @@ export class Landscape {
         positions.push(x, sample.height, z);
         weights.push(...sample.weights);
         wet.push(sample.wet);
-        desert.push(sample.desert);
+        biomes.push(...sample.biomes);
         const own = hexAt(x, z);
         hexOf.push(own.q, own.r);
       }
@@ -496,7 +506,7 @@ export class Landscape {
     geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
     geometry.setAttribute("groundWeights", new THREE.Float32BufferAttribute(weights, 4));
     geometry.setAttribute("groundWet", new THREE.Float32BufferAttribute(wet, 1));
-    geometry.setAttribute("groundDesert", new THREE.Float32BufferAttribute(desert, 1));
+    geometry.setAttribute("groundBiomes", new THREE.Float32BufferAttribute(biomes, 4));
     geometry.setAttribute("groundHex", new THREE.Float32BufferAttribute(hexOf, 2));
     geometry.setIndex(indices);
     geometry.computeVertexNormals();
@@ -542,5 +552,6 @@ export class Landscape {
       }
     });
     this.state.texture.dispose();
+    this.groundArray.dispose();
   }
 }

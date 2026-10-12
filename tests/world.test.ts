@@ -1,7 +1,7 @@
 import { autoplay } from "#rules/ai";
 import type { Placement } from "#rules/battle/engine";
 import { hexagon, hexDistance, hexKey, neighbors } from "#rules/hex";
-import { SPECIAL_NODES, findPath, generateMap, TERRAIN_COST } from "#rules/map";
+import { PATCH_BIOMES, SPECIAL_NODES, findPath, generateMap, TERRAIN_COST } from "#rules/map";
 import type { Commitment } from "#rules/forks";
 import { GUARDIAN_ID } from "#rules/units/index";
 import { CITY_HEALING_PER_TIER, CAMP_REGROWTH_TURNS, CAMP_STRONG_FROM, CAPITOL_INCOME, MINE_INCOME, STARTING_GOLD } from "#rules/balance";
@@ -64,26 +64,31 @@ describe("map", () => {
     expect(generateMap(1)).not.toEqual(generateMap(2));
   });
 
-  test("every map has one desert, one patch of neighboring hexes, a part of the map and not all of it", () => {
-    for (const seed of [1, 2, 3, 42, 1234]) {
-      const tiles = Object.values(generateMap(seed).tiles);
-      const desert = tiles.filter((t) => t.biome === "desert");
-      expect(desert.length).toBeGreaterThan(tiles.length * 0.1);
-      expect(desert.length).toBeLessThan(tiles.length * 0.4);
-      const keys = new Set(desert.map((t) => hexKey(t.hex)));
-      const first = desert[0];
-      if (!first) throw new Error("no desert");
-      const reached = new Set([hexKey(first.hex)]);
-      const frontier = [first.hex];
-      for (let hex = frontier.pop(); hex; hex = frontier.pop()) {
-        for (const n of neighbors(hex)) {
-          if (keys.has(hexKey(n)) && !reached.has(hexKey(n))) {
-            reached.add(hexKey(n));
-            frontier.push(n);
+  test("every map has its patch biomes, each one connected patch of a part of the map, with temperate land between", () => {
+    for (const [seed, size] of [[1, "small"], [2, "medium"], [3, "large"], [42, "huge"], [1234, "small"]] as const) {
+      const map = generateMap(seed, 2, size);
+      const tiles = Object.values(map.tiles);
+      const present = PATCH_BIOMES.filter((b) => tiles.some((t) => t.biome === b));
+      expect(present.length).toBe(Math.min(PATCH_BIOMES.length, map.radius - 3));
+      expect(tiles.filter((t) => t.biome === "temperate").length).toBeGreaterThan(tiles.length * 0.25);
+      for (const biome of present) {
+        const patch = tiles.filter((t) => t.biome === biome);
+        expect(patch.length).toBeLessThan(tiles.length * 0.4);
+        const keys = new Set(patch.map((t) => hexKey(t.hex)));
+        const first = patch[0];
+        if (!first) throw new Error(`no ${biome}`);
+        const reached = new Set([hexKey(first.hex)]);
+        const frontier = [first.hex];
+        for (let hex = frontier.pop(); hex; hex = frontier.pop()) {
+          for (const n of neighbors(hex)) {
+            if (keys.has(hexKey(n)) && !reached.has(hexKey(n))) {
+              reached.add(hexKey(n));
+              frontier.push(n);
+            }
           }
         }
+        expect(reached.size, `${biome} on seed ${seed}`).toBe(keys.size);
       }
-      expect(reached.size).toBe(keys.size);
     }
   });
 

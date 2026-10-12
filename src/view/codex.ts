@@ -1,6 +1,7 @@
 import { BEHAVIORS } from "#rules/abilities/index";
 import type { UnitDef } from "#rules/battle/types";
 import { EFFECTS } from "#rules/effects";
+import { TRIBE_NAMES } from "#view/map-text";
 import { FACTIONS, PLAYABLE } from "#rules/factions";
 import { NODES } from "#rules/nodes";
 import type { NodeKind } from "#rules/nodes";
@@ -26,11 +27,6 @@ type Shelf = Playable | Tribe;
 const TABS: readonly (readonly [Tab, string])[] = [["units", "Units"], ["abilities", "Abilities"], ["effects", "Effects"], ["nodes", "Nodes"]];
 
 
-/** The tribes' names are placeholders until the user names them (`faction-stuff/neutrals/`). */
-const TRIBE_NAMES: Readonly<Record<Tribe, string>> = {
-  bandits: "Bandits", gnolls: "Gnolls", drawn: "The Drawn", carnival: "The carnival",
-  wild: "The Wild", tusk: "The Tuskclans", scaled: "The Scaled", herd: "The Herd", clans: "The barbarian clans",
-};
 
 const isPlayable = (shelf: Shelf): shelf is Playable => shelf in FACTIONS;
 

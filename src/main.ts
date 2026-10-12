@@ -28,7 +28,7 @@ import type { Playable } from "#rules/units/index";
 import { isMapSize } from "#rules/map";
 import type { BattleSetting } from "#view/battle-setting";
 import { MODEL_CHAINS } from "#view/models";
-import { isTerrain } from "#rules/map";
+import { BIOMES, isTerrain } from "#rules/map";
 
 const params = new URLSearchParams(window.location.search);
 
@@ -184,12 +184,12 @@ if (params.has("map")) {
     : fight.startsWith("grove")
       ? presetOf("grove", groveKey)
       : fight === "bandits" ? BANDIT_GROUP : fight === "gnolls" ? GNOLL_GROUP : fight === "drawn" ? DRAWN_GROUP : fight === "carnival" ? CARNIVAL_GROUP : tribeFight(fight) ?? presets[1];
-  // `terrain=forest`, `biome=desert`, `backdrop=capitol|city|dungeon`: fight somewhere other than open plains (screenshots).
+  // `terrain=forest`, `biome=desert|swamp|tundra|haunted`, `backdrop=capitol|city|dungeon`: fight somewhere other than open plains (screenshots).
   const terrain = params.get("terrain") ?? "plain";
   const backdrop = params.get("backdrop");
   const setting: BattleSetting = {
     terrain: isTerrain(terrain) ? terrain : "plain",
-    biome: params.get("biome") === "desert" ? "desert" : "temperate",
+    biome: BIOMES.find((b) => b === params.get("biome")) ?? "temperate",
     backdrop: backdrop === "capitol" ? MODEL_CHAINS.capitol("jilliath") : backdrop === "city" ? MODEL_CHAINS.city() : backdrop === "dungeon" ? MODEL_CHAINS.dungeon() : null,
   };
   // `tarot=3`: each side's first unit carries Tarot 3; `seed=N` picks the hands (the user's tarot, 2026-10-05).

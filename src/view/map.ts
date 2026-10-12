@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import type { PlayerColor } from "#rules/world/colors";
-import { cityOfNode } from "#rules/world/state";
+import { cityOfNode, tribeAt } from "#rules/world/state";
+import { TRIBE_NAMES } from "#view/map-text";
 import type { PlayerId } from "#rules/world/state";
 import type { Vision } from "#rules/world/vision";
 import { threeColor } from "#view/colors";
@@ -9,7 +10,7 @@ import { movementPips } from "#view/dom";
 import { CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
 import { hexDistance, hexKey } from "#rules/hex";
 import type { Hex } from "#rules/hex";
-import type { WorldMap } from "#rules/map";
+import type { Biome, WorldMap } from "#rules/map";
 import type { NodeKind } from "#rules/nodes";
 import { UNITS } from "#rules/units/index";
 import { spellById } from "#rules/spells";
@@ -29,6 +30,9 @@ const SIZE = 1;
 export const HEX_STEP_MS = 190;
 /** Where the map camera sits relative to what it looks at. */
 const CAMERA_OFFSET = new THREE.Vector3(-3, 11, 11.2);
+
+/** Trees per forest hex by biome. */
+const TREES: Readonly<Record<Biome, number>> = { temperate: 8, desert: 5, swamp: 9, tundra: 7, haunted: 10 };
 
 export function hexPosition(hex: Hex): THREE.Vector3 {
   return new THREE.Vector3(SIZE * Math.sqrt(3) * (hex.q + hex.r / 2), 0, SIZE * 1.5 * hex.r);
@@ -323,8 +327,8 @@ export class MapView {
       };
       if (tile.terrain === "forest") {
         // A ring of seven and one in the middle, with underbrush between: a forest should read as a forest from the
-        // map's height. A desert's groves are sparser.
-        const trees = tile.biome === "desert" ? 5 : 8;
+        // map's height. A desert's groves are sparser, a haunted wood's and a swamp's denser.
+        const trees = TREES[tile.biome];
         for (let i = 0; i < trees; i++) {
           const angle = (i / (trees - 1)) * Math.PI * 2 + jitter(tile.hex, i) * 0.8;
           const reach = i === trees - 1 ? 0.05 : 0.36 + jitter(tile.hex, i + 20) * 0.22;
@@ -569,7 +573,7 @@ export class MapView {
       model.label.hidden = !model.group.visible;
       model.label.textContent =
         lair.kind === "camp"
-          ? `Bandits · ${lair.guards.length}`
+          ? `${TRIBE_NAMES[tribeAt(world.map, lair.hex)]} · ${lair.guards.length}`
           : lair.looted
             ? "Dungeon (looted)"
             : `Dungeon · ${lair.guards.length} guards`;

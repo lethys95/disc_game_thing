@@ -39,7 +39,44 @@ export class GroundTextures {
     }
     return texture;
   }
+
+  /**
+   * Several grounds as the layers of one array texture, in the order named (a missing one takes its fallback's image):
+   * a shader samples them all through one binding. Every ground on the map at once is 20 textures, past WebGPU's 16 per
+   * shader stage, which scrambled the bindings (2026-10-12). Each layer fills in as its image loads.
+   */
+  array(names: readonly (readonly [name: string, fallback: string])[]): THREE.DataArrayTexture {
+    const size = GROUND_SIZE;
+    const data = new Uint8Array(size * size * 4 * names.length).fill(255);
+    const array = new THREE.DataArrayTexture(data, size, size, names.length);
+    array.colorSpace = THREE.SRGBColorSpace;
+    array.wrapS = array.wrapT = THREE.RepeatWrapping;
+    array.magFilter = THREE.LinearFilter;
+    array.minFilter = THREE.LinearMipmapLinearFilter;
+    array.generateMipmaps = true;
+    array.anisotropy = 8;
+    names.forEach(([name, fallback], layer) => {
+      const url = GROUND[`/assets/ground/${name}-1.webp`] ?? GROUND[`/assets/ground/${fallback}-1.webp`];
+      if (!url) return;
+      const image = new Image();
+      image.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = canvas.height = size;
+        const g = canvas.getContext("2d");
+        if (!g) return;
+        g.drawImage(image, 0, 0, size, size);
+        data.set(g.getImageData(0, 0, size, size).data, layer * size * size * 4);
+        array.addLayerUpdate(layer);
+        array.needsUpdate = true;
+      };
+      image.src = url;
+    });
+    return array;
+  }
 }
+
+/** Every ground texture's side, in pixels (`assets/ground/`). */
+const GROUND_SIZE = 512;
 
 /** The haze where the sky's painted mountains meet the land (`assets/sky/map.webp`); fog fades into it. */
 export const HORIZON_MIST = 0x4a5358;
@@ -61,7 +98,7 @@ export const TERRAIN_VARIANTS = { tree: 4, mountain: 3, hill: 2, rock: 2, bush: 
 export type TerrainProp = keyof typeof TERRAIN_VARIANTS;
 
 /** The biomes other than the temperate land draw their props and grounds under their own prefix. */
-const BIOME_PREFIX: Readonly<Record<Biome, string>> = { temperate: "", desert: "desert-" };
+const BIOME_PREFIX: Readonly<Record<Biome, string>> = { temperate: "", desert: "desert-", swamp: "swamp-", tundra: "tundra-", haunted: "haunted-" };
 
 /** A terrain prop's slot chain: the biome's variant, then its first, then the temperate ones while it has none. */
 export function terrainChain(biome: Biome, kind: TerrainProp, variant: number): string[] {
@@ -80,6 +117,9 @@ export const groundName = (biome: Biome, terrain: string): string => `${BIOME_PR
 export const GROUND_LOOK: Readonly<Record<Biome, { readonly tone: number; readonly seamless: boolean }>> = {
   temperate: { tone: 1, seamless: false },
   desert: { tone: 0.7, seamless: true },
+  swamp: { tone: 0.9, seamless: true },
+  tundra: { tone: 0.75, seamless: true },
+  haunted: { tone: 0.85, seamless: true },
 };
 
 /** Every model slot the map can show, for the orphan check (`tests/models.test.ts`). */

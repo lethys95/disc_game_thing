@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { hexKey } from "#rules/hex";
-import type { Terrain } from "#rules/map";
+import type { Biome, Terrain } from "#rules/map";
 import type { PlayerId, World } from "#rules/world/state";
 import { COLOR_HEX } from "#view/colors";
 import { hexPosition } from "#view/map";
@@ -9,6 +9,8 @@ import type { MapView } from "#view/map";
 /** Each terrain as a flat value: the minimap reads at a glance, not as a picture. */
 const TERRAIN_FILL: Readonly<Record<Terrain, string>> = { plain: "#55513f", forest: "#2f3e2b", hills: "#6b5f4a", mountain: "#8a857c", water: "#26394a" };
 const UNEXPLORED = "#141210";
+/** Each patch biome's tint over the terrain fills, so the patches show at a glance. */
+const BIOME_TINT: Readonly<Record<Biome, string | null>> = { temperate: null, desert: "#b8925a", swamp: "#3f5a3a", tundra: "#c8d4dc", haunted: "#5a4f63" };
 const NEUTRAL = "#9a948a";
 const INK = "#0d0b0a";
 const LIGHT = "#e6dccb";
@@ -74,8 +76,16 @@ export class Minimap {
     tiles.forEach((tile, i) => {
       const p = points[i];
       if (!p) return;
-      g.fillStyle = explored.has(hexKey(tile.hex)) ? TERRAIN_FILL[tile.terrain] : UNEXPLORED;
+      const seen = explored.has(hexKey(tile.hex));
+      g.fillStyle = seen ? TERRAIN_FILL[tile.terrain] : UNEXPLORED;
       this.hex(g, p.x * scale + this.fit.x, p.z * scale + this.fit.z, radius);
+      const tint = BIOME_TINT[tile.biome];
+      if (seen && tint && tile.terrain !== "water") {
+        g.globalAlpha = 0.45;
+        g.fillStyle = tint;
+        this.hex(g, p.x * scale + this.fit.x, p.z * scale + this.fit.z, radius);
+        g.globalAlpha = 1;
+      }
     });
     // Neutral places have no hue (every hue is a player's): lairs dark with a light rim, structures light with a dark one.
     for (const lair of known.lairs) {

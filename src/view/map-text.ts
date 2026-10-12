@@ -11,6 +11,13 @@ import { describeSpell, spellById } from "#rules/spells";
 import { itemById } from "#rules/items";
 import { unitName } from "#view/members";
 import { STRUCTURES } from "#rules/structures";
+import type { Tribe } from "#rules/world/state";
+
+/** The tribes' names are placeholders until the user names them (`faction-stuff/neutrals/`). */
+export const TRIBE_NAMES: Readonly<Record<Tribe, string>> = {
+  bandits: "Bandits", gnolls: "Gnolls", drawn: "The Drawn", carnival: "The carnival",
+  wild: "The Wild", tusk: "The Tuskclans", scaled: "The Scaled", herd: "The Herd", clans: "The barbarian clans",
+};
 
 /** What the map's hint line says: the hover, the march, the news. Pure text over what the player knows. */
 

@@ -22,7 +22,11 @@ export const TERRAIN_COST: Readonly<Record<Terrain, number | null>> = {
  * A region's look (user, 2026-09-30: biomes are mostly cosmetic; careful with effects): the same terrains, drawn
  * differently. It changes no rule yet. "temperate" is a placeholder name for the land the map had before biomes.
  */
-export type Biome = "temperate" | "desert";
+export type Biome = "temperate" | "desert" | "swamp" | "tundra" | "haunted";
+
+/** The biomes that come as patches in the temperate land (the user added swamp, tundra and haunted woods, 2026-10-12). */
+export const PATCH_BIOMES: readonly Exclude<Biome, "temperate">[] = ["desert", "swamp", "tundra", "haunted"];
+export const BIOMES: readonly Biome[] = ["temperate", ...PATCH_BIOMES];
 
 export interface MapTile {
   readonly hex: Hex;
@@ -104,16 +108,30 @@ function terrainFor(seed: number, hex: Hex, radius: number): Terrain {
 }
 
 /**
- * Provisional (#60): one desert per map, a patch with a wandering edge about half the map's radius across, centered
- * on a hex partway out from the middle, in a direction the seed picks.
+ * Provisional (#60, #82): biomes come as patches in the temperate land, each with a wandering edge, centred partway out
+ * from the middle at evenly spread angles the seed turns. A small map has two, a medium three, larger ones all four
+ * (`PATCH_BIOMES`), the seed choosing which.
  */
 function biomeFor(seed: number, hex: Hex, radius: number): Biome {
-  const angle = noise(seed + 6007, 0, 0) * Math.PI * 2;
-  const out = radius * 0.45;
-  const q = Math.round(out * Math.cos(angle));
-  const r = Math.round(out * Math.sin(angle) - q / 2);
-  const reach = radius * 0.5 + (smooth(seed + 6011, hex) - 0.5) * 3;
-  return hexDistance(hex, { q, r }) <= reach ? "desert" : "temperate";
+  const count = Math.min(PATCH_BIOMES.length, radius - 3);
+  const order = [...PATCH_BIOMES].sort((a, b) => noise(seed + 6101, PATCH_BIOMES.indexOf(a), 0) - noise(seed + 6101, PATCH_BIOMES.indexOf(b), 0));
+  const turn = noise(seed + 6007, 0, 0) * Math.PI * 2;
+  const out = radius * 0.5;
+  const reach = radius * (count > 2 ? 0.36 : 0.45) + (smooth(seed + 6011, hex) - 0.5) * 3;
+  let best: Biome = "temperate";
+  let nearest = Infinity;
+  for (let i = 0; i < count; i++) {
+    const angle = turn + (i * Math.PI * 2) / count;
+    const q = Math.round(out * Math.cos(angle));
+    const r = Math.round(out * Math.sin(angle) - q / 2);
+    const d = hexDistance(hex, { q, r });
+    const biome = order[i];
+    if (biome && d <= reach && d < nearest) {
+      nearest = d;
+      best = biome;
+    }
+  }
+  return best;
 }
 
 /**

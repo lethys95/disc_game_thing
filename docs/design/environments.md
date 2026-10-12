@@ -54,3 +54,9 @@ game testing beckons it once more."
   - Tundra: burning ends early.
   - Storm scar: lightning damage is a little higher.
   - Temperate land: nothing (the baseline).
+
+## Swamp, tundra, haunted woods (2026-10-12)
+The user: "We probably need more biomes" and, offered Claude's table, "Add swamp, tundra, haunted woods." In the game:
+their grounds, grass and tree density, patch placement and tribes (`provisional.md` #82). Old forest, highlands and
+steppe (the Wild, the Tuskclans, the Herd in the table) weren't chosen. Still to come: each biome's own props (dead
+pale trees, snowy pines, mangroves and reeds); they borrow the temperate ones meanwhile.
