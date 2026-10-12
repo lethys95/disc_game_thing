@@ -71,3 +71,13 @@ wolf beside the branch and on the mound of crows. **Round three:** a flock frame
 **Round three (2026-10-12), the crows alone:** a frame for a flock as one object worked: a dead tree crowded with
 crows and a torn grey cloth (the branch reading, both seeds), and a churning column of wings around a sapling (the
 swirl). Every unit of the Wild now has a reading that's the animal itself.
+
+## The user's picks (2026-10-12)
+- **Carrion Murder:** `carrion-murder-r3-branch-turnaround-1000`.
+- **Old Grey:** "Just don't use the wolf with antlers": the frost reading (round two), unless the user says otherwise.
+- **Grey Wolf:** neither: "grey-wolf-r2-scarred is very poor quality, and the other variation has a chain around its
+  neck for some reason." A new round (round five).
+- Boar and Cave Bear: not picked yet.
+**Round five (2026-10-12), the grey wolf:** plain wild wolves, nothing on them. The timber reading (brown-grey, a
+cream chest, amber eyes) is the most detailed, both seeds alike; the forest reading is darker and sleeker (seed 1001
+draws the back view twice).

@@ -141,6 +141,21 @@ export const TRIBE_EFFECTS: readonly EffectDef[] = [
   // The barbarian clans.
   flatStat({ id: "last_stand", name: "Last stand", stat: "hitBonus", stacking: { mode: "unique" }, describe: (e) => `Refused to die: +${e.amount} damage for the rest of the battle.` }),
   {
+    // An Axe-maiden's axe: less armor until the end of the next round.
+    id: "split_armor",
+    name: "Split armor",
+    describe: (e) => `−${e.amount} armor, for ${e.stacks} more round start${e.stacks === 1 ? "" : "s"}.`,
+    stacking: { mode: "unique" },
+    lifetime: "rounds",
+    visibility: "public",
+    hooks: {
+      stats: (_ctx, self, subjectId, stats) => {
+        if (subjectId === self.unitId) stats.armor -= self.effect?.amount ?? 0;
+      },
+      aiValue: (ctx, self) => -Math.min(self.effect?.amount ?? 0, ctx.stats(self.unitId).armor + (self.effect?.amount ?? 0)) * STAT_WORTH.armor,
+    },
+  },
+  {
     // A Shamaness's blood oath: more damage while she lives, and half of each wound goes to her.
     id: "oathbound",
     name: "Blood oath",

@@ -70,3 +70,10 @@ ground (opening the subject with the tail did it), crowned or veiled, both seeds
 the spitter has no wings (its throat sac doesn't show; its reed cloak does). The Shedskin: the hooded reading is a
 calm robed lizard priest (the shed skin as such doesn't show); the pale reading has pale scales and a dark mantle,
 the clearest so far. The model won't draw an empty skin cleanly; the pale scales carry the idea best.
+
+## The user's picks (2026-10-12)
+- **Medusa:** `medusa-r4-coils-turnaround-1001`.
+- **Naga Coiler:** `naga-coiler-armored-turnaround-1000`.
+- **Spitter:** `spitter-r4-turnaround-1000`.
+- **Shedskin:** "use r4-hood" (`shedskin-r4-hood-turnaround`, seed not named: 1000 until said).
+- Scaleblade: not picked yet.

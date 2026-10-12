@@ -435,8 +435,8 @@ const GROUPS: Readonly<Record<Tribe, Readonly<Record<Strength, Group>>>> = {
   },
   clans: {
     weak: { level: 0, units: [["berserker", { row: 0, col: 0 }], ["berserker", { row: 0, col: 1 }], ["hunter", { row: 1, col: 0 }], ["shamaness", { row: 1, col: 1 }]] },
-    medium: { level: 2, units: [["berserker", { row: 0, col: 0 }], ["spearwarden", { row: 0, col: 1 }], ["berserker", { row: 0, col: 2 }], ["hunter", { row: 1, col: 0 }], ["shamaness", { row: 1, col: 1 }]] },
-    strong: { level: 4, units: [["berserker", { row: 0, col: 0 }], ["warlord", { row: 0, col: 1 }], ["spearwarden", { row: 0, col: 2 }], ["hunter", { row: 1, col: 0 }], ["shamaness", { row: 1, col: 1 }], ["hunter", { row: 1, col: 2 }]] },
+    medium: { level: 2, units: [["berserker", { row: 0, col: 0 }], ["berserker", { row: 0, col: 2 }], ["axe_maiden", { row: 1, col: 0 }], ["shamaness", { row: 1, col: 1 }], ["hunter", { row: 1, col: 2 }]] },
+    strong: { level: 4, units: [["berserker", { row: 0, col: 0 }], ["warlord", { row: 0, col: 1 }], ["berserker", { row: 0, col: 2 }], ["axe_maiden", { row: 1, col: 0 }], ["shamaness", { row: 1, col: 1 }], ["hunter", { row: 1, col: 2 }]] },
   },
 };
 

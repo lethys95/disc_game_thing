@@ -1,4 +1,8 @@
 import { single } from "#rules/abilities/core";
+import { opponent } from "#rules/battle/grid";
+
+/** How far an Axe-maiden throws, in tiles from her own (the user, 2026-10-12). */
+const AXE_REACH = 3;
 import type { Behavior } from "#rules/battle/types";
 
 /**
@@ -24,18 +28,32 @@ export const clans: Readonly<Record<string, Behavior>> = {
     },
   },
 
-  /** Spearwarden: while it defends, every melee hit on it is paid for. */
-  set_spears: {
-    kind: "passive",
-    name: "Set spears",
-    defaults: { power: 15 },
+  /**
+   * Axe-maiden (the user, 2026-10-12: she replaces the spearwarden; "Throw axes and be a non-healing support unit.
+   * Midrange"). Her throw reaches three tiles out from where she stands (the user: "if she's in the middle lane, she'll
+   * hit the first two rows. If she's front row, she can hit all. If she's in the back row, she can only hit the front
+   * row"), counted on the tiles themselves, and splits the target's armor, so the clan's blows land.
+   */
+  hurled_axe: {
+    kind: "active",
+    name: "Hurled axe",
+    applies: ["split_armor"],
+    describe: (p) => `Throw an axe for ${p["power"]} at an enemy up to ${AXE_REACH} tiles out (from the front row every enemy row, from the back row only the enemy's front row); it loses ${p["armor"]} armor until the end of the next round.`,
+    tags: ["attack", "ranged", "damage"],
+    defaults: { power: 14, armor: 8 },
     scales: ["power"],
-    describe: (p) => `While defending, every melee hit on it deals ${p["power"]} back to the attacker.`,
-    hooks: {
-      incoming: (ctx, self, packet) => {
-        if (packet.target !== self.unitId || !packet.source || packet.amount <= 0 || !packet.tags.includes("melee")) return;
-        if (ctx.unit(self.unitId).effects.some((e) => e.def === "defending") && ctx.unit(packet.source).alive) ctx.lose(packet.source, self.params["power"] ?? 0, self.unitId);
-      },
+    choices: (ctx, self) => {
+      const me = ctx.unit(self.unitId);
+      return ctx.living(opponent(me.side)).filter((u) => me.tile.row + u.tile.row + 1 <= AXE_REACH).map((u) => single(u, "main"));
+    },
+    resolve: (ctx, self, choice) => {
+      ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self));
+      for (const id of choice.affected) {
+        if (!ctx.unit(id).alive) continue;
+        const existing = ctx.unit(id).effects.find((e) => e.def === "split_armor");
+        if (existing) ctx.removeEffect(id, existing);
+        ctx.addEffect(id, { def: "split_armor", amount: self.params["armor"] ?? 0, stacks: 2, source: self.unitId });
+      }
     },
   },
 

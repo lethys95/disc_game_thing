@@ -69,3 +69,10 @@ Icewind Dale troll); the ogre in a bell crown and the ogre under a totem of skul
 troll, mushroom hexer, totem ogre, chained orc, skull-masked cutthroat.
 **Round four (2026-10-12):** the bog troll again, "a single figure with two long arms": no stray arm in either seed,
 and the arm grown back thinner reads in seed 1001.
+
+## The user's picks (2026-10-12)
+- **Goblin Cutthroat:** `goblin-cutthroat-hood-turnaround-1000` ("the other one is too tall").
+- **Goblin Hexer:** `goblin-hexer-mushroom-turnaround-1000` ("it matches in height with the other").
+- **Ogre Warchief:** `ogre-warchief-totem-turnaround-1000` ("more interesting").
+- **Orc Ravager:** `orc-ravager-trophies-turnaround-1000`.
+- **Troll:** `troll-r4-bog-turnaround-1000`.

@@ -176,9 +176,17 @@ describe("the barbarian clans", () => {
     expect(unit(battle, "1.0.1").alive).toBe(false);
   });
 
-  test("Set spears: a defending spearwarden hurts its melee attackers", () => {
-    const battle = until(start([p("congregant", 0, 1)], [p("spearwarden", 0, 1, [{ def: "defending" }])]), "0.0.1");
-    expect(unit(act(battle, "attack", "1.0.1").battle, "0.0.1").hp).toBe(90 - param("spearwarden", "set_spears", "power"));
+  test("Hurled axe: three tiles out from her own tile, and the target's armor split for a round", () => {
+    const enemies = [p("paladin", 0, 1), p("congregant", 1, 0), p("congregant", 2, 2)];
+    const reach = (row: 0 | 1 | 2) => {
+      const battle = until(start([p("axe_maiden", row, 1)], enemies), `0.${row}.1`);
+      return ["1.0.1", "1.1.0", "1.2.2"].filter((id) => affectedBy(battle, "hurled_axe", id) !== undefined);
+    };
+    expect(reach(0)).toEqual(["1.0.1", "1.1.0", "1.2.2"]);
+    expect(reach(1)).toEqual(["1.0.1", "1.1.0"]);
+    expect(reach(2)).toEqual(["1.0.1"]);
+    const after = act(until(start([p("axe_maiden", 1, 1)], enemies), "0.1.1"), "hurled_axe", "1.0.1").battle;
+    expect(effectiveStatsOf(after)["1.0.1"]?.armor).toBe(20 - param("axe_maiden", "hurled_axe", "armor"));
   });
 
   test("Piercing shot: a hunter's arrows ignore armor", () => {

@@ -1125,6 +1125,16 @@ const ROUND_4_TUSK = jobs(
   TUSK_3D,
 );
 
+
+/**
+ * Round five, the grey wolf (the user, 2026-10-12: "grey-wolf-r2-scarred is very poor quality, and the other variation
+ * has a chain around its neck for some reason"). A plain wild wolf, richly furred, nothing on it at all.
+ */
+const WOLF_5_JOBS = [
+  { id: "grey-wolf-r5-timber-turnaround", prompt: creature("A grey timber wolf, a big powerful wild wolf with a thick, richly detailed winter coat of grey, brown and cream fur, darker along the back, a pale throat and chest, amber eyes, a long bushy tail, a lean hungry face. Nothing around its neck or on its body.", WILD_3D) },
+  { id: "grey-wolf-r5-hunter-turnaround", prompt: creature("A grey wolf of the forests, long-legged and rangy, its dense grey fur flecked with black, a dark saddle of fur over its shoulders, a narrow muzzle with a black lip line, ears laid back, pale yellow eyes. Nothing around its neck or on its body.", WILD_3D) },
+];
+
 /** Each group of jobs has its own folder, so one group's run doesn't mix into another's manifest. */
 const GROUPS = [
   { dir: "art/candidates/units/grove", jobs: GROVE_JOBS },
@@ -1150,6 +1160,7 @@ const GROUPS = [
   { dir: "art/candidates/units/neutrals/herd", jobs: ROUND_4_HERD },
   { dir: "art/candidates/units/neutrals/scaled", jobs: ROUND_4_SCALED },
   { dir: "art/candidates/units/neutrals/tusk", jobs: ROUND_4_TUSK },
+  { dir: "art/candidates/units/neutrals/wild", jobs: WOLF_5_JOBS },
 ];
 
 const args = process.argv.slice(2);

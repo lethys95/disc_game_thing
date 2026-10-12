@@ -227,10 +227,11 @@ export const NEUTRAL_UNITS: Readonly<Record<string, UnitDef>> = {
     stats: { maxHp: 110, shield: 0, armor: 0, initiative: 45, abilityPower: 100 },
     abilities: [{ id: "last_stand", params: { bonus: 10 } }, { id: "attack", params: { power: 20 } }, ...kit("defend", "wait")],
   },
-  spearwarden: {
-    id: "spearwarden", name: "Spearwarden", faction: "neutral", tier: 1,
-    stats: { maxHp: 120, shield: 0, armor: 7, initiative: 35, abilityPower: 100 },
-    abilities: [{ id: "set_spears" }, { id: "attack", params: { power: 16 } }, ...kit("defend", "wait")],
+  // The user (2026-10-12): replaces the spearwarden; throws axes, a support that doesn't heal, midrange.
+  axe_maiden: {
+    id: "axe_maiden", name: "Axe-maiden", faction: "neutral", tier: 1,
+    stats: { maxHp: 85, shield: 0, armor: 0, initiative: 50, abilityPower: 100 },
+    abilities: [{ id: "hurled_axe" }, ...kit("defend", "wait")],
   },
   hunter: {
     id: "hunter", name: "Hunter", faction: "neutral", tier: 1,
