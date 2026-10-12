@@ -1091,6 +1091,40 @@ const CROWS_3_JOBS = [
   { id: "carrion-murder-r3-swirl-turnaround", prompt: flock("A churning column of ragged black carrion crows wheeling around a dead sapling, wings spread and overlapping, loose black feathers falling, many open beaks.", WILD_3D) },
 ];
 
+
+/**
+ * Round four (the user, 2026-10-12: "some of this art is weird. Can you take another pass"). Claude's list of the weird:
+ * saddles on centaurs (a horse missing its rider; "no saddle" didn't hold, so the bare back is named instead), medusas
+ * whose serpent bodies hid under gowns, stray floating arms (a scaleblade, the bog troll), a skull-faced scaleblade, a
+ * spitter whose frill became wings, and a Shedskin that never read. What leads the subject wins (unit-concepts skill),
+ * so each subject opens with the part that went wrong.
+ */
+const BARE_BACK = "Its horse back is bare, only its own hide and hair, with nothing strapped or seated on it.";
+const ROUND_4_HERD = jobs(
+  {
+    "outrider-r4": { subject: `${CENTAUR} ${BARE_BACK} An outrider: a lean dun horse body with ochre stripes painted on its flanks, a wiry human torso in a leather vest, a quiver slung across the human back, braided hair with bone beads, hands empty and open.`, pose: CLEAR_POSE },
+    "lancer-r4": { subject: `${CENTAUR} ${BARE_BACK} A lancer: a tall grey horse body painted with red handprints, a muscular human torso in a bone breastplate, long black braids, a horn helm over a human face, hands empty and open.`, pose: CLEAR_POSE },
+    "hoofbreaker-r4": { subject: `${CENTAUR} ${BARE_BACK} A hoofbreaker: a massive draft-horse body with huge feathered hooves shod in iron, a thick-necked man's torso with a shaved head and a broken nose, iron-studded leather bracers, hands empty and open.`, pose: CLEAR_POSE },
+    "herd-khan-r4": { subject: `${CENTAUR} ${BARE_BACK} A herd-khan: a huge black horse body, a broad scarred man's torso and a bearded human face under a helm made from a horse skull, a coat of bronze scales on the human torso only, a red war cloak hanging from his shoulders, hands empty and open.`, pose: CLEAR_POSE },
+  },
+  HERD_3D,
+);
+const ROUND_4_SCALED = jobs(
+  {
+    "medusa-r4-coils": { subject: "A medusa: from the waist down a long thick serpent's tail, its coils lying on the ground and its tip curling behind her, no legs; from the waist up a woman with grey-green scaled skin, living snakes for hair, a breastplate of tarnished gold, bare scaled arms with gold bands, hands empty and open.", pose: CLEAR_POSE },
+    "medusa-r4-veil": { subject: "A medusa: from the waist down a long banded serpent's tail coiled on the ground, no legs; from the waist up a woman veiled in a short corroded verdigris bronze veil that the living snakes of her hair lift aside, a bronze scale corset, hands empty and open.", pose: CLEAR_POSE },
+    "scaleblade-r4": { subject: "A lizardman warrior, a single figure with two arms and two legs: tall and lean, a crested lizard head with a long snout and yellow eyes, dull green-brown scales, a long tail, armour of bronze scales over the chest and reed greaves, bone beads on the wrists, hands empty and open." },
+    "spitter-r4": { subject: "A lizardman spitter, a single figure with two arms, two legs and no wings: thin and long-necked, a swollen pale throat sac glistening with venom under its jaw, mottled scales, yellow eyes, a cloak of woven reed mats, a belt of small bone darts, hands empty and open." },
+    "shedskin-r4-pale": { subject: "A lizardman scale-priest just after shedding: its new scales pale, almost white and faintly translucent, an old thin lizardman with a crested head, wearing a reed kilt and a bronze disc on its brow; draped over its shoulders like a stole, the dark empty husk of its old skin, flat and papery. Hands empty and open." },
+    "shedskin-r4-hood": { subject: "A lizardman scale-priest wearing its own shed skin as a hood and mantle: the pale papery moulted skin of its head pulled over its head like a hood, the rest hanging down its back like a cape; underneath, bright fresh green scales, a sash of dried herbs, shell talismans, hands empty and open." },
+  },
+  SCALED_3D,
+);
+const ROUND_4_TUSK = jobs(
+  { "troll-r4-bog": { subject: "A bog troll, a single figure with two long arms and two legs: hunched and huge, rubbery dark hide streaked with swamp weed, a jutting underbite with tusks, a back crusted with barnacle-like growths, one arm grown back thinner and paler than the other, bare clawed hands.", pose: CLEAR_POSE } },
+  TUSK_3D,
+);
+
 /** Each group of jobs has its own folder, so one group's run doesn't mix into another's manifest. */
 const GROUPS = [
   { dir: "art/candidates/units/grove", jobs: GROVE_JOBS },
@@ -1113,6 +1147,9 @@ const GROUPS = [
   { dir: "art/candidates/units/neutrals/scaled", jobs: SCALED_2_JOBS },
   { dir: "art/candidates/units/neutrals/herd", jobs: HERD_2_JOBS },
   { dir: "art/candidates/units/neutrals/wild", jobs: CROWS_3_JOBS },
+  { dir: "art/candidates/units/neutrals/herd", jobs: ROUND_4_HERD },
+  { dir: "art/candidates/units/neutrals/scaled", jobs: ROUND_4_SCALED },
+  { dir: "art/candidates/units/neutrals/tusk", jobs: ROUND_4_TUSK },
 ];
 
 const args = process.argv.slice(2);

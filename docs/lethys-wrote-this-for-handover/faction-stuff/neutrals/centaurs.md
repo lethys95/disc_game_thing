@@ -63,3 +63,8 @@ wouldn't. **Round two:** those two again, the body named first and "no saddle".
 **Round two (2026-10-12):** both are centaurs now (a human torso on a horse's body, no rider). The dusty outrider
 still has a saddle, and the hoofbreaker came out as a woman rather than a scarred brute: judge them as they are, or
 I go again.
+**Round four (2026-10-12; the user: "some of this art is weird"):** saddles were the weird part (a horse missing its
+rider), and "no saddle" didn't hold; naming the bare back did. Clean now: the khan (bearded, horse-skull helm, red
+cloak, both seeds), the lancer with red handprints (both), the hoofbreaker seed 1001 (bald brute, iron-shod), the
+outrider seed 1000 (ochre stripes, quiver). Misses kept aside: hoofbreaker 1000 (a horse's head and saddle again),
+outrider 1001 (a rider on a horse).

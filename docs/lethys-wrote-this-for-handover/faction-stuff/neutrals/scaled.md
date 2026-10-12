@@ -65,3 +65,8 @@ Shedskin missed in both readings: robed lizards with no shed skin to be seen. **
 **Round two (2026-10-12):** the cloak reading shows the moulted skin hanging from it, limbs and tail dangling: odd, and
 the first time the idea reads. The peeling reading shows no peeling; the model won't draw skin coming away after two
 tries, so the cloak is the one to judge.
+**Round four (2026-10-12; the user: "some of this art is weird"):** the medusas now have serpent tails coiled on the
+ground (opening the subject with the tail did it), crowned or veiled, both seeds each; the scaleblade has no stray arm;
+the spitter has no wings (its throat sac doesn't show; its reed cloak does). The Shedskin: the hooded reading is a
+calm robed lizard priest (the shed skin as such doesn't show); the pale reading has pale scales and a dark mantle,
+the clearest so far. The model won't draw an empty skin cleanly; the pale scales carry the idea best.

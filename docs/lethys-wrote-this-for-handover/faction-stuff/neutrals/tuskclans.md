@@ -67,3 +67,5 @@ a huge spore-shedding mushroom cap (the most interesting); the topknot orc with 
 skulls; the bog troll with barnacle growths (one view draws a stray arm) and the gaunt, long-armed mossy troll (the
 Icewind Dale troll); the ogre in a bell crown and the ogre under a totem of skulls. My picks if you want them: mossy
 troll, mushroom hexer, totem ogre, chained orc, skull-masked cutthroat.
+**Round four (2026-10-12):** the bog troll again, "a single figure with two long arms": no stray arm in either seed,
+and the arm grown back thinner reads in seed 1001.
