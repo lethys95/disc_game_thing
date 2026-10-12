@@ -49,3 +49,33 @@ Any faction can hold any node. Some nodes simply read differently per faction, a
 - A **Grove-held Leech pit**: the heal comes over 2 turns instead of at once (the Grove heals slowly).
 
 Idea behind this: a node you capture from someone else should feel like *theirs being turned to your use*.
+
+## Round two (Claude, 2026-10-12; for the user to pick, as round one was)
+The user: "We need more nodes before I can say which nodes to place in each biome." Twelve more, each with a biome it
+fits (not a lock: a biome's pool is the user's call), in the same three shapes as round one: recruit marks, city and
+map effects, nodes that change the economy. Numbers are only to show the size of the thing.
+
+### Recruit marks ("born here")
+- **Venom distillery** (swamp): recruits' first hit in each battle envenoms (the Scaled's venom, a little of it).
+- **Rune circle** (tundra): recruits refuse their first death in a battle once, left at 1 HP (the berserker's Last
+  stand, without the damage). Strong: maybe from level 2.
+- **Witch hut** (haunted woods; in round one, not taken): whoever kills a recruit is Punished for 2 stacks.
+- **Hunting lodge** (temperate): recruits deal 25% more to neutral units. A city that clears the map's camps.
+
+### City and map effects
+- **Drowned bell** (swamp): an enemy warband ending its march within 2 hexes of the city loses 1 movement next turn.
+  The mire, as a node.
+- **Moth lantern** (haunted woods): the land within 3 hexes is always lit for its holder, and enemy warbands in it
+  show their true squad (breaks disguises; the Drawn's light).
+- **Gallows** (haunted woods): enemy units that die in battles at this city can't be raised by their owner.
+- **Oasis** (desert): the holder's warbands that end a turn in the city heal fully; others heal nothing there.
+- **Dog yard** (tundra): warbands of its holder that start a turn in the city's radius move through hills and snow
+  at plain cost that turn.
+
+### The economy
+- **Caravanserai** (desert): merchants and mercenary camps sell to its holder 25% cheaper.
+- **Bog iron** (swamp): this city's recruits cost 20% less gold.
+- **Granary** (temperate): the city's garrison heals twice as fast, and the city's tier upgrades cost 20% less.
+
+Round one's untaken nodes are still there to pick too: training yard, scriptorium, toll bridge, waystation, mercenary
+guildhall, aqueduct, the shrine as a node, and the user's own Waystone.
