@@ -11,3 +11,6 @@ reference_material/**/*.png
 reference_material/**/*.webp
 reference_material/**/*.gif
 reference_material/index.html
+
+# Model weights fetched by scripts (the YOLO pose model in portrait-frames.py)
+*.pt
