@@ -1135,6 +1135,29 @@ const WOLF_5_JOBS = [
   { id: "grey-wolf-r5-hunter-turnaround", prompt: creature("A grey wolf of the forests, long-legged and rangy, its dense grey fur flecked with black, a dark saddle of fur over its shoulders, a narrow muzzle with a black lip line, ears laid back, pale yellow eyes. Nothing around its neck or on its body.", WILD_3D) },
 ];
 
+
+/**
+ * The five tribes' weapons as separate models (decision 2026-10-04; the user, 2026-10-12: "continue with the weapons"),
+ * each as its unit's card shows it, in its tribe's materials. Units that fight bare-handed have none.
+ */
+const propSheet = (things: string, materials: string) =>
+  `A 3D render of game prop models laid out side by side, like textured assets shown in a modelling program: ${things} ${materials} ` +
+  "Each object whole and separate, shown flat from the side. Flat, even, shadowless lighting from all sides, like a texture reference. A plain flat light grey background, no ground, no hands, no text.";
+const TRIBE_WEAPONS: readonly (readonly [string, string, string])[] = [
+  ["goblin-cutthroat-knives", "a set of five crude throwing knives of dark pitted iron with leaf-shaped blades and handles wrapped in grimy cloth, and a stolen dagger with a notched blade.", TUSK_3D],
+  ["orc-ravager-cleaver", "a heavy jagged iron cleaver, a broad chopping blade with a hooked tip and saw-toothed back, a thick handle bound in leather and a bone pommel; and a short spiked iron mace beside it.", TUSK_3D],
+  ["ogre-warchief-club", "a huge two-handed war club: a thick tree-trunk shaft banded with rusted iron, its head studded with iron spikes and nails, a chain wrapped round the grip.", TUSK_3D],
+  ["scaleblade-spear", "a long hunting spear with a broad leaf-shaped bronze head, a shaft of dark reed-wrapped wood, bone beads and a tuft of feathers tied below the head.", SCALED_3D],
+  ["outrider-bow", "a short recurve horn bow strung with sinew, its grip wrapped in leather, and a quiver of horse hide holding arrows fletched with grey feathers.", HERD_3D],
+  ["lancer-lance", "a very long cavalry spear-lance with a narrow bronze head, a shaft of dark ash wood bound with leather, red horsehair tassels below the head.", HERD_3D],
+  ["herd-khan-lance", "a very long war lance with a heavy bronze head, braided trophies of horse hair, bone beads and small bronze discs hanging below it, a shaft of black wood.", HERD_3D],
+  ["berserker-axes", "a matched pair of bearded hand axes with heavy dark iron heads, short ash handles wrapped in leather, blue woad marks painted on the heads.", CLAN_3D],
+  ["axe-maiden-axes", "a set of four small balanced throwing axes with narrow iron heads and short handles wrapped in red leather, and a leather belt with loops that holds them.", CLAN_3D],
+  ["hunter-longbow", "a tall longbow of dark yew with an antler grip, strung with sinew, and a quiver of brown leather holding long arrows with grey goose fletching.", CLAN_3D],
+  ["warlord-greataxe", "a great two-handed war axe with a broad crescent iron head engraved with knotted lines, a long shaft bound with iron bands and a spiked butt.", CLAN_3D],
+];
+const TRIBE_WEAPON_JOBS = TRIBE_WEAPONS.map(([id, things, materials]) => ({ id: `${id}-props`, prompt: propSheet(things, materials), width: 2048, height: 832 }));
+
 /** Each group of jobs has its own folder, so one group's run doesn't mix into another's manifest. */
 const GROUPS = [
   { dir: "art/candidates/units/grove", jobs: GROVE_JOBS },
@@ -1161,6 +1184,7 @@ const GROUPS = [
   { dir: "art/candidates/units/neutrals/scaled", jobs: ROUND_4_SCALED },
   { dir: "art/candidates/units/neutrals/tusk", jobs: ROUND_4_TUSK },
   { dir: "art/candidates/units/neutrals/wild", jobs: WOLF_5_JOBS },
+  { dir: "art/candidates/units/neutrals/weapons", jobs: TRIBE_WEAPON_JOBS },
 ];
 
 const args = process.argv.slice(2);

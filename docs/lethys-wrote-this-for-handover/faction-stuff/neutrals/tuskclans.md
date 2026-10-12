@@ -78,3 +78,4 @@ and the arm grown back thinner reads in seed 1001.
 - **Troll:** `troll-r4-bog-turnaround-1000`.
 - **For Tripo (2026-10-12):** every pick split into views in `shots/tripo/` (`shots/tripo/index.html`, "The five new tribes").
 - **Portraits (2026-10-12):** card, bust and icon in the game for every unit, from its pick (`scripts/art/portraits.ts`; `shots/tribe-portraits.html`).
+- **Weapons (2026-10-12, Claude's picks):** prop sheets for Tripo in `shots/tripo/`: the cutthroat's knives (1001), the ravager's cleaver (1001), the warchief's club (1001). Every sheet in `art/candidates/units/neutrals/weapons/`.

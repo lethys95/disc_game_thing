@@ -86,3 +86,4 @@ skulls at her belt. All dark furs: they hold together as a tribe, and the props 
 - **Status:** in game as `axe_maiden`.
 - **For Tripo (2026-10-12):** every pick split into views in `shots/tripo/` (`shots/tripo/index.html`, "The five new tribes").
 - **Portraits (2026-10-12):** card, bust and icon in the game for every unit, from its pick (`scripts/art/portraits.ts`; `shots/tribe-portraits.html`).
+- **Weapons (2026-10-12, Claude's picks):** the berserker's paired axes (1000), the Axe-maiden's throwing axes and belt (1000), the hunter's bow and quiver (1000; the bows came out with antler limbs), the warlord's great axe (1000), in `shots/tripo/`.
