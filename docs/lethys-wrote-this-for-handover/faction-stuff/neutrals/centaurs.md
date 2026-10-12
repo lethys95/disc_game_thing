@@ -73,3 +73,4 @@ outrider 1001 (a rider on a horse).
 Outrider `outrider-r4-turnaround-1000`; Lancer `lancer-r4-turnaround-1000`; Hoofbreaker
 `hoofbreaker-r4-turnaround-1001`; Starseer `starseer-blind-turnaround-1000`; Herd-Khan `herd-khan-r4-turnaround-1000`.
 - **For Tripo (2026-10-12):** every pick split into views in `shots/tripo/` (`shots/tripo/index.html`, "The five new tribes").
+- **Portraits (2026-10-12):** card, bust and icon in the game for every unit, from its pick (`scripts/art/portraits.ts`; `shots/tribe-portraits.html`).

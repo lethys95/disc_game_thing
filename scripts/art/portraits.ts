@@ -494,6 +494,260 @@ const UNITS: Readonly<Record<string, Unit>> = {
       crops: { bust: { from: "card", size: 0.405, x: 0.481, y: 0.386 }, icon: { from: "card", size: 0.24, x: 0.48, y: 0.325 } },
     },
   },
+  // The five tribes (2026-10-12): the user's picks and Claude's, at the user's word (`faction-stuff/neutrals/`).
+  grey_wolf: {
+    front: "shots/tripo/grey-wolf-front.png",
+    identity: "a grey timber wolf, a big wild wolf with a thick coat of grey, brown and cream fur, darker along the back, a pale throat, amber eyes and a long bushy tail",
+    poses: ["it stands low and stalking, its head lowered, lips drawn back from its fangs"],
+    strengths: T_POSED,
+    picked: {
+      card: "grey_wolf-card-d90.png",
+      crops: { bust: { from: "card", size: 0.7, x: 0.62, y: 0.45 }, icon: { from: "card", size: 0.42, x: 0.68, y: 0.43 } },
+    },
+  },
+  boar: {
+    front: "shots/tripo/boar-front.png",
+    identity: "a great wild boar with black bristles standing up along its humped back, two long yellowed curling tusks and small furious eyes",
+    poses: ["it stands with its head lowered to charge, its tusks forward"],
+    strengths: T_POSED,
+    picked: {
+      card: "boar-card-d90.png",
+      crops: { bust: { from: "card", size: 0.78, x: 0.47, y: 0.52 }, icon: { from: "card", size: 0.5, x: 0.42, y: 0.58 } },
+    },
+  },
+  cave_bear: {
+    front: "shots/tripo/cave-bear-front.png",
+    identity: "a huge shaggy brown cave bear, old arrowheads lodged in its hide, a heavy scarred head and long curved claws",
+    poses: ["it rears up on its hind legs, roaring, its claws raised"],
+    strengths: T_POSED,
+    picked: {
+      card: "cave_bear-card-d90.png",
+      crops: { bust: { from: "card", size: 0.813, x: 0.548, y: 0.265 }, icon: { from: "card", size: 0.407, x: 0.496, y: 0.179 } },
+    },
+  },
+  carrion_murder: {
+    front: "shots/tripo/carrion-murder-front.png",
+    identity: "a murder of ragged black carrion crows crowded on a gnarled dead tree, a torn strip of grey cloth caught in its branches",
+    poses: ["the crows burst from the tree, wings spread, beaks open, black feathers falling"],
+    strengths: T_POSED,
+    picked: {
+      card: "carrion_murder-card-d90.png",
+      crops: { bust: { from: "card", size: 0.8, x: 0.5, y: 0.35 }, icon: { from: "card", size: 0.45, x: 0.55, y: 0.28 } },
+    },
+  },
+  old_grey: {
+    front: "shots/tripo/old-grey-front.png",
+    identity: "Old Grey, a giant wolf of terrible size with a mane of frost-white fur, one torn ear, a muzzle scarred white and eyes pale as ice",
+    poses: ["it stands with its head raised, howling, frost breath rising"],
+    strengths: T_POSED,
+    picked: {
+      card: "old_grey-card-d90.png",
+      crops: { bust: { from: "card", size: 0.72, x: 0.42, y: 0.28 }, icon: { from: "card", size: 0.38, x: 0.33, y: 0.17 } },
+    },
+  },
+  goblin_cutthroat: {
+    front: "shots/tripo/goblin-cutthroat-front.png",
+    identity: "a goblin cutthroat: small and wiry, long ears and a hooked nose under a deep ragged hood, grey-green skin, scraps of dark stolen armour strapped on",
+    poses: ["it crouches, a throwing knife drawn back in one hand, more knives at its belt"],
+    strengths: T_POSED,
+    picked: {
+      card: "goblin_cutthroat-card-d90.png",
+      crops: { bust: { from: "card", size: 0.722, x: 0.529, y: 0.344 }, icon: { from: "card", size: 0.333, x: 0.59, y: 0.292 } },
+    },
+  },
+  orc_ravager: {
+    front: "shots/tripo/orc-ravager-front.png",
+    identity: "an orc ravager: tall and grey-green with broken yellowed tusks and long black hair, spiked iron shoulder plates, a belt of skulls and dark warpaint across the eyes",
+    poses: ["he stands ready to strike, a heavy jagged iron cleaver in his hand"],
+    strengths: T_POSED,
+    picked: {
+      card: "orc_ravager-card-d90.png",
+      crops: { bust: { from: "card", size: 0.764, x: 0.541, y: 0.196 }, icon: { from: "card", size: 0.353, x: 0.561, y: 0.131 } },
+    },
+  },
+  troll: {
+    front: "shots/tripo/troll-front.png",
+    identity: "a bog troll: hunched and huge, rubbery grey-green hide crusted with barnacle-like growths on its shoulders and back, a jutting underbite, long clawed hands",
+    poses: ["it lurches forward, its long arms spread, a wound on its chest knitting closed"],
+    strengths: T_POSED,
+    picked: {
+      card: "troll-card-d90.png",
+      crops: { bust: { from: "card", size: 0.72, x: 0.5, y: 0.3 }, icon: { from: "card", size: 0.36, x: 0.45, y: 0.24 } },
+    },
+  },
+  goblin_hexer: {
+    front: "shots/tripo/goblin-hexer-front.png",
+    identity: "a goblin hexer: a scrawny goblin under a huge dried mushroom cap shedding pale glowing spores, a patched sackcloth robe and bone fetishes in its hair",
+    poses: ["it holds one hand up, pale spores swirling from its fingers"],
+    strengths: T_POSED,
+    picked: {
+      card: "goblin_hexer-card-d90.png",
+      crops: { bust: { from: "card", size: 0.592, x: 0.518, y: 0.392 }, icon: { from: "card", size: 0.273, x: 0.492, y: 0.337 } },
+    },
+  },
+  ogre_warchief: {
+    front: "shots/tripo/ogre-warchief-front.png",
+    identity: "an ogre warchief: a hulking grey brute in spiked dark iron, a clan totem of horned skulls rising above his head from his back, a belly plate of iron",
+    poses: ["he stands wide, a huge iron-studded club over his shoulder"],
+    strengths: T_POSED,
+    picked: {
+      // The pose model took the skull totem for his head; his face is lower (framed by hand).
+      card: "ogre_warchief-card-d90.png",
+      crops: { bust: { from: "card", size: 0.8, x: 0.5, y: 0.42 }, icon: { from: "card", size: 0.36, x: 0.5, y: 0.38 } },
+    },
+  },
+  scaleblade: {
+    front: "shots/tripo/scaleblade-front.png",
+    identity: "a lizardman warrior: tall and lean, a crested lizard head, dull green-brown scales, a long tail, armour of bronze scales over the chest, bone bracelets",
+    poses: ["he stands ready, a bronze-headed spear held across his body"],
+    strengths: T_POSED,
+    picked: {
+      card: "scaleblade-card-d90.png",
+      crops: { bust: { from: "card", size: 0.665, x: 0.506, y: 0.207 }, icon: { from: "card", size: 0.332, x: 0.531, y: 0.136 } },
+    },
+  },
+  spitter: {
+    front: "shots/tripo/spitter-front.png",
+    identity: "a lizardman spitter: thin and long-necked, mottled dark scales, yellow eyes, a cloak of woven reed mats, a belt of small bone darts",
+    poses: ["it leans forward, mouth open, a spray of green venom spitting from its jaws"],
+    strengths: T_POSED,
+    picked: {
+      card: "spitter-card-d90.png",
+      crops: { bust: { from: "card", size: 0.62, x: 0.35, y: 0.24 }, icon: { from: "card", size: 0.32, x: 0.25, y: 0.13 } },
+    },
+  },
+  naga_coiler: {
+    front: "shots/tripo/naga-coiler-front.png",
+    identity: "a naga: a hooded serpent-headed torso in bronze scale armour rising from a long thick coiled serpent body of dark green scales",
+    poses: ["it rears up from its coils, its clawed hands reaching forward to seize"],
+    strengths: T_POSED,
+    picked: {
+      card: "naga_coiler-card-d90.png",
+      crops: { bust: { from: "card", size: 0.463, x: 0.584, y: 0.252 }, icon: { from: "card", size: 0.231, x: 0.55, y: 0.203 } },
+    },
+  },
+  shedskin: {
+    front: "shots/tripo/shedskin-front.png",
+    identity: "a lizardman scale-priest in a deep dark hood and a long tattered robe, green scales showing at its arms, a sash of dried herbs and shell talismans",
+    poses: ["it raises one hand in blessing, pale shed skin curling away like smoke around it"],
+    strengths: T_POSED,
+    picked: {
+      card: "shedskin-card-d90.png",
+      crops: { bust: { from: "card", size: 0.6, x: 0.5, y: 0.22 }, icon: { from: "card", size: 0.3, x: 0.54, y: 0.13 } },
+    },
+  },
+  medusa: {
+    front: "shots/tripo/medusa-front.png",
+    identity: "a medusa: from the waist down a long coiled serpent tail of dark scales, from the waist up a woman with grey-green scaled skin, living snakes for hair, a tarnished gold breastplate",
+    poses: ["she rises from her coils, her eyes glowing pale, her gaze turning the air to dust"],
+    strengths: T_POSED,
+    picked: {
+      card: "medusa-card-d90.png",
+      crops: { bust: { from: "card", size: 0.608, x: 0.5, y: 0.225 }, icon: { from: "card", size: 0.304, x: 0.507, y: 0.16 } },
+    },
+  },
+  outrider: {
+    front: "shots/tripo/outrider-front.png",
+    identity: "a centaur outrider: a lean dun horse body with ochre stripes on its flanks, a wiry human torso in a leather vest, braided hair with bone beads, a quiver on the human back",
+    poses: ["he draws a recurve bow at full stretch"],
+    strengths: T_POSED,
+    picked: {
+      card: "outrider-card-d90.png",
+      crops: { bust: { from: "card", size: 0.358, x: 0.557, y: 0.304 }, icon: { from: "card", size: 0.165, x: 0.574, y: 0.269 } },
+    },
+  },
+  lancer: {
+    front: "shots/tripo/lancer-front.png",
+    identity: "a centaur lancer: a grey horse body painted with red handprints, a muscular human torso in a bone breastplate, long black braids, a horned helm",
+    poses: ["he levels a long spear-lance, about to charge"],
+    strengths: T_POSED,
+    picked: {
+      card: "lancer-card-d90.png",
+      crops: { bust: { from: "card", size: 0.457, x: 0.613, y: 0.263 }, icon: { from: "card", size: 0.214, x: 0.586, y: 0.217 } },
+    },
+  },
+  hoofbreaker: {
+    front: "shots/tripo/hoofbreaker-front.png",
+    identity: "a centaur, one creature with no rider: from the waist down the whole body of a massive dark draft horse with huge feathered hooves shod in iron, joined at the waist to a bald scarred man's torso with iron-studded bracers",
+    poses: ["he stands on his four hooves, his fists clenched, ready to trample"],
+    strengths: { card: [0.6, 0.7], bust: [] },
+    // The first cards (0.75, 0.9) became a man riding a horse; the centaur body leads the identity now, at lower strength.
+    picked: {
+      card: "hoofbreaker-card-d70.png",
+      crops: { bust: { from: "card", size: 0.632, x: 0.498, y: 0.192 }, icon: { from: "card", size: 0.292, x: 0.5, y: 0.135 } },
+    },
+  },
+  starseer: {
+    front: "shots/tripo/starseer-front.png",
+    identity: "a centaur starseer: an old grey mare's body with star charts tattooed down its flanks, an old woman's torso, a cloth blindfold over her eyes, strings of bone beads",
+    poses: ["she raises her hands to the sky, faint starlight gathering between them"],
+    strengths: T_POSED,
+    picked: {
+      card: "starseer-card-d90.png",
+      crops: { bust: { from: "card", size: 0.507, x: 0.63, y: 0.263 }, icon: { from: "card", size: 0.254, x: 0.626, y: 0.21 } },
+    },
+  },
+  herd_khan: {
+    front: "shots/tripo/herd-khan-front.png",
+    identity: "a centaur, one creature with no rider: from the waist down the whole body of a huge black horse, joined at the waist to a broad bearded man's torso in bronze scales, a helm made from a horse skull, a red war cloak hanging from his human shoulders",
+    poses: ["he stands on his four hooves, holding a long lance upright in his human hands"],
+    strengths: { card: [0.6, 0.7], bust: [] },
+    // The first cards (0.75, 0.9) became a man riding a horse; the centaur body leads the identity now, at lower strength.
+    picked: {
+      card: "herd_khan-card-d70.png",
+      crops: { bust: { from: "card", size: 0.599, x: 0.51, y: 0.2 }, icon: { from: "card", size: 0.277, x: 0.501, y: 0.15 } },
+    },
+  },
+  berserker: {
+    front: "shots/tripo/berserker-front.png",
+    identity: "a barbarian berserker: a huge red-bearded man under a bear pelt worn as a hood, the bear's head over his own, blue woad spirals on his bare arms, a belly scarred and bare",
+    poses: ["he roars, a hand axe in each fist"],
+    strengths: T_POSED,
+    picked: {
+      card: "berserker-card-d90.png",
+      crops: { bust: { from: "card", size: 0.886, x: 0.494, y: 0.244 }, icon: { from: "card", size: 0.409, x: 0.484, y: 0.184 } },
+    },
+  },
+  axe_maiden: {
+    front: "shots/tripo/axe-maiden-front.png",
+    identity: "a barbarian axe-maiden: a tall woman with the sides of her head shaved and a long braid, her face and arms painted blue woad, a wolf-fur kilt and boots, iron rings on her arms",
+    poses: ["she draws back a throwing axe, more axes at her belt"],
+    strengths: T_POSED,
+    picked: {
+      card: "axe_maiden-card-d90.png",
+      crops: { bust: { from: "card", size: 0.513, x: 0.513, y: 0.207 }, icon: { from: "card", size: 0.257, x: 0.531, y: 0.153 } },
+    },
+  },
+  hunter: {
+    front: "shots/tripo/hunter-front.png",
+    identity: "a barbarian hunter: wiry, wearing a deer skull with tall antlers as a hood, a brown fur cloak, a leather bracer on one forearm",
+    poses: ["he draws a longbow, an arrow nocked"],
+    strengths: T_POSED,
+    picked: {
+      card: "hunter-card-d90.png",
+      crops: { bust: { from: "card", size: 0.531, x: 0.49, y: 0.373 }, icon: { from: "card", size: 0.245, x: 0.493, y: 0.328 } },
+    },
+  },
+  shamaness: {
+    front: "shots/tripo/shamaness-front.png",
+    identity: "a barbarian shamaness: an old woman with long grey braids, red handprints painted across her face, a cloak of raven feathers, bone charms and antlers at her belt",
+    poses: ["she raises a hand marked in blood, red light curling from it"],
+    strengths: T_POSED,
+    picked: {
+      card: "shamaness-card-d90.png",
+      crops: { bust: { from: "card", size: 0.754, x: 0.5, y: 0.251 }, icon: { from: "card", size: 0.377, x: 0.488, y: 0.172 } },
+    },
+  },
+  warlord: {
+    front: "shots/tripo/warlord-front.png",
+    identity: "a barbarian warlord: a towering chieftain in scaled blackened iron under a white bear's hide, a horned iron helm, a heavy gold torc, a grey beard",
+    poses: ["he stands with a great two-handed axe planted before him"],
+    strengths: T_POSED,
+    picked: {
+      card: "warlord-card-d90.png",
+      crops: { bust: { from: "card", size: 0.68, x: 0.506, y: 0.231 }, icon: { from: "card", size: 0.314, x: 0.503, y: 0.165 } },
+    },
+  },
 };
 
 const dirOf = (id: string) => `art/candidates/portraits/${id}`;

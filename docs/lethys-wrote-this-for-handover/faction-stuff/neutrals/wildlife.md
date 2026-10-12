@@ -85,3 +85,4 @@ draws the back view twice).
   `grey-wolf-r5-timber-turnaround-1000`; Boar `boar-r2-tusks-turnaround-1000`; Cave Bear
   `cave-bear-r2-mangy-turnaround-1000` (the arrowheads tell its story); Old Grey `old-grey-r2-frost-turnaround-1000`.
 - **For Tripo (2026-10-12):** every pick split into views in `shots/tripo/` (`shots/tripo/index.html`, "The five new tribes").
+- **Portraits (2026-10-12):** card, bust and icon in the game for every unit, from its pick (`scripts/art/portraits.ts`; `shots/tribe-portraits.html`).

@@ -85,3 +85,4 @@ skulls at her belt. All dark furs: they hold together as a tribe, and the props 
   and arms painted blue woad, wolf fur, iron arm rings. Axes as a prop sheet.
 - **Status:** in game as `axe_maiden`.
 - **For Tripo (2026-10-12):** every pick split into views in `shots/tripo/` (`shots/tripo/index.html`, "The five new tribes").
+- **Portraits (2026-10-12):** card, bust and icon in the game for every unit, from its pick (`scripts/art/portraits.ts`; `shots/tribe-portraits.html`).
