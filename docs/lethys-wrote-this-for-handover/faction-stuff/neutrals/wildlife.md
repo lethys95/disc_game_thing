@@ -81,3 +81,7 @@ swirl). Every unit of the Wild now has a reading that's the animal itself.
 **Round five (2026-10-12), the grey wolf:** plain wild wolves, nothing on them. The timber reading (brown-grey, a
 cream chest, amber eyes) is the most detailed, both seeds alike; the forest reading is darker and sleeker (seed 1001
 draws the back view twice).
+- **Claude's picks, at the user's word (2026-10-12: "I'll let you pick the rest"):** Grey Wolf
+  `grey-wolf-r5-timber-turnaround-1000`; Boar `boar-r2-tusks-turnaround-1000`; Cave Bear
+  `cave-bear-r2-mangy-turnaround-1000` (the arrowheads tell its story); Old Grey `old-grey-r2-frost-turnaround-1000`.
+- **For Tripo (2026-10-12):** every pick split into views in `shots/tripo/` (`shots/tripo/index.html`, "The five new tribes").

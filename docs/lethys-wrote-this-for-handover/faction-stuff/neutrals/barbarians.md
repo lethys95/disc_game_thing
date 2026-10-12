@@ -84,3 +84,4 @@ skulls at her belt. All dark furs: they hold together as a tribe, and the props 
 - **Look:** `berserker-woad-turnaround-1000` (the user's pick): tall, a shaved-sided head with a long braid, her face
   and arms painted blue woad, wolf fur, iron arm rings. Axes as a prop sheet.
 - **Status:** in game as `axe_maiden`.
+- **For Tripo (2026-10-12):** every pick split into views in `shots/tripo/` (`shots/tripo/index.html`, "The five new tribes").

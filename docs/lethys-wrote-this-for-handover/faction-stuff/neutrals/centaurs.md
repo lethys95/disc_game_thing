@@ -68,3 +68,8 @@ rider), and "no saddle" didn't hold; naming the bare back did. Clean now: the kh
 cloak, both seeds), the lancer with red handprints (both), the hoofbreaker seed 1001 (bald brute, iron-shod), the
 outrider seed 1000 (ochre stripes, quiver). Misses kept aside: hoofbreaker 1000 (a horse's head and saddle again),
 outrider 1001 (a rider on a horse).
+
+## Picks (Claude's, at the user's word, 2026-10-12: "I'll let you pick the rest")
+Outrider `outrider-r4-turnaround-1000`; Lancer `lancer-r4-turnaround-1000`; Hoofbreaker
+`hoofbreaker-r4-turnaround-1001`; Starseer `starseer-blind-turnaround-1000`; Herd-Khan `herd-khan-r4-turnaround-1000`.
+- **For Tripo (2026-10-12):** every pick split into views in `shots/tripo/` (`shots/tripo/index.html`, "The five new tribes").

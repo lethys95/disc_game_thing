@@ -76,3 +76,4 @@ and the arm grown back thinner reads in seed 1001.
 - **Ogre Warchief:** `ogre-warchief-totem-turnaround-1000` ("more interesting").
 - **Orc Ravager:** `orc-ravager-trophies-turnaround-1000`.
 - **Troll:** `troll-r4-bog-turnaround-1000`.
+- **For Tripo (2026-10-12):** every pick split into views in `shots/tripo/` (`shots/tripo/index.html`, "The five new tribes").

@@ -77,3 +77,5 @@ the clearest so far. The model won't draw an empty skin cleanly; the pale scales
 - **Spitter:** `spitter-r4-turnaround-1000`.
 - **Shedskin:** "use r4-hood" (`shedskin-r4-hood-turnaround`, seed not named: 1000 until said).
 - Scaleblade: not picked yet.
+- **Claude's pick, at the user's word:** Scaleblade `scaleblade-r4-turnaround-1001`.
+- **For Tripo (2026-10-12):** every pick split into views in `shots/tripo/` (`shots/tripo/index.html`, "The five new tribes").
