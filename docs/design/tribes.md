@@ -9,5 +9,5 @@ greenskins (or call it something else [...]), lizard people (gorgons, naga, liza
 (shamaness, some axe wearing guys, bows, spears [...]). There's room to be creative." Claude's pitches, each testing a
 different thing: **the Wild** (your back row; `faction-stuff/neutrals/wildlife.md`), **the Tuskclans** (staying power
 and fire; `tuskclans.md`), **the Scaled** (health over time and control; `scaled.md`), **the Herd** (your melee and
-turtling; `centaurs.md`), **the barbarian clans** (your burst; `barbarians.md`). In the game on `?fight=` routes, not on
-the map (which tribe guards where is the user's, questions #6, #12).
+turtling; `centaurs.md`), **the barbarian clans** (your burst; `barbarians.md`). In the game on `?fight=` routes and on
+the map, several tribes per biome as the user placed them (`provisional.md` #82).

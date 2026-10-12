@@ -37,7 +37,6 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 | Lightdrinker | the Drawn | Claude's own tribe | picked: `lightdrinker-deathshead-turnaround-1001` | ✓ |
 | Eyespot | the Drawn | Claude's own tribe | picked: `eyespot-fan-turnaround-1000` | ✓ |
 | Pale Mother | the Drawn | Claude's own tribe | picked: `pale-mother-turnaround-1002` | ✓ |
-
 | Godkin | Jilliath 5 (support) | user (a silhouette of moving sky) | picked: `godkin-bare-turnaround-1001` (user: "has captured what I intended") | ✓ |
 | Pontiff | Jilliath 3 (mage) | Claude's crown of candles (user: "looks good") | picked: `pontiff-candles-turnaround-1001` (seed Claude's) | ✓ |
 | Acolyte | Jilliath 1 (mage) | Claude's (red blindfold, lantern) | picked: `acolyte-branded-turnaround` (user: "as he is now"; seed 1001 Claude's) | ✓ |
@@ -51,6 +50,10 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 | Templar | Jilliath 3 (preserve) | Claude's knight, the user's rose shield | picked: `templar-rose-turnaround-1001`, shield `templar-shield-props-1001` (user) | ✓ |
 | Immortal | Jilliath 4 (preserve) | Claude's (white marble mended with gold; crest, halo, cape) | picked: `immortal-kintsugi-turnaround-1000` (user: "he looks awesome"); weapon open | ✓ |
 | Emissary | Jilliath 2 (support) | user ("closer to the stereotypical angel") | picked: `emissary-robed-turnaround` (user: "looks great"; seed 1000 or 1001 open) | ✓ |
+| Etherborn | Nexus 3 | user: galaxy skin, noble robes, no face, hands in purple-pink arcane energy, female-shaped | picked: `etherborn-lined-turnaround-1001` | ✓ |
+| Soothsayer | carnival 2 | user, plus Claude's eye coat and coin veil; fully veiled, dark skin (user) | picked: `soothsayer-hooded-dark-turnaround-1000` | ✓ |
+| Omen | carnival 2 | user: twin flintlocks, blindfold, ragged trenchcoat with a pentagram; Claude's: top hat, gold grin | picked: `omen-grin-turnaround-1001`, pistols `omen-pistols-props-1000` | ✓ |
+| The five tribes (25 units) | the Wild, the Tuskclans, the Scaled, the Herd, the barbarian clans | Claude's (sheets in `faction-stuff/neutrals/`) | picked: in each sheet (`shots/tribes.html`) | ✓ |
 
 ## 2. Identity, but no picked concept: needs concept art
 | Unit | Faction · tier | Identity | Concept |
@@ -58,26 +61,16 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 | Congregant | Jilliath 1 | user: "an angry mob […] not rugged knights" | cand. (anchors; "rather close": `baroque_congregant-1000`) |
 | Paladin | Jilliath 2 | Claude's holy knight; the user: "cool if a bit forgettable" | cand. (anchors) |
 | Apprentice | Nexus 1 | user: hooded and robed, gender ambiguous (semi placeholder) | cand. (rejected: "a depressed anime boy") |
-| Etherborn | Nexus 3 | user: galaxy skin, noble robes, no face, hands in purple-pink arcane energy, female-shaped | picked: `etherborn-lined-turnaround-1001` | ✓ |
-| Soothsayer | carnival 2 | user, plus Claude's eye coat and coin veil; fully veiled, dark skin (user) | picked: `soothsayer-hooded-dark-turnaround-1000` | ✓ |
-| Omen | carnival 2 | user: twin flintlocks, blindfold, ragged trenchcoat with a pentagram; Claude's: top hat, gold grin | picked: `omen-grin-turnaround-1001`, pistols `omen-pistols-props-1000` | ✓ |
 | Fire Eater | carnival 1 | Claude: a carnival fire-breather, torch and flask, soot on worn motley | — |
+| Guardian, Empyreal | Jilliath 3 (support) | user's answers to Claude's drafts (`jilliath-identities.md`) | deferred by the user until an overview |
+| Cleric, Archon | Jilliath 2, 4 (mage) | user's answers to Claude's drafts | deferred |
+| Fire mage 3, Fire mage 4, Martyr mage 4 | Jilliath 3–4 (mage, fire) | user's answers to Claude's drafts | deferred; names first (questions #2) |
+| Torturer | Jilliath 4 | user's answers to Claude's drafts | deferred |
+| Fanatic | Jilliath 3 (consume) | user's answers to Claude's drafts | deferred |
 
 ## 3. No identity yet: needs a look in words first (the user's, or Claude's to propose)
 | Unit | Faction · tier | What exists |
 |---|---|---|
-| Seraph | Jilliath 1 (support) | user: "hooded, closed off, praying"; Claude's draft adds to it |
-| Emissary, Guardian, Paragon, Empyreal, Reclaimer | Jilliath 2–3 (support) | designs; Claude's drafts (the Paragon's blood-tipped wings are the user's) |
-| Shepherd, Godkin | Jilliath 4–5 (support) | user: stained glass; a silhouette of moving sky with god rays |
-| Acolyte, Cleric, Pontiff | Jilliath 1–3 (mage, priests) | designs; Claude's drafts |
-| Archon | Jilliath 4 (mage) | user: "one foot into the world of angels"; Claude's draft |
-| Doomsayer, Fire mage 3, Fire mage 4, Martyr mage 4 | Jilliath 2–4 (mage, fire) | designs; Claude's drafts |
-| Templar, Immortal | Jilliath 3–4 (preserve) | designs; Claude's drafts |
-| Fanatic, Chosen, Avatar of Vengeance | Jilliath 3–5 (consume) | designs; Claude's drafts |
-| Torturer | Jilliath 4 | design; Claude's draft |
-
-Every Jilliath unit above (2026-10-08): the user's answers to Claude's drafts in `jilliath-identities.md` (all angels
-female except the Avatar of Vengeance; the fire casters need names first).
 | Technician | Nexus 1 | design, no look |
 | Cyclops | Nexus 2 | design; "scheme = automata" (dichotomies) |
 | Mutant | Nexus 2 | design; "mutants will be the melee line" |

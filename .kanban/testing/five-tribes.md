@@ -8,7 +8,7 @@
 - **Where:** sheets in `docs/lethys-wrote-this-for-handover/faction-stuff/neutrals/`, rules in
   `src/rules/abilities/{wild,tusk,scaled,herd,clans}.ts` and `effects/tribes.ts`, numbers `provisional.md` #81,
   `?fight=wild|tusk|scaled|herd|clans`, review page `shots/tribes.html`.
-- **Done when:** the user has looked: keep, cut, rename; picks among the concepts; which biome each tribe guards
-  (questions #6, #12), then they go on the map.
+- **Done when:** the user has looked: keep, cut, rename; picks among the concepts (done, portraits in).
+  Their biomes are placed (`tribes-on-the-map`).
 - **Who:** Claude built; the user judges.
 - 2026-10-12: on the map. Each biome holds several tribes (the user's list), a camp's tribe fixed by its place (`provisional.md` #82).

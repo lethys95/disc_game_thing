@@ -17,4 +17,4 @@
 - **The user (2026-10-07), second round:** ability power per unit like health (100 × tier only a guideline; Nexus
   casters above it); healing and melee scale too; Witherbloom for Decay support 2; then "Everything is an ability":
   no damage stat, damage types on abilities. All built (#71), plus marked numbers in rules text and a clearer hover
-  preview (badge, skull when lethal, the health bar marked). Open: questions #14 (Nexus spells: air or fire).
+  preview (badge, skull when lethal, the health bar marked). Ral-Vitahl's casters all deal lightning (the user, for now; `damage-types`).

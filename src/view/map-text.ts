@@ -3,7 +3,7 @@ import { hexKey, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { tileAt, TERRAIN_COST } from "#rules/map";
 import type { MovePlan, MoveTarget } from "#rules/world/movement";
-import { cityById, lairById, leaderAt, playerOf } from "#rules/world/state";
+import { cityById, lairById, leaderAt, playerOf, tribeAt } from "#rules/world/state";
 import type { Leader, PlayerId, World, WorldEvent } from "#rules/world/state";
 import { sightOf } from "#rules/world/vision";
 import { castProblem, spellVictims } from "#rules/world/spells";
@@ -57,7 +57,8 @@ export function hintText({ known, player, leader, hovered, plan, forecast }: Hin
   if (target?.kind === "lair") {
     const lair = lairById(known, target.lairId);
     const reward = lair.kind === "dungeon" ? ` Reward: ${lair.reward.gold} gold${lair.reward.joins ? ` and a ${unitName(lair.reward.joins)} joins you` : ""}.` : "";
-    return `Click to attack the ${lair.kind === "camp" ? "bandit camp" : "dungeon's guards"}.${reward} ${forecast(leader, target)}`;
+    const tribe = TRIBE_NAMES[tribeAt(known.map, lair.hex)];
+    return `Click to attack the ${lair.kind === "camp" ? "camp" : "dungeon's guards"} (${tribe}).${reward} ${forecast(leader, target)}`;
   }
   if (plan.steps === 0) return "Not enough movement left to go further. End your turn.";
   const total = plan.path.hexes.length;
@@ -97,7 +98,10 @@ export function newsText(events: readonly WorldEvent[], world: World, player: Pl
     if (e.type === "xp" && e.player === player) lines.push(`Your survivors gain ${e.each} XP each.`);
     if (e.type === "evolved" && e.player === player) lines.push(`${unitName(e.from)} becomes ${unitName(e.to)}.`);
     if (e.type === "leveled" && e.player === player) lines.push(`${unitName(e.defId)} reaches level ${e.level}.`);
-    if (e.type === "cleared" && (e.player === player || lairSeen(e.lairId))) lines.push(e.player === player ? "The bandit camp is cleared." : "The enemy cleared a bandit camp.");
+    if (e.type === "cleared" && (e.player === player || lairSeen(e.lairId))) {
+      const tribe = TRIBE_NAMES[tribeAt(world.map, lairById(world, e.lairId).hex)];
+      lines.push(e.player === player ? `The camp is cleared (${tribe}).` : `The enemy cleared a camp (${tribe}).`);
+    }
     if (e.type === "leaderFell" && e.player === player) lines.push("One of your warbands fell.");
     if (e.type === "spellCast" && (e.player === player || inSight(e.at))) lines.push(`${e.player === player ? "You cast" : "The enemy casts"} ${spellById(e.spell).name}.`);
     if (e.type === "looted" && e.player === player) lines.push(`The dungeon yields ${e.gold} gold${e.joins ? ` and a ${unitName(e.joins)} joins you` : ""}${e.item ? `, and a ${itemById(e.item).name}` : ""}.`);

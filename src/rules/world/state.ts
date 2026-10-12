@@ -325,7 +325,7 @@ export const emptyMemory = (): Memory => ({ cities: [], lairs: [], nodes: [], st
 
 export type Strength = "weak" | "medium" | "strong";
 
-/** The neutral peoples who guard camps and dungeons (`design/tribes.md`). Only the bandits and gnolls are placed on the map yet. */
+/** The neutral peoples who guard camps and dungeons (`design/tribes.md`), placed by biome (`TRIBES_OF_BIOME`). */
 export type Tribe = "bandits" | "gnolls" | "drawn" | "carnival" | "wild" | "tusk" | "scaled" | "herd" | "clans";
 
 type Group = { readonly level: number; readonly units: readonly [string, Tile][] };
@@ -412,7 +412,7 @@ const GROUPS: Readonly<Record<Tribe, Readonly<Record<Strength, Group>>>> = {
       ],
     },
   },
-  // Claude's five tribes at the user's invitation (2026-10-11, provisional #81): not on the map yet.
+  // Claude's five tribes at the user's invitation (2026-10-11, provisional #81).
   wild: {
     weak: { level: 0, units: [["boar", { row: 0, col: 0 }], ["grey_wolf", { row: 0, col: 1 }], ["grey_wolf", { row: 1, col: 0 }], ["carrion_murder", { row: 1, col: 1 }]] },
     medium: { level: 2, units: [["boar", { row: 0, col: 0 }], ["cave_bear", { row: 0, col: 1 }], ["grey_wolf", { row: 0, col: 2 }], ["grey_wolf", { row: 1, col: 0 }], ["carrion_murder", { row: 1, col: 1 }]] },
