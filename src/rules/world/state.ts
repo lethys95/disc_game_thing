@@ -456,15 +456,28 @@ export function neutralGroup(tribe: Tribe, strength: Strength): SquadMember[] {
 }
 
 /**
- * Who guards a camp or dungeon here: the tribe of its biome (provisional #63, #82; the user's idea of a
- * tribe per biome, questions #6). Neutral cities keep bandit garrisons.
+ * Who guards a camp or dungeon here: one of its biome's tribes, chosen by the site's place, so the same map always has
+ * the same guards (provisional #63, #82). Neutral cities keep bandit garrisons.
  */
 export function tribeAt(map: WorldMap, hex: Hex): Tribe {
-  return TRIBE_OF_BIOME[map.tiles[hexKey(hex)]?.biome ?? "temperate"];
+  const tribes = TRIBES_OF_BIOME[map.tiles[hexKey(hex)]?.biome ?? "temperate"];
+  // A small integer hash of the hex: deterministic, and different neighbours land on different tribes.
+  const h = Math.abs((hex.q * 73856093) ^ (hex.r * 19349663)) % 9973;
+  return tribes[h % tribes.length] ?? "bandits";
 }
 
-/** Who guards each biome's camps and dungeons (provisional #63, #82; Claude's table, the biomes the user's). */
-const TRIBE_OF_BIOME: Readonly<Record<Biome, Tribe>> = { temperate: "bandits", desert: "gnolls", swamp: "scaled", tundra: "clans", haunted: "drawn" };
+/**
+ * Which tribes live in each biome (the user, 2026-10-12: "There is no 'one biome per neutral faction' rule. You should
+ * just place them where they make sense. I'm thinking carnival on desert, swamp and haunted woods. Wild on temperate,
+ * swamp. Herd on tundra, desert. Tuskclans on temperate, swamp"); the first of each list was Claude's.
+ */
+const TRIBES_OF_BIOME: Readonly<Record<Biome, readonly Tribe[]>> = {
+  temperate: ["bandits", "wild", "tusk"],
+  desert: ["gnolls", "carnival", "herd"],
+  swamp: ["scaled", "carnival", "wild", "tusk"],
+  tundra: ["clans", "herd"],
+  haunted: ["drawn", "carnival"],
+};
 
 /** Stronger the further from both Capitols: easy fights near home, harder ones in the middle. */
 export function strengthAt(map: WorldMap, hex: Hex, atLeast: Strength): Strength {

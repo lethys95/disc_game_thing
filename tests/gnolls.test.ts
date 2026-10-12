@@ -57,7 +57,7 @@ describe("gnolls", () => {
     expect(strongestHits(after)["1.0.2"]).toBe(24 + 4);
   });
 
-  test("camps and dungeons in the desert are guarded by gnolls, elsewhere by bandits", () => {
+  test("camps and dungeons are guarded by their biome's tribes; gnolls turn up in the desert", () => {
     const squad = [p("paladin", 0, 1)];
     let gnollCamps = 0;
     for (const seed of [1, 2, 3, 4, 5, 6]) {
