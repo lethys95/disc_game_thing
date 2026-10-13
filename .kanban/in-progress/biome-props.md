@@ -7,4 +7,6 @@
 - **Done when:** The meshes are in `assets/models/terrain/`, the biomes place their own props, and the user has seen
   them on the map.
 - **Who:** Claude builds; the user judges.
-- **2026-10-12:** the batch is running in the background (swamp done, tundra under way); placing the props comes after.
+- **2026-10-12:** first batch: 11 of 39 meshes. The other 28 ran out of GPU memory, with ComfyUI still holding
+  Krea-2 on the same card (`engineering.md`, Gotchas). The script now unloads it first.
+- **2026-10-13:** the 28 rerun from the same concepts (`CONCEPTS=0`); placing the props comes after.
