@@ -398,5 +398,509 @@
     "prompt": "A single emblem for a game ability icon: a burning heart pierced by a sword. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of deep blood red where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
     "model": "krea2_turbo_fp8_scaled.safetensors",
     "from": "art/candidates/icons/abilities/icon_zeal-1000.png"
+  },
+  "ability/tarot": {
+    "file": "icon_tarot-1001.png",
+    "id": "icon_tarot",
+    "seed": 1001,
+    "prompt": "A single emblem for a game ability icon: three tarot cards fanned out face down, one turning over. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_tarot-1001.png"
+  },
+  "ability/crit": {
+    "file": "icon_crit-1000.png",
+    "id": "icon_crit",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a blade striking a gap in plate armor with a burst of sparks. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_crit-1000.png"
+  },
+  "ability/evasion": {
+    "file": "icon_evasion-1000.png",
+    "id": "icon_evasion",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a blade passing through a wisp of smoke where a body was. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_evasion-1000.png"
+  },
+  "ability/explode": {
+    "file": "icon_explode-1000.png",
+    "id": "icon_explode",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a cracked clay body bursting apart in a blast of fire and shards. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_explode-1000.png"
+  },
+  "ability/ignite": {
+    "file": "icon_ignite-1000.png",
+    "id": "icon_ignite",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a burning torch setting a ragged cloak alight. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_ignite-1000.png"
+  },
+  "ability/soak": {
+    "file": "icon_soak-1000.png",
+    "id": "icon_soak",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a heavy wave of dark water crashing down. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_soak-1000.png"
+  },
+  "ability/prayer": {
+    "file": "icon_prayer-1000.png",
+    "id": "icon_prayer",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: two clasped hands raised in prayer, a halo of light above them. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of deep blood red where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_prayer-1000.png"
+  },
+  "ability/guardians_shield": {
+    "file": "icon_guardians_shield-1001.png",
+    "id": "icon_guardians_shield",
+    "seed": 1001,
+    "prompt": "A single emblem for a game ability icon: a pair of feathered wings folded around a kite shield. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of deep blood red where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_guardians_shield-1001.png"
+  },
+  "ability/resurrection": {
+    "file": "icon_resurrection-1000.png",
+    "id": "icon_resurrection",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a hand rising from an open grave toward a beam of light. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of deep blood red where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_resurrection-1000.png"
+  },
+  "ability/atonement": {
+    "file": "icon_atonement-1000.png",
+    "id": "icon_atonement",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a weeping wound pouring light into an open chalice. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of deep blood red where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_atonement-1000.png"
+  },
+  "ability/reclaim": {
+    "file": "icon_reclaim-1001.png",
+    "id": "icon_reclaim",
+    "seed": 1001,
+    "prompt": "A single emblem for a game ability icon: a segmented metal hand drawing a red light out of a wound. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of deep blood red where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_reclaim-1001.png"
+  },
+  "ability/chant": {
+    "file": "icon_chant-1001.png",
+    "id": "icon_chant",
+    "seed": 1001,
+    "prompt": "A single emblem for a game ability icon: an open hymnal with sound rising off its pages like smoke. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of deep blood red where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_chant-1001.png"
+  },
+  "ability/repentance": {
+    "file": "icon_repentance-1000.png",
+    "id": "icon_repentance",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a kneeling figure bound in a shroud, head bowed. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of deep blood red where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_repentance-1000.png"
+  },
+  "ability/judgement": {
+    "file": "icon_judgement-1000.png",
+    "id": "icon_judgement",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a great sword of light descending from above. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of deep blood red where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_judgement-1000.png"
+  },
+  "ability/burn_at_the_stake": {
+    "file": "icon_burn_at_the_stake-1000.png",
+    "id": "icon_burn_at_the_stake",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a wooden stake wrapped in chains, flames climbing it. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of deep blood red where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_burn_at_the_stake-1000.png"
+  },
+  "ability/detonate": {
+    "file": "icon_detonate-1000.png",
+    "id": "icon_detonate",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a burning coal bursting into a blinding flare. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of deep blood red where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_detonate-1000.png"
+  },
+  "ability/gorge": {
+    "file": "icon_gorge-1000.png",
+    "id": "icon_gorge",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a maw of roots and teeth closing around a bone. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of deep moss green where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_gorge-1000.png"
+  },
+  "ability/witherbloom": {
+    "file": "icon_witherbloom-1001.png",
+    "id": "icon_witherbloom",
+    "seed": 1001,
+    "prompt": "A single emblem for a game ability icon: a pale flower blooming from dead, withered stems. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of deep moss green where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_witherbloom-1001.png"
+  },
+  "ability/wellspring": {
+    "file": "icon_wellspring-1001.png",
+    "id": "icon_wellspring",
+    "seed": 1001,
+    "prompt": "A single emblem for a game ability icon: a spring of clear water welling up between mossy stones. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of deep moss green where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_wellspring-1001.png"
+  },
+  "ability/prey": {
+    "file": "icon_prey-1000.png",
+    "id": "icon_prey",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a hunting mark daubed in blood on a shield. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_prey-1000.png"
+  },
+  "ability/crack": {
+    "file": "icon_crack-1000.png",
+    "id": "icon_crack",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a heavy club splitting an iron breastplate. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_crack-1000.png"
+  },
+  "ability/cackle": {
+    "file": "icon_cackle-1000.png",
+    "id": "icon_cackle",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a grinning hyena skull with its jaws wide open. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_cackle-1000.png"
+  },
+  "ability/run_them_down": {
+    "file": "icon_run_them_down-1000.png",
+    "id": "icon_run_them_down",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: pawprints of a pack closing in a ring. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_run_them_down-1000.png"
+  },
+  "ability/pecking_order": {
+    "file": "icon_pecking_order-1001.png",
+    "id": "icon_pecking_order",
+    "seed": 1001,
+    "prompt": "A single emblem for a game ability icon: a bone crown on a hyena skull. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_pecking_order-1001.png"
+  },
+  "ability/flit": {
+    "file": "icon_flit-1000.png",
+    "id": "icon_flit",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a dusty moth wing sweeping in a fast arc. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_flit-1000.png"
+  },
+  "ability/dust": {
+    "file": "icon_dust-1000.png",
+    "id": "icon_dust",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a cloud of pale wing dust hanging in the air. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_dust-1000.png"
+  },
+  "ability/metamorphosis": {
+    "file": "icon_metamorphosis-1000.png",
+    "id": "icon_metamorphosis",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a split cocoon with a wing unfolding from it. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_metamorphosis-1000.png"
+  },
+  "ability/drink_light": {
+    "file": "icon_drink_light-1000.png",
+    "id": "icon_drink_light",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a moth drinking from a candle flame that dims. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_drink_light-1000.png"
+  },
+  "ability/mesmerize": {
+    "file": "icon_mesmerize-1000.png",
+    "id": "icon_mesmerize",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a pair of eyespots on a wing, staring. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_mesmerize-1000.png"
+  },
+  "ability/open_the_eyes": {
+    "file": "icon_open_the_eyes-1000.png",
+    "id": "icon_open_the_eyes",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: many eyespots opening across a vast spread of wings. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_open_the_eyes-1000.png"
+  },
+  "ability/dust_veil": {
+    "file": "icon_dust_veil-1000.png",
+    "id": "icon_dust_veil",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a veil of drifting dust like a curtain. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_dust_veil-1000.png"
+  },
+  "ability/foretell": {
+    "file": "icon_foretell-1000.png",
+    "id": "icon_foretell",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a crystal ball with a falling blade reflected inside. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_foretell-1000.png"
+  },
+  "ability/curse": {
+    "file": "icon_curse-1000.png",
+    "id": "icon_curse",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a black candle dripping wax over a cracked coin. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_curse-1000.png"
+  },
+  "ability/healing_draught": {
+    "file": "icon_healing_draught-1000.png",
+    "id": "icon_healing_draught",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a corked bottle of murky tonic with a crooked label. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_healing_draught-1000.png"
+  },
+  "ability/explosive_flask": {
+    "file": "icon_explosive_flask-1000.png",
+    "id": "icon_explosive_flask",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a glass flask with a burning rag in its neck. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_explosive_flask-1000.png"
+  },
+  "ability/sleep_potion": {
+    "file": "icon_sleep_potion-1001.png",
+    "id": "icon_sleep_potion",
+    "seed": 1001,
+    "prompt": "A single emblem for a game ability icon: a small vial breathing out a curl of pale vapour. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_sleep_potion-1001.png"
+  },
+  "ability/omen": {
+    "file": "icon_omen-1001.png",
+    "id": "icon_omen",
+    "seed": 1001,
+    "prompt": "A single emblem for a game ability icon: a flintlock pistol lying across a tarot card. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_omen-1001.png"
+  },
+  "ability/spit_fire": {
+    "file": "icon_spit_fire-1000.png",
+    "id": "icon_spit_fire",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a cone of flame breathed out from a torch held to the lips. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_spit_fire-1000.png"
+  },
+  "ability/pounce": {
+    "file": "icon_pounce-1000.png",
+    "id": "icon_pounce",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a wolf in mid-leap with its jaws open. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_pounce-1000.png"
+  },
+  "ability/gore": {
+    "file": "icon_gore-1000.png",
+    "id": "icon_gore",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a boar tusk dripping blood. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_gore-1000.png"
+  },
+  "ability/wounded_fury": {
+    "file": "icon_wounded_fury-1000.png",
+    "id": "icon_wounded_fury",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a bear claw raking with blood on its fur. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_wounded_fury-1000.png"
+  },
+  "ability/peck_the_eyes": {
+    "file": "icon_peck_the_eyes-1000.png",
+    "id": "icon_peck_the_eyes",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a black crow's beak striking down. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_peck_the_eyes-1000.png"
+  },
+  "ability/howl": {
+    "file": "icon_howl-1000.png",
+    "id": "icon_howl",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a wolf's head raised, howling at a pale moon. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_howl-1000.png"
+  },
+  "ability/kick_them_down": {
+    "file": "icon_kick_them_down-1000.png",
+    "id": "icon_kick_them_down",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: an iron-shod boot stamping down on a fallen helmet. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_kick_them_down-1000.png"
+  },
+  "ability/bloodlust": {
+    "file": "icon_bloodlust-1001.png",
+    "id": "icon_bloodlust",
+    "seed": 1001,
+    "prompt": "A single emblem for a game ability icon: a tusked mouth snarling with a bloody axe before it. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_bloodlust-1001.png"
+  },
+  "ability/frenzy": {
+    "file": "icon_frenzy-1000.png",
+    "id": "icon_frenzy",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a crude bone fetish shaking, red eyes painted on it. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_frenzy-1000.png"
+  },
+  "ability/cleave": {
+    "file": "icon_cleave-1000.png",
+    "id": "icon_cleave",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a huge cleaver sweeping in a wide arc. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_cleave-1000.png"
+  },
+  "ability/venom": {
+    "file": "icon_venom-1000.png",
+    "id": "icon_venom",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a fang dripping a bead of green venom. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_venom-1000.png"
+  },
+  "ability/constrict": {
+    "file": "icon_constrict-1000.png",
+    "id": "icon_constrict",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a serpent's coils tightening around a breastplate. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_constrict-1000.png"
+  },
+  "ability/shed_skin": {
+    "file": "icon_shed_skin-1000.png",
+    "id": "icon_shed_skin",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a shed snakeskin lying in a coil. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_shed_skin-1000.png"
+  },
+  "ability/stone_gaze": {
+    "file": "icon_stone_gaze-1000.png",
+    "id": "icon_stone_gaze",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a serpent-haired face with eyes turning things to stone. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_stone_gaze-1000.png"
+  },
+  "ability/skirmish": {
+    "file": "icon_skirmish-1000.png",
+    "id": "icon_skirmish",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a horse's hooves wheeling away from a thrust spear. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_skirmish-1000.png"
+  },
+  "ability/run_through": {
+    "file": "icon_run_through-1000.png",
+    "id": "icon_run_through",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a lance piercing through one shield and into a second. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_run_through-1000.png"
+  },
+  "ability/rear_and_kick": {
+    "file": "icon_rear_and_kick-1000.png",
+    "id": "icon_rear_and_kick",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a rearing horse's hooves smashing a raised shield. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_rear_and_kick-1000.png"
+  },
+  "ability/read_the_stars": {
+    "file": "icon_read_the_stars-1000.png",
+    "id": "icon_read_the_stars",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a ring of stars over an open hand. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_read_the_stars-1000.png"
+  },
+  "ability/thundering_charge": {
+    "file": "icon_thundering_charge-1000.png",
+    "id": "icon_thundering_charge",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a wall of hooves charging forward in a cloud of dust. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_thundering_charge-1000.png"
+  },
+  "ability/last_stand": {
+    "file": "icon_last_stand-1000.png",
+    "id": "icon_last_stand",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a broken axe still gripped in a bloodied fist. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_last_stand-1000.png"
+  },
+  "ability/hurled_axe": {
+    "file": "icon_hurled_axe-1001.png",
+    "id": "icon_hurled_axe",
+    "seed": 1001,
+    "prompt": "A single emblem for a game ability icon: a bearded axe spinning through the air. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_hurled_axe-1001.png"
+  },
+  "ability/piercing_shot": {
+    "file": "icon_piercing_shot-1000.png",
+    "id": "icon_piercing_shot",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: an arrow piercing straight through a breastplate. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_piercing_shot-1000.png"
+  },
+  "ability/blood_oath": {
+    "file": "icon_blood_oath-1000.png",
+    "id": "icon_blood_oath",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: two forearms bound together with a bloody cord. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_blood_oath-1000.png"
+  },
+  "ability/war_cry": {
+    "file": "icon_war_cry-1000.png",
+    "id": "icon_war_cry",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a horned war horn blowing, its sound like a gust. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_war_cry-1000.png"
+  },
+  "ability/storm_capacitor": {
+    "file": "icon_storm_capacitor-1000.png",
+    "id": "icon_storm_capacitor",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a brass jar with copper coils crackling with lightning. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_storm_capacitor-1000.png"
+  },
+  "ability/hourglass": {
+    "file": "icon_hourglass-1000.png",
+    "id": "icon_hourglass",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a cracked hourglass with its sand running upward. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/abilities/icon_hourglass-1000.png"
   }
 }
