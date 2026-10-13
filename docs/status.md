@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-12 (docs and board audited against the code)
+**Updated:** 2026-10-13 (the three new biomes have their own props)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): a first complete version, far off (the board's README
@@ -24,10 +24,8 @@ interface change.
   (`todo/concepts-and-portraits`). The HUD is box-out-then-paint-in (`hud-paint-in` skill); Jilliath's Capitol
   column and garrison are painted. The HUD rests for now (the user, 2026-10-11).
 - **Mana is one kind** (the user's call, 2026-10-11). **Armor is a percentage** with diminishing returns.
-
-## Running now
-- **Biome props** (`in-progress/biome-props`): TRELLIS.2 meshes for the swamp, tundra and haunted woods, building
-  in the background; placing them on the map comes next.
+- **Biome props:** the swamp, tundra and haunted woods have their own thirteen props each, on the map
+  (`testing/biome-props`, `shots/biome-props.html`).
 
 ## Next (the board's todo, in rank order)
 1. **Design sessions with the user:** the Grove's mage line (questions #10), Ral-Vitahl's missing tiers, the
