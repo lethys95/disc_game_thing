@@ -13,5 +13,5 @@
   to ue5 […] for the quality reasons"). What the tests settled: one unsegmented mesh, PBR textures, about 48k
   triangles, 4k, Tripo's rig (61 bones named like Unreal's mannequin), FBX (Tripo's GLB wrote the rig's bind matrices
   corrupt at this size). Loose cloth gets bone chains for spring physics (`scripts/art/cloth-bones.py`); the braids
-  wait, fused into the hood in this generation. In the repo as `assets/models/units/psychopomp.fbx`.
+  wait, fused into the hood in this generation. In the repo as `assets/models/units/psychopomp.glb` (Blender's FBX export scaled the root bone; GLB doesn't). Walking in Unreal with springs on the cape and skirt: `disc_unreal`'s `card/3d-figures`, `shots/figures/index.html`.
 

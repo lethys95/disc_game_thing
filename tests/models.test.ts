@@ -1,3 +1,4 @@
+import { UNITS } from "#rules/units/index";
 import { readdirSync } from "node:fs";
 import { join, relative } from "node:path";
 import { FACTIONS } from "#rules/factions";
@@ -11,7 +12,7 @@ const files = (dir: string): string[] =>
 
 describe("model slots", () => {
   test("every model file belongs to a slot, so a rename can't orphan a model silently", () => {
-    const slots = new Set(modelSlots(Object.keys(FACTIONS), STRUCTURE_KINDS, Object.keys(NODES)));
+    const slots = new Set(modelSlots(Object.keys(FACTIONS), STRUCTURE_KINDS, Object.keys(NODES), Object.keys(UNITS)));
     const orphans = files("assets/models").map((f) => relative("assets/models", f).replace(/\.glb$/, "")).filter((key) => !slots.has(key));
     expect(orphans).toEqual([]);
   });

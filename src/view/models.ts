@@ -123,7 +123,7 @@ export const GROUND_LOOK: Readonly<Record<Biome, { readonly tone: number; readon
 };
 
 /** Every model slot the map can show, for the orphan check (`tests/models.test.ts`). */
-export function modelSlots(factions: readonly string[], structures: readonly string[], nodes: readonly string[]): string[] {
+export function modelSlots(factions: readonly string[], structures: readonly string[], nodes: readonly string[], units: readonly string[]): string[] {
   return [
     ...factions.flatMap((f) => MODEL_CHAINS.capitol(f)),
     ...MODEL_CHAINS.city(),
@@ -131,6 +131,7 @@ export function modelSlots(factions: readonly string[], structures: readonly str
     ...nodes.flatMap((n) => MODEL_CHAINS.node(n)),
     ...MODEL_CHAINS.dungeon(),
     ...MODEL_CHAINS.portal(),
+    ...units.flatMap((u) => MODEL_CHAINS.figure(u)),
     ...Object.values(BIOME_PREFIX).flatMap((prefix) =>
       Object.entries(TERRAIN_VARIANTS).flatMap(([kind, count]) => Array.from({ length: count }, (_, i) => `terrain/${prefix}${kind}-${i + 1}`)),
     ),
@@ -145,6 +146,8 @@ export const MODEL_CHAINS = {
   node: (kind: string) => [`node/${kind}`],
   dungeon: () => ["lair/dungeon"],
   portal: () => ["structure/portal"],
+  /** A unit's 3D figure, rigged (the 3D figures card): Unreal draws it; this view keeps its standees for now. */
+  figure: (unit: string) => [`units/${unit}`],
 } as const;
 
 /** Loads each model once; places share its geometry and materials (`userData.shared` keeps `discard` off them). */
