@@ -902,5 +902,37 @@
     "prompt": "A single emblem for a game ability icon: a cracked hourglass with its sand running upward. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
     "model": "krea2_turbo_fp8_scaled.safetensors",
     "from": "art/candidates/icons/abilities/icon_hourglass-1000.png"
+  },
+  "effect/burning": {
+    "file": "icon_burning-1000.png",
+    "id": "icon_burning",
+    "seed": 1000,
+    "prompt": "A single emblem for a game status-effect icon: a small figure wreathed in licking flames. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/effects/icon_burning-1000.png"
+  },
+  "effect/stunned": {
+    "file": "icon_stunned-1000.png",
+    "id": "icon_stunned",
+    "seed": 1000,
+    "prompt": "A single emblem for a game status-effect icon: a dented helm with a ring of dizzy sparks above it. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/effects/icon_stunned-1000.png"
+  },
+  "item/twin_knives": {
+    "file": "icon_twin_knives-1001.png",
+    "id": "icon_twin_knives",
+    "seed": 1001,
+    "prompt": "A single emblem for a game item icon: a pair of matching curved knives crossed at the hilts. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/items/icon_twin_knives-1001.png"
+  },
+  "item/salt_of_the_old_kings": {
+    "file": "icon_salt_of_the_old_kings-1000.png",
+    "id": "icon_salt_of_the_old_kings",
+    "seed": 1000,
+    "prompt": "A single emblem for a game item icon: a small iron-bound casket spilling coarse white salt. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/items/icon_salt_of_the_old_kings-1000.png"
   }
 }

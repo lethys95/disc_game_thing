@@ -10,3 +10,8 @@
   47 existing ones came from), two seeds each, running in the background. Items are an art slot kind now (an icon
   beside each item on the leader's and merchants' screens). Effects and items have never had icons: a test of two each
   (Burning, Stunned, Twin knives, Salt of the old kings) runs after the abilities, before the rest.
+- **2026-10-13:** 63 of the 69 abilities in (Claude's picks); six missed (Transfusion, Castigation, Fire on all, Beam,
+  Hamstring, Regenerate) and run again with new subjects. The effect and item test holds the look (Burning, Stunned,
+  Twin knives, Salt of the old kings, in the game). Waiting for the user's okay on the test before the other 86 effects
+  and 20 items (subjects written in `scripts/art/icons.ts`). Review page `shots/icons.html`.
+
