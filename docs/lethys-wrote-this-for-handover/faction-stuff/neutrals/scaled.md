@@ -80,4 +80,4 @@ the clearest so far. The model won't draw an empty skin cleanly; the pale scales
 - **Claude's pick, at the user's word:** Scaleblade `scaleblade-r4-turnaround-1001`.
 - **For Tripo (2026-10-12):** every pick split into views in `shots/tripo/` (`shots/tripo/index.html`, "The five new tribes").
 - **Portraits (2026-10-12):** card, bust and icon in the game for every unit, from its pick (`scripts/art/portraits.ts`; `shots/tribe-portraits.html`).
-- **Weapons (2026-10-12, Claude's pick):** the Scaleblade's spear (1000), `shots/tripo/scaleblade-spear.png`. The rest fight bare-handed.
+- **Weapons (2026-10-12, Claude's pick):** the Scaleblade's spear (1000), `shots/tripo/scaleblade/spear.png`. The rest fight bare-handed.

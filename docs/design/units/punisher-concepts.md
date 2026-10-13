@@ -62,7 +62,7 @@ The user: "I'd say iron 1000. I didn't really intend for the completely straight
 is terrifying […] Dark Souls also have hoods like these […] I'd totally go with iron 1000. He's terrifying."
 **Concept: `punisher-iron-turnaround-1000`** (round two). In code as `PUNISHER_SUBJECT` / `PUNISHER_3D`,
 byte-identical to the manifest; the other readings were removed from code (manifest and git keep them). Split for
-Tripo: `shots/tripo/punisher-{front,side,back}.png`. **The flail is not picked:** the heads keep coming out as spiked
+Tripo: `shots/tripo/punisher/{front,side,back}.png`. **The flail is not picked:** the heads keep coming out as spiked
 balls, not the canon's flanged heads (`PUNISHER_FLAIL`, still in code).
 - **Flail (the user, 2026-10-05):** "we can do punisher-flail-flanged-props-1001 on the last one, but I'm pretty sure
   we'd need to do some magic because of the weird stuff with flails and physics anyway. Might take some creativity."

@@ -175,18 +175,18 @@ back? Maybe something like 'not anime'? Idk."
 The user: "Much much much better. Thank you. Both style first and short are better. short 1002 is final, good job."
 **Concept: `psychopomp-short-turnaround-1002`** (round six). Prompt in code as `PSYCHOPOMP_SUBJECT` / `PSYCHOPOMP_3D`,
 byte-identical to the manifest; the other rounds' prompts were removed from code (they live in the manifest and git).
-Split for Tripo: `shots/tripo/psychopomp-{front,side,back}.png`. Not in the image, for the 3D model, textures and
+Split for Tripo: `shots/tripo/psychopomp/{front,side,back}.png`. Not in the image, for the 3D model, textures and
 effects: the hood's gouged-out pits (the wolf has glowing eyes), her scarlet fingers (teal nails), the glitching ghosts
 and the eye glow (vfx).
 - **The ears (the user, 2026-10-05):** "1002 short has a problem with the ears […] the ears are sticking out from the
   front, but not from the side, which doesn't make sense logically." Backups if Tripo doesn't go well: short 1001 or
   style-first 1000. Checked per view: short 1001 keeps the ears inside the hood in both views (consistent);
   style-first 1000 has small tips at the front and none at the side (the same mismatch, milder) and draws the side
-  twice. All three are split in `shots/tripo/` (`psychopomp-*`, `psychopomp-backup-1-*`, `psychopomp-backup-2-*`).
+  twice. All three were split for Tripo; the backups now sit in `art/candidates/units/grove/psychopomp/tripo-alternates/` (2026-10-13), and `shots/tripo/psychopomp/` holds only the set for Tripo.
 - **The ears inpainted (2026-10-05, the user: "try it out"):** the first repair with the new inpainting
   (`scripts/art/fixes.ts`, fix `psychopomp-short-1002-earless`). The mask (`masks/psychopomp-short-1002-ears.png`)
   was picked out by the ears' pink skin within two boxes and widened 7 px. The prompt is the pick's, without "long
   pointed ears", plus the hood's fur close around her face. Strengths 0.7, 0.85 and 1.0 all replace the ears with
   hood fur; small pointed ear tips stay tucked inside the hood. Outside the mask the pixels are the pick's, checked:
-  a difference of 0. Claude's choice for Tripo: 0.85 (`shots/tripo/psychopomp-earless-front.png`, with the pick's
+  a difference of 0. Claude's choice for Tripo: 0.85 (`shots/tripo/psychopomp/front.png`, with the pick's
   side and back).
