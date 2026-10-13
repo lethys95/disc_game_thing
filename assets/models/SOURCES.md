@@ -36,3 +36,10 @@ The prompts are keyed by slot in `scripts/art/props.ts` (the first two predate t
 Placeholders for the M42 spike (2026-09-27): the art direction isn't settled (`docs/design/art.md`).
 
 Later the same day (the user's go-ahead): hill-1 and hill-2 from darker heath concepts (seed 3); mountain-3 without its snowy top (seed 3), which read as a pale mound. Sky (`assets/sky/map.webp`): `scripts/art/sky.ts` in gothic, seed 3, raised 28% so its distant mountains sit on the horizon, the rest filled with `HORIZON_MIST` (#4a5358, the haze over those mountains).
+
+Figures (2026-10-13, the first): `units/psychopomp.fbx` is the user's Tripo model of the picked Psychopomp concept
+(test 3: one mesh, about 48.5k triangles, 4k PBR textures embedded, Tripo's 61-bone rig named like Unreal's mannequin;
+FBX because Tripo's GLB export wrote that rig's bind matrices corrupt), with 20 bones added by
+`scripts/art/cloth-bones.py` for spring physics: `cape_l_01–04`, `cape_r_01–04` under `spine_03`, and
+`skirt_front|back|l|r_01–03` under `pelvis`. The cape and skirt strips are ripped free of the body where Tripo had
+fused them. Part labels for the script came from the segmented test 2 (`scripts/art/part-labels.py`).
