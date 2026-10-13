@@ -10,6 +10,8 @@ The user's verdicts on Claude's brainstorm (`brainstorm/items.md`, notes written
 - Avoid mental overhead (alternating states to track) and anything too strong to counter.
 
 ## Taken
+All sixteen are in the game (2026-10-13); Claude's readings where the design was open are `provisional.md` #83.
+
 | Item | Slot | As the user wants it |
 |---|---|---|
 | Grudgebearer | weapon | +3 damage per enemy leader killed, for good; keep the tooltip from turning into spam (a count, maybe the last few names) |

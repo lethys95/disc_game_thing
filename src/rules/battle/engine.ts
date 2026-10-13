@@ -84,6 +84,7 @@ export function createBattle(sides: readonly [readonly Placement[], readonly Pla
         alive: true,
         fled: false,
         corpse: "intact",
+        killedBy: null,
         spellCharges: def.spellCharges ?? 0,
         lastTurnDealt: 0,
         leader: leader ?? false,
@@ -231,7 +232,10 @@ export function applyAction(battle: Battle, action: Action): Step {
   slot.bonusIndex = 0;
 
   if (!isBonus && choice.cost === "free") slot.freeUsed.push(action.abilityId);
-  if (!isBonus && choice.cost === "main") slot.mainTaken = true;
+  if (!isBonus && choice.cost === "main") {
+    if (slot.extraActions > 0) slot.extraActions -= 1;
+    else slot.mainTaken = true;
+  }
   if (found.reschedules) {
     draft.queue.push(unitId);
     draft.waitedThisPass.push(unitId);
@@ -395,7 +399,7 @@ function advance(ctx: Ctx): void {
       ctx.emit({ type: "skipped", unitId: next, reason: "lostTurn" });
       continue;
     }
-    battle.current = { unitId: next, freeUsed: [], mainTaken: false, bonusOwed: 0, bonusGranted: 0, bonusIndex: 0 };
+    battle.current = { unitId: next, freeUsed: [], mainTaken: false, bonusOwed: 0, bonusGranted: 0, bonusIndex: 0, extraActions: 0 };
     if (!hasMainAction(legal(ctx))) {
       battle.current = null;
       ctx.emit({ type: "skipped", unitId: next, reason: "noActions" });
@@ -664,6 +668,10 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
       if (slot?.unitId !== unitId) return;
       slot.bonusOwed += 1;
       slot.bonusGranted += 1;
+    },
+    grantExtraAction: (unitId) => {
+      const slot = ctx.battle.current;
+      if (slot?.unitId === unitId) slot.extraActions += 1;
     },
     consumeCharge: (unitId, abilityId) => {
       if (chargesLeft(ctx, unitId, abilityId) <= 0) return false;

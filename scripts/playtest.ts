@@ -5,6 +5,7 @@ import { createServer } from "vite";
 import battle from "#scripts/playtests/battle";
 import city from "#scripts/playtests/city";
 import { harness } from "#scripts/playtests/harness";
+import items from "#scripts/playtests/items";
 import type { Playtest } from "#scripts/playtests/harness";
 import map from "#scripts/playtests/map";
 import music from "#scripts/playtests/music";
@@ -19,7 +20,7 @@ import structures from "#scripts/playtests/structures";
  * Plays the game by hand, like a person would: `pnpm playtest [name…]` runs the named playtests (all by default)
  * against one dev server and one browser, each in a fresh context (its own storage). Fails on any page error.
  */
-const PLAYTESTS: readonly Playtest[] = [battle, map, save, city, settings, setup, spells, structures, music, tarot];
+const PLAYTESTS: readonly Playtest[] = [battle, map, save, city, settings, setup, spells, structures, items, music, tarot];
 
 const wanted = process.argv.slice(2).filter((a) => a !== "--");
 const unknown = wanted.filter((w) => !PLAYTESTS.some((p) => p.name === w));

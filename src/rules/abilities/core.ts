@@ -63,7 +63,10 @@ export const core: Readonly<Record<string, Behavior>> = {
     tags: ["attack", "melee", "damage"],
     defaults: { power: 20 },
     scales: ["power"],
-    choices: (ctx, self) => meleeTargets(ctx.living(), ctx.unit(self.unitId)).map((t) => single(t, "main")),
+    choices: (ctx, self) => {
+      const depth = Math.max(0, ...ctx.traits(self.unitId).map((t) => t.hooks.reach?.(ctx, t.self) ?? 0));
+      return meleeTargets(ctx.living(), ctx.unit(self.unitId), depth).map((t) => single(t, "main"));
+    },
     resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self)),
   },
   shoot: {
@@ -83,7 +86,7 @@ export const core: Readonly<Record<string, Behavior>> = {
     applies: ["defending"],
     describe: () =>
       "End the turn. Damage taken is halved until this unit acts again.",
-    tags: ["common"],
+    tags: ["common", "guard"],
     hotkey: "d",
     choices: (ctx, self) => [single(ctx.unit(self.unitId), "main")],
     resolve: (ctx, self) => ctx.addEffect(self.unitId, { def: "defending" }),
@@ -115,6 +118,46 @@ export const core: Readonly<Record<string, Behavior>> = {
     scales: ["power"],
     choices: rangedChoices,
     resolve: (ctx, self, choice) => ctx.hit(self.unitId, choice.affected, ctx.hitSpec(self)),
+  },
+  /**
+   * Carried by a Storm capacitor (the user, 2026-09-29: "just make it an ability the leader gets that gives the team
+   * shield once"). The shield comes on top of any the units have, like a Cyclops's loan; amount provisional (#83).
+   */
+  storm_capacitor: {
+    kind: "active",
+    name: "Storm capacitor",
+    describe: (p) => `${uses(p)}: every ally (this unit too) gains ${p["amount"]} shield for the rest of the battle.`,
+    tags: [],
+    defaults: { charges: 1, amount: 20 },
+    scales: ["amount"],
+    choices: (ctx, self) => {
+      const user = ctx.unit(self.unitId);
+      return [at(user, ctx.living(user.side).map((u) => u.id), "main")];
+    },
+    resolve: (ctx, self, choice) => {
+      const amount = self.params["amount"] ?? 0;
+      for (const id of choice.affected) {
+        ctx.unit(id).shield += amount;
+        ctx.emit({ type: "shieldRestored", unitId: id, amount });
+      }
+    },
+  },
+  /**
+   * Carried by an Hourglass of borrowed time (the user, 2026-09-29: "once per battle, free: act now, skip the first
+   * action next round"): one more action this turn, paid for with the next round's first.
+   */
+  hourglass: {
+    kind: "active",
+    name: "Hourglass of borrowed time",
+    applies: ["borrowed_time"],
+    describe: (p) => `${uses(p)}, free: this unit takes another action this turn, and loses its first turn next round.`,
+    tags: [],
+    defaults: { charges: 1 },
+    choices: (ctx, self) => [single(ctx.unit(self.unitId), "free")],
+    resolve: (ctx, self) => {
+      ctx.grantExtraAction(self.unitId);
+      ctx.addEffect(self.unitId, { def: "borrowed_time", source: self.unitId, amount: ctx.battle.round });
+    },
   },
   retreat: {
     kind: "active",

@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-13 (the three new biomes have their own props)
+**Updated:** 2026-10-13 (the sixteen taken items are in the game; save 38)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): a first complete version, far off (the board's README
@@ -13,7 +13,7 @@ interfaces, the map's look, tools and music installs. The roadmap's milestones a
 A playable map game for 2–6 players (hotseat viewer vs AIs) with Jilliath, Ral-Vitahl and the Sylvan; nine tribes
 (bandits, gnolls, the Drawn, the carnival, the Wild, the Tuskclans, the Scaled, the Herd, the barbarian clans) on the
 map, several per biome; five biomes (temperate, desert, swamp, tundra, haunted woods); cities, nodes, spells, items,
-fog, saves (37), tarot and keywords. The AI plays map and battles in a web worker. A front door (title, new game,
+fog, saves (38), tarot and keywords. The AI plays map and battles in a web worker. A front door (title, new game,
 skirmish, codex, settings, credits). Architecture: `design/architecture.md`; gotchas: `engineering.md`;
 `pnpm verify` before calling anything done (check its exit code, not a grep of its output); `pnpm sizes` for any
 interface change.
@@ -24,14 +24,16 @@ interface change.
   (`todo/concepts-and-portraits`). The HUD is box-out-then-paint-in (`hud-paint-in` skill); Jilliath's Capitol
   column and garrison are painted. The HUD rests for now (the user, 2026-10-11).
 - **Mana is one kind** (the user's call, 2026-10-11). **Armor is a percentage** with diminishing returns.
+- **Items:** the sixteen the user took from the brainstorm are built (`testing/items`): bodyguards, double strikes,
+  reach, extra actions, items that remember, salted hexes, a suit of armor that fights. Try `&items=` on `?map`.
 - **Biome props:** the swamp, tundra and haunted woods have their own thirteen props each, on the map
   (`testing/biome-props`, `shots/biome-props.html`).
 
 ## Next (the board's todo, in rank order)
 1. **Design sessions with the user:** the Grove's mage line (questions #10), Ral-Vitahl's missing tiers, the
    Spiritess tier 4, the joker lines, owners for Evasion, Explode and Soak.
-2. **Claude's own, meanwhile:** looks for the units without one (`unit-looks`, Nexus first), then their concepts and
-   portraits; the sixteen items the user took (`items`, designed, none built).
+2. **Claude's own, meanwhile:** icons for abilities, effects and items (`icons`, the user's suggestion); looks for
+   the units without one (`unit-looks`, Nexus first), then their concepts and portraits.
 3. **The user's picks waiting:** the node brainstorm's round two (`design/brainstorm/nodes.md`, questions #6), and
    everything in `testing/`.
 4. **The balance pass** once the factions' lines exist, with the user's worry that Jilliath's lines are too long.

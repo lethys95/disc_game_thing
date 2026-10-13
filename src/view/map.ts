@@ -204,6 +204,8 @@ export class MapView {
   private readonly nodeModels = new Map<string, THREE.Group>();
   private readonly lairs = new Map<string, { group: THREE.Group; label: HTMLDivElement }>();
   private readonly structures = new Map<string, { group: THREE.Group; label: HTMLDivElement }>();
+  /** Salted hexes (Salt of the old kings), by hex key: a label on the ground, no model. */
+  private readonly wards = new Map<string, { group: THREE.Group; label: HTMLDivElement }>();
   private readonly siteLayer = new THREE.Group();
   private readonly models = new Models();
   private readonly ground = new GroundTextures();
@@ -419,6 +421,7 @@ export class MapView {
     discardChildren(this.siteLayer);
     this.sites.clear();
     this.lairs.clear();
+    this.wards.clear();
     const stone = new THREE.MeshStandardMaterial({ color: 0x3b3733, roughness: 0.9 });
     const dark = new THREE.MeshStandardMaterial({ color: 0x1f1c1a, roughness: 0.85 });
     const ore = new THREE.MeshStandardMaterial({ color: 0xd9a431, emissive: 0xd9a431, emissiveIntensity: 1.4, roughness: 0.4 });
@@ -577,6 +580,35 @@ export class MapView {
           : lair.looted
             ? "Dungeon (looted)"
             : `Dungeon · ${lair.guards.length} guards`;
+    }
+  }
+
+  /** Hexes nobody may enter for now: each labelled with the turns it stays shut. */
+  syncWards(world: World): void {
+    const present = new Set(world.wards.map((w) => hexKey(w.hex)));
+    for (const [key, ward] of this.wards) {
+      if (present.has(key)) continue;
+      discard(ward.group);
+      this.wards.delete(key);
+    }
+    for (const ward of world.wards) {
+      const key = hexKey(ward.hex);
+      let model = this.wards.get(key);
+      if (!model) {
+        const group = new THREE.Group();
+        group.position.copy(this.standingPoint(ward.hex));
+        group.userData = { hex: ward.hex };
+        const label = document.createElement("div");
+        label.className = "site-label neutral";
+        const tag = new CSS2DObject(label);
+        tag.position.set(0, 0.4, 0);
+        group.add(tag);
+        this.siteLayer.add(group);
+        model = { group, label };
+        this.wards.set(key, model);
+      }
+      const turns = ward.until - world.turn + 1;
+      model.label.textContent = `Salted · ${turns} turn${turns === 1 ? "" : "s"}`;
     }
   }
 

@@ -1,5 +1,5 @@
 import { FACTIONS } from "#rules/factions";
-import { describeItem, itemById } from "#rules/items";
+import { describeCarried, describeItem, itemById } from "#rules/items";
 import { describeSpell, spellById } from "#rules/spells";
 import { hireCost, MERCHANT_STAPLES, resalePrice, STRUCTURES } from "#rules/structures";
 import { maxHpOf } from "#rules/world/record";
@@ -17,6 +17,8 @@ import { equipmentPanel } from "#view/equipment";
 export interface StructureScreenOptions {
   readonly act: (action: WorldAction) => void;
   readonly close: () => void;
+  /** Aim an item that takes a hex (Salt of the old kings) on the map: the screen closes for it. */
+  readonly aim: (leaderId: string, item: string) => void;
 }
 
 /** A warband visiting a map structure (`rules/structures.ts`): what it offers in the frame, the warband's column on the right. */
@@ -71,7 +73,7 @@ export class StructureScreen implements KeyLayer {
       this.tab = id === "equipment" ? "equipment" : "offer";
       this.show(world, leader, structure, mayAct);
     };
-    const body = this.tab === "offer" ? offer : equipmentPanel(world, leader, mayAct, this.options.act);
+    const body = this.tab === "offer" ? offer : equipmentPanel(world, leader, mayAct, this.options.act, (item) => this.options.aim(leader.id, item));
     this.root.append(warbandColumn(world, leader, tabs, select, () => this.options.close()), tabFrame(this.tab === "offer" ? name : "Equipment", body, null));
   }
 
@@ -112,7 +114,7 @@ export class StructureScreen implements KeyLayer {
     for (const id of leader.bag) {
       const item = itemById(id);
       rows.push(
-        this.row(item.name, describeItem(item, leaderAbilityPower(leader)), orderButton("small", ["Sell · ", gold(resalePrice(item.price))], {
+        this.row(item.name, describeCarried(id, leaderAbilityPower(leader)), orderButton("small", ["Sell · ", gold(resalePrice(item.price))], {
           mayAct,
           problem: sellItemProblem(world, leader.id, id),
           explain: "Half its price.",

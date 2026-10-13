@@ -3,6 +3,7 @@ import { hexDistance, hexKey, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import type { MapTile, WorldMap } from "#rules/map";
 import { NODES } from "#rules/nodes";
+import { giftOf } from "#rules/world/leaders";
 import { emptyMemory, nodesHeldBy, playerOf } from "#rules/world/state";
 import type { Player, PlayerId, World } from "#rules/world/state";
 
@@ -18,7 +19,7 @@ const PORTAL_SIGHT = 1;
 /** The hexes a player sees now: around its warbands, the cities it holds and their watching nodes. */
 export function sightOf(world: World, player: PlayerId): Set<string> {
   const eyes: [Hex, number][] = [
-    ...world.leaders.filter((l) => l.player === player).map((l): [Hex, number] => [l.hex, WARBAND_SIGHT]),
+    ...world.leaders.filter((l) => l.player === player).map((l): [Hex, number] => [l.hex, WARBAND_SIGHT + giftOf(l, "sight")]),
     // A warband on a portal sees what's around its other end: a march's next hex must always be in sight, and a
     // portal's next hex is over there.
     ...world.leaders

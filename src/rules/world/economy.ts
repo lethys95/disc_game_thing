@@ -6,19 +6,21 @@ import { sameHex } from "#rules/hex";
 import { NODES } from "#rules/nodes";
 import { grow, xpToEvolve } from "#rules/progression";
 import { EVOLUTIONS, FACTION_ROOTS, GUARDIAN_ID, LINE_ARCHETYPE, RECRUIT_COST, UNITS } from "#rules/units/index";
-import { freeRevival, learnProblem, movementOf, squadHealingOf } from "#rules/world/leaders";
+import { freeRevival, giftOf, learnProblem, movementOf, squadHealingOf } from "#rules/world/leaders";
 import { maxHpOf } from "#rules/world/record";
 import { CITY_RESURRECTION_PREMIUM, RESEARCH } from "#rules/research";
 import { UPGRADES, upgradesFor } from "#rules/upgrades";
 import { playerOf, alive, neutralGroup, capitolOf, cityById, cityOfNode, giftsOf, leaderAt, leaderById, leaderUnit, member, nodesHeldBy, nodesOf, tribeAt, tribeRecruitsOf } from "#rules/world/state";
-import type { Enchantment, PlayerId, City, Leader, MapNode, Mark, SquadMember, SquadRef, Strength, World, WorldEvent } from "#rules/world/state";
+import type { PlayerId, City, Leader, MapNode, Mark, SquadMember, SquadRef, Strength, World, WorldEvent } from "#rules/world/state";
 import { capacityOf, cityOfSquad, ownerOf, squadAt } from "#rules/world/squads";
 import { hireCost, MERCHANT_RESTOCK_TURNS, merchantWares } from "#rules/structures";
 
 /** Gold, recruiting, branch choices, resurrection, elevation, and the start of a side's turn. */
 
 export function income(world: World, side: PlayerId): number {
-  return (capitolOf(world, side) ? CAPITOL_INCOME : 0) + nodesHeldBy(world, side).reduce((sum, n) => sum + NODES[n.kind].income(n.level), 0);
+  const nodes = nodesHeldBy(world, side).reduce((sum, n) => sum + NODES[n.kind].income(n.level), 0);
+  const items = world.leaders.filter((l) => l.player === side).reduce((sum, l) => sum + giftOf(l, "gold"), 0);
+  return (capitolOf(world, side) ? CAPITOL_INCOME : 0) + nodes + items;
 }
 
 
@@ -199,10 +201,10 @@ export function newcomer(world: World, side: PlayerId, defId: string, tile: Tile
   return { ...member(defId, tile), marks: marksOnBecoming(world, side, defId) };
 }
 
-/** Evolves or levels members in place; a new form or level arrives at full health (provisional). */
-export function growSquad(world: World, { squad, leader }: Held, gained: number, side: PlayerId, events: WorldEvent[]): void {
+/** Evolves or levels members in place (those `who` picks); a new form or level arrives at full health (provisional). */
+export function growSquad(world: World, { squad, leader }: Held, gained: number, side: PlayerId, events: WorldEvent[], who: (m: SquadMember) => boolean = () => true): void {
   squad.forEach((m, i) => {
-    if (!alive(m)) return;
+    if (!alive(m) || !who(m)) return;
     const growth = grow(m.defId, m.xp, gained, playerOf(world, side).commitment);
     let from = m.defId;
     for (const to of growth.evolvedInto) {
@@ -283,8 +285,9 @@ export function upgradeProblem(world: World, id: string): string | null {
 
 /** A new round (every player has moved): cleared camps regrow (provisional, #19), stronger as the game goes on. */
 export function startRound(world: World, events: WorldEvent[]): void {
-  // Spells on warbands and cities wear off.
-  const lasting = (e: Enchantment) => e.until >= world.turn;
+  // Spells on warbands and cities wear off, and so does salt on the ground.
+  const lasting = (e: { readonly until: number }) => e.until >= world.turn;
+  world.wards = world.wards.filter(lasting);
   for (const leader of world.leaders) leader.enchantments = leader.enchantments.filter(lasting);
   for (const city of world.cities) city.enchantments = city.enchantments.filter(lasting);
   const strength: Strength = world.turn >= CAMP_STRONG_FROM ? "strong" : world.turn >= CAMP_MEDIUM_FROM ? "medium" : "weak";

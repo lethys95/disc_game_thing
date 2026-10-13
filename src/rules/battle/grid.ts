@@ -34,15 +34,19 @@ export function inFrontLine(units: readonly BattleUnit[], unit: BattleUnit): boo
  * Provisional (docs/design/combat.md): the user suggested "one tile in front"; widened to the
  * neighbouring columns so a gap in the enemy line can't make a unit useless.
  */
-export function meleeTargets(units: readonly BattleUnit[], user: BattleUnit): BattleUnit[] {
+export function meleeTargets(units: readonly BattleUnit[], user: BattleUnit, depth = 0): BattleUnit[] {
   if (!inFrontLine(units, user)) return [];
   const enemy = opponent(user.side);
-  const row = frontLine(units, enemy);
-  if (row === null) return [];
-  const line = units.filter((u) => u.alive && u.side === enemy && u.tile.row === row);
+  const front = frontLine(units, enemy);
+  if (front === null) return [];
   const distance = (u: BattleUnit) => Math.abs(u.tile.col - user.tile.col);
-  const reach = Math.max(1, Math.min(...line.map(distance)));
-  return line.filter((u) => distance(u) <= reach);
+  // `depth` lines past the front one (a Reaching spear's), each reached by the same rule.
+  return ROWS.filter((row) => row >= front && row <= front + depth).flatMap((row) => {
+    const line = units.filter((u) => u.alive && u.side === enemy && u.tile.row === row);
+    if (line.length === 0) return [];
+    const reach = Math.max(1, Math.min(...line.map(distance)));
+    return line.filter((u) => distance(u) <= reach);
+  });
 }
 
 export function adjacent(a: Tile, b: Tile): boolean {

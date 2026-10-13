@@ -412,3 +412,17 @@ so the colours did nothing. Laid out as four options (typed nodes after D2's cry
 mana beyond spells), the user: "I just think the colored mana types is sort of arbitrary and annoying. I might say
 pass and turn into a singular." A player's mana is one number; a spell costs mana, whoever's it is. A faction's colour
 stays its accent (art.md): its magic glows in it and its mana gem is drawn in it. Save 35.
+
+## An item remembers in its own id (2026-10-13)
+The Grudgebearer and the Veteran's standard count things for good, and the count must go wherever the item goes:
+worn by another leader, sold, taken as spoils. Items were plain ids in bags and slots, so the count rides in the id
+(`grudgebearer:3`): every place that moves items moves the count without knowing it, and `itemById` reads past it.
+The alternative, item instances with their own records, would have touched every bag, ware, reward and save for two
+items. If items grow many kinds of memory, instances become the better shape.
+
+## Bodyguards, double strikes and reach are hooks (2026-10-13)
+Three of the taken items needed the engine to ask a new question: who takes part of a hit aimed at someone else
+(`intercept`, Penitent's chains), how many times a hit strikes (`strikes`, Twin knives), and how deep an Attack
+reaches (`reach`, the Reaching spear). Each is asked at one place, and none names an item. A turn can also hold extra
+main actions of any kind (the Hourglass), beside the extra attacks it already could. Save 38.
+

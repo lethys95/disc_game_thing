@@ -4,8 +4,9 @@ import { createBattle, NO_CONTEXT } from "#rules/battle/engine";
 import { seedOf } from "#rules/battle/tarot";
 import type { Placement } from "#rules/battle/engine";
 import type { Battle, EffectSeed, Side } from "#rules/battle/types";
+import { itemById, tallyOf, withTally } from "#rules/items";
 import { NODES } from "#rules/nodes";
-import { sameTile } from "#rules/battle/grid";
+import { COLS, ROWS, sameTile } from "#rules/battle/grid";
 import { xpValue } from "#rules/progression";
 import { GUARDIAN_ID } from "#rules/units/index";
 import { growSquad } from "#rules/world/economy";
@@ -61,6 +62,23 @@ function nodeDefenceFor(world: World, defender: Defender, player: PlayerId | nul
   return city ? nodesOf(world, city).flatMap((n) => [...(NODES[n.kind].city?.defenderEffects?.(n.level) ?? [])]) : [];
 }
 
+/**
+ * What a standing leader's items field beside its squad (a Hollow plate): each in the frontmost free tile, never
+ * part of the squad, so it earns no XP, leaves no corpse and is whole again next battle.
+ */
+function standersOf(leader: Leader | undefined): Placement[] {
+  if (!leader || leader.fellOnTurn !== null) return [];
+  const taken = leader.squad.map((m) => m.tile);
+  const placed: Placement[] = [];
+  for (const defId of leader.worn.flatMap((id) => itemById(id).standsIn ?? [])) {
+    const tile = ROWS.flatMap((row) => COLS.map((col) => ({ row, col }))).find((t) => !taken.some((u) => sameTile(u, t)));
+    if (!tile) break;
+    taken.push(tile);
+    placed.push({ defId, tile });
+  }
+  return placed;
+}
+
 /** A fight between a warband and whatever it walked into, ready to play. */
 export function engage(world: World, attacker: Leader, defender: Defender): Engagement {
   return { attackerId: attacker.id, defender, battle: engagementBattle(world, attacker, defender), players: [attacker.player, defendingSquad(world, defender).player] };
@@ -70,7 +88,7 @@ function engagementBattle(world: World, attacker: Leader, defender: Defender): B
   const defending = defendingSquad(world, defender);
   const spelled = (placement: Placement, on: readonly Enchantment[]): Placement =>
     on.length === 0 ? placement : { ...placement, effects: [...(placement.effects ?? []), ...on.map((e) => e.effect)] };
-  const ours = attacker.squad.filter(alive).map((m) => spelled(placementOf(m, attacker), attacker.enchantments));
+  const ours = [...attacker.squad.filter(alive).map((m) => spelled(placementOf(m, attacker), attacker.enchantments)), ...standersOf(attacker)];
   // A warband brings its own spells; defenders behind a city's walls (its garrison, or a warband in its own city)
   // also bring the city's.
   const theirSpells = [...(defending.leader?.enchantments ?? []), ...(defendedCity(world, defender, defending.player)?.enchantments ?? [])];
@@ -83,7 +101,7 @@ function engagementBattle(world: World, attacker: Leader, defender: Defender): B
     const effects = [...(placement.effects ?? []), ...(walls > 0 ? [{ def: "fortified", amount: walls }] : []), ...(cornered ? [{ def: "cornered" }] : []), ...fromNodes];
     return { ...placement, effects };
   });
-  const squads: [Placement[], Placement[]] = [ours, theirs];
+  const squads: [Placement[], Placement[]] = [ours, [...theirs, ...standersOf(defending.leader)]];
   // The fight's own seed (tarot hands): the same fight on the same turn deals the same cards.
   const seed = seedOf(world.turn, `${attacker.id}:${JSON.stringify(defender)}`);
   return createBattle(squads, { ...NO_CONTEXT, seed }).battle;
@@ -109,6 +127,21 @@ function killed(squad: readonly SquadMember[], side: Side, battle: Battle): Squa
   });
 }
 
+/**
+ * What a warband's remembering items count from a battle it fought (before spoils change hands): every battle, and
+ * the enemy leaders its leader slew.
+ */
+function remember(leader: Leader, side: Side, battle: Battle): void {
+  const own = unitId(side, leader.leaderTile);
+  const slain = Object.values(battle.units).filter((u) => u.side !== side && u.leader && u.killedBy === own).length;
+  leader.worn = leader.worn.map((item) => {
+    const counts = itemById(item).memory?.counts;
+    if (counts === "battles") return withTally(item, tallyOf(item) + 1);
+    if (counts === "leaderKills" && slain > 0) return withTally(item, tallyOf(item) + slain);
+    return item;
+  });
+}
+
 /** Writes a finished battle back into the world: survivors keep their wounds, the dead leave their squad. */
 export function concludeBattle(world: World, battle: Battle): WorldStep {
   const engagement = world.engagement;
@@ -118,6 +151,8 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
   const attacker = leaderById(draft, engagement.attackerId);
   const defending = defendingSquad(draft, engagement.defender);
 
+  remember(attacker, ATTACKER, battle);
+  if (defending.leader) remember(defending.leader, DEFENDER, battle);
   const lost: [SquadMember[], SquadMember[]] = [killed(attacker.squad, ATTACKER, battle), killed(defending.squad, DEFENDER, battle)];
   const attackers = remaining(attacker.squad, ATTACKER, battle, attacker);
   const defenders = remaining(defending.squad, DEFENDER, battle, defending.leader);

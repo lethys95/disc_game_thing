@@ -13,6 +13,8 @@ import { warbandColumn } from "#view/warband-column";
 export interface LeaderScreenOptions {
   readonly act: (action: WorldAction) => void;
   readonly close: () => void;
+  /** Aim an item that takes a hex (Salt of the old kings) on the map: the screen closes for it. */
+  readonly aim: (leaderId: string, item: string) => void;
 }
 
 type LeaderTab = "tree" | "equipment";
@@ -81,7 +83,7 @@ export class LeaderScreen implements KeyLayer {
       this.tab = id === "equipment" ? "equipment" : "tree";
       this.show(world, leader, mayAct);
     };
-    const body = this.tab === "tree" ? this.tree(world, leader, mayAct) : equipmentPanel(world, leader, mayAct, this.options.act);
+    const body = this.tab === "tree" ? this.tree(world, leader, mayAct) : equipmentPanel(world, leader, mayAct, this.options.act, (item) => this.options.aim(leader.id, item));
     this.root.append(warbandColumn(world, leader, tabs, select, () => this.options.close()), tabFrame(this.tab === "tree" ? "Leader tree" : "Equipment", body, null));
   }
 

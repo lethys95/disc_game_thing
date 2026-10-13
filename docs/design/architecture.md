@@ -30,8 +30,11 @@ A **trait** is a bundle of hooks. Passive abilities are traits. Effects (buffs, 
 |---|---|---|
 | `stats(subject, stats)` | every trait on the battlefield (auras see other units) | Congregation, Devotion Aura, Punished, Mutated, context bonuses |
 | `grants(subject)` → ability refs with params / `restrict(subject, allowed)` | every trait | Fanaticism Aura, Must Attack, items and nodes that carry an ability (Hatchet, Holy Water) |
+| `strikes(spec)` → count, percent | the attacker's traits, once per target | Twin knives (twice at 60%) |
+| `reach()` → lines | the attacker's traits, for its Attack | Reaching spear (the line behind the front one) |
 | `outgoing(packet)` | the attacker's traits | Marauder (+10 vs armor), Blacksmith (+10), Absorb on an enemy |
 | `convert(packet)` | the attacker's traits, after `outgoing` | Domination (split into bleed) |
+| `intercept(packet)` → amount | the target's allies' traits, as the hit arrives | Penitent's chains (a bodyguard takes half, through its own defenses) |
 | `incoming(packet)` | the target's traits | immunities, resistances, Negate (hit → healing), Absorb on an ally |
 | `absorb(packet)` → amount | the target's traits, in priority order | fire shield (fire only), shield pool (anything) |
 | `mitigate(packet)` | the target's traits | Defend (halve) |

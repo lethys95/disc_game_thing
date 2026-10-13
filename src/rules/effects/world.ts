@@ -1,5 +1,6 @@
 import type { EffectDef } from "#rules/battle/types";
-import { flatStat } from "#rules/effects/shared";
+import { adjacent, frontLine } from "#rules/battle/grid";
+import { flatStat, STAT_WORTH } from "#rules/effects/shared";
 
 /** Effects the world brings into battle: recruit marks from nodes (design/nodes.md, 2026-09-28; numbers provisional #56), items, upgrades, spells, walls, leaders' levels and skills. */
 export const WORLD_EFFECTS: readonly EffectDef[] = [
@@ -165,6 +166,165 @@ export const WORLD_EFFECTS: readonly EffectDef[] = [
         if (!packet.tags.includes("attack") || !self.effect) return;
         packet.amount += self.effect.amount;
         if (ctx.unit(packet.target).shield > 0) packet.amount += 2 * self.effect.amount;
+      },
+    },
+  },
+  // The user's picks from Claude's item brainstorm (2026-09-29, `design/items.md`); numbers provisional (#83).
+  {
+    // Burial wrappings: "the leader has a Death ward (stops at 1 HP, once per battle)".
+    id: "death_ward",
+    quiet: true,
+    name: "Death ward",
+    describe: () => "Once per battle, the first blow that would kill it leaves it at 1 HP.",
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      preventDeath: (ctx, self) => {
+        if (!self.effect) return false;
+        ctx.removeEffect(self.unitId, self.effect);
+        return true;
+      },
+      aiValue: (ctx, self) => (ctx.stats(self.unitId).maxHp * STAT_WORTH.maxHp) / 2,
+    },
+  },
+  {
+    // Seedpod reliquary: "just give everyone a tiny regen bonus on the team".
+    id: "seedpod",
+    quiet: true,
+    name: "Seedpod reliquary",
+    describe: (e) => `Heals ${e.amount} at the start of each of its turns.`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      turnStart: (ctx, self) => {
+        ctx.heal(self.unitId, self.effect?.amount ?? 0);
+        return null;
+      },
+      aiValue: (_ctx, self) => 2 * (self.effect?.amount ?? 0),
+    },
+  },
+  {
+    // Banner of the vanguard, toned down by the user: "first strike only for leader". Claude's reading: the leader
+    // acts first in the first round, as a city's forewarned defenders do.
+    id: "vanguard",
+    quiet: true,
+    name: "Banner of the vanguard",
+    describe: () => "Acts before everyone else in the first round.",
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: { precedes: (ctx) => ctx.battle.round === 1 },
+  },
+  {
+    // Crown of the pretender's drawbacks, which the user kept: "the warband can never retreat, and the leader can
+    // never Defend". On every unit of the warband.
+    id: "pretender",
+    quiet: true,
+    name: "Crown of the pretender",
+    describe: () => "Its warband's pretender wears a crown: no unit of it may retreat, and its leader may never defend.",
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      restrict: (ctx, self, subjectId, allowed) => {
+        if (subjectId !== self.unitId) return;
+        const leads = ctx.unit(subjectId).leader;
+        for (const id of [...allowed]) if (ctx.hasTag(id, "flee") || (leads && ctx.hasTag(id, "guard"))) allowed.delete(id);
+      },
+    },
+  },
+  {
+    // Penitent's chains: "the leader takes half the damage aimed at orthogonally adjacent allies [...] not cursed,
+    // just a good item". The half it takes goes through its own armor and pools.
+    id: "penitent",
+    quiet: true,
+    name: "Penitent's chains",
+    describe: (e) => `Takes ${e.amount}% of every hit aimed at an ally beside it (not diagonally), through its own defenses.`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      intercept: (ctx, self, packet) =>
+        adjacent(ctx.unit(self.unitId).tile, ctx.unit(packet.target).tile) ? Math.floor((packet.amount * (self.effect?.amount ?? 0)) / 100) : 0,
+    },
+  },
+  {
+    // Twin knives: "the attack hits twice at 60%, both at the same target".
+    id: "twin_knives",
+    quiet: true,
+    name: "Twin knives",
+    describe: (e) => `Its attacks strike each target twice, at ${e.amount}% each.`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: { strikes: (_ctx, self, spec) => (spec.tags.includes("attack") ? { count: 2, percent: self.effect?.amount ?? 100 } : null) },
+  },
+  {
+    // Reaching spear: "melee reaches the enemy's middle row at half damage". Claude's reading: the line behind the
+    // enemy's front line, whichever row that is now.
+    id: "reaching_spear",
+    quiet: true,
+    name: "Reaching spear",
+    describe: (e) => `Its Attack reaches the enemy line behind the front one too, for ${e.amount}% damage there.`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      reach: () => 1,
+      outgoing: (ctx, self, packet) => {
+        if (!packet.tags.includes("melee")) return;
+        const target = ctx.unit(packet.target);
+        if (target.tile.row !== frontLine(ctx.living(), target.side)) packet.amount = Math.round((packet.amount * (self.effect?.amount ?? 100)) / 100);
+      },
+    },
+  },
+  {
+    // The Hourglass of borrowed time's debt: the turn after the one it hurried, lost. `amount` is the round it was used in.
+    id: "borrowed_time",
+    name: "Borrowed time",
+    describe: () => "Its first turn next round is lost: it already took it.",
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      turnStart: (ctx, self) => {
+        const debt = self.effect;
+        if (!debt || ctx.battle.round <= debt.amount) return null;
+        ctx.removeEffect(self.unitId, debt);
+        return "skip";
+      },
+      aiValue: (ctx, self) => -ctx.strongestHit(self.unitId),
+    },
+  },
+  {
+    // A Grudgebearer's count: every enemy leader it has slain (`stacks`).
+    id: "grudge",
+    quiet: true,
+    name: "Grudgebearer",
+    describe: (e) => `+${e.amount} damage for every enemy leader it has slain: ${e.stacks} so far, +${e.amount * e.stacks}.`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      stats: (_ctx, self, subjectId, stats) => {
+        if (subjectId === self.unitId && self.effect) stats.hitBonus += self.effect.amount * self.effect.stacks;
+      },
+    },
+  },
+  {
+    // A Veteran's standard's count: every battle it has been through (`stacks`, capped by the item).
+    id: "battle_worn",
+    quiet: true,
+    name: "Veteran's standard",
+    describe: (e) => `+${e.amount} damage for every battle the standard has been through: ${e.stacks} so far, +${e.amount * e.stacks}.`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      stats: (_ctx, self, subjectId, stats) => {
+        if (subjectId === self.unitId && self.effect) stats.hitBonus += self.effect.amount * self.effect.stacks;
       },
     },
   },

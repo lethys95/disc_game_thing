@@ -15,6 +15,7 @@ import { capitolOf, leaderAt, playerOf } from "#rules/world/state";
 import type { Leader, PlayerId, World, WorldAction } from "#rules/world/state";
 import { knownWorld, visionOf } from "#rules/world/vision";
 import { castProblem, spellTargets } from "#rules/world/spells";
+import { useItemProblem, wardTargets } from "#rules/world/items";
 import { FACTIONS } from "#rules/factions";
 import { hexKey } from "#rules/hex";
 import type { AiClient } from "#view/ai-client";
@@ -31,7 +32,7 @@ import { LeaderScreen } from "#view/leader";
 import { HEX_STEP_MS } from "#view/map";
 import type { MapView } from "#view/map";
 import { MapPanels } from "#view/map-panels";
-import { castHint, hintText, newsText } from "#view/map-text";
+import { castHint, hintText, newsText, wardHint } from "#view/map-text";
 import { formation, groupAt, placeInfo, showPeek } from "#view/peek";
 import type { Stage } from "#view/stage";
 import type { Sound } from "#view/sound";
@@ -60,6 +61,14 @@ const PAN_SPEED = 14;
 const PAN: Readonly<Record<string, readonly [number, number]>> = {
   ArrowUp: [0, 1], w: [0, 1], ArrowDown: [0, -1], s: [0, -1], ArrowLeft: [-1, 0], a: [-1, 0], ArrowRight: [1, 0], d: [1, 0],
 };
+
+/** What a click on the map is aimed with: a spell, or an item a warband uses on a hex. */
+type Aim = { readonly kind: "spell"; readonly spell: string } | { readonly kind: "item"; readonly leaderId: string; readonly item: string };
+
+const aimProblem = (world: World, aim: Aim, at: Hex): string | null =>
+  aim.kind === "spell" ? castProblem(world, aim.spell, at) : useItemProblem(world, aim.leaderId, aim.item, at);
+
+const aimTargets = (world: World, aim: Aim): Hex[] => (aim.kind === "spell" ? spellTargets(world, aim.spell) : wardTargets(world, aim.leaderId));
 
 export class Campaign implements KeyLayer {
   private world: World | null = null;
@@ -103,12 +112,12 @@ export class Campaign implements KeyLayer {
     },
     newGame: () => this.options.onSetup(),
     pickSpell: (id) => {
-      this.casting = id;
+      this.aiming = id === null ? null : { kind: "spell", spell: id };
       this.render();
     },
   });
-  /** The spell being aimed on the map, if any: the next click on a valid hex casts it. */
-  private casting: string | null = null;
+  /** What's being aimed on the map, if anything: the next click on a valid hex casts the spell or uses the item. */
+  private aiming: Aim | null = null;
   /** Pan keys held down now. */
   private readonly panning = new Set<string>();
   /** The city (or meeting warbands) whose screen is open. */
@@ -122,6 +131,11 @@ export class Campaign implements KeyLayer {
       this.leaderOpen = null;
       this.render();
     },
+    aim: (leaderId, item) => {
+      this.leaderOpen = null;
+      this.aiming = { kind: "item", leaderId, item };
+      this.render();
+    },
   });
   /** The warband whose visit to the structure it stands on is open. */
   private visiting: string | null = null;
@@ -129,6 +143,11 @@ export class Campaign implements KeyLayer {
     act: (action) => void this.act(action),
     close: () => {
       this.visiting = null;
+      this.render();
+    },
+    aim: (leaderId, item) => {
+      this.visiting = null;
+      this.aiming = { kind: "item", leaderId, item };
       this.render();
     },
   });
@@ -164,9 +183,9 @@ export class Campaign implements KeyLayer {
     });
     canvas.addEventListener("pointerdown", (e) => {
       if (e.button !== 2 || this.cityScreen.open()) return;
-      // Right-click stops aiming a spell; otherwise it peeks at a formation.
-      if (this.casting) {
-        this.casting = null;
+      // Right-click stops aiming; otherwise it peeks at a formation.
+      if (this.aiming) {
+        this.aiming = null;
         this.render();
       } else this.peekAt(e.clientX, e.clientY);
     });
@@ -208,8 +227,8 @@ export class Campaign implements KeyLayer {
     if (this.cityScreen.open()) return this.cityScreen.key(e);
     if (this.leaderScreen.open()) return this.leaderScreen.key(e);
     if (this.structureScreen.open()) return this.structureScreen.key(e);
-    if (e.key === "Escape" && this.casting) {
-      this.casting = null;
+    if (e.key === "Escape" && this.aiming) {
+      this.aiming = null;
       this.render();
       return true;
     }
@@ -270,6 +289,15 @@ export class Campaign implements KeyLayer {
     if (!world) return;
     const leaders = world.leaders.map((l) => (l.player === this.viewer ? { ...l, experience: xp, squad: l.squad.map((m) => ({ ...m, xp })) } : l));
     this.world = { ...world, leaders };
+    this.render();
+  }
+
+  /** Screenshots and playtests: our first warband's leader carries these items in its bag (to try them). */
+  startingItems(items: readonly string[]): void {
+    const world = this.world;
+    if (!world) return;
+    const first = world.leaders.find((l) => l.player === this.viewer);
+    this.world = { ...world, leaders: world.leaders.map((l) => (l === first ? { ...l, bag: [...l.bag, ...items] } : l)) };
     this.render();
   }
 
@@ -360,6 +388,7 @@ export class Campaign implements KeyLayer {
     this.view.syncSites(known);
     this.view.syncLairs(known);
     this.view.syncStructures(known);
+    this.view.syncWards(known);
   }
 
   /** The world as the player at this screen knows it: what hovering, planning and forecasts may use. */
@@ -387,7 +416,7 @@ export class Campaign implements KeyLayer {
   }
 
   private plan(): MovePlan | null {
-    if (this.casting) return null;
+    if (this.aiming) return null;
     const world = this.known();
     const leader = this.selectedLeader();
     const hovered = this.hovered;
@@ -409,11 +438,11 @@ export class Campaign implements KeyLayer {
     const world = this.known();
     const target = this.hovered;
     if (!world || !target || !this.myTurn()) return;
-    const spell = this.casting;
-    if (spell) {
-      if (this.world && castProblem(this.world, spell, target) === null) {
-        this.casting = null;
-        await this.act({ type: "castSpell", spell, at: target });
+    const aim = this.aiming;
+    if (aim) {
+      if (this.world && aimProblem(this.world, aim, target) === null) {
+        this.aiming = null;
+        await this.act(aim.kind === "spell" ? { type: "castSpell", spell: aim.spell, at: target } : { type: "useItem", leaderId: aim.leaderId, item: aim.item, at: target });
       }
       return;
     }
@@ -503,10 +532,10 @@ export class Campaign implements KeyLayer {
     const leader = this.selectedLeader();
     const plan = this.plan();
     const known = this.known() ?? knownWorld(world, this.viewer);
-    if (this.casting && !this.myTurn()) this.casting = null;
-    const casting = this.casting;
-    const aimed = casting && this.hovered && castProblem(known, casting, this.hovered) === null ? this.hovered : null;
-    const reach = casting ? new Set(spellTargets(known, casting).map(hexKey)) : new Set((leader && this.myTurn() ? reachable(known, leader.id) : new Map<string, number>()).keys());
+    if (this.aiming && !this.myTurn()) this.aiming = null;
+    const aiming = this.aiming;
+    const aimed = aiming && this.hovered && aimProblem(known, aiming, this.hovered) === null ? this.hovered : null;
+    const reach = aiming ? new Set(aimTargets(known, aiming).map(hexKey)) : new Set((leader && this.myTurn() ? reachable(known, leader.id) : new Map<string, number>()).keys());
     this.view.setHighlights({
       reachable: reach,
       path: plan?.path.hexes ?? [],
@@ -526,11 +555,11 @@ export class Campaign implements KeyLayer {
     explain(this.goldPlate, "Gold", `${income(world, this.viewer)} more at the start of your next turn.`);
     explain(this.manaPlate, "Mana", `${manaIncome(world, this.viewer)} more at the start of your next turn.`);
     this.endTurn.disabled = !this.myTurn();
-    this.panels.render(world, this.viewer, leader, this.casting, this.myTurn());
+    this.panels.render(world, this.viewer, leader, aiming?.kind === "spell" ? aiming.spell : null, this.myTurn());
     this.minimap.render(known, this.viewer, new Set(playerOf(world, this.viewer).explored));
     this.renderCityScreen(world);
-    this.hint.textContent = casting && this.myTurn()
-      ? castHint(known, casting, this.hovered)
+    this.hint.textContent = aiming && this.myTurn()
+      ? aiming.kind === "spell" ? castHint(known, aiming.spell, this.hovered) : wardHint(known, aiming.leaderId, aiming.item, this.hovered)
       : this.myTurn()
       ? hintText({ known, player: this.viewer, leader, hovered: this.hovered, plan, forecast: (l, target) => this.forecasts.text(known, l, target) })
       : world.activePlayer === this.viewer

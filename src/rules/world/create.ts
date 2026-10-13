@@ -99,6 +99,7 @@ export function createWorld(seed: number, setups: readonly PlayerSetup[], size: 
     engagement: null,
     outcome: null,
     nextLeader: setups.length,
+    wards: [],
   };
   startTurn(world, []);
   updateVision(world);

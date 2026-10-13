@@ -348,8 +348,8 @@ export interface Path {
  * Cheapest path by terrain cost (A*). `blocked` hexes can't be entered, except the goal itself, so a
  * path can end on an enemy to attack it.
  */
-export function findPath(map: WorldMap, from: Hex, to: Hex, blocked: (hex: Hex) => boolean): Path | null {
-  if (stepCost(map, to) === null) return null;
+export function findPath(map: WorldMap, from: Hex, to: Hex, blocked: (hex: Hex) => boolean, costOf: (hex: Hex) => number | null = (hex) => stepCost(map, hex)): Path | null {
+  if (costOf(to) === null) return null;
   const open = new Map<string, { hex: Hex; cost: number; estimate: number }>([[hexKey(from), { hex: from, cost: 0, estimate: stepsAtLeast(map, from, to) }]]);
   const came = new Map<string, Hex>();
   const best = new Map<string, number>([[hexKey(from), 0]]);
@@ -374,7 +374,7 @@ export function findPath(map: WorldMap, from: Hex, to: Hex, blocked: (hex: Hex) 
       return { hexes, cost: current.cost };
     }
     for (const next of exits(map, current.hex)) {
-      const cost = stepCost(map, next);
+      const cost = costOf(next);
       if (cost === null) continue;
       if (!sameHex(next, to) && blocked(next)) continue;
       const total = current.cost + cost;

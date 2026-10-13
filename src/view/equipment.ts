@@ -1,8 +1,8 @@
-import { describeItem, itemById, SLOT_CAPACITY, SLOT_NAMES } from "#rules/items";
+import { describeCarried, itemById, SLOT_CAPACITY, SLOT_NAMES } from "#rules/items";
 import { leaderAbilityPower } from "#view/members";
 import type { EquipmentSlot } from "#rules/items";
-import { equipProblem } from "#rules/world/leaders";
-import { useItemProblem } from "#rules/world/items";
+import { equipProblem, unequipProblem } from "#rules/world/leaders";
+import { takesHex, useItemProblem, wardTargets } from "#rules/world/items";
 import type { Leader, World, WorldAction } from "#rules/world/state";
 import { element, orderButton } from "#view/dom";
 
@@ -13,7 +13,7 @@ const isSlot = (key: string): key is EquipmentSlot => key in SLOT_CAPACITY;
  * then the bag with Put on or Use. The leader's screen and every structure show it, so what was bought can be put on at
  * once.
  */
-export function equipmentPanel(world: World, leader: Leader, mayAct: boolean, act: (action: WorldAction) => void): HTMLElement {
+export function equipmentPanel(world: World, leader: Leader, mayAct: boolean, act: (action: WorldAction) => void, aim: (item: string) => void): HTMLElement {
   const box = element("div", "equipment");
   const power = leaderAbilityPower(leader);
   box.appendChild(element("div", "section", "Worn"));
@@ -25,8 +25,8 @@ export function equipmentPanel(world: World, leader: Leader, mayAct: boolean, ac
       row.appendChild(element("span", "slot-name", SLOT_NAMES[slot]));
       if (id) {
         const item = itemById(id);
-        row.append(element("span", "item", item.name), element("span", "note", describeItem(item, power)));
-        row.appendChild(orderButton("small", "Take off", { mayAct, problem: null, explain: describeItem(item, power), give: () => act({ type: "unequip", leaderId: leader.id, item: id }) }));
+        row.append(element("span", "item", item.name), element("span", "note", describeCarried(id, power)));
+        row.appendChild(orderButton("small", "Take off", { mayAct, problem: unequipProblem(leader, id), explain: describeCarried(id, power), give: () => act({ type: "unequip", leaderId: leader.id, item: id }) }));
       } else row.appendChild(element("span", "note", "empty"));
       box.appendChild(row);
     }
@@ -36,9 +36,12 @@ export function equipmentPanel(world: World, leader: Leader, mayAct: boolean, ac
   leader.bag.forEach((id) => {
     const item = itemById(id);
     const row = element("div", "slot-row");
-    row.append(element("span", "item", item.name), element("span", "note", describeItem(item, power)));
-    if (item.slot) row.appendChild(orderButton("small", "Put on", { mayAct, problem: equipProblem(leader, id), explain: describeItem(item, power), give: () => act({ type: "equip", leaderId: leader.id, item: id }) }));
-    else if (item.use) row.appendChild(orderButton("small", "Use", { mayAct, problem: useItemProblem(world, leader.id, id), explain: describeItem(item, power), give: () => act({ type: "useItem", leaderId: leader.id, item: id }) }));
+    row.append(element("span", "item", item.name), element("span", "note", describeCarried(id, power)));
+    if (item.slot) row.appendChild(orderButton("small", "Put on", { mayAct, problem: equipProblem(leader, id), explain: describeCarried(id, power), give: () => act({ type: "equip", leaderId: leader.id, item: id }) }));
+    else if (item.use && takesHex(id)) {
+      const problem = wardTargets(world, leader.id).length === 0 ? "no open hex beside the warband" : null;
+      row.appendChild(orderButton("small", "Use", { mayAct, problem, explain: describeCarried(id, power), give: () => aim(id) }));
+    } else if (item.use) row.appendChild(orderButton("small", "Use", { mayAct, problem: useItemProblem(world, leader.id, id), explain: describeCarried(id, power), give: () => act({ type: "useItem", leaderId: leader.id, item: id }) }));
     box.appendChild(row);
   });
   return box;

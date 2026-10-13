@@ -1,11 +1,10 @@
 import { choose } from "#rules/forks";
 import { sameTile } from "#rules/battle/grid";
-import { stepCost } from "#rules/map";
 import { LEADER_MOVEMENT } from "#rules/balance";
 import { defenderOf, engage } from "#rules/world/battles";
 import { nodeMarks, recruitCost, chooseBranchProblem, elevateProblem, freeTile, growSquad, learnSkillProblem, newcomer, recruitProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem, squadsOf, startRound, startTurn, upgradeCityProblem, researchProblem, investNodeProblem, nodeInvestCost, upgradeProblem, cityUpgradeCost } from "#rules/world/economy";
-import { equipProblem, freeRevival, movementOf, rankOf } from "#rules/world/leaders";
-import { destination, planMove } from "#rules/world/movement";
+import { equipProblem, freeRevival, giftOf, movementOf, rankOf, unequipProblem } from "#rules/world/leaders";
+import { destination, planMove, warbandStepCost } from "#rules/world/movement";
 import { knownWorld, see, updateVision } from "#rules/world/vision";
 import { castProblem, castSpell, learnSpellProblem } from "#rules/world/spells";
 import { buyItem, buySpell, hire, sellItem } from "#rules/world/structures";
@@ -176,7 +175,8 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
     }
     case "unequip": {
       const leader = leaderById(draft, action.leaderId);
-      if (leader.player !== side || !leader.worn.includes(action.item)) throw new Error(`cannot take off ${action.item}`);
+      const problem = unequipProblem(leader, action.item);
+      if (leader.player !== side || problem) throw new Error(`cannot take off ${action.item}: ${problem ?? "not your leader"}`);
       leader.worn.splice(leader.worn.indexOf(action.item), 1);
       leader.bag.push(action.item);
       break;
@@ -212,7 +212,7 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       buySpell(draft, action.leaderId, action.spell, events);
       break;
     case "useItem":
-      useItem(draft, action.leaderId, action.item, events);
+      useItem(draft, action.leaderId, action.item, events, action.at);
       break;
     default: {
       const unhandled: never = action;
@@ -239,6 +239,19 @@ function ringBells(world: World, leader: Leader, from: Hex, events: WorldEvent[]
  * a warband it hadn't seen, or when its way or goal turns out other than it looked through the fog; the next hex
  * is always in sight, so it never walks into anything unawares.
  */
+/** A leader whose items reward scouting (a Spyglass helm) gains XP for the land its march was first to reveal. */
+function scout(draft: World, leader: Leader, before: ReadonlySet<string>, events: WorldEvent[]): void {
+  const per = giftOf(leader, "scouting");
+  if (per === 0) return;
+  see(draft, leader.player);
+  const revealed = playerOf(draft, leader.player).explored.filter((key) => !before.has(key)).length;
+  if (revealed === 0) return;
+  const xp = revealed * per;
+  leader.experience += xp;
+  growSquad(draft, { squad: leader.squad, leader }, xp, leader.player, events, (m) => isLeaderOf(m, leader));
+  events.push({ type: "scouted", leaderId: leader.id, hexes: revealed, xp });
+}
+
 function march(draft: World, leader: Leader, to: Hex, events: WorldEvent[]): void {
   const side = leader.player;
   const origin = leader.hex;
@@ -246,12 +259,13 @@ function march(draft: World, leader: Leader, to: Hex, events: WorldEvent[]): voi
   const plan = planMove(known, leader.id, to);
   if (!plan) throw new Error(`no path for ${leader.id}`);
   const seen = new Set(known.leaders.map((l) => l.id));
+  const explored = new Set(playerOf(draft, side).explored);
   const route = plan.path.hexes.slice(0, plan.steps);
   const walked: Hex[] = [];
   let interrupted = false;
   let captures: string | null = null;
   for (const [i, hex] of route.entries()) {
-    const cost = stepCost(draft.map, hex);
+    const cost = warbandStepCost(draft, leader, hex);
     const there = destination(draft, side, hex);
     const last = i === route.length - 1;
     const capture = last && plan.target?.kind === "capture" && there !== null && there !== "blocked" && there.kind === "capture" ? there.cityId : null;
@@ -274,6 +288,7 @@ function march(draft: World, leader: Leader, to: Hex, events: WorldEvent[]): voi
   if (walked.length > 0) {
     events.push({ type: "moved", leaderId: leader.id, path: walked });
     ringBells(draft, leader, origin, events);
+    scout(draft, leader, explored, events);
   }
   if (captures !== null) {
     cityById(draft, captures).owner = side;

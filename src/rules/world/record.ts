@@ -4,7 +4,7 @@ import { LEVEL_BONUS_PERCENT } from "#rules/balance";
 import { FACTIONS } from "#rules/factions";
 import { UNITS } from "#rules/units/index";
 import { sameTile } from "#rules/battle/grid";
-import { itemById } from "#rules/items";
+import { itemById, seedsOf } from "#rules/items";
 import { leaderEffects } from "#rules/world/leaders";
 import { fullHp } from "#rules/world/state";
 import type { Leader, Mark, SquadMember } from "#rules/world/state";
@@ -18,10 +18,10 @@ export function recordOf(m: SquadMember, leader: Leader | undefined): Mark[] {
   const fromTree = isLeaderOf(m, leader) ? leaderEffects(leader).map(({ skill, effect }): Mark => ({ effect, source: { kind: "leaderTree", skill } })) : [];
   const fromLevels: Mark[] = m.level > 0 ? [{ effect: { def: "veteran", amount: m.level * levelBonusPercent(m.defId) }, source: { kind: "levels", levels: m.level } }] : [];
   // Worn items: the leader's own unit wears them; a banner reaches the whole warband.
-  const worn = leader?.worn.map(itemById) ?? [];
-  const fromItems: Mark[] = worn.flatMap((item) =>
-    [...(isLeaderOf(m, leader) ? item.worn : []), ...item.banner].map((effect): Mark => ({ effect, source: { kind: "item", item: item.id } })),
-  );
+  const fromItems: Mark[] = (leader?.worn ?? []).flatMap((id) => {
+    const seeds = seedsOf(id);
+    return [...(isLeaderOf(m, leader) ? seeds.worn : []), ...seeds.banner].map((effect): Mark => ({ effect, source: { kind: "item", item: itemById(id).id } }));
+  });
   return [...m.marks, ...fromLevels, ...fromTree, ...fromItems];
 }
 

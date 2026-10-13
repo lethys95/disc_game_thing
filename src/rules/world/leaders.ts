@@ -1,7 +1,7 @@
 import { EFFECTS } from "#rules/effects";
 import { LEADER_AURA, LEADER_EXTRA_HEALTH, LEADER_HEALING, LEADER_MOVEMENT, LEADER_XP_PER_POINT, MAX_LEADERSHIP, STARTING_LEADERSHIP } from "#rules/balance";
 import type { EffectSeed } from "#rules/battle/types";
-import { itemById, SLOT_CAPACITY, SLOT_NAMES } from "#rules/items";
+import { itemById, SLOT_CAPACITY, SLOT_NAMES, wornGift } from "#rules/items";
 import type { Leader } from "#rules/world/state";
 
 /**
@@ -41,7 +41,10 @@ export const LEADER_SKILLS: Readonly<Record<string, LeaderSkill>> = {
 
 export const rankOf = (leader: Leader, skill: string): number => leader.skills[skill] ?? 0;
 
-export const leadershipOf = (leader: Leader): number => STARTING_LEADERSHIP + rankOf(leader, "leadership");
+export const leadershipOf = (leader: Leader): number => STARTING_LEADERSHIP + rankOf(leader, "leadership") + wornGift(leader.worn, "leadership");
+
+/** What a standing leader's worn items give on the map (a fallen leader's give nothing until it's revived). */
+export const giftOf = (leader: Leader, gift: "gold" | "sight" | "scouting"): number => (leader.fellOnTurn === null ? wornGift(leader.worn, gift) : 0);
 
 export const movementOf = (leader: Leader): number => LEADER_MOVEMENT + rankOf(leader, "movement") + marchBonusOf(leader);
 
@@ -77,6 +80,13 @@ export function equipProblem(leader: Leader, item: string): string | null {
   if (!slot) return "it's carried, not worn";
   const used = leader.worn.filter((w) => itemById(w).slot === slot).length;
   return used >= SLOT_CAPACITY[slot] ? `no free ${SLOT_NAMES[slot].toLowerCase()} slot` : null;
+}
+
+/** Why this leader can't take off `item` now, or null: its warband can't outgrow the Leadership left without it. */
+export function unequipProblem(leader: Leader, item: string): string | null {
+  if (!leader.worn.includes(item)) return "not worn";
+  const left = leadershipOf(leader) - (itemById(item).map?.leadership ?? 0);
+  return leader.squad.length > left ? `the warband would be too big (Leadership ${left})` : null;
 }
 
 /** An item that makes reviving this leader free (the Ankh), worn or in the bag. */

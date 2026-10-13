@@ -118,6 +118,12 @@ export interface Enchantment {
   readonly until: number;
 }
 
+/** A hex nothing may enter until the end of turn `until`. */
+export interface Ward {
+  readonly hex: Hex;
+  readonly until: number;
+}
+
 /** A node on the map: it belongs to the nearest city (`cityOfNode`). */
 export interface MapNode {
   readonly id: string;
@@ -223,6 +229,8 @@ export interface World {
   /** Whose turn it is. Players take turns in order; a round ends when the order wraps around. */
   activePlayer: PlayerId;
   engagement: Engagement | null;
+  /** Hexes nobody may enter for now (Salt of the old kings). */
+  wards: Ward[];
   /** The last player standing (Guardians fallen for all the others). */
   outcome: { winner: PlayerId } | null;
   nextLeader: number;
@@ -267,7 +275,8 @@ export type WorldAction =
   /** At a mage merchant the warband stands on: learn a spell. */
   | { type: "buySpell"; leaderId: string; spell: string }
   /** Use a consumable from the leader's bag (a potion), wherever the warband is. */
-  | { type: "useItem"; leaderId: string; item: string };
+  /** `at`: the hex an item is used on, for one that takes a hex (Salt of the old kings). */
+  | { type: "useItem"; leaderId: string; item: string; at?: Hex };
 
 export type WorldEvent =
   | { type: "moved"; leaderId: string; path: readonly Hex[] }
@@ -302,6 +311,7 @@ export type WorldEvent =
   | { type: "bought"; leaderId: string; item: string }
   | { type: "sold"; leaderId: string; item: string; gold: number }
   | { type: "used"; leaderId: string; item: string }
+  | { type: "scouted"; leaderId: string; hexes: number; xp: number }
   | { type: "restocked"; structureId: string }
   | { type: "worldEnd"; winner: PlayerId }
   | { type: "eliminated"; player: PlayerId };

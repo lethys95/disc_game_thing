@@ -3,7 +3,8 @@ import { hexKey, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { tileAt, TERRAIN_COST } from "#rules/map";
 import type { MovePlan, MoveTarget } from "#rules/world/movement";
-import { cityById, lairById, leaderAt, playerOf, tribeAt } from "#rules/world/state";
+import { cityById, lairById, leaderAt, leaderById, playerOf, tribeAt } from "#rules/world/state";
+import { useItemProblem } from "#rules/world/items";
 import type { Leader, PlayerId, World, WorldEvent } from "#rules/world/state";
 import { sightOf } from "#rules/world/vision";
 import { castProblem, spellVictims } from "#rules/world/spells";
@@ -82,6 +83,15 @@ export function castHint(world: World, spellId: string, hovered: Hex | null): st
   return `Click to cast ${spell.name} here.`;
 }
 
+/** The hint while aiming an item that takes a hex (Salt of the old kings). */
+export function wardHint(world: World, leaderId: string, item: string, hovered: Hex | null): string {
+  const def = itemById(item);
+  const problem = hovered ? useItemProblem(world, leaderId, item, hovered) : null;
+  if (!hovered || problem) return `${def.name}: click a highlighted hex beside the warband; right-click or Esc to stop.${problem && hovered ? ` (Here: ${problem}.)` : ""}`;
+  const turns = def.use?.kind === "ward" ? def.use.turns : 0;
+  return `Click to use the ${def.name} here: nobody may enter this hex for ${turns} turns.`;
+}
+
 /** News for the player: its own, and what others do where it can see. */
 export function newsText(events: readonly WorldEvent[], world: World, player: PlayerId): string {
   const sight = sightOf(world, player);
@@ -103,6 +113,7 @@ export function newsText(events: readonly WorldEvent[], world: World, player: Pl
       lines.push(e.player === player ? `The camp is cleared (${tribe}).` : `The enemy cleared a camp (${tribe}).`);
     }
     if (e.type === "leaderFell" && e.player === player) lines.push("One of your warbands fell.");
+    if (e.type === "scouted" && world.leaders.some((l) => l.id === e.leaderId && l.player === player)) lines.push(`New land: ${leaderName(leaderById(world, e.leaderId))} gains ${e.xp} XP scouting.`);
     if (e.type === "spellCast" && (e.player === player || inSight(e.at))) lines.push(`${e.player === player ? "You cast" : "The enemy casts"} ${spellById(e.spell).name}.`);
     if (e.type === "looted" && e.player === player) lines.push(`The dungeon yields ${e.gold} gold${e.joins ? ` and a ${unitName(e.joins)} joins you` : ""}${e.item ? `, and a ${itemById(e.item).name}` : ""}.`);
     if (e.type === "spoils" && world.leaders.some((l) => l.id === e.leaderId && l.player === player)) lines.push(`Spoils: ${e.items.map((i) => itemById(i).name).join(", ")}.`);

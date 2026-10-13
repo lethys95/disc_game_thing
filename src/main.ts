@@ -1,3 +1,4 @@
+import { baseItem, ITEMS } from "#rules/items";
 import { createBattle } from "#rules/battle/engine";
 import { AiClient } from "#view/ai-client";
 import { applySideColors, colorPair } from "#view/colors";
@@ -165,6 +166,8 @@ if (params.has("map")) {
   );
   if (params.has("xp")) campaign.startingXp(Number(params.get("xp")));
   if (params.has("mana")) campaign.startingMana(Number(params.get("mana")));
+  // `items=salt_of_the_old_kings,grudgebearer`: in the first warband's bag.
+  if (params.has("items")) campaign.startingItems((params.get("items") ?? "").split(",").filter((id) => ITEMS.some((i) => i.id === baseItem(id))));
   if (params.has("reveal")) campaign.revealAll();
   if (params.has("capitol")) campaign.openCapitol(params.get("capitol") ?? "");
   if (params.has("leader")) campaign.openLeader();

@@ -117,6 +117,8 @@ export interface BattleUnit {
    * every corpse is used up), or `destroyed` (burst by a corpse explosion: it never reaches the graveyard).
    */
   corpse: "intact" | "used" | "destroyed";
+  /** Whose blow or burn killed it (null while it lives, or when nothing did): a Grudgebearer counts its kills. */
+  killedBy: string | null;
   /** Spell charges left this battle. */
   spellCharges: number;
   /** Damage its most recent turn dealt, reset when its next turn starts. */
@@ -135,6 +137,8 @@ export interface Slot {
   bonusGranted: number;
   /** Which extra attack is resolving: 0 for the turn's own actions, then 1, 2… */
   bonusIndex: number;
+  /** Main actions still to come after this one, of any kind (`Ctx.grantExtraAction`). */
+  extraActions: number;
 }
 
 export interface Battle {
@@ -220,9 +224,10 @@ export type BattleEvent =
 /**
  * What an ability does, for modifiers, the AI and the UI to reason about without naming abilities:
  * `attack` is the unit's attack (what Must Attack allows and Hysteria repeats, and its default action); `common`
- * marks the verbs every unit has (Defend, Wait, Retreat); `damage` abilities are what hit bonuses touch.
+ * marks the verbs every unit has (Defend, Wait, Retreat); `damage` abilities are what hit bonuses touch; `guard` is
+ * bracing for blows (what a Crown of the pretender forbids its leader).
  */
-export type Tag = "attack" | "common" | "melee" | "ranged" | "spell" | "damage" | "heal" | "area" | "flee";
+export type Tag = "attack" | "common" | "melee" | "ranged" | "spell" | "damage" | "heal" | "area" | "flee" | "guard";
 
 /** One hit on one unit, on its way through the damage pipeline (architecture.md §3). */
 export interface Packet {
@@ -235,6 +240,8 @@ export interface Packet {
   riders: EffectSeed[];
   /** Armor this hit ignores (a siege-trained attack goes through a city's fortification). */
   pierce: number;
+  /** A share of a hit some ally took upon itself (`Hooks.intercept`): no one intercepts it again. */
+  readonly intercepted: boolean;
 }
 
 export interface HitSpec {
@@ -274,6 +281,18 @@ export interface Hooks {
   grants?(ctx: Ctx, self: TraitSelf, subjectId: string): readonly AbilityRef[];
   /** Removes ability ids `subjectId` may not use. Asked of every trait. */
   restrict?(ctx: Ctx, self: TraitSelf, subjectId: string, allowed: Set<string>): void;
+  /**
+   * How each target of this unit's hit is struck: `count` times at `percent` of its power (Twin knives: twice at 60%).
+   * The first trait that answers decides.
+   */
+  strikes?(ctx: Ctx, self: TraitSelf, spec: HitSpec): { readonly count: number; readonly percent: number } | null;
+  /** How many lines past the enemy's front line this unit's Attack reaches (a Reaching spear's 1). */
+  reach?(ctx: Ctx, self: TraitSelf): number;
+  /**
+   * Asked of the allies of a hit's target (not the target) as the hit arrives: how much of it this unit takes upon
+   * itself instead (Penitent's chains). The first that takes any does; its share goes through its own defenses.
+   */
+  intercept?(ctx: Ctx, self: TraitSelf, packet: Packet): number;
   /** The attacker's traits add to or change an outgoing hit. */
   outgoing?(ctx: Ctx, self: TraitSelf, packet: Packet): void;
   /** The attacker's traits split part of a hit into other forms (bleed), after `outgoing`. */
@@ -442,6 +461,8 @@ export interface Ctx {
   consumeCharge(unitId: string, abilityId: string): boolean;
   /** Owes the unit whose turn it is one more attack this turn; nothing if it isn't that unit's turn. */
   grantBonusAttack(unitId: string): void;
+  /** Gives the unit whose turn it is one more main action this turn, of any kind; nothing if it isn't its turn. */
+  grantExtraAction(unitId: string): void;
   /** Ability ids the unit has, including ones granted by traits. */
   abilityIds(unitId: string): string[];
   /** The unit's own ref for an ability, or the granted one (with its params), or a bare `{ id }`. */

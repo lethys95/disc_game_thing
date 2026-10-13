@@ -1,9 +1,10 @@
-import { hexKey } from "#rules/hex";
+import { hexKey, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
-import { exits, findPath, stepCost } from "#rules/map";
+import { sureFooted } from "#rules/items";
+import { exits, findPath, stepCost, TERRAIN_COST } from "#rules/map";
 import type { Path } from "#rules/map";
 import { cityAt, lairAt, leaderAt, leaderById } from "#rules/world/state";
-import type { PlayerId, World } from "#rules/world/state";
+import type { Leader, PlayerId, World } from "#rules/world/state";
 
 /** Where a warband can go and what it runs into. */
 
@@ -33,18 +34,25 @@ export function destination(world: World, side: PlayerId, hex: Hex): MoveTarget 
   return city.garrison.length > 0 ? { kind: "garrison", cityId: city.id } : { kind: "capture", cityId: city.id };
 }
 
+/** What stepping onto `hex` costs this warband: its terrain's cost, or null where it can't go (impassable, salted). */
+export function warbandStepCost(world: World, leader: Leader, hex: Hex): number | null {
+  if (world.wards.some((w) => sameHex(w.hex, hex))) return null;
+  const cost = stepCost(world.map, hex);
+  return cost !== null && sureFooted(leader.worn) ? Math.min(cost, TERRAIN_COST.plain ?? 1) : cost;
+}
+
 export function planMove(world: World, leaderId: string, to: Hex): MovePlan | null {
   const leader = leaderById(world, leaderId);
   const goal = destination(world, leader.player, to);
   if (goal === "blocked") return null;
   // Other leaders and cities not your own can only be a march's goal, never a waypoint.
   const blocked = (hex: Hex) => destination(world, leader.player, hex) !== null;
-  const path = findPath(world.map, leader.hex, to, blocked);
+  const path = findPath(world.map, leader.hex, to, blocked, (hex) => warbandStepCost(world, leader, hex));
   if (!path || path.hexes.length === 0) return null;
   let left = leader.movement;
   let steps = 0;
   for (const hex of path.hexes) {
-    const cost = stepCost(world.map, hex) ?? Infinity;
+    const cost = warbandStepCost(world, leader, hex) ?? Infinity;
     if (cost > left) break;
     left -= cost;
     steps += 1;
@@ -64,7 +72,7 @@ export function reachable(world: World, leaderId: string): Map<string, number> {
     if (!hex) break;
     const spent = costs.get(hexKey(hex)) ?? 0;
     for (const next of exits(world.map, hex)) {
-      const cost = stepCost(world.map, next);
+      const cost = warbandStepCost(world, leader, next);
       if (cost === null || destination(world, leader.player, next) !== null) continue;
       const total = spent + cost;
       if (total > leader.movement || total >= (costs.get(hexKey(next)) ?? Infinity)) continue;

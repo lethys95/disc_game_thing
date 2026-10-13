@@ -12,6 +12,13 @@ export const NEUTRAL_UNITS: Readonly<Record<string, UnitDef>> = {
     stats: { maxHp: 1500, shield: 0, armor: 25, initiative: 60, abilityPower: 100 },
     abilities: [{ id: "attack", params: { power: 80 } }, ...kit("defend", "wait")],
   },
+  // A Hollow plate's armor, standing on its own (the user, 2026-09-29: "Hollow plate | armor | stands in a free grid
+  // tile as a unit (60 HP, 10 armor, weak attack, no XP)"). An item's, never recruited. Attack and initiative provisional (#83).
+  hollow_plate: {
+    id: "hollow_plate", name: "Hollow plate", faction: "neutral", tier: 0,
+    stats: { maxHp: 60, shield: 0, armor: 10, initiative: 40, abilityPower: 100 },
+    abilities: [{ id: "attack", params: { power: 10 } }, ...kit("defend", "wait")],
+  },
   brigand: {
     id: "brigand", name: "Brigand", faction: "neutral", tier: 1,
     stats: { maxHp: 100, shield: 0, armor: 0, initiative: 45, abilityPower: 100 },
