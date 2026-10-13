@@ -9,3 +9,9 @@
   with Tripo." Claude doesn't make models; it integrates Tripo's.
 - **Done when:** 
 - **Who:** The user (Tripo is the user's account); Claude integrates.
+- **The first (2026-10-13):** the user started with the Psychopomp in Tripo, for Unreal ("We're moving this project
+  to ue5 […] for the quality reasons"). What the tests settled: one unsegmented mesh, PBR textures, about 48k
+  triangles, 4k, Tripo's rig (61 bones named like Unreal's mannequin), FBX (Tripo's GLB wrote the rig's bind matrices
+  corrupt at this size). Loose cloth gets bone chains for spring physics (`scripts/art/cloth-bones.py`); the braids
+  wait, fused into the hood in this generation. In the repo as `assets/models/units/psychopomp.fbx`.
+
