@@ -6,3 +6,7 @@
   lot of missing ones."
 - **Done when:** Every ability, effect and item has its own icon, in the style of the 47 ability icons that exist.
 - **Who:** Claude makes them (test on a few first, then batches: memory `batch-when-proven`); the user judges.
+- **Started (2026-10-13):** subjects for the 69 abilities without an icon in `scripts/art/icons.ts` (the recipe the
+  47 existing ones came from), two seeds each, running in the background. Items are an art slot kind now (an icon
+  beside each item on the leader's and merchants' screens). Effects and items have never had icons: a test of two each
+  (Burning, Stunned, Twin knives, Salt of the old kings) runs after the abilities, before the rest.
