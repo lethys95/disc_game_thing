@@ -14,4 +14,6 @@
   Hamstring, Regenerate) and run again with new subjects. The effect and item test holds the look (Burning, Stunned,
   Twin knives, Salt of the old kings, in the game). Waiting for the user's okay on the test before the other 86 effects
   and 20 items (subjects written in `scripts/art/icons.ts`). Review page `shots/icons.html`.
+- **2026-10-13, later:** every ability has its icon (the six redone over up to four rounds; Beam is the weakest,
+  flames rather than a column). Effects and items: the test is in, the rest wait for the user's okay.
 
