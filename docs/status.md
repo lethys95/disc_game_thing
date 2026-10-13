@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-13 (the sixteen taken items are in the game; save 38)
+**Updated:** 2026-10-13 (the first 3D figure walks in Unreal; every ability has an icon)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): a first complete version, far off (the board's README
@@ -26,6 +26,10 @@ interface change.
 - **Mana is one kind** (the user's call, 2026-10-11). **Armor is a percentage** with diminishing returns.
 - **Items:** the sixteen the user took from the brainstorm are built (`testing/items`): bodyguards, double strikes,
   reach, extra actions, items that remember, salted hexes, a suit of armor that fights. Try `&items=` on `?map`.
+- **3D figures (the user's Tripo, for Unreal's quality):** the Psychopomp is the first (`assets/models/units/psychopomp.glb`,
+  spring bone chains on her cape and skirt by `scripts/art/cloth-bones.py`), walking in Unreal on `disc_unreal`'s
+  `card/3d-figures` (`shots/figures/index.html`). Ability icons: all in (`in-progress/icons`; effects and items wait for
+  the user's okay on the test, `shots/icons.html`).
 - **Biome props:** the swamp, tundra and haunted woods have their own thirteen props each, on the map
   (`testing/biome-props`, `shots/biome-props.html`).
 
