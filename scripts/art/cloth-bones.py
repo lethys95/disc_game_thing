@@ -3,7 +3,7 @@ Physics bone chains for a Tripo character (the Psychopomp first, 2026-10-13): tw
 the skirt, for spring physics in Unreal. Moving pieces are ripped free where Tripo fused them to the body (the
 cape's hem into the belt, strips into the thighs); each vertex on a moving face takes its chain's share, growing
 from nothing at the piece's top. Which parts move is the character's: the part numbers come from part-labels.py.
-  blender -b --python scripts/art/cloth-bones.py -- <character.fbx> <labels.json> <out>   (writes <out>.fbx, .blend)
+  blender -b --python scripts/art/cloth-bones.py -- <character.fbx> <labels.json> <out>   (writes <out>.glb, .blend)
 """
 import bpy, bmesh, sys, json, math
 from mathutils import Vector
@@ -152,7 +152,9 @@ for v in mesh.data.vertices:
 
 print("RIPPED", len(rip))
 bpy.ops.wm.save_as_mainfile(filepath=out + ".blend")
-bpy.ops.export_scene.fbx(
-    filepath=out + ".fbx", use_selection=False, add_leaf_bones=False, bake_anim=False, path_mode="COPY", embed_textures=True,
-    mesh_smooth_type="FACE", use_armature_deform_only=False,
+# glTF, not FBX: Blender's FBX puts its metres-to-centimetres on the root bone (a scale of 100 in the reference pose),
+# which a retargeted animation drops, shrinking the figure to a hundredth in Unreal. glTF has no units to convert.
+bpy.ops.export_scene.gltf(
+    filepath=out + ".glb", export_format="GLB", export_skins=True, export_animations=False, export_morph=False,
+    export_image_format="AUTO", export_yup=True,
 )
