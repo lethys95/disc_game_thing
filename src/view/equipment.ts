@@ -1,4 +1,5 @@
-import { describeCarried, itemById, SLOT_CAPACITY, SLOT_NAMES } from "#rules/items";
+import { baseItem, describeCarried, itemById, SLOT_CAPACITY, SLOT_NAMES } from "#rules/items";
+import { art } from "#view/art";
 import { leaderAbilityPower } from "#view/members";
 import type { EquipmentSlot } from "#rules/items";
 import { equipProblem, unequipProblem } from "#rules/world/leaders";
@@ -7,6 +8,13 @@ import type { Leader, World, WorldAction } from "#rules/world/state";
 import { element, orderButton } from "#view/dom";
 
 const isSlot = (key: string): key is EquipmentSlot => key in SLOT_CAPACITY;
+
+/** An item's icon and name, as the bag and the slots show it. */
+export function named(item: string): HTMLElement {
+  const box = element("span", "item");
+  box.append(art({ kind: "item", id: baseItem(item) }, "item-icon"), element("span", "", itemById(item).name));
+  return box;
+}
 
 /**
  * A leader's equipment (`docs/design/warband-elements.md`, "Equipment"): a row per slot with what's worn and Take off,
@@ -24,8 +32,7 @@ export function equipmentPanel(world: World, leader: Leader, mayAct: boolean, ac
       const row = element("div", `slot-row${id ? "" : " empty"}`);
       row.appendChild(element("span", "slot-name", SLOT_NAMES[slot]));
       if (id) {
-        const item = itemById(id);
-        row.append(element("span", "item", item.name), element("span", "note", describeCarried(id, power)));
+        row.append(named(id), element("span", "note", describeCarried(id, power)));
         row.appendChild(orderButton("small", "Take off", { mayAct, problem: unequipProblem(leader, id), explain: describeCarried(id, power), give: () => act({ type: "unequip", leaderId: leader.id, item: id }) }));
       } else row.appendChild(element("span", "note", "empty"));
       box.appendChild(row);
@@ -36,7 +43,7 @@ export function equipmentPanel(world: World, leader: Leader, mayAct: boolean, ac
   leader.bag.forEach((id) => {
     const item = itemById(id);
     const row = element("div", "slot-row");
-    row.append(element("span", "item", item.name), element("span", "note", describeCarried(id, power)));
+    row.append(named(id), element("span", "note", describeCarried(id, power)));
     if (item.slot) row.appendChild(orderButton("small", "Put on", { mayAct, problem: equipProblem(leader, id), explain: describeCarried(id, power), give: () => act({ type: "equip", leaderId: leader.id, item: id }) }));
     else if (item.use && takesHex(id)) {
       const problem = wardTargets(world, leader.id).length === 0 ? "no open hex beside the warband" : null;

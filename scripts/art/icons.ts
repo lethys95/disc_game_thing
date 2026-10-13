@@ -1,20 +1,26 @@
 import { runBatch } from "#scripts/art/batch";
 
 /**
- * Ability icons in the recipe of the four the user liked (`assets/art/provenance.json`: flail, defend, lay_on_hands,
- * plus_burst): a gothic reliquary emblem on black, one saturated accent by faction. The subjects are Claude's
- * readings of each ability, for the user to judge. `pnpm tsx scripts/art/icons.ts [id…] [seed…]`
+ * Ability, effect and item icons in the recipe of the four the user liked (`assets/art/provenance.json`: flail,
+ * defend, lay_on_hands, plus_burst): a gothic reliquary emblem on black, one saturated accent by faction. The subjects
+ * are Claude's readings of each, for the user to judge. `pnpm tsx scripts/art/icons.ts [id…] [seed…]`
  */
 
-const RECIPE = (subject: string, accent: string) =>
-  `A single emblem for a game ability icon: ${subject}. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. ` +
+type Kind = "ability" | "effect" | "item";
+
+const NOUN: Readonly<Record<Kind, string>> = { ability: "game ability icon", effect: "game status-effect icon", item: "game item icon" };
+
+const FOLDER: Readonly<Record<Kind, string>> = { ability: "abilities", effect: "effects", item: "items" };
+
+const RECIPE = (kind: Kind, subject: string, accent: string) =>
+  `A single emblem for a ${NOUN[kind]}: ${subject}. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. ` +
   "Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. " +
   `A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of ${accent} where there is magic or devotion. ` +
   "Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.";
 
 const ACCENT = { jilliath: "deep blood red", nexus: "electric teal", grove: "deep moss green", neutral: "dull ember orange" } as const;
 
-const ICONS: readonly { readonly id: string; readonly faction: keyof typeof ACCENT; readonly subject: string }[] = [
+const ICONS: readonly { readonly id: string; readonly faction: keyof typeof ACCENT; readonly subject: string; readonly kind?: Kind }[] = [
   { id: "attack", faction: "neutral", subject: "a notched longsword held point down" },
   { id: "shoot", faction: "neutral", subject: "a drawn bow with an arrow nocked" },
   { id: "retreat", faction: "neutral", subject: "a tattered banner lowered and dragged backwards" },
@@ -58,10 +64,91 @@ const ICONS: readonly { readonly id: string; readonly faction: keyof typeof ACCE
   { id: "area_2x2", faction: "neutral", subject: "a burst of fire scattering across four stones" },
   { id: "stun_front", faction: "neutral", subject: "a club striking a helm, stars of pain" },
   { id: "anti_armor", faction: "neutral", subject: "a heavy pick punching through a breastplate" },
+  // Every ability without an icon on 2026-10-13 (the user: "there's the option of creating icons for items and
+  // abilities"); Claude's readings, for the user to judge.
+  { id: "tarot", faction: "neutral", subject: "three tarot cards fanned out face down, one turning over" },
+  { id: "crit", faction: "neutral", subject: "a blade striking a gap in plate armor with a burst of sparks" },
+  { id: "evasion", faction: "neutral", subject: "a blade passing through a wisp of smoke where a body was" },
+  { id: "explode", faction: "neutral", subject: "a cracked clay body bursting apart in a blast of fire and shards" },
+  { id: "ignite", faction: "neutral", subject: "a burning torch setting a ragged cloak alight" },
+  { id: "soak", faction: "neutral", subject: "a heavy wave of dark water crashing down" },
+  { id: "prayer", faction: "jilliath", subject: "two clasped hands raised in prayer, a halo of light above them" },
+  { id: "guardians_shield", faction: "jilliath", subject: "a pair of feathered wings folded around a kite shield" },
+  { id: "resurrection", faction: "jilliath", subject: "a hand rising from an open grave toward a beam of light" },
+  { id: "atonement", faction: "jilliath", subject: "a weeping wound pouring light into an open chalice" },
+  { id: "transfusion", faction: "jilliath", subject: "a thread of blood flowing between two open palms" },
+  { id: "reclaim", faction: "jilliath", subject: "a segmented metal hand drawing a red light out of a wound" },
+  { id: "castigation", faction: "jilliath", subject: "a raised scourge of light coming down on a bowed back" },
+  { id: "chant", faction: "jilliath", subject: "an open hymnal with sound rising off its pages like smoke" },
+  { id: "repentance", faction: "jilliath", subject: "a kneeling figure bound in a shroud, head bowed" },
+  { id: "judgement", faction: "jilliath", subject: "a great sword of light descending from above" },
+  { id: "burn_at_the_stake", faction: "jilliath", subject: "a wooden stake wrapped in chains, flames climbing it" },
+  { id: "fire_on_all", faction: "jilliath", subject: "a rain of burning embers falling from a dark sky" },
+  { id: "detonate", faction: "jilliath", subject: "a burning coal bursting into a blinding flare" },
+  { id: "beam", faction: "jilliath", subject: "a single straight pillar of fire burning through the dark" },
+  { id: "gorge", faction: "grove", subject: "a maw of roots and teeth closing around a bone" },
+  { id: "witherbloom", faction: "grove", subject: "a pale flower blooming from dead, withered stems" },
+  { id: "wellspring", faction: "grove", subject: "a spring of clear water welling up between mossy stones" },
+  { id: "prey", faction: "neutral", subject: "a hunting mark daubed in blood on a shield" },
+  { id: "crack", faction: "neutral", subject: "a heavy club splitting an iron breastplate" },
+  { id: "hamstring", faction: "neutral", subject: "a curved blade cutting behind a heel" },
+  { id: "cackle", faction: "neutral", subject: "a grinning hyena skull with its jaws wide open" },
+  { id: "run_them_down", faction: "neutral", subject: "pawprints of a pack closing in a ring" },
+  { id: "pecking_order", faction: "neutral", subject: "a bone crown on a hyena skull" },
+  { id: "flit", faction: "neutral", subject: "a dusty moth wing sweeping in a fast arc" },
+  { id: "dust", faction: "neutral", subject: "a cloud of pale wing dust hanging in the air" },
+  { id: "metamorphosis", faction: "neutral", subject: "a split cocoon with a wing unfolding from it" },
+  { id: "drink_light", faction: "neutral", subject: "a moth drinking from a candle flame that dims" },
+  { id: "mesmerize", faction: "neutral", subject: "a pair of eyespots on a wing, staring" },
+  { id: "open_the_eyes", faction: "neutral", subject: "many eyespots opening across a vast spread of wings" },
+  { id: "dust_veil", faction: "neutral", subject: "a veil of drifting dust like a curtain" },
+  { id: "foretell", faction: "neutral", subject: "a crystal ball with a falling blade reflected inside" },
+  { id: "curse", faction: "neutral", subject: "a black candle dripping wax over a cracked coin" },
+  { id: "healing_draught", faction: "neutral", subject: "a corked bottle of murky tonic with a crooked label" },
+  { id: "explosive_flask", faction: "neutral", subject: "a glass flask with a burning rag in its neck" },
+  { id: "sleep_potion", faction: "neutral", subject: "a small vial breathing out a curl of pale vapour" },
+  { id: "omen", faction: "neutral", subject: "a flintlock pistol lying across a tarot card" },
+  { id: "spit_fire", faction: "neutral", subject: "a cone of flame breathed out from a torch held to the lips" },
+  { id: "pounce", faction: "neutral", subject: "a wolf in mid-leap with its jaws open" },
+  { id: "gore", faction: "neutral", subject: "a boar tusk dripping blood" },
+  { id: "wounded_fury", faction: "neutral", subject: "a bear claw raking with blood on its fur" },
+  { id: "peck_the_eyes", faction: "neutral", subject: "a black crow's beak striking down" },
+  { id: "howl", faction: "neutral", subject: "a wolf's head raised, howling at a pale moon" },
+  { id: "kick_them_down", faction: "neutral", subject: "an iron-shod boot stamping down on a fallen helmet" },
+  { id: "bloodlust", faction: "neutral", subject: "a tusked mouth snarling with a bloody axe before it" },
+  { id: "regenerate", faction: "neutral", subject: "grey troll flesh knitting itself shut over a wound" },
+  { id: "frenzy", faction: "neutral", subject: "a crude bone fetish shaking, red eyes painted on it" },
+  { id: "cleave", faction: "neutral", subject: "a huge cleaver sweeping in a wide arc" },
+  { id: "venom", faction: "neutral", subject: "a fang dripping a bead of green venom" },
+  { id: "constrict", faction: "neutral", subject: "a serpent's coils tightening around a breastplate" },
+  { id: "shed_skin", faction: "neutral", subject: "a shed snakeskin lying in a coil" },
+  { id: "stone_gaze", faction: "neutral", subject: "a serpent-haired face with eyes turning things to stone" },
+  { id: "skirmish", faction: "neutral", subject: "a horse's hooves wheeling away from a thrust spear" },
+  { id: "run_through", faction: "neutral", subject: "a lance piercing through one shield and into a second" },
+  { id: "rear_and_kick", faction: "neutral", subject: "a rearing horse's hooves smashing a raised shield" },
+  { id: "read_the_stars", faction: "neutral", subject: "a ring of stars over an open hand" },
+  { id: "thundering_charge", faction: "neutral", subject: "a wall of hooves charging forward in a cloud of dust" },
+  { id: "last_stand", faction: "neutral", subject: "a broken axe still gripped in a bloodied fist" },
+  { id: "hurled_axe", faction: "neutral", subject: "a bearded axe spinning through the air" },
+  { id: "piercing_shot", faction: "neutral", subject: "an arrow piercing straight through a breastplate" },
+  { id: "blood_oath", faction: "neutral", subject: "two forearms bound together with a bloody cord" },
+  { id: "war_cry", faction: "neutral", subject: "a horned war horn blowing, its sound like a gust" },
+  { id: "storm_capacitor", faction: "neutral", subject: "a brass jar with copper coils crackling with lightning" },
+  { id: "hourglass", faction: "neutral", subject: "a cracked hourglass with its sand running upward" },
+  // Effects and items: a first two of each (2026-10-13), to see whether the recipe holds before the rest.
+  { id: "burning", faction: "neutral", kind: "effect", subject: "a small figure wreathed in licking flames" },
+  { id: "stunned", faction: "neutral", kind: "effect", subject: "a dented helm with a ring of dizzy sparks above it" },
+  { id: "twin_knives", faction: "neutral", kind: "item", subject: "a pair of matching curved knives crossed at the hilts" },
+  { id: "salt_of_the_old_kings", faction: "neutral", kind: "item", subject: "a small iron-bound casket spilling coarse white salt" },
 ];
 
 const args = process.argv.slice(2);
 const seeds = args.map(Number).filter((n) => !Number.isNaN(n));
 const chosen = args.filter((a) => Number.isNaN(Number(a)));
-const jobs = ICONS.filter((i) => chosen.length === 0 || chosen.includes(i.id)).map((i) => ({ id: `icon_${i.id}`, prompt: RECIPE(i.subject, ACCENT[i.faction]), width: 1024, height: 1024 }));
-await runBatch("art/candidates/icons/abilities", jobs, seeds.length > 0 ? seeds : [1000, 1001]);
+const picked = ICONS.filter((i) => chosen.length === 0 || chosen.includes(i.id));
+for (const kind of ["ability", "effect", "item"] as const) {
+  const jobs = picked
+    .filter((i) => (i.kind ?? "ability") === kind)
+    .map((i) => ({ id: `icon_${i.id}`, prompt: RECIPE(kind, i.subject, ACCENT[i.faction]), width: 1024, height: 1024 }));
+  if (jobs.length > 0) await runBatch(`art/candidates/icons/${FOLDER[kind]}`, jobs, seeds.length > 0 ? seeds : [1000, 1001]);
+}

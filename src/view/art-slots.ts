@@ -1,6 +1,7 @@
 import { BEHAVIORS } from "#rules/abilities/index";
 import type { Faction } from "#rules/battle/types";
 import { EFFECTS } from "#rules/effects";
+import { describeItem, ITEMS } from "#rules/items";
 import { UNITS } from "#rules/units/index";
 
 /**
@@ -8,7 +9,7 @@ import { UNITS } from "#rules/units/index";
  * `assets/art/<kind>/<id>.webp`; when it's missing, the view falls back to a family default, then to a placeholder.
  * Plain data and pure functions, so the art scripts can list the same slots the game uses.
  */
-export type SlotKind = "portrait" | "ability" | "effect";
+export type SlotKind = "portrait" | "ability" | "effect" | "item";
 
 /**
  * A unit's art comes framed three ways, each its own file (the user, 2026-10-05): the card, the whole figure (on the
@@ -59,6 +60,10 @@ export function slotInfo(slot: Slot): SlotInfo {
       const def = EFFECTS.get(slot.id);
       return { name: def?.name ?? slot.id, faction: "neutral", text: def?.describe({ def: slot.id, source: null, stacks: 1, amount: 10 }) ?? "" };
     }
+    case "item": {
+      const item = ITEMS.find((i) => i.id === slot.id);
+      return { name: item?.name ?? slot.id, faction: "neutral", text: item ? describeItem(item, 100) : "" };
+    }
   }
 }
 
@@ -79,6 +84,8 @@ export function fallbackKeys(slot: Slot): string[] {
     }
     case "effect":
       return [own, "effect/_effect"];
+    case "item":
+      return [own, "item/_item"];
   }
 }
 
@@ -88,5 +95,6 @@ export function allSlots(): Slot[] {
     ...Object.keys(UNITS).map((id): Slot => ({ kind: "portrait", id })),
     ...Object.keys(BEHAVIORS).map((id): Slot => ({ kind: "ability", id })),
     ...[...EFFECTS.keys()].map((id): Slot => ({ kind: "effect", id })),
+    ...ITEMS.map((i): Slot => ({ kind: "item", id: i.id })),
   ];
 }

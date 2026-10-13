@@ -12,7 +12,7 @@ import { warbandColumn } from "#view/warband-column";
 import type { KeyLayer } from "#view/input";
 import { leaderAbilityPower, unitName } from "#view/members";
 import { squadTile } from "#view/squad-tile";
-import { equipmentPanel } from "#view/equipment";
+import { equipmentPanel, named } from "#view/equipment";
 
 export interface StructureScreenOptions {
   readonly act: (action: WorldAction) => void;
@@ -98,7 +98,7 @@ export class StructureScreen implements KeyLayer {
   private wares(world: World, leader: Leader, merchant: Merchant, mayAct: boolean): HTMLElement[] {
     const offer = (id: string) => {
       const item = itemById(id);
-      return this.row(item.name, describeItem(item, leaderAbilityPower(leader)), orderButton("small", ["Buy · ", gold(item.price)], {
+      return this.row(named(id), describeItem(item, leaderAbilityPower(leader)), orderButton("small", ["Buy · ", gold(item.price)], {
         mayAct,
         problem: buyItemProblem(world, leader.id, id),
         explain: item.use ? "Into the leader's bag; use it from the leader's screen." : "Into the leader's bag; put it on from the leader's screen.",
@@ -114,7 +114,7 @@ export class StructureScreen implements KeyLayer {
     for (const id of leader.bag) {
       const item = itemById(id);
       rows.push(
-        this.row(item.name, describeCarried(id, leaderAbilityPower(leader)), orderButton("small", ["Sell · ", gold(resalePrice(item.price))], {
+        this.row(named(id), describeCarried(id, leaderAbilityPower(leader)), orderButton("small", ["Sell · ", gold(resalePrice(item.price))], {
           mayAct,
           problem: sellItemProblem(world, leader.id, id),
           explain: "Half its price.",
@@ -150,9 +150,11 @@ export class StructureScreen implements KeyLayer {
     });
   }
 
-  private row(name: string, describe: string, action: HTMLElement): HTMLElement {
+  private row(name: string | HTMLElement, describe: string, action: HTMLElement): HTMLElement {
     const text = element("div", "spell-text");
-    text.append(element("div", "name", name), element("div", "note", describe));
+    const title = element("div", "name");
+    title.append(name);
+    text.append(title, element("div", "note", describe));
     const row = element("div", "spell-row");
     row.append(text, action);
     return row;
