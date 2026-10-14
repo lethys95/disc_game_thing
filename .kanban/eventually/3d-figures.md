@@ -28,4 +28,5 @@
   map), no drift. One piece of mesh, the robe fused to the armoured legs under it: `cloth-bones.py` tells the robe by
   how far it stands off the leg bones and rips it free, five chains round it (the Seraph's), the hem keeping 70% of
   Tripo's leg weights: at 40% the mannequin's back kick came out through the robe. Tripo made no thighs under the
-  robe, so a wide swing shows a gap there. In the repo as `assets/models/units/zealot.glb`.
+  robe, so a wide swing shows a gap there. In the repo as `assets/models/units/zealot.glb`; walking in Unreal
+  (`disc_unreal`'s `card/3d-figures`, `shots/figures/zealot-check.html`).
