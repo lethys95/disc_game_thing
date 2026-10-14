@@ -80,7 +80,9 @@ Work on a card branch in a sibling worktree when another session is in its main 
   in an mp4, goes in this repo's `shots/figures/` for the user.
 - The springs are `UFigureAnimInstance` (C++, no Blueprint: the project allows none): chains found by name
   (every `cape_*_01`, `skirt_*_01` in the skeleton), verlet particles pulled to the animated pose, gravity, a 45° swing limit, capsules
-  round the spine and legs that never push a joint past where it rests.
+  round the spine and legs that never push a joint past where it rests. Hanging chains (`hang_*_01`) swing under
+  gravity alone: no pull, no capsules, light damping, at most 40° from straight down, and the upper arm they hang
+  from held 20° out from the body.
 
 ## Gotchas met
 - Unreal culled the figure as a few centimetres big: its bounds came from the physics asset the import made.
@@ -95,4 +97,8 @@ Work on a card branch in a sibling worktree when another session is in its main 
   the check (the walk holds them about 55° down); wings that are their own mesh pieces move whole onto `spine_03`.
   (Her repaired GLB also tore its sleeves with the arms down; her FBX, with the same weights, didn't. Another reason
   for FBX.)
+- A hanging thing needs its own physics, not the cloth's (the Acolyte's lantern, 2026-10-14): the pull to the
+  animated pose turns it with the limb; the capsules' pushes become speed and fling it; the cloth's damping is a drag
+  against the world that holds its fall below a walking hand's speed, so it trails like a flag.
+- Image sequences from `figure.sh`: `LC_ALL=C seq` for the times, or the locale's decimal commas break `disc.After`.
 - An asset that already exists can't be recreated headless (the editor can't ask): reuse it.
