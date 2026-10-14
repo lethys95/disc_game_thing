@@ -46,9 +46,10 @@ generation fused into a hood stay rigid (the Psychopomp's). Each dangling part n
   the cape, four round the skirt. The Seraph: five round the mantle (open at the front), five round the skirt (one over
   each shin), whose hem keeps 40% of Tripo's leg weights: on chains alone, the mannequin's long stride brought her boots
   out through the hem.
-- **Hanging pieces** (the Acolyte's lantern on its links) ride a bone of their own, `hang_<name>_01`, from the
-  pieces' top straight down, whole; Unreal swings it under gravity alone, so it hangs from the wrist whatever the arm
-  does. Tripo weights such a thing to the limb it hangs from, and with the arms down it swings into the body.
+- **Hanging things** (the Acolyte's lantern on its links) ride two bones of their own straight down, `hang_<name>_01`
+  for the links and `_02` for the thing (its largest piece), each piece whole; Unreal swings them under gravity alone,
+  so the lantern hangs from the wrist whatever the arm does. (One bone has no direction for Unreal's springs: a
+  chain's last bone points the way its parent does.) Tripo weights such a thing to the limb it hangs from, and with the arms down it swings into the body.
 
 ## 4. Chains, rips and weights
 `blender -b --python scripts/art/cloth-bones.py -- <unit> <model.fbx> <out> [labels.json]` adds the chains, moves the

@@ -22,5 +22,5 @@
   still shows the leading boot's toe under her hem: a gliding walk of her own would fit her.
 - **The Acolyte (2026-10-14):** `acolyte#1` (FBX), sound at once: 24k triangles, one 4k PBR material, no drift. In the
   repo as `assets/models/units/acolyte.glb`: a chain down each strip of the red stole, five round the robe below the
-  belt (the Seraph's), and the lantern on a bone of its own (`hang_lantern_01`): Tripo put it on the forearm, and with
-  the arms down it sat inside the robe. In Unreal the hanging bone swings under gravity alone.
+  belt (the Seraph's), and the lantern on bones of its own (`hang_lantern_01–02`, links and lantern): Tripo put it on the forearm, and with
+  the arms down it sat inside the robe. In Unreal the hanging bones swing under gravity alone.

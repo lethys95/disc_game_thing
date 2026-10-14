@@ -3,8 +3,8 @@ Physics bone chains for a Tripo character, for spring physics in Unreal; which p
 the character's (FIGURES). Moving pieces are ripped free where Tripo fused them to another part (the Psychopomp's
 cape hem into the belt, her strips into the thighs); each vertex on a moving face takes its chain's share, growing
 from nothing at the piece's top. Rigid pieces Tripo weighted to the wrong bones (the Seraph's wings, on the upper
-arms) move whole onto one bone; hanging pieces (the Acolyte's lantern) ride a bone of their own, which Unreal swings
-under gravity alone.
+arms) move whole onto one bone; a hanging thing (the Acolyte's lantern) rides two of its own, its links' and its own,
+which Unreal swings under gravity alone.
 Parts are either labels from a segmented generation (part-labels.py) or the mesh's own separate pieces, largest first.
   blender -b --python scripts/art/cloth-bones.py -- <unit> <character.fbx> <out> [labels.json]   (writes <out>.glb, .blend)
 """
@@ -233,15 +233,19 @@ for c in chains:
         b.use_connect = k > 0
         parent = b
         c["bones"].append(b.name)
+# A hanging thing is its links and, on them, its largest piece: a bone each, straight down from the top, every piece
+# riding whole the one it hangs on.
 hangs = {}
 for name, (parent, picks) in figure["hanging"].items():
     ids = [i for i in range(len(co)) if picks(i, part)]
-    top = max(ids, key=lambda i: co[i].z)
-    b = eb.new(f"hang_{name}_01")
-    b.head = co[top]
-    b.tail = Vector((co[top].x, co[top].y, min(co[i].z for i in ids)))
-    b.parent = eb[parent]
-    hangs.update({i: b.name for i in ids})
+    top = co[max(ids, key=lambda i: co[i].z)]
+    body = max({part[i] for i in ids}, key=lambda n: sum(1 for i in ids if part[i] == n))
+    joint = max(co[i].z for i in ids if part[i] == body)
+    links, held = eb.new(f"hang_{name}_01"), eb.new(f"hang_{name}_02")
+    links.head, links.tail = top, Vector((top.x, top.y, joint))
+    held.head, held.tail = links.tail, Vector((top.x, top.y, min(co[i].z for i in ids)))
+    links.parent, held.parent, held.use_connect = eb[parent], links, True
+    hangs.update({i: links.name if centre(part[i]).z > joint else held.name for i in ids})
 bpy.ops.object.mode_set(mode="OBJECT")
 for name in set(hangs.values()):
     mesh.vertex_groups.new(name=name)

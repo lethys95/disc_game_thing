@@ -56,6 +56,6 @@ are the mesh's own separate pieces; nothing ripped.
 triangles, 4k PBR textures, the same 61-bone rig), with 22 bones added by `scripts/art/cloth-bones.py acolyte`:
 `cape_front|back_01–03` down the stole's two strips under `spine_03`, `skirt_front_l|l|back|r|front_r_01–03` round
 the robe below the belt under `pelvis` (the hem keeping 40% of Tripo's leg weights, as the Seraph's), and
-`hang_lantern_01` under `lowerarm_r`, on which the lantern and the links it hangs by ride whole: Tripo put them on the
-forearm, so with the arms down they swung into the robe; Unreal swings the bone under gravity alone. Its parts are the
+`hang_lantern_01–02` under `lowerarm_r`, the links the lantern hangs by and the lantern, each riding its bone whole:
+Tripo put them on the forearm, so with the arms down they swung into the robe; Unreal swings them under gravity alone. Its parts are the
 mesh's own separate pieces; nothing ripped.
