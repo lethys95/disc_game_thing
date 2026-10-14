@@ -59,7 +59,12 @@ report = {
 if source.endswith(".glb"):
     report["bad bind values"] = bind_matrices(source)
 dg = bpy.context.evaluated_depsgraph_get()
-points = [m.matrix_world @ v.co for m in meshes for v in m.evaluated_get(dg).to_mesh().vertices]
+pairs = [(m.matrix_world @ v.co, m.matrix_world @ e.co)
+         for m in meshes for v, e in zip(m.data.vertices, m.evaluated_get(dg).to_mesh().vertices)]
+points = [e for _, e in pairs]
+rest = sorted((v - e).length for v, e in pairs)
+report["skin drift at rest, median/max m"] = [round(rest[len(rest) // 2], 4), round(rest[-1], 4)] if rest else None
+report["two-sided"] = sorted({not s.material.use_backface_culling for m in meshes for s in m.material_slots if s.material})
 report["posed NaN vertices"] = sum(1 for p in points if any(math.isnan(c) for c in p))
 report["height"] = round(max(p.z for p in points) - min(p.z for p in points), 3) if points else 0
 print("FIGURE", json.dumps(report, indent=1))

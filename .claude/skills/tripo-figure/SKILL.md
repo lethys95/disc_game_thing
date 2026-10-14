@@ -18,13 +18,16 @@ Input: the unit's front, side and back from `shots/tripo/<unit>/` (one folder pe
 - **About 48k triangles, quad topology if offered**; 11k looked faceted in the fur. **4k textures** for Unreal.
 - **Rigged** (Tripo's rig: 61 bones named like Unreal's UE4 mannequin, which makes retargeting automatic).
 - **Download FBX.** Tripo's GLB export wrote the rig's inverse bind matrices corrupt at this size (twice, the same
-  bytes); its FBX of the same model was fine. Files go to `art/candidates/models/units/<unit>/` (not committed).
+  bytes); its FBX of the same model was fine. The Seraph's GLB (2026-10-14) had sound bind matrices but no transform
+  on any joint: `blender -b --python scripts/art/glb-joints.py -- <in.glb> <out.glb>` rebuilds them from the bind
+  matrices. Files go to `art/candidates/models/units/<unit>/` (not committed).
 
 ## 2. Check every download
 `blender -b --python scripts/art/figure-check.py -- <model> <out> shots/tripo/<unit>` prints the numbers (triangles,
 materials, textures, bones, skinned meshes, a GLB's bad bind values, NaN vertices once posed, height) and writes
 `<out>-views.png`: the concept, the model front/side/back under light, and a test pose. Look at it. Red flags: bad
-bind values above 0 or NaN vertices (a broken rig: the model collapses when posed), more than one material, a height
+bind values above 0, skin drift at rest above a millimetre, or NaN vertices (a broken rig: the model collapses at rest
+or when posed), more than one material, a height
 far from 1 (Tripo's are a metre tall), a pose that tears or pinches.
 
 ## 3. Which parts dangle (the one step that is the unit's)
@@ -76,4 +79,9 @@ Work on a card branch in a sibling worktree when another session is in its main 
 - glTF imports into subfolders by kind; the script renames the mesh to `/Game/Figures/<unit>/<unit>`. Renaming the
   skeleton too broke the mesh's reference to it.
 - Figures face +Y at rest. The probe once walked her backwards (yaw off by 180°).
+- Tripo's material comes single-sided: Blender hides back faces and a hood's inside reads as see-through
+  (`two-sided` in the check). Unreal does the same unless its material is made two-sided.
+- Tripo weights what it can't place to the nearest limb: the Seraph's wings followed the upper arms and her sleeve
+  drapes partly `spine_02` and `thigh_l`. Lower the arms in the check (the walk holds them about 55° down); wings that
+  are their own mesh pieces move whole onto `spine_03`.
 - An asset that already exists can't be recreated headless (the editor can't ask): reuse it.
