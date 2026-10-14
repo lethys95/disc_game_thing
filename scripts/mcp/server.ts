@@ -3,7 +3,8 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import type { WorldAction } from "#rules/world/state";
-import { act, describe, look, raw, startGame, loadTable, storeTable } from "#scripts/mcp/session";
+import { act, describe, look, raw, startGame, loadTable, storeTable, wait, WAIT_LIMIT_MS } from "#scripts/mcp/session";
+import type { Table } from "#scripts/mcp/table";
 import type { Reply } from "#scripts/mcp/session";
 import { RULES_PRIMER } from "#scripts/mcp/primer";
 
@@ -23,9 +24,15 @@ function kept(result: Reply) {
   return text(result.text);
 }
 
-function withTable(run: (table: NonNullable<ReturnType<typeof loadTable>>) => Reply) {
+/**
+ * A tool on the game on disk. Only a changed table is written back: during the browser player's move the file is
+ * theirs, and writing back what was read could undo what they did meanwhile.
+ */
+function withTable(run: (table: Table) => Reply) {
   const table = loadTable(TABLE);
-  return table ? kept(run(table)) : text("No game is running. Start one with new_game.");
+  if (!table) return text("No game is running. Start one with new_game.");
+  const result = run(table);
+  return result.table === table ? text(result.text) : kept(result);
 }
 
 const server = new McpServer({ name: "disc", version: "1.0.0" }, { instructions: RULES_PRIMER });
@@ -40,6 +47,7 @@ server.registerTool(
       seed: z.number().int().optional().describe("Map seed: the same seed makes the same map."),
       size: z.enum(["small", "medium", "large", "huge"]).optional().describe("Map size (default by player count)."),
       battles: z.enum(["play", "auto"]).optional().describe("play: you give every battle order yourself (default); auto: the battle AI fights your battles."),
+      human: z.enum(["jilliath", "nexus", "grove"]).optional().describe("A human plays against you in the browser (at /?join on the dev server), as player 1 with this faction. Then opponents (the AI players) default to none."),
     },
   },
   (args) => kept(startGame(args, Date.now())),
@@ -81,6 +89,19 @@ server.registerTool(
       const order: WorldAction = JSON.parse(JSON.stringify(action));
       return raw(table, order);
     }),
+);
+
+server.registerTool(
+  "wait",
+  {
+    description: "When it is the other player's move (a human in the browser), wait for it. Returns as soon as it's your move again (with your options), or after a few minutes with a note to call wait again.",
+    inputSchema: {},
+  },
+  async () => {
+    const result = await wait(() => loadTable(TABLE), WAIT_LIMIT_MS);
+    const before = loadTable(TABLE);
+    return result.table && before && result.table.revision !== before.revision ? kept(result) : text(result.text);
+  },
 );
 
 server.registerTool(

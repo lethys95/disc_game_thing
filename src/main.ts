@@ -7,7 +7,8 @@ import { routeKeys } from "#view/input";
 import { AUTOSAVE_ID, LocalSaveStore } from "#view/saves";
 import { applyUiKit } from "#view/art";
 import { App } from "#view/app";
-import { byId } from "#view/dom";
+import { byId, element } from "#view/dom";
+import { isSharedTable } from "#view/shared-table";
 import { wireExplanations } from "#view/explain";
 import { Campaign } from "#view/campaign";
 import { isMood, MapView, MOODS } from "#view/map";
@@ -167,6 +168,23 @@ async function follow(url: string): Promise<void> {
   }
 }
 
+/** Waits for a shared game with a seat for a human, then takes that seat. */
+async function join(url: string): Promise<void> {
+  hideScreens();
+  const notice = element("div", "join-wait panel", "Waiting for a game to join: ask the MCP player to start one with a human player (new_game with human).");
+  document.body.appendChild(notice);
+  for (;;) {
+    const response = await fetch(url, { cache: "no-store" }).catch(() => null);
+    const parsed: unknown = response?.ok ? await response.json().catch(() => null) : null;
+    if (isSharedTable(parsed) && parsed.guest !== null) {
+      notice.remove();
+      campaign.join(parsed, url);
+      return;
+    }
+    await new Promise((done) => setTimeout(done, WATCH_POLL_MS));
+  }
+}
+
 const presets = [PRESETS.jilliath.preserve, PRESETS.jilliath.punishment] as const;
 // Screenshots and playtests skip the setup screen.
 if (params.has("map")) {
@@ -222,6 +240,9 @@ if (params.has("map")) {
   const own = fight === "mages" ? PRESETS.jilliath.holy : fight === "angels" ? PRESETS.jilliath.guardian : presets[0];
   const other = fight === "mages" ? PRESETS.jilliath.fire : fight === "angels" ? PRESETS.jilliath.vengeance : enemy;
   app.start([withTarot(own), withTarot(other)], params.get("auto") === "1" ? null : params.get("side") === "1" ? 1 : 0, colorPair(["jilliath", fight.startsWith("nexus") ? "nexus" : fight.startsWith("grove") ? "grove" : "jilliath"]), Number(params.get("steps") ?? 0), setting, Number(params.get("seed") ?? 0));
+} else if (params.has("join")) {
+  // `join`: play the human seat of the MCP player's game (`pnpm mcp`, new_game with `human`), served at /mcp/table.
+  void join("/mcp/table");
 } else if (params.has("watch")) {
   // `watch[=/shots/mcp/game.json]`: follow the game an outside player plays over MCP (`pnpm mcp`), save by save.
   void follow(params.get("watch") || "/shots/mcp/game.json");

@@ -1,4 +1,4 @@
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { BEHAVIORS, describeAbility } from "#rules/abilities/index";
 import { EFFECTS } from "#rules/effects";
@@ -14,12 +14,13 @@ import type { Playable } from "#rules/units/index";
 import { LEADER_SKILLS } from "#rules/world/leaders";
 import type { WorldAction } from "#rules/world/state";
 import { unitName } from "#view/names";
+import { isSharedTable } from "#view/shared-table";
 import { battleOptions, battleView } from "#scripts/mcp/battle-text";
 import type { BattleChoice } from "#scripts/mcp/battle-text";
 import { mapOptions, placeText } from "#scripts/mcp/map-options";
 import { knownWorld } from "#rules/world/vision";
 import { cityById, lairById, leaderById } from "#rules/world/state";
-import { autoFight, fight, inFight, newTable, order, pickTarot, seatOver, seatSide } from "#scripts/mcp/table";
+import { autoFight, fight, guestsMove, inFight, newTable, order, pickTarot, resume, seatOver, seatSide } from "#scripts/mcp/table";
 import type { Played, Table } from "#scripts/mcp/table";
 import { lookText, statusLine, warbandLines } from "#scripts/mcp/world-text";
 
@@ -46,7 +47,8 @@ function listed(table: Table): Listed[] {
   const battle = table.world.engagement?.battle;
   if (inFight(table) && side !== null && battle) {
     const fights = battleOptions(battle, side).map((o): Listed => ({ text: o.text, choice: { kind: "battle", choice: o.choice } }));
-    return [...fights, { text: "Let the battle AI fight the rest of this battle for you.", choice: { kind: "auto" } }];
+    const versusGuest = table.guest !== null && table.world.engagement?.players.includes(table.guest) === true;
+    return versusGuest ? fights : [...fights, { text: "Let the battle AI fight the rest of this battle for you.", choice: { kind: "auto" } }];
   }
   if (table.world.activePlayer !== table.seat) return [];
   return mapOptions(table.world, table.seat).map((o) => ({ text: o.text, choice: { kind: "map", action: o.action } }));
@@ -58,14 +60,19 @@ function gameOver(table: Table): string {
   return "GAME OVER: your Capitol's Guardian fell; you are out of the game.";
 }
 
-/** Where things stand now, and the numbered options. */
+/** Where things stand now, and the numbered options (or that the other player is to move). */
 function screen(table: Table, full: boolean): string {
   if (seatOver(table)) return gameOver(table);
   const side = seatSide(table);
   const engagement = table.world.engagement;
   const parts: string[] = [];
-  if (inFight(table) && side !== null && engagement) parts.push(battleView(engagement.battle, side, `BATTLE: ${engagementText(table)}`));
+  const fighting = side !== null && engagement !== null && (table.battles === "play" || table.guest !== null && engagement.players.includes(table.guest));
+  if (fighting && engagement) parts.push(battleView(engagement.battle, side, `BATTLE: ${engagementText(table)}`));
   else parts.push(full ? lookText(table.world, table.seat) : [statusLine(table.world, table.seat), ...warbandLines(table.world, table.seat)].join("\n"));
+  if (guestsMove(table)) {
+    parts.push(`WAITING: it is the other player's move (player ${table.guest}, playing in the browser). Call wait: it returns when it's your move again.`);
+    return parts.join("\n\n");
+  }
   const options = listed(table);
   parts.push(`OPTIONS (revision ${table.revision}; answer with act, giving the option's number and this revision):`);
   parts.push(options.map((o, i) => `${i + 1}. ${o.text}`).join("\n"));
@@ -101,6 +108,8 @@ export interface NewGame {
   readonly seed?: number | undefined;
   readonly size?: string | undefined;
   readonly battles?: "play" | "auto" | undefined;
+  /** A player in the browser (`?join`) plays this faction, as player 1. */
+  readonly human?: string | undefined;
 }
 
 const isPlayable = (key: string): key is Playable => PLAYABLE.some((p) => p === key);
@@ -108,23 +117,51 @@ const isPlayable = (key: string): key is Playable => PLAYABLE.some((p) => p === 
 export function startGame(args: NewGame, now: number): Reply {
   const faction = args.faction ?? "jilliath";
   if (!isPlayable(faction)) return { table: null, text: `Unknown faction "${faction}". Choose one of: ${PLAYABLE.join(", ")}.` };
-  const opponents = args.opponents ?? ["nexus"];
+  const human = args.human ?? null;
+  if (human !== null && !isPlayable(human)) return { table: null, text: `The human player's faction must be one of: ${PLAYABLE.join(", ")}.` };
+  const opponents = args.opponents ?? (human === null ? ["nexus"] : []);
   const unknown = opponents.find((o) => !isPlayable(o));
-  if (unknown !== undefined || opponents.length < 1 || opponents.length > 5) return { table: null, text: `Opponents must be 1 to 5 of: ${PLAYABLE.join(", ")}.` };
+  const players = opponents.length + (human === null ? 1 : 2);
+  if (unknown !== undefined || players < 2 || players > 6) return { table: null, text: `A game has 2 to 6 players; AI opponents are any of: ${PLAYABLE.join(", ")}.` };
   if (args.size !== undefined && !isMapSize(args.size)) return { table: null, text: "Size must be small, medium, large or huge." };
   const played = newTable({
     seed: args.seed ?? now % 100000,
     faction,
+    guest: human,
     opponents: opponents.filter(isPlayable),
     ...(args.size !== undefined && isMapSize(args.size) ? { size: args.size } : {}),
     battles: args.battles ?? "play",
   });
-  return reply({ table: played.table, lines: [`A new game on map seed ${played.table.seed}: you are player 0, ${faction}, against ${opponents.join(", ")}.`, ...played.lines] }, true);
+  const against = [...(human === null ? [] : [`${human} (player 1, a human playing in the browser at /?join)`]), ...opponents.map((o) => `${o} (AI)`)];
+  return reply({ table: played.table, lines: [`A new game on map seed ${played.table.seed}: you are player 0, ${faction}, against ${against.join(", ")}.`, ...played.lines] }, true);
 }
 
-export const look = (table: Table): Reply => reply({ table, lines: [] }, true);
+export const look = (table: Table): Reply => reply(resume(table), true);
+
+/** How often `wait` looks at the table, and how long one call waits at most before saying so. */
+const WAIT_POLL_MS = 1000;
+export const WAIT_LIMIT_MS = 240_000;
+
+/** Waits until it's the seat's move again (the other player has moved), then shows it; or says it's still waiting. */
+export async function wait(load: () => Table | null, limitMs: number): Promise<Reply> {
+  const started = Date.now();
+  for (;;) {
+    const table = load();
+    if (!table) return { table: null, text: "No game is running. Start one with new_game." };
+    if (!guestsMove(table)) {
+      const played = resume(table);
+      return reply({ ...played, lines: ["The other player has moved.", ...played.lines] }, false);
+    }
+    if (Date.now() - started >= limitMs) return { table, text: "Still the other player's move. Call wait again." };
+    await new Promise((done) => setTimeout(done, WAIT_POLL_MS));
+  }
+}
 
 export function act(table: Table, option: number, revision: number): Reply {
+  if (guestsMove(table)) return { table, text: screen(table, false) };
+  // The other player's write can leave AI moves to make first (a battle an AI started against us): they come first.
+  const ready = resume(table);
+  if (ready.table !== table) return reply(ready);
   if (revision !== table.revision) return { table, text: `Those options were for revision ${revision}; the game is at revision ${table.revision} now.\n\n${screen(table, false)}` };
   const chosen = listed(table)[option - 1];
   if (!chosen) return { table, text: `There is no option ${option}.\n\n${screen(table, false)}` };
@@ -179,17 +216,18 @@ export function describe(name: string): string {
 export function loadTable(path: string): Table | null {
   try {
     const parsed: unknown = JSON.parse(readFileSync(path, "utf8"));
-    return isTable(parsed) ? parsed : null;
+    return isSharedTable(parsed) ? parsed : null;
   } catch {
     return null;
   }
 }
 
-/** The table file is only ever written by `storeTable`: its header is checked, its world trusted. */
-function isTable(value: unknown): value is Table {
-  if (typeof value !== "object" || value === null) return false;
-  const record: Record<string, unknown> = { ...value };
-  return typeof record["seed"] === "number" && typeof record["seat"] === "number" && typeof record["revision"] === "number" && typeof record["world"] === "object";
+/** Written whole or not at all: the browser reads the same file while the server writes it. */
+function writeWhole(path: string, text: string): void {
+  mkdirSync(dirname(path), { recursive: true });
+  const temporary = `${path}.${process.pid}.tmp`;
+  writeFileSync(temporary, text);
+  renameSync(temporary, path);
 }
 
 /**
@@ -198,9 +236,6 @@ function isTable(value: unknown): value is Table {
  */
 export function storeTable(path: string, watch: string, table: Table, now: Date): void {
   if (path === watch) throw new Error("the table and the watched save must be different files");
-  mkdirSync(dirname(path), { recursive: true });
-  writeFileSync(path, JSON.stringify(table));
-  if (table.world.engagement) return;
-  mkdirSync(dirname(watch), { recursive: true });
-  writeFileSync(watch, writeSave(toSave(table.world, table.seed, now)));
+  writeWhole(path, JSON.stringify(table));
+  if (!table.world.engagement) writeWhole(watch, writeSave(toSave(table.world, table.seed, now)));
 }

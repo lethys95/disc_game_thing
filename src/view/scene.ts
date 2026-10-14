@@ -229,14 +229,20 @@ export class BattleScene {
     material.map?.dispose();
     material.map = null;
     if (texture) {
-      const tiled = texture.clone();
-      tiled.userData = {};
       const look = GROUND_LOOK[setting.biome];
-      tiled.wrapS = tiled.wrapT = look.seamless ? THREE.RepeatWrapping : THREE.MirroredRepeatWrapping;
-      tiled.repeat.set(44, 44);
-      tiled.needsUpdate = true;
-      material.map = tiled;
       material.color.setScalar(look.tone);
+      // A copy is flagged for upload as it's made (three's `Texture.copy`), and WebGPU crashes uploading an image that
+      // hasn't arrived: the ground is copied once its image is in. A battle can open first (joining one mid-fight).
+      void this.grounds.whenLoaded(texture).then(() => {
+        if (this.setting !== setting) return;
+        const tiled = texture.clone();
+        tiled.userData = {};
+        tiled.wrapS = tiled.wrapT = look.seamless ? THREE.RepeatWrapping : THREE.MirroredRepeatWrapping;
+        tiled.repeat.set(44, 44);
+        material.map?.dispose();
+        material.map = tiled;
+        material.needsUpdate = true;
+      });
     } else material.color.set(0x1c2230);
     material.needsUpdate = true;
     for (const prop of ARENA_PROPS[setting.terrain]) {

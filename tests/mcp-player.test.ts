@@ -5,6 +5,7 @@ import { mapOptions } from "#scripts/mcp/map-options";
 import { act, describe as rulesText, look, startGame } from "#scripts/mcp/session";
 import type { Reply } from "#scripts/mcp/session";
 import type { Table } from "#scripts/mcp/table";
+import { decider } from "#view/shared-table";
 
 /** The outside player's tools (`scripts/mcp/`): what they list is what the rules take, and a game plays through. */
 
@@ -61,6 +62,19 @@ describe("the MCP player", () => {
     expect(end.text).not.toContain("BATTLE:");
   });
 
+  test("with a human seat, the MCP player stops at the human's move and waits", () => {
+    const start = startGame({ seed: 6, faction: "jilliath", human: "nexus" }, 0);
+    const table = start.table;
+    if (!table) throw new Error("no game");
+    const end = Number(/(\d+)\. End your turn/.exec(start.text)?.[1]);
+    const after = act(table, end, table.revision);
+    expect(after.table?.world.activePlayer).toBe(1);
+    expect(after.text).toContain("WAITING");
+    expect(decider(after.table ?? table)).toBe("guest");
+    if (!after.table) throw new Error("no game");
+    expect(act(after.table, 1, after.table.revision).text).toContain("WAITING");
+  });
+
   test("a stale revision is refused", () => {
     const reply = startGame({ seed: 1 }, 0);
     if (!reply.table) throw new Error("no game");
@@ -76,7 +90,7 @@ describe("the MCP player", () => {
   });
 
   test("the view code it borrows stays headless", () => {
-    const headless = ["src/view/names.ts", "src/view/map-text.ts", "src/view/secrecy.ts"];
+    const headless = ["src/view/names.ts", "src/view/map-text.ts", "src/view/secrecy.ts", "src/view/shared-table.ts"];
     const outside = headless.flatMap((path) =>
       [...readFileSync(path, "utf8").matchAll(/from "([^"]+)"/g)].flatMap((m) => (m[1] && !m[1].startsWith("#rules/") && m[1] !== "#view/names" ? [`${path}: ${m[1]}`] : [])),
     );

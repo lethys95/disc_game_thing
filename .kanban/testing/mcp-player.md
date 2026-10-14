@@ -1,6 +1,6 @@
 # An outside AI plays over MCP
 
-- **What:** a local stdio MCP server in `scripts/mcp/` running a headless game (the rules are pure, like `sim:world`); the other seats are the map AI. The real work: a compact, readable state description, and a list of what a player can do now on the map (the rules only answer "why not"). Dev tooling, kept out of `src/`. Joining that game from the browser is its own card (`eventually/mcp-join`).
+- **What:** a local stdio MCP server in `scripts/mcp/` running a headless game (the rules are pure, like `sim:world`); the other seats are the map AI. The real work: a compact, readable state description, and a list of what a player can do now on the map (the rules only answer "why not"). Dev tooling, kept out of `src/`. Playing against it from the browser is its own card (`testing/mcp-join`).
 - **Why:** The user (2026-09-26): "for shits and giggles". Asked for again 2026-10-14: "so AI such as yourself, a language model, can possess a player and make decisions. I'm thinking something cheap like a haiku model could do".
 - **Done when:** An AI can play a whole game over MCP, and the user has seen it play.
 - **Who:** Claude.

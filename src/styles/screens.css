@@ -201,3 +201,6 @@
 .tab-frame .offers .offer.refused { opacity: 0.4; cursor: default; }
 .tab-frame .offers .offer.refused:hover { box-shadow: inset 0 0 0 1px var(--gbx-edge); }
 .tab-frame .offer { display: flex; flex-direction: column; gap: 0.3em; }
+
+/* ?join, before there's a game to join. */
+.join-wait { position: fixed; left: 50%; top: 40%; transform: translateX(-50%); max-width: 32rem; padding: 1.2rem 1.6rem; font: 1.3rem var(--display); text-align: center; z-index: 50; }

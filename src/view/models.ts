@@ -24,6 +24,8 @@ const GROUND = import.meta.glob<string>("/assets/ground/*.webp", { eager: true, 
 export class GroundTextures {
   private readonly loader = new THREE.TextureLoader();
   private readonly loaded = new Map<string, THREE.Texture>();
+  /** Each texture's image, once it has arrived. */
+  private readonly arrived = new Map<THREE.Texture, Promise<void>>();
 
   /** The texture for this terrain and variant (falling back to variant 1), or null if the terrain has none. */
   get(terrain: string, variant: number): THREE.Texture | null {
@@ -31,13 +33,21 @@ export class GroundTextures {
     if (!url) return null;
     let texture = this.loaded.get(url);
     if (!texture) {
-      texture = this.loader.load(url);
+      let arrive = () => {};
+      const arrived = new Promise<void>((done) => (arrive = done));
+      texture = this.loader.load(url, arrive);
+      this.arrived.set(texture, arrived);
       texture.colorSpace = THREE.SRGBColorSpace;
       texture.anisotropy = 8;
       texture.userData["shared"] = true;
       this.loaded.set(url, texture);
     }
     return texture;
+  }
+
+  /** When a texture from `get` has its image: only then may it be copied (a copy is flagged for upload at once). */
+  whenLoaded(texture: THREE.Texture): Promise<void> {
+    return this.arrived.get(texture) ?? Promise.resolve();
   }
 
   /**

@@ -12,30 +12,23 @@ import { defaultColors } from "#rules/world/colors";
 import { createWorld } from "#rules/world/create";
 import type { PlayerSetup } from "#rules/world/create";
 import { playerOf } from "#rules/world/state";
-import type { PlayerId, World, WorldAction } from "#rules/world/state";
+import type { World, WorldAction } from "#rules/world/state";
 import { defaultMapSize } from "#rules/map";
 import type { MapSize } from "#rules/map";
 import { newsText } from "#view/map-text";
+import { decider, sideOf, withWorld } from "#view/shared-table";
+import type { BattleMove, SharedTable } from "#view/shared-table";
 import { masked } from "#view/secrecy";
 import { battleLog } from "#scripts/mcp/battle-text";
 
-/**
- * A game with one seat taken by an outside player (an LLM over MCP); the map AI plays every other seat. Plain data,
- * so it can be written to disk between calls and picked up again by the server or the command line.
- */
-export interface Table {
-  readonly seed: number;
-  readonly seat: PlayerId;
-  /** `play`: the seat fights its own battles, order by order; `auto`: the battle AI fights them for it. */
-  readonly battles: "play" | "auto";
-  readonly world: World;
-  /** Counts the seat's orders: an option number is only good for the listing made at the same revision. */
-  readonly revision: number;
-}
+/** The game on disk: the MCP player's seat, and the browser player's when one plays (`view/shared-table.ts`). */
+export type Table = SharedTable;
 
 export interface TableSetup {
   readonly seed: number;
   readonly faction: Playable;
+  /** The faction of a player who joins from the browser (`?join`), seated second; null for none. */
+  readonly guest: Playable | null;
   readonly opponents: readonly Playable[];
   readonly size?: MapSize;
   readonly battles: "play" | "auto";
@@ -48,36 +41,35 @@ export interface Played {
 }
 
 export function newTable(setup: TableSetup): Played {
-  const factions = [setup.faction, ...setup.opponents];
+  const factions = [setup.faction, ...(setup.guest ? [setup.guest] : []), ...setup.opponents];
   const colors = defaultColors(factions);
   const setups = factions.map((faction, i): PlayerSetup => {
     const squad = [...(FORMATIONS[faction][0]?.squad ?? [])];
     return { squad, faction, commitment: commitmentOf(squad.map((p) => p.defId)) ?? {}, color: colors[i] ?? "white" };
   });
   const world = createWorld(setup.seed, setups, setup.size ?? defaultMapSize(setups.length));
-  return advance({ seed: setup.seed, seat: 0, battles: setup.battles, world, revision: 0 }, []);
+  return advance({ seed: setup.seed, seat: 0, guest: setup.guest ? 1 : null, battles: setup.battles, world, revision: 0, moves: [] }, []);
 }
 
-/** The side the seat fights on in the current engagement, or null when it isn't in one. */
-export function seatSide(table: Table): Side | null {
-  const engagement = table.world.engagement;
-  if (!engagement) return null;
-  if (engagement.players[0] === table.seat) return 0;
-  return engagement.players[1] === table.seat ? 1 : null;
-}
+export const seatSide = (table: Table): Side | null => sideOf(table, table.seat);
 
-/** The seat's fight waits for it: an engagement it's in, while it fights its own battles. */
-export const inFight = (table: Table): boolean => table.battles === "play" && seatSide(table) !== null;
+const guestSide = (table: Table): Side | null => sideOf(table, table.guest);
+
+/** The seat's fight waits for its orders: its unit acts or its tarot hand is open, in a battle it fights itself. */
+export const inFight = (table: Table): boolean => table.battles === "play" && seatSide(table) !== null && decider(table) === "seat" && table.world.engagement?.battle.outcome === null;
 
 export const seatOver = (table: Table): boolean => table.world.outcome !== null || playerOf(table.world, table.seat).eliminated;
 
+/** The browser player's move: the seat waits (the `wait` tool). */
+export const guestsMove = (table: Table): boolean => decider(table) === "guest";
+
 /** A map order of the seat's. Throws with the rules' reason when it can't be given. */
 export function order(table: Table, action: WorldAction): Played {
-  if (inFight(table)) throw new Error("a battle is on: give battle orders");
+  if (table.world.engagement) throw new Error("a battle is on: give battle orders");
   if (table.world.activePlayer !== table.seat) throw new Error("not your turn");
   const step = applyWorldAction(table.world, action);
   const news = newsText(step.events, step.world, table.seat);
-  return advance({ ...table, world: step.world, revision: table.revision + 1 }, news ? [news] : []);
+  return advance(withWorld(table, step.world), news ? [news] : [], table);
 }
 
 /** An order for the seat's unit whose turn it is in the current battle. */
@@ -85,20 +77,24 @@ export function fight(table: Table, action: Action): Played {
   const { battle, side } = seatBattle(table);
   if (battle.current === null || battle.units[battle.current.unitId]?.side !== side) throw new Error("not your unit's turn");
   const step = applyAction(battle, action);
-  return advance(withBattle({ ...table, revision: table.revision + 1 }, step.battle), battleLog(masked(step.events, step.battle, side), step.battle, side));
+  return advance(recorded(withBattle(table, step.battle), { kind: "act", side, action }), battleLog(masked(step.events, step.battle, side), step.battle, side), table);
 }
 
 export function pickTarot(table: Table, hand: number, card: number): Played {
   const { battle, side } = seatBattle(table);
   if (battle.tarot[hand]?.side !== side) throw new Error("not your hand");
-  return advance(withBattle({ ...table, revision: table.revision + 1 }, chooseTarot(battle, hand, card).battle), []);
+  return advance(recorded(withBattle(table, chooseTarot(battle, hand, card).battle), { kind: "tarot", side, hand, card }), [], table);
 }
 
-/** Hands the rest of the seat's current battle to the battle AI. */
+/** Hands the rest of the seat's current battle to the battle AI; not against the browser player, who fights its own side. */
 export function autoFight(table: Table): Played {
   const { battle } = seatBattle(table);
-  return advance(withBattle({ ...table, revision: table.revision + 1 }, autoplay(battle)), []);
+  if (guestSide(table) !== null) throw new Error("the other player fights their own side");
+  return advance(withBattle(table, autoplay(battle)), [], table);
 }
+
+/** Picks up the game where the other player left it: what the seat must decide now, after anything the AI does first. */
+export const resume = (table: Table): Played => advance(table, []);
 
 function seatBattle(table: Table): { battle: Battle; side: Side } {
   const side = seatSide(table);
@@ -112,59 +108,67 @@ const withBattle = (table: Table, battle: Battle): Table => {
   return engagement ? { ...table, world: { ...table.world, engagement: { ...engagement, battle } } } : table;
 };
 
+/** A move in a battle against the browser player goes on the table, for the browser to replay. */
+const recorded = (table: Table, move: BattleMove): Table => (guestSide(table) === null ? table : { ...table, moves: [...table.moves, move] });
+
 /** The seat's tarot hands still to pick from: the fight waits for them. */
 export const openHands = (battle: Battle, side: Side): number[] => battle.tarot.flatMap((h, i) => (h.side === side && h.chosen === null ? [i] : []));
 
 /**
- * Plays everything that isn't the seat's to decide: the other side's battle orders, battles the seat isn't in, the
- * other players' turns. Stops when the seat must decide (its turn, its unit's turn, a tarot hand) or its game is over.
+ * Plays everything that isn't an outside player's to decide: the AI's battle orders, battles no outside player is
+ * in, the AI players' turns. Stops when the seat must decide (its turn, its unit's turn, a tarot hand), when it's the
+ * browser player's move, or when the game is over for everyone here. A table that changed comes out one revision on.
  */
-function advance(start: Table, lines: string[]): Played {
+function advance(start: Table, lines: string[], before: Table = start): Played {
   // One BattleMemo per call: a turn's forecasts repeat, a game's grow without bound.
   const memo: BattleMemo = new Map();
   let table = start;
   for (let guard = 0; guard < 100000; guard++) {
     const world = table.world;
-    if (seatOver(table)) break;
+    const next = decider(table);
+    if (next === "none" || next === "guest" || (seatOver(table) && table.guest === null)) break;
     const engagement = world.engagement;
     if (engagement) {
       const side = seatSide(table);
-      if (side === null || table.battles === "auto") {
-        const done = autoplay(engagement.battle);
-        table = concluded(table, done, side, lines);
+      const against = guestSide(table);
+      const battle = engagement.battle;
+      if (side === null) {
+        table = concluded(table, autoplay(battle), side, lines);
         continue;
       }
-      const battle = engagement.battle;
       if (battle.outcome) {
         table = concluded(table, battle, side, lines);
         continue;
       }
-      const theirs: Side = side === 0 ? 1 : 0;
-      const picked = chooseTarotCards(battle, theirs);
-      if (openHands(picked, side).length > 0) {
-        table = withBattle(table, picked);
-        break;
+      if (against === null && table.battles === "auto") {
+        table = concluded(table, autoplay(battle), side, lines);
+        continue;
       }
+      const theirs: Side = side === 0 ? 1 : 0;
+      // Against the browser player the seat's tarot cards are the AI's picks, which both ends make alike.
+      const picked = chooseTarotCards(battle, against === null ? theirs : side);
       const current = picked.current;
-      if (current && picked.units[current.unitId]?.side === side) {
-        table = withBattle(table, picked);
+      const seatActs = current !== null && picked.units[current.unitId]?.side === side;
+      if (openHands(picked, side).length > 0 || (seatActs && table.battles === "play")) {
+        if (picked !== battle) table = withBattle(table, picked);
         break;
       }
       const action = chooseAction(picked);
-      const next = action ? applyAction(picked, action) : { battle: autoplay(picked), events: [] as BattleEvent[] };
-      lines.push(...battleLog(masked(next.events, next.battle, side), next.battle, side));
-      table = withBattle(table, next.battle);
+      const played = action ? applyAction(picked, action) : { battle: autoplay(picked), events: [] as BattleEvent[] };
+      lines.push(...battleLog(masked(played.events, played.battle, side), played.battle, side));
+      table = withBattle(table, played.battle);
+      if (action && seatActs) table = recorded(table, { kind: "act", side, action });
       continue;
     }
-    if (world.activePlayer === table.seat) break;
+    if (next === "seat") break;
     const step = applyWorldAction(world, chooseWorldAction(world, memo));
     const news = newsText(step.events, step.world, table.seat);
     if (news) lines.push(news);
     for (const e of step.events) if (e.type === "turnStarted" && e.player === table.seat) lines.push(`The other players have moved (you hear only of what happens in your sight). Turn ${e.turn}, your turn: +${e.income} gold.`);
-    if (step.world.engagement && seatSide({ ...table, world: step.world }) === 1) lines.push(attackedText(step.world));
-    table = { ...table, world: step.world };
+    table = withWorld(table, step.world);
+    if (seatSide(table) === 1) lines.push(attackedText(step.world));
   }
-  return { table, lines };
+  return { table: table === before ? before : { ...table, revision: before.revision + 1 }, lines };
 }
 
 function concluded(table: Table, battle: Battle, side: Side | null, lines: string[]): Table {
@@ -172,7 +176,7 @@ function concluded(table: Table, battle: Battle, side: Side | null, lines: strin
   if (side !== null) lines.push(battleResult(battle, side));
   const news = newsText(step.events, step.world, table.seat);
   if (news) lines.push(news);
-  return { ...table, world: step.world };
+  return withWorld(table, step.world);
 }
 
 function battleResult(battle: Battle, side: Side): string {

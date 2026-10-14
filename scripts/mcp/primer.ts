@@ -1,12 +1,13 @@
 import { ARMOR_HALF, BATTLE_ROUND_LIMIT, CITY_HEALING_PER_TIER, LEADER_XP_PER_POINT, MAX_LEADERSHIP, RESURRECTION_PREMIUM, STARTING_LEADERSHIP } from "#rules/balance";
 
 /** What an outside player needs to know to play, sent as the MCP server's instructions. Numbers come from the rules. */
-export const RULES_PRIMER = `You are playing disc, a turn-based fantasy strategy game (in the spirit of Disciples II), as player 0 against the game's own AI.
+export const RULES_PRIMER = `You are playing disc, a turn-based fantasy strategy game (in the spirit of Disciples II), as player 0 against the game's own AI, or against a human playing in the browser, or both.
 
 HOW TO PLAY THROUGH THESE TOOLS
 - new_game starts a game; look shows everything you know; act takes a numbered option. Every reply ends with OPTIONS and a revision number: answer with act(option, revision). The numbers change after every act, so always use the latest listing.
 - When you end your turn, the other players move; their visible moves and any attack on you are reported under WHAT HAPPENED.
 - order gives a map order that is not listed (march to any hex, rearrange units between squads). describe explains any unit, ability, effect, item or spell.
+- Against a human (new_game with human): they play in the browser. When a reply says WAITING, it is their move: call wait, which returns when it's yours again. In a battle between you two, each gives their own side's orders.
 
 HOW TO WIN
 - Every player has a Capitol guarded by its Capitol Guardian. A player whose Guardian falls is out. The last player standing wins.

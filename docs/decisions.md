@@ -436,3 +436,11 @@ play, only judgement. A listing belongs to a revision; `act` with an older one i
 land on a list that has changed since. `order` keeps raw actions for what the list leaves out (a march to any hex, a
 transfer to a chosen tile). The server reuses the browser's text for news and secrecy, which is why the names it needs
 moved into the pure `view/names.ts`.
+
+## Playing against the MCP player: one file, each their own side (2026-10-14)
+The browser player and the MCP player share one game through a file (`.cache/mcp/table.json`) rather than a server
+holding it: the MCP server already reloaded its game from disk on every call, so whoever's decision it is acts and
+writes, and the other picks the change up (`view/shared-table.ts`, `decider`). No process runs on its own; the AI's
+turns are played by whichever end handed them the turn. In a battle between the two, each gives their own side's
+orders, unit by unit: the browser replays the MCP player's orders from the table so they animate like the AI's. The MCP
+player's tarot cards there are the AI's picks, which both ends make alike, so no pick has to cross the table.

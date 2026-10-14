@@ -12,7 +12,7 @@ import { income, manaIncome } from "#rules/world/economy";
 import { planMove, reachable } from "#rules/world/movement";
 import type { MovePlan } from "#rules/world/movement";
 import { capitolOf, leaderAt, playerOf } from "#rules/world/state";
-import type { Leader, PlayerId, World, WorldAction } from "#rules/world/state";
+import type { Engagement, Leader, PlayerId, World, WorldAction } from "#rules/world/state";
 import { knownWorld, visionOf } from "#rules/world/vision";
 import { castProblem, spellTargets } from "#rules/world/spells";
 import { useItemProblem, wardTargets } from "#rules/world/items";
@@ -23,6 +23,9 @@ import type { App } from "#view/app";
 import { CityScreen } from "#view/city";
 import type { Place } from "#view/city";
 import { applySideColors, battleColors } from "#view/colors";
+import { decider } from "#view/shared-table";
+import type { SharedTable } from "#view/shared-table";
+import { TableLink } from "#view/table-link";
 import { buttonById, byId, element, gold, mana } from "#view/dom";
 import { explain } from "#view/explain";
 import { Forecasts } from "#view/forecasts";
@@ -70,6 +73,9 @@ const aimProblem = (world: World, aim: Aim, at: Hex): string | null =>
 
 const aimTargets = (world: World, aim: Aim): Hex[] => (aim.kind === "spell" ? spellTargets(world, aim.spell) : wardTargets(world, aim.leaderId));
 
+/** How long a joined game's map draws before a fight waiting on the table opens. */
+const JOIN_SETTLE_MS = 1500;
+
 export class Campaign implements KeyLayer {
   private world: World | null = null;
   /**
@@ -84,6 +90,8 @@ export class Campaign implements KeyLayer {
   private busy = false;
   /** Following a game played elsewhere (`watch`). */
   private watching = false;
+  /** Playing a seat of a game shared with the MCP player (`join`). */
+  private link: TableLink | null = null;
   private generation = 0;
   private readonly forecasts: Forecasts;
   private readonly hud = byId("maphud");
@@ -279,7 +287,27 @@ export class Campaign implements KeyLayer {
     this.load(save);
   }
 
-  private load(save: Save): void {
+  /**
+   * Plays the browser's seat in a game shared with the MCP player (`?join`, `view/shared-table.ts`): every change made
+   * here goes to the table, every change the other player makes comes from it, and battles between the two are fought
+   * order by order, each player giving their own side's.
+   */
+  join(table: SharedTable, url: string): void {
+    if (table.guest === null) return;
+    this.stop();
+    this.viewer = table.guest;
+    const link = new TableLink(table, url, (newer) => this.adopt(newer));
+    this.link = link;
+    this.load({ seed: table.seed, world: table.world });
+    link.start();
+    // The map draws first: a battle opened in the same frames as the map's first ones fails to build its pipelines.
+    const generation = this.generation;
+    void this.stage.tween(JOIN_SETTLE_MS, () => {}).then(() => {
+      if (generation === this.generation) this.proceed();
+    });
+  }
+
+  private load(save: { readonly seed: number; readonly world: World }): void {
     this.seed = save.seed;
     this.world = save.world;
     this.view.viewer = this.viewer;
@@ -288,6 +316,44 @@ export class Campaign implements KeyLayer {
     this.view.buildSites(save.world);
     this.view.centerOn(save.world.map.starts[this.viewer] ?? { q: 0, r: 0 });
     this.enterMap();
+  }
+
+  /** The other player wrote the table: its world replaces ours, unless a fight is on (its moves reach the fight). */
+  private adopt(table: SharedTable): void {
+    if (!this.world || this.busy || this.app.open()) return;
+    this.world = table.world;
+    this.forecasts.clear();
+    this.syncView(table.world);
+    this.render();
+    this.proceed();
+  }
+
+  /**
+   * In a shared game: a fight of ours the table holds, to open or to write back. (The AI's turns that fall to this end
+   * start from `enterMap`, as in any game.)
+   */
+  private proceed(): void {
+    const link = this.link;
+    const world = this.world;
+    if (!link || !world || this.busy || this.app.open()) return;
+    const engagement = world.engagement;
+    if (!engagement || !playersIn(engagement).includes(this.viewer)) return;
+    if (!engagement.battle.outcome) void this.openFight(engagement, this.generation);
+    else if (decider({ ...link.current, world }) === "guest") this.afterBattle(engagement.battle, this.generation);
+  }
+
+  /** The battle screen for a fight we're in: against the MCP player, order by order; against anyone else, the AI. */
+  private async openFight(engagement: Engagement, generation: number): Promise<void> {
+    const world = this.world;
+    if (!world) return;
+    this.hud.hidden = true;
+    await this.stage.tween(400, () => {});
+    if (generation !== this.generation) return;
+    const side: Side = engagement.players[0] === this.viewer ? 0 : 1;
+    const link = this.link;
+    const remote = link && engagement.players.includes(link.current.seat) ? link : null;
+    remote?.fighting(side);
+    this.app.fight(engagement.battle, side, battleColors(world, engagement.players), battleSetting(world, engagement), (battle) => this.afterBattle(battle, generation), remote);
   }
 
   /** Whether a map game is running (not a skirmish, not the setup screen). */
@@ -382,6 +448,9 @@ export class Campaign implements KeyLayer {
     this.world = null;
     this.busy = false;
     this.watching = false;
+    this.link?.stop();
+    this.link = null;
+    this.viewer = 0;
     this.hud.hidden = true;
     delete document.body.dataset["skin"];
   }
@@ -498,15 +567,23 @@ export class Campaign implements KeyLayer {
     }
     if (generation !== this.generation) return;
     this.world = step.world;
+    this.link?.publish(step.world);
     // A march that ends on a structure opens it, as D2's shops do.
     if (action.type === "move" && world.activePlayer === this.viewer) {
       const mover = step.world.leaders.find((l) => l.id === action.leaderId);
       if (mover && structureAt(step.world, mover) && !step.world.engagement) this.visiting = mover.id;
     }
-    if (step.events.some((e) => e.type === "turnStarted" && e.player === this.viewer)) this.autosave();
+    // A shared game lives on its table, not in this browser's saves.
+    if (!this.link && step.events.some((e) => e.type === "turnStarted" && e.player === this.viewer)) this.autosave();
     this.syncView(step.world);
     this.busy = false;
     const engagement = step.world.engagement;
+    const seat = this.link?.current.seat;
+    if (engagement && seat !== undefined && engagement.players.includes(seat) && !playersIn(engagement).includes(this.viewer)) {
+      // The MCP player's fight against an AI: it fights it there, and the table comes back when it has.
+      this.render();
+      return;
+    }
     if (engagement) {
       if (!playersIn(engagement).includes(this.viewer)) {
         // Not our fight (other players, or one against neutrals): resolve it off-screen, as D2 does, and report it;
@@ -515,10 +592,7 @@ export class Campaign implements KeyLayer {
         this.afterBattle(result, generation);
         return;
       }
-      this.hud.hidden = true;
-      await this.stage.tween(400, () => {});
-      const side: Side = engagement.players[0] === this.viewer ? 0 : 1;
-      this.app.fight(engagement.battle, side, battleColors(step.world, engagement.players), battleSetting(step.world, engagement), (battle) => this.afterBattle(battle, generation));
+      await this.openFight(engagement, generation);
       return;
     }
     this.render();
@@ -528,8 +602,16 @@ export class Campaign implements KeyLayer {
 
   private afterBattle(battle: Battle, generation: number): void {
     if (generation !== this.generation || !this.world) return;
+    const link = this.link;
+    if (link && this.world.activePlayer === link.current.seat) {
+      // The MCP player's attack: it writes the battle back. The table may have come back already, during the fight.
+      this.world = link.current.world;
+      this.enterMap();
+      return;
+    }
     const step = concludeBattle(this.world, battle);
     this.world = step.world;
+    link?.publish(step.world);
     this.enterMap();
     this.announce(newsText(step.events, step.world, this.viewer));
   }
@@ -540,8 +622,11 @@ export class Campaign implements KeyLayer {
 
   private async runAi(): Promise<void> {
     const world = this.world;
-    // Once you're out, the game is over for this screen, even if others would play on.
-    if (!world || this.watching || world.outcome || world.engagement || world.activePlayer === this.viewer || this.busy || playerOf(world, this.viewer).eliminated) return;
+    if (!world || this.watching || world.outcome || world.engagement || world.activePlayer === this.viewer || this.busy) return;
+    // In a shared game the AI's turns after ours are played here, up to the MCP player's; otherwise, once you're out,
+    // the game is over for this screen, even if others would play on.
+    const link = this.link;
+    if (link ? decider({ ...link.current, world }) !== "ai" : playerOf(world, this.viewer).eliminated) return;
     const generation = this.generation;
     await this.stage.tween(AI_STEP_MS, () => {});
     if (generation !== this.generation) return;
@@ -586,7 +671,9 @@ export class Campaign implements KeyLayer {
       ? aiming.kind === "spell" ? castHint(known, aiming.spell, this.hovered) : wardHint(known, aiming.leaderId, aiming.item, this.hovered)
       : this.myTurn()
       ? hintText({ known, player: this.viewer, leader, hovered: this.hovered, plan, forecast: (l, target) => this.forecasts.text(known, l, target) })
-      : this.watching
+      : this.link && decider({ ...this.link.current, world }) === "seat"
+        ? `Waiting for the MCP player (player ${this.link.current.seat}) to move…`
+        : this.watching
         ? `Watching an outside player's game (player ${this.viewer}): turn ${world.turn}${world.outcome ? `, won by player ${world.outcome.winner}` : ""}. The map follows its saves.`
         : world.activePlayer === this.viewer
           ? ""

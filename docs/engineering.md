@@ -64,6 +64,11 @@ command line); `primer.ts` is the rules text the server sends as its instruction
 It borrows `view/names.ts`, `view/map-text.ts` and `view/secrecy.ts`, which must stay free of the DOM
 (`tests/mcp-player.test.ts` checks their imports). A new kind of map order needs a line in `map-options.ts`, or the
 outside player can only give it through `order`.
+**A human against the MCP player** (`?join`): the table is `view/shared-table.ts`'s `SharedTable`, one file both ends
+read and write; `decider` says whose move it is (and so who may write). The dev server serves it at `/mcp/table`
+(`scripts/mcp/vite-plugin.ts`, from `vite.config.ts`); `view/table-link.ts` polls and writes it for the browser, and
+is the battle screen's `RemoteSide` in a fight between the two. The MCP end writes the file only when its call changed
+the table: a write of what it read could undo the human's move made meanwhile.
 
 ## Art
 Art is assigned by **slot**: one per unit (`portrait/<unitId>`), ability (`ability/<id>`), and effect (`effect/<id>`). A unit's art has three framings, each its own file: the card `portrait/<id>` (the standee), the bust `bust/<id>` (the unit card) and the icon `icon/<id>` (turn order, squad grids, lists); a framing falls back to the wider one (icon → bust → card), and the CSS zooms a wider framing toward the face. Portraits come from picked concepts: `scripts/art/portraits.ts` (`--install <card> <bust>` cuts the icon from the bust). A slot's file is `assets/art/<kind>/<id>.webp`, found at build time by `import.meta.glob`, so adding art is dropping a file. A missing file falls back to a family default (`portrait/_<faction>`, `ability/_<tag>`, `effect/_effect`), then to a placeholder in the faction's color with initials, so every spot works before its art exists. The view calls `art(slot, size)`. The UI kit (frames, plaques, buttons, textures) is separate: `assets/ui/<name>.webp`, reaching CSS as `--ui-<name>` (`applyUiKit`); CSS decides where each piece goes. A screen's painted pieces live in `assets/ui/<screen>/` (`--ui-battle-bar`), painted by the `hud-paint-in` skill from a layout first judged with the `greybox` skill; the stylesheet places each window where it was painted, in the painting's own pixels. Photon's CLI (`~/.photon/bin/photon`) does the subject cuts headless; save its PNGs at level 1 (higher levels can corrupt the stream).

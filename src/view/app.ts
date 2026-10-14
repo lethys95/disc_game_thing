@@ -1,3 +1,4 @@
+import type { RemoteSide } from "#view/table-link";
 import { chooseAction, chooseTarotCards } from "#rules/ai";
 import { UNITS } from "#rules/units/index";
 import { applyAction, chooseTarot, createBattle, legalActions, NO_CONTEXT } from "#rules/battle/engine";
@@ -88,6 +89,8 @@ export class App implements KeyLayer {
   private reveals: number[] = [];
   /** The AI plays the player's side too, until switched off. */
   private auto = false;
+  /** Who gives the other side's orders when it isn't the AI. */
+  private remote: RemoteSide | null = null;
   /** Bumped on every start/stop so a turn still animating from an old battle can't touch the new one. */
   private generation = 0;
   private timer: number | undefined;
@@ -158,13 +161,17 @@ export class App implements KeyLayer {
     this.run(step.battle, step.events, playerSide, colors, setting, { kind: "skirmish", squads, colors }, fastForward);
   }
 
-  /** A battle that came from the map, fought where `setting` says; `onDone` receives the finished battle. */
-  fight(battle: Battle, playerSide: Side | null, colors: Colors, setting: BattleSetting, onDone: (battle: Battle) => void): void {
-    this.run(battle, [], playerSide, colors, setting, { kind: "world", onDone }, 0);
+  /**
+   * A battle that came from the map, fought where `setting` says; `onDone` receives the finished battle. With `remote`,
+   * a player elsewhere gives the other side's orders (the MCP player, `?join`) instead of the AI.
+   */
+  fight(battle: Battle, playerSide: Side | null, colors: Colors, setting: BattleSetting, onDone: (battle: Battle) => void, remote: RemoteSide | null = null): void {
+    this.run(battle, [], playerSide, colors, setting, { kind: "world", onDone }, 0, remote);
   }
 
-  private run(start: Battle, events: readonly BattleEvent[], playerSide: Side | null, colors: Colors, setting: BattleSetting, finish: Finish, fastForward: number): void {
+  private run(start: Battle, events: readonly BattleEvent[], playerSide: Side | null, colors: Colors, setting: BattleSetting, finish: Finish, fastForward: number, remote: RemoteSide | null = null): void {
     this.stop();
+    this.remote = remote;
     this.scene.setSetting(setting);
     this.scene.setColors(colors);
     this.scene.setLeft(playerSide ?? 0);
@@ -239,6 +246,7 @@ export class App implements KeyLayer {
       if (!this.battle) return;
       const step = chooseTarot(this.battle, index, card);
       this.battle = step.battle;
+      if (this.playerSide !== null) this.remote?.sent({ kind: "tarot", side: this.playerSide, hand: index, card }, step.battle);
       this.hud.appendLog(masked(step.events, step.battle, this.playerSide), step.battle, this.playerSide);
       this.offerTarot();
       this.render();
@@ -267,7 +275,8 @@ export class App implements KeyLayer {
   /** The rest of the battle played at once by the AI on both sides, in the worker; only the result is shown. */
   private async resolveNow(): Promise<void> {
     const battle = this.battle;
-    if (!battle || battle.outcome || this.playerSide === null) return;
+    // Against a player elsewhere, the AI can't finish their side's fight for them.
+    if (!battle || battle.outcome || this.playerSide === null || this.remote) return;
     this.generation += 1;
     window.clearTimeout(this.timer);
     const generation = this.generation;
@@ -430,12 +439,14 @@ export class App implements KeyLayer {
     this.busy = true;
     this.preview = null;
     this.render();
+    const actor = battle.current ? battle.units[battle.current.unitId]?.side : undefined;
     const step = applyAction(battle, action);
     const visible = masked(step.events, step.battle, this.playerSide);
     for (const cue of battleCues(visible, step.battle, this.playerSide)) this.sound.play(cue.chain, cue.delay * this.stage.timeScale, cue.duration);
     this.hud.appendLog(visible, step.battle, this.playerSide);
     // Hands drawn mid-fight (Omen): the AI's are picked at once, the player's wait for the player.
     this.battle = this.aiPicks(step.battle, this.auto || this.playerSide === null ? undefined : this.playerSide === 0 ? 1 : 0, !this.auto && this.playerSide !== null);
+    if (actor !== undefined && actor === this.playerSide) this.remote?.sent({ kind: "act", side: actor, action }, this.battle);
     this.followLead();
     await this.scene.play(visible, step.battle);
     if (generation !== this.generation) return;
@@ -458,6 +469,13 @@ export class App implements KeyLayer {
     const unit = id ? battle.units[id] : undefined;
     if (!unit || (unit.side === this.playerSide && !this.auto)) return;
     const generation = this.generation;
+    const remote = this.remote;
+    if (remote && unit.side !== this.playerSide) {
+      void remote.next().then((action) => {
+        if (generation === this.generation) void this.commit(action);
+      });
+      return;
+    }
     this.timer = window.setTimeout(() => {
       void this.ai.chooseAction(battle).then((action) => {
         if (generation !== this.generation || !action) return;
@@ -578,7 +596,7 @@ export class App implements KeyLayer {
     if (!battle || battle.outcome || this.busy) return "";
     if (this.auto) return "Auto-battle: the AI is playing your side.";
     if (this.pickingTarot) return "Pick a tarot card to begin.";
-    if (!this.playersTurn()) return this.playerSide === null ? "The AI plays both sides." : "The enemy is acting…";
+    if (!this.playersTurn()) return this.playerSide === null ? "The AI plays both sides." : this.remote ? "The other player is choosing…" : "The enemy is acting…";
     const name = battle.current ? battle.units[battle.current.unitId]?.name : undefined;
     if (!option) return `${name}: choose an action.`;
     const left = this.targetsNeeded(option) - this.picks.length;

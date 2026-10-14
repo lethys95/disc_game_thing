@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-14 (an outside AI plays a seat over MCP; `?watch` follows its game)
+**Updated:** 2026-10-14 (an outside AI plays a seat over MCP; you can play against it at `?join`)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): a first complete version, far off (the board's README
@@ -32,7 +32,8 @@ interface change.
   the user's okay on the test, `shots/icons.html`).
 - **MCP player (`testing/mcp-player`):** `pnpm mcp` lets an LLM play seat 0 against the map AI, choosing from numbered
   options (forecasts on attacks, previews on battle orders); `pnpm play` is the same on the command line; `?watch`
-  follows its game. A Haiku agent played seven turns of it. Joining that game from the browser: `eventually/mcp-join`.
+  follows its game. A Haiku agent played seven turns of it. `?join` plays against it (`testing/mcp-join`): one shared
+  game file, each giving their own side's battle orders.
 - **Biome props:** the swamp, tundra and haunted woods have their own thirteen props each, on the map
   (`testing/biome-props`, `shots/biome-props.html`).
 

@@ -11,7 +11,7 @@ Tests prove the rules; only a rendered frame proves the view. Always look at the
 0. `pnpm verify` runs 1–4 in one go. Use it before calling anything done. Judge it by its **exit code** (`pnpm verify; echo $?`), never by grepping its output in a chain that goes on to commit: a type error in a playtest once slipped into a commit that way (2026-10-07).
 1. `pnpm check`: typecheck + unit tests. Must be green first.
 2. `pnpm shot <out.png> "<route>"`: headless render. Exits non-zero on any console error or page error.
-3. `pnpm playtest [name…]`: every click-through playtest (battle, map, save, city, settings, setup, spells, watch; setup now goes title → new game → march, then the codex and credits) against one server and browser, each in a fresh context; name some to run only those (`shots/playtest-*.png`, `shots/map-*.png`, `shots/failed-<name>.png` on a failure).
+3. `pnpm playtest [name…]`: every click-through playtest (battle, map, save, city, settings, setup, spells, watch, join; setup now goes title → new game → march, then the codex and credits) against one server and browser, each in a fresh context; name some to run only those (`shots/playtest-*.png`, `shots/map-*.png`, `shots/failed-<name>.png` on a failure).
 4. **Any change to the interface (CSS or view layout): `pnpm sizes [route…]`** renders the main screens at 1280×720,
    1920×1080 and 2560×1440 (`shots/sizes/`). Look at the sizes side by side: each screen should keep its proportions.
    Size everything in `rem`, never `px` (only 1–2px hairlines stay px); the root size follows the window's height and
@@ -25,6 +25,7 @@ Tests prove the rules; only a rendered frame proves the view. Always look at the
 |---|---|
 | (none) | title screen |
 | `?newgame`, `?skirmish`, `?codex`, `?credits` | that screen of the title's (the skirmish is the old setup screen: build two squads, fight one battle) |
+| `?join` | the human seat of the MCP player's game (`new_game` with `human`), shared through `/mcp/table` |
 | `?watch[=/path.json]` | follows the MCP player's game (`pnpm mcp`), save by save, from `/shots/mcp/game.json` by default; takes no orders |
 | `?fight` | skip setup, battle with the preserve vs punishment presets (`?fight=mages` for the Jilliath mage line, holy vs fire; `?fight=angels` for its support line, guardian vs vengeance; `?fight=nexus`, `?fight=nexus:scheme`, `?fight=nexus:overload`, `?fight=bandits` for other enemies; `&side=1` plays the defending side, drawn on the left; `&terrain=forest|hills|mountain` and `&backdrop=capitol|city|dungeon` set where it's fought) |
 | `?steps=N` | fast-forward N AI actions before the first frame (no animation) |
