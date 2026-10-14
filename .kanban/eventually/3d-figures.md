@@ -16,4 +16,7 @@
   wait, fused into the hood in this generation. In the repo as `assets/models/units/psychopomp.glb` (Blender's FBX export scaled the root bone; GLB doesn't). Walking in Unreal with springs on the cape and skirt: `disc_unreal`'s `card/3d-figures`, `shots/figures/index.html`.
 - **The Seraph (2026-10-14):** `seraph#1`, checked (`shots/figures/seraph-check.html`). 27k triangles, one 4k PBR
   material. The GLB's joints had no transforms (`scripts/art/glb-joints.py` rebuilds them); the FBX (`seraph#1.zip`)
-  is sound and the one to use. The wings are weighted to the upper arms; moved whole onto `spine_03` they hold.
+  is sound and the one to use. In the repo as `assets/models/units/seraph.glb`: wings moved whole onto `spine_03`
+  (Tripo had them on the upper arms), five spring chains round the open mantle and five round the skirt, whose hem
+  keeps 40% of Tripo's leg weights. Walking in Unreal (`disc_unreal`'s `card/3d-figures`); the mannequin's stride
+  still shows the leading boot's toe under her hem: a gliding walk of her own would fit her.
