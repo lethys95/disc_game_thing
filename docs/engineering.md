@@ -32,6 +32,7 @@ src/view/
   app.ts, campaign.ts battle and map controllers (campaign: game flow, input, AI turns, what goes where)
   map-panels.ts      beside the map: your warbands, your cities, the end banner
   map-text.ts        the hint line and news, pure text over the known world (tested)
+  names.ts           what the interface calls units, cities, tribes and leaders (pure: the MCP player uses it)
   peek.ts            hold-right-click peeks (formations, as last seen)
   fork-prompt.ts     "a unit is ready to evolve" and Decide later
   forecasts.ts       battle forecasts for the hint, from the worker
@@ -52,6 +53,17 @@ src/view/
   ai.worker.ts, ai-client.ts, ai-protocol.ts   the AI off the main thread
 ```
 Imports use `#rules/…`, `#view/…`, `#tests/…` (package.json `imports`), never `../`.
+
+## The MCP player (`scripts/mcp/`)
+An outside player (an LLM) takes seat 0 of a headless game; the map AI plays the rest. `table.ts` is the game as plain
+data (written to `.cache/mcp/table.json` after every call, so a restart picks it up) and `advance`, which plays
+everything that isn't the seat's to decide; `map-options.ts` lists the seat's map orders, each checked by the rules'
+`*Problem` functions; `battle-text.ts` shows a battle as `asKnown` lets the seat see it, with a preview per order;
+`world-text.ts` is `look`; `session.ts` is the tools as functions (`server.ts` serves them over stdio, `cli.ts` on the
+command line); `primer.ts` is the rules text the server sends as its instructions, its numbers read from `balance.ts`.
+It borrows `view/names.ts`, `view/map-text.ts` and `view/secrecy.ts`, which must stay free of the DOM
+(`tests/mcp-player.test.ts` checks their imports). A new kind of map order needs a line in `map-options.ts`, or the
+outside player can only give it through `order`.
 
 ## Art
 Art is assigned by **slot**: one per unit (`portrait/<unitId>`), ability (`ability/<id>`), and effect (`effect/<id>`). A unit's art has three framings, each its own file: the card `portrait/<id>` (the standee), the bust `bust/<id>` (the unit card) and the icon `icon/<id>` (turn order, squad grids, lists); a framing falls back to the wider one (icon → bust → card), and the CSS zooms a wider framing toward the face. Portraits come from picked concepts: `scripts/art/portraits.ts` (`--install <card> <bust>` cuts the icon from the bust). A slot's file is `assets/art/<kind>/<id>.webp`, found at build time by `import.meta.glob`, so adding art is dropping a file. A missing file falls back to a family default (`portrait/_<faction>`, `ability/_<tag>`, `effect/_effect`), then to a placeholder in the faction's color with initials, so every spot works before its art exists. The view calls `art(slot, size)`. The UI kit (frames, plaques, buttons, textures) is separate: `assets/ui/<name>.webp`, reaching CSS as `--ui-<name>` (`applyUiKit`); CSS decides where each piece goes. A screen's painted pieces live in `assets/ui/<screen>/` (`--ui-battle-bar`), painted by the `hud-paint-in` skill from a layout first judged with the `greybox` skill; the stylesheet places each window where it was painted, in the painting's own pixels. Photon's CLI (`~/.photon/bin/photon`) does the subject cuts headless; save its PNGs at level 1 (higher levels can corrupt the stream).

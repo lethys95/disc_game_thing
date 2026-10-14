@@ -107,7 +107,7 @@ function marches(known: World, seat: PlayerId, leader: Leader): MapOption[] {
     const turns = Math.max(1, Math.ceil(plan.path.cost / full));
     const arrives = plan.steps === plan.path.hexes.length;
     const stop = plan.path.hexes[plan.steps - 1];
-    const how = arrives ? "arrives this turn" : `about ${turns} turns away; stops at ${stop ? at(stop) : "?"} this turn`;
+    const how = arrives ? "arrives this turn" : `about ${turns} turn${turns === 1 ? "" : "s"} away; stops at ${stop ? at(stop) : "?"} this turn`;
     options.push({ text: `${name} marches to ${what} at ${at(hex)}: ${how}.`, action: { type: "move", leaderId: leader.id, to: hex } });
   }
   const explored = new Set(playerOf(known, seat).explored);
@@ -234,7 +234,7 @@ function leaderOrders(world: World, leader: Leader): MapOption[] {
     const def = LEADER_SKILLS[skill];
     if (def) options.push({ text: `${name} learns ${def.name}: ${def.describe}`, action: { type: "learn", leaderId: leader.id, skill } });
   }
-  if (!reviveProblem(world, leader.id)) options.push({ text: `Revive ${name}'s fallen leader (${reviveCost(world, leader)} gold).`, action: { type: "revive", leaderId: leader.id } });
+  if (!reviveProblem(world, leader.id)) options.push({ text: `Revive the fallen leader of ${name} (${reviveCost(world, leader)} gold).`, action: { type: "revive", leaderId: leader.id } });
   for (const item of leader.bag) {
     const def = itemById(item);
     if (!equipProblem(leader, item)) options.push({ text: `${name} puts on the ${def.name}.`, action: { type: "equip", leaderId: leader.id, item } });

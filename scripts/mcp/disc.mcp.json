@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "disc": {
+      "command": "pnpm",
+      "args": ["--silent", "mcp"]
+    }
+  }
+}

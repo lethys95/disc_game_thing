@@ -160,7 +160,7 @@ function advance(start: Table, lines: string[]): Played {
     const step = applyWorldAction(world, chooseWorldAction(world, memo));
     const news = newsText(step.events, step.world, table.seat);
     if (news) lines.push(news);
-    for (const e of step.events) if (e.type === "turnStarted" && e.player === table.seat) lines.push(`Turn ${e.turn}, your turn: +${e.income} gold.`);
+    for (const e of step.events) if (e.type === "turnStarted" && e.player === table.seat) lines.push(`The other players have moved (you hear only of what happens in your sight). Turn ${e.turn}, your turn: +${e.income} gold.`);
     if (step.world.engagement && seatSide({ ...table, world: step.world }) === 1) lines.push(attackedText(step.world));
     table = { ...table, world: step.world };
   }
@@ -180,9 +180,11 @@ function battleResult(battle: Battle, side: Side): string {
   const units = Object.values(battle.units);
   const standing = (s: Side) => units.filter((u) => u.side === s && u.alive).length;
   const theirs: Side = side === 0 ? 1 : 0;
+  const dead = units.filter((u) => u.side === side && !u.alive && !u.fled).map((u) => `${u.name} [${"FMB"[u.tile.row] ?? "?"}${u.tile.col + 1}]`);
+  const lost = dead.length > 0 ? ` You lost: ${dead.join(", ")}.` : " You lost nobody.";
   if (!outcome || outcome.winner === null) return `The battle ends with both sides destroyed.`;
-  if (outcome.winner === side) return `VICTORY: ${standing(side)} of yours still stand.`;
-  return `DEFEAT${"withdrew" in outcome ? " (the attacker withdrew after the round limit)" : ""}: ${standing(theirs)} of theirs still stand.`;
+  if (outcome.winner === side) return `VICTORY: ${standing(side)} of yours still stand.${lost}`;
+  return `DEFEAT${"withdrew" in outcome ? " (the attacker withdrew after the round limit)" : ""}: ${standing(theirs)} of theirs still stand.${lost}`;
 }
 
 function attackedText(world: World): string {

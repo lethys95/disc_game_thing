@@ -82,6 +82,8 @@ export class Campaign implements KeyLayer {
   private selected: string | null = null;
   private hovered: Hex | null = null;
   private busy = false;
+  /** Following a game played elsewhere (`watch`). */
+  private watching = false;
   private generation = 0;
   private readonly forecasts: Forecasts;
   private readonly hud = byId("maphud");
@@ -257,6 +259,27 @@ export class Campaign implements KeyLayer {
   /** Picks up a saved game where it left off, the AI's turn included. */
   resume(save: Save): void {
     this.stop();
+    this.load(save);
+  }
+
+  /**
+   * Shows a game someone else plays (the MCP player, `scripts/mcp/`) as its player 0 sees it, following each save it
+   * writes: no orders are taken here and no AI runs here.
+   */
+  watch(save: Save): void {
+    const world = this.world;
+    if (this.watching && world && this.seed === save.seed) {
+      this.world = save.world;
+      this.syncView(save.world);
+      this.render();
+      return;
+    }
+    this.stop();
+    this.watching = true;
+    this.load(save);
+  }
+
+  private load(save: Save): void {
     this.seed = save.seed;
     this.world = save.world;
     this.view.viewer = this.viewer;
@@ -358,6 +381,7 @@ export class Campaign implements KeyLayer {
     this.structureScreen.hide();
     this.world = null;
     this.busy = false;
+    this.watching = false;
     this.hud.hidden = true;
     delete document.body.dataset["skin"];
   }
@@ -412,7 +436,7 @@ export class Campaign implements KeyLayer {
   /** Whether the map waits for the viewer's orders. */
   myTurn(): boolean {
     const world = this.world;
-    return world !== null && !this.busy && !world.outcome && !world.engagement && world.activePlayer === this.viewer;
+    return world !== null && !this.busy && !this.watching && !world.outcome && !world.engagement && world.activePlayer === this.viewer;
   }
 
   private plan(): MovePlan | null {
@@ -461,7 +485,7 @@ export class Campaign implements KeyLayer {
   /** Applies one order, animates it, and hands over to the battle view if it started a fight. */
   private async act(action: WorldAction): Promise<void> {
     const world = this.world;
-    if (!world || this.busy || world.outcome || world.engagement) return;
+    if (!world || this.busy || this.watching || world.outcome || world.engagement) return;
     const generation = this.generation;
     this.busy = true;
     this.forecasts.clear();
@@ -517,7 +541,7 @@ export class Campaign implements KeyLayer {
   private async runAi(): Promise<void> {
     const world = this.world;
     // Once you're out, the game is over for this screen, even if others would play on.
-    if (!world || world.outcome || world.engagement || world.activePlayer === this.viewer || this.busy || playerOf(world, this.viewer).eliminated) return;
+    if (!world || this.watching || world.outcome || world.engagement || world.activePlayer === this.viewer || this.busy || playerOf(world, this.viewer).eliminated) return;
     const generation = this.generation;
     await this.stage.tween(AI_STEP_MS, () => {});
     if (generation !== this.generation) return;
@@ -562,9 +586,11 @@ export class Campaign implements KeyLayer {
       ? aiming.kind === "spell" ? castHint(known, aiming.spell, this.hovered) : wardHint(known, aiming.leaderId, aiming.item, this.hovered)
       : this.myTurn()
       ? hintText({ known, player: this.viewer, leader, hovered: this.hovered, plan, forecast: (l, target) => this.forecasts.text(known, l, target) })
-      : world.activePlayer === this.viewer
-        ? ""
-        : "The enemy is moving…";
+      : this.watching
+        ? `Watching an outside player's game (player ${this.viewer}): turn ${world.turn}${world.outcome ? `, won by player ${world.outcome.winner}` : ""}. The map follows its saves.`
+        : world.activePlayer === this.viewer
+          ? ""
+          : "The enemy is moving…";
     this.renderLeaderScreen(world);
     this.renderStructureScreen(world);
     this.forkPrompt.render(world, this.viewer, this.myTurn());

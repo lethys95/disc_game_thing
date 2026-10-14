@@ -19,6 +19,7 @@ import { Codex } from "#view/codex";
 import { Credits } from "#view/credits";
 import type { Placement } from "#rules/battle/engine";
 import { TRIBES, neutralGroup } from "#rules/world/state";
+import { readSave } from "#rules/save";
 import type { Save } from "#rules/save";
 import { BANDIT_GROUP, CARNIVAL_GROUP, DRAWN_GROUP, GNOLL_GROUP, presetOf, PRESETS } from "#rules/units/presets";
 import { ANIMATION_SPEEDS, rootFontSize, Settings } from "#view/settings";
@@ -148,6 +149,24 @@ function showTitle(): void {
   sound.ambience(null);
 }
 
+/** How often a watched game's save is checked for a newer one. */
+const WATCH_POLL_MS = 1500;
+
+async function follow(url: string): Promise<void> {
+  hideScreens();
+  let shown = "";
+  for (;;) {
+    const response = await fetch(url, { cache: "no-store" }).catch(() => null);
+    const text = response?.ok ? await response.text() : "";
+    const read = text ? readSave(text) : null;
+    if (read?.ok && read.save.savedAt !== shown) {
+      shown = read.save.savedAt;
+      campaign.watch(read.save);
+    }
+    await new Promise((done) => setTimeout(done, WATCH_POLL_MS));
+  }
+}
+
 const presets = [PRESETS.jilliath.preserve, PRESETS.jilliath.punishment] as const;
 // Screenshots and playtests skip the setup screen.
 if (params.has("map")) {
@@ -203,6 +222,9 @@ if (params.has("map")) {
   const own = fight === "mages" ? PRESETS.jilliath.holy : fight === "angels" ? PRESETS.jilliath.guardian : presets[0];
   const other = fight === "mages" ? PRESETS.jilliath.fire : fight === "angels" ? PRESETS.jilliath.vengeance : enemy;
   app.start([withTarot(own), withTarot(other)], params.get("auto") === "1" ? null : params.get("side") === "1" ? 1 : 0, colorPair(["jilliath", fight.startsWith("nexus") ? "nexus" : fight.startsWith("grove") ? "grove" : "jilliath"]), Number(params.get("steps") ?? 0), setting, Number(params.get("seed") ?? 0));
+} else if (params.has("watch")) {
+  // `watch[=/shots/mcp/game.json]`: follow the game an outside player plays over MCP (`pnpm mcp`), save by save.
+  void follow(params.get("watch") || "/shots/mcp/game.json");
 } else if (params.has("skirmish")) {
   open(setup);
 } else if (params.has("newgame")) {

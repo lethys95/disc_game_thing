@@ -96,7 +96,7 @@ export function warbandLines(world: World, seat: PlayerId): string[] {
     .map((l, i) => {
       const hp = l.squad.reduce((sum, m) => sum + m.hp, 0);
       const max = l.squad.reduce((sum, m) => sum + maxHpOf(m, l), 0);
-      const fallen = l.fellOnTurn !== null ? " Its leader has fallen: revive it at the Capitol." : "";
+      const fallen = l.fellOnTurn !== null ? " Its leader has fallen: the warband still marches and fights without it; the leader stays at 0 HP, its Squad healing and its items' gifts on the map stop, and the warband can't trade, until it is revived (an option once the warband stands in your Capitol)." : "";
       return `${i + 1}. ${warbandName(l)} at ${at(l.hex)}, ${groundText(world, seat, l.hex)}: movement ${l.movement}/${movementOf(l)}, ${l.squad.length}/${leadershipOf(l)} units, ${hp}/${max} HP.${fallen}`;
     });
 }

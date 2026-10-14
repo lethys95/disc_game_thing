@@ -197,6 +197,7 @@ function isTable(value: unknown): value is Table {
  * watch the game. A save is only written between battles: a save holds the map, not a fight in progress.
  */
 export function storeTable(path: string, watch: string, table: Table, now: Date): void {
+  if (path === watch) throw new Error("the table and the watched save must be different files");
   mkdirSync(dirname(path), { recursive: true });
   writeFileSync(path, JSON.stringify(table));
   if (table.world.engagement) return;

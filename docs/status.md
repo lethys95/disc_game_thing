@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-13 (the first 3D figure walks in Unreal; every ability has an icon)
+**Updated:** 2026-10-14 (an outside AI plays a seat over MCP; `?watch` follows its game)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): a first complete version, far off (the board's README
@@ -30,6 +30,9 @@ interface change.
   spring bone chains on her cape and skirt by `scripts/art/cloth-bones.py`), walking in Unreal on `disc_unreal`'s
   `card/3d-figures` (`shots/figures/index.html`). Ability icons: all in (`in-progress/icons`; effects and items wait for
   the user's okay on the test, `shots/icons.html`).
+- **MCP player (`testing/mcp-player`):** `pnpm mcp` lets an LLM play seat 0 against the map AI, choosing from numbered
+  options (forecasts on attacks, previews on battle orders); `pnpm play` is the same on the command line; `?watch`
+  follows its game. A Haiku agent played seven turns of it. Joining that game from the browser: `eventually/mcp-join`.
 - **Biome props:** the swamp, tundra and haunted woods have their own thirteen props each, on the map
   (`testing/biome-props`, `shots/biome-props.html`).
 

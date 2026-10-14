@@ -426,3 +426,13 @@ Three of the taken items needed the engine to ask a new question: who takes part
 reaches (`reach`, the Reaching spear). Each is asked at one place, and none names an item. A turn can also hold extra
 main actions of any kind (the Hourglass), beside the extra attacks it already could. Save 38.
 
+
+## The outside player picks from numbered options (2026-10-14)
+An LLM playing over MCP (`scripts/mcp/`) never writes the rules' action objects for ordinary play: every reply lists
+what it can do now, numbered, and `act` takes a number. The list is made from the rules' own `*Problem` functions, so
+it holds only orders the rules take (a test checks every listed one), and each line carries what a player sees on
+screen: an attack's forecast, a battle order's preview. A cheap model then needs no knowledge of ids, hexes or tiles to
+play, only judgement. A listing belongs to a revision; `act` with an older one is refused, so an option number can't
+land on a list that has changed since. `order` keeps raw actions for what the list leaves out (a march to any hex, a
+transfer to a chosen tile). The server reuses the browser's text for news and secrecy, which is why the names it needs
+moved into the pure `view/names.ts`.

@@ -32,10 +32,12 @@ pnpm dev --host   # vite dev server; the user connects over Tailscale
 pnpm verify       # everything: tsc + vitest + screenshot + all playtests
 pnpm check        # tsc + vitest
 pnpm shot [out.png] [route]      # headless render (routes/params: see the verify skill)
-pnpm playtest [name…]            # scripted clicks: battle, map, save, city, settings, setup (title → new game), spells
+pnpm playtest [name…]            # scripted clicks: battle, map, save, city, settings, setup (title → new game), spells, watch
 pnpm sim          # AI-vs-AI matrix of the preset squads (balance)
 pnpm board        # the board (.kanban/) as shots/board.html
 pnpm sizes [route…]   # main screens at 720p, 1080p, 1440p (any UI change: sizes in rem, never px)
+pnpm mcp          # stdio MCP server: an outside AI plays a seat (scripts/mcp/disc.mcp.json); ?watch follows its game
+pnpm play <cmd>   # the same tools on the command line: rules, new, look, act <n> <revision>, order, describe
 ```
 Image generation (Krea-2 in the local ComfyUI, on the second GPU) always runs in a background subagent with exact parameters: the `krea-images` skill. Unit concept art follows the `unit-concepts` skill (identity → concept → portrait; T-pose turnarounds in rounds, then `scripts/art/portraits.ts`).
 A screen's layout is first boxed out by job and judged in the game in flat values (the `greybox` skill: every element's job written down, then the real screen without paint).
