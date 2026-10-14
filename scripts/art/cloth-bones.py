@@ -160,7 +160,8 @@ FIGURES = {
         },
     },
     # One piece: the robe below the belt is fused to the armoured legs it hangs over, so it is told from them by how
-    # far it stands off the leg bones, and ripped free wherever it meets them. Open at the front over the legs.
+    # far it stands off the leg bones, and ripped free wherever it meets them. Open at the front over the legs. The hem
+    # keeps most of Tripo's leg weights: at 40% the mannequin's back kick came out through the robe's back.
     "zealot": {
         "parts": "pieces",
         "rip": "moving",
@@ -168,7 +169,7 @@ FIGURES = {
         "hanging": {},
         "families": {
             "skirt": ("pelvis", 3, lambda i, part: i in off_legs(0.057, 0.56),
-                      around({"front_l": 25, "l": 90, "back": 180, "r": -90, "front_r": -25}, 30, 65, keep=0.4)),
+                      around({"front_l": 25, "l": 90, "back": 180, "r": -90, "front_r": -25}, 30, 65, keep=0.7)),
         },
     },
 }
