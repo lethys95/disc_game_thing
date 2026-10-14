@@ -37,17 +37,21 @@ generation fused into a hood stay rigid (the Psychopomp's). Each dangling part n
   <model.fbx> <out>` gives every vertex the part of the nearest segmented surface (median 5 mm on a 1 m figure) and
   renders the parts in colours; a per-part sheet (each part highlighted, front and back) tells which number is what.
   Segmentation keeps a hood and its cape as one part: split those by position (behind the body, below the neck).
-- `scripts/art/cloth-bones.py` holds the Psychopomp's choices in its constants (`SKIRT_PARTS`, the cape's rule, the
-  chains: two down the cape under `spine_03`, four round the skirt under `pelvis`). A second unit gets its own: move
-  them into a per-unit setting when it comes, not before.
+- **Or the mesh's own pieces:** a Tripo mesh is often several separate pieces (the Seraph's: wings, hood, mantle,
+  skirt, sleeves, belt, feet). Colour them by piece and read the numbers before reaching for a segmented generation;
+  pieces that are really apart need no rips.
+- Each unit's choices are its entry in `FIGURES` in `scripts/art/cloth-bones.py`: where its parts come from (labels
+  or pieces), which pieces ride one bone whole (the Seraph's wings on `spine_03`), and each family of chains (`cape`,
+  `skirt`), placed either left and right of the spine or round the pelvis at given angles. The Psychopomp: two down
+  the cape, four round the skirt. The Seraph: five round the mantle (open at the front), four round the skirt.
 
 ## 4. Chains, rips and weights
-`blender -b --python scripts/art/cloth-bones.py -- <model.fbx> <labels.json> <out>` adds the chains, rips the moving
-pieces free where Tripo fused them to the body (the cape's hem into the belt, strips into the thighs: without the
+`blender -b --python scripts/art/cloth-bones.py -- <unit> <model.fbx> <out> [labels.json]` adds the chains, moves the
+rigid pieces, rips the moving pieces free where Tripo fused them to the body (the cape's hem into the belt, strips into the thighs: without the
 rips they tore into long sheets), ramps each chain's weight in from nothing at the piece's top, and writes
 `<out>.glb` and `<out>.blend`. Then `blender -b <out>.blend --python scripts/art/cloth-check.py -- <out>`: it swings
 the chains a little and counts edges stretched past twice their length (the Psychopomp: 14 of 53,544, all in one
-skirt panel; 501 before the rips) and renders the swing. Tears near zero, and the pieces hang, or fix it first.
+skirt panel; 501 before the rips. The Seraph: 8 of 30,455, none ripped) and renders the swing. Tears near zero, and the pieces hang, or fix it first.
 
 **Always GLB out of Blender, never FBX:** Blender's FBX puts its metres-to-centimetres on the root bone (a scale of 100
 in the reference pose). The figure renders at rest in Unreal, but a retargeted animation writes the root's scale as 1
@@ -69,7 +73,7 @@ Work on a card branch in a sibling worktree when another session is in its main 
   on a lit floor walking a circle. Look at the shots. A sequence every 0.1 s with and without springs, side by side
   in an mp4, goes in this repo's `shots/figures/` for the user.
 - The springs are `UFigureAnimInstance` (C++, no Blueprint: the project allows none): chains found by name
-  (`cape_*_01`, `skirt_*_01`), verlet particles pulled to the animated pose, gravity, a 45° swing limit, capsules
+  (every `cape_*_01`, `skirt_*_01` in the skeleton), verlet particles pulled to the animated pose, gravity, a 45° swing limit, capsules
   round the spine and legs that never push a joint past where it rests.
 
 ## Gotchas met

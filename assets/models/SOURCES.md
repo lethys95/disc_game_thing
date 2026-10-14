@@ -44,3 +44,9 @@ from Tripo as FBX because Tripo's GLB export wrote that rig's bind matrices corr
 `skirt_front|back|l|r_01–03` under `pelvis`. The cape and skirt strips are ripped free of the body where Tripo had
 fused them. Part labels for the script came from the segmented test 2 (`scripts/art/part-labels.py`). Written as GLB:
 Blender's FBX put its metres-to-centimetres on the root bone, which Unreal's retargeted animations dropped.
+
+`units/seraph.glb` (2026-10-14) is the user's Tripo model of the Seraph (`seraph#1`: one mesh, about 27k triangles,
+4k PBR textures, the same 61-bone rig; taken as FBX, the GLB's joints came without transforms), with 32 bones added by
+`scripts/art/cloth-bones.py seraph`: `cape_front_l|l|back|r|front_r_01–04` round the mantle under `spine_03`,
+`skirt_front|l|back|r_01–03` round the skirt under `pelvis`. Its wings, weighted by Tripo to the upper arms, ride
+`spine_03` whole. Its parts are the mesh's own separate pieces; nothing ripped.
