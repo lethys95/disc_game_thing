@@ -1,7 +1,7 @@
 """
-Checks the physics bone chains cloth-bones.py added: swings every chain a little (as a spring would on a walk) and
-counts the edges stretched past twice their length (tearing: a piece still fused to what stays put, or two chains
-pulling one piece apart), then renders the swing from the side and back, mild and doubled.
+Checks the physics bone chains cloth-bones.py added: swings every chain and hanging piece a little (as a spring would on
+a walk) and counts the edges stretched past twice their length (tearing: a piece still fused to what stays put, or two
+chains pulling one piece apart), then renders the swing from the side and back, mild and doubled.
   blender -b <out>.blend --python scripts/art/cloth-check.py -- <out prefix>
 The Psychopomp's passed with 14 of 53,544 edges stretched, all inside one skirt panel; before the pieces were ripped
 free there were 501.
@@ -16,7 +16,7 @@ import bpy
 out = sys.argv[sys.argv.index("--") + 1]
 arm = [o for o in bpy.data.objects if o.type == "ARMATURE"][0]
 mesh = [o for o in bpy.data.objects if o.type == "MESH" and o.name != "Icosphere"][0]
-chains = sorted({b.name.rsplit("_", 1)[0] for b in arm.pose.bones if b.name.startswith(("cape_", "skirt_"))})
+chains = sorted({b.name.rsplit("_", 1)[0] for b in arm.pose.bones if b.name.startswith(("cape_", "skirt_", "hang_"))})
 
 
 def lengths():

@@ -3,11 +3,13 @@ Physics bone chains for a Tripo character, for spring physics in Unreal; which p
 the character's (FIGURES). Moving pieces are ripped free where Tripo fused them to another part (the Psychopomp's
 cape hem into the belt, her strips into the thighs); each vertex on a moving face takes its chain's share, growing
 from nothing at the piece's top. Rigid pieces Tripo weighted to the wrong bones (the Seraph's wings, on the upper
-arms) move whole onto one bone.
+arms) move whole onto one bone; hanging pieces (the Acolyte's lantern) ride a bone of their own, which Unreal swings
+under gravity alone.
 Parts are either labels from a segmented generation (part-labels.py) or the mesh's own separate pieces, largest first.
   blender -b --python scripts/art/cloth-bones.py -- <unit> <character.fbx> <out> [labels.json]   (writes <out>.glb, .blend)
 """
 import bpy, bmesh, sys, json, math
+from functools import cache
 from collections import defaultdict
 from mathutils import Vector
 from mathutils.kdtree import KDTree
@@ -56,6 +58,13 @@ def pieces():
     return label
 
 
+@cache
+def centre(n):
+    """The middle of piece `n`."""
+    ids = [i for i in range(len(co)) if part[i] == n]
+    return sum((co[i] for i in ids), Vector()) / len(ids)
+
+
 def split(spread):
     """Two chains, `_l` and `_r`, overlapping `spread` metres across the spine."""
     return {"chains": {"l": None, "r": None}, "spread": spread}
@@ -68,7 +77,7 @@ def around(angles, reach, window, keep=0.0):
     return {"chains": angles, "reach": reach, "window": window, "keep": keep}
 
 
-# family: parent bone, bones per chain, which vertices, how the chains share them.
+# family: parent bone, bones per chain, which vertices, how the chains share them. hanging: parent bone, which pieces.
 FIGURES = {
     # Her labels come by nearest surface from another generation and miss where Tripo fused the cape to the belt and
     # the strips to the thighs: rip wherever moving cloth meets still.
@@ -76,6 +85,7 @@ FIGURES = {
         "parts": "labels",
         "rip": "moving",
         "rigid": {},
+        "hanging": {},
         "families": {
             "cape": ("spine_03", 4, lambda i, part: part[i] == 0 and co[i].y > 0.015 and co[i].z < CHEST, split(0.06)),
             "skirt": ("pelvis", 3, lambda i, part: part[i] in {1, 5, 7, 13, 19, 20, 24, 27, 28, 30, 34},
@@ -87,12 +97,31 @@ FIGURES = {
         "parts": "pieces",
         "rip": "parts",
         "rigid": {0: "spine_03", 1: "spine_03"},
+        "hanging": {},
         "families": {
             "cape": ("spine_03", 4, lambda i, part: part[i] == 3 and co[i].z < CHEST,
                      around({"front_l": 35, "l": 100, "back": 180, "r": -100, "front_r": -35}, 35, 70)),
             # A chain over each shin, which pushes it forward when it steps; the hem goes with the legs a little, or
             # the mannequin's long stride brings the boots out through it.
             "skirt": ("pelvis", 3, lambda i, part: part[i] == 2,
+                      around({"front_l": 25, "l": 90, "back": 180, "r": -90, "front_r": -25}, 30, 65, keep=0.4)),
+        },
+    },
+    # Pieces: 0 the robe (body, sleeves and skirt in one), 2 and 3 the forearms, 4 and 8 the stole's front and back
+    # strips; the lantern and the links it hangs by are small pieces under the right forearm, the links above them
+    # wrap it. Tripo put the lantern on the forearm, so with the arms down it swung into the robe.
+    "acolyte": {
+        "parts": "pieces",
+        "rip": "parts",
+        "rigid": {},
+        "hanging": {
+            "lantern": ("lowerarm_r", lambda i, part: part[i] not in {0, 2} and centre(part[i]).x < -0.2
+                        and centre(part[i]).z < 0.735),
+        },
+        "families": {
+            "cape": ("spine_03", 3, lambda i, part: part[i] in {4, 8}, around({"front": 50, "back": 140}, 45, 45)),
+            # Below the belt, where the robe narrows past the sleeves.
+            "skirt": ("pelvis", 3, lambda i, part: part[i] == 0 and co[i].z < 0.6,
                       around({"front_l": 25, "l": 90, "back": 180, "r": -90, "front_r": -25}, 30, 65, keep=0.4)),
         },
     },
@@ -204,10 +233,21 @@ for c in chains:
         b.use_connect = k > 0
         parent = b
         c["bones"].append(b.name)
+hangs = {}
+for name, (parent, picks) in figure["hanging"].items():
+    ids = [i for i in range(len(co)) if picks(i, part)]
+    top = max(ids, key=lambda i: co[i].z)
+    b = eb.new(f"hang_{name}_01")
+    b.head = co[top]
+    b.tail = Vector((co[top].x, co[top].y, min(co[i].z for i in ids)))
+    b.parent = eb[parent]
+    hangs.update({i: b.name for i in ids})
 bpy.ops.object.mode_set(mode="OBJECT")
+for name in set(hangs.values()):
+    mesh.vertex_groups.new(name=name)
 
 for v in mesh.data.vertices:
-    bone = figure["rigid"].get(part[orig[v.index]])
+    bone = hangs.get(orig[v.index]) or figure["rigid"].get(part[orig[v.index]])
     if bone is None:
         continue
     for g in list(v.groups):
@@ -240,7 +280,7 @@ for v in mesh.data.vertices:
         if k + 1 < c["count"]:
             groups[c["bones"][k + 1]].add([v.index], part_share * f, "ADD")
 
-print("CHAINS", [c["name"] for c in chains], "RIPPED", len(rip))
+print("CHAINS", [c["name"] for c in chains], "HANGING", sorted(set(hangs.values())), "RIPPED", len(rip))
 bpy.ops.wm.save_as_mainfile(filepath=out + ".blend")
 # glTF, not FBX: Blender's FBX puts its metres-to-centimetres on the root bone (a scale of 100 in the reference pose),
 # which a retargeted animation drops, shrinking the figure to a hundredth in Unreal. glTF has no units to convert.

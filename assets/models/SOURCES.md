@@ -51,3 +51,11 @@ Blender's FBX put its metres-to-centimetres on the root bone, which Unreal's ret
 `skirt_front_l|l|back|r|front_r_01–03` round the skirt under `pelvis` (a front chain over each shin), the skirt's hem
 keeping 40% of Tripo's leg weights. Its wings, weighted by Tripo to the upper arms, ride `spine_03` whole. Its parts
 are the mesh's own separate pieces; nothing ripped.
+
+`units/acolyte.glb` (2026-10-14) is the user's Tripo model of the Acolyte (`acolyte#1`, FBX: one mesh, about 24k
+triangles, 4k PBR textures, the same 61-bone rig), with 22 bones added by `scripts/art/cloth-bones.py acolyte`:
+`cape_front|back_01–03` down the stole's two strips under `spine_03`, `skirt_front_l|l|back|r|front_r_01–03` round
+the robe below the belt under `pelvis` (the hem keeping 40% of Tripo's leg weights, as the Seraph's), and
+`hang_lantern_01` under `lowerarm_r`, on which the lantern and the links it hangs by ride whole: Tripo put them on the
+forearm, so with the arms down they swung into the robe; Unreal swings the bone under gravity alone. Its parts are the
+mesh's own separate pieces; nothing ripped.
