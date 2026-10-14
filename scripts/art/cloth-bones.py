@@ -172,6 +172,20 @@ FIGURES = {
                       around({"front_l": 25, "l": 90, "back": 180, "r": -90, "front_r": -25}, 30, 65, keep=0.7)),
         },
     },
+    # Pieces: 0 the surcoat below the belt in one shell (the red tabard at the front, the white panels either side,
+    # the red panel down the back), 7 the mail between them, 5 and 6 the tassets; the mail and tassets stay on the legs.
+    # The tabard hangs between the legs on a chain of its own; the white panels' front edges ride over the thighs.
+    "templar": {
+        "parts": "pieces",
+        "rip": "parts",
+        "rigid": {},
+        "hanging": {},
+        "families": {
+            "skirt": ("pelvis", 3, lambda i, part: part[i] == 0,
+                      around({"front": 0, "front_l": 50, "l": 100, "back": 180, "r": -100, "front_r": -50}, 30, 60,
+                             keep=0.5)),
+        },
+    },
 }
 figure = FIGURES[unit]
 part = json.load(open(labels_file))["labels"] if figure["parts"] == "labels" else pieces()

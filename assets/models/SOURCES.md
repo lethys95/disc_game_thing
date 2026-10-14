@@ -66,3 +66,10 @@ triangles, 4k PBR textures with a 2k normal map, the same 61-bone rig), with 15 
 `pelvis`, the hem keeping 70% of Tripo's leg weights (at 40% the walk's back kick came out through the robe). The mesh is one piece, the robe fused to the armoured legs it
 hangs over: the robe is what stands off the leg bones (or faces them, its lining), smoothed over the mesh, and ripped
 free wherever it meets the legs.
+
+`units/templar.glb` (2026-10-14) is the user's Tripo model of the Templar (`templar#1`, FBX: one mesh, about 31k
+triangles, 4k PBR textures, the same 61-bone rig), with 18 bones added by `scripts/art/cloth-bones.py templar`:
+`skirt_front|front_l|l|back|r|front_r_01–03` round the surcoat below the belt under `pelvis` (the red tabard between
+the legs on a chain of its own, the white panels' front edges over the thighs), the hem keeping 50% of Tripo's leg
+weights. The surcoat is a separate piece of the mesh; the mail between its panels and the tassets stay on Tripo's leg
+weights; nothing ripped.
