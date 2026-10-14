@@ -80,7 +80,8 @@ Work on a card branch in a sibling worktree when another session is in its main 
   on a lit floor walking a circle. Look at the shots. A sequence every 0.1 s with and without springs, side by side
   in an mp4, goes in this repo's `shots/figures/` for the user.
 - The springs are `UFigureAnimInstance` (C++, no Blueprint: the project allows none): chains found by name
-  (every `cape_*_01`, `skirt_*_01` in the skeleton), verlet particles pulled to the animated pose, gravity, a 45° swing limit, capsules
+  (every `cape_*_01`, `skirt_*_01` in the skeleton), verlet particles pulled to where the chain would hang with its parent bone upright (the walk's lean taken out, or a
+  strip on a leaning back points down and back with it), gravity, a 45° swing limit, capsules
   round the spine and legs that never push a joint past where it rests. Hanging chains (`hang_*_01`) swing under
   gravity alone: no pull, no capsules, light damping, at most 40° from straight down, and the upper arm they hang
   from held 20° out from the body.
