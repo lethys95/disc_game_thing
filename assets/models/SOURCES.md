@@ -46,7 +46,8 @@ fused them. Part labels for the script came from the segmented test 2 (`scripts/
 Blender's FBX put its metres-to-centimetres on the root bone, which Unreal's retargeted animations dropped.
 
 `units/seraph.glb` (2026-10-14) is the user's Tripo model of the Seraph (`seraph#1`: one mesh, about 27k triangles,
-4k PBR textures, the same 61-bone rig; taken as FBX, the GLB's joints came without transforms), with 32 bones added by
+4k PBR textures, the same 61-bone rig; taken as FBX, the GLB's joints came without transforms), with 35 bones added by
 `scripts/art/cloth-bones.py seraph`: `cape_front_l|l|back|r|front_r_01–04` round the mantle under `spine_03`,
-`skirt_front|l|back|r_01–03` round the skirt under `pelvis`. Its wings, weighted by Tripo to the upper arms, ride
-`spine_03` whole. Its parts are the mesh's own separate pieces; nothing ripped.
+`skirt_front_l|l|back|r|front_r_01–03` round the skirt under `pelvis` (a front chain over each shin), the skirt's hem
+keeping 40% of Tripo's leg weights. Its wings, weighted by Tripo to the upper arms, ride `spine_03` whole. Its parts
+are the mesh's own separate pieces; nothing ripped.

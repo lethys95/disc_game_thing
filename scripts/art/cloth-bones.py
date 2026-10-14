@@ -61,10 +61,11 @@ def split(spread):
     return {"chains": {"l": None, "r": None}, "spread": spread}
 
 
-def around(angles, reach, window):
+def around(angles, reach, window, keep=0.0):
     """Chains round the pelvis at these angles (0 front, +90 the model's left, ±180 back): each placed through the
-    vertices within `reach` degrees of it, and sharing a vertex with its neighbours within `window`."""
-    return {"chains": angles, "reach": reach, "window": window}
+    vertices within `reach` degrees of it, and sharing a vertex with its neighbours within `window`. `keep` of Tripo's
+    own weights stays at the hem (a long skirt that should go with the legs a little)."""
+    return {"chains": angles, "reach": reach, "window": window, "keep": keep}
 
 
 # family: parent bone, bones per chain, which vertices, how the chains share them.
@@ -89,8 +90,10 @@ FIGURES = {
         "families": {
             "cape": ("spine_03", 4, lambda i, part: part[i] == 3 and co[i].z < CHEST,
                      around({"front_l": 35, "l": 100, "back": 180, "r": -100, "front_r": -35}, 35, 70)),
+            # A chain over each shin, which pushes it forward when it steps; the hem goes with the legs a little, or
+            # the mannequin's long stride brings the boots out through it.
             "skirt": ("pelvis", 3, lambda i, part: part[i] == 2,
-                      around({"front": 0, "l": 90, "back": 180, "r": -90}, 90, 90)),
+                      around({"front_l": 25, "l": 90, "back": 180, "r": -90, "front_r": -25}, 30, 65, keep=0.4)),
         },
     },
 }
@@ -221,14 +224,15 @@ for v in mesh.data.vertices:
         continue
     i = orig[v.index]
     parts = blend[i] if i in blend and family[i] == fam else shares(fam, co[i])
-    s = sum(ramp(by_name[n], co[i].z) * w for n, w in parts.items())
+    keep = figure["families"][fam][3].get("keep", 0.0)
+    s = sum(ramp(by_name[n], co[i].z) * w for n, w in parts.items()) * (1 - keep)
     if s <= 0:
         continue
     for g in v.groups:
         mesh.vertex_groups[g.group].add([v.index], g.weight * (1 - s), "REPLACE")
     for n, w in parts.items():
         c = by_name[n]
-        part_share = ramp(c, co[i].z) * w
+        part_share = ramp(c, co[i].z) * w * (1 - keep)
         seg = (c["top"] - c["bottom"]) / c["count"]
         pos = min(c["count"] - 1e-6, max(0.0, (c["top"] - co[i].z) / seg - 0.5))
         k, f = int(pos), pos - int(pos)

@@ -43,7 +43,9 @@ generation fused into a hood stay rigid (the Psychopomp's). Each dangling part n
 - Each unit's choices are its entry in `FIGURES` in `scripts/art/cloth-bones.py`: where its parts come from (labels
   or pieces), which pieces ride one bone whole (the Seraph's wings on `spine_03`), and each family of chains (`cape`,
   `skirt`), placed either left and right of the spine or round the pelvis at given angles. The Psychopomp: two down
-  the cape, four round the skirt. The Seraph: five round the mantle (open at the front), four round the skirt.
+  the cape, four round the skirt. The Seraph: five round the mantle (open at the front), five round the skirt (one over
+  each shin), whose hem keeps 40% of Tripo's leg weights: on chains alone, the mannequin's long stride brought her boots
+  out through the hem.
 
 ## 4. Chains, rips and weights
 `blender -b --python scripts/art/cloth-bones.py -- <unit> <model.fbx> <out> [labels.json]` adds the chains, moves the
@@ -51,7 +53,8 @@ rigid pieces, rips the moving pieces free where Tripo fused them to the body (th
 rips they tore into long sheets), ramps each chain's weight in from nothing at the piece's top, and writes
 `<out>.glb` and `<out>.blend`. Then `blender -b <out>.blend --python scripts/art/cloth-check.py -- <out>`: it swings
 the chains a little and counts edges stretched past twice their length (the Psychopomp: 14 of 53,544, all in one
-skirt panel; 501 before the rips. The Seraph: 8 of 30,455, none ripped) and renders the swing. Tears near zero, and the pieces hang, or fix it first.
+skirt panel; 501 before the rips. The Seraph: 42 of 30,455, none ripped; the check twists her two front skirt chains
+  against each other, which a walk doesn't) and renders the swing. Tears near zero, and the pieces hang, or fix it first.
 
 **Always GLB out of Blender, never FBX:** Blender's FBX puts its metres-to-centimetres on the root bone (a scale of 100
 in the reference pose). The figure renders at rest in Unreal, but a retargeted animation writes the root's scale as 1
