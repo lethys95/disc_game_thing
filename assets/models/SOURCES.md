@@ -59,3 +59,10 @@ the robe below the belt under `pelvis` (the hem keeping 40% of Tripo's leg weigh
 `hang_lantern_01–02` under `lowerarm_r`, the links the lantern hangs by and the lantern, each riding its bone whole:
 Tripo put them on the forearm, so with the arms down they swung into the robe; Unreal swings them under gravity alone. Its parts are the
 mesh's own separate pieces; nothing ripped.
+
+`units/zealot.glb` (2026-10-14) is the user's Tripo model of the Zealot (`zealot#1`, FBX: one mesh, about 19k
+triangles, 4k PBR textures with a 2k normal map, the same 61-bone rig), with 15 bones added by
+`scripts/art/cloth-bones.py zealot`: `skirt_front_l|l|back|r|front_r_01–03` round the robe below the belt under
+`pelvis`, the hem keeping 40% of Tripo's leg weights. The mesh is one piece, the robe fused to the armoured legs it
+hangs over: the robe is what stands off the leg bones (or faces them, its lining), smoothed over the mesh, and ripped
+free wherever it meets the legs.

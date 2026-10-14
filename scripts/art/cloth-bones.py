@@ -5,13 +5,15 @@ cape hem into the belt, her strips into the thighs); each vertex on a moving fac
 from nothing at the piece's top. Rigid pieces Tripo weighted to the wrong bones (the Seraph's wings, on the upper
 arms) move whole onto one bone; a hanging thing (the Acolyte's lantern) rides two of its own, its links' and its own,
 which Unreal swings under gravity alone.
-Parts are either labels from a segmented generation (part-labels.py) or the mesh's own separate pieces, largest first.
+Parts are either labels from a segmented generation (part-labels.py) or the mesh's own separate pieces, largest first;
+a robe Tripo fused to the legs under it (the Zealot's) is told from them by how far it stands off the leg bones.
   blender -b --python scripts/art/cloth-bones.py -- <unit> <character.fbx> <out> [labels.json]   (writes <out>.glb, .blend)
 """
 import bpy, bmesh, sys, json, math
 from functools import cache
 from collections import defaultdict
 from mathutils import Vector
+from mathutils.geometry import intersect_point_line
 from mathutils.kdtree import KDTree
 
 args = sys.argv[sys.argv.index("--") + 1:]
@@ -29,12 +31,25 @@ CHEST = bones["spine_03"].head_local.z + 0.02
 RAMP = 0.25  # the chain's share grows from nothing at a piece's top to all of it this far down
 
 
-def pieces():
-    """Each vertex's piece of the mesh (0 the largest), joining vertices the FBX split at UV seams."""
+@cache
+def neighbours():
+    """Each vertex's neighbours along edges and across the FBX's UV seams."""
     tree = KDTree(len(co))
     for i, c in enumerate(co):
         tree.insert(c, i)
     tree.balance()
+    near = [[] for _ in co]
+    for e in mesh.data.edges:
+        a, b = e.vertices
+        near[a].append(b)
+        near[b].append(a)
+    for i, c in enumerate(co):
+        near[i].extend(k for _, k, _ in tree.find_range(c, 1e-5) if k != i)
+    return near
+
+
+def pieces():
+    """Each vertex's piece of the mesh (0 the largest)."""
     root = list(range(len(co)))
 
     def find(i):
@@ -43,10 +58,8 @@ def pieces():
             i = root[i]
         return i
 
-    for e in mesh.data.edges:
-        root[find(e.vertices[0])] = find(e.vertices[1])
-    for i, c in enumerate(co):
-        for _, k, _ in tree.find_range(c, 1e-5):
+    for i, near in enumerate(neighbours()):
+        for k in near:
             root[find(i)] = find(k)
     groups = defaultdict(list)
     for i in range(len(co)):
@@ -56,6 +69,27 @@ def pieces():
         for i in members:
             label[i] = n
     return label
+
+
+@cache
+def off_legs(clear, top, rounds=12):
+    """The vertices below `top` standing more than `clear` metres off the leg bones: a robe Tripo fused to the legs
+    it hangs over. The cut is smoothed over the mesh `rounds` times, or every flap pressed to a knee rips a hole."""
+    legs = [(bones[n].head_local, bones[n].tail_local) for n in ("thigh_l", "calf_l", "foot_l", "thigh_r", "calf_r", "foot_r")]
+
+    def off(v):
+        """1 well off the legs, 0 on them; a vertex facing the leg is the robe's lining and goes with the robe."""
+        away = min((v.co - a.lerp(b, min(1.0, max(0.0, intersect_point_line(v.co, a, b)[1]))) for a, b in legs),
+                   key=lambda d: d.length)
+        if v.normal.dot(away.normalized()) < -0.3:
+            return 1.0
+        return min(1.0, max(0.0, (away.length - clear) / 0.025 + 0.5))
+
+    score = [off(v) if v.co.z < top else 0.0 for v in mesh.data.vertices]
+    near = neighbours()
+    for _ in range(rounds):
+        score = [(score[i] + sum(score[k] for k in near[i])) / (1 + len(near[i])) for i in range(len(co))]
+    return frozenset(i for i in range(len(co)) if score[i] > 0.5)
 
 
 @cache
@@ -122,6 +156,18 @@ FIGURES = {
             "cape": ("spine_03", 3, lambda i, part: part[i] in {4, 8}, around({"front": 50, "back": 140}, 45, 45)),
             # Below the belt, where the robe narrows past the sleeves.
             "skirt": ("pelvis", 3, lambda i, part: part[i] == 0 and co[i].z < 0.6,
+                      around({"front_l": 25, "l": 90, "back": 180, "r": -90, "front_r": -25}, 30, 65, keep=0.4)),
+        },
+    },
+    # One piece: the robe below the belt is fused to the armoured legs it hangs over, so it is told from them by how
+    # far it stands off the leg bones, and ripped free wherever it meets them. Open at the front over the legs.
+    "zealot": {
+        "parts": "pieces",
+        "rip": "moving",
+        "rigid": {},
+        "hanging": {},
+        "families": {
+            "skirt": ("pelvis", 3, lambda i, part: i in off_legs(0.057, 0.56),
                       around({"front_l": 25, "l": 90, "back": 180, "r": -90, "front_r": -25}, 30, 65, keep=0.4)),
         },
     },

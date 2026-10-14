@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-14 (the Acolyte's 3D figure walks in Unreal, his lantern swinging from his hand)
+**Updated:** 2026-10-14 (the Zealot's 3D figure: his robe rigged free of the legs Tripo fused it to)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): a first complete version, far off (the board's README
@@ -31,7 +31,8 @@ interface change.
   `card/3d-figures` (`shots/figures/index.html`). The Seraph is the second
   (`assets/models/units/seraph.glb`, chains round her mantle and skirt, wings on her back), walking there too
   (`shots/figures/seraph-check.html`). The Acolyte is the third (`acolyte.glb`: stole and robe on chains, his
-  lantern on bones of its own that Unreal swings under gravity; `shots/figures/acolyte-check.html`). Ability icons: all in (`in-progress/icons`; effects and items wait for
+  lantern on bones of its own that Unreal swings under gravity; `shots/figures/acolyte-check.html`). The Zealot is the
+  fourth (`zealot.glb`: one fused piece, the robe told from the legs by its distance off the leg bones, five chains). Ability icons: all in (`in-progress/icons`; effects and items wait for
   the user's okay on the test, `shots/icons.html`).
 - **MCP player (`testing/mcp-player`):** `pnpm mcp` lets an LLM play seat 0 against the map AI, choosing from numbered
   options (forecasts on attacks, previews on battle orders); `pnpm play` is the same on the command line; `?watch`

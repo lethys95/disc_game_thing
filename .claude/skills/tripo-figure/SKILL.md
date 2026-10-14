@@ -39,6 +39,10 @@ generation fused into a hood stay rigid (the Psychopomp's). Each dangling part n
   strips, forearms, and the lantern in twenty bits). `blender -b --python scripts/art/figure-pieces.py -- <model.fbx>
   <out> [count]` prints the largest pieces' sizes and bounds and writes `<out>-sheet.png`, each piece highlighted
   front and back, which tells which number is what. Pieces that are really apart need no rips.
+- **A robe fused to the legs** (the Zealot's: the whole figure one piece): `off_legs(clear, top)` in
+  `cloth-bones.py` picks what stands more than `clear` off the leg bones below `top`, or faces them (the lining),
+  smoothed over the mesh so flaps pressed to a knee don't rip holes; `"rip": "moving"` tears it free of the legs.
+  Check the pick in colour before rigging, and look under it: Tripo leaves the legs hollow where the robe hid them.
 - (The Psychopomp alone takes its parts from labels, `scripts/art/part-labels.py`, transferred from a segmented test
   generation made before the rule above; nothing new goes that way.)
 - Each unit's choices are its entry in `FIGURES` in `scripts/art/cloth-bones.py`: where its parts come from (labels

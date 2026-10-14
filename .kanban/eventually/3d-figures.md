@@ -24,3 +24,7 @@
   repo as `assets/models/units/acolyte.glb`: a chain down each strip of the red stole, five round the robe below the
   belt (the Seraph's), and the lantern on bones of its own (`hang_lantern_01–02`, links and lantern): Tripo put it on the forearm, and with
   the arms down it sat inside the robe. Walking in Unreal (`disc_unreal`'s `card/3d-figures`), the lantern swinging from his hand under gravity alone, the arm held a little out (`shots/figures/acolyte-check.html`).
+- **The Zealot (2026-10-14):** `zealot#1` (FBX), sound at once: 19k triangles, one 4k PBR material (a 2k normal
+  map), no drift. One piece of mesh, the robe fused to the armoured legs under it: `cloth-bones.py` tells the robe by
+  how far it stands off the leg bones and rips it free, five chains round it (the Seraph's). Tripo made no thighs
+  under the robe, so a wide swing shows a gap there. In the repo as `assets/models/units/zealot.glb`.
