@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-14 (the Templar's 3D figure walks in Unreal, six chains round his surcoat)
+**Updated:** 2026-10-14 (the Paragon's left side for Tripo, her face clear: `shots/paragon-sides.html`)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): a first complete version, far off (the board's README
@@ -34,7 +34,7 @@ interface change.
   lantern on bones of its own that Unreal swings under gravity; `shots/figures/acolyte-check.html`). The Zealot is the
   fourth (`zealot.glb`: one fused piece, the robe told from the legs by its distance off the leg bones, five chains),
   walking in Unreal (`shots/figures/zealot-check.html`). The Templar is the fifth (`templar.glb`: the surcoat its own
-  piece, six chains, the tabard between the legs; `shots/figures/templar-check.html`). Ability icons: all in (`in-progress/icons`; effects and items wait for
+  piece, six chains, the tabard between the legs; `shots/figures/templar-check.html`). The Paragon's face failed in Tripo: no view showed it clear, so her left side was repainted from the pick (`shots/tripo/paragon/side-left.png`). Ability icons: all in (`in-progress/icons`; effects and items wait for
   the user's okay on the test, `shots/icons.html`).
 - **MCP player (`testing/mcp-player`):** `pnpm mcp` lets an LLM play seat 0 against the map AI, choosing from numbered
   options (forecasts on attacks, previews on battle orders); `pnpm play` is the same on the command line; `?watch`

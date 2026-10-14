@@ -376,3 +376,22 @@ of Grief), or in Avacyn's actual armour; the Torturer's head as Pinhead's grid w
   we DO have now for Jilliath, so we can fill out the codex with what we have. I'll defer the remainder until I have a
   better overview over reference material and designs." Deferred: Guardian, Empyreal, Torturer, Archon, Cleric, Fanatic,
   the fire casters.
+
+## The Paragon's other side, for Tripo (2026-10-14; `shots/paragon-sides.html`)
+The user: Tripo "can't figure out what to do with her face […] this might be because we're missing an angle." The
+picked sheet's one side view is her right side, the side her hair hides, and the front shows half her face; no view
+shows it clear.
+- **Repaint** (`scripts/art/fixes.ts`): the side view mirrored into the back view's slot, its head and pauldron
+  repainted. Round one (`paragon-runes-1001-left`) kept the hair over the face and the emblem at every strength: the
+  prompt still said both. Round two (`paragon-runes-1001-left-2`), with neither said and the clear profile leading:
+  the face clear in profile (cheek, nose, lips, ear), the hair swept back, a plain iron pauldron; a few strands still
+  cross the eye. d90 split into `shots/tripo/paragon/side-left.png`. A mirror, so the cloth's drape and the chain are
+  her right side's, flipped.
+- **A fresh four-view sheet** (`paragon-sides`, `paragon-sides-profile`, 2816×832): five or six figures instead of
+  four, and every side view faces left (her right side, hair over the face). "From her left / from her right" doesn't
+  reach the model; turnaround sheets draw the side facing left.
+- **Directions on the picture** (`paragon-facing`, `paragon-facing-profile`: "facing the left / right edge of the
+  image", "exactly four figures"): the plain reading still faced every side left; with her face said for the
+  right-facing view, right-facing sides came. `paragon-facing-profile-turnaround-1000` alone has four distinct views
+  (and a duplicate back), but the emblem sits on the near shoulder in both sides (Krea mirrors), her face shows in every
+  profile, and it's a new figure, not the pick.

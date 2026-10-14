@@ -64,8 +64,16 @@ const GOLEM =
 
 /** Several angles in one image (the user, 2026-09-30), for multi-view 3D: painted together, the views agree. */
 const T_POSE = "all standing in the same T-pose";
-const turnaround = (subject: string, materials: string, pose = T_POSE) =>
-  `A character turnaround sheet of a 3D game character model: the same figure shown three times side by side at the same size, in a front view, a side view from the left, and a back view, ${pose}, ` +
+const THREE_VIEWS = "three times side by side at the same size, in a front view, a side view from the left, and a back view";
+
+/** Both sides, for a figure whose sides differ (the Paragon's hair hides her face from one side only). */
+const FOUR_VIEWS = "four times side by side at the same size, in a front view, a side view from her left, a side view from her right, and a back view";
+
+/** Krea drew every side view of `FOUR_VIEWS` facing left, and five or six figures: the direction said on the picture. */
+const FACING_VIEWS = "exactly four times side by side at the same size, four figures and no more: a front view, a side view facing the left edge of the image, a side view facing the right edge of the image, and a back view";
+
+const turnaround = (subject: string, materials: string, pose = T_POSE, views = THREE_VIEWS) =>
+  `A character turnaround sheet of a 3D game character model: the same figure shown ${views}, ${pose}, ` +
   `like a sculpted and textured asset shown in a modelling program, each view whole from head to feet and fingertip to fingertip. ${subject} ${materials} ` +
   "Flat, even, shadowless lighting from all sides, like a texture reference: no cast or painted shadows, no dark recesses. A plain flat light grey background, no ground, no text, no labels.";
 
@@ -491,6 +499,9 @@ const ETHERBORN_JOBS = [{ id: "etherborn-lined-turnaround", prompt: turnaround(E
 const ANGEL_3D =
   "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: aged white linen and black silk, white and ivory feathers, tarnished gold and silver, blackened iron. Serious, adult, not cartoonish.";
 
+const PARAGON_RUNES =
+  "An angel woman with a calm face. Blazing red hair falls over the right side of her face, hiding it. Light, free-flowing armour of white and red cloth over a few fitted plates. On her right pauldron an emblem of a burning open hand, palm forward. A book hangs on a chain at her left hip. Her hands and forearms are covered in runic tattoos, her fingertips fading from pale skin into pale blue. White wings dipped in blood red at the tips.";
+
 const WINGED_T_POSE = "all standing in the same T-pose, her wings open behind her and clear of her arms";
 
 const ANGELS: Readonly<Record<string, { readonly subject: string; readonly pose?: string; readonly materials?: string }>> = {
@@ -643,9 +654,7 @@ const ANGELS: Readonly<Record<string, { readonly subject: string; readonly pose?
   "guardian-porcelain": {
     subject: "A stern angel woman. Her skin is white porcelain, cracked all over, streaks of brilliant white light pouring out of the cracks. Long, smooth, silky white hair falling straight. Over a long black robe she wears an ancient chestplate from a forgotten age: pure, clean and abstract, alien in its shape, smooth pale metal without ornament. Her two wings are made of brilliant glowing white light, neon bright, a strong contrast against the black.",
   },
-  "paragon-runes": {
-    subject: "An angel woman with a calm face. Blazing red hair falls over the right side of her face, hiding it. Light, free-flowing armour of white and red cloth over a few fitted plates. On her right pauldron an emblem of a burning open hand, palm forward. A book hangs on a chain at her left hip. Her hands and forearms are covered in runic tattoos, her fingertips fading from pale skin into pale blue. White wings dipped in blood red at the tips.",
-  },
+  "paragon-runes": { subject: PARAGON_RUNES },
   // Claude's, the user: "Try yours": an old icon painting come alive, the painting's gold disc in the blades' place.
   "empyreal-icon": {
     subject: "An angel of vengeance, an old icon painting come alive. Her skin is cracked oil paint, yellowed and darkened under old varnish, the craquelure running over her face and arms. Her eyes glow bright orange in a fixed, intense glare staring straight ahead. Three pairs of blood-red wings. Behind her head stands a large flat disc of tooled gold leaf, the painting's gold background. Robes of deep red and white painted cloth, cracked where they fold.",
@@ -720,6 +729,16 @@ const ANGELS: Readonly<Record<string, { readonly subject: string; readonly pose?
 };
 
 const ANGEL_JOBS = Object.entries(ANGELS).map(([id, { subject, pose, materials }]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Her hands are empty and open.`, materials ?? ANGEL_3D, pose ?? WINGED_T_POSE) }));
+
+// The user (2026-10-14): Tripo can't make out the Paragon's face, maybe for want of an angle; the picked sheet's one
+// side view is the side her hair hides. A new sheet with both sides: her picked words, and a reading that says the
+// uncovered side outright. Four views with her wings open need a wider sheet.
+const PARAGON_SIDES_JOBS = [
+  { id: "paragon-sides-turnaround", subject: PARAGON_RUNES },
+  { id: "paragon-sides-profile-turnaround", subject: `${PARAGON_RUNES} From her left, her face is clear in profile.` },
+  { id: "paragon-facing-turnaround", subject: PARAGON_RUNES, views: FACING_VIEWS },
+  { id: "paragon-facing-profile-turnaround", subject: `${PARAGON_RUNES} In the view facing right her face is uncovered, clear in profile.`, views: FACING_VIEWS },
+].map(({ id, subject, views = FOUR_VIEWS }) => ({ id, prompt: turnaround(`${subject} Her hands are empty and open.`, ANGEL_3D, WINGED_T_POSE, views), width: 2816, height: 832 }));
 
 /**
  * Jilliath's priests, the mage line's faith side: the humans who follow the angels (`jilliath-identities.md`). Round
@@ -1168,7 +1187,7 @@ const GROUPS = [
   { dir: "art/candidates/units/grove/psychopomp", jobs: PSYCHOPOMP_JOBS },
   { dir: "art/candidates/units/neutrals/carnival", jobs: CARNIVAL_JOBS },
   { dir: "art/candidates/units/nexus/etherborn", jobs: ETHERBORN_JOBS },
-  { dir: "art/candidates/units/jilliath/angels", jobs: ANGEL_JOBS },
+  { dir: "art/candidates/units/jilliath/angels", jobs: [...ANGEL_JOBS, ...PARAGON_SIDES_JOBS] },
   { dir: "art/candidates/units/jilliath/priests", jobs: PRIEST_JOBS },
   { dir: "art/candidates/units/jilliath/melee", jobs: MELEE_JOBS },
   { dir: "art/candidates/units/neutrals/wild", jobs: WILD_JOBS },

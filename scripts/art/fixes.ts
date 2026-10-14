@@ -12,8 +12,10 @@ import type { Candidate } from "#scripts/art/batch";
 
 interface Fix {
   readonly dir: string;
-  /** The picked image, a file in `dir` with an entry in its manifest. */
-  readonly source: string;
+  /** The picked image, a file in `dir` with an entry in its manifest: the prompt comes from it. */
+  readonly pick: string;
+  /** The image repainted, when it isn't the pick itself (a sheet rearranged from it). */
+  readonly source?: string;
   /** White where the image is repainted; the same size as the source. */
   readonly mask: string;
   /** Text replaced in the pick's prompt: what the repainted area should now show. */
@@ -26,7 +28,7 @@ const FIXES: Readonly<Record<string, Fix>> = {
   // The user (2026-10-05): the ears stick out of the hood in the front view but not in the side view.
   "psychopomp-short-1002-earless": {
     dir: "art/candidates/units/grove/psychopomp",
-    source: "psychopomp-short-turnaround-1002.png",
+    pick: "psychopomp-short-turnaround-1002.png",
     mask: "masks/psychopomp-short-1002-ears.png",
     edits: [
       ["long pointed ears, ", ""],
@@ -39,7 +41,7 @@ const FIXES: Readonly<Record<string, Fix>> = {
   // then maybe it could work." The whole figure repainted lightly, so his shape stays.
   "chosen-battered-1002-red": {
     dir: "art/candidates/units/jilliath/melee",
-    source: "chosen-battered-turnaround-1002.png",
+    pick: "chosen-battered-turnaround-1002.png",
     mask: "masks/chosen-battered-1002-all.png",
     edits: [
       ["battered, chipped and scorched, no sculpted muscles.", "battered, chipped and scorched, half of them enamelled blood red, his left shoulder and arm far heavier than his right, layered high, no sculpted muscles."],
@@ -48,24 +50,55 @@ const FIXES: Readonly<Record<string, Fix>> = {
     seed: 1002,
     denoise: [0.55, 0.7, 0.85],
   },
+  // The user (2026-10-14): Tripo can't make out her face, maybe for want of an angle. The hair hides it from the front
+  // and in the only side view, so the back view's slot holds that side view mirrored, its head and pauldron repainted:
+  // her left side, the face clear in profile, no emblem on that shoulder.
+  "paragon-runes-1001-left": {
+    dir: "art/candidates/units/jilliath/angels",
+    pick: "paragon-runes-turnaround-1001.png",
+    source: "paragon-runes-1001-left-source.png",
+    mask: "masks/paragon-runes-1001-left.png",
+    edits: [
+      ["in a front view, a side view from the left, and a back view,", "in a front view, a side view from her right, and a side view from her left,"],
+      ["Blazing red hair falls over the right side of her face, hiding it.", "Blazing red hair falls over the right side of her face, hiding it; seen from her left, her face is clear in profile, her pale left cheek, eye and ear uncovered, the hair falling behind them."],
+      ["palm forward.", "palm forward; her left pauldron is plain blackened iron with tarnished gold trim."],
+    ],
+    seed: 1001,
+    denoise: [0.75, 0.9, 1],
+  },
+  // Round one kept the hair over the face and the emblem: the prompt still said both. Here neither is said.
+  "paragon-runes-1001-left-2": {
+    dir: "art/candidates/units/jilliath/angels",
+    pick: "paragon-runes-turnaround-1001.png",
+    source: "paragon-runes-1001-left-source.png",
+    mask: "masks/paragon-runes-1001-left.png",
+    edits: [
+      ["in a front view, a side view from the left, and a back view,", "in a front view, a side view from her right, and a side view from her left,"],
+      ["An angel woman with a calm face. Blazing red hair falls over the right side of her face, hiding it.", "An angel woman, her calm face clear in profile: pale cheek, eye, nose and lips, her blazing red hair swept back behind her ear and down her back."],
+      ["On her right pauldron an emblem of a burning open hand, palm forward.", "Plain pauldrons of blackened iron with tarnished gold trim."],
+    ],
+    seed: 1001,
+    denoise: [0.8, 0.9, 1],
+  },
 };
 
 const id = process.argv[2] ?? "";
 const fix = FIXES[id];
 if (!fix) throw new Error(`unknown fix "${id}"; known: ${Object.keys(FIXES).join(", ")}`);
 const manifest: Candidate[] = JSON.parse(await readFile(`${fix.dir}/manifest.json`, "utf8"));
-const picked = manifest.find((entry) => entry.file === fix.source);
-if (!picked) throw new Error(`${fix.source} has no entry in ${fix.dir}/manifest.json`);
+const picked = manifest.find((entry) => entry.file === fix.pick);
+if (!picked) throw new Error(`${fix.pick} has no entry in ${fix.dir}/manifest.json`);
+const source = fix.source ?? fix.pick;
 const prompt = fix.edits.reduce((text, [from, to]) => {
-  if (!text.includes(from)) throw new Error(`the prompt of ${fix.source} has no "${from}"`);
+  if (!text.includes(from)) throw new Error(`the prompt of ${fix.pick} has no "${from}"`);
   return text.replace(from, to);
 }, picked.prompt);
 const made: Candidate[] = [];
 for (const denoise of fix.denoise) {
   const file = `${id}-d${Math.round(denoise * 100)}.png`;
   const started = Date.now();
-  await writeFile(`${fix.dir}/${file}`, await inpaint({ prompt, seed: fix.seed, source: `${fix.dir}/${fix.source}`, mask: `${fix.dir}/${fix.mask}`, denoise }, `disc/${id}`));
+  await writeFile(`${fix.dir}/${file}`, await inpaint({ prompt, seed: fix.seed, source: `${fix.dir}/${source}`, mask: `${fix.dir}/${fix.mask}`, denoise }, `disc/${id}`));
   console.log(`${fix.dir}/${file} (${((Date.now() - started) / 1000).toFixed(1)} s)`);
-  made.push({ file, id, seed: fix.seed, prompt, model: KREA2_TURBO.diffusionModel, source: fix.source, mask: fix.mask, denoise });
+  made.push({ file, id, seed: fix.seed, prompt, model: KREA2_TURBO.diffusionModel, source, mask: fix.mask, denoise });
   await record(fix.dir, made);
 }
