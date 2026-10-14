@@ -29,7 +29,7 @@ interface change.
 - **3D figures (the user's Tripo, for Unreal's quality):** the Psychopomp is the first (`assets/models/units/psychopomp.glb`,
   spring bone chains on her cape and skirt by `scripts/art/cloth-bones.py`), walking in Unreal on `disc_unreal`'s
   `card/3d-figures` (`shots/figures/index.html`). The Seraph's first download is checked
-  (`shots/figures/seraph-check.html`): its rig repaired, its wings and sleeves need reweighting. Ability icons: all in (`in-progress/icons`; effects and items wait for
+  (`shots/figures/seraph-check.html`): the FBX is sound; its wings go onto the chest. Ability icons: all in (`in-progress/icons`; effects and items wait for
   the user's okay on the test, `shots/icons.html`).
 - **MCP player (`testing/mcp-player`):** `pnpm mcp` lets an LLM play seat 0 against the map AI, choosing from numbered
   options (forecasts on attacks, previews on battle orders); `pnpm play` is the same on the command line; `?watch`

@@ -14,6 +14,6 @@
   triangles, 4k, Tripo's rig (61 bones named like Unreal's mannequin), FBX (Tripo's GLB wrote the rig's bind matrices
   corrupt at this size). Loose cloth gets bone chains for spring physics (`scripts/art/cloth-bones.py`); the braids
   wait, fused into the hood in this generation. In the repo as `assets/models/units/psychopomp.glb` (Blender's FBX export scaled the root bone; GLB doesn't). Walking in Unreal with springs on the cape and skirt: `disc_unreal`'s `card/3d-figures`, `shots/figures/index.html`.
-- **The Seraph (2026-10-14):** `seraph#1.glb`, checked (`shots/figures/seraph-check.html`). 27k triangles, one 4k PBR
-  material. The GLB's joints had no transforms (rebuilt by `scripts/art/glb-joints.py`); the wings were weighted to the
-  upper arms (moved onto `spine_03` in a test, they hold); the sleeve drapes still stretch when the arms come down.
+- **The Seraph (2026-10-14):** `seraph#1`, checked (`shots/figures/seraph-check.html`). 27k triangles, one 4k PBR
+  material. The GLB's joints had no transforms (`scripts/art/glb-joints.py` rebuilds them); the FBX (`seraph#1.zip`)
+  is sound and the one to use. The wings are weighted to the upper arms; moved whole onto `spine_03` they hold.

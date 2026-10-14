@@ -81,7 +81,8 @@ Work on a card branch in a sibling worktree when another session is in its main 
 - Figures face +Y at rest. The probe once walked her backwards (yaw off by 180°).
 - Tripo's material comes single-sided: Blender hides back faces and a hood's inside reads as see-through
   (`two-sided` in the check). Unreal does the same unless its material is made two-sided.
-- Tripo weights what it can't place to the nearest limb: the Seraph's wings followed the upper arms and her sleeve
-  drapes partly `spine_02` and `thigh_l`. Lower the arms in the check (the walk holds them about 55° down); wings that
-  are their own mesh pieces move whole onto `spine_03`.
+- Tripo weights what it can't place to the nearest limb: the Seraph's wings followed the upper arms. Lower the arms in
+  the check (the walk holds them about 55° down); wings that are their own mesh pieces move whole onto `spine_03`.
+  (Her repaired GLB also tore its sleeves with the arms down; her FBX, with the same weights, didn't. Another reason
+  for FBX.)
 - An asset that already exists can't be recreated headless (the editor can't ask): reuse it.
