@@ -30,3 +30,7 @@
   Tripo's leg weights: at 40% the mannequin's back kick came out through the robe. Tripo made no thighs under the
   robe, so a wide swing shows a gap there. In the repo as `assets/models/units/zealot.glb`; walking in Unreal
   (`disc_unreal`'s `card/3d-figures`, `shots/figures/zealot-check.html`).
+  Made a new way (the user): one HD model at 2 million vertices, retopologized down, where the others came from
+  Tripo's Smart mesh straight at game topology. The bake gives him a normal map with real relief (the others' are
+  nearly flat), at the cost of one welded shell and a 2k normal map
+  (`shots/figures/normal-maps-acolyte-vs-zealot.jpg`).

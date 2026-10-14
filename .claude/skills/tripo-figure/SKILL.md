@@ -16,6 +16,12 @@ Input: the unit's front, side and back from `shots/tripo/<unit>/` (one folder pe
   (down to 128 px). Never ask for a segmented generation: the parts step 3 needs come from the unsegmented mesh's own
   loose parts.
 - **PBR textures** (colour, normal, roughness/metal); colour alone looked flat under Unreal's light.
+- **Two ways to the game mesh.** *Smart mesh* generates straight at game topology (the Psychopomp, Seraph, Acolyte):
+  separate shells per garment (step 3's pieces come free), but a near-flat normal map lifted from the colour. *HD
+  then retopology* (the Zealot, 2026-10-14: a 2-million-vertex HD model retopologized to 19k triangles): a normal
+  map baked from the HD sculpt, with real plates, rivets and folds, far better under light; but one welded shell (the
+  robe fused to the legs: `off_legs` in step 3), nothing modelled where clothing hid it (hollow thighs), and the
+  normal map came at 2k.
 - **About 48k triangles, quad topology if offered**; 11k looked faceted in the fur. **4k textures** for Unreal.
 - **Rigged** (Tripo's rig: 61 bones named like Unreal's UE4 mannequin, which makes retargeting automatic).
 - **Download FBX.** Tripo's GLB export wrote the rig's inverse bind matrices corrupt at this size (twice, the same
