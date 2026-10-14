@@ -1,3 +1,4 @@
+import { unitName } from "#view/names";
 import { member, playerOf } from "#rules/world/state";
 import { isFork } from "#rules/forks";
 import { EVOLUTIONS, FACTION_ROOTS, LINE_ARCHETYPE } from "#rules/units/index";
@@ -11,7 +12,7 @@ import { art } from "#view/art";
 import { element, gold, orderButton } from "#view/dom";
 import { closeDialog, openDialog } from "#view/dialog";
 import { branchCards, branchText } from "#view/branches";
-import { memberCard, unitName } from "#view/members";
+import { memberCard } from "#view/members";
 import { showPeek } from "#view/peek";
 import { treeLines } from "#view/tree-lines";
 import type { TreeLink } from "#view/tree-lines";

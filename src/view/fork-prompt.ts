@@ -1,7 +1,7 @@
+import { unitName } from "#view/names";
 import { waitingForks } from "#rules/world/economy";
 import type { PlayerId, World, WorldAction } from "#rules/world/state";
 import { element } from "#view/dom";
-import { unitName } from "#view/members";
 import { branchCards, branchText } from "#view/branches";
 
 /**

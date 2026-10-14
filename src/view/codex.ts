@@ -1,7 +1,7 @@
+import { TRIBE_NAMES } from "#view/names";
 import { BEHAVIORS } from "#rules/abilities/index";
 import type { UnitDef } from "#rules/battle/types";
 import { EFFECTS } from "#rules/effects";
-import { TRIBE_NAMES } from "#view/map-text";
 import { FACTIONS, PLAYABLE } from "#rules/factions";
 import { NODES } from "#rules/nodes";
 import type { NodeKind } from "#rules/nodes";

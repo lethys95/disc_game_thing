@@ -1,9 +1,9 @@
+import { unitName } from "#view/names";
 import type { Tile } from "#rules/battle/types";
 import { COLS, ROWS, sameTile } from "#rules/battle/grid";
 import { member } from "#rules/world/state";
 import type { Leader, SquadMember, SquadRef } from "#rules/world/state";
 import { element, gold } from "#view/dom";
-import { unitName } from "#view/members";
 import { squadTile } from "#view/squad-tile";
 
 /** One squad shown as its 3×3 grid (front row first). */

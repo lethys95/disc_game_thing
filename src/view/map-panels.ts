@@ -1,18 +1,16 @@
+import { cityName, leaderName, unitName } from "#view/names";
 import { hexDistance, sameHex } from "#rules/hex";
 import { openForks } from "#rules/forks";
 import { GUARDIAN_ID } from "#rules/units/index";
 import { leadershipOf, movementOf, unspentPoints } from "#rules/world/leaders";
 import { playerOf } from "#rules/world/state";
 import type { Leader, PlayerId, World } from "#rules/world/state";
-import { cityName } from "#view/city";
 import type { Place } from "#view/city";
 import { button, buttonById, byId, element, movementPips } from "#view/dom";
 import { squadTile } from "#view/squad-tile";
 import { explain } from "#view/explain";
 import { STRUCTURES } from "#rules/structures";
 import { structureAt } from "#rules/world/structures";
-import { leaderName } from "#view/map-text";
-import { unitName } from "#view/members";
 import { raisesDeadAt } from "#rules/world/economy";
 import { spellBar } from "#view/spells";
 

@@ -1,8 +1,9 @@
+import { unitName } from "#view/names";
 import { forkOptions } from "#rules/forks";
 import { EVOLUTIONS } from "#rules/units/index";
 import { art } from "#view/art";
 import { element } from "#view/dom";
-import { unitDefCard, unitName } from "#view/members";
+import { unitDefCard } from "#view/members";
 import { showPeek } from "#view/peek";
 
 /** Why choosing a branch matters, said the same way wherever a branch is chosen. */

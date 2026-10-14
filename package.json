@@ -21,7 +21,9 @@
     "art": "tsx scripts/art/assets.ts",
     "audio": "tsx scripts/audio/report.ts",
     "board": "tsx scripts/board.ts",
-    "sizes": "tsx scripts/sizes.ts"
+    "sizes": "tsx scripts/sizes.ts",
+    "mcp": "esbuild scripts/mcp/server.ts --bundle --platform=node --format=esm --outfile=.sim/mcp-server.mjs --external:@modelcontextprotocol/sdk --external:zod --log-level=warning && node .sim/mcp-server.mjs",
+    "play": "esbuild scripts/mcp/cli.ts --bundle --platform=node --format=esm --outfile=.sim/mcp-cli.mjs --log-level=warning && node .sim/mcp-cli.mjs"
   },
   "devEngines": {
     "packageManager": {
@@ -36,6 +38,7 @@
     "three": "^0.186.0"
   },
   "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.1",
     "@playwright/test": "^1.63.0",
     "@types/node": "^26.6.2",
     "@types/three": "^0.186.0",
@@ -45,7 +48,8 @@
     "tsx": "^4.23.15",
     "typescript": "^7.0.2",
     "vite": "^8.3.0",
-    "vitest": "^5.0.1"
+    "vitest": "^5.0.1",
+    "zod": "^4.6.7"
   },
   "private": true,
   "imports": {

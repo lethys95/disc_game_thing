@@ -1,8 +1,9 @@
+import { unitName } from "#view/names";
 import { FACTIONS } from "#rules/factions";
 import { describeCarried, describeItem, itemById } from "#rules/items";
 import { describeSpell, spellById } from "#rules/spells";
 import { hireCost, MERCHANT_STAPLES, resalePrice, STRUCTURES } from "#rules/structures";
-import { maxHpOf } from "#rules/world/record";
+import { maxHpOf, leaderAbilityPower } from "#rules/world/record";
 import { member, playerOf } from "#rules/world/state";
 import type { Leader, MageMerchant, MercenaryCamp, Merchant, Structure, World, WorldAction } from "#rules/world/state";
 import { buyItemProblem, buySpellProblem, hireProblem, sellItemProblem } from "#rules/world/structures";
@@ -10,7 +11,6 @@ import { element, gold, mana, orderButton } from "#view/dom";
 import { tabFrame } from "#view/frames";
 import { warbandColumn } from "#view/warband-column";
 import type { KeyLayer } from "#view/input";
-import { leaderAbilityPower, unitName } from "#view/members";
 import { squadTile } from "#view/squad-tile";
 import { equipmentPanel, named } from "#view/equipment";
 

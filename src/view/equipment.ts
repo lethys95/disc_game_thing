@@ -1,6 +1,6 @@
+import { leaderAbilityPower } from "#rules/world/record";
 import { baseItem, describeCarried, itemById, SLOT_CAPACITY, SLOT_NAMES } from "#rules/items";
 import { art } from "#view/art";
-import { leaderAbilityPower } from "#view/members";
 import type { EquipmentSlot } from "#rules/items";
 import { equipProblem, unequipProblem } from "#rules/world/leaders";
 import { takesHex, useItemProblem, wardTargets } from "#rules/world/items";

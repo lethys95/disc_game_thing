@@ -1,3 +1,4 @@
+import { cityName, unitName } from "#view/names";
 import type { Tile } from "#rules/battle/types";
 import { FACTION_ROOTS, GUARDIAN_ID } from "#rules/units/index";
 import { CITY_HEALING_PER_TIER, CITY_MAX_TIER, CITY_SLOTS, NODE_MAX_LEVEL } from "#rules/balance";
@@ -11,7 +12,6 @@ import { button, element, gold, mana, orderButton, roman } from "#view/dom";
 import { FACTIONS } from "#rules/factions";
 import { explain } from "#view/explain";
 import { leaveButton } from "#view/leave";
-import { unitName } from "#view/members";
 import { ResearchPanel } from "#view/research";
 import { FALLEN_DRAG, squadGrid } from "#view/squad-grid";
 import { squadTile } from "#view/squad-tile";
@@ -47,9 +47,6 @@ const TABS: Readonly<Record<CityTab, { readonly label: string; readonly glyph: s
 const GRID_HINT = "Drag units between the grids; dropping on a unit swaps the two. Click an empty place to recruit. Hold right-click on a unit for its sheet.";
 
 const isCityTab = (key: string): key is CityTab => key in TABS;
-
-/** Placeholder city names until the user names them. */
-export const cityName = (city: City): string => (city.kind === "capitol" ? "Capitol" : `City ${city.id.replace("city", "")}`);
 
 /**
  * A city's screen (pillars.md, "Cities"; the user's layout, `design/capitol-screen.md`): it opens on the city itself

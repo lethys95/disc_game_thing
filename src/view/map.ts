@@ -1,7 +1,7 @@
+import { TRIBE_NAMES, cityName } from "#view/names";
 import * as THREE from "three";
 import type { PlayerColor } from "#rules/world/colors";
 import { cityOfNode, tribeAt } from "#rules/world/state";
-import { TRIBE_NAMES } from "#view/map-text";
 import type { PlayerId } from "#rules/world/state";
 import type { Vision } from "#rules/world/vision";
 import { threeColor } from "#view/colors";
@@ -14,7 +14,6 @@ import type { Biome, WorldMap } from "#rules/map";
 import type { NodeKind } from "#rules/nodes";
 import { UNITS } from "#rules/units/index";
 import { spellById } from "#rules/spells";
-import { cityName } from "#view/city";
 import type { City, Leader, World } from "#rules/world/state";
 import { buildFigure } from "#view/figures";
 import { BOUNCE_LIGHT, discard, discardChildren, GRADE } from "#view/stage";

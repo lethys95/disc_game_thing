@@ -1,3 +1,4 @@
+import { unitName, leaderName } from "#view/names";
 import { sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { isLeaderOf, maxHpOf } from "#rules/world/record";
@@ -6,8 +7,6 @@ import { STRUCTURES } from "#rules/structures";
 import { cityOfNode, leaderAt } from "#rules/world/state";
 import type { Leader, PlayerId, SquadMember, World } from "#rules/world/state";
 import { element } from "#view/dom";
-import { unitName } from "#view/members";
-import { leaderName } from "#view/map-text";
 
 /** The hold-right-click peek: a small card by the pointer, gone on release. */
 

@@ -1,3 +1,4 @@
+import { unitName } from "#view/names";
 import { itemById } from "#rules/items";
 import { NODES } from "#rules/nodes";
 import { effectDef } from "#rules/effects";
@@ -14,8 +15,6 @@ import { element } from "#view/dom";
 import { unitSheet } from "#view/unit-sheet";
 
 /** A squad member as the map's panels show it: name, health, progress, and its track record. */
-
-export const unitName = (defId: string) => UNITS[defId]?.name ?? defId;
 
 /** "+5 damage. From the Congregant upgrade at the Capitol.": one line of a unit's track record. */
 export function markText(mark: Mark): string {
@@ -50,12 +49,6 @@ export function unitDefCard(defId: string): HTMLElement {
     hits: "", spellCharges: def.spellCharges ? { now: def.spellCharges, max: def.spellCharges } : null, xp: null,
     abilities: def.abilities.map((ref) => ({ ref, charges: "" })), effects: [], marks: [],
   });
-}
-
-/** The ability power the leader's own unit fights with: what its carried abilities' numbers grow with. */
-export function leaderAbilityPower(leader: Leader): number {
-  const own = leader.squad.find((m) => isLeaderOf(m, leader));
-  return own ? ownStats(placementOf(own, leader)).abilityPower : 100;
 }
 
 /** Where a unit stands on its way to its next level or form, or null. */

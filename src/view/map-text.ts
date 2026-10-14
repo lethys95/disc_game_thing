@@ -1,4 +1,4 @@
-import { cityName } from "#view/city";
+import { cityName, leaderName, TRIBE_NAMES, unitName } from "#view/names";
 import { hexKey, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { tileAt, TERRAIN_COST } from "#rules/map";
@@ -10,22 +10,9 @@ import { sightOf } from "#rules/world/vision";
 import { castProblem, spellVictims } from "#rules/world/spells";
 import { describeSpell, spellById } from "#rules/spells";
 import { itemById } from "#rules/items";
-import { unitName } from "#view/members";
 import { STRUCTURES } from "#rules/structures";
-import type { Tribe } from "#rules/world/state";
-
-/** The tribes' names are placeholders until the user names them (`faction-stuff/neutrals/`). */
-export const TRIBE_NAMES: Readonly<Record<Tribe, string>> = {
-  bandits: "Bandits", gnolls: "Gnolls", drawn: "The Drawn", carnival: "The carnival",
-  wild: "The Wild", tusk: "The Tuskclans", scaled: "The Scaled", herd: "The Herd", clans: "The barbarian clans",
-};
 
 /** What the map's hint line says: the hover, the march, the news. Pure text over what the player knows. */
-
-export function leaderName(leader: Leader): string {
-  const figure = leader.squad.find((m) => m.tile.row === leader.leaderTile.row && m.tile.col === leader.leaderTile.col) ?? leader.squad[0];
-  return figure ? unitName(figure.defId) : "Leader";
-}
 
 export interface HintContext {
   /** The world as the player knows it (`knownWorld`). */

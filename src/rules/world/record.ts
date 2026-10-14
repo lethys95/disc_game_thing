@@ -40,3 +40,9 @@ export function levelBonusPercent(defId: string): number {
   const faction = UNITS[defId]?.faction;
   return faction && faction !== "neutral" ? FACTIONS[faction].levelBonusPercent : LEVEL_BONUS_PERCENT;
 }
+
+/** The ability power the leader's own unit fights with: what its carried abilities' numbers grow with. */
+export function leaderAbilityPower(leader: Leader): number {
+  const own = leader.squad.find((m) => isLeaderOf(m, leader));
+  return own ? ownStats(placementOf(own, leader)).abilityPower : 100;
+}

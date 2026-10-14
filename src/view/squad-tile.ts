@@ -1,9 +1,10 @@
+import { unitName } from "#view/names";
 import type { Commitment } from "#rules/forks";
 import { isLeaderOf, maxHpOf } from "#rules/world/record";
 import type { Leader, SquadMember } from "#rules/world/state";
 import { art } from "#view/art";
 import { element } from "#view/dom";
-import { memberCard, unitName } from "#view/members";
+import { memberCard } from "#view/members";
 import { showPeek } from "#view/peek";
 
 /**

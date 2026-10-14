@@ -1,10 +1,10 @@
+import { leaderName } from "#view/names";
 import { leadershipOf } from "#rules/world/leaders";
 import { playerOf } from "#rules/world/state";
 import type { Leader, World } from "#rules/world/state";
 import { button, element, gold } from "#view/dom";
 import { explain } from "#view/explain";
 import { leaveButton } from "#view/leave";
-import { leaderName } from "#view/map-text";
 import { squadTile } from "#view/squad-tile";
 
 /** A tab in a screen's column: its id, label, and whether it's open. */
