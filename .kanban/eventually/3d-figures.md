@@ -34,3 +34,8 @@
   Tripo's Smart mesh straight at game topology. The bake gives him a normal map with real relief (the others' are
   nearly flat), at the cost of one welded shell and a 2k normal map
   (`shots/figures/normal-maps-acolyte-vs-zealot.jpg`).
+- **The Templar (2026-10-14):** `templar#1` (FBX), sound at once: 31k triangles, one 4k PBR material (a 4k normal map
+  with real relief), no drift. Smart mesh again: the surcoat below the belt is its own piece, tabard, white panels and
+  back panel in one shell, so nothing ripped. In the repo as `assets/models/units/templar.glb`: six chains round the
+  surcoat, the red tabard on its own between the legs, the hem keeping half of Tripo's leg weights. Walking in Unreal
+  (`disc_unreal`'s `card/3d-figures`, `shots/figures/templar-check.html`).
