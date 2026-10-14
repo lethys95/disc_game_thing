@@ -12,8 +12,9 @@ calls Tripo itself unless `~/.claude/CLAUDE.md` grants it (it doesn't, as of 202
 
 ## 1. What to ask Tripo for
 Input: the unit's front, side and back from `shots/tripo/<unit>/` (one folder per unit, one image per view).
-- **One mesh, unsegmented.** Segmentation gave 35 pieces with 35 materials and textures shrunk to the piece (down to
-  128 px). Ask for one segmented generation too only when part labels are needed (step 3).
+- **One mesh, unsegmented, always.** Segmentation gave 35 pieces with 35 materials and textures shrunk to the piece
+  (down to 128 px). Never ask for a segmented generation: the parts step 3 needs come from the unsegmented mesh's own
+  loose parts.
 - **PBR textures** (colour, normal, roughness/metal); colour alone looked flat under Unreal's light.
 - **About 48k triangles, quad topology if offered**; 11k looked faceted in the fur. **4k textures** for Unreal.
 - **Rigged** (Tripo's rig: 61 bones named like Unreal's UE4 mannequin, which makes retargeting automatic).
@@ -33,13 +34,13 @@ far from 1 (Tripo's are a metre tall), a pose that tears or pinches.
 ## 3. Which parts dangle (the one step that is the unit's)
 Read the concept and the unit's sheet: a cape, a skirt's flaps, long strips, a tabard. Hair or braids that the
 generation fused into a hood stay rigid (the Psychopomp's). Each dangling part needs its vertices named:
-- **Part labels from a segmented generation:** `blender -b --python scripts/art/part-labels.py -- <segmented.glb>
-  <model.fbx> <out>` gives every vertex the part of the nearest segmented surface (median 5 mm on a 1 m figure) and
-  renders the parts in colours; a per-part sheet (each part highlighted, front and back) tells which number is what.
-  Segmentation keeps a hood and its cape as one part: split those by position (behind the body, below the neck).
-- **Or the mesh's own pieces:** a Tripo mesh is often several separate pieces (the Seraph's: wings, hood, mantle,
-  skirt, sleeves, belt, feet). Colour them by piece and read the numbers before reaching for a segmented generation;
-  pieces that are really apart need no rips.
+- **The mesh's own loose parts:** an unsegmented Tripo mesh is still one material but several pieces of geometry that
+  don't touch (the Seraph's: wings, hood, mantle, skirt, sleeves, belt, feet; the Acolyte's: robe, mantle, stole
+  strips, forearms, and the lantern in twenty bits). `blender -b --python scripts/art/figure-pieces.py -- <model.fbx>
+  <out> [count]` prints the largest pieces' sizes and bounds and writes `<out>-sheet.png`, each piece highlighted
+  front and back, which tells which number is what. Pieces that are really apart need no rips.
+- (The Psychopomp alone takes its parts from labels, `scripts/art/part-labels.py`, transferred from a segmented test
+  generation made before the rule above; nothing new goes that way.)
 - Each unit's choices are its entry in `FIGURES` in `scripts/art/cloth-bones.py`: where its parts come from (labels
   or pieces), which pieces ride one bone whole (the Seraph's wings on `spine_03`), and each family of chains (`cape`,
   `skirt`), placed either left and right of the spine or round the pelvis at given angles. The Psychopomp: two down
@@ -52,7 +53,7 @@ generation fused into a hood stay rigid (the Psychopomp's). Each dangling part n
   chain's last bone points the way its parent does.) Tripo weights such a thing to the limb it hangs from, and with the arms down it swings into the body.
 
 ## 4. Chains, rips and weights
-`blender -b --python scripts/art/cloth-bones.py -- <unit> <model.fbx> <out> [labels.json]` adds the chains, moves the
+`blender -b --python scripts/art/cloth-bones.py -- <unit> <model.fbx> <out>` adds the chains, moves the
 rigid pieces, rips the moving pieces free where Tripo fused them to the body (the cape's hem into the belt, strips into the thighs: without the
 rips they tore into long sheets), ramps each chain's weight in from nothing at the piece's top, and writes
 `<out>.glb` and `<out>.blend`. Then `blender -b <out>.blend --python scripts/art/cloth-check.py -- <out>`: it swings
