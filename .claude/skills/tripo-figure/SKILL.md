@@ -53,8 +53,7 @@ rigid pieces, rips the moving pieces free where Tripo fused them to the body (th
 rips they tore into long sheets), ramps each chain's weight in from nothing at the piece's top, and writes
 `<out>.glb` and `<out>.blend`. Then `blender -b <out>.blend --python scripts/art/cloth-check.py -- <out>`: it swings
 the chains a little and counts edges stretched past twice their length (the Psychopomp: 14 of 53,544, all in one
-skirt panel; 501 before the rips. The Seraph: 42 of 30,455, none ripped; the check twists her two front skirt chains
-  against each other, which a walk doesn't) and renders the swing. Tears near zero, and the pieces hang, or fix it first.
+skirt panel; 501 before the rips. The Seraph: none of 30,455, nothing ripped) and renders the swing. Tears near zero, and the pieces hang, or fix it first.
 
 **Always GLB out of Blender, never FBX:** Blender's FBX puts its metres-to-centimetres on the root bone (a scale of 100
 in the reference pose). The figure renders at rest in Unreal, but a retargeted animation writes the root's scale as 1
