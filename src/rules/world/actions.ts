@@ -2,7 +2,7 @@ import { choose } from "#rules/forks";
 import { sameTile } from "#rules/battle/grid";
 import { LEADER_MOVEMENT } from "#rules/balance";
 import { defenderOf, engage } from "#rules/world/battles";
-import { nodeMarks, recruitCost, chooseBranchProblem, elevateProblem, freeTile, growSquad, learnSkillProblem, newcomer, recruitProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem, squadsOf, startRound, startTurn, upgradeCityProblem, researchProblem, investNodeProblem, nodeInvestCost, upgradeProblem, cityUpgradeCost } from "#rules/world/economy";
+import { recruitIn, recruitCost, chooseBranchProblem, elevateProblem, freeTile, growSquad, learnSkillProblem, recruitProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem, squadsOf, startRound, startTurn, upgradeCityProblem, researchProblem, investNodeProblem, nodeInvestCost, upgradeProblem, cityUpgradeCost } from "#rules/world/economy";
 import { equipProblem, freeRevival, giftOf, movementOf, rankOf, unequipProblem } from "#rules/world/leaders";
 import { destination, planMove, warbandStepCost } from "#rules/world/movement";
 import { knownWorld, see, updateVision } from "#rules/world/vision";
@@ -53,9 +53,9 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       const squad = squadAt(draft, action.into);
       const tile = action.tile ?? freeTile(squad, action.defId);
       if (!tile) throw new Error("no room");
-      const recruit = newcomer(draft, side, action.defId, tile);
-      squad.push({ ...recruit, marks: [...recruit.marks, ...nodeMarks(draft, cityOfSquad(draft, action.into))] });
-      playerOf(draft, side).gold -= recruitCost(action.defId) ?? 0;
+      const city = cityOfSquad(draft, action.into);
+      playerOf(draft, side).gold -= recruitCost(draft, action.defId, city) ?? 0;
+      squad.push(recruitIn(draft, side, action.defId, tile, city));
       events.push({ type: "recruited", defId: action.defId, into: action.into });
       break;
     }
@@ -69,7 +69,7 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       const tile = { row: (freeTile([], unit.defId)?.row ?? 0), col: 1 } as const;
       const id = `leader${draft.nextLeader}`;
       draft.nextLeader += 1;
-      draft.leaders.push({ id, player: side, hex: capitol.hex, movement: LEADER_MOVEMENT, experience: 0, skills: {}, fellOnTurn: null, squad: [{ ...unit, tile }], leaderTile: tile, enchantments: [], worn: [], bag: [] });
+      draft.leaders.push({ id, player: side, hex: capitol.hex, movement: LEADER_MOVEMENT, experience: 0, skills: {}, fellOnTurn: null, squad: [{ ...unit, tile }], leaderTile: tile, enchantments: [], worn: [], bag: [], sureFooted: false });
       events.push({ type: "elevated", leaderId: id });
       break;
     }

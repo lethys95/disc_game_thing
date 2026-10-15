@@ -20,7 +20,8 @@ export const TERRAIN_COST: Readonly<Record<Terrain, number | null>> = {
 
 /**
  * A region's look (user, 2026-09-30: biomes are mostly cosmetic; careful with effects): the same terrains, drawn
- * differently. It changes no rule yet. "temperate" is a placeholder name for the land the map had before biomes.
+ * differently. It decides who guards its camps and which nodes its cities have (`NODE_POOLS`), no rule of play.
+ * "temperate" is a placeholder name for the land the map had before biomes.
  */
 export type Biome = "temperate" | "desert" | "swamp" | "tundra" | "haunted";
 
@@ -198,7 +199,7 @@ export function generateMap(seed: number, players = 2, size: MapSize = defaultMa
 /** Capitols on the starts; neutral cities spread over the middle ground, each with one node beside it. */
 function placeSites(map: WorldMap, seed: number, neutralCities: number): Site[] {
   const walkable = (hex: Hex) => stepCost(map, hex) !== null;
-  const specials = [...SPECIAL_NODES].sort((a, b) => noise(seed + 43, hashOf(a), 0) - noise(seed + 43, hashOf(b), 0));
+  const dealt = new Map<NodeKind, number>();
   // Each Capitol has a gold mine of its own (user: Capitols count as cities for nodes).
   const capitolMine = (start: Hex, side: number): NodeSite[] => {
     const spot = neighbors(start)
@@ -219,34 +220,38 @@ function placeSites(map: WorldMap, seed: number, neutralCities: number): Site[] 
     const spots = neighbors(hex)
       .filter((n) => walkable(n) && !taken(n) && !map.starts.some((s) => sameHex(s, n)))
       .sort((a, b) => noise(seed + 37, a.q, a.r) - noise(seed + 37, b.q, b.r));
-    const [first, second] = spots;
+    const [first, ...beside] = spots;
     if (!first) continue;
-    // Provisional (#56): every neutral city has an economic node (the third a mana node, the others a gold mine)
-    // and, where there's room beside it, one of the special kinds, dealt from a shuffled deck so maps differ and
-    // none repeats until all have been dealt.
+    // Provisional (#56): every neutral city has an economic node (the third a mana node, the others a gold mine).
+    // The user (2026-10-15): two special ones beside it, from its biome's pool and the "anywhere" pool only. Within
+    // the pool, the kinds this map has dealt least come first, so maps differ and repeats are rare.
     const economy: NodeKind = cities === 2 ? "mana" : "gold";
-    const special = specials[cities % specials.length];
-    const nodes: NodeSite[] = [{ kind: economy, hex: first }, ...(second && special ? [{ kind: special, hex: second }] : [])];
+    const pool = [...NODE_POOLS[map.tiles[hexKey(hex)]?.biome ?? "temperate"], ...NODE_POOLS.anywhere];
+    const specials = pool
+      .sort((a, b) => (dealt.get(a) ?? 0) - (dealt.get(b) ?? 0) || noise(seed + 43, hashOf(a), cities) - noise(seed + 43, hashOf(b), cities))
+      .slice(0, Math.min(SPECIALS_PER_CITY, beside.length));
+    for (const kind of specials) dealt.set(kind, (dealt.get(kind) ?? 0) + 1);
+    const nodes: NodeSite[] = [{ kind: economy, hex: first }, ...specials.flatMap((kind, i) => (beside[i] ? [{ kind, hex: beside[i] }] : []))];
     sites.push({ id: `city${cities + 1}`, kind: "city", hex, nodes });
   }
   return sites;
 }
 
-/** The node kinds a neutral city can have besides gold and mana. */
-export const SPECIAL_NODES: readonly NodeKind[] = [
-  "blacksmith",
-  "cathedral",
-  "foundry",
-  "leech_pits",
-  "stables",
-  "tannery",
-  "siege_workshop",
-  "quarry",
-  "ossuary",
-  "watchtower",
-  "bell_tower",
-  "tribal_outpost",
-];
+/** How many special nodes (besides gold or mana) a neutral city has, where there's room (the user, 2026-10-15). */
+export const SPECIALS_PER_CITY = 2;
+
+/**
+ * The special nodes a neutral city of each biome can have, besides those of the "anywhere" pool (the user's pools,
+ * 2026-10-15, design/nodes.md). The Toll bridge, Scriptorium, Shrine and Waystone join their pools once built.
+ */
+export const NODE_POOLS: Readonly<Record<Biome | "anywhere", readonly NodeKind[]>> = {
+  anywhere: ["blacksmith", "siege_workshop", "tribal_outpost", "training_yard", "waystation"],
+  temperate: ["cathedral", "stables", "tannery", "bell_tower", "hunting_lodge", "granary"],
+  desert: ["foundry", "watchtower", "oasis", "caravanserai"],
+  swamp: ["leech_pits", "venom_distillery", "bog_iron"],
+  tundra: ["quarry", "watchtower", "dog_yard"],
+  haunted: ["ossuary", "witch_hut", "gallows"],
+};
 
 /** `each` camps and `each` dungeons on free walkable hexes, away from the Capitols and from each other. */
 function placeLairs(map: WorldMap, sites: readonly Site[], seed: number, each: number): LairSite[] {

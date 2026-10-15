@@ -239,7 +239,7 @@ export class CityScreen implements KeyLayer {
         // The faction's own first tiers, then what a Tribal outpost offers here.
         [...FACTION_ROOTS[playerOf(world, side).faction], ...(city ? tribeRecruitsOf(world, city) : [])].map((defId) => ({
           defId,
-          price: recruitCost(defId) ?? 0,
+          price: recruitCost(world, defId, city) ?? 0,
           problem: recruitProblem(world, defId, ref, tile),
           run: () => this.options.act({ type: "recruit", defId, into: ref, tile }),
         })),

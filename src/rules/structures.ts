@@ -30,11 +30,15 @@ export interface Hire {
   readonly level: number;
 }
 
-/** What each mercenary camp on a map offers, in turn: the first camp the first list, and so on. */
-export const MERCENARY_STOCKS: readonly (readonly Hire[])[] = [
-  [{ defId: "marauder", level: 1 }, { defId: "hedge_mage", level: 1 }, { defId: "brigand", level: 0 }],
-  [{ defId: "bandit", level: 1 }, { defId: "hedge_mage", level: 0 }, { defId: "marauder", level: 0 }],
-];
+/** The levels a mercenary camp's hires come with, in the order it offers them (provisional #84). */
+const MERCENARY_LEVELS: readonly number[] = [1, 1, 0];
+
+/**
+ * What a mercenary camp offers: the first of its land's tribe's units (`tribeUnits`, lowest tiers first; the user,
+ * 2026-10-15: whom a camp hires out fits its biome), seasoned by `MERCENARY_LEVELS`.
+ */
+export const mercenaryStock = (tribeUnits: readonly string[]): Hire[] =>
+  tribeUnits.slice(0, MERCENARY_LEVELS.length).map((defId, i) => ({ defId, level: MERCENARY_LEVELS[i] ?? 0 }));
 
 /** How many of each structure a map has: one per this many hexes, at least one (so bigger maps have more). */
 const HEXES_PER_STRUCTURE = 60;

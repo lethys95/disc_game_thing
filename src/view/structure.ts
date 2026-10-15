@@ -6,7 +6,7 @@ import { hireCost, MERCHANT_STAPLES, resalePrice, STRUCTURES } from "#rules/stru
 import { maxHpOf, leaderAbilityPower } from "#rules/world/record";
 import { member, playerOf } from "#rules/world/state";
 import type { Leader, MageMerchant, MercenaryCamp, Merchant, Structure, World, WorldAction } from "#rules/world/state";
-import { buyItemProblem, buySpellProblem, hireProblem, sellItemProblem } from "#rules/world/structures";
+import { buyItemProblem, buySpellProblem, hireProblem, sellItemProblem, tradePrice } from "#rules/world/structures";
 import { element, gold, mana, orderButton } from "#view/dom";
 import { tabFrame } from "#view/frames";
 import { warbandColumn } from "#view/warband-column";
@@ -84,7 +84,7 @@ export class StructureScreen implements KeyLayer {
       const recruit = { ...member(hire.defId, { row: 0, col: 0 }), level: hire.level };
       const problem = mayAct ? hireProblem(world, leader.id, index) : "not your turn";
       const item = element("button", `offer${problem ? " refused" : ""}`);
-      item.append(squadTile({ ...recruit, hp: maxHpOf(recruit, undefined) }, undefined), element("span", "name", `${unitName(hire.defId)}${hire.level > 0 ? ` · level ${hire.level}` : ""}`), gold(hireCost(hire)));
+      item.append(squadTile({ ...recruit, hp: maxHpOf(recruit, undefined) }, undefined), element("span", "name", `${unitName(hire.defId)}${hire.level > 0 ? ` · level ${hire.level}` : ""}`), gold(tradePrice(world, leader.player, hireCost(hire))));
       item.title = problem ?? "Hire: it joins the warband at full health, on the first free spot for its kind. Hold right-click for its sheet.";
       item.addEventListener("click", () => {
         if (!problem) this.options.act({ type: "hire", leaderId: leader.id, index });
@@ -98,7 +98,7 @@ export class StructureScreen implements KeyLayer {
   private wares(world: World, leader: Leader, merchant: Merchant, mayAct: boolean): HTMLElement[] {
     const offer = (id: string) => {
       const item = itemById(id);
-      return this.row(named(id), describeItem(item, leaderAbilityPower(leader)), orderButton("small", ["Buy · ", gold(item.price)], {
+      return this.row(named(id), describeItem(item, leaderAbilityPower(leader)), orderButton("small", ["Buy · ", gold(tradePrice(world, leader.player, item.price))], {
         mayAct,
         problem: buyItemProblem(world, leader.id, id),
         explain: item.use ? "Into the leader's bag; use it from the leader's screen." : "Into the leader's bag; put it on from the leader's screen.",

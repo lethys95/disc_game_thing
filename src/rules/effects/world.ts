@@ -1,6 +1,7 @@
 import type { EffectDef } from "#rules/battle/types";
 import { adjacent, frontLine } from "#rules/battle/grid";
 import { flatStat, STAT_WORTH } from "#rules/effects/shared";
+import { UNITS } from "#rules/units/index";
 
 /** Effects the world brings into battle: recruit marks from nodes (design/nodes.md, 2026-09-28; numbers provisional #56), items, upgrades, spells, walls, leaders' levels and skills. */
 export const WORLD_EFFECTS: readonly EffectDef[] = [
@@ -107,6 +108,74 @@ export const WORLD_EFFECTS: readonly EffectDef[] = [
     lifetime: "battle",
     visibility: "public",
     mapMovement: 1,
+    hooks: {},
+  },
+  // The second review's recruit marks (user, 2026-10-15, design/nodes.md); numbers provisional (#84).
+  {
+    // Venom distillery: its first hit in a battle envenoms, as a Scaled's venom does. Spent once it has.
+    id: "distilled_venom",
+    quiet: true,
+    name: "Distilled venom",
+    applies: ["envenomed"],
+    describe: (e) => `Its first hit in a battle envenoms: ${e.amount} at the start of each of the target's turns, and it heals only half.`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      afterHit: (ctx, self, targetId, dealt) => {
+        const venom = self.effect;
+        if (!venom || dealt <= 0) return;
+        ctx.removeEffect(self.unitId, venom);
+        if (!ctx.unit(targetId).alive) return;
+        const existing = ctx.unit(targetId).effects.find((e) => e.def === "envenomed");
+        if (existing) existing.amount = Math.max(existing.amount, Math.min(existing.amount + venom.amount, venom.amount * 3));
+        else ctx.addEffect(targetId, { def: "envenomed", amount: venom.amount, source: self.unitId });
+      },
+    },
+  },
+  {
+    // Witch hut: whoever kills its bearer is Punished.
+    id: "hexed",
+    quiet: true,
+    name: "Hexed",
+    applies: ["punished"],
+    describe: (e) => `Whoever kills it is Punished for ${e.stacks} stack${e.stacks > 1 ? "s" : ""}.`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      remains: (ctx, self, unitId, change) => {
+        if (unitId !== self.unitId || change !== "died" || !self.effect) return;
+        const killer = ctx.unit(self.unitId).killedBy;
+        if (killer && ctx.unit(killer).alive) ctx.addEffect(killer, { def: "punished", stacks: self.effect.stacks, source: self.unitId });
+      },
+    },
+  },
+  {
+    // Hunting lodge: it hits the map's neutral peoples harder.
+    id: "hunter",
+    quiet: true,
+    name: "Hunter",
+    describe: (e) => `Deals ${e.amount}% more damage to neutral units.`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      outgoing: (ctx, self, packet) => {
+        if (packet.tags.includes("damage") && UNITS[ctx.unit(packet.target).defId]?.faction === "neutral") packet.amount = Math.round((packet.amount * (100 + (self.effect?.amount ?? 0))) / 100);
+      },
+    },
+  },
+  {
+    // Oasis: born by the water, it mends faster on the map. No battle effect.
+    id: "oasis_born",
+    quiet: true,
+    name: "Oasis-born",
+    describe: () => "Heals twice as fast on the map.",
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    mapHealing: 2,
     hooks: {},
   },
   {

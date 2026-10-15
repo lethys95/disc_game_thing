@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-15 (the city node review as a phone page: `shots/city-nodes.html`, its Send lands in `.cache/picks/`)
+**Updated:** 2026-10-15 (the second node review built: biome pools, two specials per city, nine new nodes; `testing/biome-nodes`)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): a first complete version, far off (the board's README
@@ -40,6 +40,8 @@ interface change.
   options (forecasts on attacks, previews on battle orders); `pnpm play` is the same on the command line; `?watch`
   follows its game. A Haiku agent played seven turns of it. `?join` plays against it (`testing/mcp-join`): one shared
   game file, each giving their own side's battle orders.
+- **Nodes by biome (`testing/biome-nodes`):** each neutral city deals two special nodes from its biome's pool (the
+  user's pools, 2026-10-15); nine new nodes and the Oasis and Dog yard; outposts and mercenary camps hire the biome's tribe.
 - **Biome props:** the swamp, tundra and haunted woods have their own thirteen props each, on the map
   (`testing/biome-props`, `shots/biome-props.html`).
 
@@ -48,8 +50,8 @@ interface change.
    Spiritess tier 4, the joker lines, owners for Evasion, Explode and Soak.
 2. **Claude's own, meanwhile:** icons for abilities, effects and items (`icons`, the user's suggestion); looks for
    the units without one (`unit-looks`, Nexus first), then their concepts and portraits.
-3. **The user's picks waiting:** the node brainstorm's round two and the biome pools (questions #6; the phone page
-   `shots/city-nodes.html`, read `.cache/picks/city-nodes.txt` once sent), and
+3. **The user's picks waiting:** node clauses, faction readings and merchants by biome (`todo/node-clauses`, a phone
+   page like `shots/city-nodes.html`; Send lands in `.cache/picks/`), the Waystone (questions #14), and
    everything in `testing/`.
 4. **The balance pass** once the factions' lines exist, with the user's worry that Jilliath's lines are too long.
 

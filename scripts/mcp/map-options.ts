@@ -17,7 +17,7 @@ import { equipProblem, LEADER_SKILLS, movementOf, unequipProblem } from "#rules/
 import { planMove } from "#rules/world/movement";
 import type { MoveTarget } from "#rules/world/movement";
 import { castProblem, learnSpellProblem, spellTargets, spellVictims } from "#rules/world/spells";
-import { buyItemProblem, buySpellProblem, forSale, hireProblem, sellItemProblem, structureAt } from "#rules/world/structures";
+import { buyItemProblem, buySpellProblem, forSale, hireProblem, sellItemProblem, structureAt, tradePrice } from "#rules/world/structures";
 import { transferProblem } from "#rules/world/squads";
 import { cityAt, cityById, lairAt, leaderAt, playerOf, tribeAt, tribeRecruitsOf } from "#rules/world/state";
 import type { City, Leader, PlayerId, SquadRef, World, WorldAction } from "#rules/world/state";
@@ -146,7 +146,7 @@ function cityOrders(world: World, seat: PlayerId): MapOption[] {
     for (const ref of refs) {
       for (const defId of offered) {
         if (recruitProblem(world, defId, { ...ref })) continue;
-        options.push({ text: `Recruit ${a(unitName(defId))} (tier ${UNITS[defId]?.tier ?? 1}, ${recruitCost(defId)} gold) into ${squadName(world, ref)}.`, action: { type: "recruit", defId, into: ref } });
+        options.push({ text: `Recruit ${a(unitName(defId))} (tier ${UNITS[defId]?.tier ?? 1}, ${recruitCost(world, defId, city)} gold) into ${squadName(world, ref)}.`, action: { type: "recruit", defId, into: ref } });
       }
       player.graveyard.forEach((fallen, index) => {
         if (resurrectProblem(world, index, ref)) return;
@@ -248,13 +248,13 @@ function leaderOrders(world: World, leader: Leader): MapOption[] {
   if (structure?.kind === "mercenaries") {
     structure.stock.forEach((hire, index) => {
       if (hireProblem(world, leader.id, index)) return;
-      options.push({ text: `${name} hires ${a(unitName(hire.defId))}${hire.level > 0 ? ` (level ${hire.level})` : ""} for ${hireCost(hire)} gold.`, action: { type: "hire", leaderId: leader.id, index } });
+      options.push({ text: `${name} hires ${a(unitName(hire.defId))}${hire.level > 0 ? ` (level ${hire.level})` : ""} for ${tradePrice(world, leader.player, hireCost(hire))} gold.`, action: { type: "hire", leaderId: leader.id, index } });
     });
   }
   if (structure?.kind === "merchant") {
     for (const item of new Set(forSale(structure))) {
       if (buyItemProblem(world, leader.id, item)) continue;
-      options.push({ text: `${name} buys the ${itemById(item).name} (${itemById(item).price} gold).`, action: { type: "buyItem", leaderId: leader.id, item } });
+      options.push({ text: `${name} buys the ${itemById(item).name} (${tradePrice(world, leader.player, itemById(item).price)} gold).`, action: { type: "buyItem", leaderId: leader.id, item } });
     }
     for (const item of leader.bag) {
       if (sellItemProblem(world, leader.id, item)) continue;

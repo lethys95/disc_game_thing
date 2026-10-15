@@ -2,7 +2,9 @@ import { CAPITOL_MANA, CAMP_MEDIUM_FROM, CAMP_STRONG_FROM, CITY_HEALING_PER_TIER
 import type { Tile } from "#rules/battle/types";
 import { chooseProblem, isFork, openForks } from "#rules/forks";
 import { COLS, ROWS, sameTile } from "#rules/battle/grid";
-import { sameHex } from "#rules/hex";
+import { hexDistance, sameHex } from "#rules/hex";
+import type { Hex } from "#rules/hex";
+import { effectDef } from "#rules/effects";
 import { NODES } from "#rules/nodes";
 import { grow, xpToEvolve } from "#rules/progression";
 import { EVOLUTIONS, FACTION_ROOTS, GUARDIAN_ID, LINE_ARCHETYPE, RECRUIT_COST, UNITS } from "#rules/units/index";
@@ -41,13 +43,15 @@ function rootOf(defId: string): string {
 }
 
 /**
- * What recruiting `defId` costs: its faction's price, or for a tribe unit (a Tribal outpost) what a mercenary camp
- * asks. Null if it's neither.
+ * What recruiting `defId` in `city` costs: its faction's price, or for a tribe unit (a Tribal outpost) what a
+ * mercenary camp asks; less the city's Bog iron. Null if it's neither.
  */
-export function recruitCost(defId: string): number | null {
+export function recruitCost(world: World, defId: string, city: City | undefined): number | null {
   const own = RECRUIT_COST[defId];
-  if (own !== undefined) return own;
-  return UNITS[defId]?.faction === "neutral" ? hireCost({ defId, level: 0 }) : null;
+  const base = own ?? (UNITS[defId]?.faction === "neutral" ? hireCost({ defId, level: 0 }) : null);
+  if (base === null) return null;
+  const discount = city ? Math.max(0, ...giftsOf(world, city, "recruitDiscount")) : 0;
+  return Math.round(base * (1 - discount));
 }
 
 /**
@@ -56,7 +60,7 @@ export function recruitCost(defId: string): number | null {
  */
 export function recruitProblem(world: World, defId: string, into: SquadRef, tile?: Tile): string | null {
   const side = world.activePlayer;
-  const cost = recruitCost(defId);
+  const cost = recruitCost(world, defId, cityOfSquad(world, into));
   const own = FACTION_ROOTS[playerOf(world, side).faction].includes(defId);
   if (cost === null) return "not recruitable";
   if (playerOf(world, side).gold < cost) return "not enough gold";
@@ -201,6 +205,14 @@ export function newcomer(world: World, side: PlayerId, defId: string, tile: Tile
   return { ...member(defId, tile), marks: marksOnBecoming(world, side, defId) };
 }
 
+/** A unit recruited in `city`: what its nodes give it, the marks (a Blacksmith's edge) and levels (a Training yard). */
+export function recruitIn(world: World, side: PlayerId, defId: string, tile: Tile, city: City | undefined): SquadMember {
+  const recruit = newcomer(world, side, defId, tile);
+  const levels = city ? Math.max(0, ...giftsOf(world, city, "recruitLevels")) : 0;
+  const trained = { ...recruit, level: levels, marks: [...recruit.marks, ...nodeMarks(world, city)] };
+  return { ...trained, hp: maxHpOf(trained, undefined) };
+}
+
 /** Evolves or levels members in place (those `who` picks); a new form or level arrives at full health (provisional). */
 export function growSquad(world: World, { squad, leader }: Held, gained: number, side: PlayerId, events: WorldEvent[], who: (m: SquadMember) => boolean = () => true): void {
   squad.forEach((m, i) => {
@@ -252,18 +264,40 @@ export function startTurn(world: World, events: WorldEvent[]): void {
   player.cast = [];
   for (const { squad, leader } of squadsOf(world, side)) {
     const home = world.cities.find((c) => c.owner === side && (leader === undefined ? squad === c.garrison : sameHex(leader.hex, c.hex)));
-    const resting = home ? CITY_HEALING_PER_TIER * home.tier : 0;
-    const share = resting + (leader && leader.fellOnTurn === null ? squadHealingOf(leader) : 0);
+    const resting = home ? CITY_HEALING_PER_TIER * home.tier * restingPace(world, home, leader === undefined) : 0;
+    const share = resting + (leader && leader.fellOnTurn === null ? squadHealingOf(leader) + waystationHealing(world, leader) : 0);
     if (share === 0) continue;
     squad.forEach((m, i) => {
       if (!alive(m)) return;
       const max = maxHpOf(m, leader);
-      squad[i] = { ...m, hp: Math.min(max, m.hp + Math.ceil(max * share)) };
+      squad[i] = { ...m, hp: Math.min(max, m.hp + Math.ceil(max * share * markedHealing(m))) };
     });
   }
-  for (const leader of world.leaders) if (leader.player === side) leader.movement = movementOf(leader);
+  for (const leader of world.leaders) {
+    if (leader.player !== side) continue;
+    leader.movement = movementOf(leader);
+    leader.sureFooted = sureFootingAt(world, side, leader.hex);
+  }
 
   events.push({ type: "turnStarted", player: side, turn: world.turn, income: earned });
+}
+
+/** How many times faster a squad rests in its city: a Granary's garrison, or anyone of the holder's at an Oasis. */
+function restingPace(world: World, city: City, garrison: boolean): number {
+  return Math.max(1, ...giftsOf(world, city, "restHealing"), ...(garrison ? giftsOf(world, city, "garrisonHealing") : []));
+}
+
+/** A warband starting its turn next to one of its side's Waystations heals the best share among them. */
+function waystationHealing(world: World, leader: Leader): number {
+  return Math.max(0, ...nodesHeldBy(world, leader.player).filter((n) => hexDistance(n.hex, leader.hex) <= 1).map((n) => NODES[n.kind].city?.waystation?.(n.level) ?? 0));
+}
+
+/** How many times faster a unit heals on the map by its marks (an Oasis-born unit). */
+const markedHealing = (m: SquadMember): number => Math.max(1, ...m.marks.map((mark) => effectDef(mark.effect.def).mapHealing ?? 1));
+
+/** Whether a warband starting its turn on `hex` is within reach of one of its side's Dog yards. */
+function sureFootingAt(world: World, side: PlayerId, hex: Hex): boolean {
+  return world.cities.some((c) => c.owner === side && giftsOf(world, c, "sureFooting").some((reach) => hexDistance(c.hex, hex) <= reach));
 }
 
 export function learnSkillProblem(world: World, leaderId: string, skill: string): string | null {
@@ -325,6 +359,8 @@ export function investNodeProblem(world: World, nodeId: string): string | null {
   if (!node) return "no such node";
   if (cityOfNode(world, node)?.owner !== world.activePlayer) return "its city isn't yours";
   if (node.level >= NODE_MAX_LEVEL) return "already at its highest level";
+  // Some nodes don't grow (a Gallows): its words say whether the next level would change anything.
+  if (NODES[node.kind].describe(node.level + 1) === NODES[node.kind].describe(node.level)) return "its next level changes nothing";
   if (playerOf(world, world.activePlayer).gold < nodeInvestCost(node)) return "not enough gold";
   return null;
 }

@@ -4,16 +4,24 @@ import type { NodeKind } from "#rules/nodes";
 import { applyWorldAction } from "#rules/world/actions";
 import { engage } from "#rules/world/battles";
 import { createWorld } from "#rules/world/create";
-import { cityUpgradeCost, raisesDeadAt, recruitCost, recruitProblem, resurrectionCost } from "#rules/world/economy";
+import { autoplay } from "#rules/ai";
+import { ITEMS } from "#rules/items";
+import { resalePrice } from "#rules/structures";
+import type { Tile } from "#rules/battle/types";
+import type { Hex } from "#rules/hex";
+import { concludeBattle } from "#rules/world/battles";
+import { cityUpgradeCost, raisesDeadAt, recruitCost, recruitProblem, resurrectionCost, startTurn } from "#rules/world/economy";
+import { maxHpOf } from "#rules/world/record";
+import { tradePrice } from "#rules/world/structures";
 import { capacityOf } from "#rules/world/squads";
 import { movementOf } from "#rules/world/leaders";
-import { cityById, leaderById } from "#rules/world/state";
+import { cityById, leaderById, playerOf, tribeAt, tribeRecruitsOf, tribeUnits } from "#rules/world/state";
 import type { City, World } from "#rules/world/state";
 import { knownWorld, sightOf } from "#rules/world/vision";
-import { reachable } from "#rules/world/movement";
+import { reachable, warbandStepCost } from "#rules/world/movement";
 import type { Placement } from "#rules/battle/engine";
 import { COLS, ROWS } from "#rules/battle/grid";
-import { act, p, start, twoPlayers, unit, until, withGold, withGraveyard, withLeader } from "#tests/helpers";
+import { act, beside, p, start, startOf, twoPlayers, unit, until, withGold, withGraveyard, withLeader } from "#tests/helpers";
 import { describe, expect, test } from "vitest";
 
 /** The user's node picks (design/nodes.md, 2026-09-28): the marks their recruits carry. Numbers provisional. */
@@ -88,7 +96,8 @@ function holding(kind: NodeKind, level = 1): { world: World; city: City } {
   const next: World = {
     ...world,
     cities: world.cities.map((c) => (c.id === city.id ? { ...c, owner: 0, garrison: [] } : c)),
-    nodes: world.nodes.map((n) => (n === node ? { ...n, kind, level } : n)),
+    // Its only node: the others a map deals it would mix their gifts in.
+    nodes: world.nodes.flatMap((n) => (n === node ? [{ ...n, kind, level }] : n.cityId === city.id ? [] : [n])),
   };
   return { world: next, city: cityById(next, city.id) };
 }
@@ -140,25 +149,38 @@ describe("city nodes", () => {
 });
 
 describe("Tribal outpost", () => {
-  test("its city recruits bandits, more kinds with each level; they take no garrison slot", () => {
+  test("its city recruits its land's tribe, more kinds with each level; they take no garrison slot", () => {
     const { world, city } = holding("tribal_outpost", 1);
     const rich = withGold(world, [1000, 1000]);
     const garrison = { kind: "garrison" as const, cityId: city.id };
-    expect(recruitProblem(rich, "brigand", garrison)).toBeNull();
-    expect(recruitProblem(rich, "marauder", garrison)).toMatch(/Tribal outpost/);
-    expect(recruitProblem(withGold(holding("tribal_outpost", 2).world, [1000, 1000]), "marauder", garrison)).toBeNull();
-    expect(recruitProblem(withGold(holding("gold").world, [1000, 1000]), "brigand", garrison)).toMatch(/Tribal outpost/);
+    const [first, second, third] = tribeUnits(tribeAt(world.map, city.hex));
+    if (!first || !second || !third) throw new Error("a tribe of fewer than three kinds");
+    expect(tribeRecruitsOf(rich, city)).toEqual([first, second]);
+    expect(recruitProblem(rich, first, garrison)).toBeNull();
+    expect(recruitProblem(rich, third, garrison)).toMatch(/Tribal outpost/);
+    expect(recruitProblem(withGold(holding("tribal_outpost", 2).world, [1000, 1000]), third, garrison)).toBeNull();
+    expect(recruitProblem(withGold(holding("gold").world, [1000, 1000]), first, garrison)).toMatch(/Tribal outpost/);
 
     const slots = capacityOf(rich, garrison);
-    const after = applyWorldAction(rich, { type: "recruit", defId: "brigand", into: garrison }).world;
-    expect(cityById(after, city.id).garrison.map((m) => m.defId)).toEqual(["brigand"]);
+    const after = applyWorldAction(rich, { type: "recruit", defId: first, into: garrison }).world;
+    expect(cityById(after, city.id).garrison.map((m) => m.defId)).toEqual([first]);
     expect(capacityOf(after, garrison)).toBe(slots + 1);
-    expect(after.players[0]?.gold).toBe(1000 - (recruitCost("brigand") ?? 0));
+    expect(after.players[0]?.gold).toBe(1000 - (recruitCost(rich, first, city) ?? 0));
 
     // Slots aside, a full grid takes no one more.
     const tiles = ROWS.flatMap((row) => COLS.map((col) => ({ row, col })));
-    const packed = { ...rich, cities: rich.cities.map((c) => (c.id === city.id ? { ...c, garrison: tiles.map((tile) => ({ defId: "brigand", tile, hp: 60, xp: 0, marks: [], level: 0 })) } : c)) };
-    expect(recruitProblem(packed, "brigand", garrison)).toBe("garrison full");
+    const packed = { ...rich, cities: rich.cities.map((c) => (c.id === city.id ? { ...c, garrison: tiles.map((tile) => ({ defId: first, tile, hp: 60, xp: 0, marks: [], level: 0 })) } : c)) };
+    expect(recruitProblem(packed, first, garrison)).toBe("garrison full");
+  });
+
+  test("an outpost in another biome recruits that biome's tribe", () => {
+    const { world, city } = holding("tribal_outpost", 3);
+    for (const biome of ["desert", "haunted"] as const) {
+      const moved = { ...world, map: { ...world.map, tiles: { ...world.map.tiles, [hexKey(city.hex)]: { hex: city.hex, terrain: "plain" as const, biome } } } };
+      const tribe = tribeAt(moved.map, city.hex);
+      expect(["gnolls", "carnival", "herd", "drawn"]).toContain(tribe);
+      expect(tribeRecruitsOf(moved, city)).toEqual(tribeUnits(tribe).slice(0, 4));
+    }
   });
 });
 
@@ -186,5 +208,128 @@ describe("portals", () => {
     expect(reachable(revealed, "leader0").has(hexKey(far))).toBe(true);
     // Standing on a portal, a warband sees its other end: a march never steps into what it can't see.
     expect(sightOf(onPortal, 0).has(hexKey(far))).toBe(true);
+  });
+});
+
+/** The second review's nodes (user, 2026-10-15, design/nodes.md). Numbers provisional (#84). */
+describe("recruit marks, second review", () => {
+  test("Venom distillery: the first hit in a battle envenoms; the mark is spent", () => {
+    const battle = until(start([p("congregant", 0, 1, [{ def: "distilled_venom", amount: 4 }])], [p("congregant", 0, 1)]), "0.0.1");
+    const after = act(battle, "attack", "1.0.1").battle;
+    expect(unit(after, "1.0.1").effects.find((e) => e.def === "envenomed")?.amount).toBe(4);
+    expect(unit(after, "0.0.1").effects.some((e) => e.def === "distilled_venom")).toBe(false);
+  });
+
+  test("Witch hut: whoever kills a hexed unit is Punished", () => {
+    const battle = until(start([p("congregant", 0, 1)], [{ ...p("congregant", 0, 1, [{ def: "hexed", stacks: 2 }]), hp: 5 }]), "0.0.1");
+    const after = act(battle, "attack", "1.0.1").battle;
+    expect(unit(after, "1.0.1").alive).toBe(false);
+    expect(unit(after, "0.0.1").effects.find((e) => e.def === "punished")?.stacks).toBe(2);
+  });
+
+  test("Hunting lodge: more damage to neutral units, the same to others", () => {
+    expect(hit(p("congregant", 0, 1, [{ def: "hunter", amount: 20 }]), p("brigand", 0, 1))).toBeGreaterThan(hit(p("congregant", 0, 1), p("brigand", 0, 1)));
+    expect(hit(p("congregant", 0, 1, [{ def: "hunter", amount: 20 }]), p("congregant", 0, 1))).toBe(hit(p("congregant", 0, 1), p("congregant", 0, 1)));
+  });
+});
+
+describe("city nodes, second review", () => {
+  const garrisonOf = (city: City) => ({ kind: "garrison" as const, cityId: city.id });
+
+  test("Training yard: recruits arrive a level up, at full health", () => {
+    const { world, city } = holding("training_yard");
+    const after = applyWorldAction(withGold(world, [1000, 1000]), { type: "recruit", defId: "congregant", into: garrisonOf(city) }).world;
+    const [recruit] = cityById(after, city.id).garrison;
+    expect(recruit?.level).toBe(1);
+    expect(recruit && recruit.hp).toBe(recruit && maxHpOf(recruit, undefined));
+  });
+
+  test("Bog iron: the city's recruits cost less", () => {
+    const { world, city } = holding("bog_iron");
+    const full = recruitCost(world, "congregant", undefined) ?? 0;
+    expect(recruitCost(world, "congregant", city)).toBe(Math.round(full * 0.9));
+    const after = applyWorldAction(withGold(world, [1000, 1000]), { type: "recruit", defId: "congregant", into: garrisonOf(city) }).world;
+    expect(after.players[0]?.gold).toBe(1000 - Math.round(full * 0.9));
+  });
+
+  test("Caravanserai: its holder buys and hires cheaper, and nothing sells back for more than it cost", () => {
+    const { world } = holding("caravanserai", 3);
+    expect(tradePrice(world, 0, 100)).toBe(75);
+    expect(tradePrice(world, 1, 100)).toBe(100);
+    for (const item of ITEMS) expect(resalePrice(item.price)).toBeLessThanOrEqual(tradePrice(world, 0, item.price));
+  });
+
+  test("Granary: the garrison heals twice as fast; upgrades cost less", () => {
+    const healed = (kind: NodeKind) => {
+      const { world, city } = holding(kind);
+      const wounded = { defId: "congregant", tile: { row: 0, col: 1 } as const, hp: 1, xp: 0, marks: [], level: 0 };
+      const next = structuredClone({ ...world, cities: world.cities.map((c) => (c.id === city.id ? { ...c, garrison: [wounded] } : c)) });
+      startTurn(next, []);
+      return (cityById(next, city.id).garrison[0]?.hp ?? 0) - 1;
+    };
+    // Twice the share, rounded up as healing is.
+    expect(healed("gold")).toBeGreaterThan(0);
+    expect(healed("granary")).toBeGreaterThanOrEqual(2 * healed("gold") - 1);
+    const plain = holding("gold");
+    const granary = holding("granary");
+    expect(cityUpgradeCost(granary.world, granary.city)).toBe(Math.round(cityUpgradeCost(plain.world, plain.city) * 0.9));
+  });
+
+  test("Oasis: its recruits heal twice as fast anywhere, and so does anyone resting in the city", () => {
+    const { world, city } = holding("oasis");
+    const recruited = applyWorldAction(withGold(world, [1000, 1000]), { type: "recruit", defId: "congregant", into: garrisonOf(city) }).world;
+    expect(cityById(recruited, city.id).garrison[0]?.marks.map((m) => m.effect.def)).toContain("oasis_born");
+
+    const restingIn = (kind: NodeKind) => {
+      const held = holding(kind);
+      const leader = leaderById(held.world, "leader0");
+      const next = structuredClone(withLeader(held.world, "leader0", { hex: held.city.hex, squad: leader.squad.map((m) => ({ ...m, hp: 1 })) }));
+      startTurn(next, []);
+      return (leaderById(next, "leader0").squad[0]?.hp ?? 0) - 1;
+    };
+    expect(restingIn("gold")).toBeGreaterThan(0);
+    expect(restingIn("oasis")).toBeGreaterThanOrEqual(2 * restingIn("gold") - 1);
+  });
+
+  test("Waystation: a warband starting its turn next to it heals; farther off it doesn't", () => {
+    const { world } = holding("waystation");
+    const station = world.nodes.find((n) => n.kind === "waystation");
+    if (!station) throw new Error("no waystation");
+    const at = (hex: Hex) => {
+      const leader = leaderById(world, "leader0");
+      const next = structuredClone(withLeader(world, "leader0", { hex, squad: leader.squad.map((m) => ({ ...m, hp: 1 })) }));
+      startTurn(next, []);
+      return (leaderById(next, "leader0").squad[0]?.hp ?? 0) - 1;
+    };
+    expect(at(beside(world, station.hex))).toBe(Math.ceil(90 * 0.25));
+    const away = Object.values(world.map.tiles).find((t) => hexDistance(t.hex, station.hex) >= 3 && world.cities.every((c) => hexDistance(c.hex, t.hex) > 0));
+    if (!away) throw new Error("nowhere away");
+    expect(at(away.hex)).toBe(0);
+  });
+
+  test("Gallows: attackers who die at the city never reach their graveyard", () => {
+    const graveAfterStorming = (kind: NodeKind) => {
+      const { world, city } = holding(kind);
+      const guards = COLS.flatMap((col) => [0, 1].map((row) => ({ defId: "punisher", tile: { row, col } as Tile, hp: 200, xp: 0, marks: [], level: 0 })));
+      const walled = withLeader({ ...world, cities: world.cities.map((c) => (c.id === city.id ? { ...c, garrison: guards } : c)) }, "leader1", { hex: beside(world, city.hex) });
+      const next = applyWorldAction({ ...walled, activePlayer: 1 }, { type: "move", leaderId: "leader1", to: city.hex }).world;
+      const battle = next.engagement?.battle;
+      if (!battle) throw new Error("no battle");
+      return playerOf(concludeBattle(next, autoplay(battle)).world, 1).graveyard.length;
+    };
+    expect(graveAfterStorming("gold")).toBeGreaterThan(0);
+    expect(graveAfterStorming("gallows")).toBe(0);
+  });
+
+  test("Dog yard: a warband starting its turn near the city crosses forest and hills at plain cost", () => {
+    const { world, city } = holding("dog_yard");
+    const rough = Object.values(world.map.tiles).find((t) => t.terrain === "forest" || t.terrain === "hills");
+    if (!rough) throw new Error("no rough ground");
+    const near = structuredClone(withLeader(world, "leader0", { hex: city.hex }));
+    startTurn(near, []);
+    expect(warbandStepCost(near, leaderById(near, "leader0"), rough.hex)).toBe(1);
+    const far = structuredClone(withLeader(world, "leader0", { hex: startOf(world, 0) }));
+    startTurn(far, []);
+    expect(warbandStepCost(far, leaderById(far, "leader0"), rough.hex)).toBe(2);
   });
 });

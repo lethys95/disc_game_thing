@@ -4,7 +4,7 @@ import { hexDistance } from "#rules/hex";
 import { findPath, generateMap, stepCost } from "#rules/map";
 import { itemById } from "#rules/items";
 import { spellById } from "#rules/spells";
-import { hireCost, MERCENARY_STOCKS, MERCHANT_RESTOCK_TURNS, MERCHANT_STAPLES, resalePrice, STRUCTURE_KINDS, structuresPerKind } from "#rules/structures";
+import { hireCost, MERCHANT_RESTOCK_TURNS, MERCHANT_STAPLES, resalePrice, STRUCTURE_KINDS, structuresPerKind } from "#rules/structures";
 import { applyWorldAction } from "#rules/world/actions";
 import { createWorld } from "#rules/world/create";
 import { maxHpOf } from "#rules/world/record";
@@ -62,7 +62,8 @@ describe("placement", () => {
 describe("mercenary camp", () => {
   test("hires a unit into the warband standing there, seasoned and at full health, and never runs out", () => {
     const w = visiting(fresh(), "mercenaries");
-    const [first] = MERCENARY_STOCKS[0] ?? [];
+    const stock = structure(w, "mercenaries");
+    const [first] = stock.kind === "mercenaries" ? stock.stock : [];
     if (!first) throw new Error("no stock");
     const step = applyWorldAction(w, { type: "hire", leaderId: "leader0", index: 0 });
     const squad = leaderById(step.world, "leader0").squad;
@@ -72,7 +73,7 @@ describe("mercenary camp", () => {
     expect(playerOf(step.world, 0).gold).toBe(1000 - hireCost(first));
     expect(step.events).toContainEqual({ type: "hired", leaderId: "leader0", defId: first.defId });
     const camp = structure(step.world, "mercenaries");
-    expect(camp.kind === "mercenaries" && camp.stock).toEqual(MERCENARY_STOCKS[0]);
+    expect(camp).toEqual(stock);
     const again = applyWorldAction(step.world, { type: "hire", leaderId: "leader0", index: 0 }).world;
     expect(leaderById(again, "leader0").squad.filter((m) => m.defId === first.defId)).toHaveLength(2);
   });

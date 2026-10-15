@@ -15,7 +15,7 @@ import { isLeaderOf, placementOf } from "#rules/world/record";
 import type { MoveTarget } from "#rules/world/movement";
 import { updateVision } from "#rules/world/vision";
 import { bury, clearLair, settleWarbands } from "#rules/world/fate";
-import { alive, cityById, lairById, wallArmorOf, leaderAt, leaderById, nodesOf, playerOf, unitId } from "#rules/world/state";
+import { alive, cityById, giftsOf, lairById, wallArmorOf, leaderAt, leaderById, nodesOf, playerOf, unitId } from "#rules/world/state";
 import type { City, Defender, Enchantment, Engagement, Leader, PlayerId, SquadMember, World, WorldEvent, WorldStep } from "#rules/world/state";
 
 /**
@@ -54,6 +54,12 @@ function defendedCity(world: World, defender: Defender, player: PlayerId | null)
 function wallsFor(world: World, defender: Defender, player: PlayerId | null): number {
   const city = defendedCity(world, defender, player);
   return city ? wallArmorOf(world, city) : 0;
+}
+
+/** Whether the city the defenders stand in has a Gallows. */
+function gallowsAt(world: World, defender: Defender, player: PlayerId | null): boolean {
+  const city = defendedCity(world, defender, player);
+  return city !== undefined && giftsOf(world, city, "hangsTheDead").length > 0;
 }
 
 /** What the city's nodes give the defenders behind its walls (a Bell tower's warning). */
@@ -161,7 +167,9 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
   const gone = (before: readonly SquadMember[], after: readonly SquadMember[]) => before.filter((m) => !after.some((a) => sameTile(a.tile, m.tile)));
   // A corpse burst by a corpse explosion never reaches the graveyard (the canon fungal infestation prevents it).
   const intact = (side: Side) => (m: SquadMember) => battle.units[unitId(side, m.tile)]?.corpse !== "destroyed";
-  bury(draft, attacker.player, gone(attacker.squad, attackers).filter(intact(ATTACKER)), events);
+  // A city's Gallows: attackers who die at it never reach their graveyard.
+  const hanged = defendedCity(draft, engagement.defender, defending.player)?.owner === defending.player && gallowsAt(draft, engagement.defender, defending.player);
+  bury(draft, attacker.player, hanged ? [] : gone(attacker.squad, attackers).filter(intact(ATTACKER)), events);
   bury(draft, defending.player, gone(defending.squad, defenders).filter(intact(DEFENDER)), events);
 
   attacker.squad = attackers;

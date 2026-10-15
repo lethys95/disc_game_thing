@@ -18,7 +18,7 @@ import { chooseBranchProblem, elevateProblem, income, learnSkillProblem, recruit
 import { equipProblem, leadershipOf, movementOf } from "#rules/world/leaders";
 import { itemById } from "#rules/items";
 import { hireCost } from "#rules/structures";
-import { buyItemProblem, buySpellProblem, forSale, hireProblem } from "#rules/world/structures";
+import { buyItemProblem, buySpellProblem, forSale, hireProblem, tradePrice } from "#rules/world/structures";
 import { useItemProblem } from "#rules/world/items";
 import { destination, planMove } from "#rules/world/movement";
 import type { MovePlan, MoveTarget } from "#rules/world/movement";
@@ -383,8 +383,8 @@ const tribalGuards: Planner = ({ world, side, rich, spareFor }) => {
   for (const city of world.cities.filter((c) => c.owner === side)) {
     const garrison: SquadRef = { kind: "garrison", cityId: city.id };
     const best = tribeRecruitsOf(world, city)
-      .filter((defId) => spareFor(recruitCost(defId) ?? Infinity) && !recruitProblem(world, defId, garrison))
-      .sort((a, b) => (recruitCost(b) ?? 0) - (recruitCost(a) ?? 0))[0];
+      .filter((defId) => spareFor(recruitCost(world, defId, city) ?? Infinity) && !recruitProblem(world, defId, garrison))
+      .sort((a, b) => (recruitCost(world, b, city) ?? 0) - (recruitCost(world, a, city) ?? 0))[0];
     if (best) return { type: "recruit", defId: best, into: garrison };
   }
   return null;
@@ -440,7 +440,7 @@ function tradeAt({ world, spareFor }: AiContext, leader: Leader, structure: Stru
   switch (structure.kind) {
     case "mercenaries": {
       const best = structure.stock
-        .map((hire, index) => ({ index, cost: hireCost(hire) }))
+        .map((hire, index) => ({ index, cost: tradePrice(world, leader.player, hireCost(hire)) }))
         .filter(({ index, cost }) => spareFor(cost) && !hireProblem(there, leader.id, index))
         .sort((a, b) => b.cost - a.cost)[0];
       return best ? { type: "hire", leaderId: leader.id, index: best.index } : null;
@@ -449,7 +449,7 @@ function tradeAt({ world, spareFor }: AiContext, leader: Leader, structure: Stru
       // Something it can wear in a free slot, or a healing potion to carry if it has none.
       const worth = (id: string) => !equipProblem({ ...leader, bag: [...leader.bag, id] }, id) || (itemById(id).use?.kind === "healWarband" && !leader.bag.includes(id));
       const item = forSale(structure)
-        .filter((id) => spareFor(itemById(id).price) && !buyItemProblem(there, leader.id, id) && worth(id))
+        .filter((id) => spareFor(tradePrice(world, leader.player, itemById(id).price)) && !buyItemProblem(there, leader.id, id) && worth(id))
         .sort((a, b) => itemById(a).price - itemById(b).price)[0];
       return item ? { type: "buyItem", leaderId: leader.id, item } : null;
     }

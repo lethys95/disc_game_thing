@@ -38,7 +38,7 @@ export function destination(world: World, side: PlayerId, hex: Hex): MoveTarget 
 export function warbandStepCost(world: World, leader: Leader, hex: Hex): number | null {
   if (world.wards.some((w) => sameHex(w.hex, hex))) return null;
   const cost = stepCost(world.map, hex);
-  return cost !== null && sureFooted(leader.worn) ? Math.min(cost, TERRAIN_COST.plain ?? 1) : cost;
+  return cost !== null && (leader.sureFooted || sureFooted(leader.worn)) ? Math.min(cost, TERRAIN_COST.plain ?? 1) : cost;
 }
 
 export function planMove(world: World, leaderId: string, to: Hex): MovePlan | null {

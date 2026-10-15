@@ -7,8 +7,8 @@ import { hireCost, MERCHANT_STAPLES, resalePrice } from "#rules/structures";
 import { freeTile, newcomer } from "#rules/world/economy";
 import { leadershipOf } from "#rules/world/leaders";
 import { maxHpOf } from "#rules/world/record";
-import { leaderById, playerOf } from "#rules/world/state";
-import type { Leader, Merchant, Structure, World, WorldEvent } from "#rules/world/state";
+import { giftsOf, leaderById, playerOf } from "#rules/world/state";
+import type { Leader, Merchant, PlayerId, Structure, World, WorldEvent } from "#rules/world/state";
 
 /**
  * Visiting map structures (`rules/structures.ts`): a warband standing on one trades there, on its player's turn.
@@ -36,12 +36,18 @@ function narrow<K extends Structure["kind"]>(structure: Structure, kind: K): Ext
   return structure;
 }
 
+/** What its holder pays at merchants and mercenary camps: the price less its best Caravanserai's share. */
+export function tradePrice(world: World, player: PlayerId, price: number): number {
+  const held = world.cities.filter((c) => c.owner === player).flatMap((c) => giftsOf(world, c, "tradeDiscount"));
+  return Math.round(price * (1 - Math.max(0, ...held)));
+}
+
 export function hireProblem(world: World, leaderId: string, index: number, tile?: Tile): string | null {
   const visit = visitProblem(world, leaderId, "mercenaries");
   if ("problem" in visit) return visit.problem;
   const hire = visit.structure.stock[index];
   if (!hire) return "nobody left to hire";
-  if (playerOf(world, world.activePlayer).gold < hireCost(hire)) return "not enough gold";
+  if (playerOf(world, world.activePlayer).gold < tradePrice(world, world.activePlayer, hireCost(hire))) return "not enough gold";
   const squad = visit.leader.squad;
   if (squad.length >= leadershipOf(visit.leader)) return `squad full (Leadership ${leadershipOf(visit.leader)})`;
   if (tile && squad.some((m) => sameTile(m.tile, tile))) return "that spot is taken";
@@ -56,7 +62,7 @@ export function hire(world: World, leaderId: string, index: number, tile: Tile |
   const hired = visit.structure.stock[index];
   const spot = tile ?? (hired ? freeTile(visit.leader.squad, hired.defId) : null);
   if (!hired || !spot) throw new Error("cannot hire: no free spot");
-  playerOf(world, world.activePlayer).gold -= hireCost(hired);
+  playerOf(world, world.activePlayer).gold -= tradePrice(world, world.activePlayer, hireCost(hired));
   // It comes seasoned: its levels, and the health they bring, at full.
   const seasoned = { ...newcomer(world, world.activePlayer, hired.defId, spot), level: hired.level };
   visit.leader.squad.push({ ...seasoned, hp: maxHpOf(seasoned, undefined) });
@@ -70,7 +76,7 @@ export function buyItemProblem(world: World, leaderId: string, item: string): st
   const visit = visitProblem(world, leaderId, "merchant");
   if ("problem" in visit) return visit.problem;
   if (!forSale(visit.structure).includes(item)) return "not for sale here";
-  if (playerOf(world, world.activePlayer).gold < itemById(item).price) return "not enough gold";
+  if (playerOf(world, world.activePlayer).gold < tradePrice(world, world.activePlayer, itemById(item).price)) return "not enough gold";
   return null;
 }
 
@@ -80,7 +86,7 @@ export function buyItem(world: World, leaderId: string, item: string, events: Wo
   if (problem || "problem" in visit) throw new Error(`cannot buy ${item}: ${problem}`);
   // Staples never run out; a ware is gone once bought.
   if (!MERCHANT_STAPLES.includes(item)) visit.structure.wares.splice(visit.structure.wares.indexOf(item), 1);
-  playerOf(world, world.activePlayer).gold -= itemById(item).price;
+  playerOf(world, world.activePlayer).gold -= tradePrice(world, world.activePlayer, itemById(item).price);
   visit.leader.bag.push(item);
   events.push({ type: "bought", leaderId, item });
 }

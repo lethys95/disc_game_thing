@@ -1,7 +1,7 @@
 import { autoplay } from "#rules/ai";
 import type { Placement } from "#rules/battle/engine";
 import { hexagon, hexDistance, hexKey, neighbors } from "#rules/hex";
-import { PATCH_BIOMES, SPECIAL_NODES, findPath, generateMap, TERRAIN_COST } from "#rules/map";
+import { NODE_POOLS, PATCH_BIOMES, SPECIALS_PER_CITY, findPath, generateMap, TERRAIN_COST } from "#rules/map";
 import type { Commitment } from "#rules/forks";
 import { GUARDIAN_ID } from "#rules/units/index";
 import { CITY_HEALING_PER_TIER, CAMP_REGROWTH_TURNS, CAMP_STRONG_FROM, CAPITOL_INCOME, MINE_INCOME, STARTING_GOLD } from "#rules/balance";
@@ -50,16 +50,17 @@ describe("map", () => {
       expect(generateMap(seed)).toEqual(map);
       const capitols = map.sites.filter((s) => s.kind === "capitol").map((s) => s.hex);
       expect(capitols).toEqual([...map.starts]);
-      const specials: string[] = [];
       for (const site of map.sites.filter((s) => s.kind === "city")) {
-        // An economic node first; a special one beside it where there's room.
+        // An economic node first; two different special ones beside it where there's room, from its biome's pool
+        // or the "anywhere" pool only.
         expect(["gold", "mana"]).toContain(site.nodes[0]?.kind);
-        expect(site.nodes.length).toBeLessThanOrEqual(2);
-        for (const n of site.nodes.slice(1)) specials.push(n.kind);
+        const specials = site.nodes.slice(1).map((n) => n.kind);
+        expect(specials.length).toBeLessThanOrEqual(SPECIALS_PER_CITY);
+        expect(new Set(specials).size).toBe(specials.length);
+        const pool = [...NODE_POOLS[map.tiles[hexKey(site.hex)]?.biome ?? "temperate"], ...NODE_POOLS.anywhere];
+        for (const kind of specials) expect(pool).toContain(kind);
         for (const start of map.starts) expect(findPath(map, start, site.hex, () => false)).not.toBeNull();
       }
-      expect(specials.every((k) => SPECIAL_NODES.includes(k as (typeof SPECIAL_NODES)[number]))).toBe(true);
-      expect(new Set(specials).size).toBe(Math.min(specials.length, SPECIAL_NODES.length));
     }
     expect(generateMap(1)).not.toEqual(generateMap(2));
   });

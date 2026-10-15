@@ -498,6 +498,17 @@ export class MapView {
         watchtower: () => tower(stone, dark, 0.7),
         bell_tower: () => tower(stone, candle, 0.55),
         tribal_outpost: () => lodge(new THREE.MeshStandardMaterial({ color: 0x5a4632, roughness: 1 }), new THREE.MeshStandardMaterial({ color: 0x7a2a1e, roughness: 0.9 })),
+        venom_distillery: () => pool(new THREE.Color(0x3f5a22)),
+        witch_hut: () => lodge(new THREE.MeshStandardMaterial({ color: 0x3a3028, roughness: 1 }), new THREE.MeshStandardMaterial({ color: 0x40324a, roughness: 0.9 })),
+        hunting_lodge: () => lodge(new THREE.MeshStandardMaterial({ color: 0x6a5238, roughness: 1 }), new THREE.MeshStandardMaterial({ color: 0x3e4a2a, roughness: 0.9 })),
+        training_yard: () => lodge(stone, new THREE.MeshStandardMaterial({ color: 0x7a3a2a, roughness: 0.9 })),
+        gallows: () => tower(dark, dark, 0.5),
+        waystation: () => lodge(stone, new THREE.MeshStandardMaterial({ color: 0x5a4a3a, roughness: 0.9 })),
+        caravanserai: () => lodge(new THREE.MeshStandardMaterial({ color: 0xb89a6a, roughness: 1 }), new THREE.MeshStandardMaterial({ color: 0x8a5a3a, roughness: 0.9 })),
+        bog_iron: () => orePile(node.hex, new THREE.MeshStandardMaterial({ color: 0x6a3a22, roughness: 0.8 }), dark),
+        granary: () => lodge(stone, new THREE.MeshStandardMaterial({ color: 0xb8a060, roughness: 1 })),
+        oasis: () => pool(new THREE.Color(0x2a5a6a)),
+        dog_yard: () => lodge(new THREE.MeshStandardMaterial({ color: 0x5a4a3a, roughness: 1 }), new THREE.MeshStandardMaterial({ color: 0x8a8a8a, roughness: 0.9 })),
       };
       const model = models[node.kind]();
       model.position.copy(this.standingPoint(node.hex));

@@ -370,6 +370,8 @@ export interface EffectDef {
    * moves as fast as its best (Stables).
    */
   readonly mapMovement?: number;
+  /** Carried as a mark, how many times faster its bearer heals on the map (an Oasis). */
+  readonly mapHealing?: number;
   /**
    * Its bearer is off the field for now (Spiritwalk, user 2026-09-29): not a target, not in the front line, takes no
    * turns, "doesn't count as present". Alive all the same.

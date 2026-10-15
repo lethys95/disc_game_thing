@@ -109,6 +109,8 @@ export interface Leader {
   /** Items worn in the leader's equipment slots (`rules/items.ts`), and carried unworn. */
   worn: string[];
   bag: string[];
+  /** It started this turn near one of its side's Dog yards: forest and hills cost it what plains do, this turn. */
+  sureFooted: boolean;
 }
 
 /** A spell's lasting effect on a warband or a city's defenders, until the end of turn `until`. */
@@ -452,9 +454,11 @@ const GROUPS: Readonly<Record<Tribe, Readonly<Record<Strength, Group>>>> = {
 
 export const TRIBES: readonly Tribe[] = ["bandits", "gnolls", "drawn", "carnival", "wild", "tusk", "scaled", "herd", "clans"];
 
-/** Every unit a tribe fields, in any of its groups, in order of first appearance. */
+/** Every unit a tribe fields, in any of its groups: the lowest tiers first, then in order of first appearance. */
 export function tribeUnits(tribe: Tribe): string[] {
-  return [...new Set(Object.values(GROUPS[tribe]).flatMap((group) => group.units.map(([defId]) => defId)))];
+  const { weak, medium, strong } = GROUPS[tribe];
+  const types = [...new Set([weak, medium, strong].flatMap((group) => group.units.map(([defId]) => defId)))];
+  return types.map((defId, order) => ({ defId, order, tier: UNITS[defId]?.tier ?? 1 })).sort((a, b) => a.tier - b.tier || a.order - b.order).map((t) => t.defId);
 }
 
 export function neutralGroup(tribe: Tribe, strength: Strength): SquadMember[] {
@@ -467,7 +471,8 @@ export function neutralGroup(tribe: Tribe, strength: Strength): SquadMember[] {
 
 /**
  * Who guards a camp or dungeon here: one of its biome's tribes, chosen by the site's place, so the same map always has
- * the same guards (provisional #63, #82). Neutral cities keep bandit garrisons.
+ * the same guards (provisional #63, #82). Neutral cities keep bandit garrisons. A Tribal outpost and a mercenary camp
+ * draw on the same tribe as a camp on their hex would.
  */
 export function tribeAt(map: WorldMap, hex: Hex): Tribe {
   const tribes = TRIBES_OF_BIOME[map.tiles[hexKey(hex)]?.biome ?? "temperate"];
@@ -561,7 +566,7 @@ export const cityOfNode = (world: World, node: MapNode): City | undefined => wor
 export const nodesOf = (world: World, city: City): MapNode[] => world.nodes.filter((n) => cityOfNode(world, n)?.id === city.id);
 
 /** A city gift (`nodes.ts` CityGifts) from each of the city's nodes that has it, at the node's level. */
-export function giftsOf(world: World, city: City, gift: Exclude<keyof CityGifts, "defenderEffects" | "tribeRecruits">): number[] {
+export function giftsOf(world: World, city: City, gift: Exclude<keyof CityGifts, "defenderEffects">): number[] {
   return nodesOf(world, city).flatMap((n) => {
     const at = NODES[n.kind].city?.[gift];
     return at ? [at(n.level)] : [];
@@ -573,9 +578,10 @@ export function wallArmorOf(world: World, city: City, tier = city.tier): number 
   return CITY_ARMOR_PER_TIER * (tier - 1) + giftsOf(world, city, "wallArmor").reduce((a, b) => a + b, 0);
 }
 
-/** The tribe units a city can recruit (a Tribal outpost), besides its holder's own. */
+/** The tribe units a city can recruit (a Tribal outpost), besides its holder's own: its land's tribe's, the first few. */
 export function tribeRecruitsOf(world: World, city: City): string[] {
-  return [...new Set(nodesOf(world, city).flatMap((n) => [...(NODES[n.kind].city?.tribeRecruits?.(n.level) ?? [])]))];
+  const offered = Math.max(0, ...giftsOf(world, city, "tribeOutpost"));
+  return offered > 0 ? tribeUnits(tribeAt(world.map, city.hex)).slice(0, offered) : [];
 }
 
 /** Every node whose city this side holds. */

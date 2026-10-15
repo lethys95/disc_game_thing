@@ -2,7 +2,6 @@ import { behavior, paramsOf } from "#rules/abilities/index";
 import { BASE_ABILITY_POWER, BLACKSMITH_BONUS, MANA_NODE_INCOME, MINE_INCOME } from "#rules/balance";
 import { effectDef } from "#rules/effects";
 import type { EffectSeed } from "#rules/battle/types";
-import { UNITS } from "#rules/units/index";
 
 /**
  * Nodes (Warlords 3 style, docs/design/pillars.md "Cities"): map features that belong to the **nearest city** (a
@@ -23,7 +22,18 @@ export type NodeKind =
   | "ossuary"
   | "watchtower"
   | "bell_tower"
-  | "tribal_outpost";
+  | "tribal_outpost"
+  | "venom_distillery"
+  | "witch_hut"
+  | "hunting_lodge"
+  | "training_yard"
+  | "gallows"
+  | "waystation"
+  | "caravanserai"
+  | "bog_iron"
+  | "granary"
+  | "oasis"
+  | "dog_yard";
 
 export interface NodeDef {
   readonly name: string;
@@ -53,8 +63,24 @@ export interface CityGifts {
   readonly sight?: (level: number) => number;
   /** Its holder hears of an enemy warband ending a march this close to the city (Bell tower). */
   readonly warning?: (level: number) => number;
-  /** Tribe units the city can recruit, besides its holder's own (a Tribal outpost; `tribes.md`). */
-  readonly tribeRecruits?: (level: number) => readonly string[];
+  /** How many of its biome's tribe units the city can recruit, besides its holder's own (a Tribal outpost; `tribes.md`). */
+  readonly tribeOutpost?: (level: number) => number;
+  /** Share off the gold for units recruited in this city (Bog iron). */
+  readonly recruitDiscount?: (level: number) => number;
+  /** Levels a unit recruited in this city arrives with (Training yard). */
+  readonly recruitLevels?: (level: number) => number;
+  /** Share off its holder's buying at merchants and hiring at mercenary camps, anywhere (Caravanserai). */
+  readonly tradeDiscount?: (level: number) => number;
+  /** How many times faster the city's garrison heals (Granary). */
+  readonly garrisonHealing?: (level: number) => number;
+  /** How many times faster any of its holder's squads resting in the city heals, garrison or warband (Oasis). */
+  readonly restHealing?: (level: number) => number;
+  /** Enemy units that die in a battle at the city never reach their owner's graveyard (Gallows). */
+  readonly hangsTheDead?: (level: number) => number;
+  /** Share of health its holder's warbands heal when they start a turn next to the node (Waystation). */
+  readonly waystation?: (level: number) => number;
+  /** Its holder's warbands that start a turn this close to the city cross forest and hills at plain cost (Dog yard). */
+  readonly sureFooting?: (level: number) => number;
   /** Effects the city's defenders bring into a battle there (Bell tower). */
   readonly defenderEffects?: (level: number) => readonly EffectSeed[];
 }
@@ -64,6 +90,16 @@ const QUARRY = { upgradeDiscount: (level: number) => 0.1 + 0.1 * level, wallArmo
 // "It sounds very powerful. Careful." (user): no discount until invested.
 const OSSUARY = { raisesDead: (level: number) => 0.1 * (level - 1) };
 const WATCHTOWER = { sight: (level: number) => 2 + level };
+// The second review (user, 2026-10-15, design/nodes.md); numbers provisional (#84).
+const TRAINING_YARD = { recruitLevels: (level: number) => (level >= 3 ? 2 : 1) };
+// "Buff to 25" (user; the brainstorm said 10%).
+const WAYSTATION = { waystation: (level: number) => 0.2 + 0.05 * level };
+const CARAVANSERAI = { tradeDiscount: (level: number) => 0.1 + 0.05 * level };
+const BOG_IRON = { recruitDiscount: (level: number) => 0.05 + 0.05 * level };
+const GRANARY = { garrisonHealing: () => 2, upgradeDiscount: (level: number) => 0.05 + 0.05 * level };
+const OASIS = { restHealing: () => 2 };
+const DOG_YARD = { sureFooting: (level: number) => level };
+const percent = (share: number): string => `${Math.round(share * 100)}%`;
 
 export const NODES: Readonly<Record<NodeKind, NodeDef>> = {
   gold: { name: "Gold mine", income: (level) => MINE_INCOME * level, mana: () => 0, recruitEffects: () => [], describe: (level) => `+${MINE_INCOME * level} gold per turn` },
@@ -94,20 +130,23 @@ export const NODES: Readonly<Record<NodeKind, NodeDef>> = {
   quarry: cityNode("Quarry", QUARRY, (level) => `the city's upgrades cost ${Math.round(QUARRY.upgradeDiscount(level) * 100)}% less; its defenders have +${QUARRY.wallArmor(level)} armor behind its walls`),
   ossuary: cityNode("Ossuary", OSSUARY, (level) => `the dead can be raised in this city without the research, at the Capitol's price${OSSUARY.raisesDead(level) > 0 ? ` less ${Math.round(OSSUARY.raisesDead(level) * 100)}%` : ""}`),
   watchtower: cityNode("Watchtower", WATCHTOWER, (level) => `you see ${WATCHTOWER.sight(level)} hexes around it, through the fog`),
-  // "I really love this one" (user): the land's tribe recruits here. Bandits until biomes bring others.
-  tribal_outpost: {
-    name: "Tribal outpost",
-    income: () => 0,
-    mana: () => 0,
-    recruitEffects: () => [],
-    describe: (level) => `the city recruits bandits (${BANDIT_RECRUITS.slice(0, level + 1).map((id) => UNITS[id]?.name ?? id).join(", ")}); they take no garrison slot`,
-    city: { tribeRecruits: (level) => BANDIT_RECRUITS.slice(0, level + 1) },
-  },
+  // "I really love this one" (user): the land's tribe recruits here; one of its biome's tribes, by the city's place.
+  tribal_outpost: cityNode("Tribal outpost", { tribeOutpost: (level) => level + 1 }, (level) => `the city recruits ${level + 1} of its land's tribe's units (more with each level); they take no garrison slot`),
   bell_tower: cityNode("Bell tower", { warning: (level) => 1 + level, defenderEffects: () => [{ def: "forewarned" }] }, (level) => `you hear of enemy warbands ending a march within ${1 + level} hexes of the city; its defenders act first in the first round of a battle there`),
+  venom_distillery: markNode("Venom distillery", (level) => ({ def: "distilled_venom", amount: 2 + level })),
+  witch_hut: markNode("Witch hut", (level) => ({ def: "hexed", stacks: 1 + level })),
+  hunting_lodge: markNode("Hunting lodge", (level) => ({ def: "hunter", amount: 10 + 5 * level })),
+  training_yard: cityNode("Training yard", TRAINING_YARD, (level) => `units recruited here arrive ${TRAINING_YARD.recruitLevels(level)} level${TRAINING_YARD.recruitLevels(level) > 1 ? "s" : ""} up`),
+  // "Potentially very powerful." (user)
+  gallows: cityNode("Gallows", { hangsTheDead: () => 1 }, () => "enemy units that die in a battle at this city can't be raised by their owner"),
+  waystation: cityNode("Waystation", WAYSTATION, (level) => `your warbands that start a turn next to it heal ${percent(WAYSTATION.waystation(level))}`),
+  caravanserai: cityNode("Caravanserai", CARAVANSERAI, (level) => `merchants and mercenary camps everywhere sell to you ${percent(CARAVANSERAI.tradeDiscount(level))} cheaper`),
+  bog_iron: cityNode("Bog iron", BOG_IRON, (level) => `units recruited in this city cost ${percent(BOG_IRON.recruitDiscount(level))} less`),
+  granary: cityNode("Granary", GRANARY, (level) => `the city's garrison heals twice as fast; its upgrades cost ${percent(GRANARY.upgradeDiscount(level))} less`),
+  // The user's wording (a maybe, 2026-10-15): "units recruited there or resting in the town have 2x regeneration".
+  oasis: { ...cityNode("Oasis", OASIS, () => ""), recruitEffects: () => [{ def: "oasis_born" }], describe: () => "units recruited here heal twice as fast on the map, for good; any of your squads resting in the city does too" },
+  dog_yard: cityNode("Dog yard", DOG_YARD, (level) => `your warbands that start a turn within ${DOG_YARD.sureFooting(level)} hex${DOG_YARD.sureFooting(level) > 1 ? "es" : ""} of the city cross forest and hills at plain cost that turn`),
 };
-
-/** The bandits a Tribal outpost offers, more with each level (provisional #56). */
-const BANDIT_RECRUITS = ["brigand", "bandit", "marauder", "hedge_mage"] as const;
 
 /** A node whose gifts are to its city, not to recruits. */
 function cityNode(name: string, city: CityGifts, describe: (level: number) => string): NodeDef {
