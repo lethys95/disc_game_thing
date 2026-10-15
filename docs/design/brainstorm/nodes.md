@@ -51,6 +51,8 @@ Any faction can hold any node. Some nodes simply read differently per faction, a
 Idea behind this: a node you capture from someone else should feel like *theirs being turned to your use*.
 
 ## Round two (Claude, 2026-10-12; for the user to pick, as round one was)
+
+> **Reviewed (user, 2026-10-15):** taken, maybe and not taken, with the biome pools, are in `../nodes.md`.
 The user: "We need more nodes before I can say which nodes to place in each biome." Twelve more, each with a biome it
 fits (not a lock: a biome's pool is the user's call), in the same three shapes as round one: recruit marks, city and
 map effects, nodes that change the economy. Numbers are only to show the size of the thing.
