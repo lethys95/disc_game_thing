@@ -134,3 +134,9 @@ Still open, on purpose until something needs them:
 `cost`, `charges`, `overload` and `replicate` mean something to the engine (spell charges, uses per combat,
 enhancements) whatever the ability. A behavior that names its own param `cost` becomes a spell no unit can afford and
 silently never shows up (Transfusion did: its health price is `paid`).
+
+## Picker pages from the phone
+A picker page in `shots/` can POST its summary to `/picks/<name>` on the dev server (`scripts/picks-plugin.ts`); it
+lands in `.cache/picks/<name>.txt`. The clipboard API needs https, so over Tailscale's plain http Send is the reliable
+way back; keep a Copy button as the fallback. Vite didn't pick up a `vite.config.ts` change on a server running for
+days: restart it (`pnpm dev --host --port 5173 --strictPort`).
