@@ -3,7 +3,7 @@ import { forkOptions, openForks } from "#rules/forks";
 import { hexDistance, hexKey, neighbors, sameHex } from "#rules/hex";
 import { knownWorld } from "#rules/world/vision";
 import { NODES } from "#rules/nodes";
-import { castProblem, learnSpellProblem, spellTargets, spellVictims } from "#rules/world/spells";
+import { castProblem, knownSpells, learnSpellProblem, spellTargets, spellVictims } from "#rules/world/spells";
 import { spellById, spellsOf } from "#rules/spells";
 import type { Hex } from "#rules/hex";
 import { stepCost } from "#rules/map";
@@ -150,8 +150,10 @@ function chooseCast(world: World): WorldAction | null {
     const target = planMove(world, from.id, hex)?.target;
     return target !== undefined && target !== null && target.kind !== "capture";
   };
-  for (const id of playerOf(world, side).spells) {
+  for (const id of knownSpells(world, side)) {
     const spell = spellById(id);
+    // Stepping home through a Waystone is a choice of where to be, which the AI's map plans don't make yet.
+    if (spell.effect.kind === "recall") continue;
     const targets = spellTargets(world, id).filter((hex) => !castProblem(world, id, hex));
     let best: { hex: Hex; score: number } | null = null;
     for (const hex of targets) {
@@ -425,7 +427,7 @@ const newWarband: Planner = ({ world, capitol, mine, home, underThreat, rich, go
   const warbandsFull = mine.every((l) => l.squad.length >= leadershipOf(l));
   if ((underThreat && !canFill) || !(mine.length === 0 || (rich && warbandsFull && mine.length < AI_MAX_WARBANDS))) return null;
   const spare = capitol.garrison.find((m) => m.defId !== GUARDIAN_ID);
-  if (spare && !elevateProblem(world, spare.tile)) return { type: "elevate", tile: spare.tile };
+  if (spare && !elevateProblem(world, capitol.id, spare.tile)) return { type: "elevate", cityId: capitol.id, tile: spare.tile };
   const garrison: SquadRef = { kind: "garrison", cityId: capitol.id };
   const guard = pick(capitol.garrison);
   return recruitProblem(world, guard, garrison) ? null : { type: "recruit", defId: guard, into: garrison };

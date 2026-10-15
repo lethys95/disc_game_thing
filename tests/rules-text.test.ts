@@ -17,6 +17,7 @@ describe("rules text follows the rules", () => {
 
   test("every spell has a text with its effect's number", () => {
     for (const spell of SPELLS) {
+      if (spell.effect.kind === "recall") continue;
       const amount = spell.effect.kind === "damage" ? spell.effect.amount : (spell.effect.effect.amount ?? 0);
       expect(describeSpell(spell)).toContain(String(amount));
     }

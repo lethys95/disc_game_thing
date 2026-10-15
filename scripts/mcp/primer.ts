@@ -16,7 +16,7 @@ THE MAP
 - Hex map with axial coordinates (q,r) and fog of war: you see around your warbands and cities, and remember places as last seen.
 - Warbands march with movement points each turn (terrain costs differ; mountains and water are impassable). Marching onto an enemy warband, a guarded city or a lair starts a battle; onto an undefended city takes it.
 - Gold comes each turn from your Capitol, the nodes (gold mines and others) of cities you hold, and some items. Holding more cities means more nodes and more gold.
-- Recruit your faction's first-tier units in any city you hold, into its garrison or into a warband standing there. A warband holds as many units as its Leadership (${STARTING_LEADERSHIP} at first, up to ${MAX_LEADERSHIP}). A Capitol garrison unit can be elevated to lead a new warband.
+- Recruit your faction's first-tier units in any city you hold, into its garrison or into a warband standing there. A warband holds as many units as its Leadership (${STARTING_LEADERSHIP} at first, up to ${MAX_LEADERSHIP}). A garrison unit of any city you hold can be elevated to lead a new warband.
 - Units resting in a city you hold heal ${Math.round(CITY_HEALING_PER_TIER * 100)}% of their max HP per wall tier at the start of your turn.
 - Lairs: camps of neutral tribes (cleared, they grow back later) and dungeons (a one-time reward). Structures: a merchant (items), a mercenary camp (hire units), a mage (spells); stand on one to trade.
 - Dead units go to your graveyard. Resurrect them at the Capitol: dear at first (${RESURRECTION_PREMIUM}x), cheaper each turn you wait. If a warband's own leader falls but the squad wins, the warband lives on but must revive its leader at the Capitol.

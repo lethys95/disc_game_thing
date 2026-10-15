@@ -242,10 +242,10 @@ export const SPECIALS_PER_CITY = 2;
 
 /**
  * The special nodes a neutral city of each biome can have, besides those of the "anywhere" pool (the user's pools,
- * 2026-10-15, design/nodes.md). The Toll bridge, Scriptorium, Shrine and Waystone join their pools once built.
+ * 2026-10-15, design/nodes.md). The Toll bridge, Scriptorium and Shrine join their pools once built.
  */
 export const NODE_POOLS: Readonly<Record<Biome | "anywhere", readonly NodeKind[]>> = {
-  anywhere: ["blacksmith", "siege_workshop", "tribal_outpost", "training_yard", "waystation"],
+  anywhere: ["blacksmith", "siege_workshop", "tribal_outpost", "training_yard", "waystation", "waystone"],
   temperate: ["cathedral", "stables", "tannery", "bell_tower", "hunting_lodge", "granary"],
   desert: ["foundry", "watchtower", "oasis", "caravanserai"],
   swamp: ["leech_pits", "venom_distillery", "bog_iron"],

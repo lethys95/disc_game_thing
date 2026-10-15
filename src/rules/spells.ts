@@ -14,6 +14,8 @@ export type SpellTarget = "enemyGroup" | "ownWarband" | "enemyCity" | "area";
 
 /** What a spell does, as data: the world applies it, whatever the spell. */
 export type SpellEffect =
+  /** The warband steps through to the Waystone city its leader was elevated in (`world/spells.ts`). */
+  | { readonly kind: "recall" }
   /** Every unit hit loses this much HP, and may die of it (`world/spells.ts`). */
   | { readonly kind: "damage"; readonly amount: number }
   /** An effect every unit of the target brings into its battles for a number of turns. */
@@ -22,8 +24,11 @@ export type SpellEffect =
 export interface SpellDef {
   readonly id: string;
   readonly name: string;
-  /** A faction's spells are learned at its Capitol; neutral ones are bought from a mage merchant. */
-  readonly faction: Playable | "neutral";
+  /**
+   * A faction's spells are learned at its Capitol; neutral ones are bought from a mage merchant; a node's are known
+   * while its city is held (the Waystone's).
+   */
+  readonly faction: Playable | "neutral" | "node";
   /** Mana per cast. */
   readonly cost: number;
   /** Gold to learn it, at the Capitol or a mage merchant (a spell tree comes later, pillars.md). */
@@ -96,6 +101,17 @@ export const SPELLS: readonly SpellDef[] = [
     radius: 0,
     effect: { kind: "enchant", effect: { def: "extra_armor", amount: 5 }, turns: 2 },
   },
+  // The user's Waystone (2026-09-29, design/nodes.md): "Gain spell 'way portal' if controlled." Mana provisional (#85).
+  {
+    id: "way_portal",
+    name: "Way portal",
+    faction: "node",
+    cost: 30,
+    learnCost: 0,
+    target: "ownWarband",
+    radius: 0,
+    effect: { kind: "recall" },
+  },
 ];
 
 export function spellById(id: string): SpellDef {
@@ -119,6 +135,7 @@ export function describeSpell(spell: SpellDef): string {
   const where = spell.target === "area" && spell.radius > 0 ? `${TARGETS.area} and every hex within ${spell.radius}` : TARGETS[spell.target];
   const who = spell.target === "area" ? "every unit of every enemy warband and neutral group there" : spell.target === "enemyCity" ? "its defenders" : "each of its units";
   if (spell.effect.kind === "damage") return `${where}: ${who} loses ${spell.effect.amount} HP.`;
+  if (spell.effect.kind === "recall") return "One of your warbands whose leader was elevated in a city with a Waystone you hold: it steps through to that city, if no leader stands there.";
   const seed = spell.effect.effect;
   const what = effectDef(seed.def).describe({ def: seed.def, source: null, stacks: seed.stacks ?? 1, amount: seed.amount ?? 0 });
   return `${where}: ${who} fight${spell.target === "enemyCity" ? "" : "s"} with ${what.replace(/\.$/, "")} for ${spell.effect.turns} turns.`;

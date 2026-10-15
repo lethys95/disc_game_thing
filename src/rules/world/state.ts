@@ -109,6 +109,8 @@ export interface Leader {
   /** Items worn in the leader's equipment slots (`rules/items.ts`), and carried unworn. */
   worn: string[];
   bag: string[];
+  /** The city its leader was elevated in, until that city changes hands (a Waystone recalls to it); null for the first. */
+  elevatedIn: string | null;
   /** It started this turn near one of its side's Dog yards: forest and hills cost it what plains do, this turn. */
   sureFooted: boolean;
 }
@@ -248,7 +250,7 @@ export type WorldAction =
   | { type: "recruit"; defId: string; into: SquadRef; tile?: Tile }
   /** Move a unit between squads that meet, or within one; onto an occupied tile, the two swap. */
   | { type: "transfer"; from: SquadRef; fromTile: Tile; to: SquadRef; toTile: Tile }
-  | { type: "elevate"; tile: Tile }
+  | { type: "elevate"; cityId: string; tile: Tile }
   /** Choose a branch at a fork: free and permanent, for every unit of that kind. */
   | { type: "choose"; fork: string; to: string }
   | { type: "resurrect"; index: number; into: SquadRef; tile?: Tile }
@@ -284,6 +286,7 @@ export type WorldEvent =
   | { type: "moved"; leaderId: string; path: readonly Hex[] }
   | { type: "engaged"; attackerId: string; defender: Defender }
   | { type: "captured"; cityId: string; player: PlayerId }
+  | { type: "recalled"; leaderId: string; cityId: string }
   /** A city's bells (a Bell tower): an enemy warband ended a march near it; news for `player`, who holds it. */
   | { type: "alarm"; cityId: string; leaderId: string; player: PlayerId }
   | { type: "turnStarted"; player: PlayerId; turn: number; income: number }
@@ -582,6 +585,12 @@ export function wallArmorOf(world: World, city: City, tier = city.tier): number 
 export function tribeRecruitsOf(world: World, city: City): string[] {
   const offered = Math.max(0, ...giftsOf(world, city, "tribeOutpost"));
   return offered > 0 ? tribeUnits(tribeAt(world.map, city.hex)).slice(0, offered) : [];
+}
+
+/** A city changes hands: leaders elevated in it stop counting as elevated there (the user's Waystone). */
+export function changeHands(world: World, city: City, owner: PlayerId | null): void {
+  city.owner = owner;
+  for (const leader of world.leaders) if (leader.elevatedIn === city.id) leader.elevatedIn = null;
 }
 
 /** Every node whose city this side holds. */

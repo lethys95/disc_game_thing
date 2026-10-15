@@ -218,8 +218,8 @@ describe("world", () => {
     const recruit = capitolOf(world, 0)?.garrison.find((m) => m.defId === "congregant");
     const guardian = capitolOf(world, 0)?.garrison.find((m) => m.defId === GUARDIAN_ID);
     if (!recruit || !guardian) throw new Error("garrison missing");
-    expect(() => applyWorldAction(world, { type: "elevate", tile: guardian.tile })).toThrow(/Guardian/);
-    const step = applyWorldAction(world, { type: "elevate", tile: recruit.tile });
+    expect(() => applyWorldAction(world, { type: "elevate", cityId: "capitol0", tile: guardian.tile })).toThrow(/Guardian/);
+    const step = applyWorldAction(world, { type: "elevate", cityId: "capitol0", tile: recruit.tile });
     const created = step.world.leaders.find((l) => l.id === "leader2");
     expect(created?.squad.map((m) => m.defId)).toEqual(["congregant"]);
     expect(created?.hex).toEqual(startOf(world, 0));

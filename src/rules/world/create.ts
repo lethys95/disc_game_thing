@@ -45,6 +45,7 @@ export function createWorld(seed: number, setups: readonly PlayerSetup[], size: 
       worn: [],
       bag: [],
       sureFooted: false,
+      elevatedIn: null,
       squad: setup.squad.map((p) => member(p.defId, p.tile)),
       leaderTile: first.tile,
     };

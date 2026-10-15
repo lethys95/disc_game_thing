@@ -251,8 +251,8 @@ export class CityScreen implements KeyLayer {
             }
           : null,
       unitChoices: (ref: SquadRef, member: SquadMember): GridChoice[] =>
-        ref.kind === "garrison" && city?.kind === "capitol" && member.defId !== GUARDIAN_ID
-          ? [{ label: "Elevate to leader", problem: elevateProblem(world, member.tile), run: () => this.options.act({ type: "elevate", tile: member.tile }) }]
+        ref.kind === "garrison" && city && member.defId !== GUARDIAN_ID
+          ? [{ label: "Elevate to leader", problem: elevateProblem(world, city.id, member.tile), run: () => this.options.act({ type: "elevate", cityId: city.id, tile: member.tile }) }]
           : [],
     };
   }

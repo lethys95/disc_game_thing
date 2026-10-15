@@ -33,7 +33,8 @@ export type NodeKind =
   | "bog_iron"
   | "granary"
   | "oasis"
-  | "dog_yard";
+  | "dog_yard"
+  | "waystone";
 
 export interface NodeDef {
   readonly name: string;
@@ -44,6 +45,8 @@ export interface NodeDef {
   readonly recruitEffects: (level: number) => readonly EffectSeed[];
   /** What it gives at a level, in words. */
   readonly describe: (level: number) => string;
+  /** A spell its holder knows while holding its city (the Waystone's Way portal). */
+  readonly spell?: string;
   /** What it does for its city (and its holder) rather than for recruits; absent for most kinds. */
   readonly city?: CityGifts;
 }
@@ -145,6 +148,9 @@ export const NODES: Readonly<Record<NodeKind, NodeDef>> = {
   granary: cityNode("Granary", GRANARY, (level) => `the city's garrison heals twice as fast; its upgrades cost ${percent(GRANARY.upgradeDiscount(level))} less`),
   // The user's wording (a maybe, 2026-10-15): "units recruited there or resting in the town have 2x regeneration".
   oasis: { ...cityNode("Oasis", OASIS, () => ""), recruitEffects: () => [{ def: "oasis_born" }], describe: () => "units recruited here heal twice as fast on the map, for good; any of your squads resting in the city does too" },
+  // The user's own (2026-09-29): "Gain spell 'way portal' if controlled. Units elevated to leader in the city get
+  // teleported to the city when cast. All units stop counting as having been elevated there if the city is taken."
+  waystone: { ...cityNode("Waystone", {}, () => "while you hold it, you know the spell Way portal: a warband whose leader was elevated in this city steps through to it"), spell: "way_portal" },
   dog_yard: cityNode("Dog yard", DOG_YARD, (level) => `your warbands that start a turn within ${DOG_YARD.sureFooting(level)} hex${DOG_YARD.sureFooting(level) > 1 ? "es" : ""} of the city cross forest and hills at plain cost that turn`),
 };
 

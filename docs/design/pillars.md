@@ -41,6 +41,7 @@ by probing a full board, so they always match the rules; rules text no longer de
 
 ## Leader elevation
 Leaders are not unique unit types. Any unit can be elevated to leader at any time, irreversibly. Elevation grants squad command, overworld movement, equipment slots, and leader upgrades — **no combat stat boost**. A tier-3 Paladin leader fights exactly like a tier-3 Paladin.
+- **Any city you hold elevates** a unit of its garrison (user, 2026-10-15: "cities should allow units being elevated to leaders").
 - No leader cap. Spreading thin is self-punishing: concentrated squads win.
 - Leaders evolve through the same tiers as regular units.
 - Vexumphat is the exception: spread out, more leaders, weaker squads.

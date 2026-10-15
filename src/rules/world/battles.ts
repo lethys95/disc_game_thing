@@ -15,7 +15,7 @@ import { isLeaderOf, placementOf } from "#rules/world/record";
 import type { MoveTarget } from "#rules/world/movement";
 import { updateVision } from "#rules/world/vision";
 import { bury, clearLair, settleWarbands } from "#rules/world/fate";
-import { alive, cityById, giftsOf, lairById, wallArmorOf, leaderAt, leaderById, nodesOf, playerOf, unitId } from "#rules/world/state";
+import { alive, changeHands, cityById, giftsOf, lairById, wallArmorOf, leaderAt, leaderById, nodesOf, playerOf, unitId } from "#rules/world/state";
 import type { City, Defender, Enchantment, Engagement, Leader, PlayerId, SquadMember, World, WorldEvent, WorldStep } from "#rules/world/state";
 
 /**
@@ -187,7 +187,7 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
     const guardianFell = guardianBefore && !city.garrison.some((m) => m.defId === GUARDIAN_ID);
     if (guardianFell && defending.player !== null) eliminate(draft, defending.player, events);
     if (!draft.outcome && city.garrison.length === 0 && attacker.squad.length > 0 && !leaderAt(draft, city.hex)) {
-      city.owner = attacker.player;
+      changeHands(draft, city, attacker.player);
       attacker.hex = city.hex;
       events.push({ type: "captured", cityId: city.id, player: attacker.player });
     }
@@ -239,7 +239,7 @@ export function playersIn(engagement: Engagement): PlayerId[] {
 function eliminate(world: World, player: PlayerId, events: WorldEvent[]): void {
   playerOf(world, player).eliminated = true;
   world.leaders = world.leaders.filter((l) => l.player !== player);
-  for (const city of world.cities) if (city.owner === player) city.owner = null;
+  for (const city of world.cities) if (city.owner === player) changeHands(world, city, null);
   events.push({ type: "eliminated", player });
   const standing = world.players.map((p, id) => ({ p, id })).filter(({ p }) => !p.eliminated);
   const last = standing[0];

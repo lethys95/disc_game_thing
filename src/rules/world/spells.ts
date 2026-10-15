@@ -3,12 +3,25 @@ import type { Hex } from "#rules/hex";
 import { spellById } from "#rules/spells";
 import type { SpellDef } from "#rules/spells";
 import { isLeaderOf } from "#rules/world/record";
-import { alive, capitolOf, playerOf } from "#rules/world/state";
-import type { Lair, Leader, PlayerId, SquadMember, World, WorldEvent } from "#rules/world/state";
+import { NODES } from "#rules/nodes";
+import { alive, capitolOf, leaderAt, nodesHeldBy, nodesOf, playerOf } from "#rules/world/state";
+import type { City, Lair, Leader, PlayerId, SquadMember, World, WorldEvent } from "#rules/world/state";
 import { sightOf } from "#rules/world/vision";
 import { bury, clearLair, nearestWarband, settleWarbands } from "#rules/world/fate";
 
 /** Learning and casting overworld spells (`rules/spells.ts`): who may, on what, and what it does to the world. */
+
+/** The spells `side` can cast: those it learned, and those its held nodes give (a Waystone's). */
+export function knownSpells(world: World, side: PlayerId): string[] {
+  return [...new Set([...playerOf(world, side).spells, ...nodesHeldBy(world, side).flatMap((n) => NODES[n.kind].spell ?? [])])];
+}
+
+/** Where a Way portal takes this warband: the city its leader was elevated in, held by its side with a Waystone, if no leader stands there. */
+export function recallCity(world: World, leader: Leader): City | null {
+  const city = world.cities.find((c) => c.id === leader.elevatedIn);
+  if (!city || city.owner !== leader.player || sameHex(city.hex, leader.hex) || leaderAt(world, city.hex)) return null;
+  return nodesOf(world, city).some((n) => NODES[n.kind].spell === "way_portal") ? city : null;
+}
 
 export function learnSpellProblem(world: World, id: string): string | null {
   const player = playerOf(world, world.activePlayer);
@@ -39,7 +52,7 @@ function fits(world: World, side: PlayerId, spell: SpellDef, hex: Hex): boolean 
     case "enemyGroup":
       return groupsAt(world, hex).some((g) => g.owner !== side);
     case "ownWarband":
-      return world.leaders.some((l) => l.player === side && sameHex(l.hex, hex));
+      return world.leaders.some((l) => l.player === side && sameHex(l.hex, hex) && (spell.effect.kind !== "recall" || recallCity(world, l) !== null));
     case "enemyCity":
       return world.cities.some((c) => c.owner !== side && sameHex(c.hex, hex));
     case "area":
@@ -51,7 +64,7 @@ export function castProblem(world: World, id: string, at: Hex): string | null {
   const side = world.activePlayer;
   const player = playerOf(world, side);
   const spell = spellById(id);
-  if (!player.spells.includes(id)) return "not learned";
+  if (!knownSpells(world, side).includes(id)) return "not learned";
   if (player.cast.includes(id)) return "already cast this turn";
   if (player.mana < spell.cost) return "not enough mana";
   if (!sightOf(world, side).has(hexKey(at))) return "out of sight";
@@ -95,6 +108,15 @@ export function castSpell(world: World, id: string, at: Hex, events: WorldEvent[
     for (const group of victimGroups(world, id, at)) strike(world, group, effect.amount, side, events);
     // What a spell wipes out leaves its items to the caster's warband nearest to where it struck.
     settleWarbands(world, events, () => nearestWarband(world, side, at));
+    return;
+  }
+  if (effect.kind === "recall") {
+    for (const leader of world.leaders.filter((l) => l.player === side && sameHex(l.hex, at))) {
+      const city = recallCity(world, leader);
+      if (!city) continue;
+      leader.hex = city.hex;
+      events.push({ type: "recalled", leaderId: leader.id, cityId: city.id });
+    }
     return;
   }
   const enchantment = { spell: id, effect: effect.effect, until: world.turn + effect.turns - 1 };

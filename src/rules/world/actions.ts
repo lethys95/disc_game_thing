@@ -16,7 +16,7 @@ import { cityOfSquad, squadAt, transfer, transferProblem } from "#rules/world/sq
 import { isLeaderOf } from "#rules/world/record";
 import { RESEARCH } from "#rules/research";
 import { UPGRADES } from "#rules/upgrades";
-import { playerOf, capitolOf, cityById, giftsOf, leaderById } from "#rules/world/state";
+import { playerOf, changeHands, cityById, giftsOf, leaderById } from "#rules/world/state";
 import type { Leader, World, WorldAction, WorldEvent, WorldStep } from "#rules/world/state";
 
 /** Orders a side gives on its turn. */
@@ -60,16 +60,16 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       break;
     }
     case "elevate": {
-      const problem = elevateProblem(draft, action.tile);
-      const capitol = capitolOf(draft, side);
-      const unit = capitol?.garrison.find((m) => sameTile(m.tile, action.tile));
-      if (problem || !capitol || !unit) throw new Error(`cannot elevate: ${problem}`);
-      capitol.garrison = capitol.garrison.filter((m) => m !== unit);
+      const problem = elevateProblem(draft, action.cityId, action.tile);
+      const city = cityById(draft, action.cityId);
+      const unit = city.garrison.find((m) => sameTile(m.tile, action.tile));
+      if (problem || !unit) throw new Error(`cannot elevate: ${problem}`);
+      city.garrison = city.garrison.filter((m) => m !== unit);
       // Where its line stands: a melee leader in the front middle, anyone else in the back middle.
       const tile = { row: (freeTile([], unit.defId)?.row ?? 0), col: 1 } as const;
       const id = `leader${draft.nextLeader}`;
       draft.nextLeader += 1;
-      draft.leaders.push({ id, player: side, hex: capitol.hex, movement: LEADER_MOVEMENT, experience: 0, skills: {}, fellOnTurn: null, squad: [{ ...unit, tile }], leaderTile: tile, enchantments: [], worn: [], bag: [], sureFooted: false });
+      draft.leaders.push({ id, player: side, hex: city.hex, movement: LEADER_MOVEMENT, experience: 0, skills: {}, fellOnTurn: null, squad: [{ ...unit, tile }], leaderTile: tile, enchantments: [], worn: [], bag: [], sureFooted: false, elevatedIn: city.id });
       events.push({ type: "elevated", leaderId: id });
       break;
     }
@@ -291,7 +291,7 @@ function march(draft: World, leader: Leader, to: Hex, events: WorldEvent[]): voi
     scout(draft, leader, explored, events);
   }
   if (captures !== null) {
-    cityById(draft, captures).owner = side;
+    changeHands(draft, cityById(draft, captures), side);
     events.push({ type: "captured", cityId: captures, player: side });
     return;
   }

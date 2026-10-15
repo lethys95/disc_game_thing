@@ -239,13 +239,14 @@ export function growSquad(world: World, { squad, leader }: Held, gained: number,
   });
 }
 
-export function elevateProblem(world: World, tile: Tile): string | null {
-  const capitol = capitolOf(world, world.activePlayer);
-  if (!capitol) return "no Capitol";
-  const unit = capitol.garrison.find((m) => sameTile(m.tile, tile));
+/** Any city its holder holds elevates a garrison unit to lead a new warband (the user, 2026-10-15). */
+export function elevateProblem(world: World, cityId: string, tile: Tile): string | null {
+  const city = cityById(world, cityId);
+  if (city.owner !== world.activePlayer) return "not your city";
+  const unit = city.garrison.find((m) => sameTile(m.tile, tile));
   if (!unit) return "no unit there";
   if (unit.defId === GUARDIAN_ID) return "the Guardian never leaves the Capitol";
-  if (leaderAt(world, capitol.hex)) return "a leader already stands in the Capitol";
+  if (leaderAt(world, city.hex)) return `a leader already stands in ${city.kind === "capitol" ? "the Capitol" : "the city"}`;
   return null;
 }
 

@@ -74,7 +74,7 @@ All of the above, with provisional numbers (`provisional.md` #56). Each neutral 
 - Portals are neighbors in the movement graph (`map.ts` `exits`); a warband standing on one sees its other end.
 
 ## The user's own idea: the Waystone (2026-09-29, from the items notes)
-"Could add like a waystone node for cities. Gain spell 'way portal' if controlled. Units elevated to leader in the city get teleported to the city when cast. All units stop counting as having been elevated there if the city is taken." Not built yet.
+"Could add like a waystone node for cities. Gain spell 'way portal' if controlled. Units elevated to leader in the city get teleported to the city when cast. All units stop counting as having been elevated there if the city is taken." Built 2026-10-15, once the user let every city elevate leaders (`provisional.md` #85).
 
 ## Idea (the user, 2026-10-06): an offensive Cathedral
 "The only way for 5 congregants to work, would be if somehow you attached it to a city which provided them with ranged
@@ -82,4 +82,4 @@ attacks, which we'll get later probably. Like cathedral but offensive." A node w
 one that lets back-row melee strike), making all-melee squads viable. Not designed yet; for later.
 
 ## Built (2026-10-15)
-The pools, two specials per city, the outpost's and mercenary camps' tribes by biome, and every taken node but the Shrine and the Waystone, with the maybes the user put in pools (the Oasis in the user's wording, the Dog yard). Claude's readings and numbers: `provisional.md` #84. Not built yet: the Shrine (hidden evolution routes don't exist), the Waystone (elevation happens only at the Capitol), the Scriptorium and Toll bridge (maybes), level-3 clauses, per-faction readings, and merchants' wares by biome.
+The pools, two specials per city, the outpost's and mercenary camps' tribes by biome, and every taken node but the Shrine (the Waystone since, #85), with the maybes the user put in pools (the Oasis in the user's wording, the Dog yard). Claude's readings and numbers: `provisional.md` #84. Not built yet: the Shrine (hidden evolution routes don't exist), the Scriptorium and Toll bridge (maybes), level-3 clauses, per-faction readings, and merchants' wares by biome.

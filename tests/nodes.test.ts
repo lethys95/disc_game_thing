@@ -13,9 +13,10 @@ import { concludeBattle } from "#rules/world/battles";
 import { cityUpgradeCost, raisesDeadAt, recruitCost, recruitProblem, resurrectionCost, startTurn } from "#rules/world/economy";
 import { maxHpOf } from "#rules/world/record";
 import { tradePrice } from "#rules/world/structures";
+import { castProblem, knownSpells } from "#rules/world/spells";
 import { capacityOf } from "#rules/world/squads";
 import { movementOf } from "#rules/world/leaders";
-import { cityById, leaderById, playerOf, tribeAt, tribeRecruitsOf, tribeUnits } from "#rules/world/state";
+import { changeHands, cityById, leaderById, playerOf, tribeAt, tribeRecruitsOf, tribeUnits } from "#rules/world/state";
 import type { City, World } from "#rules/world/state";
 import { knownWorld, sightOf } from "#rules/world/vision";
 import { reachable, warbandStepCost } from "#rules/world/movement";
@@ -331,5 +332,37 @@ describe("city nodes, second review", () => {
     const far = structuredClone(withLeader(world, "leader0", { hex: startOf(world, 0) }));
     startTurn(far, []);
     expect(warbandStepCost(far, leaderById(far, "leader0"), rough.hex)).toBe(2);
+  });
+});
+
+describe("Waystone (the user's own)", () => {
+  test("any held city elevates a leader; with a Waystone, Way portal brings that warband back to it, until the city is taken", () => {
+    const { world, city } = holding("waystone");
+    const recruit = { defId: "congregant", tile: { row: 0, col: 1 } as const, hp: 90, xp: 0, marks: [], level: 0 };
+    let next: World = { ...world, cities: world.cities.map((c) => (c.id === city.id ? { ...c, garrison: [recruit] } : c)) };
+    next = withLeader(next, "leader0", { hex: startOf(world, 0) });
+    expect(knownSpells(next, 0)).toContain("way_portal");
+    expect(knownSpells(next, 1)).not.toContain("way_portal");
+
+    next = applyWorldAction(next, { type: "elevate", cityId: city.id, tile: recruit.tile }).world;
+    const raised = next.leaders.find((l) => l.elevatedIn === city.id);
+    if (!raised) throw new Error("no leader elevated");
+    expect(raised.hex).toEqual(city.hex);
+
+    // Out in the field, the portal brings it home; in the city already, there's nothing to cast.
+    const away = { ...withLeader(next, raised.id, { hex: beside(next, city.hex) }), players: next.players.map((pl) => ({ ...pl, mana: 100 })) };
+    expect(castProblem({ ...away, leaders: next.leaders }, "way_portal", city.hex)).toBe("not a valid target");
+    const step = applyWorldAction(away, { type: "castSpell", spell: "way_portal", at: beside(next, city.hex) });
+    expect(leaderById(step.world, raised.id).hex).toEqual(city.hex);
+    expect(step.events).toContainEqual({ type: "recalled", leaderId: raised.id, cityId: city.id });
+
+    // A warband that wasn't elevated there can't use it.
+    expect(castProblem(withLeader(away, "leader0", { hex: beside(next, city.hex) }), "way_portal", leaderById(away, "leader0").hex)).toBe("not a valid target");
+
+    // Taken: no one counts as elevated there any more.
+    const taken = structuredClone(away);
+    changeHands(taken, cityById(taken, city.id), 1);
+    expect(leaderById(taken, raised.id).elevatedIn).toBeNull();
+    expect(knownSpells(taken, 0)).not.toContain("way_portal");
   });
 });

@@ -1,6 +1,6 @@
 import { describeSpell, spellById, spellsOf } from "#rules/spells";
 import { FACTIONS } from "#rules/factions";
-import { learnSpellProblem } from "#rules/world/spells";
+import { knownSpells, learnSpellProblem } from "#rules/world/spells";
 import { playerOf } from "#rules/world/state";
 import type { PlayerId, World, WorldAction } from "#rules/world/state";
 import { element, gold, mana, orderButton } from "#view/dom";
@@ -41,12 +41,13 @@ function readyProblem(world: World, side: PlayerId, id: string): string | null {
 /** The map's spell bar: the learned spells; picking one starts targeting. */
 export function spellBar(world: World, side: PlayerId, mayAct: boolean, casting: string | null, pick: (id: string | null) => void): HTMLElement | null {
   const player = playerOf(world, side);
-  if (player.spells.length === 0) return null;
+  const known = knownSpells(world, side);
+  if (known.length === 0) return null;
   const bar = element("div", "spell-bar");
   const title = element("div", "title", "Spells ");
   title.appendChild(mana(player.mana, FACTIONS[player.faction].accent));
   bar.appendChild(title);
-  for (const id of player.spells) {
+  for (const id of known) {
     const spell = spellById(id);
     const problem = readyProblem(world, side, id);
     bar.appendChild(orderButton(`small${casting === id ? " selected" : ""}`, [`${spell.name} · `, mana(spell.cost, FACTIONS[player.faction].accent)], { mayAct, problem, explain: describeSpell(spell), give: () => pick(casting === id ? null : id) }));

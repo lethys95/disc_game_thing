@@ -16,7 +16,7 @@ import { useItemProblem, wardTargets } from "#rules/world/items";
 import { equipProblem, LEADER_SKILLS, movementOf, unequipProblem } from "#rules/world/leaders";
 import { planMove } from "#rules/world/movement";
 import type { MoveTarget } from "#rules/world/movement";
-import { castProblem, learnSpellProblem, spellTargets, spellVictims } from "#rules/world/spells";
+import { castProblem, knownSpells, learnSpellProblem, spellTargets, spellVictims } from "#rules/world/spells";
 import { buyItemProblem, buySpellProblem, forSale, hireProblem, sellItemProblem, structureAt, tradePrice } from "#rules/world/structures";
 import { transferProblem } from "#rules/world/squads";
 import { cityAt, cityById, lairAt, leaderAt, playerOf, tribeAt, tribeRecruitsOf } from "#rules/world/state";
@@ -168,11 +168,9 @@ function cityOrders(world: World, seat: PlayerId): MapOption[] {
         options.push({ text: `Leave ${leader.id}'s ${unitName(m.defId)} [${tileName(m.tile)}] in the ${cityName(city)} garrison.`, action: { type: "transfer", from: warband, fromTile: m.tile, to: garrison, toTile: tile } });
       }
     }
-    if (city.kind === "capitol") {
-      for (const m of city.garrison) {
-        if (m.defId === GUARDIAN_ID || elevateProblem(world, m.tile)) continue;
-        options.push({ text: `Elevate the garrison's ${unitName(m.defId)} [${tileName(m.tile)}] to lead a new warband.`, action: { type: "elevate", tile: m.tile } });
-      }
+    for (const m of city.garrison) {
+      if (m.defId === GUARDIAN_ID || elevateProblem(world, city.id, m.tile)) continue;
+      options.push({ text: `Elevate the ${cityName(city)} garrison's ${unitName(m.defId)} [${tileName(m.tile)}] to lead a new warband.`, action: { type: "elevate", cityId: city.id, tile: m.tile } });
     }
     if (!upgradeCityProblem(world, city.id)) options.push({ text: `Raise ${cityName(city)}'s walls to tier ${city.tier + 1} (${cityUpgradeCost(world, city)} gold): more garrison room and armor.`, action: { type: "upgradeCity", cityId: city.id } });
   }
@@ -213,7 +211,7 @@ function capitolOrders(world: World, seat: PlayerId): MapOption[] {
 
 function spellOrders(known: World, seat: PlayerId): MapOption[] {
   const options: MapOption[] = [];
-  for (const id of playerOf(known, seat).spells) {
+  for (const id of knownSpells(known, seat)) {
     const spell = spellById(id);
     for (const hex of spellTargets(known, id)) {
       if (castProblem(known, id, hex)) continue;

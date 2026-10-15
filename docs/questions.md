@@ -21,6 +21,5 @@ Kept short: only what is the user's to decide, most blocking first. Answer inlin
 5. **Music:** the placeholder tracks are ACE-Step takes; you mentioned Suno for final AI music. Direction per faction, or references?
 
 ## Rules
-14. **The Waystone (yours, taken 2026-10-15):** "units elevated to leader in the city get teleported to the city when cast", but leaders are elevated only at the Capitol today. Does holding a Waystone let its city elevate leaders, or should every city you hold elevate them?
 7. **Spells:** what gates the spell tree: Capitol tier, research, mana spent? The real spells are yours to design whenever you like (placeholders now, `spells`).
 8. **Items:** your sixteen taken items are in the game (`testing/items`). Open: a name for the "Gold item"; the four placeholders (Iron helm, Plate armor, Swift charm, War banner) to replace or cut; War drum, Mercenary's writ, Recruiter's cap and the later consumables are still unread (`brainstorm/items.md` §6–7).
