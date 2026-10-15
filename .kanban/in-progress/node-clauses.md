@@ -8,3 +8,5 @@
   design, so they come as proposals to pick.
 - **Done when:** The user has picked, and the picks are built.
 - **Who:** Claude pitches and builds; the user picks.
+- **Now (2026-10-15):** the page is up, `shots/city-nodes-2.html` (proposals also in `design/brainstorm/nodes.md`, round
+  three); Send lands in `.cache/picks/node-clauses.txt`.

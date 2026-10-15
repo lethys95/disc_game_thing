@@ -81,3 +81,49 @@ map effects, nodes that change the economy. Numbers are only to show the size of
 
 Round one's untaken nodes are still there to pick too: training yard, scriptorium, toll bridge, waystation, mercenary
 guildhall, aqueduct, the shrine as a node, and the user's own Waystone.
+
+## Round three (Claude, 2026-10-15): level-3 clauses, faction readings, merchants by biome
+The user took two ideas without contents on 2026-10-15: "level 3 adds a clause" and "a node reads differently per
+faction" ("as long as nodes aren't stubs for other factions"), and said merchants and mercenary camps differ by biome
+(camps are built). Proposals for picking, on the phone page `shots/city-nodes-2.html`.
+
+### Level-3 clauses (one per node)
+- **Gold mine:** plunder: whoever captures the city takes a few turns of the mine's gold. A rich city becomes a target.
+- **Mana node:** your first spell each turn aimed near the city costs half. Fights get pulled toward it.
+- **Blacksmith:** recruits' attacks ignore part of their target's armor.
+- **Cathedral:** Holy Water also cleanses: bleeding, burning, venom and Punishment leave its target.
+- **Foundry:** healing that would overfill the bearer's health goes into its plating.
+- **Leech pits:** a kill heals the bearer as much as the killing blow dealt.
+- **Stables:** pursuit: a warband with a stable-bred unit that wins a battle it started keeps its movement left.
+- **Tannery:** it softens the first hit of every round, not only the battle's first.
+- **Siege workshop:** a warband with a siege-trained unit standing next to an enemy city lowers its walls while it stays.
+- **Quarry:** the city's walls can't be lowered by spells (Break walls).
+- **Ossuary:** units raised here come back a level up.
+- **Watchtower:** it also shows the items of the warbands it sees, and where each last marched.
+- **Bell tower:** when the bells ring, your nearest warband within a few hexes gets extra movement next turn.
+- **Tribal outpost:** a tribe unit recruited here can be elevated to lead a warband.
+- **Venom distillery:** every hit on an already envenomed target adds a dose, not only the first.
+- **Witch hut:** the curse passes on: the killer is hexed in turn for the rest of the battle.
+- **Hunting lodge:** trophies: a warband with a hunter earns gold for each neutral it kills.
+- **Training yard:** units resting in its garrison gain a little XP each turn.
+- **Gallows:** a warband wiped out at the city leaves its leader's items to the city's holder.
+- **Waystation:** your warbands that start a turn next to it also get +1 movement that turn.
+- **Caravanserai:** you see every merchant's wares and every camp's hires from anywhere.
+- **Bog iron:** enemy units fighting at the city have less armor (the bog eats iron).
+- **Granary:** provisions: your warbands leaving the city heal as if resting for two more turns.
+- **Oasis:** enemy warbands within a couple of hexes of the city heal nothing.
+- **Dog yard:** enemy warbands ending a march within its reach are shown to you for a turn, through fog.
+- **Waystone:** Way portal can bring any of your warbands, not only those elevated here.
+
+### Faction readings (each reading a real effect, not a stub)
+- **Cathedral:** Jilliath: Holy Water (as now). Ral-Vitahl: a charge cell restores an ally's shield once per battle (no true healing, as the faction). Grove: sap heals an ally over a few turns, more than Holy Water in all.
+- **Foundry:** Jilliath: heals that reach the bearer mend its plating too. Ral-Vitahl: overcharge: the plating starts above its maximum. Grove: bark: the plating never mends, but the bearer heals each turn while any of it holds.
+- **Leech pits:** Jilliath: the leeched health goes to the ally beside it with the least health (health as a resource). Ral-Vitahl: it restores shield instead of health. Grove: the heal comes over two turns, and more of it.
+- **Ossuary:** Jilliath: raised units come back hexed (their killer is Punished). Ral-Vitahl: automatons are rebuilt here at half price. Grove: raised units come back with a heal over time in their first battle.
+- **Witch hut:** Jilliath: the killer is Punished (as now). Ral-Vitahl: the killer is discharged, its shield gone. Grove: the killer withers.
+- **Scriptorium** (the user's maybe, waiting for exactly this): Jilliath: casters' first use of their own health as a resource each battle costs none. Ral-Vitahl: casters start each battle with an extra spell charge. Grove: casters' heals over time last a turn longer.
+
+### Merchants by biome
+Which items each biome's merchants lay out (the staples, potions, everywhere): hints on the page by each item's
+character (the carnival's deck in the desert and haunted woods, burial wrappings and the hollow plate in haunted
+woods, the clans' grudge in the tundra).

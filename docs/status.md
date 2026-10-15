@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-15 (any held city elevates leaders; the Waystone and Way portal; `testing/biome-nodes`)
+**Updated:** 2026-10-15 (the node clauses page for the phone: `shots/city-nodes-2.html`)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): a first complete version, far off (the board's README
@@ -51,8 +51,8 @@ interface change.
    Spiritess tier 4, the joker lines, owners for Evasion, Explode and Soak.
 2. **Claude's own, meanwhile:** icons for abilities, effects and items (`icons`, the user's suggestion); looks for
    the units without one (`unit-looks`, Nexus first), then their concepts and portraits.
-3. **The user's picks waiting:** node clauses, faction readings and merchants by biome (`todo/node-clauses`, a phone
-   page like `shots/city-nodes.html`; Send lands in `.cache/picks/`), and
+3. **The user's picks waiting:** node clauses, faction readings and merchants by biome (`in-progress/node-clauses`,
+   the phone page `shots/city-nodes-2.html`; read `.cache/picks/node-clauses.txt` once sent), and
    everything in `testing/`.
 4. **The balance pass** once the factions' lines exist, with the user's worry that Jilliath's lines are too long.
 
