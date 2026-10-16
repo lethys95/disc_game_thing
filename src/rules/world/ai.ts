@@ -7,7 +7,8 @@ import { castProblem, knownSpells, learnSpellProblem, spellTargets, spellVictims
 import { spellById, spellsOf } from "#rules/spells";
 import type { Hex } from "#rules/hex";
 import { stepCost } from "#rules/map";
-import { nextForm } from "#rules/progression";
+import { nextForm, xpValue } from "#rules/progression";
+import { hangingFor } from "#rules/world/fate";
 import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
 import { upgradesOf } from "#rules/upgrades";
 import { autoplay } from "#rules/ai";
@@ -296,6 +297,19 @@ const leaderUpkeep: Planner = ({ world, mine }) => {
   return null;
 };
 
+/**
+ * A Gallows waits for the AI's choice: its own dead, it gives up the least of them; an enemy's (its Gallows upgraded),
+ * it hangs the most valuable.
+ */
+const hangings: Planner = ({ world, side }) => {
+  const hanging = hangingFor(world, side);
+  if (!hanging) return null;
+  const worth = hanging.dead.map((f, index) => ({ index, value: xpValue(f.defId) * (1 + f.level / 4) }));
+  const own = hanging.owner === side;
+  const pick = worth.sort((a, b) => (own ? a.value - b.value : b.value - a.value))[0];
+  return pick ? { type: "hang", index: pick.index } : null;
+};
+
 /** Choosing is free, so the AI settles every fork it can reach right away. */
 const forks: Planner = ({ world, side, capitol }) => {
   if (!capitol) return null;
@@ -566,6 +580,7 @@ const marches: Planner = (ai) => {
  * (the Capitol's safety before growth), then spells, then the army: sieges, blitzes, marches.
  */
 const PLANNERS: readonly Planner[] = [
+  hangings,
   leaderUpkeep,
   forks,
   revival,

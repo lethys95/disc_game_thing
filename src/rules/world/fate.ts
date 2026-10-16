@@ -5,7 +5,7 @@ import { GUARDIAN_ID } from "#rules/units/index";
 import { freeTile, newcomer } from "#rules/world/economy";
 import { leadershipOf } from "#rules/world/leaders";
 import { alive, leaderUnit, playerOf } from "#rules/world/state";
-import type { Lair, Leader, PlayerId, SquadMember, World, WorldEvent } from "#rules/world/state";
+import type { City, Fallen, Hanging, Lair, Leader, PlayerId, SquadMember, World, WorldEvent } from "#rules/world/state";
 
 /**
  * What happens to the dead and the beaten on the map, whoever killed them (a battle, a spell): one place, so the two
@@ -20,6 +20,46 @@ export function bury(world: World, player: PlayerId | null, dead: readonly Squad
     playerOf(world, player).graveyard.push({ defId: m.defId, fellOnTurn: world.turn, marks: m.marks, level: m.level });
     events.push({ type: "fell", player, defId: m.defId });
   }
+}
+
+/**
+ * The dead of a failed storm on a Gallows city: one is hanged, never to be raised. With one dead there's nothing to
+ * choose; with more, `picker` chooses (`hangProblem`), and the rest go to the owner's graveyard then.
+ */
+export function hang(world: World, city: City, picker: PlayerId, owner: PlayerId, dead: readonly SquadMember[], events: WorldEvent[]): void {
+  const fallen = dead.filter((m) => m.defId !== GUARDIAN_ID).map((m): Fallen => ({ defId: m.defId, fellOnTurn: world.turn, marks: m.marks, level: m.level }));
+  const [only] = fallen;
+  if (!only) return;
+  if (fallen.length === 1) {
+    events.push({ type: "hanged", player: owner, defId: only.defId });
+    return;
+  }
+  world.hangings.push({ cityId: city.id, picker, owner, dead: fallen });
+}
+
+/** The hanging waiting for `player` to choose, if any. */
+export const hangingFor = (world: World, player: PlayerId): Hanging | undefined => world.hangings.find((h) => h.picker === player);
+
+export function hangProblem(world: World, index: number): string | null {
+  const hanging = hangingFor(world, world.activePlayer);
+  if (!hanging) return "nobody waits to be hanged";
+  return hanging.dead[index] ? null : "no such unit";
+}
+
+/** The picker's choice: that one hangs; the rest are buried. */
+export function chooseHanged(world: World, index: number, events: WorldEvent[]): void {
+  const problem = hangProblem(world, index);
+  const hanging = hangingFor(world, world.activePlayer);
+  if (problem || !hanging) throw new Error(`cannot hang: ${problem}`);
+  world.hangings = world.hangings.filter((h) => h !== hanging);
+  hanging.dead.forEach((fallen, i) => {
+    if (i === index) {
+      events.push({ type: "hanged", player: hanging.owner, defId: fallen.defId });
+      return;
+    }
+    playerOf(world, hanging.owner).graveyard.push(fallen);
+    events.push({ type: "fell", player: hanging.owner, defId: fallen.defId });
+  });
 }
 
 /**

@@ -6,3 +6,4 @@
 - **Why:** Gives the outpost a level-3 reason and makes a tribal leader a choice.
 - **Done when:** The user has said what the bonus is, and it's built.
 - **Who:** The user designs the bonus (Claude can pitch); Claude builds.
+- **Done (2026-10-16):** +2 levels on elevation, the user's call; built (`provisional.md` #87).

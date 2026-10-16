@@ -16,6 +16,7 @@ import { useItemProblem, wardTargets } from "#rules/world/items";
 import { equipProblem, LEADER_SKILLS, movementOf, unequipProblem } from "#rules/world/leaders";
 import { planMove } from "#rules/world/movement";
 import type { MoveTarget } from "#rules/world/movement";
+import { hangingFor } from "#rules/world/fate";
 import { castProblem, knownSpells, spellCost, learnSpellProblem, spellTargets, spellVictims } from "#rules/world/spells";
 import { buyItemProblem, buySpellProblem, forSale, hireProblem, sellItemProblem, structureAt, tradePrice } from "#rules/world/structures";
 import { transferProblem } from "#rules/world/squads";
@@ -185,6 +186,13 @@ function cityOrders(world: World, seat: PlayerId): MapOption[] {
 function capitolOrders(world: World, seat: PlayerId): MapOption[] {
   const player = playerOf(world, seat);
   const options: MapOption[] = [];
+  const hanging = hangingFor(world, seat);
+  if (hanging) {
+    const whose = hanging.owner === seat ? "your" : "the enemy's";
+    hanging.dead.forEach((f, index) =>
+      options.push({ text: `The Gallows: hang ${whose} fallen ${unitName(f.defId)}${f.level > 0 ? ` (level ${f.level})` : ""}; it can never be raised, and the others go to the graveyard. You must choose before ending the turn.`, action: { type: "hang", index } }),
+    );
+  }
   // Only forks a unit waits at, XP full: choosing earlier is allowed (`order`), but listing every fork is noise.
   for (const fork of waitingForks(world, seat)) {
     for (const to of forkOptions(fork)) {

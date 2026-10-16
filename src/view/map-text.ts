@@ -109,6 +109,7 @@ export function newsText(events: readonly WorldEvent[], world: World, player: Pl
       lines.push(e.player === player ? `The camp is cleared (${tribe}).` : `The enemy cleared a camp (${tribe}).`);
     }
     if (e.type === "leaderFell" && e.player === player) lines.push("One of your warbands fell.");
+    if (e.type === "hanged" && e.player === player) lines.push(`Your ${unitName(e.defId)} hangs at the Gallows: it can never be raised.`);
     if (e.type === "trophies" && e.player === player) lines.push(`Hunting trophies: +${e.gold} gold.`);
     if (e.type === "recalled" && world.leaders.some((l) => l.id === e.leaderId && l.player === player)) {
       const city = world.cities.find((c) => c.id === e.cityId);

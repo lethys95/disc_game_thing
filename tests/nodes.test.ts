@@ -18,6 +18,7 @@ import { tradePrice } from "#rules/world/structures";
 import { castProblem, knownSpells, spellCost } from "#rules/world/spells";
 import { capacityOf } from "#rules/world/squads";
 import { movementOf } from "#rules/world/leaders";
+import { hangingFor } from "#rules/world/fate";
 import { changeHands, cityById, leaderById, playerOf, tribeAt, tribeRecruitsOf, tribeUnits } from "#rules/world/state";
 import type { City, World } from "#rules/world/state";
 import { knownWorld, sightOf, watched } from "#rules/world/vision";
@@ -310,18 +311,36 @@ describe("city nodes, second review", () => {
     expect(at(away.hex)).toBe(0);
   });
 
-  test("Gallows: attackers who die at the city never reach their graveyard", () => {
-    const graveAfterStorming = (kind: NodeKind) => {
-      const { world, city } = holding(kind);
+  test("Gallows: a failed storm hangs one of the attackers' dead, chosen by them, or by the holder once upgraded", () => {
+    const storm = (kind: NodeKind, level = 1) => {
+      const { world, city } = holding(kind, level);
       const guards = COLS.flatMap((col) => [0, 1].map((row) => ({ defId: "punisher", tile: { row, col } as Tile, hp: 200, xp: 0, marks: [], level: 0 })));
       const walled = withLeader({ ...world, cities: world.cities.map((c) => (c.id === city.id ? { ...c, garrison: guards } : c)) }, "leader1", { hex: beside(world, city.hex) });
       const next = applyWorldAction({ ...walled, activePlayer: 1 }, { type: "move", leaderId: "leader1", to: city.hex }).world;
       const battle = next.engagement?.battle;
       if (!battle) throw new Error("no battle");
-      return playerOf(concludeBattle(next, autoplay(battle)).world, 1).graveyard.length;
+      return concludeBattle(next, autoplay(battle)).world;
     };
-    expect(graveAfterStorming("gold")).toBeGreaterThan(0);
-    expect(graveAfterStorming("gallows")).toBe(0);
+    const plain = storm("gold");
+    expect(playerOf(plain, 1).graveyard).toHaveLength(3);
+    expect(plain.hangings).toEqual([]);
+
+    // Its first level: the loser chooses, and can't end the turn before it has.
+    const first = storm("gallows");
+    expect(playerOf(first, 1).graveyard).toHaveLength(0);
+    expect(hangingFor(first, 1)?.dead).toHaveLength(3);
+    expect(() => applyWorldAction(first, { type: "endTurn" })).toThrow(/hangs/);
+    const chosen = applyWorldAction(first, { type: "hang", index: 0 });
+    expect(playerOf(chosen.world, 1).graveyard).toHaveLength(2);
+    expect(chosen.events).toContainEqual({ type: "hanged", player: 1, defId: "congregant" });
+    expect(chosen.world.hangings).toEqual([]);
+
+    // Upgraded: the holder chooses, on its own turn.
+    const second = storm("gallows", 2);
+    expect(hangingFor(second, 1)).toBeUndefined();
+    expect(hangingFor(second, 0)?.owner).toBe(1);
+    const held = applyWorldAction({ ...second, activePlayer: 0 }, { type: "hang", index: 1 });
+    expect(playerOf(held.world, 1).graveyard).toHaveLength(2);
   });
 
   test("Dog yard: a warband starting its turn near the city crosses forest and hills at plain cost", () => {
@@ -552,17 +571,18 @@ describe("city clauses", () => {
     expect(leaderById(step.world, "leader0").movement).toBe(1);
   });
 
-  test("Gallows: at its second level, a warband wiped out storming the city leaves its items to the holder", () => {
-    const { world, city } = holding("gallows", 2);
-    const guards = COLS.flatMap((col) => [0, 1].map((row) => ({ defId: "punisher", tile: { row, col } as Tile, hp: 200, xp: 0, marks: [], level: 0 })));
-    let walled = withLeader({ ...world, cities: world.cities.map((c) => (c.id === city.id ? { ...c, garrison: guards } : c)) }, "leader1", { hex: beside(world, city.hex), worn: ["iron_helm"] });
-    walled = withLeader(walled, "leader0", { hex: beside(world, startOf(world, 0)) });
-    const next = applyWorldAction({ ...walled, activePlayer: 1 }, { type: "move", leaderId: "leader1", to: city.hex }).world;
-    const battle = next.engagement?.battle;
-    if (!battle) throw new Error("no battle");
-    const after = concludeBattle(next, autoplay(battle)).world;
-    expect(after.leaders.some((l) => l.id === "leader1")).toBe(false);
-    expect(leaderById(after, "leader0").bag).toContain("iron_helm");
+  test("Tribal outpost: a tribe unit recruited there and elevated to leader gains two levels", () => {
+    const { world, city } = holding("tribal_outpost");
+    const [tribeUnit] = tribeRecruitsOf(world, city);
+    if (!tribeUnit) throw new Error("no tribe recruit");
+    const rich = withGold(world, [1000, 1000]);
+    const recruited = applyWorldAction(rich, { type: "recruit", defId: tribeUnit, into: { kind: "garrison", cityId: city.id } }).world;
+    const unitThere = cityById(recruited, city.id).garrison[0];
+    if (!unitThere) throw new Error("not recruited");
+    const elevated = applyWorldAction(recruited, { type: "elevate", cityId: city.id, tile: unitThere.tile }).world;
+    const leader = elevated.leaders.find((l) => l.elevatedIn === city.id);
+    expect(leader?.squad[0]?.level).toBe(2);
+    expect(NODES.tribal_outpost.recruitEffects(1, "congregant")).toEqual([]);
   });
 
   test("Hunting lodge: at its last level, a hunter's warband earns gold for each neutral it kills", () => {

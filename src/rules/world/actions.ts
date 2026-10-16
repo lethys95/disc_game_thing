@@ -13,9 +13,11 @@ import { spellById } from "#rules/spells";
 import { hexDistance } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { cityOfSquad, squadAt, transfer, transferProblem } from "#rules/world/squads";
-import { isLeaderOf } from "#rules/world/record";
+import { isLeaderOf, maxHpOf } from "#rules/world/record";
+import { effectDef } from "#rules/effects";
 import { RESEARCH } from "#rules/research";
 import { UPGRADES } from "#rules/upgrades";
+import { chooseHanged, hangingFor } from "#rules/world/fate";
 import { playerOf, changeHands, cityById, giftsOf, leaderById } from "#rules/world/state";
 import type { Leader, World, WorldAction, WorldEvent, WorldStep } from "#rules/world/state";
 
@@ -34,6 +36,7 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       break;
     }
     case "endTurn": {
+      if (hangingFor(draft, side)) throw new Error("cannot end the turn: choose who hangs first");
       // The next player still in the game; wrapping around the order starts a new round.
       const count = draft.players.length;
       let next = side;
@@ -65,14 +68,20 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       const unit = city.garrison.find((m) => sameTile(m.tile, action.tile));
       if (problem || !unit) throw new Error(`cannot elevate: ${problem}`);
       city.garrison = city.garrison.filter((m) => m !== unit);
+      // Some marks make a leader of it with levels to spare (a Tribal outpost's recruits).
+      const levels = unit.marks.reduce((sum, mark) => sum + (effectDef(mark.effect.def).elevationLevels ?? 0) * (mark.effect.amount ?? 1), 0);
+      const raised = levels > 0 ? { ...unit, level: unit.level + levels } : unit;
       // Where its line stands: a melee leader in the front middle, anyone else in the back middle.
       const tile = { row: (freeTile([], unit.defId)?.row ?? 0), col: 1 } as const;
       const id = `leader${draft.nextLeader}`;
       draft.nextLeader += 1;
-      draft.leaders.push({ id, player: side, hex: city.hex, movement: LEADER_MOVEMENT, experience: 0, skills: {}, fellOnTurn: null, squad: [{ ...unit, tile }], leaderTile: tile, enchantments: [], worn: [], bag: [], sureFooted: false, elevatedIn: city.id, provisions: null, lastMove: [] });
+      draft.leaders.push({ id, player: side, hex: city.hex, movement: LEADER_MOVEMENT, experience: 0, skills: {}, fellOnTurn: null, squad: [{ ...raised, tile, hp: levels > 0 ? maxHpOf(raised, undefined) : raised.hp }], leaderTile: tile, enchantments: [], worn: [], bag: [], sureFooted: false, elevatedIn: city.id, provisions: null, lastMove: [] });
       events.push({ type: "elevated", leaderId: id });
       break;
     }
+    case "hang":
+      chooseHanged(draft, action.index, events);
+      break;
     case "choose": {
       const problem = chooseBranchProblem(draft, action.fork, action.to);
       if (problem) throw new Error(`cannot choose: ${problem}`);

@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-16 (node levels and clauses, the Scriptorium, merchants by biome; `testing/node-clauses`)
+**Updated:** 2026-10-16 (the Gallows as the user redesigned it; outpost war leaders; `testing/node-clauses`)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): a first complete version, far off (the board's README
@@ -52,7 +52,7 @@ interface change.
    Spiritess tier 4, the joker lines, owners for Evasion, Explode and Soak.
 2. **Claude's own, meanwhile:** icons for abilities, effects and items (`icons`, the user's suggestion); looks for
    the units without one (`unit-looks`, Nexus first), then their concepts and portraits.
-3. **The user's picks waiting:** the Gallows (questions #15), and
+3. **The user's picks waiting:**
    everything in `testing/`.
 4. **The balance pass** once the factions' lines exist, with the user's worry that Jilliath's lines are too long.
 

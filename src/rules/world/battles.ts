@@ -15,7 +15,7 @@ import type { Held } from "#rules/world/economy";
 import { isLeaderOf, placementOf } from "#rules/world/record";
 import type { MoveTarget } from "#rules/world/movement";
 import { updateVision } from "#rules/world/vision";
-import { bury, clearLair, nearestWarband, settleWarbands } from "#rules/world/fate";
+import { bury, clearLair, hang, settleWarbands } from "#rules/world/fate";
 import { alive, changeHands, cityById, giftsOf, lairById, wallArmorOf, leaderAt, leaderById, nodesOf, playerOf, unitId } from "#rules/world/state";
 import type { City, Defender, Enchantment, Engagement, Leader, PlayerId, SquadMember, World, WorldEvent, WorldStep } from "#rules/world/state";
 
@@ -64,12 +64,6 @@ function nodeOffenceFor(world: World, defender: Defender, player: PlayerId | nul
 }
 
 const withEffects = (placement: Placement, effects: readonly EffectSeed[]): Placement => (effects.length === 0 ? placement : { ...placement, effects: [...(placement.effects ?? []), ...effects] });
-
-/** Whether the city the defenders stand in has a Gallows. */
-function gallowsAt(world: World, defender: Defender, player: PlayerId | null): boolean {
-  const city = defendedCity(world, defender, player);
-  return city !== undefined && giftsOf(world, city, "hangsTheDead").length > 0;
-}
 
 /** What the city's nodes give the defenders behind its walls (a Bell tower's warning). */
 function nodeDefenceFor(world: World, defender: Defender, player: PlayerId | null): EffectSeed[] {
@@ -177,9 +171,13 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
   const gone = (before: readonly SquadMember[], after: readonly SquadMember[]) => before.filter((m) => !after.some((a) => sameTile(a.tile, m.tile)));
   // A corpse burst by a corpse explosion never reaches the graveyard (the canon fungal infestation prevents it).
   const intact = (side: Side) => (m: SquadMember) => battle.units[unitId(side, m.tile)]?.corpse !== "destroyed";
-  // A city's Gallows: attackers who die at it never reach their graveyard.
-  const hanged = defendedCity(draft, engagement.defender, defending.player)?.owner === defending.player && gallowsAt(draft, engagement.defender, defending.player);
-  bury(draft, attacker.player, hanged ? [] : gone(attacker.squad, attackers).filter(intact(ATTACKER)), events);
+  // A failed storm on a city with a Gallows: one of the attackers' dead is hanged, chosen by their owner, or by the
+  // city's holder once the Gallows is upgraded.
+  const attackersDead = gone(attacker.squad, attackers).filter(intact(ATTACKER));
+  const stormed = defendedCity(draft, engagement.defender, defending.player);
+  const gallows = stormed && battle.outcome.winner !== ATTACKER ? Math.max(0, ...giftsOf(draft, stormed, "gallows")) : 0;
+  if (stormed && gallows > 0 && defending.player !== null) hang(draft, stormed, gallows >= 2 ? defending.player : attacker.player, attacker.player, attackersDead, events);
+  else bury(draft, attacker.player, attackersDead, events);
   bury(draft, defending.player, gone(defending.squad, defenders).filter(intact(DEFENDER)), events);
 
   attacker.squad = attackers;
@@ -223,16 +221,9 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
   trophies(draft, attacker.player, attacker.squad, lost[DEFENDER], events);
   if (defending.leader && defending.player !== null) trophies(draft, defending.player, defending.leader.squad, lost[ATTACKER], events);
 
-  // A warband wiped out by the other side's warband leaves it its items; one wiped out storming a city with a
-  // Gallows at its second level leaves them to the city's holder (its nearest warband).
+  // A warband wiped out by the other side's warband leaves it its items.
   const fighters = [attacker.id, ...(engagement.defender.kind === "leader" ? [engagement.defender.leaderId] : [])];
-  const city = defendedCity(draft, engagement.defender, defending.player);
-  const hangsItems = city !== undefined && defending.player !== null && giftsOf(draft, city, "hangsItems").some((h) => h > 0);
-  const holder = defending.player;
-  settleWarbands(draft, events, (beaten) => {
-    if (hangsItems && holder !== null && city && beaten.id === attacker.id) return nearestWarband(draft, holder, city.hex);
-    return fighters.includes(beaten.id) ? draft.leaders.find((l) => fighters.includes(l.id) && l.id !== beaten.id) : undefined;
-  });
+  settleWarbands(draft, events, (beaten) => (fighters.includes(beaten.id) ? draft.leaders.find((l) => fighters.includes(l.id) && l.id !== beaten.id) : undefined));
   draft.engagement = null;
   updateVision(draft);
   return { world: draft, events };
@@ -271,6 +262,10 @@ export function playersIn(engagement: Engagement): PlayerId[] {
  */
 function eliminate(world: World, player: PlayerId, events: WorldEvent[]): void {
   playerOf(world, player).eliminated = true;
+  // Hangings no one is left to choose for are settled now: an eliminated owner's dead don't matter, and an
+  // eliminated picker's undecided dead are all buried.
+  for (const hanging of world.hangings.filter((h) => h.picker === player && h.owner !== player)) playerOf(world, hanging.owner).graveyard.push(...hanging.dead);
+  world.hangings = world.hangings.filter((h) => h.picker !== player && h.owner !== player);
   world.leaders = world.leaders.filter((l) => l.player !== player);
   for (const city of world.cities) if (city.owner === player) changeHands(world, city, null);
   events.push({ type: "eliminated", player });

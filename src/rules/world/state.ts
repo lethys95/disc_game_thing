@@ -243,6 +243,20 @@ export interface World {
   /** The last player standing (Guardians fallen for all the others). */
   outcome: { winner: PlayerId } | null;
   nextLeader: number;
+  /** The dead of failed storms on Gallows cities, each waiting for one of them to be hanged. */
+  hangings: Hanging[];
+}
+
+/**
+ * A failed storm on a city with a Gallows (the user, 2026-10-16): of the attackers who died, one can never be raised.
+ * `picker` chooses which: the loser at the node's first level, its holder at the second. The others go to `owner`'s
+ * graveyard once it's chosen.
+ */
+export interface Hanging {
+  readonly cityId: string;
+  readonly picker: PlayerId;
+  readonly owner: PlayerId;
+  readonly dead: readonly Fallen[];
 }
 
 /** A squad on the map: a city's garrison, or a warband (`world/squads.ts`). */
@@ -258,6 +272,7 @@ export type WorldAction =
   | { type: "elevate"; cityId: string; tile: Tile }
   /** Choose a branch at a fork: free and permanent, for every unit of that kind. */
   | { type: "choose"; fork: string; to: string }
+  | { type: "hang"; index: number }
   | { type: "resurrect"; index: number; into: SquadRef; tile?: Tile }
   | { type: "learn"; leaderId: string; skill: string }
   /** Revive a warband's fallen leader at the Capitol. */
@@ -293,6 +308,7 @@ export type WorldEvent =
   | { type: "captured"; cityId: string; player: PlayerId }
   | { type: "recalled"; leaderId: string; cityId: string }
   | { type: "trophies"; player: PlayerId; gold: number }
+  | { type: "hanged"; player: PlayerId; defId: string }
   /** A city's bells (a Bell tower): an enemy warband ended a march near it; news for `player`, who holds it. */
   | { type: "alarm"; cityId: string; leaderId: string; player: PlayerId }
   | { type: "turnStarted"; player: PlayerId; turn: number; income: number }

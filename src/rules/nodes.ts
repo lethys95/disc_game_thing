@@ -82,8 +82,11 @@ export interface CityGifts {
   readonly garrisonHealing?: (level: number) => number;
   /** How many times faster any of its holder's squads resting in the city heals, garrison or warband (Oasis). */
   readonly restHealing?: (level: number) => number;
-  /** Enemy units that die in a battle at the city never reach their owner's graveyard (Gallows). */
-  readonly hangsTheDead?: (level: number) => number;
+  /**
+   * A failed storm on the city: one of the attackers who died can never be raised (Gallows). 1: the loser picks
+   * which; 2: the holder does.
+   */
+  readonly gallows?: (level: number) => number;
   /** Share of health its holder's warbands heal when they start a turn next to the node (Waystation). */
   readonly waystation?: (level: number) => number;
   /** Its holder's warbands that start a turn this close to the city cross forest and hills at plain cost (Dog yard). */
@@ -102,8 +105,6 @@ export interface CityGifts {
   readonly garrisonTraining?: (level: number) => number;
   /** Above 0: enemy warbands in the node's sight show their items and their last move (Watchtower). */
   readonly watches?: (level: number) => number;
-  /** Above 0: a warband wiped out at the city leaves its items to its holder (Gallows). */
-  readonly hangsItems?: (level: number) => number;
   /** Extra movement for its holder's warbands that start a turn next to the node (Waystation). */
   readonly waystationMovement?: (level: number) => number;
   /** Enemy warbands within this many hexes of the city regenerate nothing at the start of their turn (Oasis). */
@@ -128,9 +129,12 @@ const OSSUARY = { raisesDead: (level: number) => 0.1 * (level - 1) };
 const WATCHTOWER = { sight: (level: number) => 2 + level, watches: (level: number) => from(level, CLAUSE_LEVEL, 1) };
 const BELL_TOWER = { warning: (level: number) => 1 + level, defenderEffects: () => [{ def: "forewarned" }] };
 const TRIBAL_OUTPOST = { tribeOutpost: (level: number) => level + 1 };
+const TRIBE_LEADER_LEVELS = 2;
 // "Not much please" (user) for the garrison's training.
 const TRAINING_YARD = { recruitLevels: (level: number) => (level >= 2 ? 2 : 1), garrisonTraining: (level: number) => from(level, CLAUSE_LEVEL, 5) };
-const GALLOWS = { hangsTheDead: () => 1, hangsItems: (level: number) => from(level, 2, 1) };
+// The user's (2026-10-16): "Unupgraded - Loser picks a unit that the loser cannot revive. Upgrade - Winner picks unit
+// the loser can't revive. Only works when people attack gallows on a city."
+const GALLOWS = { gallows: (level: number) => level };
 // "Buff to 25" (user; the brainstorm said 10%).
 const WAYSTATION = { waystation: (level: number) => 0.2 + 0.05 * level, waystationMovement: (level: number) => from(level, CLAUSE_LEVEL, 1) };
 const CARAVANSERAI = { tradeDiscount: (level: number) => 0.1 + 0.05 * level, seesTrade: (level: number) => from(level, CLAUSE_LEVEL, 1) };
@@ -176,7 +180,15 @@ export const NODES: Readonly<Record<NodeKind, NodeDef>> = {
   ossuary: cityNode("Ossuary", OSSUARY, (level) => `the dead can be raised in this city without the research, at the Capitol's price${OSSUARY.raisesDead(level) > 0 ? ` less ${percent(OSSUARY.raisesDead(level))}` : ""}`),
   watchtower: cityNode("Watchtower", WATCHTOWER, (level) => `you see ${WATCHTOWER.sight(level)} hexes around it, through the fog${clause(level, "enemy warbands it sees show their items and their last move")}`),
   // "I really love this one" (user): the land's tribe recruits here; one of its biome's tribes, by the city's place.
-  tribal_outpost: cityNode("Tribal outpost", TRIBAL_OUTPOST, (level) => `the city recruits ${TRIBAL_OUTPOST.tribeOutpost(level)} of its land's tribe's units (more with each level); they take no garrison slot`),
+  // Its recruits elevated to leader gain levels (the user, 2026-10-16: "could just be +2 level bonus for now").
+  tribal_outpost: {
+    ...cityNode(
+      "Tribal outpost",
+      TRIBAL_OUTPOST,
+      (level) => `the city recruits ${TRIBAL_OUTPOST.tribeOutpost(level)} of its land's tribe's units (more with each level); they take no garrison slot, and one elevated to leader gains ${TRIBE_LEADER_LEVELS} levels`,
+    ),
+    recruitEffects: (_level, defId) => (UNITS[defId]?.faction === "neutral" ? [{ def: "tribe_recruit", amount: TRIBE_LEADER_LEVELS }] : []),
+  },
   bell_tower: cityNode("Bell tower", BELL_TOWER, (level) => `you hear of enemy warbands ending their move within ${BELL_TOWER.warning(level)} hexes of the city; its defenders act first in the first round of a battle there`),
   // The second review (user, 2026-10-15, design/nodes.md).
   venom_distillery: markNode("Venom distillery", (level) => [{ def: "distilled_venom", amount: 2 + level, stacks: level >= CLAUSE_LEVEL ? 2 : 1 }]),
@@ -187,9 +199,8 @@ export const NODES: Readonly<Record<NodeKind, NodeDef>> = {
     TRAINING_YARD,
     (level) => `units recruited here arrive ${plural(TRAINING_YARD.recruitLevels(level), "level")} up${clause(level, `units resting in its garrison gain ${TRAINING_YARD.garrisonTraining(CLAUSE_LEVEL)} XP a turn`)}`,
   ),
-  // "Potentially very powerful." (user) Two levels: the second hangs the dead's belongings too.
   gallows: {
-    ...cityNode("Gallows", GALLOWS, (level) => `enemy units that die in a battle at this city can't be raised by their owner${level >= 2 ? "; a warband wiped out here leaves you its items" : ""}`),
+    ...cityNode("Gallows", GALLOWS, (level) => `when an enemy storms the city and loses, one of its dead can never be raised: ${level >= 2 ? "you choose which" : "its owner chooses which"}`),
     maxLevel: 2,
   },
   waystation: cityNode(

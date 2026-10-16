@@ -30,6 +30,7 @@ import { buttonById, byId, element, gold, mana } from "#view/dom";
 import { explain } from "#view/explain";
 import { Forecasts } from "#view/forecasts";
 import { ForkPrompt } from "#view/fork-prompt";
+import { GallowsPrompt } from "#view/gallows-prompt";
 import { Minimap } from "#view/minimap";
 import { LeaderScreen } from "#view/leader";
 import { HEX_STEP_MS } from "#view/map";
@@ -102,6 +103,7 @@ export class Campaign implements KeyLayer {
   private readonly endTurn = buttonById("endturn");
   private readonly peek = byId("peek");
   private readonly forkPrompt = new ForkPrompt(byId("forkprompt"), (action) => void this.act(action), () => this.render());
+  private readonly gallowsPrompt = new GallowsPrompt(byId("gallowsprompt"), (action) => void this.act(action));
   private readonly minimap: Minimap;
   private readonly panels = new MapPanels({
     select: (leaderId) => {
@@ -681,6 +683,7 @@ export class Campaign implements KeyLayer {
     this.renderLeaderScreen(world);
     this.renderStructureScreen(world);
     this.forkPrompt.render(world, this.viewer, this.myTurn());
+    this.gallowsPrompt.render(world, this.viewer, this.myTurn());
     this.stage.renderer.domElement.style.cursor = aimed || (plan && (plan.steps > 0 || plan.target)) ? "pointer" : "default";
   }
 

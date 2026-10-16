@@ -274,6 +274,18 @@ export const WORLD_EFFECTS: readonly EffectDef[] = [
     },
   },
   {
+    // Tribal outpost: a tribe unit recruited there makes a war leader. No battle effect.
+    id: "tribe_recruit",
+    quiet: true,
+    name: "Outpost-recruited",
+    describe: (e) => `Recruited at a tribal outpost: elevated to leader, it gains ${e.amount} levels.`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    elevationLevels: 1,
+    hooks: {},
+  },
+  {
     // Oasis: born by the water, it mends faster on the map. No battle effect.
     id: "oasis_born",
     quiet: true,

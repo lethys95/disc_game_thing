@@ -376,6 +376,8 @@ export interface EffectDef {
    * Several don't add up: a warband moves as fast as its best (Stables).
    */
   readonly mapMovement?: number;
+  /** Carried as a mark, levels its bearer gains on being elevated to leader, per point of the mark's amount (a Tribal outpost's recruits). */
+  readonly elevationLevels?: number;
   /** Extra spell charges its bearer starts a battle with (a Scriptorium's gift to Ral-Vitahl's casters). */
   readonly spellCharges?: number;
   /** Carried as a mark, how many times faster its bearer heals on the map (an Oasis). */

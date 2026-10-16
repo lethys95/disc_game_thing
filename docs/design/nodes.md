@@ -124,3 +124,8 @@ Strict, like the node pools: a merchant lays out its biome's list plus "anywhere
 - **Haunted woods:** Burial wrappings, Hollow plate, Deck of cards, Hourglass of borrowed time, Ankh.
 
 Built 2026-10-16 (`provisional.md` #86): the clauses, the levels, the Scriptorium in the temperate pool, the merchants' lists, and a "harmful" flag on every debuff (the user's suggestion) that the Cathedral's Holy Water cleanses. "March" is gone from the game's words: a warband moves.
+
+## The Gallows and the outpost's war leaders (user, 2026-10-16)
+- **Gallows**, redesigned: "Unupgraded - Loser picks a unit that the loser cannot revive. Upgrade - Winner picks unit the loser can't revive. Only works when people attack gallows on a city." Two levels. This replaces the earlier Gallows (no attacker raised at all; items at the second level).
+- **Tribal outpost:** "could just be +2 level bonus for now": a tribe unit recruited at an outpost gains two levels when it's elevated to leader.
+- **The user's taste:** "I honestly enjoy nodes that modify units hired there more than I enjoy nodes that modify the map, resources, etc." New node ideas lead with recruit marks.

@@ -104,6 +104,7 @@ export function createWorld(seed: number, setups: readonly PlayerSetup[], size: 
     outcome: null,
     nextLeader: setups.length,
     wards: [],
+    hangings: [],
   };
   startTurn(world, []);
   updateVision(world);

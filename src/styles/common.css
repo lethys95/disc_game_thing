@@ -3,6 +3,8 @@
 /* The evolve prompt: the dialog's look, the fork's branches as cards (view/branches.ts), the same as in research. */
 #forkprompt { position: fixed; left: 50%; top: 38%; transform: translate(-50%, -50%); z-index: 20; }
 #forkprompt[hidden] { display: none; }
+#gallowsprompt { position: fixed; left: 50%; top: 38%; transform: translate(-50%, -50%); z-index: 21; }
+#gallowsprompt[hidden] { display: none; }
 .leader-label { font: 600 0.6875rem var(--text); padding: 1px 0.375rem; background: rgba(10, 9, 9, 0.75); border: 1px solid var(--line); white-space: nowrap; }
 .leader-label.side0 { color: var(--side0); }
 .leader-label.side1 { color: var(--side1); }
