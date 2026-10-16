@@ -509,6 +509,7 @@ export class MapView {
         granary: () => lodge(stone, new THREE.MeshStandardMaterial({ color: 0xb8a060, roughness: 1 })),
         oasis: () => pool(new THREE.Color(0x2a5a6a)),
         waystone: () => tower(stone, crystal, 0.45),
+        scriptorium: () => chapel(stone, dark, new THREE.MeshStandardMaterial({ color: 0x8a7a5a, roughness: 0.9 })),
         dog_yard: () => lodge(new THREE.MeshStandardMaterial({ color: 0x5a4a3a, roughness: 1 }), new THREE.MeshStandardMaterial({ color: 0x8a8a8a, roughness: 0.9 })),
       };
       const model = models[node.kind]();

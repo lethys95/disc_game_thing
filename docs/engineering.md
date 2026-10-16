@@ -140,3 +140,11 @@ A picker page in `shots/` can POST its summary to `/picks/<name>` on the dev ser
 lands in `.cache/picks/<name>.txt`. The clipboard API needs https, so over Tailscale's plain http Send is the reliable
 way back; keep a Copy button as the fallback. Vite didn't pick up a `vite.config.ts` change on a server running for
 days: restart it (`pnpm dev --host --port 5173 --strictPort`).
+
+## Effects: debuffs, self-costs, longer effects
+- `EffectDef.harmful` marks a debuff; a cleanse (Holy Water with `cleanse`) ends every harmful effect. A new debuff
+  needs the flag; `flatStat` with `sign: -1` sets it itself.
+- A unit paying with its own health calls `ctx.lose(self, amount, self)`: the source being the target is what lets
+  `paysFor` hooks lower the price.
+- `lengthens` adds stacks to effects a unit applies; `EffectDef.spellCharges` adds charges at battle start.
+- Nodes: `NodeDef.maxLevel` per node; clauses arrive at `CLAUSE_LEVEL`, as `CityGifts` that are 0 below it.

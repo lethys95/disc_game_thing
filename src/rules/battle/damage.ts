@@ -81,6 +81,8 @@ function intercept(ctx: Ctx, packet: Packet, tally: { dealt: number; kills: numb
 /** Direct HP loss (also the pipeline's last stage). Returns the HP actually removed: overkill isn't damage dealt. */
 export function lose(ctx: Ctx, targetId: string, amount: number, sourceId: string | null): number {
   const target = ctx.unit(targetId);
+  // A unit paying with its own health: its traits may lower the price (a Scriptorium's teaching).
+  if (sourceId === targetId) amount = traitsOn(ctx, targetId).reduce((price, t) => t.hooks.paysFor?.(ctx, t.self, price) ?? price, amount);
   if (!target.alive || amount <= 0) return 0;
   const removed = Math.min(amount, target.hp);
   target.hp -= amount;

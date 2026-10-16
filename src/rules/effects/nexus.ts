@@ -9,6 +9,7 @@ export const NEXUS_EFFECTS: readonly EffectDef[] = [
   {
     // A Justiciar's Counter; a Backlasher's Backlash also hurts the unit it cancels (`amount`).
     id: "countered",
+    harmful: true,
     name: "Countered",
     describe: (e) => `The next ability it uses will be cancelled${e.amount > 0 ? `, and the backlash deals ${e.amount} to it` : ""}.`,
     stacking: { mode: "unique" },
@@ -28,6 +29,7 @@ export const NEXUS_EFFECTS: readonly EffectDef[] = [
   {
     // An Etherborn's Negate: the next damage or healing to reach it is turned around, once.
     id: "negated",
+    harmful: true,
     name: "Negated",
     describe: () => "The next damage it would take heals it instead, and the next healing it would get (shields too) hurts it instead. Once.",
     stacking: { mode: "unique" },

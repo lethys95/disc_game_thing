@@ -1,4 +1,5 @@
 import { COLS, meleeTargets, opponent, ROWS } from "#rules/battle/grid";
+import { effectDef } from "#rules/effects";
 import type { Behavior, BattleUnit, Col, Cost, Ctx, Params, Row, TargetChoice, TraitSelf } from "#rules/battle/types";
 
 /** Shared targeting helpers and the universal verbs every unit has. */
@@ -95,17 +96,21 @@ export const core: Readonly<Record<string, Behavior>> = {
   holy_water: {
     kind: "active",
     name: "Holy Water",
-    describe: (p) => `${uses(p)}: an ally (or this unit) heals ${p["amount"]}.`,
+    describe: (p) => `${uses(p)}: an ally (or this unit) heals ${p["amount"]}${p["cleanse"] ? ", and every harmful effect on it ends" : ""}.`,
     tags: ["heal"],
-    defaults: { charges: 1, amount: 30 },
+    // `cleanse` (a Cathedral's third level): it also ends the target's harmful effects.
+    defaults: { charges: 1, amount: 30, cleanse: 0 },
     scales: ["amount"],
     choices: (ctx, self) =>
       ctx
         .living(ctx.unit(self.unitId).side)
-        .filter((u) => u.hp < ctx.stats(u.id).maxHp)
+        .filter((u) => u.hp < ctx.stats(u.id).maxHp || (self.params["cleanse"] && u.effects.some((e) => effectDef(e.def).harmful)))
         .map((u) => single(u, "main")),
     resolve: (ctx, self, choice) => {
-      for (const id of choice.affected) ctx.heal(id, self.params["amount"] ?? 0);
+      for (const id of choice.affected) {
+        ctx.heal(id, self.params["amount"] ?? 0);
+        if (self.params["cleanse"]) for (const e of ctx.unit(id).effects.filter((e) => effectDef(e.def).harmful)) ctx.removeEffect(id, e);
+      }
     },
   },
   /** Granted by a Hatchet (user, 2026-09-27): thrown once per combat. */

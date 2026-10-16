@@ -4,7 +4,7 @@ import { spellById } from "#rules/spells";
 import type { SpellDef } from "#rules/spells";
 import { isLeaderOf } from "#rules/world/record";
 import { NODES } from "#rules/nodes";
-import { alive, capitolOf, leaderAt, nodesHeldBy, nodesOf, playerOf } from "#rules/world/state";
+import { alive, capitolOf, giftsOf, leaderAt, nodesHeldBy, nodesOf, playerOf } from "#rules/world/state";
 import type { City, Lair, Leader, PlayerId, SquadMember, World, WorldEvent } from "#rules/world/state";
 import { sightOf } from "#rules/world/vision";
 import { bury, clearLair, nearestWarband, settleWarbands } from "#rules/world/fate";
@@ -60,13 +60,22 @@ function fits(world: World, side: PlayerId, spell: SpellDef, hex: Hex): boolean 
   }
 }
 
+/** What casting `id` at `at` costs the active player: half for its first spell of the turn near its Mana node's city (the clause). */
+export function spellCost(world: World, id: string, at: Hex): number {
+  const side = world.activePlayer;
+  const cost = spellById(id).cost;
+  if (playerOf(world, side).cast.length > 0) return cost;
+  const near = world.cities.some((c) => c.owner === side && giftsOf(world, c, "cheapSpells").some((reach) => reach > 0 && hexDistance(c.hex, at) <= reach));
+  return near ? Math.ceil(cost / 2) : cost;
+}
+
 export function castProblem(world: World, id: string, at: Hex): string | null {
   const side = world.activePlayer;
   const player = playerOf(world, side);
   const spell = spellById(id);
   if (!knownSpells(world, side).includes(id)) return "not learned";
   if (player.cast.includes(id)) return "already cast this turn";
-  if (player.mana < spell.cost) return "not enough mana";
+  if (player.mana < spellCost(world, id, at)) return "not enough mana";
   if (!sightOf(world, side).has(hexKey(at))) return "out of sight";
   if (!fits(world, side, spell, at)) return "not a valid target";
   return null;
@@ -101,7 +110,7 @@ export function castSpell(world: World, id: string, at: Hex, events: WorldEvent[
   const side = world.activePlayer;
   const player = playerOf(world, side);
   const spell = spellById(id);
-  player.mana -= spell.cost;
+  player.mana -= spellCost(world, id, at);
   player.cast.push(id);
   const effect = spell.effect;
   if (effect.kind === "damage") {
@@ -115,6 +124,8 @@ export function castSpell(world: World, id: string, at: Hex, events: WorldEvent[
       const city = recallCity(world, leader);
       if (!city) continue;
       leader.hex = city.hex;
+      // A Waystone at its second level sends it on with a little more movement (the user's clause).
+      leader.movement += Math.max(0, ...giftsOf(world, city, "portalMovement"));
       events.push({ type: "recalled", leaderId: leader.id, cityId: city.id });
     }
     return;

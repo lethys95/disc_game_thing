@@ -7,6 +7,7 @@ export const NEUTRAL_EFFECTS: readonly EffectDef[] = [
   {
     // A Soothsayer's attack, waiting to land: at the start of her next turn it hits.
     id: "foretold",
+    harmful: true,
     name: "Foretold",
     describe: (e) => `Takes ${e.amount} at the start of the Soothsayer's next turn.`,
     stacking: { mode: "each" },
@@ -25,6 +26,7 @@ export const NEUTRAL_EFFECTS: readonly EffectDef[] = [
   {
     // A Packstalker's mark: the marker's side hits it harder until the end of the next round.
     id: "prey",
+    harmful: true,
     name: "Prey",
     describe: (e) => `The pack's prey: takes ${e.amount} more damage from the pack for ${e.stacks} more round start${e.stacks === 1 ? "" : "s"}.`,
     stacking: { mode: "perSource" },
@@ -42,6 +44,7 @@ export const NEUTRAL_EFFECTS: readonly EffectDef[] = [
   flatStat({ id: "cracked", name: "Cracked", stat: "armor", sign: -1, stacking: { mode: "merge" }, describe: (e) => `−${e.amount} armor for the rest of combat (cracked by a gnoll's jaws).` }),
   {
     id: "hamstrung",
+    harmful: true,
     name: "Hamstrung",
     describe: (e) => `−${e.amount} initiative for ${e.stacks} more round start${e.stacks === 1 ? "" : "s"}.`,
     stacking: { mode: "perSource" },
@@ -57,6 +60,7 @@ export const NEUTRAL_EFFECTS: readonly EffectDef[] = [
   {
     // A Cackler's laugh: on its next turn the bearer can only attack. A unit with no attack is left alone.
     id: "goaded",
+    harmful: true,
     name: "Goaded",
     describe: () => "On its next turn it can only attack.",
     stacking: { mode: "unique" },
@@ -81,6 +85,7 @@ export const NEUTRAL_EFFECTS: readonly EffectDef[] = [
   {
     // A Dustwing's dust: the next hit this unit makes lands as nothing.
     id: "dusted",
+    harmful: true,
     name: "Dusted",
     describe: () => "Coated in moth dust: its next hit lands as nothing.",
     stacking: { mode: "unique" },

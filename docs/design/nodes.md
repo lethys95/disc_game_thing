@@ -122,3 +122,5 @@ Strict, like the node pools: a merchant lays out its biome's list plus "anywhere
 - **Swamp:** Twin knives, Seedpod reliquary, Hatchet, Deck of cards.
 - **Tundra:** Grudgebearer, Penitent's chains, Veteran's standard, Banner of the vanguard.
 - **Haunted woods:** Burial wrappings, Hollow plate, Deck of cards, Hourglass of borrowed time, Ankh.
+
+Built 2026-10-16 (`provisional.md` #86): the clauses, the levels, the Scriptorium in the temperate pool, the merchants' lists, and a "harmful" flag on every debuff (the user's suggestion) that the Cathedral's Holy Water cleanses. "March" is gone from the game's words: a warband moves.

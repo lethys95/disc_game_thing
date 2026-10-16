@@ -9,6 +9,7 @@ export const KEYWORDS_EFFECTS: readonly EffectDef[] = [
   {
     // Ignite: damage at the start of each of the bearer's turns; water puts it out.
     id: "burning",
+    harmful: true,
     name: "Burning",
     describe: (e) => `Takes ${e.amount} at the start of each of its next ${e.stacks} turn${e.stacks === 1 ? "" : "s"}. Water puts it out.`,
     stacking: { mode: "unique" },
@@ -32,6 +33,7 @@ export const KEYWORDS_EFFECTS: readonly EffectDef[] = [
   {
     // Soak: lightning hits a wet unit half again as hard and electrocutes it; fire dries it.
     id: "wet",
+    harmful: true,
     name: "Wet",
     applies: ["electrocuted"],
     describe: (e) => `Wet for ${e.stacks} more round start${e.stacks === 1 ? "" : "s"}: lightning hits it half again as hard and electrocutes it (it loses its next turn); fire dries it.`,
@@ -53,6 +55,7 @@ export const KEYWORDS_EFFECTS: readonly EffectDef[] = [
   },
   {
     id: "electrocuted",
+    harmful: true,
     name: "Electrocuted",
     describe: () => "Loses its next turn.",
     stacking: { mode: "unique" },

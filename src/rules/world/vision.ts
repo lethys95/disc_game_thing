@@ -4,7 +4,7 @@ import type { Hex } from "#rules/hex";
 import type { MapTile, WorldMap } from "#rules/map";
 import { NODES } from "#rules/nodes";
 import { giftOf } from "#rules/world/leaders";
-import { emptyMemory, nodesHeldBy, playerOf } from "#rules/world/state";
+import { emptyMemory, giftsOf, nodesHeldBy, playerOf } from "#rules/world/state";
 import type { Player, PlayerId, World } from "#rules/world/state";
 
 /**
@@ -100,8 +100,19 @@ export function knownWorld(world: World, player: PlayerId): World {
     cities: world.cities.flatMap((c) => (c.owner === player ? [c] : recall([c], me.memory.cities))),
     lairs: recall(world.lairs, me.memory.lairs),
     nodes: recall(world.nodes, me.memory.nodes),
-    structures: recall(world.structures, me.memory.structures),
+    // A Caravanserai's clause: every merchant and camp its holder knows of shows what it has now.
+    structures: seesTrade(world, player) ? world.structures.filter((t) => visible.has(hexKey(t.hex)) || me.memory.structures.some((m) => m.id === t.id)) : recall(world.structures, me.memory.structures),
   };
+}
+
+const seesTrade = (world: World, player: PlayerId): boolean => world.cities.some((c) => c.owner === player && giftsOf(world, c, "seesTrade").some((sees) => sees > 0));
+
+/** Whether one of `player`'s Watchtowers at its last level sees `hex`: an enemy warband there shows its items and last move. */
+export function watched(world: World, player: PlayerId, hex: Hex): boolean {
+  return nodesHeldBy(world, player).some((n) => {
+    const gifts = NODES[n.kind].city;
+    return (gifts?.watches?.(n.level) ?? 0) > 0 && hexDistance(n.hex, hex) <= (gifts?.sight?.(n.level) ?? 0);
+  });
 }
 
 function hidden(p: Player): Player {

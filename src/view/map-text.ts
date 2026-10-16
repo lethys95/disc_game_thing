@@ -6,7 +6,7 @@ import type { MovePlan, MoveTarget } from "#rules/world/movement";
 import { cityById, lairById, leaderAt, leaderById, playerOf, tribeAt } from "#rules/world/state";
 import { useItemProblem } from "#rules/world/items";
 import type { Leader, PlayerId, World, WorldEvent } from "#rules/world/state";
-import { sightOf } from "#rules/world/vision";
+import { sightOf, watched } from "#rules/world/vision";
 import { castProblem, spellVictims } from "#rules/world/spells";
 import { describeSpell, spellById } from "#rules/spells";
 import { itemById } from "#rules/items";
@@ -33,10 +33,10 @@ export function hintText({ known, player, leader, hovered, plan, forecast }: Hin
   const explored = hovered !== null && playerOf(known, player).explored.includes(hexKey(hovered));
   const tile = hovered && explored ? tileAt(known.map, hovered) : undefined;
   const terrain = hovered && !explored ? "unexplored land" : tile ? `${tile.terrain}${TERRAIN_COST[tile.terrain] === null ? " (impassable)" : `, costs ${TERRAIN_COST[tile.terrain]}`}` : "";
-  if (!plan) return `${leaderName(leader)}: ${leader.movement} movement left. ${terrain ? `Hovering ${terrain}.` : "Click a hex to march."}`;
+  if (!plan) return `${leaderName(leader)}: ${leader.movement} movement left. ${terrain ? `Hovering ${terrain}.` : "Click a hex to move there."}`;
   const target = plan.target;
   if (target?.kind === "capture") return "Click to take the undefended city.";
-  if (target?.kind === "leader") return `Click to attack the enemy warband. ${forecast(leader, target)}`;
+  if (target?.kind === "leader") return `Click to attack the enemy warband. ${forecast(leader, target)}${watchedText(known, player, leaderById(known, target.leaderId))}`;
   if (target?.kind === "garrison") {
     const city = cityById(known, target.cityId);
     const whose = city.owner === null ? "the bandit-held city" : city.kind === "capitol" ? "the Capitol" : "the city";
@@ -50,10 +50,19 @@ export function hintText({ known, player, leader, hovered, plan, forecast }: Hin
   }
   if (plan.steps === 0) return "Not enough movement left to go further. End your turn.";
   const total = plan.path.hexes.length;
-  const walks = plan.steps === total ? `March there (${plan.path.cost} movement)` : `March ${plan.steps} of ${total} hexes this turn`;
+  const walks = plan.steps === total ? `Move there (${plan.path.cost} movement)` : `Move ${plan.steps} of ${total} hexes this turn`;
   const structure = hovered ? known.structures.find((s) => sameHex(s.hex, hovered)) : undefined;
   if (structure) return `${walks}: the ${STRUCTURES[structure.kind].name.toLowerCase()}. ${STRUCTURES[structure.kind].describe}`;
   return `${walks}. Hovering ${terrain}.`;
+}
+
+/** What a Watchtower at its last level tells of an enemy warband it sees: its items and where it last came from. */
+function watchedText(known: World, player: PlayerId, enemy: Leader): string {
+  if (!watched(known, player, enemy.hex)) return "";
+  const items = [...enemy.worn, ...enemy.bag].map((id) => itemById(id).name);
+  const from = enemy.lastMove[0];
+  const came = from && enemy.lastMove.length > 1 ? ` It last moved ${enemy.lastMove.length - 1} hex${enemy.lastMove.length === 2 ? "" : "es"}, from ${from.q},${from.r}.` : "";
+  return ` Your Watchtower sees it: ${items.length > 0 ? `it carries ${items.join(", ")}` : "it carries nothing"}.${came}`;
 }
 
 /** The hint while aiming a spell: what a click on the hovered hex would do. */
@@ -100,6 +109,11 @@ export function newsText(events: readonly WorldEvent[], world: World, player: Pl
       lines.push(e.player === player ? `The camp is cleared (${tribe}).` : `The enemy cleared a camp (${tribe}).`);
     }
     if (e.type === "leaderFell" && e.player === player) lines.push("One of your warbands fell.");
+    if (e.type === "trophies" && e.player === player) lines.push(`Hunting trophies: +${e.gold} gold.`);
+    if (e.type === "recalled" && world.leaders.some((l) => l.id === e.leaderId && l.player === player)) {
+      const city = world.cities.find((c) => c.id === e.cityId);
+      lines.push(`${leaderName(leaderById(world, e.leaderId))} steps through the Waystone to ${city ? cityName(city) : "its city"}.`);
+    }
     if (e.type === "scouted" && world.leaders.some((l) => l.id === e.leaderId && l.player === player)) lines.push(`New land: ${leaderName(leaderById(world, e.leaderId))} gains ${e.xp} XP scouting.`);
     if (e.type === "spellCast" && (e.player === player || inSight(e.at))) lines.push(`${e.player === player ? "You cast" : "The enemy casts"} ${spellById(e.spell).name}.`);
     if (e.type === "looted" && e.player === player) lines.push(`The dungeon yields ${e.gold} gold${e.joins ? ` and a ${unitName(e.joins)} joins you` : ""}${e.item ? `, and a ${itemById(e.item).name}` : ""}.`);

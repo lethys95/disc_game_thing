@@ -50,7 +50,7 @@ export const movementOf = (leader: Leader): number => LEADER_MOVEMENT + rankOf(l
 
 /** The best map movement any living unit's mark gives its warband (Stables); marks don't add up. */
 function marchBonusOf(leader: Leader): number {
-  const bonuses = leader.squad.filter((m) => m.hp > 0).flatMap((m) => m.marks.map((mark) => EFFECTS.get(mark.effect.def)?.mapMovement ?? 0));
+  const bonuses = leader.squad.filter((m) => m.hp > 0).flatMap((m) => m.marks.map((mark) => (EFFECTS.get(mark.effect.def)?.mapMovement ?? 0) * (mark.effect.amount ?? 1)));
   return Math.max(0, ...bonuses);
 }
 

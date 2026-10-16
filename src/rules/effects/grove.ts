@@ -17,6 +17,7 @@ export const GROVE_EFFECTS: readonly EffectDef[] = [
   {
     // Decay: damage that rotted in instead of landing, lost evenly over the bearer's next turns (`stacks` of them).
     id: "rotting",
+    harmful: true,
     name: "Rotting",
     describe: (e) => `${e.amount} damage rots in it, lost over its next ${e.stacks} turn${e.stacks === 1 ? "" : "s"}.`,
     stacking: { mode: "unique" },
@@ -38,6 +39,7 @@ export const GROVE_EFFECTS: readonly EffectDef[] = [
   {
     // Corpse explosion: a fungal infestation, damage at the start of each of the bearer's turns while it lasts.
     id: "infested",
+    harmful: true,
     name: "Infested",
     describe: (e) => `Loses ${e.amount} HP at the start of each of its next ${e.stacks} turn${e.stacks === 1 ? "" : "s"} (a fungal infestation).`,
     stacking: { mode: "unique" },

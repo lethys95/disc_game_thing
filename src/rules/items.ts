@@ -378,7 +378,7 @@ export function describeItem(item: ItemDef, abilityPower: number): string {
   if (map?.leadership) parts.push(`+${map.leadership} Leadership for the leader.`);
   if (map?.gold) parts.push(`+${map.gold} gold at the start of each of your turns while the leader stands.`);
   if (map?.sight) parts.push(`The warband sees ${map.sight} hexes farther.`);
-  if (map?.scouting) parts.push(`The leader gains ${map.scouting} XP for each hex its march is the first of yours to reveal.`);
+  if (map?.scouting) parts.push(`The leader gains ${map.scouting} XP for each hex its moves are the first of yours to reveal.`);
   if (map?.sureFooted) parts.push("Forest and hills cost the warband what plains cost.");
   if (item.use?.kind === "ward") parts.push(`Use on the map: a hex beside the warband can't be entered by anyone for ${item.use.turns} turns. Used up.`);
   if (item.standsIn) parts.push(`In battle it stands on its own in a free tile of the warband's grid, whole again every time; it gains no XP.`);

@@ -10,3 +10,6 @@
 - **Who:** Claude pitches and builds; the user picks.
 - **Now (2026-10-15):** the page is up, `shots/city-nodes-2.html` (proposals also in `design/brainstorm/nodes.md`, round
   three); Send lands in `.cache/picks/node-clauses.txt`.
+- **Built (2026-10-16):** the taken clauses, per-node levels, the Scriptorium, merchants by biome, the harmful flag
+  (`design/nodes.md`, `provisional.md` #86). Open: the Gallows (questions #15), the Tribal outpost's bonus
+  (`maybe/outpost-war-leaders`).

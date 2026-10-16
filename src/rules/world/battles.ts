@@ -8,13 +8,14 @@ import { itemById, tallyOf, withTally } from "#rules/items";
 import { NODES } from "#rules/nodes";
 import { COLS, ROWS, sameTile } from "#rules/battle/grid";
 import { xpValue } from "#rules/progression";
-import { GUARDIAN_ID } from "#rules/units/index";
+import { GUARDIAN_ID, UNITS } from "#rules/units/index";
+import { TROPHY_GOLD_PER_TIER } from "#rules/balance";
 import { growSquad } from "#rules/world/economy";
 import type { Held } from "#rules/world/economy";
 import { isLeaderOf, placementOf } from "#rules/world/record";
 import type { MoveTarget } from "#rules/world/movement";
 import { updateVision } from "#rules/world/vision";
-import { bury, clearLair, settleWarbands } from "#rules/world/fate";
+import { bury, clearLair, nearestWarband, settleWarbands } from "#rules/world/fate";
 import { alive, changeHands, cityById, giftsOf, lairById, wallArmorOf, leaderAt, leaderById, nodesOf, playerOf, unitId } from "#rules/world/state";
 import type { City, Defender, Enchantment, Engagement, Leader, PlayerId, SquadMember, World, WorldEvent, WorldStep } from "#rules/world/state";
 
@@ -56,6 +57,14 @@ function wallsFor(world: World, defender: Defender, player: PlayerId | null): nu
   return city ? wallArmorOf(world, city) : 0;
 }
 
+/** What the city's nodes put on the enemies fighting at it (Bog iron's rust). */
+function nodeOffenceFor(world: World, defender: Defender, player: PlayerId | null): EffectSeed[] {
+  const city = defendedCity(world, defender, player);
+  return city ? nodesOf(world, city).flatMap((n) => [...(NODES[n.kind].city?.attackerEffects?.(n.level) ?? [])]) : [];
+}
+
+const withEffects = (placement: Placement, effects: readonly EffectSeed[]): Placement => (effects.length === 0 ? placement : { ...placement, effects: [...(placement.effects ?? []), ...effects] });
+
 /** Whether the city the defenders stand in has a Gallows. */
 function gallowsAt(world: World, defender: Defender, player: PlayerId | null): boolean {
   const city = defendedCity(world, defender, player);
@@ -94,7 +103,8 @@ function engagementBattle(world: World, attacker: Leader, defender: Defender): B
   const defending = defendingSquad(world, defender);
   const spelled = (placement: Placement, on: readonly Enchantment[]): Placement =>
     on.length === 0 ? placement : { ...placement, effects: [...(placement.effects ?? []), ...on.map((e) => e.effect)] };
-  const ours = [...attacker.squad.filter(alive).map((m) => spelled(placementOf(m, attacker), attacker.enchantments)), ...standersOf(attacker)];
+  const againstNodes = nodeOffenceFor(world, defender, defending.player);
+  const ours = [...attacker.squad.filter(alive).map((m) => withEffects(spelled(placementOf(m, attacker), attacker.enchantments), againstNodes)), ...standersOf(attacker)];
   // A warband brings its own spells; defenders behind a city's walls (its garrison, or a warband in its own city)
   // also bring the city's.
   const theirSpells = [...(defending.leader?.enchantments ?? []), ...(defendedCity(world, defender, defending.player)?.enchantments ?? [])];
@@ -210,12 +220,35 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
     }
   }
 
-  // A warband wiped out by the other side's warband leaves it its items.
+  trophies(draft, attacker.player, attacker.squad, lost[DEFENDER], events);
+  if (defending.leader && defending.player !== null) trophies(draft, defending.player, defending.leader.squad, lost[ATTACKER], events);
+
+  // A warband wiped out by the other side's warband leaves it its items; one wiped out storming a city with a
+  // Gallows at its second level leaves them to the city's holder (its nearest warband).
   const fighters = [attacker.id, ...(engagement.defender.kind === "leader" ? [engagement.defender.leaderId] : [])];
-  settleWarbands(draft, events, (beaten) => (fighters.includes(beaten.id) ? draft.leaders.find((l) => fighters.includes(l.id) && l.id !== beaten.id) : undefined));
+  const city = defendedCity(draft, engagement.defender, defending.player);
+  const hangsItems = city !== undefined && defending.player !== null && giftsOf(draft, city, "hangsItems").some((h) => h > 0);
+  const holder = defending.player;
+  settleWarbands(draft, events, (beaten) => {
+    if (hangsItems && holder !== null && city && beaten.id === attacker.id) return nearestWarband(draft, holder, city.hex);
+    return fighters.includes(beaten.id) ? draft.leaders.find((l) => fighters.includes(l.id) && l.id !== beaten.id) : undefined;
+  });
   draft.engagement = null;
   updateVision(draft);
   return { world: draft, events };
+}
+
+/**
+ * A Hunting lodge's clause: a warband with a hunter (the mark at its last level) living earns gold for each neutral
+ * unit the battle killed on the other side.
+ */
+function trophies(world: World, player: PlayerId, squad: readonly SquadMember[], killed: readonly SquadMember[], events: WorldEvent[]): void {
+  const hunts = squad.some((m) => alive(m) && m.marks.some((mark) => mark.effect.def === "hunter" && (mark.effect.stacks ?? 1) >= 2));
+  const prey = killed.filter((m) => UNITS[m.defId]?.faction === "neutral");
+  if (!hunts || prey.length === 0) return;
+  const gold = prey.reduce((sum, m) => sum + TROPHY_GOLD_PER_TIER * Math.max(1, UNITS[m.defId]?.tier ?? 1), 0);
+  playerOf(world, player).gold += gold;
+  events.push({ type: "trophies", player, gold });
 }
 
 function winnerSquad(world: World, defender: Defender): Held {

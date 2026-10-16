@@ -1,7 +1,7 @@
 import { LEADER_MOVEMENT, STARTING_GOLD } from "#rules/balance";
 import type { Placement } from "#rules/battle/engine";
 import type { Commitment } from "#rules/forks";
-import { defaultMapSize, generateMap } from "#rules/map";
+import { biomeAt, defaultMapSize, generateMap } from "#rules/map";
 import type { MapSize } from "#rules/map";
 import type { StructureSite, WorldMap } from "#rules/map";
 import { spellsOf } from "#rules/spells";
@@ -46,6 +46,8 @@ export function createWorld(seed: number, setups: readonly PlayerSetup[], size: 
       bag: [],
       sureFooted: false,
       elevatedIn: null,
+      provisions: null,
+      lastMove: [],
       squad: setup.squad.map((p) => member(p.defId, p.tile)),
       leaderTile: first.tile,
     };
@@ -115,7 +117,7 @@ function structureAt(map: WorldMap, site: StructureSite): Structure {
     case "mercenaries":
       return { ...base, kind: "mercenaries", stock: mercenaryStock(tribeUnits(tribeAt(map, site.hex))) };
     case "merchant":
-      return { ...base, kind: "merchant", wares: merchantWares(site.id, 1), restocksOn: 1 + MERCHANT_RESTOCK_TURNS };
+      return { ...base, kind: "merchant", wares: merchantWares(site.id, 1, biomeAt(map, site.hex)), restocksOn: 1 + MERCHANT_RESTOCK_TURNS };
     case "mage":
       return { ...base, kind: "mage", stock: spellsOf("neutral").map((s) => s.id) };
   }

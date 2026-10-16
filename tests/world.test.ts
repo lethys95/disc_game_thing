@@ -1,7 +1,7 @@
 import { autoplay } from "#rules/ai";
 import type { Placement } from "#rules/battle/engine";
 import { hexagon, hexDistance, hexKey, neighbors } from "#rules/hex";
-import { NODE_POOLS, PATCH_BIOMES, SPECIALS_PER_CITY, findPath, generateMap, TERRAIN_COST } from "#rules/map";
+import { biomeAt, NODE_POOLS, PATCH_BIOMES, SPECIALS_PER_CITY, findPath, generateMap, TERRAIN_COST } from "#rules/map";
 import type { Commitment } from "#rules/forks";
 import { GUARDIAN_ID } from "#rules/units/index";
 import { CITY_HEALING_PER_TIER, CAMP_REGROWTH_TURNS, CAMP_STRONG_FROM, CAPITOL_INCOME, MINE_INCOME, STARTING_GOLD } from "#rules/balance";
@@ -57,7 +57,7 @@ describe("map", () => {
         const specials = site.nodes.slice(1).map((n) => n.kind);
         expect(specials.length).toBeLessThanOrEqual(SPECIALS_PER_CITY);
         expect(new Set(specials).size).toBe(specials.length);
-        const pool = [...NODE_POOLS[map.tiles[hexKey(site.hex)]?.biome ?? "temperate"], ...NODE_POOLS.anywhere];
+        const pool = [...NODE_POOLS[biomeAt(map, site.hex)], ...NODE_POOLS.anywhere];
         for (const kind of specials) expect(pool).toContain(kind);
         for (const start of map.starts) expect(findPath(map, start, site.hex, () => false)).not.toBeNull();
       }

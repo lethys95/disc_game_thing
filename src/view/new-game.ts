@@ -87,7 +87,7 @@ export class NewGame {
   private render(): void {
     this.root.replaceChildren();
     const header = element("div", "setup-header");
-    header.append(element("div", "title", "New game"), element("div", "subtitle", "Choose your faction, then who you march against."));
+    header.append(element("div", "title", "New game"), element("div", "subtitle", "Choose your faction, then whom you face."));
     this.root.appendChild(header);
 
     const factions = element("div", "faction-cards");
@@ -174,7 +174,7 @@ export class NewGame {
     const footer = element("div", "setup-footer");
     footer.append(
       button("action", "Back", () => this.handlers.onBack()),
-      button("action fight", "March", () => this.handlers.onMarch(this.players(), this.mapSize())),
+      button("action fight", "Start", () => this.handlers.onMarch(this.players(), this.mapSize())),
     );
     this.root.appendChild(footer);
   }

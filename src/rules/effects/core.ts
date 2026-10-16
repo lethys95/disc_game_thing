@@ -21,6 +21,7 @@ export const CORE_EFFECTS: readonly EffectDef[] = [
   },
   {
     id: "stunned",
+    harmful: true,
     name: "Stunned",
     describe: () => "Loses its next turn.",
     stacking: { mode: "unique" },

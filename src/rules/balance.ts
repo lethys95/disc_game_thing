@@ -96,13 +96,14 @@ export const CAMP_STRONG_FROM = 40;
 
 /** Node investment (user: "possibly invest into the nodes around the cities"; provisional): cost × the next level. */
 export const NODE_INVEST_COST = 100;
+/** A Hunting lodge's trophies: gold per tier of each neutral unit a hunter's warband kills (provisional #86). */
+export const TROPHY_GOLD_PER_TIER = 10;
 /**
  * Mana (pillars.md, "Spells": one kind, it pays for spells cast on the map). Provisional: a Capitol yields a trickle,
  * a mana node more per level.
  */
 export const CAPITOL_MANA = 5;
 export const MANA_NODE_INCOME = 10;
-export const NODE_MAX_LEVEL = 3;
 
 /** Gold per tier for a unit-type upgrade (placeholder; the user tunes upgrade prices after playtests). */
 export const UPGRADE_PRICE_PER_TIER = 50;

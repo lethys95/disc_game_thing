@@ -1,7 +1,7 @@
 import { cityName, unitName } from "#view/names";
 import type { Tile } from "#rules/battle/types";
 import { FACTION_ROOTS, GUARDIAN_ID } from "#rules/units/index";
-import { CITY_HEALING_PER_TIER, CITY_MAX_TIER, CITY_SLOTS, NODE_MAX_LEVEL } from "#rules/balance";
+import { CITY_HEALING_PER_TIER, CITY_MAX_TIER, CITY_SLOTS } from "#rules/balance";
 import { raisesDeadAt, cityUpgradeCost, elevateProblem, investNodeProblem, nodeInvestCost, recruitCost, recruitProblem, upgradeCityProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem } from "#rules/world/economy";
 import { capacityOf, transferProblem } from "#rules/world/squads";
 import { member, playerOf, wallArmorOf, cityById, leaderById, leaderUnit, nodesOf, tribeRecruitsOf } from "#rules/world/state";
@@ -286,7 +286,7 @@ export class CityScreen implements KeyLayer {
       const def = NODES[node.kind];
       const row = element("div", "row node");
       row.append(element("div", "name", `${def.name} ${roman(node.level)}`), element("div", "note", def.describe(node.level)));
-      if (node.level < NODE_MAX_LEVEL) {
+      if (node.level < def.maxLevel) {
         row.appendChild(
           orderButton("order", ["Invest · ", gold(nodeInvestCost(node))], {
             mayAct,

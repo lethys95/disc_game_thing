@@ -80,7 +80,7 @@ const menu: GameMenu = new GameMenu(byId("menu"), {
   settings,
   current: () => {
     if ([title, setup, newGame, codex, credits].some((screen) => screen.visible)) return null;
-    if (!campaign.running) return "Skirmishes aren't saved; march onto a map for a game you can save.";
+    if (!campaign.running) return "Skirmishes aren't saved; start a map game for one you can save.";
     return campaign.snapshot() ?? "Finish the battle first: saves hold the map.";
   },
   load: (save) => resume(save),

@@ -2,7 +2,7 @@ import { BEHAVIORS } from "#rules/abilities/index";
 import type { EffectSeed, UnitDef } from "#rules/battle/types";
 import { EFFECTS } from "#rules/effects";
 import { ITEMS } from "#rules/items";
-import { NODES } from "#rules/nodes";
+import { NODES, nodeEffects } from "#rules/nodes";
 import type { NodeKind } from "#rules/nodes";
 import { SPELLS } from "#rules/spells";
 import { UNITS } from "#rules/units/index";
@@ -37,7 +37,6 @@ export const GROUP_NAMES: Readonly<Record<Group, string>> = {
   other: "Other",
 };
 
-const NODE_LEVELS = [1, 2, 3];
 
 const TRIBE_UNITS: ReadonlySet<string> = new Set(TRIBES.flatMap((tribe) => tribeUnits(tribe)));
 
@@ -52,7 +51,7 @@ function worldSeeds(): { source: Source; seed: EffectSeed }[] {
   const seeds: { source: Source; seed: EffectSeed }[] = [];
   for (const item of ITEMS) for (const seed of [...item.worn, ...item.banner]) seeds.push({ source: { kind: "item", name: item.name }, seed });
   for (const [id, node] of Object.entries(NODES)) {
-    for (const level of NODE_LEVELS) for (const seed of [...node.recruitEffects(level), ...(node.city?.defenderEffects?.(level) ?? [])]) seeds.push({ source: { kind: "node", id: nodeKind(id) }, seed });
+    for (const seed of nodeEffects(node)) seeds.push({ source: { kind: "node", id: nodeKind(id) }, seed });
   }
   for (const spell of SPELLS) if (spell.effect.kind === "enchant") seeds.push({ source: { kind: "spell", name: spell.name }, seed: spell.effect.effect });
   return seeds;

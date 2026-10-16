@@ -403,7 +403,8 @@ function investWorth(world: World, node: MapNode): number {
   if (def.mana(node.level + 1) > def.mana(node.level)) return 2;
   if (def.city) return 1;
   const recruitsHere = cityOfNode(world, node)?.kind === "capitol";
-  return recruitsHere && def.recruitEffects(node.level + 1).length > 0 ? 1 : 0;
+  const roots = FACTION_ROOTS[playerOf(world, world.activePlayer).faction];
+  return recruitsHere && roots.some((defId) => def.recruitEffects(node.level + 1, defId).length > 0) ? 1 : 0;
 }
 
 /** Invest with spare gold: the worthiest node first, then the cheapest. */

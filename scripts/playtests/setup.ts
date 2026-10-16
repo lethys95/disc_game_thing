@@ -19,7 +19,7 @@ const setup: Playtest = {
     await t.page.locator("#newgame .map-size button", { hasText: "Large" }).click();
     if ((await picked.textContent()) !== "Large") t.fail("picking Large didn't take");
     await t.shot("playtest-newgame");
-    await t.page.locator("#newgame button", { hasText: "March" }).click();
+    await t.page.locator("#newgame button.action.fight").click();
     await t.page.waitForSelector("#mapmenu", { state: "visible" });
     await t.page.click("#mapmenu");
     const autosave = await t.page.locator("#menu .save-row", { hasText: "Autosave" }).locator(".note").textContent();

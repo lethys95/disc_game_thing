@@ -62,7 +62,7 @@ const map: Playtest = {
       t.log(`step ${step}: ${hint}`);
       // The click lands when the leader moves, a battle starts, or the turn passes.
       const before = JSON.stringify([await t.leaderHex(0), await t.page.textContent("#mapturn")]);
-      if (hint?.startsWith("Click to attack") || hint?.startsWith("March")) await t.page.mouse.click(point.x, point.y);
+      if (hint?.startsWith("Click to attack") || hint?.startsWith("Move")) await t.page.mouse.click(point.x, point.y);
       else await t.page.click("#endturn");
       await t.page.waitForFunction(
         (b) => window.discDebug.awaiting() !== "map" || JSON.stringify([window.discDebug.leaderHex(0), document.getElementById("mapturn")?.textContent ?? null]) !== b,

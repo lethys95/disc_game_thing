@@ -2,8 +2,9 @@ import { CITY_ARMOR_PER_TIER, levelBonus } from "#rules/balance";
 import type { Battle, EffectSeed, Side, Tile } from "#rules/battle/types";
 import type { Commitment } from "#rules/forks";
 import type { PlayerColor } from "#rules/world/colors";
-import { hexDistance, hexKey, sameHex } from "#rules/hex";
+import { hexDistance, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
+import { biomeAt } from "#rules/map";
 import type { Biome, WorldMap } from "#rules/map";
 import { NODES } from "#rules/nodes";
 import type { CityGifts, NodeKind } from "#rules/nodes";
@@ -111,6 +112,10 @@ export interface Leader {
   bag: string[];
   /** The city its leader was elevated in, until that city changes hands (a Waystone recalls to it); null for the first. */
   elevatedIn: string | null;
+  /** The hexes its last move walked, from where it started (a Watchtower at its last level shows it). */
+  lastMove: Hex[];
+  /** Provisions from a Granary it left: the share it goes on healing each turn, for `turns` more turns. */
+  provisions: { readonly share: number; readonly turns: number } | null;
   /** It started this turn near one of its side's Dog yards: forest and hills cost it what plains do, this turn. */
   sureFooted: boolean;
 }
@@ -287,6 +292,7 @@ export type WorldEvent =
   | { type: "engaged"; attackerId: string; defender: Defender }
   | { type: "captured"; cityId: string; player: PlayerId }
   | { type: "recalled"; leaderId: string; cityId: string }
+  | { type: "trophies"; player: PlayerId; gold: number }
   /** A city's bells (a Bell tower): an enemy warband ended a march near it; news for `player`, who holds it. */
   | { type: "alarm"; cityId: string; leaderId: string; player: PlayerId }
   | { type: "turnStarted"; player: PlayerId; turn: number; income: number }
@@ -478,7 +484,7 @@ export function neutralGroup(tribe: Tribe, strength: Strength): SquadMember[] {
  * draw on the same tribe as a camp on their hex would.
  */
 export function tribeAt(map: WorldMap, hex: Hex): Tribe {
-  const tribes = TRIBES_OF_BIOME[map.tiles[hexKey(hex)]?.biome ?? "temperate"];
+  const tribes = TRIBES_OF_BIOME[biomeAt(map, hex)];
   // A small integer hash of the hex: deterministic, and different neighbours land on different tribes.
   const h = Math.abs((hex.q * 73856093) ^ (hex.r * 19349663)) % 9973;
   return tribes[h % tribes.length] ?? "bandits";
@@ -569,7 +575,7 @@ export const cityOfNode = (world: World, node: MapNode): City | undefined => wor
 export const nodesOf = (world: World, city: City): MapNode[] => world.nodes.filter((n) => cityOfNode(world, n)?.id === city.id);
 
 /** A city gift (`nodes.ts` CityGifts) from each of the city's nodes that has it, at the node's level. */
-export function giftsOf(world: World, city: City, gift: Exclude<keyof CityGifts, "defenderEffects">): number[] {
+export function giftsOf(world: World, city: City, gift: Exclude<keyof CityGifts, "defenderEffects" | "attackerEffects">): number[] {
   return nodesOf(world, city).flatMap((n) => {
     const at = NODES[n.kind].city?.[gift];
     return at ? [at(n.level)] : [];

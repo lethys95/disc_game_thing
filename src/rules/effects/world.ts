@@ -1,4 +1,4 @@
-import type { EffectDef } from "#rules/battle/types";
+import type { Ctx, EffectDef, EffectInstance } from "#rules/battle/types";
 import { adjacent, frontLine } from "#rules/battle/grid";
 import { flatStat, STAT_WORTH } from "#rules/effects/shared";
 import { UNITS } from "#rules/units/index";
@@ -80,21 +80,26 @@ export const WORLD_EFFECTS: readonly EffectDef[] = [
     id: "siege",
     quiet: true,
     name: "Siege-trained",
-    describe: () => "Its first attack against a city's defenders ignores their fortification.",
+    describe: (e) => (e.amount === 1 ? "Its first attack against a city's defenders ignores their fortification." : `Its first ${e.amount} attacks against a city's defenders ignore their fortification.`),
     stacking: { mode: "unique" },
     lifetime: "battle",
     visibility: "public",
     hooks: {
+      // `amount`: attacks left; `stacks` 2 marks one as used during an attack, counted once it has resolved.
       outgoing: (ctx, self, packet) => {
         const trained = self.effect;
-        if (!trained || !packet.tags.includes("attack")) return;
+        if (!trained || trained.amount <= 0 || !packet.tags.includes("attack")) return;
         const walls = ctx.unit(packet.target).effects.find((e) => e.def === "fortified");
         if (!walls) return;
         packet.pierce += walls.amount;
         trained.stacks = 2;
       },
       afterAttack: (ctx, self) => {
-        if (self.effect && self.effect.stacks === 2) ctx.removeEffect(self.unitId, self.effect);
+        const trained = self.effect;
+        if (!trained || trained.stacks !== 2) return;
+        trained.stacks = 1;
+        trained.amount -= 1;
+        if (trained.amount <= 0) ctx.removeEffect(self.unitId, trained);
       },
     },
   },
@@ -110,6 +115,99 @@ export const WORLD_EFFECTS: readonly EffectDef[] = [
     mapMovement: 1,
     hooks: {},
   },
+  // Level-3 clauses (user, 2026-10-16, design/nodes.md "Third review"); numbers provisional (#86).
+  {
+    // A Blacksmith's clause: its attacks go through part of their target's armor.
+    id: "armor_piercing",
+    quiet: true,
+    name: "Armor-piercing",
+    describe: (e) => `Its attacks ignore ${e.amount} of their target's armor.`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      outgoing: (_ctx, self, packet) => {
+        if (packet.tags.includes("attack")) packet.pierce += self.effect?.amount ?? 0;
+      },
+    },
+  },
+  {
+    // A Foundry's clause: "only 50% of overfill, doesn't stack" (user): healing past full health goes into its shield,
+    // which never grows past what it holds at most.
+    id: "overflow_plating",
+    quiet: true,
+    name: "Overflow plating",
+    describe: (e) => `${e.amount}% of healing past its full health goes into its shield.`,
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      healing: (ctx, self, heal) => {
+        if (heal.pool !== "hp") return;
+        const unit = ctx.unit(self.unitId);
+        const overflow = unit.hp + heal.amount - ctx.stats(self.unitId).maxHp;
+        if (overflow > 0) ctx.restoreShield(self.unitId, Math.floor((overflow * (self.effect?.amount ?? 0)) / 100));
+      },
+    },
+  },
+  {
+    // A Leech pits' clause: a kill feeds it the blow that made it.
+    id: "leech_feast",
+    quiet: true,
+    name: "Leech feast",
+    describe: () => "A kill heals it as much as the killing blow dealt.",
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      afterHit: (ctx, self, targetId, dealt) => {
+        if (dealt > 0 && !ctx.unit(targetId).alive) ctx.heal(self.unitId, dealt);
+      },
+    },
+  },
+  // Bog iron's clause: the bog eats the iron of its holder's enemies fighting at the city.
+  flatStat({ id: "rusted", name: "Rusted", stat: "armor", sign: -1, stacking: { mode: "unique" }, describe: (e) => `−${e.amount} armor (the bog eats iron).` }),
+  // The Scriptorium (user, 2026-10-16): a different gift to each faction's casters.
+  {
+    // Jilliath: the first time it pays with its own health in a battle, it pays nothing.
+    id: "scriptorium_jilliath",
+    quiet: true,
+    name: "Scriptorium-taught",
+    describe: () => "The first time in a battle it would pay with its own health, it pays nothing.",
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: {
+      paysFor: (ctx, self, amount) => {
+        if (!self.effect || amount <= 0) return amount;
+        ctx.removeEffect(self.unitId, self.effect);
+        return 0;
+      },
+    },
+  },
+  {
+    // Ral-Vitahl: another battery in the bag.
+    id: "scriptorium_nexus",
+    quiet: true,
+    name: "Scriptorium-taught",
+    describe: () => "Starts each battle with an extra spell charge.",
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    spellCharges: 1,
+    hooks: {},
+  },
+  {
+    // The Grove: its mending lasts longer.
+    id: "scriptorium_grove",
+    quiet: true,
+    name: "Scriptorium-taught",
+    describe: () => "Its heals over time last a turn longer.",
+    stacking: { mode: "unique" },
+    lifetime: "battle",
+    visibility: "public",
+    hooks: { lengthens: (_ctx, _self, def) => (def === "mending" ? 1 : 0) },
+  },
   // The second review's recruit marks (user, 2026-10-15, design/nodes.md); numbers provisional (#84).
   {
     // Venom distillery: its first hit in a battle envenoms, as a Scaled's venom does. Spent once it has.
@@ -117,17 +215,22 @@ export const WORLD_EFFECTS: readonly EffectDef[] = [
     quiet: true,
     name: "Distilled venom",
     applies: ["envenomed"],
-    describe: (e) => `Its first hit in a battle envenoms: ${e.amount} at the start of each of the target's turns, and it heals only half.`,
+    describe: (e) =>
+      `Its first hit in a battle envenoms: ${e.amount} at the start of each of the target's turns, and it heals only half.${e.stacks >= 2 ? " Every later hit on an envenomed target adds a dose." : ""}`,
     stacking: { mode: "unique" },
     lifetime: "battle",
     visibility: "public",
     hooks: {
+      // `stacks`: 1, the first hit only; 2, the clause (every hit on an envenomed target adds a dose); 3, the clause
+      // once the first hit is spent.
       afterHit: (ctx, self, targetId, dealt) => {
         const venom = self.effect;
         if (!venom || dealt <= 0) return;
-        ctx.removeEffect(self.unitId, venom);
+        const fresh = venom.stacks < 3;
+        if (fresh) spend(ctx, self.unitId, venom);
         if (!ctx.unit(targetId).alive) return;
         const existing = ctx.unit(targetId).effects.find((e) => e.def === "envenomed");
+        if (!fresh && !existing) return;
         if (existing) existing.amount = Math.max(existing.amount, Math.min(existing.amount + venom.amount, venom.amount * 3));
         else ctx.addEffect(targetId, { def: "envenomed", amount: venom.amount, source: self.unitId });
       },
@@ -139,15 +242,19 @@ export const WORLD_EFFECTS: readonly EffectDef[] = [
     quiet: true,
     name: "Hexed",
     applies: ["punished"],
-    describe: (e) => `Whoever kills it is Punished for ${e.stacks} stack${e.stacks > 1 ? "s" : ""}.`,
+    describe: (e) => `Whoever kills it is Punished for ${e.stacks} stack${e.stacks > 1 ? "s" : ""}${e.amount > 0 ? ", and hexed in turn" : ""}.`,
     stacking: { mode: "unique" },
     lifetime: "battle",
     visibility: "public",
     hooks: {
+      // `amount` 1: the curse passes on (the clause), so the killer is hexed in turn.
       remains: (ctx, self, unitId, change) => {
-        if (unitId !== self.unitId || change !== "died" || !self.effect) return;
+        const hex = self.effect;
+        if (unitId !== self.unitId || change !== "died" || !hex) return;
         const killer = ctx.unit(self.unitId).killedBy;
-        if (killer && ctx.unit(killer).alive) ctx.addEffect(killer, { def: "punished", stacks: self.effect.stacks, source: self.unitId });
+        if (!killer || !ctx.unit(killer).alive) return;
+        ctx.addEffect(killer, { def: "punished", stacks: hex.stacks, source: self.unitId });
+        if (hex.amount > 0) ctx.addEffect(killer, { def: "hexed", stacks: hex.stacks, amount: hex.amount, source: self.unitId });
       },
     },
   },
@@ -156,7 +263,7 @@ export const WORLD_EFFECTS: readonly EffectDef[] = [
     id: "hunter",
     quiet: true,
     name: "Hunter",
-    describe: (e) => `Deals ${e.amount}% more damage to neutral units.`,
+    describe: (e) => `Deals ${e.amount}% more damage to neutral units.${e.stacks >= 2 ? " Its warband earns gold for each neutral it kills." : ""}`,
     stacking: { mode: "unique" },
     lifetime: "battle",
     visibility: "public",
@@ -455,3 +562,9 @@ export const WORLD_EFFECTS: readonly EffectDef[] = [
     },
   },
 ];
+
+/** A distilled venom's first hit is spent: gone, or (with the clause) kept for the doses that follow. */
+function spend(ctx: Ctx, unitId: string, venom: EffectInstance): void {
+  if (venom.stacks >= 2) venom.stacks = 3;
+  else ctx.removeEffect(unitId, venom);
+}

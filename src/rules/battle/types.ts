@@ -328,6 +328,10 @@ export interface Hooks {
   castsFree?(ctx: Ctx, self: TraitSelf): boolean;
   /** When a shield restoration reaches this unit: how much went in, and how much didn't fit. */
   restored?(ctx: Ctx, self: TraitSelf, restored: number, overflow: number): void;
+  /** When this unit pays with its own health (it is the source of its own loss): what it pays instead. */
+  paysFor?(ctx: Ctx, self: TraitSelf, amount: number): number;
+  /** When this unit applies an effect: extra stacks (turns) for it (a Scriptorium's longer mending). */
+  lengthens?(ctx: Ctx, self: TraitSelf, def: string): number;
   /** What this trait is worth to its unit's side, for the AI's valuation. */
   aiValue?(ctx: Ctx, self: TraitSelf): number;
   /** As the fight begins: how many tarot cards this trait draws for its unit's side (Tarot x). */
@@ -360,16 +364,20 @@ export interface EffectDef {
   readonly lifetime: Lifetime;
   /** `secret`: only the side of the unit that applied it knows it's there, until it fires (a Justiciar's mark). */
   readonly visibility: "public" | "secret";
+  /** A debuff: done to the unit against its interest, so a cleanse (a Cathedral's Holy Water) removes it. */
+  readonly harmful?: boolean;
   /** Bookkeeping effects (a loan, a context bonus) that the view shouldn't announce when applied. */
   readonly quiet?: boolean;
   readonly hooks: Hooks;
   readonly absorbPriority?: number;
   onExpire?(ctx: Ctx, self: TraitSelf): void;
   /**
-   * Carried as a mark (`world/state.ts`), extra movement for its warband on the map. Several don't add up: a warband
-   * moves as fast as its best (Stables).
+   * Carried as a mark (`world/state.ts`), extra movement for its warband on the map, per point of the mark's amount.
+   * Several don't add up: a warband moves as fast as its best (Stables).
    */
   readonly mapMovement?: number;
+  /** Extra spell charges its bearer starts a battle with (a Scriptorium's gift to Ral-Vitahl's casters). */
+  readonly spellCharges?: number;
   /** Carried as a mark, how many times faster its bearer heals on the map (an Oasis). */
   readonly mapHealing?: number;
   /**

@@ -6,19 +6,21 @@ import { engage } from "#rules/world/battles";
 import { createWorld } from "#rules/world/create";
 import { autoplay } from "#rules/ai";
 import { ITEMS } from "#rules/items";
-import { resalePrice } from "#rules/structures";
 import type { Tile } from "#rules/battle/types";
 import type { Hex } from "#rules/hex";
 import { concludeBattle } from "#rules/world/battles";
-import { cityUpgradeCost, raisesDeadAt, recruitCost, recruitProblem, resurrectionCost, startTurn } from "#rules/world/economy";
+import { cityUpgradeCost, investNodeProblem, raisesDeadAt, recruitCost, recruitProblem, resurrectionCost, startTurn } from "#rules/world/economy";
 import { maxHpOf } from "#rules/world/record";
+import { NODES } from "#rules/nodes";
+import { spellById } from "#rules/spells";
+import { MERCHANT_POOLS, merchantWares, resalePrice } from "#rules/structures";
 import { tradePrice } from "#rules/world/structures";
-import { castProblem, knownSpells } from "#rules/world/spells";
+import { castProblem, knownSpells, spellCost } from "#rules/world/spells";
 import { capacityOf } from "#rules/world/squads";
 import { movementOf } from "#rules/world/leaders";
 import { changeHands, cityById, leaderById, playerOf, tribeAt, tribeRecruitsOf, tribeUnits } from "#rules/world/state";
 import type { City, World } from "#rules/world/state";
-import { knownWorld, sightOf } from "#rules/world/vision";
+import { knownWorld, sightOf, watched } from "#rules/world/vision";
 import { reachable, warbandStepCost } from "#rules/world/movement";
 import type { Placement } from "#rules/battle/engine";
 import { COLS, ROWS } from "#rules/battle/grid";
@@ -63,14 +65,14 @@ describe("recruit marks", () => {
     const walled = p("congregant", 0, 1, [{ def: "fortified", amount: 10 }]);
     // 10 armor takes a seventh off a Congregant's 20; the siege-trained hit goes through it.
     expect(hit(p("congregant", 0, 1), walled)).toBe(17);
-    expect(hit(p("congregant", 0, 1, [{ def: "siege" }]), walled)).toBe(20);
-    let battle = until(start([p("congregant", 0, 1, [{ def: "siege" }])], [walled]), "0.0.1");
+    expect(hit(p("congregant", 0, 1, [{ def: "siege", amount: 1 }]), walled)).toBe(20);
+    let battle = until(start([p("congregant", 0, 1, [{ def: "siege", amount: 1 }])], [walled]), "0.0.1");
     battle = act(battle, "attack", "1.0.1").battle;
     const before = unit(until(battle, "0.0.1"), "1.0.1").hp;
     const after = unit(act(until(battle, "0.0.1"), "attack", "1.0.1").battle, "1.0.1").hp;
     expect(before - after).toBe(17);
     // Against a target without walls it isn't spent.
-    expect(hit(p("congregant", 0, 1, [{ def: "siege" }]), p("congregant", 0, 1))).toBe(20);
+    expect(hit(p("congregant", 0, 1, [{ def: "siege", amount: 1 }]), p("congregant", 0, 1))).toBe(20);
   });
 
   test("Stables: a warband with a unit bred there moves one farther; several don't add up, a fallen one gives nothing", () => {
@@ -364,5 +366,223 @@ describe("Waystone (the user's own)", () => {
     changeHands(taken, cityById(taken, city.id), 1);
     expect(leaderById(taken, raised.id).elevatedIn).toBeNull();
     expect(knownSpells(taken, 0)).not.toContain("way_portal");
+  });
+});
+
+/** The third review's clauses (user, 2026-10-16, design/nodes.md "Third review"). Numbers provisional (#86). */
+describe("node levels and clauses", () => {
+  test("every level of every node says something new; investing stops at the node's own last level", () => {
+    for (const def of Object.values(NODES)) for (let level = 1; level < def.maxLevel; level++) expect(def.describe(level + 1)).not.toBe(def.describe(level));
+    const { world } = holding("waystone", 2);
+    const stone = world.nodes.find((n) => n.kind === "waystone");
+    if (!stone) throw new Error("no waystone");
+    expect(investNodeProblem(withGold(world, [1000, 1000]), stone.id)).toMatch(/highest level/);
+  });
+
+  test("Cathedral: Holy Water heals more each level and cleanses at the last", () => {
+    const water = (level: number) => NODES.cathedral.recruitEffects(level, "congregant")[0]?.ability;
+    expect(water(2)?.params?.["amount"]).toBeGreaterThan(water(1)?.params?.["amount"] ?? Infinity);
+    const ability = water(3);
+    if (!ability) throw new Error("no holy water");
+    const hurt = { ...p("congregant", 0, 0, [{ def: "punished", stacks: 2 }, { def: "bleeding", amount: 5 }, { def: "mutated", amount: 5 }]), hp: 50 };
+    let battle = until(start([p("congregant", 0, 1, [{ def: "carries", ability }]), hurt], [p("congregant", 0, 1)]), "0.0.1");
+    battle = act(battle, "holy_water", "0.0.0").battle;
+    expect(unit(battle, "0.0.0").effects.map((e) => e.def)).toEqual(["mutated"]);
+  });
+
+  test("Blacksmith's clause pierces armor; Leech pits' feeds on a kill", () => {
+    const armored = p("congregant", 0, 1, [{ def: "extra_armor", amount: 20 }]);
+    expect(hit(p("congregant", 0, 1, [{ def: "armor_piercing", amount: 5 }]), armored)).toBeGreaterThan(hit(p("congregant", 0, 1), armored));
+    const battle = until(start([{ ...p("congregant", 0, 1, [{ def: "leech_feast" }]), hp: 40 }], [{ ...p("congregant", 0, 1), hp: 10 }]), "0.0.1");
+    const after = act(battle, "attack", "1.0.1").battle;
+    expect(unit(after, "0.0.1").hp).toBe(50);
+  });
+
+  test("Foundry's clause: half of a heal past full health goes into the shield, never past its most", () => {
+    const shieldAfterHeal = (effects: { def: string; amount?: number }[]) => {
+      const water = { def: "carries", ability: { id: "holy_water", params: { amount: 30 } } };
+      let battle = until(start([p("congregant", 0, 1, effects), p("congregant", 1, 1, [water])], [p("congregant", 0, 1)]), "1.0.1");
+      battle = until(act(battle, "attack", "0.0.1").battle, "0.1.1");
+      battle = act(battle, "holy_water", "0.0.1").battle;
+      return unit(battle, "0.0.1").shield;
+    };
+    expect(shieldAfterHeal([{ def: "foundry", amount: 12 }])).toBeLessThanOrEqual(4);
+    expect(shieldAfterHeal([{ def: "foundry", amount: 12 }, { def: "overflow_plating", amount: 50 }])).toBeGreaterThanOrEqual(11);
+    expect(shieldAfterHeal([{ def: "foundry", amount: 12 }, { def: "overflow_plating", amount: 50 }])).toBeLessThanOrEqual(12);
+  });
+
+  test("Venom distillery's clause: every later hit on an envenomed target adds a dose; without it, the first hit only", () => {
+    const venom = (stacks: number) => {
+      let battle = until(start([p("congregant", 0, 1, [{ def: "distilled_venom", amount: 4, stacks }])], [p("templar", 0, 1)]), "0.0.1");
+      battle = act(battle, "attack", "1.0.1").battle;
+      battle = act(until(battle, "0.0.1"), "attack", "1.0.1").battle;
+      return unit(battle, "1.0.1").effects.find((e) => e.def === "envenomed")?.amount;
+    };
+    expect(venom(1)).toBe(4);
+    expect(venom(2)).toBe(8);
+  });
+
+  test("Witch hut's clause: the curse passes on to the killer", () => {
+    const battle = until(start([p("congregant", 0, 1)], [{ ...p("congregant", 0, 1, [{ def: "hexed", stacks: 2, amount: 1 }]), hp: 5 }]), "0.0.1");
+    const after = act(battle, "attack", "1.0.1").battle;
+    expect(unit(after, "0.0.1").effects.map((e) => e.def)).toEqual(expect.arrayContaining(["punished", "hexed"]));
+  });
+
+  test("Siege workshop: more attacks go through the walls with each level", () => {
+    const walled = p("congregant", 0, 1, [{ def: "fortified", amount: 10 }]);
+    let battle = until(start([p("congregant", 0, 1, [{ def: "siege", amount: 2 }])], [walled]), "0.0.1");
+    battle = act(battle, "attack", "1.0.1").battle;
+    const second = unit(until(battle, "0.0.1"), "1.0.1").hp - unit(act(until(battle, "0.0.1"), "attack", "1.0.1").battle, "1.0.1").hp;
+    expect(second).toBe(20);
+  });
+
+  test("the Scriptorium: each faction's casters get their own gift; melee recruits get none", () => {
+    expect(NODES.scriptorium.recruitEffects(1, "congregant")).toEqual([]);
+    expect(NODES.scriptorium.recruitEffects(1, "apprentice")).toEqual([{ def: "scriptorium_nexus" }]);
+    // Ral-Vitahl: an extra spell charge.
+    const charges = (effects: { def: string }[]) => unit(start([p("apprentice", 1, 1, effects)], [p("congregant", 0, 1)]), "0.1.1").spellCharges;
+    expect(charges([{ def: "scriptorium_nexus" }])).toBe(charges([]) + 1);
+    // Jilliath: the first price paid in health is waived.
+    const paid = (effects: { def: string }[]) => {
+      let battle = until(start([p("reclaimer", 1, 1, effects), { ...p("congregant", 0, 1), hp: 30 }], [p("congregant", 0, 1)]), "0.1.1");
+      battle = act(battle, "transfusion", "0.0.1").battle;
+      return unit(battle, "0.1.1").hp;
+    };
+    expect(paid([{ def: "scriptorium_jilliath" }])).toBeGreaterThan(paid([]));
+    // The Grove: mending lasts a turn longer.
+    const mending = (effects: { def: string }[]) => {
+      let battle = until(start([p("grove_support_1", 1, 1, effects), { ...p("congregant", 0, 1), hp: 30 }], [p("congregant", 0, 1)]), "0.1.1");
+      battle = act(battle, "bloom", "0.0.1").battle;
+      return unit(battle, "0.0.1").effects.find((e) => e.def === "mending")?.stacks ?? 0;
+    };
+    expect(mending([{ def: "scriptorium_grove" }])).toBe(mending([]) + 1);
+  });
+
+  test("Stables: two levels, the second a second hex of movement", () => {
+    expect(NODES.stables.maxLevel).toBe(2);
+    expect(NODES.stables.recruitEffects(2, "congregant")).toEqual([{ def: "stables", amount: 2 }]);
+  });
+});
+
+describe("city clauses", () => {
+  test("Mana node: the first spell of a turn aimed near the city costs half", () => {
+    const { world, city } = holding("mana", 3);
+    const near = { ...world, players: world.players.map((pl, i) => (i === 0 ? { ...pl, spells: ["harden_warband"] } : pl)) };
+    expect(spellCost(near, "harden_warband", city.hex)).toBe(Math.ceil(spellById("harden_warband").cost / 2));
+    const far = Object.values(world.map.tiles).find((t) => hexDistance(t.hex, city.hex) > 3);
+    if (!far) throw new Error("nowhere far");
+    expect(spellCost(near, "harden_warband", far.hex)).toBe(spellById("harden_warband").cost);
+    const cast = { ...near, players: near.players.map((pl, i) => (i === 0 ? { ...pl, cast: ["firebolt"] } : pl)) };
+    expect(spellCost(cast, "harden_warband", city.hex)).toBe(spellById("harden_warband").cost);
+  });
+
+  test("Caravanserai: its holder sees a known merchant's wares as they are now", () => {
+    const { world } = holding("caravanserai", 3);
+    const merchant = world.structures.find((s) => s.kind === "merchant");
+    if (!merchant || merchant.kind !== "merchant") throw new Error("no merchant");
+    const stale = { ...merchant, wares: [] };
+    const remembered = { ...world, players: world.players.map((pl, i) => (i === 0 ? { ...pl, memory: { ...pl.memory, structures: [stale] } } : pl)) };
+    const seen = knownWorld(remembered, 0).structures.find((s) => s.id === merchant.id);
+    expect(seen).toEqual(merchant);
+    const plain = { ...remembered, nodes: remembered.nodes.map((n) => (n.kind === "caravanserai" ? { ...n, level: 1 } : n)) };
+    expect(knownWorld(plain, 0).structures.find((s) => s.id === merchant.id)).toEqual(sightOf(plain, 0).has(hexKey(merchant.hex)) ? merchant : stale);
+  });
+
+  test("Bog iron: enemies fighting at the city rust", () => {
+    const { world, city } = holding("bog_iron", 3);
+    const walled = { ...world, cities: world.cities.map((c) => (c.id === city.id ? { ...c, garrison: [{ defId: "congregant", tile: { row: 0, col: 1 } as const, hp: 90, xp: 0, marks: [], level: 0 }] } : c)) };
+    const battle = engage(walled, leaderById(walled, "leader1"), { kind: "garrison", cityId: city.id }).battle;
+    expect(unit(battle, "0.0.1").effects.some((e) => e.def === "rusted")).toBe(true);
+    expect(unit(battle, "1.0.1").effects.some((e) => e.def === "rusted")).toBe(false);
+  });
+
+  test("Granary: a warband that rested there carries provisions for two more turns", () => {
+    const { world, city } = holding("granary", 3);
+    let next = structuredClone(withLeader(world, "leader0", { hex: city.hex }));
+    startTurn(next, []);
+    expect(leaderById(next, "leader0").provisions?.turns).toBe(2);
+    const away = Object.values(next.map.tiles).find((t) => hexDistance(t.hex, city.hex) >= 3 && next.cities.every((c) => hexDistance(c.hex, t.hex) > 0) && next.nodes.every((n) => hexDistance(n.hex, t.hex) > 1));
+    if (!away) throw new Error("nowhere away");
+    const leader = leaderById(next, "leader0");
+    next = structuredClone(withLeader(next, "leader0", { hex: away.hex, squad: leader.squad.map((m) => ({ ...m, hp: 1 })) }));
+    startTurn(next, []);
+    expect(leaderById(next, "leader0").squad[0]?.hp).toBeGreaterThan(1);
+    expect(leaderById(next, "leader0").provisions?.turns).toBe(1);
+  });
+
+  test("Training yard: its garrison drills a little each turn", () => {
+    const { world, city } = holding("training_yard", 3);
+    const next = structuredClone({ ...world, cities: world.cities.map((c) => (c.id === city.id ? { ...c, garrison: [{ defId: "congregant", tile: { row: 0, col: 1 } as const, hp: 90, xp: 0, marks: [], level: 0 }] } : c)) });
+    startTurn(next, []);
+    expect(cityById(next, city.id).garrison[0]?.xp).toBe(5);
+  });
+
+  test("Watchtower: at its last level, it sees enemy warbands' items and last move", () => {
+    const { world } = holding("watchtower", 3);
+    const tower = world.nodes.find((n) => n.kind === "watchtower");
+    if (!tower) throw new Error("no tower");
+    expect(watched(world, 0, tower.hex)).toBe(true);
+    expect(watched(world, 1, tower.hex)).toBe(false);
+    const low = { ...world, nodes: world.nodes.map((n) => (n.kind === "watchtower" ? { ...n, level: 2 } : n)) };
+    expect(watched(low, 0, tower.hex)).toBe(false);
+  });
+
+  test("Waystation: at its last level, warbands starting next to it get a hex more", () => {
+    const { world } = holding("waystation", 3);
+    const station = world.nodes.find((n) => n.kind === "waystation");
+    if (!station) throw new Error("no waystation");
+    const next = structuredClone(withLeader(world, "leader0", { hex: beside(world, station.hex) }));
+    startTurn(next, []);
+    expect(leaderById(next, "leader0").movement).toBe(movementOf(leaderById(next, "leader0")) + 1);
+  });
+
+  test("Oasis: at its last level, enemy warbands near it regenerate nothing", () => {
+    const { world, city } = holding("oasis", 3);
+    const near = beside(world, city.hex);
+    const leader = leaderById(world, "leader1");
+    const thirsty = structuredClone({ ...withLeader(world, "leader1", { hex: near, squad: leader.squad.map((m) => ({ ...m, hp: 1 })), skills: { healing: 1 } }), activePlayer: 1 as const });
+    startTurn(thirsty, []);
+    expect(leaderById(thirsty, "leader1").squad[0]?.hp).toBe(1);
+  });
+
+  test("Waystone: at its second level, Way portal sends the warband on with a hex more", () => {
+    const { world, city } = holding("waystone", 2);
+    const away = { ...withLeader(world, "leader0", { hex: beside(world, city.hex), elevatedIn: city.id, movement: 0 }), players: world.players.map((pl) => ({ ...pl, mana: 100 })) };
+    const step = applyWorldAction(away, { type: "castSpell", spell: "way_portal", at: beside(world, city.hex) });
+    expect(leaderById(step.world, "leader0").movement).toBe(1);
+  });
+
+  test("Gallows: at its second level, a warband wiped out storming the city leaves its items to the holder", () => {
+    const { world, city } = holding("gallows", 2);
+    const guards = COLS.flatMap((col) => [0, 1].map((row) => ({ defId: "punisher", tile: { row, col } as Tile, hp: 200, xp: 0, marks: [], level: 0 })));
+    let walled = withLeader({ ...world, cities: world.cities.map((c) => (c.id === city.id ? { ...c, garrison: guards } : c)) }, "leader1", { hex: beside(world, city.hex), worn: ["iron_helm"] });
+    walled = withLeader(walled, "leader0", { hex: beside(world, startOf(world, 0)) });
+    const next = applyWorldAction({ ...walled, activePlayer: 1 }, { type: "move", leaderId: "leader1", to: city.hex }).world;
+    const battle = next.engagement?.battle;
+    if (!battle) throw new Error("no battle");
+    const after = concludeBattle(next, autoplay(battle)).world;
+    expect(after.leaders.some((l) => l.id === "leader1")).toBe(false);
+    expect(leaderById(after, "leader0").bag).toContain("iron_helm");
+  });
+
+  test("Hunting lodge: at its last level, a hunter's warband earns gold for each neutral it kills", () => {
+    const hunter = { effect: { def: "hunter", amount: 25, stacks: 2 }, source: { kind: "node" as const, node: "hunting_lodge" as const, cityId: "city1" } };
+    const { world } = holding("gold");
+    const lair = world.lairs.find((l) => l.kind === "camp");
+    if (!lair) throw new Error("no camp");
+    const leader = leaderById(world, "leader0");
+    const strong = withLeader(world, "leader0", { hex: beside(world, lair.hex), squad: leader.squad.map((m) => ({ ...m, defId: "templar", hp: 400, level: 6, marks: [hunter] })) });
+    const next = applyWorldAction(strong, { type: "move", leaderId: "leader0", to: lair.hex }).world;
+    const battle = next.engagement?.battle;
+    if (!battle) throw new Error("no battle");
+    const step = concludeBattle(next, autoplay(battle));
+    expect(step.events.some((e) => e.type === "trophies" && e.gold > 0)).toBe(true);
+  });
+
+  test("merchants lay out only their biome's list and the anywhere list", () => {
+    for (const biome of ["temperate", "desert", "swamp", "tundra", "haunted"] as const) {
+      const pool = [...MERCHANT_POOLS[biome], ...MERCHANT_POOLS.anywhere];
+      for (let turn = 1; turn < 30; turn += 6) for (const ware of merchantWares("merchant0", turn, biome)) expect(pool).toContain(ware);
+    }
   });
 });

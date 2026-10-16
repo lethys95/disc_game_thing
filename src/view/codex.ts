@@ -3,7 +3,7 @@ import { BEHAVIORS } from "#rules/abilities/index";
 import type { UnitDef } from "#rules/battle/types";
 import { EFFECTS } from "#rules/effects";
 import { FACTIONS, PLAYABLE } from "#rules/factions";
-import { NODES } from "#rules/nodes";
+import { NODES, nodeEffects } from "#rules/nodes";
 import type { NodeKind } from "#rules/nodes";
 import { EVOLUTIONS, RECRUIT_COST, UNITS } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
@@ -339,7 +339,7 @@ export class Codex {
     }
     page.appendChild(levels);
     page.appendChild(element("div", "note", "A node belongs to the nearest city: whoever holds the city holds it. Investing raises its level."));
-    const seeds = [...node.recruitEffects(1), ...(node.city?.defenderEffects?.(1) ?? [])];
+    const seeds = nodeEffects(node);
     const gives = seeds.flatMap((seed): Source[] => (seed.ability ? [{ kind: "ability", id: seed.ability.id }] : EFFECTS.get(seed.def)?.quiet ? [] : [{ kind: "effect", id: seed.def }]));
     if (gives.length > 0) {
       const lines = element("div", "codex-lines");

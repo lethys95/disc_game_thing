@@ -29,6 +29,9 @@ export type Biome = "temperate" | "desert" | "swamp" | "tundra" | "haunted";
 export const PATCH_BIOMES: readonly Exclude<Biome, "temperate">[] = ["desert", "swamp", "tundra", "haunted"];
 export const BIOMES: readonly Biome[] = ["temperate", ...PATCH_BIOMES];
 
+/** The biome a hex lies in; temperate off the map. */
+export const biomeAt = (map: WorldMap, hex: Hex): Biome => map.tiles[hexKey(hex)]?.biome ?? "temperate";
+
 export interface MapTile {
   readonly hex: Hex;
   readonly terrain: Terrain;
@@ -226,7 +229,7 @@ function placeSites(map: WorldMap, seed: number, neutralCities: number): Site[] 
     // The user (2026-10-15): two special ones beside it, from its biome's pool and the "anywhere" pool only. Within
     // the pool, the kinds this map has dealt least come first, so maps differ and repeats are rare.
     const economy: NodeKind = cities === 2 ? "mana" : "gold";
-    const pool = [...NODE_POOLS[map.tiles[hexKey(hex)]?.biome ?? "temperate"], ...NODE_POOLS.anywhere];
+    const pool = [...NODE_POOLS[biomeAt(map, hex)], ...NODE_POOLS.anywhere];
     const specials = pool
       .sort((a, b) => (dealt.get(a) ?? 0) - (dealt.get(b) ?? 0) || noise(seed + 43, hashOf(a), cities) - noise(seed + 43, hashOf(b), cities))
       .slice(0, Math.min(SPECIALS_PER_CITY, beside.length));
@@ -242,11 +245,11 @@ export const SPECIALS_PER_CITY = 2;
 
 /**
  * The special nodes a neutral city of each biome can have, besides those of the "anywhere" pool (the user's pools,
- * 2026-10-15, design/nodes.md). The Toll bridge, Scriptorium and Shrine join their pools once built.
+ * 2026-10-15, design/nodes.md). The Toll bridge and Shrine join their pools once built.
  */
 export const NODE_POOLS: Readonly<Record<Biome | "anywhere", readonly NodeKind[]>> = {
   anywhere: ["blacksmith", "siege_workshop", "tribal_outpost", "training_yard", "waystation", "waystone"],
-  temperate: ["cathedral", "stables", "tannery", "bell_tower", "hunting_lodge", "granary"],
+  temperate: ["cathedral", "stables", "tannery", "bell_tower", "hunting_lodge", "granary", "scriptorium"],
   desert: ["foundry", "watchtower", "oasis", "caravanserai"],
   swamp: ["leech_pits", "venom_distillery", "bog_iron"],
   tundra: ["quarry", "watchtower", "dog_yard"],

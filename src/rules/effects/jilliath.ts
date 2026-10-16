@@ -46,6 +46,7 @@ function repentant(): EffectDef {
 export const JILLIATH_EFFECTS: readonly EffectDef[] = [
   {
     id: "punished",
+    harmful: true,
     name: "Punished",
     describe: (e) => `−${PUNISHED_PER_STACK * e.stacks} damage and −${PUNISHED_PER_STACK * e.stacks} initiative for the rest of combat (at most ${PUNISHMENT_MAX_STACKS} stacks).`,
     stacking: { mode: "merge", cap: PUNISHMENT_MAX_STACKS },
@@ -61,6 +62,7 @@ export const JILLIATH_EFFECTS: readonly EffectDef[] = [
   },
   {
     id: "bleeding",
+    harmful: true,
     name: "Bleeding",
     describe: (e) => `Loses ${e.amount} HP at the start of each of its turns.`,
     stacking: { mode: "merge" },

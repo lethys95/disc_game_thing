@@ -69,7 +69,7 @@ export function applyWorldAction(world: World, action: WorldAction): WorldStep {
       const tile = { row: (freeTile([], unit.defId)?.row ?? 0), col: 1 } as const;
       const id = `leader${draft.nextLeader}`;
       draft.nextLeader += 1;
-      draft.leaders.push({ id, player: side, hex: city.hex, movement: LEADER_MOVEMENT, experience: 0, skills: {}, fellOnTurn: null, squad: [{ ...unit, tile }], leaderTile: tile, enchantments: [], worn: [], bag: [], sureFooted: false, elevatedIn: city.id });
+      draft.leaders.push({ id, player: side, hex: city.hex, movement: LEADER_MOVEMENT, experience: 0, skills: {}, fellOnTurn: null, squad: [{ ...unit, tile }], leaderTile: tile, enchantments: [], worn: [], bag: [], sureFooted: false, elevatedIn: city.id, provisions: null, lastMove: [] });
       events.push({ type: "elevated", leaderId: id });
       break;
     }
@@ -287,6 +287,7 @@ function march(draft: World, leader: Leader, to: Hex, events: WorldEvent[]): voi
   }
   if (walked.length > 0) {
     events.push({ type: "moved", leaderId: leader.id, path: walked });
+    leader.lastMove = [origin, ...walked];
     ringBells(draft, leader, origin, events);
     scout(draft, leader, explored, events);
   }

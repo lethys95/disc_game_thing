@@ -16,7 +16,7 @@ import { useItemProblem, wardTargets } from "#rules/world/items";
 import { equipProblem, LEADER_SKILLS, movementOf, unequipProblem } from "#rules/world/leaders";
 import { planMove } from "#rules/world/movement";
 import type { MoveTarget } from "#rules/world/movement";
-import { castProblem, knownSpells, learnSpellProblem, spellTargets, spellVictims } from "#rules/world/spells";
+import { castProblem, knownSpells, spellCost, learnSpellProblem, spellTargets, spellVictims } from "#rules/world/spells";
 import { buyItemProblem, buySpellProblem, forSale, hireProblem, sellItemProblem, structureAt, tradePrice } from "#rules/world/structures";
 import { transferProblem } from "#rules/world/squads";
 import { cityAt, cityById, lairAt, leaderAt, playerOf, tribeAt, tribeRecruitsOf } from "#rules/world/state";
@@ -108,7 +108,7 @@ function marches(known: World, seat: PlayerId, leader: Leader): MapOption[] {
     const arrives = plan.steps === plan.path.hexes.length;
     const stop = plan.path.hexes[plan.steps - 1];
     const how = arrives ? "arrives this turn" : `about ${turns} turn${turns === 1 ? "" : "s"} away; stops at ${stop ? at(stop) : "?"} this turn`;
-    options.push({ text: `${name} marches to ${what} at ${at(hex)}: ${how}.`, action: { type: "move", leaderId: leader.id, to: hex } });
+    options.push({ text: `${name} moves to ${what} at ${at(hex)}: ${how}.`, action: { type: "move", leaderId: leader.id, to: hex } });
   }
   const explored = new Set(playerOf(known, seat).explored);
   const unknown = Object.values(known.map.tiles)
@@ -218,7 +218,7 @@ function spellOrders(known: World, seat: PlayerId): MapOption[] {
       const victims = spellVictims(known, id, hex).flat().filter((m) => m.hp > 0);
       const amount = spell.effect.kind === "damage" ? spell.effect.amount : 0;
       const hits = spell.effect.kind === "damage" ? `: ${victims.length} units lose ${amount} HP, ${victims.filter((m) => m.hp <= amount).length} would die` : "";
-      options.push({ text: `Cast ${spell.name} (${spell.cost} mana) on ${placeText(known, seat, hex)} at ${at(hex)}${hits}.`, action: { type: "castSpell", spell: id, at: hex } });
+      options.push({ text: `Cast ${spell.name} (${spellCost(known, id, hex)} mana) on ${placeText(known, seat, hex)} at ${at(hex)}${hits}.`, action: { type: "castSpell", spell: id, at: hex } });
     }
   }
   return options;

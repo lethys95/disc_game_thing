@@ -13,6 +13,7 @@ export const TRIBE_EFFECTS: readonly EffectDef[] = [
   {
     // A Boar's tusks: bleeds at the start of each of its turns; more gores add up.
     id: "gored",
+    harmful: true,
     name: "Gored",
     describe: (e) => `Bleeds ${e.amount} at the start of each of its turns.`,
     stacking: { mode: "merge" },
@@ -49,6 +50,7 @@ export const TRIBE_EFFECTS: readonly EffectDef[] = [
   {
     // A troll touched by fire: its next regeneration fails.
     id: "seared",
+    harmful: true,
     name: "Seared",
     describe: () => "Fire has touched it: it won't regenerate at the start of its next turn.",
     stacking: { mode: "unique" },
@@ -78,6 +80,7 @@ export const TRIBE_EFFECTS: readonly EffectDef[] = [
   {
     // Venom: loses health at the start of each turn, and heals only half.
     id: "envenomed",
+    harmful: true,
     name: "Envenomed",
     describe: (e) => `Loses ${e.amount} at the start of each of its turns, and heals only half.`,
     stacking: { mode: "unique" },
@@ -97,6 +100,7 @@ export const TRIBE_EFFECTS: readonly EffectDef[] = [
   {
     // A naga's coils: no turns until the naga's next turn, when it must squeeze again.
     id: "constricted",
+    harmful: true,
     name: "Constricted",
     describe: () => "Held in a naga's coils: it loses its turns until the naga's next turn.",
     stacking: { mode: "unique" },
@@ -107,6 +111,7 @@ export const TRIBE_EFFECTS: readonly EffectDef[] = [
   {
     // The medusa's gaze: stone until its next turn, which it loses; half damage meanwhile.
     id: "petrified",
+    harmful: true,
     name: "Stone",
     describe: () => "Turned to stone: it loses its next turn, and takes half damage until then.",
     stacking: { mode: "unique" },
@@ -143,6 +148,7 @@ export const TRIBE_EFFECTS: readonly EffectDef[] = [
   {
     // An Axe-maiden's axe: less armor until the end of the next round.
     id: "split_armor",
+    harmful: true,
     name: "Split armor",
     describe: (e) => `−${e.amount} armor, for ${e.stacks} more round start${e.stacks === 1 ? "" : "s"}.`,
     stacking: { mode: "unique" },

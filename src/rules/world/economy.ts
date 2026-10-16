@@ -1,11 +1,13 @@
-import { CAPITOL_MANA, CAMP_MEDIUM_FROM, CAMP_STRONG_FROM, CITY_HEALING_PER_TIER, CITY_MAX_TIER, CITY_UPGRADE_COST, NODE_INVEST_COST, NODE_MAX_LEVEL, CAPITOL_INCOME, RESURRECTION_BASE, RESURRECTION_PREMIUM } from "#rules/balance";
+import { CAPITOL_MANA, CAMP_MEDIUM_FROM, CAMP_STRONG_FROM, CITY_HEALING_PER_TIER, CITY_MAX_TIER, CITY_UPGRADE_COST, NODE_INVEST_COST, CAPITOL_INCOME, RESURRECTION_BASE, RESURRECTION_PREMIUM } from "#rules/balance";
 import type { Tile } from "#rules/battle/types";
 import { chooseProblem, isFork, openForks } from "#rules/forks";
 import { COLS, ROWS, sameTile } from "#rules/battle/grid";
 import { hexDistance, sameHex } from "#rules/hex";
 import type { Hex } from "#rules/hex";
 import { effectDef } from "#rules/effects";
+import { biomeAt } from "#rules/map";
 import { NODES } from "#rules/nodes";
+import type { CityGifts } from "#rules/nodes";
 import { grow, xpToEvolve } from "#rules/progression";
 import { EVOLUTIONS, FACTION_ROOTS, GUARDIAN_ID, LINE_ARCHETYPE, RECRUIT_COST, UNITS } from "#rules/units/index";
 import { freeRevival, giftOf, learnProblem, movementOf, squadHealingOf } from "#rules/world/leaders";
@@ -194,13 +196,13 @@ export function marksOnBecoming(world: World, side: PlayerId, defId: string): Ma
     .map((u): Mark => ({ effect: u.effect, source: { kind: "upgrade", upgrade: u.id } }));
 }
 
-/** A new unit for `side`: recruited, joining, or otherwise acquired. */
-/** What a unit recruited in `city` carries from the city's nodes (a Blacksmith's edge). */
-export function nodeMarks(world: World, city: City | undefined): Mark[] {
+/** What a unit of `defId` recruited in `city` carries from the city's nodes (a Blacksmith's edge). */
+export function nodeMarks(world: World, city: City | undefined, defId: string): Mark[] {
   if (!city) return [];
-  return nodesOf(world, city).flatMap((n) => NODES[n.kind].recruitEffects(n.level).map((effect): Mark => ({ effect, source: { kind: "node", node: n.kind, cityId: city.id } })));
+  return nodesOf(world, city).flatMap((n) => NODES[n.kind].recruitEffects(n.level, defId).map((effect): Mark => ({ effect, source: { kind: "node", node: n.kind, cityId: city.id } })));
 }
 
+/** A new unit for `side`: recruited, joining, or otherwise acquired. */
 export function newcomer(world: World, side: PlayerId, defId: string, tile: Tile): SquadMember {
   return { ...member(defId, tile), marks: marksOnBecoming(world, side, defId) };
 }
@@ -209,7 +211,7 @@ export function newcomer(world: World, side: PlayerId, defId: string, tile: Tile
 export function recruitIn(world: World, side: PlayerId, defId: string, tile: Tile, city: City | undefined): SquadMember {
   const recruit = newcomer(world, side, defId, tile);
   const levels = city ? Math.max(0, ...giftsOf(world, city, "recruitLevels")) : 0;
-  const trained = { ...recruit, level: levels, marks: [...recruit.marks, ...nodeMarks(world, city)] };
+  const trained = { ...recruit, level: levels, marks: [...recruit.marks, ...nodeMarks(world, city, defId)] };
   return { ...trained, hp: maxHpOf(trained, undefined) };
 }
 
@@ -266,7 +268,7 @@ export function startTurn(world: World, events: WorldEvent[]): void {
   for (const { squad, leader } of squadsOf(world, side)) {
     const home = world.cities.find((c) => c.owner === side && (leader === undefined ? squad === c.garrison : sameHex(leader.hex, c.hex)));
     const resting = home ? CITY_HEALING_PER_TIER * home.tier * restingPace(world, home, leader === undefined) : 0;
-    const share = resting + (leader && leader.fellOnTurn === null ? squadHealingOf(leader) + waystationHealing(world, leader) : 0);
+    const share = resting + (leader ? warbandHealing(world, leader, home) : 0);
     if (share === 0) continue;
     squad.forEach((m, i) => {
       if (!alive(m)) return;
@@ -276,8 +278,13 @@ export function startTurn(world: World, events: WorldEvent[]): void {
   }
   for (const leader of world.leaders) {
     if (leader.player !== side) continue;
-    leader.movement = movementOf(leader);
+    leader.movement = movementOf(leader) + nextToWaystation(world, leader, (city) => city?.waystationMovement);
     leader.sureFooted = sureFootingAt(world, side, leader.hex);
+  }
+  // A Training yard's garrison drills: a little XP a turn.
+  for (const city of world.cities.filter((c) => c.owner === side)) {
+    const drill = Math.max(0, ...giftsOf(world, city, "garrisonTraining"));
+    if (drill > 0) growSquad(world, { squad: city.garrison, leader: undefined }, drill, side, events, (m) => m.defId !== GUARDIAN_ID);
   }
 
   events.push({ type: "turnStarted", player: side, turn: world.turn, income: earned });
@@ -288,10 +295,29 @@ function restingPace(world: World, city: City, garrison: boolean): number {
   return Math.max(1, ...giftsOf(world, city, "restHealing"), ...(garrison ? giftsOf(world, city, "garrisonHealing") : []));
 }
 
-/** A warband starting its turn next to one of its side's Waystations heals the best share among them. */
-function waystationHealing(world: World, leader: Leader): number {
-  return Math.max(0, ...nodesHeldBy(world, leader.player).filter((n) => hexDistance(n.hex, leader.hex) <= 1).map((n) => NODES[n.kind].city?.waystation?.(n.level) ?? 0));
+/**
+ * What a warband regenerates at the start of its turn, besides resting in a city: its leader's healing, a Waystation
+ * beside it, provisions from a Granary it left. Nothing near an enemy's Oasis (the user: "regenerate nothing, rather.
+ * Healing should still be possible"); items and spells still heal there. Standing in a Granary city packs provisions.
+ */
+function warbandHealing(world: World, leader: Leader, home: City | undefined): number {
+  const packed = home ? Math.max(0, ...giftsOf(world, home, "provisions")) : 0;
+  const carried = leader.provisions;
+  if (home && packed > 0) leader.provisions = { share: CITY_HEALING_PER_TIER * home.tier * restingPace(world, home, false), turns: packed };
+  else if (!home && carried) leader.provisions = carried.turns > 1 ? { ...carried, turns: carried.turns - 1 } : null;
+  if (leader.fellOnTurn !== null || inDrought(world, leader)) return 0;
+  const provisions = !home && carried ? carried.share : 0;
+  return squadHealingOf(leader) + nextToWaystation(world, leader, (city) => city?.waystation) + provisions;
 }
+
+/** The best gift among its side's Waystations beside the warband (heal share, extra movement). */
+function nextToWaystation(world: World, leader: Leader, gift: (city: CityGifts | undefined) => ((level: number) => number) | undefined): number {
+  return Math.max(0, ...nodesHeldBy(world, leader.player).filter((n) => hexDistance(n.hex, leader.hex) <= 1).map((n) => gift(NODES[n.kind].city)?.(n.level) ?? 0));
+}
+
+/** Whether an enemy's Oasis keeps this warband from regenerating. */
+const inDrought = (world: World, leader: Leader): boolean =>
+  world.cities.some((c) => c.owner !== null && c.owner !== leader.player && giftsOf(world, c, "drought").some((reach) => reach > 0 && hexDistance(c.hex, leader.hex) <= reach));
 
 /** How many times faster a unit heals on the map by its marks (an Oasis-born unit). */
 const markedHealing = (m: SquadMember): number => Math.max(1, ...m.marks.map((mark) => effectDef(mark.effect.def).mapHealing ?? 1));
@@ -329,7 +355,7 @@ export function startRound(world: World, events: WorldEvent[]): void {
   // Merchants lay out new wares every few rounds (user: limited, changing, and they come back).
   for (const merchant of world.structures) {
     if (merchant.kind !== "merchant" || merchant.restocksOn > world.turn) continue;
-    merchant.wares = merchantWares(merchant.id, world.turn);
+    merchant.wares = merchantWares(merchant.id, world.turn, biomeAt(world.map, merchant.hex));
     merchant.restocksOn = world.turn + MERCHANT_RESTOCK_TURNS;
     events.push({ type: "restocked", structureId: merchant.id });
   }
@@ -359,9 +385,7 @@ export function investNodeProblem(world: World, nodeId: string): string | null {
   const node = world.nodes.find((n) => n.id === nodeId);
   if (!node) return "no such node";
   if (cityOfNode(world, node)?.owner !== world.activePlayer) return "its city isn't yours";
-  if (node.level >= NODE_MAX_LEVEL) return "already at its highest level";
-  // Some nodes don't grow (a Gallows): its words say whether the next level would change anything.
-  if (NODES[node.kind].describe(node.level + 1) === NODES[node.kind].describe(node.level)) return "its next level changes nothing";
+  if (node.level >= NODES[node.kind].maxLevel) return "already at its highest level";
   if (playerOf(world, world.activePlayer).gold < nodeInvestCost(node)) return "not enough gold";
   return null;
 }

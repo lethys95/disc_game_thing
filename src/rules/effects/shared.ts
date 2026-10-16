@@ -14,6 +14,7 @@ export function lostUntilHurt(id: string, name: string): EffectDef {
     id,
     name,
     describe: () => "Loses its next turn, unless it is hurt before then.",
+    harmful: true,
     stacking: { mode: "unique" },
     lifetime: "untilOwnTurn",
     visibility: "public",
@@ -33,6 +34,7 @@ export function weakened(id: string, name: string): EffectDef {
     id,
     name,
     describe: (e) => `Deals ${e.amount}% less damage for ${e.stacks} more turn${e.stacks === 1 ? "" : "s"}.`,
+    harmful: true,
     stacking: { mode: "unique" },
     lifetime: "battle",
     visibility: "public",
@@ -92,6 +94,8 @@ export function flatStat(def: {
     lifetime: "battle",
     visibility: "public",
     ...(def.quiet ? { quiet: true } : {}),
+    // A flat penalty is a debuff a cleanse removes.
+    ...(sign < 0 ? { harmful: true } : {}),
     hooks: {
       stats: (_ctx, self, subjectId, stats) => {
         if (subjectId === self.unitId) stats[def.stat] += sign * (self.effect?.amount ?? 0);

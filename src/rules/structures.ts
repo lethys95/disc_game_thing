@@ -1,4 +1,5 @@
 import { ITEMS } from "#rules/items";
+import type { Biome } from "#rules/map";
 import { hashOf, noise } from "#rules/noise";
 import { UNITS } from "#rules/units/index";
 
@@ -53,12 +54,27 @@ const MERCHANT_WARES = 3;
 export const MERCHANT_RESTOCK_TURNS = 6;
 
 /**
- * The wares a merchant lays out from `turn`: a few items from everything but the staples, picked by noise on the
- * merchant and the turn, so they differ between merchants and each time, yet the game stays deterministic.
+ * What a biome's merchants sell besides the staples, and what every merchant may (the user, 2026-10-16: strict, like
+ * the node pools; the lists were Claude's hints, taken as they were).
  */
-export function merchantWares(merchantId: string, turn: number): string[] {
+export const MERCHANT_POOLS: Readonly<Record<Biome | "anywhere", readonly string[]>> = {
+  anywhere: ["iron_helm", "plate_armor", "swift_charm", "war_banner", "storm_capacitor", "wayfinders_map"],
+  temperate: ["hatchet", "outlaws_pocketwatch", "reaching_spear", "banner_of_the_vanguard", "spyglass_helm", "veterans_standard"],
+  desert: ["deck_of_cards", "ankh", "crown_of_the_pretender", "salt_of_the_old_kings", "hourglass_of_borrowed_time", "gold_item"],
+  swamp: ["twin_knives", "seedpod_reliquary", "hatchet", "deck_of_cards"],
+  tundra: ["grudgebearer", "penitents_chains", "veterans_standard", "banner_of_the_vanguard"],
+  haunted: ["burial_wrappings", "hollow_plate", "deck_of_cards", "hourglass_of_borrowed_time", "ankh"],
+};
+
+/**
+ * The wares a merchant in `biome` lays out from `turn`: a few items from its biome's list and the "anywhere" list,
+ * picked by noise on the merchant and the turn, so they differ between merchants and each time, yet the game stays
+ * deterministic.
+ */
+export function merchantWares(merchantId: string, turn: number, biome: Biome): string[] {
   const seed = hashOf(merchantId);
-  return ITEMS.filter((i) => !MERCHANT_STAPLES.includes(i.id))
+  const pool = new Set([...MERCHANT_POOLS[biome], ...MERCHANT_POOLS.anywhere]);
+  return ITEMS.filter((i) => pool.has(i.id))
     .map((i) => ({ id: i.id, roll: noise(seed, turn, hashOf(i.id)) }))
     .sort((a, b) => a.roll - b.roll)
     .slice(0, MERCHANT_WARES)

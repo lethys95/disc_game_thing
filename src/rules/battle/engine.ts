@@ -85,7 +85,7 @@ export function createBattle(sides: readonly [readonly Placement[], readonly Pla
         fled: false,
         corpse: "intact",
         killedBy: null,
-        spellCharges: def.spellCharges ?? 0,
+        spellCharges: (def.spellCharges ?? 0) + (effects ?? []).reduce((more, e) => more + (effectDef(e.def).spellCharges ?? 0), 0),
         lastTurnDealt: 0,
         leader: leader ?? false,
       };
@@ -576,6 +576,9 @@ function makeCtx(battle: Battle, events: BattleEvent[]): Ctx {
     if (!target.alive) return;
     const def = effectDef(seed.def);
     const fresh = instance(seed);
+    // Its source's traits may make it last longer (a Scriptorium's mending).
+    const source = seed.source ? battle.units[seed.source] : undefined;
+    if (source) fresh.stacks += traitsOn(ctx, source.id).reduce((more, t) => more + (t.hooks.lengthens?.(ctx, t.self, seed.def) ?? 0), 0);
     const stacking = def.stacking;
     const existing =
       stacking.mode === "each"
