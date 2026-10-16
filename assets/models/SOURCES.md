@@ -77,7 +77,8 @@ weights; nothing ripped.
 `units/punisher.glb` (2026-10-17) is the user's Tripo model of the Punisher (`punisher#1`, FBX: one mesh, about 34k
 triangles, 4k PBR textures, the same 61-bone rig), with 18 bones added by `scripts/art/cloth-bones.py punisher`:
 `skirt_front|front_l|l|back|r|front_r_01–03` round the robe below the belt under `pelvis` (the apron down the front on
-a chain of its own), the hem keeping 50% of Tripo's leg weights. Everything hanging off the belt (the sash's tail, the
+a chain of its own), the hem keeping 70% of Tripo's leg weights (at half, the robe swung off the leading shin; the
+walk's back kick still brings a boot out through its back). Everything hanging off the belt (the sash's tail, the
 chains, the pendants, the apron's hem ornaments) rides the robe's chains; the hood and shoulder cape stay on Tripo's
 weights, the shins and boots under the robe on the legs. The robe is a separate piece of the mesh; nothing ripped.
 

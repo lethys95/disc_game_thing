@@ -189,7 +189,8 @@ FIGURES = {
     # Pieces: 6 the robe below the belt with the apron down its front, 0 the tunic and belt, 1 the hood and shoulder
     # cape (stiff: they stay). Everything hanging off the belt (the sash's tail, the front chain loop, the chain round
     # the right hip, the pendants, the apron's hem ornaments) rides the robe's chains; the shins and boots under it
-    # stay on the legs.
+    # stay on the legs. The hem keeps most of Tripo's leg weights, as the Zealot's: at half, the walk's back kick came
+    # out through the robe's back.
     "punisher": {
         "parts": "pieces",
         "rip": "parts",
@@ -199,7 +200,7 @@ FIGURES = {
             "skirt": ("pelvis", 3, lambda i, part: part[i] not in {17, 18, 26, 27, 28, 31, 32, 41, 42, 59, 60}
                       and 0.115 < centre(part[i]).z < 0.5 and abs(centre(part[i]).x) < 0.2,
                       around({"front": 0, "front_l": 50, "l": 100, "back": 180, "r": -100, "front_r": -50}, 30, 60,
-                             keep=0.5)),
+                             keep=0.7)),
         },
     },
     # Pieces: 0 and 1 the wings, 4 the torn skirt (open at the front over the legs), 12 the red tabard between them, 35
