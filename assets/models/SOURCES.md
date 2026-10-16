@@ -73,3 +73,18 @@ triangles, 4k PBR textures, the same 61-bone rig), with 18 bones added by `scrip
 the legs on a chain of its own, the white panels' front edges over the thighs), the hem keeping 50% of Tripo's leg
 weights. The surcoat is a separate piece of the mesh; the mail between its panels and the tassets stay on Tripo's leg
 weights; nothing ripped.
+
+`units/punisher.glb` (2026-10-17) is the user's Tripo model of the Punisher (`punisher#1`, FBX: one mesh, about 34k
+triangles, 4k PBR textures, the same 61-bone rig), with 18 bones added by `scripts/art/cloth-bones.py punisher`:
+`skirt_front|front_l|l|back|r|front_r_01–03` round the robe below the belt under `pelvis` (the apron down the front on
+a chain of its own), the hem keeping 50% of Tripo's leg weights. Everything hanging off the belt (the sash's tail, the
+chains, the pendants, the apron's hem ornaments) rides the robe's chains; the hood and shoulder cape stay on Tripo's
+weights, the shins and boots under the robe on the legs. The robe is a separate piece of the mesh; nothing ripped.
+
+`units/paragon.glb` (2026-10-17) is the user's Tripo model of the Paragon (`paragon#1`, FBX: one mesh, about 43k
+triangles, 4k PBR textures, the same 61-bone rig), with 18 bones added by `scripts/art/cloth-bones.py paragon`:
+`skirt_front|front_l|l|back|r|front_r_01–03` round the torn skirt under `pelvis` (the red tabard between the legs on
+the front chain, the strips and their pendants riding the skirt), the hem keeping 50% of Tripo's leg weights. Her
+wings ride `spine_03` whole (the Seraph's); the book on her left hip and the chains looped on both hips ride `pelvis`
+whole, as Tripo split them between the thigh and the hand that rests on the book. Its parts are the mesh's own
+separate pieces; nothing ripped.

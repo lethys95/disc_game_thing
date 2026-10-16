@@ -186,6 +186,39 @@ FIGURES = {
                              keep=0.5)),
         },
     },
+    # Pieces: 6 the robe below the belt with the apron down its front, 0 the tunic and belt, 1 the hood and shoulder
+    # cape (stiff: they stay). Everything hanging off the belt (the sash's tail, the front chain loop, the chain round
+    # the right hip, the pendants, the apron's hem ornaments) rides the robe's chains; the shins and boots under it
+    # stay on the legs.
+    "punisher": {
+        "parts": "pieces",
+        "rip": "parts",
+        "rigid": {},
+        "hanging": {},
+        "families": {
+            "skirt": ("pelvis", 3, lambda i, part: part[i] not in {17, 18, 26, 27, 28, 31, 32, 41, 42, 59, 60}
+                      and 0.115 < centre(part[i]).z < 0.5 and abs(centre(part[i]).x) < 0.2,
+                      around({"front": 0, "front_l": 50, "l": 100, "back": 180, "r": -100, "front_r": -50}, 30, 60,
+                             keep=0.5)),
+        },
+    },
+    # Pieces: 0 and 1 the wings, 4 the torn skirt (open at the front over the legs), 12 the red tabard between them, 35
+    # and 36 the strips down the back, 31, 37 and 61, 60 the front strips and their pendants, 54 and 55 the hem's. The
+    # book (48) sits on her left hip with a chain looped under it, another chain on the right hip: both stay on the
+    # pelvis whole, as Tripo split them over the thigh and the hand that rests on the book. The wings, as the Seraph's.
+    "paragon": {
+        "parts": "pieces",
+        "rip": "parts",
+        "rigid": {0: "spine_03", 1: "spine_03"} | {n: "pelvis" for n in (
+            48, 25, 26, 40, 45, 62, 63, 64, 65, 68, 76, 77, 78, 79, 80, 82, 83, 84, 85, 86, 94,
+            18, 24, 39, 66, 69, 70, 71, 72, 73, 74, 91)},
+        "hanging": {},
+        "families": {
+            "skirt": ("pelvis", 3, lambda i, part: part[i] in {4, 12, 31, 35, 36, 37, 54, 55, 60, 61},
+                      around({"front": 0, "front_l": 50, "l": 100, "back": 180, "r": -100, "front_r": -50}, 30, 60,
+                             keep=0.5)),
+        },
+    },
 }
 figure = FIGURES[unit]
 part = json.load(open(labels_file))["labels"] if figure["parts"] == "labels" else pieces()

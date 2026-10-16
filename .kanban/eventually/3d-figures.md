@@ -39,3 +39,13 @@
   back panel in one shell, so nothing ripped. In the repo as `assets/models/units/templar.glb`: six chains round the
   surcoat, the red tabard on its own between the legs, the hem keeping half of Tripo's leg weights. Walking in Unreal
   (`disc_unreal`'s `card/3d-figures`, `shots/figures/templar-check.html`).
+- **The Punisher (2026-10-17):** `punisher#1` (FBX), sound at once: 34k triangles, one 4k PBR material, no drift. Smart
+  mesh: the robe below the belt its own piece, the apron part of it. In the repo as `assets/models/units/punisher.glb`:
+  six chains round the robe (the Templar's), the apron on the front one; the sash's tail, the chains and the pendants
+  hanging off the belt ride the robe's chains. The hood and shoulder cape stay stiff.
+- **The Paragon (2026-10-17):** `paragon#1` (FBX), sound at once: 43k triangles, one 4k PBR material, no drift. In the
+  repo as `assets/models/units/paragon.glb`: wings moved whole onto `spine_03` (the Seraph's), six chains round the
+  torn skirt with the red tabard on the front one, and the book on her left hip with its chain, and the chain on her
+  right hip, riding the pelvis whole.
+- **The Reclaimer (2026-10-17):** `reclaimer#1` came without a rig (no bones, no skin): it needs Tripo's rig and a new
+  FBX before anything else. The mesh itself looked sound (43k triangles, one 4k PBR material).
