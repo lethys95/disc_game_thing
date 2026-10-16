@@ -21,5 +21,6 @@ Kept short: only what is the user's to decide, most blocking first. Answer inlin
 5. **Music:** the placeholder tracks are ACE-Step takes; you mentioned Suno for final AI music. Direction per faction, or references?
 
 ## Rules
+15. **The Gallows (2026-10-16):** you took its clause but are "really unsure whether or not Gallows should actually be in the game at all. It seems like it just breaks the game dynamics." Keep it, soften it (say, only enemy leaders can't be raised), or cut it?
 7. **Spells:** what gates the spell tree: Capitol tier, research, mana spent? The real spells are yours to design whenever you like (placeholders now, `spells`).
 8. **Items:** your sixteen taken items are in the game (`testing/items`). Open: a name for the "Gold item"; the four placeholders (Iron helm, Plate armor, Swift charm, War banner) to replace or cut; War drum, Mercenary's writ, Recruiter's cap and the later consumables are still unread (`brainstorm/items.md` §6–7).

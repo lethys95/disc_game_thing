@@ -83,3 +83,42 @@ one that lets back-row melee strike), making all-melee squads viable. Not design
 
 ## Built (2026-10-15)
 The pools, two specials per city, the outpost's and mercenary camps' tribes by biome, and every taken node but the Shrine (the Waystone since, #85), with the maybes the user put in pools (the Oasis in the user's wording, the Dog yard). Claude's readings and numbers: `provisional.md` #84. Not built yet: the Shrine (hidden evolution routes don't exist), the Scriptorium and Toll bridge (maybes), level-3 clauses, per-faction readings, and merchants' wares by biome.
+
+## Third review: level-3 clauses, faction readings, merchants (user, 2026-10-16, the phone page)
+From Claude's proposals (`brainstorm/nodes.md`, round three). The user's notes are quoted.
+
+**Levels:** at level 3 the node's number still grows **and** its clause arrives. Nodes with no number are "just missing upgrades": they get a growing number ("Cathedral could have a better holy water, oasis could increase movement more"); "for things like waystone, yeah, two levels".
+
+### Clauses taken
+- **Mana node:** your first spell each turn aimed near the city costs half ("very close to it though").
+- **Caravanserai:** you see every merchant's wares and every camp's hires from anywhere.
+- **Bog iron:** enemy units fighting at the city have less armor.
+- **Granary:** provisions: your warbands leaving the city heal as if resting for two more turns.
+- **Blacksmith:** recruits' attacks ignore part of their target's armor.
+- **Cathedral:** Holy Water also cleanses harmful effects. "It might be worth having some kind of debuff flag, so you're not just manually removing these effects here [...] more debuffs will exist in the future."
+- **Foundry:** healing past full health goes into the shield: "Only 50% of overfill, doesn't stack."
+- **Leech pits:** a kill heals the bearer as much as the killing blow dealt.
+- **Venom distillery:** every hit on an already envenomed target adds a dose.
+- **Witch hut:** the curse passes on: the killer is hexed in turn.
+- **Hunting lodge:** trophies: gold for each neutral a hunter's warband kills.
+- **Training yard:** units resting in its garrison gain a little XP each turn ("not much please").
+- **Watchtower:** it also shows the items of the warbands it sees, and where each last moved.
+- **Gallows:** a warband wiped out at the city leaves its leader's items to the holder. "I'm really unsure whether or not Gallows should actually be in the game at all. It seems like it just breaks the game dynamics."
+- **Waystation:** +1 movement for warbands starting next to it.
+- **Oasis:** enemy warbands near the city "regenerate nothing, rather. Healing should still be possible."
+- **Waystone** (the user's own clause, two levels): units brought by Way portal get a small amount of extra movement.
+
+### Clauses not taken
+Gold mine ("this makes people not want to upgrade"), Stables, Tannery, Siege workshop, Quarry, Ossuary, Bell tower, Dog yard, Claude's Waystone clause. **Tribal outpost** is a maybe: a tribe unit can already be elevated; instead "maybe we can say that there's a strong bonus if you decide to elevate a neutral unit through the tribal outpost". **Wording:** "I don't like how 'march' is used in our game right now. I don't know what it means. A turn?"
+
+### Faction readings
+Only the **Scriptorium** reads per faction ("very strong I think, but okay"): Jilliath's casters' first use of their own health each battle costs none; Ral-Vitahl's casters start each battle with an extra spell charge; the Grove's casters' heals over time last a turn longer. Everywhere else, one effect for all: "Holy water all around", "just lifesteal all around", "just Punished".
+
+### Merchants by biome
+Strict, like the node pools: a merchant lays out its biome's list plus "anywhere" (the potions everywhere). The lists are Claude's hints, taken as they were:
+- **Anywhere:** Iron helm, Plate armor, Swift charm, War banner (the four placeholders), Storm capacitor, Wayfinder's map.
+- **Temperate:** Hatchet, Outlaw's pocketwatch, Reaching spear, Banner of the vanguard, Spyglass helm, Veteran's standard.
+- **Desert:** Deck of cards, Ankh, Crown of the pretender, Salt of the old kings, Hourglass of borrowed time, Gold item.
+- **Swamp:** Twin knives, Seedpod reliquary, Hatchet, Deck of cards.
+- **Tundra:** Grudgebearer, Penitent's chains, Veteran's standard, Banner of the vanguard.
+- **Haunted woods:** Burial wrappings, Hollow plate, Deck of cards, Hourglass of borrowed time, Ankh.

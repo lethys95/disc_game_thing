@@ -83,6 +83,8 @@ Round one's untaken nodes are still there to pick too: training yard, scriptoriu
 guildhall, aqueduct, the shrine as a node, and the user's own Waystone.
 
 ## Round three (Claude, 2026-10-15): level-3 clauses, faction readings, merchants by biome
+
+> **Reviewed (user, 2026-10-16):** what was taken is in `../nodes.md`, "Third review".
 The user took two ideas without contents on 2026-10-15: "level 3 adds a clause" and "a node reads differently per
 faction" ("as long as nodes aren't stubs for other factions"), and said merchants and mercenary camps differ by biome
 (camps are built). Proposals for picking, on the phone page `shots/city-nodes-2.html`.
