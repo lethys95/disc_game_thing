@@ -253,7 +253,7 @@ FIGURES = {
             "skirt": ("pelvis", 3, lambda i, part: part[i] not in {6, 7} and centre(part[i]).x < 0.1
                       and (co[i].z < 0.45 if part[i] == 1 else centre(part[i]).z < 0.45),
                       around({"front": 0, "front_l": 50, "l": 100, "back": 180, "r": -100, "front_r": -50}, 30, 60,
-                             keep=0.7)),
+                             keep=0.85)),
         },
     },
     # Pieces: 0 the robe's top and sleeves, 1 the hair, 2 the skirt, 4 the legs; the wings are many pieces behind the
@@ -266,7 +266,7 @@ FIGURES = {
         "hanging": {},
         "families": {
             "skirt": ("pelvis", 3, lambda i, part: part[i] == 2,
-                      around({"front_l": 25, "l": 90, "back": 180, "r": -90, "front_r": -25}, 30, 65, keep=0.4)),
+                      around({"front_l": 25, "l": 90, "back": 180, "r": -90, "front_r": -25}, 30, 65, keep=0.7)),
         },
     },
 }

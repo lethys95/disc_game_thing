@@ -98,7 +98,7 @@ onto `spine_03`, as the Seraph's.
 `units/chosen.glb`, `units/pontiff.glb` and `units/shepherd.glb` (2026-10-17) are the user's Tripo models (`chosen#1`,
 `pontiff#1`, `shepherd#1`, FBX: one mesh each, 35–38k triangles, 4k PBR textures, the same 61-bone rig). The Chosen is
 plate throughout: nothing added. The Pontiff's body is one shell (alb, chasuble, the stole's strips): six chains round
-it below the belt, the stole's ends and pendants riding them, the floor-length robe keeping 70% of Tripo's leg weights
-(the Punisher's); his censer and its chain hang from the belt on bones of their own (the Acolyte's lantern). The
+it below the belt, the stole's ends and pendants riding them, the floor-length robe keeping 85% of Tripo's leg weights
+(at 70% his shins came out the front); his censer and its chain hang from the belt on bones of their own (the Acolyte's lantern). The
 Shepherd's wings, many separate pieces behind her back, ride `spine_03` whole (the Seraph's); five chains round her
-skirt, the hem keeping 40% of the leg weights; her hair stays on Tripo's weights. Nothing ripped.
+skirt, the hem keeping 70% of the leg weights (at 40% the leading leg came out ahead of it); her hair stays on Tripo's weights. Nothing ripped.
