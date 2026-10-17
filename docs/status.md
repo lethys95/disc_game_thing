@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-16 (the Gallows as the user redesigned it; outpost war leaders; `testing/node-clauses`)
+**Updated:** 2026-10-17 (looks drafted for the fourteen units without one; the Fire Eater's concepts)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): a first complete version, far off (the board's README
@@ -50,8 +50,9 @@ interface change.
 ## Next (the board's todo, in rank order)
 1. **Design sessions with the user:** the Grove's mage line (questions #10), Ral-Vitahl's missing tiers, the
    Spiritess tier 4, the joker lines, owners for Evasion, Explode and Soak.
-2. **Claude's own, meanwhile:** icons for abilities, effects and items (`icons`, the user's suggestion); looks for
-   the units without one (`unit-looks`, Nexus first), then their concepts and portraits.
+2. **Claude's own, meanwhile:** icons for abilities, effects and items (`icons`, the user's suggestion); the looks
+   for the fourteen units without one are drafted (`in-progress/unit-looks`, `shots/unit-looks.html`, waiting for the
+   user's marks); the Fire Eater's concepts in rounds (`carnival-concepts.md`); then concepts and portraits.
 3. **The user's picks waiting:**
    everything in `testing/`.
 4. **The balance pass** once the factions' lines exist, with the user's worry that Jilliath's lines are too long.

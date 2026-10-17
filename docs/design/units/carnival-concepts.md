@@ -150,3 +150,45 @@ The user: "I'll say we're locking in 1000. I think this look works really well. 
 `etherborn-lined-turnaround-1001`. In code byte-identical to the manifests; the other readings were removed from code.
 Split for Tripo in `shots/tripo/`. The Soothsayer's orb and card props are not picked yet.
 - **Props picked (the user, 2026-10-06):** the orb `soothsayer-orb-props-1000`, the cards `soothsayer-cards-props-1001`.
+
+## The Fire Eater (2026-10-17)
+The look is Claude's (a carnival fire-breather, soot and scorch on worn motley); the user's ask for this session: "try
+to be creative". Palette apart from the Omen's oxblood and the Soothsayer's stripes: soot black and faded saffron
+diamonds. Folder `art/candidates/units/neutrals/carnival/fire-eater/`.
+
+### Round one: three twists
+- *dragon*: a soot-blackened iron dragon's jaw strapped over his mouth, the sideshow mask he breathes through;
+- *burned*: the act gone wrong once, the lower face burned away, a necklace of clay oil flasks;
+- *bellows*: a leather bellows strapped like a hump on his back, a brass pipe to a mouthpiece in his teeth.
+
+Plus a torch and flask prop sheet.
+
+**Read (Claude):** the saffron and black diamond motley landed in all twelve and is unmistakable next to the other
+two. *Bellows* has the strongest silhouette: the bag on his back and its brass pipes standing up behind his head like
+horns. But every face and all bare skin came out a flat black or grey mannequin: no dragon jaw, no scars. The guess:
+"soot" in the materials line and the subjects blackened the skin. The torch's wick has no flame and reads as a mace.
+
+### Round two
+The face leads each subject (the Chosen's lesson), the skin is named, soot is kept to the clothes. *jaw* and *scarred*
+say round one's faces again; *bellows-scarred* joins the strongest silhouette to the burned face. The torch says its
+flames.
+
+**Read (Claude):** the faces came back in all nine; skin is skin.
+- *jaw*: the jaw grew into a whole horned, fanged dragon helm over the face, on a pale, paunchy, bare-chested
+  strongman. Not what was asked, and the strongest figure yet: nothing else on the roster looks like it. Best: 1001.
+- *bellows-scarred*: a real weathered face; in 1002 the pipe runs from the bag over his shoulder into his mouth.
+  1000 drew the side view twice. The scars didn't come.
+- *scarred*: gaunt and bald, unsettling, with the flask necklace, but no scars for the second round running. Burn scars
+  resist; the model's texture can carry them.
+- Torch: lit now. 1001 is clean (lit, unlit, flask); 1002 adds a stray draped table.
+
+### Round three
+*dragon-bellows*: round two's two strongest halves joined, the dragon helm breathing through the bellows' pipe.
+
+**Read (Claude):** halfway. The helm grew ram horns and spiked brass pauldrons, the bellows became a lidded pot, and
+the pipe never reaches the mouth (1000 drew the side view twice). Heavier and more demonic than *jaw*, which stays the
+cleaner of the two. Stopped here for the user's pick.
+
+**Claude's picks, for the user:** `fire-eater-jaw-turnaround-1001` (the dragon helm on a bare strongman), or
+`fire-eater-bellows-scarred-turnaround-1002` if his face should show. Torch `fire-eater-torch-props-1001`. The burn
+scars never came in two rounds: a job for the model's texture. Page: `shots/fire-eater.html`.

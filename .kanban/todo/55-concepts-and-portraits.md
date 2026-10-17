@@ -9,7 +9,7 @@
   until an overview (Guardian, Empyreal, Cleric, Archon, Torturer, Fanatic, the three fire casters,
   `jilliath-identities.md`); Ral-Vitahl's other eight (looks first, `unit-looks`; the Apprentice's round was
   rejected); the Grove's six placeholders (names first); the bandits, Cutpurse, Snakeoiler and Capitol Guardian
-  (looks first); the Fire Eater (Claude's look, no concept yet).
+  (looks first); the Fire Eater (three rounds, Claude's picks wait for the user, `shots/fire-eater.html`).
 - **Why:** The alpha is painted.
 - **Done when:** Every alpha unit has card, bust and icon.
 - **Who:** Claude iterates; the user picks concepts. Needs ComfyUI.

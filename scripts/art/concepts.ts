@@ -512,9 +512,37 @@ const FIRE_EATERS: Readonly<Record<string, string>> = {
 const FIRE_EATER_KIT =
   "a fire-breather's torch: an iron rod with a thick ball of charred wick bound in wire at one end, flames burning on it; beside it a dented brass flask of lamp oil with a cork on a chain, and a short torch drawn without flame. Each object separate.";
 
+// Round two: round one's faces and skin came out a flat black mannequin ("soot" in the materials and subjects), so
+// the face leads each subject now, the skin is named, and soot is only on the clothes.
+const FIRE_EATER_2_3D =
+  "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: scorched diamond-patterned motley cloth, cracked leather, blackened iron, tarnished brass, clay, weathered human skin. Serious, adult, not cartoonish.";
+
+const FIRE_EATERS_2: Readonly<Record<string, string>> = {
+  "fire-eater-jaw":
+    "A soot-blackened iron mask shaped like a dragon's lower jaw, fanged and open, strapped over the mouth and chin of a stocky fire-breather of a nomadic swindlers' carnival; above it his own weathered, ruddy face, a broken nose, small hard eyes, a shaved head. " +
+    "Bare muscular chest and arms with pale tanned skin, burn scars on the forearms. A short open vest of faded saffron and black diamond motley, loose dark trousers, a belt hung with corked brass flasks of oil.",
+  "fire-eater-scarred":
+    "A face half burned away: the lower half of a gaunt man's pale face is glossy pink and white burn scar, no lips left, his teeth bared in a permanent grimace, while the upper half is untouched, with sunken watchful eyes and a shaved scalp. " +
+    "A fire-breather of a nomadic swindlers' carnival, wiry. Round his neck a heavy string of small corked clay flasks of oil. A sleeveless tunic of faded saffron and black diamond motley, burned through in holes, ragged trousers, bare pale arms.",
+  "fire-eater-bellows-scarred":
+    "A weathered ruddy face with burn scars across the cheeks and chin and singed-away eyebrows, a dented brass mouthpiece clenched in his teeth. A hunched, broad fire-breather of a nomadic swindlers' carnival with a contraption on his back: a large patched leather bellows strapped like a hump between his shoulders, one brass pipe running from it over his shoulder to his mouth. " +
+    "A harlequin shirt of faded saffron and black diamonds, a heavy scorched leather apron, cracked boots.",
+};
+
+const FIRE_EATER_KIT_2 =
+  "a fire-breather's torch: an iron rod with a ball of charred wick bound in wire at one end, bright orange flames burning on the wick; beside it the same torch unlit, and a dented brass flask of lamp oil with a cork on a chain. Each object separate.";
+
+// Round three: round two's two strongest halves joined, the dragon helm (*jaw*) breathing through the bellows' pipe.
+const FIRE_EATER_DRAGON_BELLOWS =
+  "A horned iron dragon's head worn as a helmet over his whole face, fanged jaws open, scorched black around the mouth, and a dented brass pipe running into the dragon's mouth from a large patched leather bellows strapped like a hump between his shoulders. " +
+  "A stocky fire-breather of a nomadic swindlers' carnival, bare muscular arms with pale skin and old burn scars. A short open vest of faded saffron and black diamond motley over a bare chest, a heavy scorched leather apron, loose dark trousers, cracked boots.";
+
 const FIRE_EATER_JOBS = [
   ...Object.entries(FIRE_EATERS).map(([id, subject]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Hands empty and open, no weapon.`, FIRE_EATER_3D) })),
   { id: "fire-eater-kit-props", prompt: prop(FIRE_EATER_KIT, FIRE_EATER_3D), width: 2048, height: 832 },
+  ...Object.entries(FIRE_EATERS_2).map(([id, subject]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Hands empty and open, no weapon.`, FIRE_EATER_2_3D) })),
+  { id: "fire-eater-dragon-bellows-turnaround", prompt: turnaround(`${FIRE_EATER_DRAGON_BELLOWS} Hands empty and open, no weapon.`, FIRE_EATER_2_3D) },
+  { id: "fire-eater-torch-props", prompt: prop(FIRE_EATER_KIT_2, FIRE_EATER_2_3D), width: 2048, height: 832 },
 ];
 
 /**

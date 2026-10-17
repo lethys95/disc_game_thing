@@ -61,7 +61,7 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 | Congregant | Jilliath 1 | user: "an angry mob […] not rugged knights" | cand. (anchors; "rather close": `baroque_congregant-1000`) |
 | Paladin | Jilliath 2 | Claude's holy knight; the user: "cool if a bit forgettable" | cand. (anchors) |
 | Apprentice | Nexus 1 | user: hooded and robed, gender ambiguous (semi placeholder) | cand. (rejected: "a depressed anime boy") |
-| Fire Eater | carnival 1 | Claude: a carnival fire-breather, torch and flask, soot on worn motley | — |
+| Fire Eater | carnival 1 | Claude: a carnival fire-breather, torch and flask, soot on worn motley | Claude: `fire-eater-jaw-turnaround-1001` (alt `fire-eater-bellows-scarred-turnaround-1002`), torch `fire-eater-torch-props-1001`; `shots/fire-eater.html` |
 | Guardian, Empyreal | Jilliath 3 (support) | user's answers to Claude's drafts (`jilliath-identities.md`) | deferred by the user until an overview |
 | Cleric, Archon | Jilliath 2, 4 (mage) | user's answers to Claude's drafts | deferred |
 | Fire mage 3, Fire mage 4, Martyr mage 4 | Jilliath 3–4 (mage, fire) | user's answers to Claude's drafts | deferred; names first (questions #2) |
