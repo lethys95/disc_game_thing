@@ -18,12 +18,11 @@ than the Custodian's 3D concepts is a stand-in to redo (the user, 2026-10-05).
   rule only (memory: creature-art-asymmetric). Cute is fine when it fits.
 
 ## 2. Prompts in `scripts/art/concepts.ts`, one group per line or tribe
-- Each group: a materials line in the gothic recipe **word for word** ("Dark gothic
-  fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim physically based materials: <the
-  unit's materials>. Serious, adult, not cartoonish."), only the materials swapped. **No "weathered and worn" by
-  default** (the user, 2026-10-17: worn, weathered and repaired is not on by default in any new creation): wear goes
-  into a unit's materials only when its design asks for it (a bandit's patched coat, a gnoll's rawhide), never into
-  the shared line. Older groups still carry it, kept byte-identical for their picks; a home-made line drifts out of the game's style
+- Each group: its materials line built by **`gothicLine(materials)`** in `concepts.ts`, never written by hand. The
+  gothic fantasy baseline is in it and is not optional (the user, 2026-10-17); only the materials change. **No
+  finish by default** (the user, 2026-10-17: worn, weathered and repaired is not on by default in any new creation):
+  wear goes into a unit's materials only when its design asks for it (a bandit's patched coat, a gnoll's rawhide).
+  The Nexus pass `"immaculate"`; older groups pass `"weathered and worn"` to keep their picks byte-identical; a home-made line drifts out of the game's style
   (the Psychopomp's rounds two and three, the user: "it doesn't fit in style wise"). Examples: `GROVE_3D`,
   `GNOLL_3D`, `DRAWN_3D`. Then a record of subjects (`{ subject, stance, pose? }`), and jobs:
   - **Turnaround** (`turnaround(subject, materials, pose)`, 2048×832): front, side and back of a 3D model asset, flat

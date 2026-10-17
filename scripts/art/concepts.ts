@@ -1,6 +1,15 @@
 import { runBatch } from "#scripts/art/batch";
 
 /**
+ * The gothic fantasy baseline every concept carries (the user, 2026-10-17: "baseline and non-optional"); only the
+ * materials and their finish change. No finish by default: worn, weathered and repaired is not on by default in any
+ * new creation, so wear goes into a unit's own materials when its design asks. "weathered and worn" stays on the
+ * groups made before, whose picks' prompts must stay byte-identical; "immaculate" is the Nexus's canon.
+ */
+const gothicLine = (materials: string, finish?: "weathered and worn" | "immaculate") =>
+  `Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, ${finish === undefined ? "" : `${finish} `}physically based materials: ${materials}. Serious, adult, not cartoonish.`;
+
+/**
  * Unit concept probes (2026-09-30): the user liked the Custodian's portrait (the painterly "anchor" recipe) and asked
  * for non-ink tries of the Zealot and the Psychopomp, and a Custodian concept to take to 3D. The subjects are the
  * user's own looks; two framings each, for the user to pick. The Grove's turnarounds (2026-10-04) below.
@@ -56,7 +65,7 @@ const GOTHIC_MATERIALS =
 
 /** GOTHIC_MATERIALS for a 3D render: the same mood, with physically based materials instead of a painting's hand. */
 const GOTHIC_3D =
-  "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: rough cracked stone, tarnished brass, frayed cloth. Serious, adult, not cartoonish.";
+  gothicLine("rough cracked stone, tarnished brass, frayed cloth", "weathered and worn");
 
 const GOLEM =
   "A hulking golem guardian, not a person: a massive body of cracked grey stone blocks bound with dark brass bands, a blank stone head, thick stone arms and legs, " +
@@ -176,7 +185,7 @@ const GNOLL =
   "A gnoll: a hyena-headed humanoid with a long muzzle full of teeth, coarse spotted and striped fur, a bristling mane down the neck and back, long arms and digitigrade hyena legs.";
 
 const GNOLL_3D =
-  "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: matted fur, cracked leather and rawhide, tarnished bronze, bone, frayed dark cloth. Serious, adult, not cartoonish.";
+  gothicLine("matted fur, cracked leather and rawhide, tarnished bronze, bone, frayed dark cloth", "weathered and worn");
 
 /**
  * Round two (the user, 2026-10-04): the Packstalker and Hamstringer "look too much alike", so clothing sets them apart;
@@ -402,7 +411,7 @@ const ZEALOT_JOBS = [
  * `docs/design/units/punisher-concepts.md`. The flail is not picked yet.
  */
 const PUNISHER_3D =
-  "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: heavy aged cloth worn thin by use, tarnished iron, old leather, bone. Serious, adult, not cartoonish.";
+  gothicLine("heavy aged cloth worn thin by use, tarnished iron, old leather, bone", "weathered and worn");
 
 const PUNISHER_SUBJECT =
   "An executioner of a militant faith: a tall pointed executioner's hood with only black shadow inside it, no face; a long cassock and a stiff hooded mantle of dark iron-grey cloth; dented iron bracers, an iron gorget, a heavy chain belt, blood red soaked into the cloth.";
@@ -433,7 +442,7 @@ const PSYCHOPOMP_SUBJECT =
   "Short fingerless ivory gloves, her bare fingers soaked scarlet red. Rough boots of matted grey wolf fur bound to the knee. Knotted ivory rags tied on at her chest and hips, a ragged fur mantle, leather wraps and tarnished bronze bangles on her arms. Her hands are open and empty.";
 
 const PSYCHOPOMP_3D =
-  "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: matted wolf fur, stained ivory rags, worn leather, tarnished bronze, wet moss and roots. Serious, adult, not cartoonish.";
+  gothicLine("matted wolf fur, stained ivory rags, worn leather, tarnished bronze, wet moss and roots", "weathered and worn");
 
 // Picked: seed 1002.
 const PSYCHOPOMP_JOBS = [{ id: "psychopomp-short-turnaround", prompt: turnaround(PSYCHOPOMP_SUBJECT, PSYCHOPOMP_3D) }];
@@ -445,12 +454,12 @@ const PSYCHOPOMP_JOBS = [{ id: "psychopomp-short-turnaround", prompt: turnaround
  * gold grin, the Soothsayer's eye coat and fully veiled face, the Etherborn's galaxy skin and fan collar.
  */
 const CARNIVAL_3D =
-  "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: faded striped canvas, patched velvet, cracked leather, tarnished brass and gold, bone. Serious, adult, not cartoonish.";
+  gothicLine("faded striped canvas, patched velvet, cracked leather, tarnished brass and gold, bone", "weathered and worn");
 
 // The Nexus "definitely are not worn, weathered and repaired" (the user, `factions/ral-vitahl.md`): "immaculate" in
 // that one place of the recipe.
 const NEXUS_NOBLE_3D =
-  "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, immaculate physically based materials: dark silk and velvet, polished gold and brass filigree, enamel, skin of deep starlit space. Serious, adult, not cartoonish.";
+  gothicLine("dark silk and velvet, polished gold and brass filigree, enamel, skin of deep starlit space", "immaculate");
 
 // Picked: seed 1001.
 const OMEN =
@@ -495,7 +504,7 @@ const ETHERBORN_JOBS = [{ id: "etherborn-lined-turnaround", prompt: turnaround(E
  * from the Omen's oxblood and the Soothsayer's red and mustard: soot black and faded saffron diamonds.
  */
 const FIRE_EATER_3D =
-  "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: scorched diamond-patterned motley cloth, cracked leather, soot, blackened iron, tarnished brass, clay. Serious, adult, not cartoonish.";
+  gothicLine("scorched diamond-patterned motley cloth, cracked leather, soot, blackened iron, tarnished brass, clay", "weathered and worn");
 
 const FIRE_EATERS: Readonly<Record<string, string>> = {
   "fire-eater-dragon":
@@ -515,7 +524,7 @@ const FIRE_EATER_KIT =
 // Round two: round one's faces and skin came out a flat black mannequin ("soot" in the materials and subjects), so
 // the face leads each subject now, the skin is named, and soot is only on the clothes.
 const FIRE_EATER_2_3D =
-  "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: scorched diamond-patterned motley cloth, cracked leather, blackened iron, tarnished brass, clay, weathered human skin. Serious, adult, not cartoonish.";
+  gothicLine("scorched diamond-patterned motley cloth, cracked leather, blackened iron, tarnished brass, clay, weathered human skin", "weathered and worn");
 
 const FIRE_EATERS_2: Readonly<Record<string, string>> = {
   "fire-eater-jaw":
@@ -553,7 +562,7 @@ const FIRE_EATER_JOBS = [
  * standout, are Claude's. No weapons on the figures (support units; staffs and crooks get prop sheets later).
  */
 const ANGEL_3D =
-  "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: aged white linen and black silk, white and ivory feathers, tarnished gold and silver, blackened iron. Serious, adult, not cartoonish.";
+  gothicLine("aged white linen and black silk, white and ivory feathers, tarnished gold and silver, blackened iron", "weathered and worn");
 
 const PARAGON_RUNES =
   "An angel woman with a calm face. Blazing red hair falls over the right side of her face, hiding it. Light, free-flowing armour of white and red cloth over a few fitted plates. On her right pauldron an emblem of a burning open hand, palm forward. A book hangs on a chain at her left hip. Her hands and forearms are covered in runic tattoos, her fingertips fading from pale skin into pale blue. White wings dipped in blood red at the tips.";
@@ -678,23 +687,23 @@ const ANGELS: Readonly<Record<string, { readonly subject: string; readonly pose?
   "reclaimer-platinum": {
     subject: "An inhuman angel, slender and feminine, tall with long elongated limbs: her whole body is a segmented shell of smooth pale platinum-grey plates, overlapping along her arms, waist and legs. Her head is a small smooth shell fused to the body, no face, a small gold diamond set in the brow, small gold diamonds set in her chest and shoulders. Her legs have no feet: they taper into long pointed tails of overlapping scaled plates, dark teal at the tips. No cloth anywhere, no skirt, no shoes. Huge wings of pale stone-grey feathers darkening to deep teal at the tips.",
     pose: "all in the same pose, arms straight out to the sides, legs hanging straight down, wings spread wide behind her",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: polished platinum, pale grey stone, tarnished gold, dark teal enamel. Serious, adult, not cartoonish.",
+    materials: gothicLine("polished platinum, pale grey stone, tarnished gold, dark teal enamel", "weathered and worn"),
   },
   "reclaimer-platinum-blades": {
     subject: "An inhuman angel, slender and feminine, tall with long elongated limbs: her whole body is a segmented shell of smooth pale platinum-grey plates, overlapping along her arms, waist and legs. Her head is a small smooth shell fused to the body, no face, a small gold diamond set in the brow, small gold diamonds set in her chest and shoulders. Her legs have no feet: they taper into long pointed tails of overlapping scaled plates. No cloth anywhere, no skirt, no shoes. Huge wings of pale platinum feathers, each feather a long thin blade, darkening to deep teal at the tips.",
     pose: "all in the same pose, arms straight out to the sides, legs hanging straight down, wings spread wide behind her",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: polished platinum, pale grey stone, tarnished gold, dark teal enamel. Serious, adult, not cartoonish.",
+    materials: gothicLine("polished platinum, pale grey stone, tarnished gold, dark teal enamel", "weathered and worn"),
   },
   // Round six (the user, 2026-10-08): "make the reclaimer bulkier". Round five's platinum reading, heavier.
   "reclaimer-platinum-heavy": {
     subject: "An inhuman angel, feminine and powerfully built, broad-shouldered and tall: her whole body is a segmented shell of thick, heavy pale platinum-grey plates, layered deep over her chest, shoulders, arms, hips and thighs. Her head is a small smooth shell fused to the body, no face, a small gold diamond set in the brow, gold diamonds set in her chest and shoulders. Her legs have no feet: they taper into long pointed tails of overlapping scaled plates, dark teal at the tips. No cloth anywhere, no skirt, no shoes. Huge wings of pale stone-grey feathers darkening to deep teal at the tips.",
     pose: "all in the same pose, arms straight out to the sides, legs hanging straight down, wings spread wide behind her",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: polished platinum, pale grey stone, tarnished gold, dark teal enamel. Serious, adult, not cartoonish.",
+    materials: gothicLine("polished platinum, pale grey stone, tarnished gold, dark teal enamel", "weathered and worn"),
   },
   "reclaimer-platinum-heavy-blades": {
     subject: "An inhuman angel, feminine and powerfully built, broad-shouldered and tall: her whole body is a segmented shell of thick, heavy pale platinum-grey plates, layered deep over her chest, shoulders, arms, hips and thighs, the shoulder plates wide and high. Her head is a small smooth shell fused to the body, no face, a small gold diamond set in the brow, gold diamonds set in her chest and shoulders. Her legs have no feet: they taper into long pointed tails of overlapping scaled plates. No cloth anywhere, no skirt, no shoes. Huge wings of pale platinum feathers, each feather a long thin blade, darkening to deep teal at the tips.",
     pose: "all in the same pose, arms straight out to the sides, legs hanging straight down, wings spread wide behind her",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: polished platinum, pale grey stone, tarnished gold, dark teal enamel. Serious, adult, not cartoonish.",
+    materials: gothicLine("polished platinum, pale grey stone, tarnished gold, dark teal enamel", "weathered and worn"),
   },
   // The user (2026-10-08): "She's not captured, she's just humble. Make her hooded. Hide her face, give her robes. She'll
   // be praying in her posture in game. Robes are black and white cloth/silk. Wings are brown and plain."
@@ -715,12 +724,12 @@ const ANGELS: Readonly<Record<string, { readonly subject: string; readonly pose?
   "empyreal-icon": {
     subject: "An angel of vengeance, an old icon painting come alive. Her skin is cracked oil paint, yellowed and darkened under old varnish, the craquelure running over her face and arms. Her eyes glow bright orange in a fixed, intense glare staring straight ahead. Three pairs of blood-red wings. Behind her head stands a large flat disc of tooled gold leaf, the painting's gold background. Robes of deep red and white painted cloth, cracked where they fold.",
     pose: "all standing in the same T-pose, her three pairs of wings open behind her and clear of her arms",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: old cracked oil paint and yellowed varnish, tooled gold leaf, red and white painted cloth, blood-red feathers. Serious, adult, not cartoonish.",
+    materials: gothicLine("old cracked oil paint and yellowed varnish, tooled gold leaf, red and white painted cloth, blood-red feathers", "weathered and worn"),
   },
   "empyreal-icon-plain": {
     subject: "An angel of vengeance, an old icon painting come alive. Her skin is cracked oil paint, yellowed and darkened under old varnish, the craquelure running over her face and arms. Her eyes glow bright orange in a fixed, intense glare staring straight ahead. Three pairs of blood-red wings. Robes of deep red and white painted cloth, cracked where they fold.",
     pose: "all standing in the same T-pose, her three pairs of wings open behind her and clear of her arms",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: old cracked oil paint and yellowed varnish, tooled gold leaf, red and white painted cloth, blood-red feathers. Serious, adult, not cartoonish.",
+    materials: gothicLine("old cracked oil paint and yellowed varnish, tooled gold leaf, red and white painted cloth, blood-red feathers", "weathered and worn"),
   },
   // Round nine: round eight's Guardian ignored the cracks; they lead now.
   "guardian-cracks": {
@@ -731,56 +740,56 @@ const ANGELS: Readonly<Record<string, { readonly subject: string; readonly pose?
   // the porcelain is the subject, not a detail.
   "guardian-porcelain-statue": {
     subject: "A porcelain angel, a statue come alive: her body, face and hands are smooth white porcelain, cracked all over in a fine web, pure white light glowing inside every crack. Long smooth white hair. An ancient chestplate from a forgotten age, pale abstract metal in flowing alien curves, over short black robes. Her two wings are pure white light, no feathers.",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: cracked white porcelain, pale abstract metal, black velvet, pure white light. Serious, adult, not cartoonish.",
+    materials: gothicLine("cracked white porcelain, pale abstract metal, black velvet, pure white light", "weathered and worn"),
   },
   "guardian-porcelain-bare": {
     subject: "A porcelain angel, a statue come alive: her body, face, head and hands are smooth white porcelain with no hair, cracked all over in a fine web, pure white light glowing inside every crack. An ancient chestplate from a forgotten age, pale abstract metal in flowing alien curves, over short black robes. Her two wings are pure white light, no feathers.",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: cracked white porcelain, pale abstract metal, black velvet, pure white light. Serious, adult, not cartoonish.",
+    materials: gothicLine("cracked white porcelain, pale abstract metal, black velvet, pure white light", "weathered and worn"),
   },
   // The Empyreal: the gold plate and the red wings stay (the user: they work); the skin was charcoal, so it's pale
   // now, cracked and flaking to canvas; the third pair of wings is spelled out; the robes become the painting too.
   "empyreal-flaking": {
     subject: "An angel of vengeance, an old icon painting come alive. Her skin is pale ivory oil paint covered in the fine craquelure of an old painting, flaking away in places to show the bare canvas weave beneath. Her eyes glow bright orange in a fixed, intense glare staring straight ahead. Six blood-red wings, three pairs. Behind her head stands a large flat disc of tooled gold leaf. Her robes are stiff gold-leaf brocade and deep red painted cloth, the paint flaking to bare canvas at the folds and hems.",
     pose: "all standing in the same T-pose, her six wings open behind her in three pairs, one pair above another, clear of her arms",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: pale cracked oil paint, bare canvas weave, tooled gold leaf, gold brocade, blood-red feathers. Serious, adult, not cartoonish.",
+    materials: gothicLine("pale cracked oil paint, bare canvas weave, tooled gold leaf, gold brocade, blood-red feathers", "weathered and worn"),
   },
   // Round eleven (the user: "get away from 'robes' for empyreal entirely […] think outside the box"). The skin, glare,
   // gold disc and six red wings stay; three outfits that aren't cloth, all from the icon painting she stepped out of.
   "empyreal-frame": {
     subject: "An angel of vengeance, an old icon painting come alive. Her skin is pale ivory oil paint covered in the fine craquelure of an old painting, flaking away in places to show the bare canvas weave beneath. Her eyes glow bright orange in a fixed, intense glare staring straight ahead. Six blood-red wings, three pairs. Behind her head stands a large flat disc of tooled gold leaf. She wears the broken pieces of her own ornate gilded picture frame: carved gold frame pieces fitted around her as a corset and shoulder pieces, a broken arch of frame rising over her shoulders, painted skin between them. No robes, no cloth.",
     pose: "all standing in the same T-pose, her six wings open behind her in three pairs, one pair above another, clear of her arms",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: pale cracked oil paint, bare canvas weave, carved and gilded wood, tooled gold leaf, blood-red feathers. Serious, adult, not cartoonish.",
+    materials: gothicLine("pale cracked oil paint, bare canvas weave, carved and gilded wood, tooled gold leaf, blood-red feathers", "weathered and worn"),
   },
   "empyreal-mosaic": {
     subject: "An angel of vengeance, an old icon painting come alive. Her skin is pale ivory oil paint covered in the fine craquelure of an old painting, flaking away in places to show the bare canvas weave beneath. Her eyes glow bright orange in a fixed, intense glare staring straight ahead. Six blood-red wings, three pairs. Behind her head stands a large flat disc of tooled gold leaf. From the neck down her body is covered in a close-fitting skin of Byzantine mosaic: tiny tiles of gold and blood-red glass, set close together. No robes, no cloth.",
     pose: "all standing in the same T-pose, her six wings open behind her in three pairs, one pair above another, clear of her arms",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: pale cracked oil paint, gold and blood-red glass mosaic tiles, tooled gold leaf, blood-red feathers. Serious, adult, not cartoonish.",
+    materials: gothicLine("pale cracked oil paint, gold and blood-red glass mosaic tiles, tooled gold leaf, blood-red feathers", "weathered and worn"),
   },
   "empyreal-canvas": {
     subject: "An angel of vengeance, an old icon painting come alive. Her skin is pale ivory oil paint covered in the fine craquelure of an old painting, flaking away in places to show the bare canvas weave beneath. Her eyes glow bright orange in a fixed, intense glare staring straight ahead. Six blood-red wings, three pairs. Behind her head stands a large flat disc of tooled gold leaf. Strips of her own painted canvas, torn from the painting, are wound tightly around her body and limbs, their frayed ends trailing. No robes.",
     pose: "all standing in the same T-pose, her six wings open behind her in three pairs, one pair above another, clear of her arms",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: pale cracked oil paint, torn painted canvas, frayed threads, tooled gold leaf, blood-red feathers. Serious, adult, not cartoonish.",
+    materials: gothicLine("pale cracked oil paint, torn painted canvas, frayed threads, tooled gold leaf, blood-red feathers", "weathered and worn"),
   },
   // Round twelve (the user on rounds ten and eleven). The Empyreal covered: the mosaic as something she wears, said
   // as what covers her ("no cloth" undressed her); the old-paint skin worded toward amber (it kept coming out pale).
   "empyreal-mosaic-tunic": {
     subject: "An angel of vengeance, an old icon painting come alive. Her skin is old varnished oil paint, amber-yellow, covered in a web of fine dark cracks. Her eyes glow bright orange in a fixed, intense glare staring straight ahead. She wears a stiff, high-collared tunic of Byzantine mosaic, gold and blood-red glass tiles, reaching below her knees, with stiff mosaic panels over her shoulders and long mosaic sleeves. Six blood-red wings, three pairs. Behind her head stands a large flat disc of tooled gold leaf.",
     pose: "all standing in the same T-pose, her six wings open behind her in three pairs, one pair above another, clear of her arms",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: amber-yellowed cracked oil paint, gold and blood-red glass mosaic tiles, tooled gold leaf, blood-red feathers. Serious, adult, not cartoonish.",
+    materials: gothicLine("amber-yellowed cracked oil paint, gold and blood-red glass mosaic tiles, tooled gold leaf, blood-red feathers", "weathered and worn"),
   },
   "empyreal-mosaic-mantle": {
     subject: "An angel of vengeance, an old icon painting come alive. Her skin is old varnished oil paint, amber-yellow, covered in a web of fine dark cracks. Her eyes glow bright orange in a fixed, intense glare staring straight ahead. A heavy, stiff mantle of Byzantine mosaic, gold and blood-red glass tiles, covers her from the shoulders to the ankles, falling in rigid angular folds, its edges set with gold. Six blood-red wings, three pairs. Behind her head stands a large flat disc of tooled gold leaf.",
     pose: "all standing in the same T-pose, her six wings open behind her in three pairs, one pair above another, clear of her arms",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: amber-yellowed cracked oil paint, gold and blood-red glass mosaic tiles, tooled gold leaf, blood-red feathers. Serious, adult, not cartoonish.",
+    materials: gothicLine("amber-yellowed cracked oil paint, gold and blood-red glass mosaic tiles, tooled gold leaf, blood-red feathers", "weathered and worn"),
   },
   // The Guardian away from the anime girl: an ancient, severe statue, not a young woman; a long coat, not a dress.
   "guardian-statue-bald": {
     subject: "An ancient porcelain angel, severe and still, a cathedral statue come alive: her head is bald and smooth, her face stern and old, cold porcelain cracked all over in a fine web, pure white light glowing in the cracks, her hands the same. An ancient chestplate from a forgotten age, pale abstract metal in flowing alien curves, over a long black coat with a high collar, reaching the ground. Two wings of pure white light, no feathers.",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: weathered cracked white porcelain, pale abstract metal, heavy black wool, pure white light. Serious, adult, not cartoonish.",
+    materials: gothicLine("weathered cracked white porcelain, pale abstract metal, heavy black wool, pure white light", "weathered and worn"),
   },
   "guardian-statue": {
     subject: "An ancient porcelain angel, severe and still, a cathedral statue come alive: her face stern and old, cold porcelain cracked all over in a fine web, pure white light glowing in the cracks, her hands the same, long straight white hair. An ancient chestplate from a forgotten age, pale abstract metal in flowing alien curves, over a long black coat with a high collar, reaching the ground. Two wings of pure white light, no feathers.",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: weathered cracked white porcelain, pale abstract metal, heavy black wool, pure white light. Serious, adult, not cartoonish.",
+    materials: gothicLine("weathered cracked white porcelain, pale abstract metal, heavy black wool, pure white light", "weathered and worn"),
   },
 };
 
@@ -803,7 +812,7 @@ const PARAGON_SIDES_JOBS = [
  * this becoming generic" and "It's a bit weak". The Doomsayer is Claude's ("We can try it out").
  */
 const PRIEST_3D =
-  "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: heavy black and blood-red cloth, yellowed white linen, tarnished gold, blackened iron, old wax and leather. Serious, adult, not cartoonish.";
+  gothicLine("heavy black and blood-red cloth, yellowed white linen, tarnished gold, blackened iron, old wax and leather", "weathered and worn");
 
 const PRIESTS: Readonly<Record<string, { readonly subject: string; readonly pose?: string }>> = {
   "acolyte-bound": {
@@ -862,7 +871,7 @@ const PRIESTS: Readonly<Record<string, { readonly subject: string; readonly pose
  * figures.
  */
 const KNIGHT_3D =
-  "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: blackened and scorched steel, bone-white lacquer, frayed white and blood-red cloth, old leather, tarnished brass. Serious, adult, not cartoonish.";
+  gothicLine("blackened and scorched steel, bone-white lacquer, frayed white and blood-red cloth, old leather, tarnished brass", "weathered and worn");
 
 const MELEE: Readonly<Record<string, { readonly subject: string; readonly pose?: string; readonly materials?: string }>> = {
   "templar-reliquary": {
@@ -923,77 +932,77 @@ const MELEE: Readonly<Record<string, { readonly subject: string; readonly pose?:
   // The user's directions (2026-10-09); each with materials of its own, without the shared steel line.
   "chosen-juggernaut": {
     subject: "An inhuman juggernaut in a man's shape, a brutish champion of a militant faith, massive and heavy, completely covered in form-fitting armour of smooth shell plates that follow his body, no skin showing. A red and white cape.",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: blackened shell plates, bone-white enamel, red and white cloth, heat-scorched metal. Serious, adult, not cartoonish.",
+    materials: gothicLine("blackened shell plates, bone-white enamel, red and white cloth, heat-scorched metal", "weathered and worn"),
   },
   "torturer-husk": {
     subject: "A torturer: an inhuman, grotesque husk of cold grey metal plates, metal skin and no flesh showing anywhere, riddled with cone-shaped iron spikes. His face is an iron-maiden mask of anguish, a sculpted iron face frozen in a scream. Evil gauntlets hung with chains. Disastrous, wrong.",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: cold grey iron, rust, blackened chains, old dried blood. Serious, adult, not cartoonish.",
+    materials: gothicLine("cold grey iron, rust, blackened chains, old dried blood", "weathered and worn"),
   },
   "avatar-illusory": {
     subject: "A vengeance angel, a man in hooded white and red angelic armour, its rims and edges glowing and covered in abstract symbols; his gauntlets and boots fade into glowing heated metal. Three pairs of wings layered one behind another, translucent and illusory, their feathers ending in flames.",
     pose: "all standing in the same T-pose, his three pairs of wings open behind him and clear of his arms",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: white enamel, red cloth, tarnished gold, glowing heated metal, translucent light. Serious, adult, not cartoonish.",
+    materials: gothicLine("white enamel, red cloth, tarnished gold, glowing heated metal, translucent light", "weathered and worn"),
   },
   // Round nine: each leads with what round eight dropped (the Chosen's inhuman head, the Torturer's mask of anguish,
   // the Avatar's flames and heated gauntlets); "armour" is kept out of the Torturer's words.
   "chosen-faceless": {
     subject: "An inhuman juggernaut in a man's shape: no face, his head a smooth rounded shell with no visor and no eye slits, fused to a massive body of thick form-fitting shell plates that follow his muscles, brutish and heavy. A red and white cape.",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: blackened shell plates, bone-white enamel, red and white cloth, heat-scorched metal. Serious, adult, not cartoonish.",
+    materials: gothicLine("blackened shell plates, bone-white enamel, red and white cloth, heat-scorched metal", "weathered and worn"),
   },
   "torturer-anguish": {
     subject: "A torturer whose face is an iron mask of anguish: a sculpted iron face frozen in a scream, its eyes and mouth stretched wide open, bolted onto his head. His body is an inhuman, grotesque husk of cold grey metal, metal skin and no flesh anywhere, riddled with cone-shaped iron spikes. Evil gauntlets hung with chains. No helmet, no knight. Disastrous, wrong.",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: cold grey iron, rust, blackened chains, old dried blood. Serious, adult, not cartoonish.",
+    materials: gothicLine("cold grey iron, rust, blackened chains, old dried blood", "weathered and worn"),
   },
   "avatar-flames": {
     subject: "A vengeance angel, a man in hooded white and red angelic armour, its rims and edges glowing and covered in abstract symbols. His gauntlets and boots glow orange-red with heat, fading from heated metal at the fingers and toes into white armour. Three pairs of translucent, illusory wings layered one behind another, every feather ending in a lick of orange flame.",
     pose: "all standing in the same T-pose, his three pairs of wings open behind him and clear of his arms",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: white enamel, red cloth, tarnished gold, glowing heated metal, translucent light, flame. Serious, adult, not cartoonish.",
+    materials: gothicLine("white enamel, red cloth, tarnished gold, glowing heated metal, translucent light, flame", "weathered and worn"),
   },
   // Round ten. The Chosen: no cape, narrower, battered rather than sculpted (the user: "too much like a superhero";
   // "too broad").
   "chosen-battered": {
     subject: "An inhuman juggernaut in a man's shape, tall and heavy but not broad: no face, his head a smooth rounded shell with no visor and no eye slits, fused to a body of thick layered shell plates, battered, chipped and scorched, no sculpted muscles. No cape.",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: blackened shell plates, chipped bone-white enamel, heat-scorched metal. Serious, adult, not cartoonish.",
+    materials: gothicLine("blackened shell plates, chipped bone-white enamel, heat-scorched metal", "weathered and worn"),
   },
   // The Torturer: the screaming mask leads, then what was missing: the instruments, a hunched, wrong body.
   "torturer-instruments": {
     subject: "A torturer whose face is an iron mask of anguish, a sculpted iron face screaming, its mouth stretched wide. An inhuman, grotesque husk of cold grey metal, hunched, with overlong arms, metal skin and no flesh anywhere, riddled with cone-shaped iron spikes, his back bristling with them. Hooks, pincers and saw blades hang from his belt on chains; evil gauntlets hung with chains. No helmet, no knight. Disastrous, wrong.",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: cold grey iron, rust, blackened chains, old dried blood. Serious, adult, not cartoonish.",
+    materials: gothicLine("cold grey iron, rust, blackened chains, old dried blood", "weathered and worn"),
   },
   // The Avatar after the user's reference (MTG's Illusory Angel, described in words): enormous wings of long loose
   // feathers coming apart into streaks and smoke, in red. And the Chosen's next step: the same faceless shell.
   "avatar-ascended": {
     subject: "A vengeance angel, the faceless champion ascended: a tall body of white and red shell plates under a deep hood, no face, only a glowing red void inside the hood, the plates' edges glowing and covered in abstract symbols, gauntlets and boots glowing with heat. From his back spread three pairs of enormous red wings, far larger than his body, made of long loose feathers that come apart into streaks, embers and smoke, feathers breaking off and drifting away, translucent and glowing.",
     pose: "all standing in the same T-pose, his enormous wings spread wide behind him and clear of his arms",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: white and red shell plates, glowing heated metal, red feathers dissolving into smoke and embers. Serious, adult, not cartoonish.",
+    materials: gothicLine("white and red shell plates, glowing heated metal, red feathers dissolving into smoke and embers", "weathered and worn"),
   },
   "avatar-cracked": {
     subject: "A vengeance angel, the faceless champion ascended: his smooth rounded shell head and thick shell plates cracked open, fire burning inside every crack, his gauntlets and boots glowing with heat. From his back spread three pairs of enormous red wings, far larger than his body, made of long loose feathers that come apart into streaks, embers and smoke, feathers breaking off and drifting away, translucent and glowing.",
     pose: "all standing in the same T-pose, his enormous wings spread wide behind him and clear of his arms",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: blackened and bone-white shell plates, fire, glowing heated metal, red feathers dissolving into smoke and embers. Serious, adult, not cartoonish.",
+    materials: gothicLine("blackened and bone-white shell plates, fire, glowing heated metal, red feathers dissolving into smoke and embers", "weathered and worn"),
   },
   // Round eleven: round eight's juggernaut (the user: "His shape was fine […] we just needed it to be less like a
   // regular piece of armor"), with round nine's faceless head, one continuous shell, no cape.
   "chosen-shell": {
     subject: "An inhuman juggernaut in a man's shape, a brutish champion of a militant faith, massive and heavy, completely covered in one continuous shell of smooth fused plates, none of the seams or straps of a knight's suit, no skin showing. His head is a smooth rounded shell with no face, no visor and no eye slits. No cape.",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: blackened shell plates, bone-white enamel, heat-scorched metal. Serious, adult, not cartoonish.",
+    materials: gothicLine("blackened shell plates, bone-white enamel, heat-scorched metal", "weathered and worn"),
   },
   // Round twelve. The Avatar's wings after the user's reference (the Illusory Angel), on round ten's ascended figure.
   "avatar-streaks": {
     subject: "A vengeance angel, the faceless champion ascended: a tall body of white and red shell plates under a deep hood, no face, only a glowing red void inside the hood, the plates' edges glowing and covered in abstract symbols, gauntlets and boots glowing with heat. From his back spread three pairs of enormous wings, far larger than his body, made of long, loose, flowing red feathers that trail away into streaks of red light and smoke, the feathers drifting apart at their ends, wispy and translucent, painted in loose streaks.",
     pose: "all standing in the same T-pose, his enormous wings spread wide behind him and clear of his arms",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: white and red shell plates, glowing heated metal, translucent red light, smoke. Serious, adult, not cartoonish.",
+    materials: gothicLine("white and red shell plates, glowing heated metal, translucent red light, smoke", "weathered and worn"),
   },
   // The Torturer after the user's three references, in words: the gold boss of Baldur's Gate 3 (a body cased in dark,
   // ornate bronze and gold, a smooth metal face, a spiked headdress, bladed claws), Pinhead without the pins (a head
   // scored in a grid), an iron maiden without the casket (iron and spikes). No skin, not human.
   "torturer-aberration": {
     subject: "A humanoid aberration of torture, not human: a heavy, hulking body cased entirely in dark, ornate bronze and tarnished gold, layered metal folds over metal folds, iron spikes jutting out between them. His face is a smooth metal mask, eyes closed, deep lines scored into it in a grid across the face and the bald metal head. A tall headdress of iron spikes. His fingers are long iron blades. No skin anywhere.",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: dark bronze, tarnished gold, blackened iron, verdigris. Serious, adult, not cartoonish.",
+    materials: gothicLine("dark bronze, tarnished gold, blackened iron, verdigris", "weathered and worn"),
   },
   "torturer-aberration-maiden": {
     subject: "A humanoid aberration of torture, not human: a tall, heavy body of dark bronze and blackened iron plates hinged at the front like the doors of an iron maiden, standing a little open to show rows of spikes inside. His face is a smooth bronze mask, eyes closed, deep lines scored into it in a grid across the face and the bald metal head. A tall headdress of iron spikes. His fingers are long iron blades. No skin anywhere.",
-    materials: "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: dark bronze, tarnished gold, blackened iron, rust, verdigris. Serious, adult, not cartoonish.",
+    materials: gothicLine("dark bronze, tarnished gold, blackened iron, rust, verdigris", "weathered and worn"),
   },
 };
 
@@ -1026,8 +1035,7 @@ const MELEE_JOBS = [
  * readings per unit, each built around one standout feature; turnarounds only, hands empty (weapons get prop sheets
  * once a unit is picked). Every subject is Claude's.
  */
-const tribeLine = (materials: string) =>
-  `Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: ${materials}. Serious, adult, not cartoonish.`;
+const tribeLine = (materials: string) => gothicLine(materials, "weathered and worn");
 const WILD_3D = tribeLine("matted fur, scarred hide, bristles, cracked tusk and bone, mud");
 const TUSK_3D = tribeLine("scarred grey-green hide, rusted iron, boiled leather, bone, coarse frayed cloth, moss");
 const SCALED_3D = tribeLine("dull scales, verdigris bronze, reed and bone, wet dark leather, tarnished gold");
