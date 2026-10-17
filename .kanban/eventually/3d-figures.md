@@ -52,3 +52,7 @@
 - **The Reclaimer (2026-10-17):** `reclaimer#1` came without a rig; `reclaimer#2` (FBX) is rigged and sound: 43k
   triangles, one 4k PBR material, no drift. Plate throughout, so no chains: her wings, separate pieces, ride
   `spine_03` whole (the Seraph's). In the repo as `assets/models/units/reclaimer.glb`.
+- **The Chosen, Pontiff and Shepherd (2026-10-17):** `chosen#1`, `pontiff#1`, `shepherd#1` (FBX), all sound at once:
+  35–38k triangles, one 4k PBR material, no drift. The Chosen is plate: no chains. The Pontiff, one shell, gets six
+  chains round the robe below the belt and his censer on bones of its own from the belt (the Acolyte's lantern). The
+  Shepherd's wings ride `spine_03` whole, five chains round her skirt. In the repo as `assets/models/units/<unit>.glb`.

@@ -112,6 +112,7 @@ def around(angles, reach, window, keep=0.0):
 
 
 # family: parent bone, bones per chain, which vertices, how the chains share them. hanging: parent bone, which pieces.
+# rigid: the bone each piece rides whole, by number or by a rule on the piece.
 FIGURES = {
     # Her labels come by nearest surface from another generation and miss where Tripo fused the cape to the belt and
     # the strips to the thighs: rip wherever moving cloth meets still.
@@ -228,9 +229,50 @@ FIGURES = {
         "hanging": {},
         "families": {},
     },
+    # Pieces: 0 the armoured body, 1 and 2 the pauldrons, which Tripo weighted to the shoulders. Plate only.
+    "chosen": {
+        "parts": "pieces",
+        "rip": "parts",
+        "rigid": {},
+        "hanging": {},
+        "families": {},
+    },
+    # Pieces: 1 the body in one shell (alb, chasuble, the stole's strips down the front), 11 the black hem under it, 6
+    # and 7 the shoes, 0 the crown; the censer (2) and its chain, small pieces on his left hip, hang from the belt.
+    # Below the belt the robe, the stole's ends and the pendants on it ride six chains; the floor-length robe keeps most
+    # of Tripo's leg weights, as the Punisher's.
+    "pontiff": {
+        "parts": "pieces",
+        "rip": "parts",
+        "rigid": {},
+        "hanging": {
+            "censer": ("pelvis", lambda i, part: part[i] != 1 and centre(part[i]).x > 0.1
+                       and 0.2 < centre(part[i]).z < 0.56),
+        },
+        "families": {
+            "skirt": ("pelvis", 3, lambda i, part: part[i] not in {6, 7} and centre(part[i]).x < 0.1
+                      and (co[i].z < 0.45 if part[i] == 1 else centre(part[i]).z < 0.45),
+                      around({"front": 0, "front_l": 50, "l": 100, "back": 180, "r": -100, "front_r": -50}, 30, 60,
+                             keep=0.7)),
+        },
+    },
+    # Pieces: 0 the robe's top and sleeves, 1 the hair, 2 the skirt, 4 the legs; the wings are many pieces behind the
+    # back (7–12 and sixty small feathers), which Tripo weighted to the upper arms: they ride `spine_03` whole, as the
+    # Seraph's.
+    "shepherd": {
+        "parts": "pieces",
+        "rip": "parts",
+        "rigid": lambda n: "spine_03" if centre(n).y > -0.035 and centre(n).z > 0.3 else None,
+        "hanging": {},
+        "families": {
+            "skirt": ("pelvis", 3, lambda i, part: part[i] == 2,
+                      around({"front_l": 25, "l": 90, "back": 180, "r": -90, "front_r": -25}, 30, 65, keep=0.4)),
+        },
+    },
 }
 figure = FIGURES[unit]
 part = json.load(open(labels_file))["labels"] if figure["parts"] == "labels" else pieces()
+rigid = figure["rigid"] if callable(figure["rigid"]) else figure["rigid"].get
 
 
 def angle(c):
@@ -354,7 +396,7 @@ for name in set(hangs.values()):
     mesh.vertex_groups.new(name=name)
 
 for v in mesh.data.vertices:
-    bone = hangs.get(orig[v.index]) or figure["rigid"].get(part[orig[v.index]])
+    bone = hangs.get(orig[v.index]) or rigid(part[orig[v.index]])
     if bone is None:
         continue
     for g in list(v.groups):
