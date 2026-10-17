@@ -19,14 +19,15 @@ import type { Candidate } from "#scripts/art/batch";
 
 // The first batch's portraits the user liked were painted with chiaroscuro and a rim light on dark grey. "Ornate" in
 // a painting turned the Bog Giant's bark into gold filigree; *plain* is the same line without it (the user: "try
-// things out"), to compare.
+// things out"), to compare. No "weathered and worn" since 2026-10-17 (the user: not on by default); the portraits made
+// before carry it in their manifests.
 type Style = "ornate" | "plain";
 const PAINTED: Readonly<Record<Style, string>> = {
   ornate:
-    "Dark gothic fantasy in the manner of Disciples II's art: rich, brooding and ornate, desaturated colors with dark accents, dramatic and grim materials, weathered and worn. Serious, adult, not cartoonish. " +
+    "Dark gothic fantasy in the manner of Disciples II's art: rich, brooding and ornate, desaturated colors with dark accents, dramatic and grim materials. Serious, adult, not cartoonish. " +
     "A painted fantasy illustration with chiaroscuro lighting, deep shadows and a hard rim light, on a plain flat dark grey background. No text.",
   plain:
-    "Dark gothic fantasy in the manner of Disciples II's art: rich and brooding, desaturated colors with dark accents, dramatic and grim materials, weathered and worn. Serious, adult, not cartoonish. " +
+    "Dark gothic fantasy in the manner of Disciples II's art: rich and brooding, desaturated colors with dark accents, dramatic and grim materials. Serious, adult, not cartoonish. " +
     "A painted fantasy illustration with chiaroscuro lighting, deep shadows and a hard rim light, on a plain flat dark grey background. No text.",
 };
 

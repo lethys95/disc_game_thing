@@ -1,6 +1,6 @@
 # Art direction
 
-> **Not settled.** The user corrected it for Nexus (2026-09-27): a haughty noble house, opulent and immaculate, "definitely not worn, weathered and repaired" (`factions/ral-vitahl.md`). The "used up" look below is Claude's proposal and doesn't apply faction-wide.
+> **Not settled.** The user corrected it for Nexus (2026-09-27): a haughty noble house, opulent and immaculate, "definitely not worn, weathered and repaired" (`factions/ral-vitahl.md`). The "used up" look below is Claude's proposal and doesn't apply faction-wide. **Not a default (the user, 2026-10-17):** worn, weathered and repaired is off in every new creation's prompt; a unit or object is worn only when its own design says so.
 >
 > Chosen by Claude (2026-09-25), within the user's brief: dark, adult, possibly gothic, never made for kids. "Adult" means dark stories and themes, not explicit content. The user named Shichigoro-Shingo and Giger as mood references. We don't copy anyone's style and don't put artist names in generation prompts. The direction below is described by its own qualities.
 

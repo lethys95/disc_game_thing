@@ -444,3 +444,4 @@ writes, and the other picks the change up (`view/shared-table.ts`, `decider`). N
 turns are played by whichever end handed them the turn. In a battle between the two, each gives their own side's
 orders, unit by unit: the browser replays the MCP player's orders from the table so they animate like the AI's. The MCP
 player's tarot cards there are the AI's picks, which both ends make alike, so no pick has to cross the table.
+- **Not a default (2026-10-17):** "weathered and worn" is out of the recipe for new concepts and portraits (the user); see `art.md`.
