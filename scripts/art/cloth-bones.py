@@ -220,6 +220,14 @@ FIGURES = {
                              keep=0.5)),
         },
     },
+    # Pieces: 0 the armoured body, 1 and 2 the wings, which Tripo weighted to the upper arms. Plate only: nothing hangs.
+    "reclaimer": {
+        "parts": "pieces",
+        "rip": "parts",
+        "rigid": {1: "spine_03", 2: "spine_03"},
+        "hanging": {},
+        "families": {},
+    },
 }
 figure = FIGURES[unit]
 part = json.load(open(labels_file))["labels"] if figure["parts"] == "labels" else pieces()

@@ -89,3 +89,8 @@ the front chain, the strips and their pendants riding the skirt), the hem keepin
 wings ride `spine_03` whole (the Seraph's); the book on her left hip and the chains looped on both hips ride `pelvis`
 whole, as Tripo split them between the thigh and the hand that rests on the book. Its parts are the mesh's own
 separate pieces; nothing ripped.
+
+`units/reclaimer.glb` (2026-10-17) is the user's Tripo model of the Reclaimer (`reclaimer#2`, FBX: one mesh, about 43k
+triangles, 4k PBR textures, the same 61-bone rig; `reclaimer#1` came without one). No bones added: she is plate
+throughout, nothing hangs. `scripts/art/cloth-bones.py reclaimer` moves her wings, separate pieces of the mesh, whole
+onto `spine_03`, as the Seraph's.

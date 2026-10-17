@@ -49,5 +49,6 @@
   repo as `assets/models/units/paragon.glb`: wings moved whole onto `spine_03` (the Seraph's), six chains round the
   torn skirt with the red tabard on the front one, and the book on her left hip with its chain, and the chain on her
   right hip, riding the pelvis whole.
-- **The Reclaimer (2026-10-17):** `reclaimer#1` came without a rig (no bones, no skin): it needs Tripo's rig and a new
-  FBX before anything else. The mesh itself looked sound (43k triangles, one 4k PBR material).
+- **The Reclaimer (2026-10-17):** `reclaimer#1` came without a rig; `reclaimer#2` (FBX) is rigged and sound: 43k
+  triangles, one 4k PBR material, no drift. Plate throughout, so no chains: her wings, separate pieces, ride
+  `spine_03` whole (the Seraph's). In the repo as `assets/models/units/reclaimer.glb`.
