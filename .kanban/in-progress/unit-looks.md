@@ -7,3 +7,7 @@
 - **Why:** Look → concept → portrait: no look, no art.
 - **Done when:** Each has a look the user accepted.
 - **Who:** Claude drafts, marked as Claude's; the user accepts or rewrites. Claude can start this without waiting.
+- **Drafted (2026-10-17):** all fourteen, in `docs/design/units/unit-looks.md`, for the user on `shots/unit-looks.html`
+  (keep, maybe or cut, with notes). The user asked for creativity at the level of their own looks. Line motifs: Nexus
+  casters wear their charges as glass cells that grow tier by tier; the bandits wear something stolen above the neck.
+  Next: the user's marks, then concepts for the kept ones (`concepts-and-portraits`).

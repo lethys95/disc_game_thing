@@ -69,6 +69,7 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 | Fanatic | Jilliath 3 (consume) | user's answers to Claude's drafts | deferred |
 
 ## 3. No identity yet: needs a look in words first (the user's, or Claude's to propose)
+Claude's drafts for all of these wait for the user: `unit-looks.md` (2026-10-17).
 | Unit | Faction · tier | What exists |
 |---|---|---|
 | Technician | Nexus 1 | design, no look |

@@ -490,6 +490,34 @@ const CARNIVAL_JOBS = [
 const ETHERBORN_JOBS = [{ id: "etherborn-lined-turnaround", prompt: turnaround(ETHERBORN, NEXUS_NOBLE_3D) }];
 
 /**
+ * The carnival's Fire Eater (tier 1, melee, spits fire in a cone), round one. The look is Claude's: a fire-breather
+ * with soot and scorch on worn motley. Each reading has its own twist the role doesn't predict, and a palette apart
+ * from the Omen's oxblood and the Soothsayer's red and mustard: soot black and faded saffron diamonds.
+ */
+const FIRE_EATER_3D =
+  "Dark gothic fantasy, rich, brooding and ornate, desaturated colors with dark accents, grim, weathered and worn physically based materials: scorched diamond-patterned motley cloth, cracked leather, soot, blackened iron, tarnished brass, clay. Serious, adult, not cartoonish.";
+
+const FIRE_EATERS: Readonly<Record<string, string>> = {
+  "fire-eater-dragon":
+    "A fire-breather of a nomadic swindlers' carnival, a stocky bare-chested man. His lower face is hidden by a soot-blackened iron dragon's jaw strapped over his mouth and chin, its fanged mouth open, scorched around the lips, the old sideshow mask he breathes his fire through. " +
+    "Shaved head, soot smeared down his chest, scarred forearms wrapped in leather. A short open vest of faded saffron and black diamond motley, scorched at the hem, loose dark trousers, a belt hung with corked flasks of lamp oil.",
+  "fire-eater-burned":
+    "A fire-breather of a nomadic swindlers' carnival, a wiry gaunt man whose act once went wrong: the lower half of his face is old shiny burn scar, no lips left, his teeth bared in a permanent grimace. " +
+    "Soot-black tattoos of flames climb his throat into his mouth. Round his neck a heavy string of small corked clay flasks of oil, like a necklace of beads. A sleeveless tunic of faded saffron and black diamond motley, burned through in holes, ragged trousers, bare scorched feet.",
+  "fire-eater-bellows":
+    "A fire-breather of a nomadic swindlers' carnival, a hunched broad man with a contraption on his back: a large patched leather bellows strapped like a hump between his shoulders, a dented brass pipe running from it over his shoulder to a brass mouthpiece clenched in his teeth. " +
+    "A soot-black face, singed eyebrows, a sweat-stained harlequin shirt of faded saffron and black diamonds, a heavy scorched leather apron, cracked boots.",
+};
+
+const FIRE_EATER_KIT =
+  "a fire-breather's torch: an iron rod with a thick ball of charred wick bound in wire at one end, flames burning on it; beside it a dented brass flask of lamp oil with a cork on a chain, and a short torch drawn without flame. Each object separate.";
+
+const FIRE_EATER_JOBS = [
+  ...Object.entries(FIRE_EATERS).map(([id, subject]) => ({ id: `${id}-turnaround`, prompt: turnaround(`${subject} Hands empty and open, no weapon.`, FIRE_EATER_3D) })),
+  { id: "fire-eater-kit-props", prompt: prop(FIRE_EATER_KIT, FIRE_EATER_3D), width: 2048, height: 832 },
+];
+
+/**
  * Jilliath's angels, the support line (`docs/design/units/jilliath-identities.md`, the user's answers 2026-10-08): all
  * female; winged people from above, not Christianity. Round one. The user's words are held fixed (the Guardian's
  * glowing white wings, black robes and white hair; the Shepherd's stained glass; the Godkin's sky silhouette; the
@@ -1187,6 +1215,7 @@ const GROUPS = [
   { dir: "art/candidates/units/grove/psychopomp", jobs: PSYCHOPOMP_JOBS },
   { dir: "art/candidates/units/neutrals/carnival", jobs: CARNIVAL_JOBS },
   { dir: "art/candidates/units/nexus/etherborn", jobs: ETHERBORN_JOBS },
+  { dir: "art/candidates/units/neutrals/carnival/fire-eater", jobs: FIRE_EATER_JOBS },
   { dir: "art/candidates/units/jilliath/angels", jobs: [...ANGEL_JOBS, ...PARAGON_SIDES_JOBS] },
   { dir: "art/candidates/units/jilliath/priests", jobs: PRIEST_JOBS },
   { dir: "art/candidates/units/jilliath/melee", jobs: MELEE_JOBS },
