@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-26 (unit looks round 2 from the user's notes; portraits and biome props accepted)
+**Updated:** 2026-10-26 (concept round one for the thirteen looks; portraits and biome props accepted)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): a first complete version, far off (the board's README
@@ -53,7 +53,8 @@ interface change.
    Spiritess tier 4, the joker lines, owners for Evasion, Explode and Soak.
 2. **Claude's own, meanwhile:** icons for abilities, effects and items (`icons`, the user's suggestion); the looks
    for the thirteen units without one are in round 2, redrafted from the user's notes (`in-progress/unit-looks`,
-   `shots/unit-looks-2.html`; the rule now: nothing odd hung on clothes); a Capitol Guardian per faction
+   `shots/unit-looks-2.html`; the rule now: nothing odd hung on clothes); concept round one for all
+   thirteen is generating (the user: "first round on all, then we can edit afterwards"); a Capitol Guardian per faction
    (`todo/capitol-guardians`, the user 2026-10-26); the Fire Eater's concepts in rounds (`carnival-concepts.md`); then concepts and portraits.
 3. **The user's picks waiting:**
    everything in `testing/`.

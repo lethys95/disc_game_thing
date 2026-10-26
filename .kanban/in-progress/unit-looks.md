@@ -18,3 +18,7 @@
 - **Round 2 (2026-10-26):** thirteen redrafted from the notes, each note quoted above its draft
   (`docs/design/units/unit-looks.md`), on `shots/unit-looks-2.html` with a Send button. The Hedge Mage has two
   directions to choose from.
+- **Concepts started (2026-10-26):** the user: "you can try from creating images from what we have now. Just first
+  round on all, then we can edit afterwards." So the round-2 words go to concepts as they stand: round one in
+  `scripts/art/concepts.ts` (`NEXUS_LOOKS`, `BANDITS`, the Cutpurse and Snakeoiler), two readings per unit, weapons as
+  prop sheets; the looks get edited from the pictures.
