@@ -22,3 +22,6 @@
   round on all, then we can edit afterwards." So the round-2 words go to concepts as they stand: round one in
   `scripts/art/concepts.ts` (`NEXUS_LOOKS`, `BANDITS`, the Cutpurse and Snakeoiler), two readings per unit, weapons as
   prop sheets; the looks get edited from the pictures.
+- **Concept round one in (2026-10-26):** 64 images, `shots/looks-r1.html` (Claude's read and pick per unit, every
+  prompt as sent, a Send button). Eleven of thirteen have a reading Claude would defend; the Backlasher missed both
+  ways (no glass, the canisters a ring of baubles). Waiting for the user's picks and notes.

@@ -163,3 +163,25 @@ Palettes so far: the Omen oxblood, the Soothsayer red and mustard stripes, the F
   dark patchwork, a waistcoat, dark trousers, a dark curly beard. A large round-bottomed flask in each hand,
   filled with murky liquid that glows faintly. His face inquisitive, intelligent, confident and malicious; not crazed.
 - **Standout:** the two flasks held out, and the top hat.
+
+## Concept round one (2026-10-26)
+
+The words above as they stood (the user: "first round on all, then we can edit afterwards"); prompts in
+`scripts/art/concepts.ts` (`NEXUS_LOOKS`, `BANDITS`, `CARNIVAL_LOOKS_JOBS`), images in
+`art/candidates/units/{nexus/looks,neutrals/bandits,neutrals/carnival/looks}/`, the review on `shots/looks-r1.html`.
+Claude's read:
+
+- My read of the round: eleven of thirteen have a reading I'd defend; the Backlasher missed both ways, and the Hedge Mage's deserter is plain. Effects (the Maelstrom's fog, the Thaumaturge's lightning, the firestarter's glowing runes) don't show under the turnaround's flat light; they belong to the cards and the game. Several sheets draw a side view twice (noted per unit); the split for Tripo skips duplicates.
+- **Technician:** My pick: technician-livery-turnaround-1000. One gauntlet on the right arm, the left a plain sleeve, the canister upright on his back: the look as written. The wright reading put gauntlets on both arms; its two canisters crossed on the back are the better pack, if you'd rather have that on the livery.
+- **Cyclops:** My pick: cyclops-furnace-turnaround-1001. The rank of steaming vent pipes on its back and the one teal sight-glass give it a silhouette nothing else has. The boiler reading came out a lanky diver robot (1001 grew a second eye in its chest). Both furnace sheets wear a cloth skirt I didn't ask for; 1000 draws a side view twice.
+- **Mutant:** My pick: mutant-carapace-turnaround-1001. The spiked carapace on the back, one armoured forearm, pale skin with teal veins: an organic hulk the house grew. The hulk reading is just a big bald man (no horn ridges, even arms); 1000 has a stray floating arm.
+- **Justiciar:** My pick: justiciar-collar-turnaround-1001. The high collar framing her head, the canisters standing either side of it, wide teal-lined sleeves: haughty. The flared reading is a good second, a fitted coat with gold clasps (1000 draws a side view twice). The rod's globe came out painted like a world map: next round, plain glass.
+- **Thaumaturge:** My pick: thaumaturge-tailcoat-turnaround-1001. The canisters in hip holsters read as a duellist's pistols, the tailcoat and waistcoat as a young lord. The greatcoat reading looks more like a hunter than an aristocrat. The lightning between his fingers didn't render under flat light: card and effects.
+- **Backlasher:** Neither. No black mirror glass in either reading, and the canisters came out as a ring of baubles round the waist, which is exactly the hung-on look; a tiara and a low neckline crept in too. Round two: the glass as fitted pieces of her gown (a collar and bodice of black glass shards, held a little apart), the loose cloud of shards as an effect, and the canisters fewer, set into a fitted metal girdle.
+- **Maelstrom:** My pick: maelstrom-dragon-turnaround-1000. Black and gold, the dragon winding up the coat, long black hair, the canisters a ridge down his spine under the cape. 1001 lost its face. The robe reading is the more dramatic silhouette (wide dragon sleeves, silver hair) but its canisters stand over the shoulders like lanterns.
+- **Brigand:** My pick: brigand-gambeson-turnaround-1001. Red bandana, ponytail, quilted gambeson, scruffy: your note as drawn. The longcoat is good too (1000 has a stray floating arm). Weapons: the club reads better than the mace, whose head came out quilted like leather.
+- **Marauder:** My pick: marauder-plate-turnaround-1001, by a little. Both readings came out close: the mask became a closed visored helm under the hood rather than a crude mask, and the leathers look much like the plate. Round two: a crude mask in words that can't become a helm. The warhammer is right.
+- **Bandit:** My pick: bandit-cuffs-turnaround-1001. Kanzashi through the bun, the scarf, the wide cuffs on gloves and boots. The longcoat reading (rust scarf, split coat) is a close second. The longbow sheet is fine.
+- **Hedge Mage:** My pick: hedge-mage-firestarter-turnaround-1000. The shaved sides, braid and tattooed bare forearms give the gang a caster you can tell apart; the runes will glow in the game. The deserter reads as a plain officer in a greatcoat.
+- **Cutpurse:** My pick: cutpurse-pixie-turnaround-1001. The vertical black and purple stripes, the long pointed coat with its lining, the bandana and ponytail. The tails reading ballooned the trousers at the hips. The knives sheet drew one knife each, with fussy handles: round two.
+- **Snakeoiler:** My pick: snakeoiler-lean-turnaround-1000. Top hat, curly beard, patchwork frock coat, a sharp face. The broad reading is the same man heavier. The flasks came out wrapped in patchwork (the coat's materials leaked onto them): round two gives them their own glass-and-brass line.
