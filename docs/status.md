@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-17 (looks drafted for the fourteen units without one; the Fire Eater's concepts)
+**Updated:** 2026-10-26 (the user accepted all 60 portraits, four icons re-cropped, and the biome props)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): a first complete version, far off (the board's README
@@ -20,7 +20,8 @@ interface change.
 
 - **Rosters:** Jilliath's is built but for the joker line. Ral-Vitahl's mages reach tier 3; its melee and support
   stop at tier 2 and 1. The Grove's melee and support lines are in, its mage only at tier 1.
-- **Art:** 60 units have card, bust and icon (`shots/portraits.html`, `shots/tribe-portraits.html`); 33 don't
+- **Art:** 60 units have card, bust and icon, all accepted by the user (2026-10-26; `shots/portraits.html`,
+  `shots/tribe-portraits.html`); 33 don't
   (`todo/concepts-and-portraits`). The HUD is box-out-then-paint-in (`hud-paint-in` skill); Jilliath's Capitol
   column and garrison are painted. The HUD rests for now (the user, 2026-10-11).
 - **Mana is one kind** (the user's call, 2026-10-11). **Armor is a percentage** with diminishing returns.
@@ -44,8 +45,8 @@ interface change.
   user's pools, 2026-10-15); nine new nodes, the Oasis, Dog yard and the user's Waystone (Way portal recalls a warband to the city its leader was
   elevated in; any held city elevates now); outposts and mercenary camps hire the biome's tribe. Levels add a clause at the
   top (`testing/node-clauses`); merchants sell their biome's list; the Scriptorium gives each faction's casters their own gift.
-- **Biome props:** the swamp, tundra and haunted woods have their own thirteen props each, on the map
-  (`testing/biome-props`, `shots/biome-props.html`).
+- **Biome props:** the swamp, tundra and haunted woods have their own thirteen props each, on the map, accepted by
+  the user (2026-10-26; some may become Tripo models later, `maybe/tripo-props`).
 
 ## Next (the board's todo, in rank order)
 1. **Design sessions with the user:** the Grove's mage line (questions #10), Ral-Vitahl's missing tiers, the

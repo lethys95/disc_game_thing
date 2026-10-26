@@ -6,3 +6,7 @@
   candidate under each).
 - **Done when:** The user has seen them (`shots/portraits.html`, `?fight=carnival`, `?fight=drawn`, the codex).
 - **Who:** The user looks.
+- **Accepted (the user, 2026-10-26):** all 60 portraits on `portraits.html`, `jilliath-portraits.html` and
+  `tribe-portraits.html`. Four icons were re-cropped from their cards at the user's word: the Grey wolf and the
+  Troll (muzzle and chin had been cut off), the Spitter and the Naga coiler (the snout had been cut off; now framed on
+  the face).

@@ -14,7 +14,6 @@ Kept short: only what is the user's to decide, most blocking first. Answer inlin
 
 10. **The Regrowth line's damage (the composition matrix, 2026-09-30, `provisional.md` #61):** Regrowth 3 "supports and attacks weakly" (your design), and the Grove has no damage dealer past its tier-1 mage. So Regrowth squads win 0–17% against Jilliath's tier 3 (Templars' 20 armor turn its 32 into 12) while Decay squads win 92%. A tier-2 Grove mage would give it a partner; or Regrowth 3 hits harder; or it stays the Grove's weak matchup. Your call.
 11. **Who gets the unowned keywords (2026-10-05, `provisional.md` #65, #66):** Evasion, Explode (your "boomer […] on melee line": which faction's?) and Soak exist and are tested, and no unit carries them. Tarot and Crit sit only on carnival units (and the Deck of cards); should a faction carry them too? More statuses beyond wet, burn and electrocuted whenever you have them.
-13. **Unit portraits:** 60 units have card, bust and icon in the game, the five tribes' 25 among them (`shots/portraits.html`, `shots/jilliath-portraits.html`, `shots/tribe-portraits.html`). Anything to change?
 
 ## Look and sound
 4. **The map's look:** "actual grass", and which way terrain goes (`design/map-look.md`). Reference images or games whose map look you like would help most.

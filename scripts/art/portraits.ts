@@ -503,7 +503,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     strengths: T_POSED,
     picked: {
       card: "grey_wolf-card-d90.png",
-      crops: { bust: { from: "card", size: 0.7, x: 0.62, y: 0.45 }, icon: { from: "card", size: 0.42, x: 0.68, y: 0.43 } },
+      crops: { bust: { from: "card", size: 0.7, x: 0.62, y: 0.45 }, icon: { from: "card", size: 0.5, x: 0.757, y: 0.475 } },
     },
   },
   boar: {
@@ -573,7 +573,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     strengths: T_POSED,
     picked: {
       card: "troll-card-d90.png",
-      crops: { bust: { from: "card", size: 0.72, x: 0.5, y: 0.3 }, icon: { from: "card", size: 0.36, x: 0.45, y: 0.24 } },
+      crops: { bust: { from: "card", size: 0.72, x: 0.5, y: 0.3 }, icon: { from: "card", size: 0.4, x: 0.475, y: 0.255 } },
     },
   },
   goblin_hexer: {
@@ -614,7 +614,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     strengths: T_POSED,
     picked: {
       card: "spitter-card-d90.png",
-      crops: { bust: { from: "card", size: 0.62, x: 0.35, y: 0.24 }, icon: { from: "card", size: 0.32, x: 0.25, y: 0.13 } },
+      crops: { bust: { from: "card", size: 0.62, x: 0.35, y: 0.24 }, icon: { from: "card", size: 0.36, x: 0.21, y: 0.155 } },
     },
   },
   naga_coiler: {
@@ -624,7 +624,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     strengths: T_POSED,
     picked: {
       card: "naga_coiler-card-d90.png",
-      crops: { bust: { from: "card", size: 0.463, x: 0.584, y: 0.252 }, icon: { from: "card", size: 0.231, x: 0.55, y: 0.203 } },
+      crops: { bust: { from: "card", size: 0.463, x: 0.584, y: 0.252 }, icon: { from: "card", size: 0.31, x: 0.51, y: 0.137 } },
     },
   },
   shedskin: {

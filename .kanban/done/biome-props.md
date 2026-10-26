@@ -11,3 +11,5 @@
   concepts; the snow-laden fir cluster (`tundra-tree-2`) overflowed TRELLIS.2's simplifier and was meshed with TRELLIS
   v1. Review page `shots/biome-props.html`.
 - **Done when:** the user has seen them: keep, redo or cut.
+- **Accepted (the user, 2026-10-26):** "they look great", all 39 kept. Some may be replaced by Tripo models later
+  (`maybe/tripo-props`).
