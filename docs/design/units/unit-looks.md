@@ -1,130 +1,154 @@
-# Looks for the units without one (Claude's drafts)
+# Looks for the units without one
 
-Step one of the art (`roster.md`, group 3): a look in words before any concept. Everything here is **(Claude)**, drafted
-2026-10-17 for the user to keep, change or cut (`todo/unit-looks`). Once a look is accepted it moves to the unit's sheet
-and this entry goes. Shown on `shots/unit-looks.html`.
+Step one of the art (`roster.md`, group 3): a look in words before any concept. Once a look is accepted it moves to
+the unit's sheet and its entry here goes. Round 2 is on `shots/unit-looks-2.html` (`todo/unit-looks`).
 
-The aim is the user's own looks (the Etherborn's galaxy skin, the Archon's waving neon bands, the Zealot's burning hand):
-one physical idea the role doesn't predict, a palette, and what the figure lacks. Each draft names its **standout**, the
-one feature that tells it apart from the rest of the roster at a glance.
+**Round 1 (Claude, 2026-10-17)** was cut almost whole by the user on 2026-10-26; only the Justiciar, the Maelstrom
+and the Brigand stayed, as maybes. The user's rule for every look since: **nothing odd hung on clothes or bodies.**
+"Cut down on putting odd things on clothes. It doesn't make much sense." The line gimmicks went with it (the bandits
+wearing "something stolen", the Nexus casters wearing their charges as glass cells). An idea lives in the body, the
+cut and colour of the clothes, and what the figure holds. "Be creative but not strange."
+
+The user's references below are direction, not features to transcribe: the concept prompts never name them.
+
+**Round 2 (2026-10-26)** follows. In each entry, *the user* is their note on round 1, word for word; the draft is
+Claude's, built on it. Where the user's note already is the look, the draft only fills in what it leaves open.
 
 ## Ral-Vitahl
-The user's canon held in every draft: a haughty noble house of inventors, opulent and immaculate, darker than high
-elves, never worn or repaired, not sci-fi. Scheme is automata, overload is mutants; scheme casters female, overload
-male; the Apprentice stays hooded and ambiguous.
-
-**A line motif (Claude):** the casters aren't real spellcasters, their power is in batteries. So every caster *wears
-its charges*: glass cells holding caged teal lightning, worn as jewellery and grown into the silhouette tier by tier
-(the Apprentice one cell at the belt, the Justiciar a chatelaine of them, the Thaumaturge a pack). How many charges a
-caster has can be read off its body.
+Canon held: a haughty noble house of inventors, opulent and immaculate, darker than high elves, never worn or
+repaired, not sci-fi; teal lightning is the house's power, and it runs on equipment, not on the body.
 
 ### Technician (support, tier 1)
-- **The idea:** the only Nexus unit who isn't noble: a liveried servant of the house, who tends the golems the way a
-  piano tuner tends a piano. He restores shields by striking a great brass tuning fork and holding it to them.
-- **Look:** immaculate black livery with teal facings and brass buttons, white gloves, a powdered queue of hair, a
-  servant's sober face. Over one eye a jeweller's loupe of three stacked lenses on a brass arm. On his back a long
-  fitted case of brass tuning forks in velvet slots, like an instrument case.
-- **Standout:** the tuning fork (its own prop sheet) and the stacked loupe.
-- **Why:** the faction "abuses the masses"; its one support unit is one of the masses, in service. Its weak ranged
-  attack is a smaller fork's ringing note.
+- **The user:** cut. "A tuning fork is not serious."
+- **Draft:** the house's golem-wright, a servant in its livery. A lean man in immaculate black livery with teal
+  facings, tall boots, hair cropped short, a sober and attentive face. His right arm, hand to shoulder, is cased in
+  one long fitted gauntlet of black steel and brass, a glass channel along the forearm where teal lightning runs. He
+  restores a shield by laying that palm flat on the golem; his weak ranged attack is a short arc from the same palm.
+- **Standout:** the one long gauntlet on an otherwise plain servant.
 
 ### Cyclops (melee, tier 2, scheme)
-- **The idea:** the Custodian refined into an automaton of the house: no longer rough stone but white enamel plates
-  edged in gold, tall and narrow. Its head is a single great lens, ringed like a lighthouse lens, that glows teal.
-- **Look:** a glass-walled chest in a gilt cage, and inside it the shield it banks: teal lightning trapped and
-  circling. When it shares its shield (*Equalize*) the chest visibly drains. Thin jointed limbs, the joints gold.
-- **Standout:** the lighthouse-lens head and the glass chest of lightning.
+- **The user:** cut. "I want you to focus on steam vents and pipes I think. See where you can bring that idea."
+- **Draft:** a tall automaton built around a boiler. Its broad barrel chest is the boiler, black enamel bound in
+  polished brass with fine gold filigree; pipes run from it over the shoulders and down into the arms and legs,
+  half under the plates. Rows of vents along the shoulders and back breathe steam. Its one eye is a round furnace
+  sight-glass in a brass cowl, glowing teal from within: the pressure it banks is its shield. When it shares the
+  shield (*Equalize*) the vents open and the steam rolls out toward the ally.
+- **Standout:** the boiler chest breathing steam, and the single sight-glass eye.
 
 ### Mutant (melee, tier 2, overload)
-- **The idea:** a Custodian overcharged until something grew inside it. Raw grey-pink muscle swells out between the
-  stone blocks and bursts the brass bands; teal veins glow under the skin. The stone is still on it, as broken
-  armour it has outgrown.
-- **Look:** one arm far larger than the other, its stone fallen away to the elbow; the blank stone head split open,
-  a small human mouth showing in the crack. No clothes, no face but that.
-- **Standout:** flesh breaking out of the golem's stone.
-- **Why:** *Mutate* grows it whenever its shield is overfilled: the overflow is visibly winning over the golem.
-  "You must attack this thing or it becomes a menace" (the user).
+- **The user:** cut. "I think you need to have a look at mundo from league to start with. Also have a look at simic
+  mutants from mtg as reference material. Don't worry about stone transition, it's not important. Mutants are
+  organic hulks."
+- **Draft:** a man the house grew past himself. A hulk three times a man's mass, the head small and low between huge
+  shoulders, the arms hanging to the knees, the right far heavier than the left. Grey skin gone dark and dense, the
+  surgeons' neat stitched seams across the chest and arms, faint teal veins under the skin. Ridges of hard ribbed
+  growth, like horn or a crab's shell, break out along the spine and the forearms. A heavy black iron collar is
+  riveted round its neck: the house's leash. Black breeches, barefoot.
+- **Standout:** the hunched mass with ribbed growths on the spine and forearms. *Mutate* could grow those ridges as it
+  stacks, if the view ever shows growth.
 
 ### Justiciar (caster, tier 2, scheme, female)
-- **The idea:** a magistrate of the house who passes verdicts in secret. Her verdicts are sealed letters.
-- **Look:** a slender noblewoman in a high-necked gown of black silk, tight sleeves, a long train. Her lower face
-  is hidden behind a fine screen of gold lattice. A sash across her body hung with black wax seals, each sealing a
-  folded letter: her secret marks. A chatelaine of small glass cells at her waist, each holding teal lightning (her
-  charges).
-- **Standout:** the sash of sealed letters and the gold lattice over the mouth.
-- **Leads to:** the Etherborn (galaxy skin, fan collar) or the Backlasher.
+- **The user:** maybe. "cut the letters, they're weird. Nobody hangs sealed letters from their bodies. It's not a
+  thing. Have a look at azorius mtg justiciars, judges, etc as style reference, as well as orzhov nobles. She's
+  supposed to be haughty, wear fine clothes/robes, possible contrasting teal on primarily black robes. And no sashes
+  with wax seals. It's so weird. Be creative but not strange. Like, give her a high collar so she can feel different
+  and haughty. Maybe also have a look at I think it's the tier 1 WoW mage set for collars."
+- **Draft:** a judge of the house. Long robes of heavy black silk falling straight to the floor, in layers; a teal
+  panel down the front and teal lining in the wide sleeves; gold embroidery in severe geometric bands at the hems and
+  cuffs. A tall stiff collar rises from her shoulders behind her head, open at the front, black outside, teal inside,
+  edged in gold. Hair drawn up severely, long black gloves, a pale haughty face looking down at you. In one hand a
+  short rod of office in white gold, its head a teal glass globe: her charges.
+- **Standout:** the high collar framing the head.
+- **Leads to:** the Etherborn, whose fan collar grows from hers.
 
 ### Thaumaturge (caster, tier 2, overload, male)
-- **The idea:** an aristocrat who uses himself as the lightning rod.
-- **Look:** an immaculate teal-black frock coat, a lace jabot and cuffs, the lace singed at the edges. On his back a
-  harness of heavy glass cells, and rising from it, high above his head, a tall iron lightning rod with a gilt
-  finial. His white hair stands on end; his gloves are scorched black at the fingertips. A haughty, bored face.
-- **Standout:** the lightning rod over his head.
+- **The user:** cut. "A high iron rod on top of the head of an aristocrat... No."
+- **Draft:** a careless young lord who throws lightning without looking where it lands. A cutaway black tailcoat over
+  a teal silk waistcoat, a high white stock at the throat, slim black breeches and riding boots, dark hair slicked
+  back, a bored sneer. His gloves are black kid with a disc of teal glass set into each palm, the batteries; he holds
+  both hands open and loose, lightning crawling between his fingers.
+- **Standout:** lightning held loose in two open gloved hands.
 
 ### Backlasher (caster, tier 3, from the Justiciar)
-- **The idea:** a counter that bites back, so she gives the enemy its own reflection. Her face is a mask of
-  polished silver mirror, and her gown is armoured in plates of black mirror glass, so whoever looks at her sees
-  themselves.
-- **Look:** the Justiciar's black gown, now stiffened with the mirror plates at the bodice, shoulders and hem; the
-  mirror mask smooth and featureless, a hairline crack across it. The cells at her waist are larger.
-- **Standout:** the mirror face.
+- **The user:** cut. "I think I enjoy the black mirror glass. The polished silver mirror mask is going to be
+  confusing. You don't need to think about the transition between them. When I think of backlasher, I think
+  something more volatile."
+- **Draft:** a woman holding a storm in check. Around her hangs a cloud of black mirror-glass shards, splintered from
+  one larger whole, slowly turning a hand's breadth from her body, thickest around her hands. Teal lightning jumps
+  between them, and their edges glow where it touches. A fitted black gown with sharp teal edging, her face bare and
+  set in cold fury, her hair lifting loose in the charge. The glass looks ready to fly outward: that is the backlash.
+- **Standout:** the turning cloud of black glass shards.
 
 ### Maelstrom (caster, tier 3, from the Thaumaturge)
-- **The idea:** the Thaumaturge after his own storm went into him. His skin is crazed like porcelain, with teal
-  light in every crack, and a wind that comes from him lifts his coat-tails, lace and hair upward and keeps them
-  there.
-- **Look:** the same fine teal-black coat, immaculate in its cut but streaming; the lightning rod gone, its glass
-  cells now a ring of them orbiting his head like a crown. His eyes are white light.
-- **Standout:** the porcelain cracks of light and the orbiting cells.
-- **Why:** linear upgrade, more charges: more cells, and he can't hold them in any more.
+- **The user:** maybe. "I think I like this one here the most, though it still needs work. I think I enjoy the idea of
+  him hovering, fog around him, teal sparks of lightning fluctuating here and there. His coat tails can hang, but
+  forget about trying to reuse thaumaturge's outfit. Lets have them get inspired here by chinese dragons maybe, but
+  have them be black and gold. Clean shaven, just clean in general. Have his hair be long and floating slightly like
+  the cape does."
+- **Draft:** he hovers a foot above the ground with fog pooling under and around him, teal sparks flickering here and
+  there in it. A long black silk coat in a high-collared mandarin cut, a gold dragon embroidered winding up from the
+  hem around his body, gold scale patterns down the sleeves; the coat tails hang, a black cape behind. Clean shaven,
+  immaculate, long black hair floating slightly as the cape does. A calm, absolute face.
+- **Standout:** the hovering figure in fog, black and gold.
 
 ## The bandits
-The user's one-liners are mechanics only. **A gang motif (Claude):** they take their faces from the people they
-robbed. Each wears something stolen above the neck, so the gang reads as one at a glance.
 
 ### Brigand (melee; stuns the one in front, once)
-- A heavy man in a stolen nobleman's coat, too tight, its buttons torn off over his mail. His head is a sackcloth
-  hood with two ragged eye holes, the hood a flour sack still stamped with a mill's mark. A lead-weighted cosh
-  on a wrist strap (prop) for the stun.
-- **Standout:** the flour-sack hood.
+- **The user:** maybe. "Have him use a red bandana at the mouth and give him a pony tail. Should be scruffy, leathery
+  boots. Has a mace/club."
+- **Draft:** a broad, stocky man, scruffy: a padded dark gambeson under a scuffed leather jerkin, heavy leather boots,
+  brown hair tied back in a ponytail, a red bandana over his mouth and nose. A heavy flanged mace, or a studded
+  wooden club (one each on the prop sheet).
+- **Standout:** the red bandana.
 
 ### Marauder (melee; extra damage against armour)
-- A rangy man wearing armour he has pried off knights he killed, piece by piece and none of it matching: one ornate
-  pauldron, a breastplate with a dent where its owner died, a helmet whose visor he tore away to leave his face open.
-  A long iron pry-pick for opening armour (prop).
-- **Standout:** the mismatched trophy armour.
+- **The user:** cut. "I'm thinking a larger guy with dark plated brigandine, black chainmail with a larger warhammer,
+  hooded with crude mask. Make a variation trying out various leather variants too. Overall dark plate/leather,
+  twohanded spiked warhammer"
+- **Draft:** the user's note is the look. A big man, hooded in black wool. Variant A: dark plated brigandine over
+  black chainmail, a crude mask of hammered iron with eye slits. Variant B, the leathers: boiled-leather lamellar or
+  studded leather brigandine, a mask of stitched dark leather. Both carry a long two-handed warhammer with a spiked
+  head and a back spike.
+- **Standout:** the crude mask under the hood, and the warhammer.
 
 ### Bandit (bow, high initiative)
-- An ambusher in a poacher's cloak of rags, strips of sacking and dead leaves sewn on until her outline disappears;
-  a long scarf over the lower face, a stolen lady's silver hairpin through the hood. Lean, light, barefoot.
-- **Standout:** the shapeless cloak of rags and leaves.
+- **The user:** cut. "Forget about the stolen, it doesn't work. Keep scarf. Give her kankazhi (japanese hair pins),
+  leather with longer sleaves at both the boots and hands. Longbow."
+- **Draft:** a lean woman, dark hair in a high knot held by two kanzashi pins, a scarf over her lower face. A fitted
+  dark leather jerkin; long leather gloves flaring to wide cuffs at the elbow, and tall boots with wide cuffs above
+  the knee. A plain longbow taller than she is.
+- **Standout:** the hair pins and the longbow.
 
 ### Hedge Mage (caster; a 2x2 fire spell; low health)
-- A self-taught hedge witch, gaunt, a crown of dry hawthorn and briar on her head. Her fire burns her too: both hands
-  are black with soot and old burns up to the wrist. A cloak patched together from a stolen church tapestry, a saint's
-  embroidered face upside down across her back.
-- **Standout:** the hands black to the wrist, the upside-down saint.
+- **The user:** cut. "A hedgemage does not mean a witch. There are surely better ways of describing a bandit mage."
+- **Draft, two to choose from:**
+  - **A, the deserter:** a war mage who left an army. Lean and hard, a dark military greatcoat buttoned to a high
+    collar, short-cropped grey hair, fingerless gloves; fire cupped in both bare palms. Tired, steady eyes.
+  - **B, the firestarter:** the gang's arsonist, a woman. Sides of the head shaved, a heavy dark leather coat, bare
+    forearms tattooed with runes that glow like embers when she casts. A hard, amused face.
+- **Standout:** A, a soldier's bearing with fire in bare hands; B, the glowing runes.
 
 ## The carnival
 Palettes so far: the Omen oxblood, the Soothsayer red and mustard stripes, the Fire Eater soot and saffron diamonds.
 
 ### Cutpurse (tier 1, high initiative, crit)
-- A lithe pickpocket in a long dark coat that looks plain until it's open: its whole lining is hung with what he
-  has stolen, dozens of purses, rings, pocket watches, rosaries and keys. A white harlequin half-mask over the eyes,
-  a sly mouth below it. A hooked knife (prop).
-- **Standout:** the coat lined with loot.
+- **The user:** cut. "Stop trying to hang items on peoples' coats. It's weird. Thing about a rogue with two knives,
+  outfit matching the carnival themes. And make its a woman. Maybe think about yoinking the bogslayer legging artstyle
+  from wow., though it'll probably be difficult. It means striped black and dark purple tight pants, where the stripes
+  are vertical instead of horizontal. And hide her face with a bandana, she doesn't want to show her face. beautiful,
+  natural eyebrows, serious, ponytail, long pixie jacket / pixie long trenchcoat in dark colors."
+- **Draft:** the user's note is the look. A slim woman with a dark ponytail, a dark bandana over her lower face,
+  beautiful natural eyebrows over serious eyes. Tight trousers in vertical stripes of black and dark purple, soft
+  boots. A long dark trench coat with a pixie hem cut in points, falling to the calves; for the carnival, its lining
+  oxblood with a faint harlequin diamond. Two slim curved knives.
+- **Standout:** the vertical striped legs under the long pointed coat.
 
 ### Snakeoiler (tier 1, potions, sleep)
-- A quack physician carrying his shop: a tall wooden apothecary's cabinet strapped to his back, rising high above
-  his head, dozens of small drawers and stoppered bottles in its shelves. A long pale snake lives draped across his
-  shoulders. Tinted round spectacles, a stained waistcoat, a too-wide smile.
-- **Standout:** the cabinet over his head and the snake.
-
-## Capitol Guardian (all factions, tier 0)
-- **The idea:** the chess king, "powerful but immobile". So it *can't* move: a colossus whose legs end in the
-  plinth it stands on, grown into the Capitol's stone from the knees down. The upper body is a living statue in the
-  faction's material; it fights from where it stands.
-- **Look:** massive shoulders and arms, the torso and head in the faction's own skin (pale marble for Jilliath,
-  enamel and gold for Ral-Vitahl, bark for the Grove), the legs one block with the floor, cracked where it would
-  need to step. One look in shape, one material per faction.
-- **Standout:** a body that is half its own pedestal.
+- **The user:** cut. "He's not carrying a shop on his back... Just give him two large round bottom flasks filled with
+  ominous looking liquid to begin with. One to fill each. Give him a top hat like those you'd see from that era. I'm
+  thinking about the butcher from gangs of new york but with roundbottom potions and more patchwork. Curly beard. His
+  facial expression should probably be inquisitive, intelligent, confident, and malicious. Not crazed."
+- **Draft:** the user's note is the look. A tall lean man in a tall top hat of the mid-1800s, a long frock coat of
+  dark patchwork, a waistcoat, dark trousers, a dark curly beard. A large round-bottomed flask in each hand,
+  filled with murky liquid that glows faintly. His face inquisitive, intelligent, confident and malicious; not crazed.
+- **Standout:** the two flasks held out, and the top hat.

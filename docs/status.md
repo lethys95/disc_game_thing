@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-26 (the user accepted all 60 portraits, four icons re-cropped, and the biome props)
+**Updated:** 2026-10-26 (unit looks round 2 from the user's notes; portraits and biome props accepted)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): a first complete version, far off (the board's README
@@ -52,8 +52,9 @@ interface change.
 1. **Design sessions with the user:** the Grove's mage line (questions #10), Ral-Vitahl's missing tiers, the
    Spiritess tier 4, the joker lines, owners for Evasion, Explode and Soak.
 2. **Claude's own, meanwhile:** icons for abilities, effects and items (`icons`, the user's suggestion); the looks
-   for the fourteen units without one are drafted (`in-progress/unit-looks`, `shots/unit-looks.html`, waiting for the
-   user's marks); the Fire Eater's concepts in rounds (`carnival-concepts.md`); then concepts and portraits.
+   for the thirteen units without one are in round 2, redrafted from the user's notes (`in-progress/unit-looks`,
+   `shots/unit-looks-2.html`; the rule now: nothing odd hung on clothes); a Capitol Guardian per faction
+   (`todo/capitol-guardians`, the user 2026-10-26); the Fire Eater's concepts in rounds (`carnival-concepts.md`); then concepts and portraits.
 3. **The user's picks waiting:**
    everything in `testing/`.
 4. **The balance pass** once the factions' lines exist, with the user's worry that Jilliath's lines are too long.
