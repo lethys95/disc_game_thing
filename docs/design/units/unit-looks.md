@@ -4,11 +4,14 @@ Step one of the art (`roster.md`, group 3): a look in words before any concept. 
 the unit's sheet and its entry here goes. Round 2 is on `shots/unit-looks-2.html` (`todo/unit-looks`).
 
 **Round 1 (Claude, 2026-10-17)** was cut almost whole by the user on 2026-10-26; only the Justiciar, the Maelstrom
-and the Brigand stayed, as maybes. The user's rule for every look since: **nothing odd hung on clothes or bodies.**
-"Cut down on putting odd things on clothes. It doesn't make much sense." The bandits' "something stolen" went with it. An idea lives in the
-body, the cut and colour of the clothes, and what the figure holds. "Be creative but not strange."
+and the Brigand stayed, as maybes. The user's note for every look since: "Cut down on putting odd things on clothes. It
+doesn't make much sense." It's common sense, not a ban: **would this person plausibly wear it?** A thing strapped on
+is fine when it makes sense and stays modest (the Psychopomp's one talisman, "fairly harmless"); it's wrong when nobody
+would walk around like that ("nobody walks around with bookpages pinned to their clothes", sealed letters on a sash,
+a coat lined with loot, a shop on the back). The bandits' "something stolen" went with round 1. The idea mostly lives
+in the body, the cut and colour of the clothes, and what the figure holds. "Be creative but not strange."
 
-What isn't odd is gear the world explains. The Nexus casters' charge canisters stay (the user, 2026-10-26): "They're
+Gear the world explains is the clearest case of sense. The Nexus casters' charge canisters stay (the user, 2026-10-26): "They're
 not natural spell casters. They use technology to get powers, and once spent they're spent. That's why they use
 charges. But that's not strange. It's like a battery pack many of them will wear in different ways. That's not the
 same as someone walking around with an entire shop on their back."
@@ -177,7 +180,7 @@ Claude's read:
 - **Mutant:** My pick: mutant-carapace-turnaround-1001. The spiked carapace on the back, one armoured forearm, pale skin with teal veins: an organic hulk the house grew. The hulk reading is just a big bald man (no horn ridges, even arms); 1000 has a stray floating arm.
 - **Justiciar:** My pick: justiciar-collar-turnaround-1001. The high collar framing her head, the canisters standing either side of it, wide teal-lined sleeves: haughty. The flared reading is a good second, a fitted coat with gold clasps (1000 draws a side view twice). The rod's globe came out painted like a world map: next round, plain glass.
 - **Thaumaturge:** My pick: thaumaturge-tailcoat-turnaround-1001. The canisters in hip holsters read as a duellist's pistols, the tailcoat and waistcoat as a young lord. The greatcoat reading looks more like a hunter than an aristocrat. The lightning between his fingers didn't render under flat light: card and effects.
-- **Backlasher:** Neither. No black mirror glass in either reading, and the canisters came out as a ring of baubles round the waist, which is exactly the hung-on look; a tiara and a low neckline crept in too. Round two: the glass as fitted pieces of her gown (a collar and bodice of black glass shards, held a little apart), the loose cloud of shards as an effect, and the canisters fewer, set into a fitted metal girdle.
+- **Backlasher:** Neither. No black mirror glass in either reading, and the canisters came out as a dozen round baubles ringing the waist: they don't read as canisters, and that many is busy; a tiara and a low neckline crept in too. Round two: the glass as fitted pieces of her gown (a collar and bodice of black glass shards, held a little apart), the loose cloud of shards as an effect, and two or three canisters set into a fitted metal girdle.
 - **Maelstrom:** My pick: maelstrom-dragon-turnaround-1000. Black and gold, the dragon winding up the coat, long black hair, the canisters a ridge down his spine under the cape. 1001 lost its face. The robe reading is the more dramatic silhouette (wide dragon sleeves, silver hair) but its canisters stand over the shoulders like lanterns.
 - **Brigand:** My pick: brigand-gambeson-turnaround-1001. Red bandana, ponytail, quilted gambeson, scruffy: your note as drawn. The longcoat is good too (1000 has a stray floating arm). Weapons: the club reads better than the mace, whose head came out quilted like leather.
 - **Marauder:** My pick: marauder-plate-turnaround-1001, by a little. Both readings came out close: the mask became a closed visored helm under the hood rather than a crude mask, and the leathers look much like the plate. Round two: a crude mask in words that can't become a helm. The warhammer is right.

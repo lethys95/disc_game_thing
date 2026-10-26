@@ -12,8 +12,9 @@
   casters wear their charges as glass cells that grow tier by tier; the bandits wear something stolen above the neck.
   Next: the user's marks, then concepts for the kept ones (`concepts-and-portraits`).
 - **The user's marks (2026-10-26):** eleven cut, three maybes (Justiciar, Maelstrom, Brigand), every one with a note,
-  and one rule for all looks: nothing odd hung on clothes ("Cut down on putting odd things on clothes. It doesn't make
-  much sense."). The bandits' "something stolen" went with it; the Nexus casters' charge canisters stay, worn a different way by each (the user: lore, "like a battery pack"). The Capitol Guardian leaves this card: one per faction
+  and one note for all looks: "Cut down on putting odd things on clothes. It doesn't make much sense." Common sense,
+not a ban (the user, later the same day): a talisman or a canister pack is fine where someone would plausibly wear
+it; book pages pinned to a coat are not. The bandits' "something stolen" went with it; the Nexus casters' charge canisters stay, worn a different way by each (the user: lore, "like a battery pack"). The Capitol Guardian leaves this card: one per faction
   (`todo/capitol-guardians`).
 - **Round 2 (2026-10-26):** thirteen redrafted from the notes, each note quoted above its draft
   (`docs/design/units/unit-looks.md`), on `shots/unit-looks-2.html` with a Send button. The Hedge Mage has two

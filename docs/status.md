@@ -53,7 +53,7 @@ interface change.
    Spiritess tier 4, the joker lines, owners for Evasion, Explode and Soak.
 2. **Claude's own, meanwhile:** icons for abilities, effects and items (`icons`, the user's suggestion); the looks
    for the thirteen units without one are in round 2, redrafted from the user's notes (`in-progress/unit-looks`,
-   `shots/unit-looks-2.html`; the rule now: nothing odd hung on clothes); concept round one for all
+   `shots/unit-looks-2.html`; common sense on what's strapped to clothes, not a ban); concept round one for all
    thirteen is in (`shots/looks-r1.html`, Claude's picks; the Backlasher missed), waiting for the user's picks; a Capitol Guardian per faction
    (`todo/capitol-guardians`, the user 2026-10-26); the Fire Eater's concepts in rounds (`carnival-concepts.md`); then concepts and portraits.
 3. **The user's picks waiting:**
