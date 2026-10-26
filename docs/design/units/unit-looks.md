@@ -5,9 +5,13 @@ the unit's sheet and its entry here goes. Round 2 is on `shots/unit-looks-2.html
 
 **Round 1 (Claude, 2026-10-17)** was cut almost whole by the user on 2026-10-26; only the Justiciar, the Maelstrom
 and the Brigand stayed, as maybes. The user's rule for every look since: **nothing odd hung on clothes or bodies.**
-"Cut down on putting odd things on clothes. It doesn't make much sense." The line gimmicks went with it (the bandits
-wearing "something stolen", the Nexus casters wearing their charges as glass cells). An idea lives in the body, the
-cut and colour of the clothes, and what the figure holds. "Be creative but not strange."
+"Cut down on putting odd things on clothes. It doesn't make much sense." The bandits' "something stolen" went with it. An idea lives in the
+body, the cut and colour of the clothes, and what the figure holds. "Be creative but not strange."
+
+What isn't odd is gear the world explains. The Nexus casters' charge canisters stay (the user, 2026-10-26): "They're
+not natural spell casters. They use technology to get powers, and once spent they're spent. That's why they use
+charges. But that's not strange. It's like a battery pack many of them will wear in different ways. That's not the
+same as someone walking around with an entire shop on their back."
 
 The user's references below are direction, not features to transcribe: the concept prompts never name them.
 
@@ -16,13 +20,17 @@ Claude's, built on it. Where the user's note already is the look, the draft only
 
 ## Ral-Vitahl
 Canon held: a haughty noble house of inventors, opulent and immaculate, darker than high elves, never worn or
-repaired, not sci-fi; teal lightning is the house's power, and it runs on equipment, not on the body.
+repaired, not sci-fi; teal lightning is the house's power, and it runs on equipment, not on the body. The casters carry it in **charge
+canisters**: glass cylinders capped in brass or gold, teal lightning inside, worn as a battery pack, and each caster
+wears them a different way.
 
 ### Technician (support, tier 1)
 - **The user:** cut. "A tuning fork is not serious."
 - **Draft:** the house's golem-wright, a servant in its livery. A lean man in immaculate black livery with teal
   facings, tall boots, hair cropped short, a sober and attentive face. His right arm, hand to shoulder, is cased in
-  one long fitted gauntlet of black steel and brass, a glass channel along the forearm where teal lightning runs. He
+  one long fitted gauntlet of black steel and brass, a glass channel along the forearm where
+  teal lightning runs. It draws on one large canister in a fitted leather harness across his back: he carries the
+  charge he hands out. He
   restores a shield by laying that palm flat on the golem; his weak ranged attack is a short arc from the same palm.
 - **Standout:** the one long gauntlet on an otherwise plain servant.
 
@@ -56,8 +64,9 @@ repaired, not sci-fi; teal lightning is the house's power, and it runs on equipm
 - **Draft:** a judge of the house. Long robes of heavy black silk falling straight to the floor, in layers; a teal
   panel down the front and teal lining in the wide sleeves; gold embroidery in severe geometric bands at the hems and
   cuffs. A tall stiff collar rises from her shoulders behind her head, open at the front, black outside, teal inside,
-  edged in gold. Hair drawn up severely, long black gloves, a pale haughty face looking down at you. In one hand a
-  short rod of office in white gold, its head a teal glass globe: her charges.
+  edged in gold. Hair drawn up severely, long black gloves, a pale haughty face looking down at you. Her canisters sit
+  under the collar: two slim ones fitted upright between her shoulder blades in a gold mount, so the collar seems to
+  rise out of them. In one hand a short rod of office in white gold, its head a teal glass globe.
 - **Standout:** the high collar framing the head.
 - **Leads to:** the Etherborn, whose fan collar grows from hers.
 
@@ -65,8 +74,9 @@ repaired, not sci-fi; teal lightning is the house's power, and it runs on equipm
 - **The user:** cut. "A high iron rod on top of the head of an aristocrat... No."
 - **Draft:** a careless young lord who throws lightning without looking where it lands. A cutaway black tailcoat over
   a teal silk waistcoat, a high white stock at the throat, slim black breeches and riding boots, dark hair slicked
-  back, a bored sneer. His gloves are black kid with a disc of teal glass set into each palm, the batteries; he holds
-  both hands open and loose, lightning crawling between his fingers.
+  back, a bored sneer. Two heavy canisters ride at his hips in tooled
+  leather holsters, worn like a duellist's pistols. His gloves are black kid with a disc of teal glass set into each
+  palm; he holds both hands open and loose, lightning crawling between his fingers.
 - **Standout:** lightning held loose in two open gloved hands.
 
 ### Backlasher (caster, tier 3, from the Justiciar)
@@ -75,8 +85,8 @@ repaired, not sci-fi; teal lightning is the house's power, and it runs on equipm
   something more volatile."
 - **Draft:** a woman holding a storm in check. Around her hangs a cloud of black mirror-glass shards, splintered from
   one larger whole, slowly turning a hand's breadth from her body, thickest around her hands. Teal lightning jumps
-  between them, and their edges glow where it touches. A fitted black gown with sharp teal edging, her face bare and
-  set in cold fury, her hair lifting loose in the charge. The glass looks ready to fly outward: that is the backlash.
+  between them, and their edges glow where it touches. A fitted black gown with sharp teal edging; a band of canisters
+  round her waist burns white-teal, overcharged. Her face is bare and set in cold fury, her hair lifting loose in the charge. The glass looks ready to fly outward: that is the backlash.
 - **Standout:** the turning cloud of black glass shards.
 
 ### Maelstrom (caster, tier 3, from the Thaumaturge)
@@ -87,7 +97,8 @@ repaired, not sci-fi; teal lightning is the house's power, and it runs on equipm
   the cape does."
 - **Draft:** he hovers a foot above the ground with fog pooling under and around him, teal sparks flickering here and
   there in it. A long black silk coat in a high-collared mandarin cut, a gold dragon embroidered winding up from the
-  hem around his body, gold scale patterns down the sleeves; the coat tails hang, a black cape behind. Clean shaven,
+  hem around his body, gold scale patterns down the sleeves; the coat tails hang, a black cape behind. His
+  canisters run in a row down his spine under the cape, gold-capped, rising like a dragon's spinal ridge. Clean shaven,
   immaculate, long black hair floating slightly as the cape does. A calm, absolute face.
 - **Standout:** the hovering figure in fog, black and gold.
 
