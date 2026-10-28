@@ -1322,6 +1322,8 @@ const creatureFront = (id: string, subject: string, materials: string) => ({
 const BACKLASHER_SHELL = "An inhuman female humanoid like elongated limbs, of an arcane noble house: arms and legs too long and too thin for a human. A black splinter glass exoskeleton, an insectoid shell, covers it from head to feet: a sculpted breastplate and shoulder plates, segmented plates down the arms and legs, jointed at elbow and knee, every plate cracked through with teal light glowing in the cracks. A Venetian mask with little expression, in dark colors with stars, covers the face. A short split skirt of black silk falls from a fitted gold girdle at the hips over the plated legs. Hands empty and open.";
 // Round six (the user, 2026-10-28): the shell's list of plates out ("Remove this: covers it from head to feet: […]"), "Add no hair."
 const BACKLASHER_BARE = "An inhuman female humanoid like elongated limbs, of an arcane noble house: arms and legs too long and too thin for a human. A black splinter glass exoskeleton, an insectoid shell. A Venetian mask with little expression, in dark colors with stars, covers the face. No hair. A short split skirt of black silk falls from a fitted gold girdle at the hips over the plated legs. Hands empty and open.";
+// Round seven (the user, 2026-10-28): "Add fullbody to exoskeleton. Add: no skirt," (the skirt's sentence, and its girdle, out).
+const BACKLASHER_FULL = "An inhuman female humanoid like elongated limbs, of an arcane noble house: arms and legs too long and too thin for a human. A black splinter glass fullbody exoskeleton, an insectoid shell. A Venetian mask with little expression, in dark colors with stars, covers the face. No hair. No skirt. Hands empty and open.";
 const NEXUS_LOOKS_2_JOBS = [
   ...jobs({
     // Picked: 1000 (the user, 2026-10-28).
@@ -1355,6 +1357,8 @@ const NEXUS_LOOKS_2_JOBS = [
   ].map(([id = "", subject = ""]) => creatureFront(id, subject, BACKLASHER_ARMOUR_3D)),
   { id: "backlasher-bare-turnaround", prompt: turnaround(BACKLASHER_BARE, BACKLASHER_ARMOUR_3D) },
   creatureFront("backlasher-bare-front", BACKLASHER_BARE, BACKLASHER_ARMOUR_3D),
+  { id: "backlasher-full-turnaround", prompt: turnaround(BACKLASHER_FULL, BACKLASHER_ARMOUR_3D) },
+  creatureFront("backlasher-full-front", BACKLASHER_FULL, BACKLASHER_ARMOUR_3D),
 ];
 
 /** Each group of jobs has its own folder, so one group's run doesn't mix into another's manifest. */

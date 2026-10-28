@@ -298,3 +298,9 @@ and shoulder plates, segmented plates down the arms and legs, jointed at elbow a
 with teal light glowing in the cracks. Add no hair." Claude's read (`shots/looks-r6.html`): the single views lost the
 hair (a shell crest instead) and show more grey-violet skin at the neck and chest; the gold corset and skirt are the
 most human parts left. The turnarounds stayed human (hair, heels). Claude's pick: `backlasher-bare-front-1001`.
+
+**Backlasher, round seven (the user, 2026-10-28):** "Add fullbody to exoskeleton. Add: no skirt," (the skirt's
+sentence and its girdle out). Claude's read (`shots/looks-r7.html`): the single views are the most inhuman yet (a
+flame-shaped shell crest, long thin legs, grey-violet skin), but the shell covers too little: the torso is bare skin
+between breast cups, closer to a painted nude than a shell, since the prompt names only what she doesn't wear. The
+turnarounds are a woman in a bodysuit with heels. Claude's pick, with that caveat: `backlasher-full-front-1000`.
