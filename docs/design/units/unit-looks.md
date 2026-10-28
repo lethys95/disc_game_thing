@@ -259,3 +259,13 @@ line too.
 - **Thaumaturge**, two directions of Claude's, each one silhouette hook: *gauntlets*, two huge overbuilt gauntlets
   past the elbows with a canister along each forearm, on a lean lord in a doublet; *helm*, a closed high-crested helm
   of black enamel and gold with one teal glass eye slit, on a lord in a long coat.
+
+Claude's read of round three (`shots/looks-r3.html`):
+- **Justiciar:** `open-1000`: eyes open, pale and cold, no canisters, the pick's collar and robes (side view drawn
+  twice); `open-1001` as clean, a softer face.
+- **Technician:** `uncharged-1001`: no canister, the arm folded at his hip in every view; 1000 draws a loose second arm.
+- **Backlasher:** `plate-1001`: armour neck to feet with the veil, circlet and breastplate; the teal cracks didn't come
+  (plain glossy black plates), and a strip of thigh shows above the greaves. *Exo* brought the long skirt back.
+- **Thaumaturge:** neither done. `helm-1001` is the only direction worth showing (a helmed figure in a long coat, the
+  canisters flat across his back), but the helm is a plain knight's, with no teal slit; the gauntlets came out ordinary.
+  A feeling or reference from the user would steer him better than more guesses.

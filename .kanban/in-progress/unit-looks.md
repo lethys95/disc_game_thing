@@ -37,4 +37,7 @@ it; book pages pinned to a coat are not. The bandits' "something stolen" went wi
 - **The user's round-two picks (2026-10-28):** the Maelstrom's repaint (d70) and the Mutant's `overgrown-1000`. Redone
   in round three, from words (the user: "redo not inpaint"): the Justiciar (eyes open, no canisters), the Technician
   (no canister), the Backlasher (the veil in armour), the Thaumaturge (two new directions; no children, ever).
+- **Round three in (2026-10-28):** `shots/looks-r3.html`. Claude's picks: Justiciar `open-1000`, Technician
+  `uncharged-1001`, Backlasher `plate-1001` (teal cracks lost); the Thaumaturge still has no identity (helm-1001 the
+  only direction); Claude asks the user for a feeling or reference for him.
 
