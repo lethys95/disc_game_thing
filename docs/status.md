@@ -52,7 +52,7 @@ interface change.
 1. **Design sessions with the user:** the Grove's mage line (begun 2026-10-28: Decay tier 2 is the corpse explosion; questions #10), Ral-Vitahl's missing tiers, the
    Spiritess tier 4, the joker lines, owners for Evasion, Explode and Soak.
 2. **Claude's own, meanwhile:** icons for abilities, effects and items (`icons`, the user's suggestion); the
-   thirteen looks (`in-progress/unit-looks`): all thirteen concepts picked (2026-10-28; the Backlasher framed as a creature); no skirts on
+   thirteen looks (`done/unit-looks`): all thirteen concepts picked (2026-10-28; the Backlasher framed as a creature); no skirts on
    female figures (the user); redone from words, not inpainted (the user); no children anywhere (`art.md`); then portraits for the nine; a Capitol Guardian per faction
    (`todo/capitol-guardians`, the user 2026-10-26); the Fire Eater's concepts in rounds (`carnival-concepts.md`); then concepts and portraits.
 3. **The user's picks waiting:**
