@@ -269,3 +269,12 @@ Claude's read of round three (`shots/looks-r3.html`):
 - **Thaumaturge:** neither done. `helm-1001` is the only direction worth showing (a helmed figure in a long coat, the
   canisters flat across his back), but the helm is a plain knight's, with no teal slit; the gauntlets came out ordinary.
   A feeling or reference from the user would steer him better than more guesses.
+
+## The user's picks on round three (2026-10-28)
+Picked: the Justiciar `justiciar-open-turnaround-1000`, the Technician `technician-uncharged-turnaround-1001`, the
+Thaumaturge `thaumaturge-helm-turnaround-1000`. Twelve of thirteen now have a concept.
+
+**Backlasher, round four:** `backlasher-plate-turnaround-1001` with the user's edits, their words kept in the prompt
+(`backlasher-masked`): "Remove charges, remove veil, add venician mask type but with little expression and dark colors
+with stars, rewrite armor as "black glass exoskeleton", write "inhuman female humanoid like elongated limbs" instead
+of woman. Lets see what happens."

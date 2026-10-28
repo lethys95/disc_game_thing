@@ -40,4 +40,6 @@ it; book pages pinned to a coat are not. The bandits' "something stolen" went wi
 - **Round three in (2026-10-28):** `shots/looks-r3.html`. Claude's picks: Justiciar `open-1000`, Technician
   `uncharged-1001`, Backlasher `plate-1001` (teal cracks lost); the Thaumaturge still has no identity (helm-1001 the
   only direction); Claude asks the user for a feeling or reference for him.
+- **Round three picked (2026-10-28):** the Justiciar, the Technician and the Thaumaturge (the helm); twelve of thirteen
+  done, their views on `shots/tripo/to-model.html`. The Backlasher's round four runs on the user's own edits.
 

@@ -1305,31 +1305,32 @@ const NEXUS_MUTANT_2_3D = gothicLine("swollen raw muscle and pale stretched skin
 
 /**
  * Round three (2026-10-28), redone from words rather than inpainted (the user: "Just redo instead of trying to fix",
- * "redo not inpaint"). The Justiciar: her pick with open eyes and no canisters ("Her eyes are closed."). The Technician:
- * `technician-loupe-turnaround-1000` without its canister ("has right idea. remove charge"). The Backlasher:
- * `backlasher-veil-turnaround-1000` in armour ("less robes and more exoskeleton/armor. I like the breastplate"). The
- * Thaumaturge's earlier rounds had no identity (the user), so two new directions, Claude's: overbuilt gauntlets, and a
- * closed helm. With no canister wanted, the glass leaves the materials line too, or it brings them back.
+ * "redo not inpaint"). With no canister wanted, the glass leaves the materials line too, or it brings them back. Only
+ * the picks stay; the rest is in the manifest and git.
  */
 const NEXUS_PLAIN_3D = gothicLine("fine black silk and velvet with a visible weave and soft folds, polished brass and gold filigree, black enamel", "immaculate");
 const BACKLASHER_ARMOUR_3D = gothicLine("cracked black mirror glass, thin gold frames and filigree, fine black silk with a visible weave, teal lightning", "immaculate");
-const VEIL = "A veil of cracked dark teal glass hangs from a gold circlet over the lower half of her face; cold dark eyes above it, dark hair drawn up under the circlet.";
 const NEXUS_LOOKS_2_JOBS = [
   ...jobs({
     // Picked: 1000 (the user, 2026-10-28).
     "mutant-overgrown": { subject: "Muscle that has outgrown its skin: one side of an organic hulk grown by an arcane noble house has swollen far past the other. Its right shoulder is a huge mound of raw grey-red muscle bursting through split pale skin, its right arm twice the length of the left, ending in a fist of fused bone knuckles that hangs to the ground. The left arm is still a man's. A small bald head pushed down and sideways by the swollen shoulder, a jaw of uneven teeth, small furious eyes. Pale grey skin stretched thin and shiny over the growth, teal light in the veins beneath. A heavy black iron collar riveted round the neck, torn black leather breeches, bare feet.", pose: CLEAR_POSE },
   }, NEXUS_MUTANT_2_3D),
   ...jobs({
+    // Picked: 1000 (the user, 2026-10-28).
     "justiciar-open": { subject: "A tall stiff collar rises from the shoulders behind the head of a haughty noblewoman of an arcane noble house, a judge: open at the front, black outside, teal inside, edged in gold. A pale face, chin raised, her eyes open, cold and grey, hair drawn up severely. Long robes of heavy black silk falling straight to the floor in layers, a teal panel down the front, teal lining in the wide sleeves, severe geometric gold embroidery at the hems and cuffs, long black gloves. The collar rises straight out of the black silk of her shoulders. Hands empty and open." },
+    // Picked: 1001 (the user, 2026-10-28).
     "technician-uncharged": { subject: "A brass monocle of stacked magnifying lenses on hinged arms sits over the right eye of a golem-wright of an arcane noble house, two lenses swung down in front of it, the eye behind them magnified. A stocky older man, close-cropped grey hair, a short grey beard, a craftsman's calm face. A long jointed clockwork arm of black iron lies folded down his back from a brass mount between the shoulders, gears showing at its joints, a three-fingered clamp at its end resting at his hip. A long black leather work apron over a high-collared black coat with teal piping, gauntlets of black steel and brass, tall boots. Hands empty and open." },
   }, NEXUS_PLAIN_3D),
   ...jobs({
-    "thaumaturge-gauntlets": { subject: "Two huge gauntlets of black enamel and polished brass, overbuilt and far too large for the lean man who wears them, reach past his elbows, ribbed with coils of teal glass, a glass charge canister capped in brass fitted along the back of each forearm, teal lightning crawling over the fingers. A haughty lord of an arcane noble house in his forties, a sharp clean-shaven face, dark hair swept back, a cold sneer. A fitted black silk doublet with a high collar and teal lining, black breeches, tall polished boots. Hands empty and open." },
+    // Picked: 1000 (the user, 2026-10-28).
     "thaumaturge-helm": { subject: "A closed helm of black enamel and gold filigree hides the whole head of a lord of an arcane noble house, smooth and high-crested, one narrow slit of teal glass across the eyes glowing from within. Tall and straight-backed. A long black silk coat with a stiff gold-edged standing collar and teal lining, a row of gold buttons, black breeches, polished boots, black gloves. Two glass charge canisters capped in gold, teal lightning inside, lie flat in a fitted gold mount across the small of his back. Hands empty and open." },
   }, NEXUS_3D),
   ...jobs({
-    "backlasher-plate": { subject: `A fitted armour of black mirror-glass plates in thin gold frames covers a noblewoman of an arcane noble house from neck to feet: a sculpted breastplate and shoulder plates, segmented plates down her arms and legs, jointed at elbow and knee, every plate cracked through with teal light glowing in the cracks. ${VEIL} A short split skirt of black silk falls from a fitted gold girdle at her hips over the plated legs. Two slim glass charge canisters capped in gold, teal lightning inside, lie flat in the girdle. Hands empty and open.` },
-    "backlasher-exo": { subject: `A jointed exoskeleton of black mirror-glass plates on thin gold struts follows the lines of the body of a noblewoman of an arcane noble house over close-fitting black silk: a sculpted glass breastplate, plates along her arms, ribs and legs, cracked through with teal light. ${VEIL} A fitted gold girdle at her hips holds two slim glass charge canisters capped in gold, teal lightning inside, lying flat. Hands empty and open.` },
+    // Round four, `backlasher-plate-turnaround-1001` with the user's edits word for word (2026-10-28): "Remove charges,
+    // remove veil, add venician mask type but with little expression and dark colors with stars, rewrite armor as
+    // "black glass exoskeleton", write "inhuman female humanoid like elongated limbs" instead of woman. Lets see what
+    // happens."
+    "backlasher-masked": { subject: "An inhuman female humanoid like elongated limbs, of an arcane noble house, covered from neck to feet in a black glass exoskeleton in thin gold frames: a sculpted breastplate and shoulder plates, segmented plates down the arms and legs, jointed at elbow and knee, every plate cracked through with teal light glowing in the cracks. A Venetian mask with little expression covers her face, in dark colors with stars. Dark hair drawn up under a gold circlet. A short split skirt of black silk falls from a fitted gold girdle at her hips over the plated legs. Hands empty and open." },
   }, BACKLASHER_ARMOUR_3D),
 ];
 
