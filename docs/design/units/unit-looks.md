@@ -284,3 +284,11 @@ came (a dark half mask with small gold stars, no expression). The inhuman, elong
 height and build (the turnaround frame pulls figures human, and the hair, circlet and "her face" pull with it). The
 exoskeleton reads as plain black plate, still without teal cracks, and the mask's stars leaked onto it. Next to try:
 cut the hair, circlet and "her face", say the limbs plainly; failing that, a single front view.
+
+**Backlasher, round five (the user, 2026-10-28):** "try black splinter glass exoskeleton insectoid shell, apply your
+suggestions too": the hair, circlet and "her face" out, the limbs said plainly, and single views. Claude's read
+(`shots/looks-r5.html`): the turnarounds missed (an armoured woman again, the hair back unasked). The first single
+view kept the turnaround's opening line and drew several views (Claude's slip); redone in the creature frame that
+freed the Mulch Gorger, it gave one figure and moved her off the human: grey-violet skin, a pointed head shell and
+ears, longer legs, teal veining in the glass, the starred mask. Claude's pick: `backlasher-insect-front-1001`. Still a
+woman's shape in a skirt, not an insect.

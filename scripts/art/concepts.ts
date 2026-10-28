@@ -1310,6 +1310,7 @@ const NEXUS_MUTANT_2_3D = gothicLine("swollen raw muscle and pale stretched skin
  */
 const NEXUS_PLAIN_3D = gothicLine("fine black silk and velvet with a visible weave and soft folds, polished brass and gold filigree, black enamel", "immaculate");
 const BACKLASHER_ARMOUR_3D = gothicLine("cracked black mirror glass, thin gold frames and filigree, fine black silk with a visible weave, teal lightning", "immaculate");
+const BACKLASHER_SHELL = "An inhuman female humanoid like elongated limbs, of an arcane noble house: arms and legs too long and too thin for a human. A black splinter glass exoskeleton, an insectoid shell, covers it from head to feet: a sculpted breastplate and shoulder plates, segmented plates down the arms and legs, jointed at elbow and knee, every plate cracked through with teal light glowing in the cracks. A Venetian mask with little expression, in dark colors with stars, covers the face. A short split skirt of black silk falls from a fitted gold girdle at the hips over the plated legs. Hands empty and open.";
 const NEXUS_LOOKS_2_JOBS = [
   ...jobs({
     // Picked: 1000 (the user, 2026-10-28).
@@ -1332,6 +1333,22 @@ const NEXUS_LOOKS_2_JOBS = [
     // happens."
     "backlasher-masked": { subject: "An inhuman female humanoid like elongated limbs, of an arcane noble house, covered from neck to feet in a black glass exoskeleton in thin gold frames: a sculpted breastplate and shoulder plates, segmented plates down the arms and legs, jointed at elbow and knee, every plate cracked through with teal light glowing in the cracks. A Venetian mask with little expression covers her face, in dark colors with stars. Dark hair drawn up under a gold circlet. A short split skirt of black silk falls from a fitted gold girdle at her hips over the plated legs. Hands empty and open." },
   }, BACKLASHER_ARMOUR_3D),
+  // Round five (the user, 2026-10-28): "try black splinter glass exoskeleton insectoid shell, apply your suggestions
+  // too": the hair, circlet and "her face" out, the limbs said plainly.
+  { id: "backlasher-shell-turnaround", prompt: turnaround(BACKLASHER_SHELL, BACKLASHER_ARMOUR_3D) },
+  // And the single view, in the creature frame that escaped the turnaround's pull toward the human for the Mulch
+  // Gorger; once as written, once with the shell leading (what leads the subject wins).
+  ...[
+    ["backlasher-shell-front", BACKLASHER_SHELL],
+    ["backlasher-insect-front", "A black splinter glass exoskeleton, an insectoid shell, is the whole body of an inhuman female humanoid like elongated limbs, of an arcane noble house: arms and legs too long and too thin for a human, segmented and jointed at elbow and knee, a sculpted breastplate and shoulder plates, every plate cracked through with teal light glowing in the cracks. A Venetian mask with little expression, in dark colors with stars, covers the face. A short split skirt of black silk falls from a fitted gold girdle at the hips. Hands empty and open."],
+  ].map(([id = "", subject = ""]) => ({
+    id,
+    prompt:
+      "A 3D render of a game creature model in a front view, standing in a T-pose, the whole figure visible from head to feet with a margin around it, like a sculpted and textured asset shown in a modelling program. " +
+      `${subject} ${BACKLASHER_ARMOUR_3D} Flat, even, shadowless lighting from all sides, like a texture reference. A plain flat light grey background, no ground, no text.`,
+    width: 1344,
+    height: 1024,
+  })),
 ];
 
 /** Each group of jobs has its own folder, so one group's run doesn't mix into another's manifest. */

@@ -43,4 +43,6 @@ it; book pages pinned to a coat are not. The bandits' "something stolen" went wi
 - **Round three picked (2026-10-28):** the Justiciar, the Technician and the Thaumaturge (the helm); twelve of thirteen
   done, their views on `shots/tripo/to-model.html`. The Backlasher's round four runs on the user's own edits.
 - **Backlasher round four in (2026-10-28):** `shots/looks-r4.html`: the mask came, the inhuman elongated body didn't.
+- **Backlasher round five in (2026-10-28):** `shots/looks-r5.html`; the creature-frame single views came closest
+  (Claude: `insect-front-1001`).
 
