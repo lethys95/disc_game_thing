@@ -278,3 +278,9 @@ Thaumaturge `thaumaturge-helm-turnaround-1000`. Twelve of thirteen now have a co
 (`backlasher-masked`): "Remove charges, remove veil, add venician mask type but with little expression and dark colors
 with stars, rewrite armor as "black glass exoskeleton", write "inhuman female humanoid like elongated limbs" instead
 of woman. Lets see what happens."
+
+Claude's read of round four (`shots/looks-r4.html`): half took. The veil and canisters are gone and the Venetian mask
+came (a dark half mask with small gold stars, no expression). The inhuman, elongated body didn't: an ordinary woman's
+height and build (the turnaround frame pulls figures human, and the hair, circlet and "her face" pull with it). The
+exoskeleton reads as plain black plate, still without teal cracks, and the mask's stars leaked onto it. Next to try:
+cut the hair, circlet and "her face", say the limbs plainly; failing that, a single front view.

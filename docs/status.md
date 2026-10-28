@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-28 (looks: twelve of thirteen picked, the Backlasher in round four; `shots/tripo/to-model.html` lists the 61 units still to model)
+**Updated:** 2026-10-28 (looks: twelve of thirteen picked, the Backlasher's round four in; `shots/tripo/to-model.html` lists the 61 units still to model)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): a first complete version, far off (the board's README
@@ -52,8 +52,8 @@ interface change.
 1. **Design sessions with the user:** the Grove's mage line (begun 2026-10-28: Decay tier 2 is the corpse explosion; questions #10), Ral-Vitahl's missing tiers, the
    Spiritess tier 4, the joker lines, owners for Evasion, Explode and Soak.
 2. **Claude's own, meanwhile:** icons for abilities, effects and items (`icons`, the user's suggestion); the
-   thirteen looks (`in-progress/unit-looks`): twelve of thirteen concepts picked (2026-10-28); the Backlasher's round four runs on the
-   user's own edits; redone from words, not inpainted (the user); no children anywhere (`art.md`); then portraits for the nine; a Capitol Guardian per faction
+   thirteen looks (`in-progress/unit-looks`): twelve of thirteen concepts picked (2026-10-28); the Backlasher's round four is in
+   (`shots/looks-r4.html`: the mask came, the inhuman body didn't); redone from words, not inpainted (the user); no children anywhere (`art.md`); then portraits for the nine; a Capitol Guardian per faction
    (`todo/capitol-guardians`, the user 2026-10-26); the Fire Eater's concepts in rounds (`carnival-concepts.md`); then concepts and portraits.
 3. **The user's picks waiting:**
    everything in `testing/`.
