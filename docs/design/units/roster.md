@@ -59,6 +59,7 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 | Technician | Nexus 1 | Claude, on the user's note (a zoom monocle, a clockwork iron arm on the back) | picked: `technician-uncharged-turnaround-1001` (user, round three) | |
 | Justiciar | Nexus 2 | Claude, on the user's high collar | picked: `justiciar-open-turnaround-1000` (user, round three; the side view drawn twice) | |
 | Thaumaturge | Nexus 2 | Claude's (a closed helm, a long coat) | picked: `thaumaturge-helm-turnaround-1000` (user, round three) | |
+| Backlasher | Nexus 3 | the user's (an inhuman figure in a black splinter glass fullbody exoskeleton, a starred Venetian mask, no hair) | picked: `backlasher-creature-turnaround-1000` (user, round eight) | |
 | Maelstrom | Nexus 3 | the user's (hovering, black and gold, a Chinese dragon) | picked: `maelstrom-robe-1000-uncharged-d70` (user: the canisters repainted off `maelstrom-robe-turnaround-1000`) | |
 | Brigand | bandits 1 | the user's (red bandana, ponytail, scruffy) | picked: `brigand-longcoat-turnaround-1000` (user); stray arm cleared: `brigand-longcoat-1000-armless` | |
 | Marauder | bandits 1 | the user's (a big man, dark brigandine, black chainmail, a warhammer) | picked: `marauder-leather-turnaround-1000` (user) | |
@@ -81,10 +82,9 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 | Fanatic | Jilliath 3 (consume) | user's answers to Claude's drafts | deferred |
 
 ## 3. No identity yet: needs a look in words first (the user's, or Claude's to propose)
-The looks in words are in `unit-looks.md`; the Backlasher's round four is running (2026-10-28).
+All thirteen looks have a picked concept (2026-10-28; `unit-looks.md`).
 | Unit | Faction · tier | What exists |
 |---|---|---|
-| Backlasher | Nexus 3 | round four: `backlasher-plate-turnaround-1001` with the user's edits (a dark starred Venetian mask, a "black glass exoskeleton", an "inhuman female humanoid like elongated limbs", no veil, no canisters) |
 | Capitol Guardian | — | the canon role (the chess king), no look |
 
 ## 4. Stubs: placeholder names or thin designs (identity waits on the design)

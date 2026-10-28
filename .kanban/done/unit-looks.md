@@ -51,4 +51,6 @@ it; book pages pinned to a coat are not. The bandits' "something stolen" went wi
   torso came out bare skin; a closed carapace over chest and belly is the next fix if the user wants it.
 - **Backlasher round eight in (2026-10-28):** `shots/looks-r8.html`: round seven's look as a creature-framed T-pose
   turnaround (single views are out, the user); Claude: `creature-turnaround-1001`.
+- **Done (2026-10-28):** the Backlasher picked (`creature-turnaround-1000`); all thirteen have a concept, their views on
+  `shots/tripo/to-model.html`. Portraits for them belong to `todo/concepts-and-portraits`.
 

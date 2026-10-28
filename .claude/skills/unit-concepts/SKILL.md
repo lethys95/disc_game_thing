@@ -116,6 +116,9 @@ than the Custodian's 3D concepts is a stand-in to redo (the user, 2026-10-05).
 - **Name the cloth's texture** (the Seraph, 2026-10-08): under the turnaround's flat shadowless light, "linen" with no
   texture named renders as smooth matte clay. Say the weave, the folds and the fraying ("coarse woven wool, the weave
   visible, heavy soft folds, frayed hems").
+- **No skirts on female figures** (the user, 2026-10-28: "If I want skirts on female models I'll tell you. And I most
+  likely won't."): never in a look or a prompt. Where the model adds one anyway ("woman", "robes", "linen" bring it),
+  name what covers the legs instead.
 - **Say what covers a figure, never only what doesn't** (Jilliath, 2026-10-09): "no robes, no cloth" with "skin between
   them" gave a gilded corset over near-nudity, and "short black robes" on a woman a miniskirt and heels. Name the
   covering itself (a skin of mosaic tiles, a long coat, full-length plates).

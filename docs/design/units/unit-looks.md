@@ -312,3 +312,7 @@ unchanged, in a three-view T-pose turnaround framed as a creature (`creatureTurn
 Claude's read (`shots/looks-r8.html`): the creature framing keeps her in the turnaround: three clean T-pose views of
 the full-front-1001 figure (flame crest, starred mask, grey-violet skin, glass plates, long legs; no hair, skirt or
 heels). Claude's pick: `backlasher-creature-turnaround-1001`; 1002 the most alien skin.
+
+**Picked (the user, 2026-10-28):** `backlasher-creature-turnaround-1000`. All thirteen now have a concept. And: "If I
+want skirts on female models I'll tell you. And I most likely won't." No skirt goes into a female figure's prompt.
+

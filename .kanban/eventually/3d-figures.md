@@ -60,5 +60,5 @@
   kick a boot behind, with or without the springs: walks of their own (a shuffle, a glide) would fit them. In the repo as
   `assets/models/units/<unit>.glb`, walking in Unreal (`shots/figures/{chosen,pontiff,shepherd}-check.html`).
 - **Still to model (2026-10-28):** `shots/tripo/to-model.html` lists every unit with a picked concept and no model
-  (61 on 2026-10-28), its views from `shots/tripo/<unit>/` to download for Tripo; the Custodian (one front view), the Cyclops, the
+  (62 on 2026-10-28), its views from `shots/tripo/<unit>/` to download for Tripo; the Custodian (one front view), the Cyclops, the
   bandits, the Cutpurse and the Snakeoiler were split for it today.
