@@ -45,4 +45,6 @@ it; book pages pinned to a coat are not. The bandits' "something stolen" went wi
 - **Backlasher round four in (2026-10-28):** `shots/looks-r4.html`: the mask came, the inhuman elongated body didn't.
 - **Backlasher round five in (2026-10-28):** `shots/looks-r5.html`; the creature-frame single views came closest
   (Claude: `insect-front-1001`).
+- **Backlasher round six in (2026-10-28):** `shots/looks-r6.html` (the user's edit: no plate list, no hair; Claude:
+  `bare-front-1001`). The single creature view is the way for this one; turnarounds keep making her human.
 

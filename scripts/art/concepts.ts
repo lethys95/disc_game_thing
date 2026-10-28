@@ -1310,7 +1310,18 @@ const NEXUS_MUTANT_2_3D = gothicLine("swollen raw muscle and pale stretched skin
  */
 const NEXUS_PLAIN_3D = gothicLine("fine black silk and velvet with a visible weave and soft folds, polished brass and gold filigree, black enamel", "immaculate");
 const BACKLASHER_ARMOUR_3D = gothicLine("cracked black mirror glass, thin gold frames and filigree, fine black silk with a visible weave, teal lightning", "immaculate");
+/** One front view in a T-pose, framed as a creature: the turnaround frame pulls figures human (the Mulch Gorger). */
+const creatureFront = (id: string, subject: string, materials: string) => ({
+  id,
+  prompt:
+    "A 3D render of a game creature model in a front view, standing in a T-pose, the whole figure visible from head to feet with a margin around it, like a sculpted and textured asset shown in a modelling program. " +
+    `${subject} ${materials} Flat, even, shadowless lighting from all sides, like a texture reference. A plain flat light grey background, no ground, no text.`,
+  width: 1344,
+  height: 1024,
+});
 const BACKLASHER_SHELL = "An inhuman female humanoid like elongated limbs, of an arcane noble house: arms and legs too long and too thin for a human. A black splinter glass exoskeleton, an insectoid shell, covers it from head to feet: a sculpted breastplate and shoulder plates, segmented plates down the arms and legs, jointed at elbow and knee, every plate cracked through with teal light glowing in the cracks. A Venetian mask with little expression, in dark colors with stars, covers the face. A short split skirt of black silk falls from a fitted gold girdle at the hips over the plated legs. Hands empty and open.";
+// Round six (the user, 2026-10-28): the shell's list of plates out ("Remove this: covers it from head to feet: […]"), "Add no hair."
+const BACKLASHER_BARE = "An inhuman female humanoid like elongated limbs, of an arcane noble house: arms and legs too long and too thin for a human. A black splinter glass exoskeleton, an insectoid shell. A Venetian mask with little expression, in dark colors with stars, covers the face. No hair. A short split skirt of black silk falls from a fitted gold girdle at the hips over the plated legs. Hands empty and open.";
 const NEXUS_LOOKS_2_JOBS = [
   ...jobs({
     // Picked: 1000 (the user, 2026-10-28).
@@ -1341,14 +1352,9 @@ const NEXUS_LOOKS_2_JOBS = [
   ...[
     ["backlasher-shell-front", BACKLASHER_SHELL],
     ["backlasher-insect-front", "A black splinter glass exoskeleton, an insectoid shell, is the whole body of an inhuman female humanoid like elongated limbs, of an arcane noble house: arms and legs too long and too thin for a human, segmented and jointed at elbow and knee, a sculpted breastplate and shoulder plates, every plate cracked through with teal light glowing in the cracks. A Venetian mask with little expression, in dark colors with stars, covers the face. A short split skirt of black silk falls from a fitted gold girdle at the hips. Hands empty and open."],
-  ].map(([id = "", subject = ""]) => ({
-    id,
-    prompt:
-      "A 3D render of a game creature model in a front view, standing in a T-pose, the whole figure visible from head to feet with a margin around it, like a sculpted and textured asset shown in a modelling program. " +
-      `${subject} ${BACKLASHER_ARMOUR_3D} Flat, even, shadowless lighting from all sides, like a texture reference. A plain flat light grey background, no ground, no text.`,
-    width: 1344,
-    height: 1024,
-  })),
+  ].map(([id = "", subject = ""]) => creatureFront(id, subject, BACKLASHER_ARMOUR_3D)),
+  { id: "backlasher-bare-turnaround", prompt: turnaround(BACKLASHER_BARE, BACKLASHER_ARMOUR_3D) },
+  creatureFront("backlasher-bare-front", BACKLASHER_BARE, BACKLASHER_ARMOUR_3D),
 ];
 
 /** Each group of jobs has its own folder, so one group's run doesn't mix into another's manifest. */

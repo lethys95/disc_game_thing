@@ -292,3 +292,9 @@ view kept the turnaround's opening line and drew several views (Claude's slip); 
 freed the Mulch Gorger, it gave one figure and moved her off the human: grey-violet skin, a pointed head shell and
 ears, longer legs, teal veining in the glass, the starred mask. Claude's pick: `backlasher-insect-front-1001`. Still a
 woman's shape in a skirt, not an insect.
+
+**Backlasher, round six (the user, 2026-10-28):** "Remove this: covers it from head to feet: a sculpted breastplate
+and shoulder plates, segmented plates down the arms and legs, jointed at elbow and knee, every plate cracked through
+with teal light glowing in the cracks. Add no hair." Claude's read (`shots/looks-r6.html`): the single views lost the
+hair (a shell crest instead) and show more grey-violet skin at the neck and chest; the gold corset and skirt are the
+most human parts left. The turnarounds stayed human (hair, heels). Claude's pick: `backlasher-bare-front-1001`.
