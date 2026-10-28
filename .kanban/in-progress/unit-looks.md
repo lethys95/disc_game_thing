@@ -26,3 +26,8 @@ it; book pages pinned to a coat are not. The bandits' "something stolen" went wi
 - **Concept round one in (2026-10-26):** 64 images, `shots/looks-r1.html` (Claude's read and pick per unit, every
   prompt as sent, a Send button). Eleven of thirteen have a reading Claude would defend; the Backlasher missed both
   ways (no glass, the canisters a ring of baubles). Waiting for the user's picks and notes.
+- **The user's picks (2026-10-28):** nine picked (the Cyclops, Justiciar, Maelstrom, the four bandits, the Cutpurse,
+  the Snakeoiler; `roster.md`). The Justiciar's and Maelstrom's canisters come off by inpainting, and the Brigand's
+  stray arm is cleared. Turned down: the Technician (a zoom monocle and a clockwork iron arm on the back, `wright-1000`
+  closest), the Mutant ("Very tame"), the Thaumaturge ("These are boring."), the Backlasher ("They have no
+  identity"). Round two for those four is running (`unit-looks.md`). Then: portraits for the nine.

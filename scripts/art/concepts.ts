@@ -1310,6 +1310,34 @@ const CARNIVAL_LOOKS_JOBS = [
   { id: "snakeoiler-flasks-props", prompt: prop("two large round-bottomed glass flasks with long necks and cork stoppers, filled with a murky dark green liquid that glows faintly; each drawn from the side and from above.", SNAKEOILER_3D), width: 2048, height: 832 },
 ];
 
+/**
+ * Round two for the four the user turned down in round one (2026-10-28): the Technician ("Give monocle zoom-in glasses
+ * and a clockwork iron arm on back. wright 1000 is closest."), the Mutant ("Very tame"), the Thaumaturge ("These are
+ * boring.") and the Backlasher ("They have no identity"). The readings past the user's words are Claude's. The user had
+ * the canisters standing off the Justiciar's shoulders and the Maelstrom's back removed, so here they lie flat.
+ */
+const NEXUS_MUTANT_2_3D = gothicLine("swollen raw muscle and pale stretched skin, bare bone, dark ridged shell, black iron, black leather, teal light under the skin");
+const BACKLASHER_3D = gothicLine("fine black silk with a visible weave and soft folds, cracked black mirror glass, gold filigree, teal lightning", "immaculate");
+const FLAT_CANISTERS = "Two slim glass charge canisters capped in gold, teal lightning inside, lie flat in a fitted gold girdle at her waist.";
+const NEXUS_LOOKS_2_JOBS = [
+  ...jobs({
+    "technician-arm": { subject: `A third arm of black iron clockwork rises from a brass mount on the back of a golem-wright of an arcane noble house and reaches forward over his right shoulder, long and jointed, brass gears at every joint, ending in a small three-fingered clamp. The mount holds one glass charge canister capped in polished brass, teal lightning inside. A stocky older man with close-cropped grey hair, a short grey beard and a craftsman's calm face, a jeweller's monocle of stacked brass rings and lenses over his right eye. His right arm is one long gauntlet of black steel and brass to the shoulder. A long black leather work apron over a high-collared black coat with teal piping. Tall boots. Hands empty and open.` },
+    "technician-loupe": { subject: `A brass monocle of stacked magnifying lenses on hinged arms sits over the right eye of a golem-wright of an arcane noble house, two lenses swung down in front of it, the eye behind them magnified. A stocky older man, close-cropped grey hair, a short grey beard, a craftsman's calm face. A long jointed clockwork arm of black iron lies folded down his back from a brass mount between the shoulders, gears showing at its joints, a three-fingered clamp at its end resting at his hip; the mount holds one glass charge canister capped in polished brass, teal lightning inside. A long black leather work apron over a high-collared black coat with teal piping, gauntlets of black steel and brass, tall boots. Hands empty and open.` },
+    "thaumaturge-scarred": { subject: `Pale branching Lichtenberg scars, the marks lightning leaves, run from the fingertips up both bare forearms to the throat and across one cheek of a reckless young lord of an arcane noble house, dark hair cut short, a sharp clean-shaven face with a wild, delighted grin. A long black silk coat to the shins with a stiff standing collar and teal lining, its sleeves ending at the elbow in wide gold-embroidered cuffs, a black brocade waistcoat, black breeches, tall polished boots. Three ${CANISTER} lie flat in a fitted black leather bandolier across his chest. Hands bare, empty and open.` },
+    "thaumaturge-blind": { subject: `Eyes burned milk-white by his own lightning, wide open in the broad, heavy face of an old lord of an arcane noble house, his head shaved, a short white beard, a hard proud mouth. Broad-shouldered and heavy. A long black brocade greatcoat with a deep collar of black fur, gold frogging across the chest, black breeches, heavy polished boots, black gloves. Two ${CANISTER} lie flat in a fitted leather case across the small of his back. Hands empty and open.` },
+    "thaumaturge-heir": { subject: "A boy heir of an arcane noble house, about fourteen, slight and pale, dark hair in careless curls, a spoiled and bored face. A long black velvet coat cut for a grown man, its sleeves turned back in wide teal cuffs, a high lace jabot at the throat, a teal silk waistcoat, black breeches, polished black boots to the knee. Two slim glass charge canisters capped in gold, teal lightning inside, sit flat in a fitted gold mount at the small of his back. Hands empty and open." },
+  }, NEXUS_3D),
+  ...jobs({
+    "mutant-overgrown": { subject: "Muscle that has outgrown its skin: one side of an organic hulk grown by an arcane noble house has swollen far past the other. Its right shoulder is a huge mound of raw grey-red muscle bursting through split pale skin, its right arm twice the length of the left, ending in a fist of fused bone knuckles that hangs to the ground. The left arm is still a man's. A small bald head pushed down and sideways by the swollen shoulder, a jaw of uneven teeth, small furious eyes. Pale grey skin stretched thin and shiny over the growth, teal light in the veins beneath. A heavy black iron collar riveted round the neck, torn black leather breeches, bare feet.", pose: CLEAR_POSE },
+    "mutant-chimera": { subject: "An organic hulk an arcane noble house grafted together from a man and a giant crab: a thick ridged shell of dark green-black grows over its back and over the top of its head, its left arm one huge serrated claw of the same shell, its right arm a swollen man's arm with knuckles of bare bone. Pale grey-green skin, teal light glowing where shell meets flesh, small black eyes, a wide lipless mouth. Short thick legs, bare feet. A heavy black iron collar riveted round the neck, black leather breeches.", pose: CLEAR_POSE },
+  }, NEXUS_MUTANT_2_3D),
+  ...jobs({
+    "backlasher-cracked": { subject: `Black mirror glass has grown over both hands and forearms of a haughty noblewoman of an arcane noble house, cracked through, bright teal lightning burning in every crack, the cracks spreading up her upper arms. A pale sharp face set in cold fury, dark hair drawn up tight, a few strands lifting loose. A high-necked fitted robe of heavy black silk to the floor, sleeves ending above the elbow, a stiff high collar black outside and teal inside, sharp teal edging. ${FLAT_CANISTERS} Hands empty and open.` },
+    "backlasher-veil": { subject: `A veil of cracked black mirror-glass shards hangs from a gold circlet over the upper half of the face of a noblewoman of an arcane noble house, teal light glowing through the cracks; below it a pale mouth set hard. Dark hair drawn up under the circlet. A long robe of heavy black silk with a high neck, its bodice and shoulders set with fitted plates of black mirror glass, cracked and glowing teal at the seams, wide sleeves lined in teal. ${FLAT_CANISTERS} Hands empty and open.` },
+    "backlasher-collar": { subject: `A tall collar of jagged black mirror-glass shards rises behind the head of a haughty noblewoman of an arcane noble house, the shards cracked and splintering outward, teal lightning crawling between them. A pale face set in cold fury, dark hair drawn up severely. Long robes of heavy black silk falling straight to the floor, a teal panel down the front, teal lining in the wide sleeves, severe geometric gold embroidery at the hems, long black gloves. ${FLAT_CANISTERS} Hands empty and open.` },
+  }, BACKLASHER_3D),
+];
+
 /** Each group of jobs has its own folder, so one group's run doesn't mix into another's manifest. */
 const GROUPS = [
   { dir: "art/candidates/units/grove", jobs: GROVE_JOBS },
@@ -1341,6 +1369,7 @@ const GROUPS = [
   { dir: "art/candidates/units/nexus/looks", jobs: NEXUS_LOOKS_JOBS },
   { dir: "art/candidates/units/neutrals/bandits", jobs: BANDIT_JOBS },
   { dir: "art/candidates/units/neutrals/carnival/looks", jobs: CARNIVAL_LOOKS_JOBS },
+  { dir: "art/candidates/units/nexus/looks", jobs: NEXUS_LOOKS_2_JOBS },
 ];
 
 const args = process.argv.slice(2);

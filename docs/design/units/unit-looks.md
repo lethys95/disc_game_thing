@@ -188,3 +188,36 @@ Claude's read:
 - **Hedge Mage:** My pick: hedge-mage-firestarter-turnaround-1000. The shaved sides, braid and tattooed bare forearms give the gang a caster you can tell apart; the runes will glow in the game. The deserter reads as a plain officer in a greatcoat.
 - **Cutpurse:** My pick: cutpurse-pixie-turnaround-1001. The vertical black and purple stripes, the long pointed coat with its lining, the bandana and ponytail. The tails reading ballooned the trousers at the hips. The knives sheet drew one knife each, with fussy handles: round two.
 - **Snakeoiler:** My pick: snakeoiler-lean-turnaround-1000. Top hat, curly beard, patchwork frock coat, a sharp face. The broad reading is the same man heavier. The flasks came out wrapped in patchwork (the coat's materials leaked onto them): round two gives them their own glass-and-brass line.
+
+## The user's picks (2026-10-28)
+
+Nine picked (the roster has them): the Cyclops `furnace-1001`, the Justiciar `collar-1000` ("Remove charges from
+shoulders."), the Maelstrom `robe-1000` ("Remove charges from back."), the Brigand `longcoat-1000`, the Marauder
+`leather-1000`, the Bandit `cuffs-1001`, the Hedge Mage `firestarter-1000`, the Cutpurse `pixie-1001`, the
+Snakeoiler `broad-1000`. Repairs: the Justiciar's and the Maelstrom's canisters are repainted away by inpainting
+(`scripts/art/fixes.ts`); the Brigand's stray arm floated on the plain background and is filled with it
+(`brigand-longcoat-1000-armless.png`). The weapon prop sheets have no pick yet.
+
+Turned down, with the user's words:
+- **Technician:** "Give monocle zoom-in glasses and a clockwork iron arm on back. wright 1000 is closest."
+- **Mutant:** "Very tame"
+- **Thaumaturge:** "These are boring."
+- **Backlasher:** "They have no identity"
+
+## Concept round two (2026-10-28)
+
+Prompts in `scripts/art/concepts.ts` (`NEXUS_LOOKS_2_JOBS`), images in `art/candidates/units/nexus/looks/`. The
+readings past the user's words are Claude's. Both canister removals took off canisters that stood up off the
+body, so in this round they lie flat (a bandolier, a girdle, a case at the back).
+- **Technician:** the wright as the user picked him, with a jeweller's monocle of stacked lenses and a clockwork arm
+  of black iron on a back mount that holds one canister. *Arm*: the arm reaching forward over his shoulder, said
+  first. *Loupe*: the monocle said first, the arm folded down his back.
+- **Mutant:** wilder than round one. *Overgrown*: one side swollen past the other, muscle bursting through split
+  skin, the right arm dragging a fist of fused bone. *Chimera*: grafted from a man and a giant crab, a shell over
+  its back and head, one arm a serrated claw.
+- **Thaumaturge:** a twist on the reckless lord. *Scarred*: pale Lichtenberg scars from his fingertips up the arms
+  to his cheek, a wild grin, canisters in a bandolier across his chest. *Blind*: an old heavy lord, eyes burned
+  white by his own lightning, a fur collar. *Heir*: a spoiled boy of about fourteen in a coat cut for a grown man.
+- **Backlasher:** black mirror glass, cracked, with teal light in the cracks: the volatile part. *Cracked*: the
+  glass grown over her hands and forearms. *Veil*: a veil of glass shards over her eyes, glass plates set into the
+  bodice. *Collar*: the Justiciar's high collar grown into jagged glass shards.

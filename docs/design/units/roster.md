@@ -54,6 +54,15 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 | Soothsayer | carnival 2 | user, plus Claude's eye coat and coin veil; fully veiled, dark skin (user) | picked: `soothsayer-hooded-dark-turnaround-1000` | ✓ |
 | Omen | carnival 2 | user: twin flintlocks, blindfold, ragged trenchcoat with a pentagram; Claude's: top hat, gold grin | picked: `omen-grin-turnaround-1001`, pistols `omen-pistols-props-1000` | ✓ |
 | The five tribes (25 units) | the Wild, the Tuskclans, the Scaled, the Herd, the barbarian clans | Claude's (sheets in `faction-stuff/neutrals/`) | picked: in each sheet (`shots/tribes.html`) | ✓ |
+| Cyclops | Nexus 2 | Claude, on the user's steam vents and pipes (`unit-looks.md`) | picked: `cyclops-furnace-turnaround-1001` (user, 2026-10-28) | |
+| Justiciar | Nexus 2 | Claude, on the user's high collar | picked: `justiciar-collar-turnaround-1000` (user: "Remove charges from shoulders"; repaint `justiciar-collar-1000-uncharged`) | |
+| Maelstrom | Nexus 3 | the user's (hovering, black and gold, a Chinese dragon) | picked: `maelstrom-robe-turnaround-1000` (user: "Remove charges from back"; repaint `maelstrom-robe-1000-uncharged`) | |
+| Brigand | bandits 1 | the user's (red bandana, ponytail, scruffy) | picked: `brigand-longcoat-turnaround-1000` (user); stray arm cleared: `brigand-longcoat-1000-armless` | |
+| Marauder | bandits 1 | the user's (a big man, dark brigandine, black chainmail, a warhammer) | picked: `marauder-leather-turnaround-1000` (user) | |
+| Bandit | bandits 1 | the user's (kanzashi, wide cuffs) | picked: `bandit-cuffs-turnaround-1001` (user) | |
+| Hedge Mage | bandits 1 | Claude, on the user's note | picked: `hedge-mage-firestarter-turnaround-1000` (user) | |
+| Cutpurse | carnival 1 | the user's (stripes, long pointed coat) | picked: `cutpurse-pixie-turnaround-1001` (user) | |
+| Snakeoiler | carnival 1 | the user's (top hat, curly beard, patchwork) | picked: `snakeoiler-broad-turnaround-1000` (user) | |
 
 ## 2. Identity, but no picked concept: needs concept art
 | Unit | Faction · tier | Identity | Concept |
@@ -69,16 +78,13 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 | Fanatic | Jilliath 3 (consume) | user's answers to Claude's drafts | deferred |
 
 ## 3. No identity yet: needs a look in words first (the user's, or Claude's to propose)
-Claude's drafts for all of these wait for the user: `unit-looks.md` (2026-10-17).
+The looks in words are in `unit-looks.md`; round two of concepts is running (2026-10-28).
 | Unit | Faction · tier | What exists |
 |---|---|---|
-| Technician | Nexus 1 | design, no look |
-| Cyclops | Nexus 2 | design; "scheme = automata" (dichotomies) |
-| Mutant | Nexus 2 | design; "mutants will be the melee line" |
-| Justiciar, Thaumaturge | Nexus 2 | designs; the user: scheme female, overload male (semi placeholder) |
-| Backlasher, Maelstrom | Nexus 3 | designs, no look |
-| Brigand, Marauder, Bandit, Hedge Mage | bandits 1 | the user's one-line designs, no look |
-| Cutpurse, Snakeoiler | carnival 1 | the user's designs, no look |
+| Technician | Nexus 1 | concept round two (user: a zoom monocle, a clockwork iron arm on the back; `wright-1000` closest) |
+| Mutant | Nexus 2 | concept round two (user on round one: "Very tame") |
+| Thaumaturge | Nexus 2 | concept round two (user on round one: "These are boring.") |
+| Backlasher | Nexus 3 | concept round two (user on round one: "They have no identity") |
 | Capitol Guardian | — | the canon role (the chess king), no look |
 
 ## 4. Stubs: placeholder names or thin designs (identity waits on the design)
