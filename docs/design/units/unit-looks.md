@@ -309,3 +309,6 @@ turnarounds are a woman in a bodysuit with heels. Claude's pick, with that cavea
 actually generated three images? Like, why front only? I can't generate anything from it. Stop doing front only. Try
 again with proper turnaround t-pose". Single views are out of the workflow (`unit-concepts` skill). Round seven's words,
 unchanged, in a three-view T-pose turnaround framed as a creature (`creatureTurnaround`), three seeds.
+Claude's read (`shots/looks-r8.html`): the creature framing keeps her in the turnaround: three clean T-pose views of
+the full-front-1001 figure (flame crest, starred mask, grey-violet skin, glass plates, long legs; no hair, skirt or
+heels). Claude's pick: `backlasher-creature-turnaround-1001`; 1002 the most alien skin.

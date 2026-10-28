@@ -49,4 +49,6 @@ it; book pages pinned to a coat are not. The bandits' "something stolen" went wi
   `bare-front-1001`). The single creature view is the way for this one; turnarounds keep making her human.
 - **Backlasher round seven in (2026-10-28):** `shots/looks-r7.html` (fullbody, no skirt): most inhuman yet, but the
   torso came out bare skin; a closed carapace over chest and belly is the next fix if the user wants it.
+- **Backlasher round eight in (2026-10-28):** `shots/looks-r8.html`: round seven's look as a creature-framed T-pose
+  turnaround (single views are out, the user); Claude: `creature-turnaround-1001`.
 
