@@ -236,3 +236,26 @@ Claude's read of round two (`shots/looks-r2.html`, with the repairs):
 - **Backlasher:** `collar-1001`: a crown of jagged black glass shards with teal lightning through them; a small tiara
   crept in. *Veil* is the second (the veil over her mouth, not her eyes); *cracked* lost the glass on her arms.
 - Flat canisters only half took: words that put them flat still draw them upright at waist and shoulder.
+
+## The user's picks on round two (2026-10-28)
+- **Justiciar:** neither repaint. "Her eyes are closed. Just redo instead of trying to fix."
+- **Maelstrom:** `maelstrom-robe-1000-uncharged-d70`.
+- **Technician:** neither. "technician-loupe-turnaround-1000.png has right idea. remove charge, redo not inpaint"
+- **Mutant:** `mutant-overgrown-turnaround-1000` (Claude had called it a miss).
+- **Thaumaturge:** neither. "do not make children. These do not have any identity. I don't want children anywhere in
+  this game at all for the record." (Canon: `art.md`.)
+- **Backlasher:** neither. "Try backlasher-veil-turnaround-1000.png but less robes and more exoskeleton/armor. I like
+  the breastplate"
+
+## Concept round three (2026-10-28)
+Redone from words, not inpainted (`NEXUS_LOOKS_2_JOBS`). Where no canister is wanted, the glass leaves the materials
+line too.
+- **Justiciar** (`justiciar-open`): her pick's words, the canisters out, "a pale face, chin raised, her eyes open"
+  where "a pale face looking down" closed them.
+- **Technician** (`technician-uncharged`): the loupe reading without its canister.
+- **Backlasher:** the veil reading in armour, the breastplate kept, the long robe and wide sleeves gone. *Plate*:
+  fitted armour of cracked glass plates in gold frames, a short split skirt. *Exo*: a jointed exoskeleton of glass
+  plates on gold struts over close-fitting silk.
+- **Thaumaturge**, two directions of Claude's, each one silhouette hook: *gauntlets*, two huge overbuilt gauntlets
+  past the elbows with a canister along each forearm, on a lean lord in a doublet; *helm*, a closed high-crested helm
+  of black enamel and gold with one teal glass eye slit, on a lord in a long coat.

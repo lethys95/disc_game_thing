@@ -80,18 +80,6 @@ const FIXES: Readonly<Record<string, Fix>> = {
     seed: 1001,
     denoise: [0.8, 0.9, 1],
   },
-  // The user (2026-10-28), picking it: "Remove charges from shoulders."
-  "justiciar-collar-1000-uncharged": {
-    dir: "art/candidates/units/nexus/looks",
-    pick: "justiciar-collar-turnaround-1000.png",
-    mask: "masks/justiciar-collar-1000-uncharged.png",
-    edits: [
-      ["Two slim glass charge canisters capped in gold, teal lightning inside, fitted upright between her shoulder blades in a gold mount, the collar rising out of them. ", "The collar rises straight out of the black silk of her shoulders. "],
-      [", clear glass holding teal lightning.", "."],
-    ],
-    seed: 1000,
-    denoise: [0.7, 0.85, 1],
-  },
   // The user (2026-10-28), picking it: "Remove charges from back."
   "maelstrom-robe-1000-uncharged": {
     dir: "art/candidates/units/nexus/looks",

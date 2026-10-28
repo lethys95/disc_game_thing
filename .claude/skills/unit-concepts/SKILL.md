@@ -135,7 +135,12 @@ than the Custodian's 3D concepts is a stand-in to redo (the user, 2026-10-05).
   `uv run scripts/art/split-turnaround.py <sheet.png> shots/tripo <unit>` (views named front, side, back, then
   view-4 for a duplicate; check the result, since a sheet can draw the same view twice), and add them to
   `shots/tripo/index.html`.
-- **Repairs by inpainting** (a flaw in a pick, like views that disagree: the Psychopomp's ears stuck out at the front
+- **Redo, don't repair, by default** (the user, 2026-10-28, on two inpainted picks: "Just redo instead of trying to
+  fix", "redo not inpaint"): when the user asks for a change to a pick (take the canisters off, open her eyes), the
+  change goes into the words and the unit gets a new round on the same seeds. Inpaint only when the user asks to keep
+  that exact image, or for a flaw on the plain background (a stray limb), which can be filled with the background
+  itself, no model.
+- **Repairs by inpainting**, when wanted (a flaw in a pick, like views that disagree: the Psychopomp's ears stuck out at the front
   only): add a fix to `FIXES` in `scripts/art/fixes.ts` (the source, a mask, edits to the pick's own prompt, the seed,
   two or three strengths) and run `pnpm exec tsx scripts/art/fixes.ts <fix id>` through the `krea-images` subagent.
   Outside the mask every pixel stays the pick's. Masks live in the unit's folder under `masks/`; build one from colour

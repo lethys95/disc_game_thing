@@ -55,8 +55,8 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 | Omen | carnival 2 | user: twin flintlocks, blindfold, ragged trenchcoat with a pentagram; Claude's: top hat, gold grin | picked: `omen-grin-turnaround-1001`, pistols `omen-pistols-props-1000` | ✓ |
 | The five tribes (25 units) | the Wild, the Tuskclans, the Scaled, the Herd, the barbarian clans | Claude's (sheets in `faction-stuff/neutrals/`) | picked: in each sheet (`shots/tribes.html`) | ✓ |
 | Cyclops | Nexus 2 | Claude, on the user's steam vents and pipes (`unit-looks.md`) | picked: `cyclops-furnace-turnaround-1001` (user, 2026-10-28) | |
-| Justiciar | Nexus 2 | Claude, on the user's high collar | picked: `justiciar-collar-turnaround-1000` (user: "Remove charges from shoulders"; repaint `justiciar-collar-1000-uncharged`) | |
-| Maelstrom | Nexus 3 | the user's (hovering, black and gold, a Chinese dragon) | picked: `maelstrom-robe-turnaround-1000` (user: "Remove charges from back"; repaint `maelstrom-robe-1000-uncharged`) | |
+| Mutant | Nexus 2 | Claude, on the user's organic hulk | picked: `mutant-overgrown-turnaround-1000` (user, round two) | |
+| Maelstrom | Nexus 3 | the user's (hovering, black and gold, a Chinese dragon) | picked: `maelstrom-robe-1000-uncharged-d70` (user: the canisters repainted off `maelstrom-robe-turnaround-1000`) | |
 | Brigand | bandits 1 | the user's (red bandana, ponytail, scruffy) | picked: `brigand-longcoat-turnaround-1000` (user); stray arm cleared: `brigand-longcoat-1000-armless` | |
 | Marauder | bandits 1 | the user's (a big man, dark brigandine, black chainmail, a warhammer) | picked: `marauder-leather-turnaround-1000` (user) | |
 | Bandit | bandits 1 | the user's (kanzashi, wide cuffs) | picked: `bandit-cuffs-turnaround-1001` (user) | |
@@ -78,13 +78,13 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 | Fanatic | Jilliath 3 (consume) | user's answers to Claude's drafts | deferred |
 
 ## 3. No identity yet: needs a look in words first (the user's, or Claude's to propose)
-The looks in words are in `unit-looks.md`; round two of concepts is running (2026-10-28).
+The looks in words are in `unit-looks.md`; round three of concepts is running (2026-10-28).
 | Unit | Faction · tier | What exists |
 |---|---|---|
-| Technician | Nexus 1 | concept round two (user: a zoom monocle, a clockwork iron arm on the back; `wright-1000` closest) |
-| Mutant | Nexus 2 | concept round two (user on round one: "Very tame") |
-| Thaumaturge | Nexus 2 | concept round two (user on round one: "These are boring.") |
-| Backlasher | Nexus 3 | concept round two (user on round one: "They have no identity") |
+| Technician | Nexus 1 | round three: `technician-loupe-turnaround-1000` redone without its canister (user: "has right idea. remove charge") |
+| Justiciar | Nexus 2 | round three: `justiciar-collar-turnaround-1000` redone with open eyes and no canisters (user: "Her eyes are closed. Just redo instead of trying to fix.") |
+| Thaumaturge | Nexus 2 | round three: two new directions (user on rounds one and two: "These do not have any identity.") |
+| Backlasher | Nexus 3 | round three: `backlasher-veil-turnaround-1000` in armour (user: "less robes and more exoskeleton/armor. I like the breastplate") |
 | Capitol Guardian | — | the canon role (the chess king), no look |
 
 ## 4. Stubs: placeholder names or thin designs (identity waits on the design)
