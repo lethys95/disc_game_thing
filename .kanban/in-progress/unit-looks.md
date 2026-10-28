@@ -31,3 +31,6 @@ it; book pages pinned to a coat are not. The bandits' "something stolen" went wi
   stray arm is cleared. Turned down: the Technician (a zoom monocle and a clockwork iron arm on the back, `wright-1000`
   closest), the Mutant ("Very tame"), the Thaumaturge ("These are boring."), the Backlasher ("They have no
   identity"). Round two for those four is running (`unit-looks.md`). Then: portraits for the nine.
+- **Round two in (2026-10-28):** `shots/looks-r2.html` with the two canister repaints (Claude: 70 for both); Claude's
+  picks: Technician `loupe-1000`, Mutant `chimera-1001`, Thaumaturge `blind-1001`, Backlasher `collar-1001`. Waiting for
+  the user's picks.

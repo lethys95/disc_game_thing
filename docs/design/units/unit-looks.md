@@ -221,3 +221,18 @@ body, so in this round they lie flat (a bandolier, a girdle, a case at the back)
 - **Backlasher:** black mirror glass, cracked, with teal light in the cracks: the volatile part. *Cracked*: the
   glass grown over her hands and forearms. *Veil*: a veil of glass shards over her eyes, glass plates set into the
   bodice. *Collar*: the Justiciar's high collar grown into jagged glass shards.
+
+Claude's read of round two (`shots/looks-r2.html`, with the repairs):
+- **Repairs:** the Justiciar's and the Maelstrom's canisters come off cleanly at all three strengths; my pick is 70 for
+  both, the least change (at 100 the Justiciar grows gold shoulder points; at 85 and 100 the Maelstrom's side view
+  gets a dark fold where the canister stood).
+- **Technician:** `loupe-1000`: the arm in every view, folded at his hip with a clamp, lenses over the eyes (the side
+  view drawn twice); `loupe-1001` as good. The *arm* reading lost the arm (1001 has it in the side view only). Every
+  sheet keeps a canister standing up behind a shoulder.
+- **Mutant:** `chimera-1001`: a hunched hulk under a spiked crab shell over back and head, one arm a claw, teal at the
+  shell's edges. *Overgrown* missed: the swollen side came out as an ornate pauldron and gauntlet on a lean man.
+- **Thaumaturge:** `blind-1001`, by a little: an old, heavy, bald lord, fur collar and gold frogging; the eyes pale
+  grey, not burned white. *Scarred* lost its scars (the cuffs became embroidered bracers). *Heir* reads as a spoiled boy.
+- **Backlasher:** `collar-1001`: a crown of jagged black glass shards with teal lightning through them; a small tiara
+  crept in. *Veil* is the second (the veil over her mouth, not her eyes); *cracked* lost the glass on her arms.
+- Flat canisters only half took: words that put them flat still draw them upright at waist and shoulder.
