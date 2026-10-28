@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-26 (concept round one for the thirteen looks is in; portraits and biome props accepted)
+**Updated:** 2026-10-28 (the Grove mage line has begun: the user puts the corpse explosion on the Decay mage at tier 2)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): a first complete version, far off (the board's README
@@ -49,7 +49,7 @@ interface change.
   the user (2026-10-26; some may become Tripo models later, `maybe/tripo-props`).
 
 ## Next (the board's todo, in rank order)
-1. **Design sessions with the user:** the Grove's mage line (questions #10), Ral-Vitahl's missing tiers, the
+1. **Design sessions with the user:** the Grove's mage line (begun 2026-10-28: Decay tier 2 is the corpse explosion; questions #10), Ral-Vitahl's missing tiers, the
    Spiritess tier 4, the joker lines, owners for Evasion, Explode and Soak.
 2. **Claude's own, meanwhile:** icons for abilities, effects and items (`icons`, the user's suggestion); the looks
    for the thirteen units without one are in round 2, redrafted from the user's notes (`in-progress/unit-looks`,

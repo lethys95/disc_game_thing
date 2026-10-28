@@ -26,6 +26,11 @@ fits the existing hooks. Stats: health low · damage medium · armor none · ini
 
 ## Tier 2
 
+(user, 2026-10-28) "decay mage sylvan tier 2 is corpse explosion I think". So the line forks at tier 2, its Decay side
+taking the corpse explosion (the 2026-09-26 mage idea). (Claude) Since 2026-09-29 the explosion sits on the support's
+Decay side and is built there, on Decay support 2 beside Corpse growth (`support.md`). Open: it moves to the mage, or
+both carry it; and what the fork's other side is.
+
 ## Tier 3
 
 ## Tier 4
