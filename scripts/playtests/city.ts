@@ -2,7 +2,7 @@ import type { Playtest } from "#scripts/playtests/harness";
 
 const city: Playtest = {
   name: "city",
-  about: "open on the city view (the Capitol theme playing), go to the garrison, drag a unit into it, recruit, peek at a unit, Escape out (the map theme back)",
+  about: "open on the city view (the Capitol theme playing), go to the garrison, drag a unit into it, recruit, peek at a unit, Escape out (the map's music back)",
   async run(t) {
     await t.open("/?map&seed=1&capitol");
     // The Capitol opens on its city view: a painting of the city in a frame, the tab rail on the right.
@@ -50,7 +50,7 @@ const city: Playtest = {
     await t.page.keyboard.press("Escape");
     await t.page.locator("#capitol").waitFor({ state: "hidden", timeout: 2000 }).catch(() => t.fail("Escape didn't close the city screen"));
     const outside = await t.page.evaluate(() => window.discDebug.loopMusic());
-    if (outside !== "music/jilliath/map") t.fail(`back on the map, the map theme should play: ${outside}`);
+    if (!/^music\/(overworld\/map-\d+|jilliath\/map)$/.test(outside ?? "")) t.fail(`back on the map, the map's music should play: ${outside}`);
     const windBack = await t.page.evaluate(() => window.discDebug.ambience());
     if (windBack === null) t.fail("back on the map, its ambience should play again");
   },

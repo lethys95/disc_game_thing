@@ -445,3 +445,6 @@ turns are played by whichever end handed them the turn. In a battle between the 
 orders, unit by unit: the browser replays the MCP player's orders from the table so they animate like the AI's. The MCP
 player's tarot cards there are the AI's picks, which both ends make alike, so no pick has to cross the table.
 - **Not a default (2026-10-17):** "weathered and worn" is out of the recipe for new concepts and portraits (the user); see `art.md`.
+- **Music is lossless (2026-10-28):** the user's tracks go in as FLAC (`scripts/audio/music-take.sh`), after they heard
+  the loss in Opus at 128 and at 256 kb/s; the game loads `.flac` beside `.ogg`. On the map the music is a rotation
+  (the overworld tracks and the faction's map theme, drawn from a bucket), not one looping theme.

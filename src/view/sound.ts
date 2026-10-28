@@ -4,14 +4,18 @@ import type { SettingsData } from "#view/settings";
 
 /**
  * Sound through WebAudio. A sound is a chain of slot keys (`view/sound-slots.ts`): the first one with a file at
- * `assets/audio/<key>.ogg` plays; a chain without one is silent, like art's placeholders. What fills each slot is
- * listed in `assets/audio/SOURCES.md` (the user picks keepers by ear).
+ * `assets/audio/<key>.ogg` (or `.flac`: the user's music, lossless) plays; a chain without one is silent, like art's
+ * placeholders. What fills each slot is listed in `assets/audio/SOURCES.md` (the user picks keepers by ear).
  */
 
-/** The sounds that exist, found at build time. */
-const FILES = import.meta.glob<string>("/assets/audio/**/*.ogg", { eager: true, query: "?url", import: "default" });
+/** The sounds that exist, found at build time, by slot key. */
+const FILES: ReadonlyMap<string, string> = new Map(
+  Object.entries(import.meta.glob<string>("/assets/audio/**/*.{ogg,flac}", { eager: true, query: "?url", import: "default" })).map(
+    ([path, url]) => [path.replace(/^\/assets\/audio\//, "").replace(/\.(ogg|flac)$/, ""), url],
+  ),
+);
 
-const fileOf = (key: string): string | undefined => FILES[`/assets/audio/${key}.ogg`];
+const fileOf = (key: string): string | undefined => FILES.get(key);
 
 /** The first key along a chain that has a file. */
 export const resolve = (chain: readonly string[]): string | undefined => chain.find((key) => fileOf(key) !== undefined);
@@ -20,18 +24,17 @@ export const resolve = (chain: readonly string[]): string | undefined => chain.f
 const REPEAT_MS = 60;
 
 /**
- * Music: `assets/audio/music/<faction>/map.ogg`, `capitol.ogg` and `battle-<n>.ogg`. On the map, your faction's theme,
- * looping (user, 2026-09-27); in your Capitol, its Capitol theme where it has one. In battle, both sides' themes play at once and the side that's winning is the one heard (user,
- * 2026-10-03: a tug of war), each drawing its tracks from its faction's bucket (`view/bucket.ts`).
+ * Music: `assets/audio/music/<faction>/map`, `capitol` and `battle-<n>`, and `overworld/map-<n>`. On
+ * the map, the overworld tracks (the user, 2026-10-28) and your faction's own map theme, one after another from a
+ * bucket; in your Capitol, its Capitol theme, looping, where it has one. In battle, both sides' themes play at once and
+ * the side that's winning is the one heard (user, 2026-10-03: a tug of war), each drawing its tracks from its faction's
+ * bucket (`view/bucket.ts`).
  */
 export type Track = string;
 
 /** The music files there are, as track keys (`jilliath/battle-2`). */
 export const musicTracks = (): string[] =>
-  Object.keys(FILES).flatMap((path) => {
-    const match = /^\/assets\/audio\/music\/(.+)\.ogg$/.exec(path);
-    return match?.[1] ? [match[1]] : [];
-  });
+  [...FILES.keys()].flatMap((key) => (key.startsWith("music/") ? [key.slice("music/".length)] : []));
 
 const CROSSFADE_S = 1.5;
 /** How long the battle music takes to turn from one side's theme to the other's. */
@@ -58,6 +61,8 @@ export class Sound {
   private master: GainNode | null = null;
   private effects: GainNode | null = null;
   private readonly musicLoop: Loop = { want: null, playing: null, bus: null };
+  /** On the map: whose map music plays, drawn in turn from its bucket; null while one track loops (or none plays). */
+  private mapList: { readonly faction: string; readonly bucket: Bucket<string> } | null = null;
   private readonly ambienceLoop: Loop = { want: null, playing: null, bus: null };
   private readonly buffers = new Map<string, Promise<AudioBuffer | null>>();
   private readonly lastPlayed = new Map<string, number>();
@@ -121,11 +126,23 @@ export class Sound {
     });
   }
 
-  /** A faction's theme for the map or its Capitol; its map theme where it has no Capitol theme, any faction's if none. */
+  /**
+   * A faction's music on the map: the overworld tracks and its own map theme in turn (any faction's map themes if there
+   * are none); in its Capitol, its Capitol theme where it has one. Asked again for the same, the music carries on.
+   */
   mapMusic(faction: string, where: "map" | "capitol"): void {
     const tracks = musicTracks();
-    const maps = tracks.filter((t) => t.endsWith("/map"));
-    this.music(tracks.find((t) => t === `${faction}/${where}`) ?? maps.find((t) => t === `${faction}/map`) ?? maps[0] ?? null);
+    if (where === "capitol" && tracks.includes(`${faction}/capitol`)) {
+      this.music(`${faction}/capitol`);
+      return;
+    }
+    if (this.mapList?.faction === faction && this.musicLoop.want !== null) return;
+    const own = tracks.filter((t) => /^overworld\/map-\d+$/.test(t) || t === `${faction}/map`);
+    const list = own.length > 0 ? own : tracks.filter((t) => t.endsWith("/map"));
+    const bucket = new Bucket(list.sort());
+    const first = bucket.take();
+    this.music(first ?? null);
+    if (first) this.mapList = { faction, bucket };
   }
 
   /**
@@ -133,6 +150,7 @@ export class Sound {
    * side's; if neither has any, any faction's.
    */
   battleMusic(factions: readonly [string, string], lead: Side): void {
+    this.mapList = null;
     this.loop(this.musicLoop, null);
     this.stopVoices();
     this.wantBattle = { factions, lead };
@@ -159,6 +177,7 @@ export class Sound {
   music(track: Track | null): void {
     this.stopVoices();
     this.wantBattle = null;
+    this.mapList = null;
     this.loop(this.musicLoop, track === null ? null : `music/${track}`);
   }
 
@@ -167,7 +186,7 @@ export class Sound {
     return this.ambienceLoop.want;
   }
 
-  /** The looping music asked for now (`music/jilliath/map`), for playtests; null in battle or silence. */
+  /** The map or Capitol music asked for now (`music/overworld/map-2`), for playtests; null in battle or silence. */
   loopMusicNow(): string | null {
     return this.musicLoop.want;
   }
@@ -277,7 +296,17 @@ export class Sound {
       if (!buffer || layer.want !== key || layer.playing) return;
       const source = context.createBufferSource();
       source.buffer = buffer;
-      source.loop = true;
+      const list = layer === this.musicLoop ? this.mapList : null;
+      source.loop = list === null;
+      // The map's music goes on to the next track from its bucket when one ends.
+      source.onended = () => {
+        if (!list || this.mapList !== list || layer.playing?.source !== source) return;
+        const next = list.bucket.take();
+        if (!next) return;
+        layer.playing = null;
+        layer.want = `music/${next}`;
+        this.startLoop(layer);
+      };
       const fade = context.createGain();
       fade.gain.setValueAtTime(0, context.currentTime);
       fade.gain.linearRampToValueAtTime(1, context.currentTime + CROSSFADE_S);

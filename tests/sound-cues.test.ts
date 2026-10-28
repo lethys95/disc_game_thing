@@ -38,15 +38,18 @@ describe("sound slots", () => {
   });
 });
 
+/** A slot's file: Opus, or FLAC for the user's music. */
+const hasFile = (key: string) => existsSync(`assets/audio/${key}.ogg`) || existsSync(`assets/audio/${key}.flac`);
+
 describe("sound files", () => {
   test("every slot with a recorded source has its file", () => {
     const listed = [...readFileSync("assets/audio/SOURCES.md", "utf8").matchAll(/^\| `([^`]+)`/gm)].map((m) => m[1] ?? "");
-    for (const key of listed) expect(existsSync(`assets/audio/${key}.ogg`)).toBe(true);
+    for (const key of listed) expect(hasFile(key), key).toBe(true);
   });
 
   test("every fixed slot and every family fallback the game leans on has a file", () => {
     for (const { key, chain } of allSoundSlots().filter((s) => !s.key.startsWith("ability/"))) {
-      expect(chain.some((k) => existsSync(`assets/audio/${k}.ogg`)), key).toBe(true);
+      expect(chain.some(hasFile), key).toBe(true);
     }
   });
 

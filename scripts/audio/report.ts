@@ -5,7 +5,7 @@ import { allSoundSlots } from "#view/sound-slots";
  * `pnpm audio`: every sound slot the game has content for (`src/view/sound-slots.ts`), and what it plays: its own
  * file, a family fallback, or nothing. Like `pnpm art report`.
  */
-const has = (key: string) => existsSync(`assets/audio/${key}.ogg`);
+const has = (key: string) => existsSync(`assets/audio/${key}.ogg`) || existsSync(`assets/audio/${key}.flac`);
 const rows = allSoundSlots().map(({ key, chain }) => {
   const via = chain.find(has);
   return { key, state: has(key) ? "own" : via ? `→ ${via}` : "silent" };
