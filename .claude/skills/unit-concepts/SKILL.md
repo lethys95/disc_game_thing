@@ -31,8 +31,10 @@ than the Custodian's 3D concepts is a stand-in to redo (the user, 2026-10-05).
   - **No stance or action views** (the user, 2026-10-05: "We're creating models, not scenes. If we want one in a
     frenzied stance, we'll likely put them in one later. Right now we just want the t-pose. The figure we're putting in
     the t-pose must fit the design spec"). The design itself (face, armour, body, materials) carries the unit's
-    identity and attitude, not a pose. (The gnolls and the Drawn had stance views; that's past practice.) Fallback when
-    the turnaround frame keeps failing the design (the Mulch Gorger): a single front view, still in the model's pose.
+    identity and attitude, not a pose. (The gnolls and the Drawn had stance views; that's past practice.) **Never a
+    single front view** (the user, 2026-10-28: "why front only? I can't generate anything from it. Stop doing front
+    only."): every concept is three views. When the character frame keeps pulling a figure human, frame the sheet as a
+    creature (`creatureTurnaround` in `concepts.ts`: "A creature turnaround sheet of a 3D game creature model").
   - **Weapons are separate models** (decision 2026-10-04): no weapon on the figure ("hands empty and open"), and the
     weapon gets a prop sheet of its own (`-props`, 2048×832).
 - **Two or three readings per unit**, each a different body or silhouette around the user's fixed words. In a group,
@@ -74,13 +76,14 @@ than the Custodian's 3D concepts is a stand-in to redo (the user, 2026-10-05).
   consistent style wise is pretty essential"). Cut to ~120 grim words, the same features came back dark, ornate and
   worn; moving the gothic line first changed little. Size cues ("large eyes set wide apart", "wide and bulky") push
   toward cartoon proportions. Each round's fixes go *into* a short description, not onto the end of a long one.
-- The turnaround frame pulls figures upright, even and human; single views escape it (the Mulch Gorger).
+- The character turnaround frame pulls figures upright, even and human. Calling the model a *creature* lets inhuman
+  words through (the Backlasher, 2026-10-28); keep the three views either way.
 - **Animals need a frame of their own** (the Wild, 2026-10-11/12): in the character turnaround frame every wolf, boar
   and crow stood up as an armoured beast-man, whatever the subject said. The `creature` frame in `concepts.ts`
   ("a four-legged animal … standing on all four legs … no clothing, no armour, not upright") gave real animals at once.
   But "four-legged animal" summons one: a flock of crows got a wolf beside it twice. A flock is a `flock` frame of its
-  own ("a single model of a flock of birds as one object … only crows"), which worked first time. For a body
-  that must stay strange, a single view can go to Tripo alone.
+  own ("a single model of a flock of birds as one object … only crows"), which worked first time. A body that must
+  stay strange still gets three views (the creature-framed turnaround), never a single view.
 - A phrase meant as a mood can become the subject: "faces veiled, turned away" put hooded mourners on every card; "an
   object with no limbs" gave gothic women in dresses.
 - **No similes for shapes or surfaces**: the model takes the named thing literally ("a doll's face" grew a nose and a

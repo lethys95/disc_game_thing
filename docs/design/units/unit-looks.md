@@ -304,3 +304,8 @@ sentence and its girdle out). Claude's read (`shots/looks-r7.html`): the single 
 flame-shaped shell crest, long thin legs, grey-violet skin), but the shell covers too little: the torso is bare skin
 between breast cups, closer to a painted nude than a shell, since the prompt names only what she doesn't wear. The
 turnarounds are a woman in a bodysuit with heels. Claude's pick, with that caveat: `backlasher-full-front-1000`.
+
+**Backlasher, round eight (the user, 2026-10-28):** "backlasher-full-front-1001.png I might've considered if you had
+actually generated three images? Like, why front only? I can't generate anything from it. Stop doing front only. Try
+again with proper turnaround t-pose". Single views are out of the workflow (`unit-concepts` skill). Round seven's words,
+unchanged, in a three-view T-pose turnaround framed as a creature (`creatureTurnaround`), three seeds.
