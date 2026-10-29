@@ -67,4 +67,9 @@
   hand from `spitter-r4-turnaround-1000`. `scripts/art/check-views.py` scans every view for cuts and loose pieces: the
   Avatar of Vengeance has only a front view, its right wings cut where the side view's wing begins (the three views'
   wings overlap on the sheet); the Emissary's left wingtip is clipped by the sheet's own edge.
+- **2026-10-29, later:** the Godkin's and the Avatar of Vengeance's views were broken too (the user). The Godkin's pale
+  clouds read as background to the splitter, so the front lost its right hand to the side view; now cut in column
+  strips. The Avatar had only a front, cut at its right wings; now front, side and back, cut along hand-drawn seams
+  between the wings (both edges of its sheet clip feathers of their own). All three units' cuts are in
+  `scripts/art/cut-views.py`.
 
