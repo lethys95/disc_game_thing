@@ -62,3 +62,9 @@
 - **Still to model (2026-10-28):** `shots/tripo/to-model.html` lists every unit with a picked concept and no model
   (62 on 2026-10-28), its views from `shots/tripo/<unit>/` to download for Tripo; the Custodian (one front view), the Cyclops, the
   bandits, the Cutpurse and the Snakeoiler were split for it today.
+- **2026-10-29:** the Spitter's views were broken (the user): the front's right hand and the side's tail cut off, the
+  side's tail tip in the back view; its side views' tails run under each other and the back view, so it was cut by
+  hand from `spitter-r4-turnaround-1000`. `scripts/art/check-views.py` scans every view for cuts and loose pieces: the
+  Avatar of Vengeance has only a front view, its right wings cut where the side view's wing begins (the three views'
+  wings overlap on the sheet); the Emissary's left wingtip is clipped by the sheet's own edge.
+

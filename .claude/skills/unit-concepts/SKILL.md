@@ -140,7 +140,10 @@ than the Custodian's 3D concepts is a stand-in to redo (the user, 2026-10-05).
 - **For Tripo:** split the picked turnaround into single views (1024×1024 on its own grey) with
   `uv run scripts/art/split-turnaround.py <sheet.png> shots/tripo <unit>` (views named front, side, back, then
   view-4 for a duplicate; check the result, since a sheet can draw the same view twice), and add them to
-  `shots/tripo/index.html`.
+  `shots/tripo/index.html`. Then `uv run scripts/art/check-views.py`, and look at what it flags. Where tails or wings
+  run from one view into the next, the splitter can't part them (it finds fewer views): cut those by hand, keeping
+  each view's own pixels whole (the Spitter, 2026-10-29: its old views had a hand and a tail cut off, and a
+  neighbour's tail tip in the back view).
 - **Redo, don't repair, by default** (the user, 2026-10-28, on two inpainted picks: "Just redo instead of trying to
   fix", "redo not inpaint"): when the user asks for a change to a pick (take the canisters off, open her eyes), the
   change goes into the words and the unit gets a new round on the same seeds. Inpaint only when the user asks to keep
