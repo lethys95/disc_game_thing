@@ -4,5 +4,6 @@
 - **Why:** The Sylvan's lines stop short; the composition sims flag the gap.
 - **Done when:** Designed and built to the line's last tier.
 - **Who:** The user designs; Claude builds, then art.
-- **The user (2026-10-28):** the Decay mage's tier 2 is the corpse explosion ("I think"). It's built on Decay
-  support 2 today; whether it moves or both carry it is open (`faction-stuff/sylvan/mage.md`, tier 2).
+- **The user (2026-10-28, then 2026-10-30):** the line forks at tier 2; its Decay side is damage over time ("we'll use
+  dots on mage line decay"), and the corpse explosion stays a support skill. Open: the Decay mage's abilities, and the
+  fork's other side (`faction-stuff/sylvan/mage.md`, tier 2).

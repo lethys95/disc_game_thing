@@ -16,4 +16,9 @@
   and 20 items (subjects written in `scripts/art/icons.ts`). Review page `shots/icons.html`.
 - **2026-10-13, later:** every ability has its icon (the six redone over up to four rounds; Beam is the weakest,
   flames rather than a column). Effects and items: the test is in, the rest wait for the user's okay.
+- **The user (2026-10-30):** "I accept every icon but curse, prey, storm capacitor. I think all of those could have
+  icons which better signal what they're about. Like, when I think of the word \"prey\" I don't think of shields".
+  New subjects from what each does (Curse: a pinned hex doll; Prey: a hyena's jaws on a fleeing stag; Storm capacitor:
+  a jar of stored lightning arching over three shields), and the same fix for the not-yet-made Cursed and Prey effects
+  and the Storm capacitor item. The test okayed, the other 86 effects and 20 items run as one batch.
 
