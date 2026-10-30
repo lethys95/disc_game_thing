@@ -24,6 +24,7 @@ A deterministic, Disciples II–inspired turn-based strategy game: squads on 3x3
 - **`src/rules/` is pure.** Plain serializable data + pure functions. It never imports three.js, the DOM, or `src/view/`. No randomness; the game is deterministic.
 - **Verify what you build.** `pnpm verify` (types, tests, screenshot, playtests) before calling anything done; for visual work use the `verify` skill and look at the PNGs. Don't call visual work done without having seen it.
 - **Extend through the architecture** (`docs/design/architecture.md`, recipes in `docs/engineering.md`): new mechanics are traits, effect definitions, params and tags. The engine, AI and view never name an ability or effect id.
+- **`scripts/mcp` is how Sanctuary plays.** The user's companion AI (`~/projects/sanctuary`) plays disc through the MCP server. A change to the rules, the options or their texts updates the server and its primer (`scripts/mcp/primer.ts`) in the same change, keeping the convention in `~/projects/sanctuary/docs/games.md`: a reply that leaves a decision ends with numbered options under a line `OPTIONS (revision N`; `act` takes an option's number and the revision; an old revision is refused in words, not as an error; everything a player needs is in the text; the primer is the server's instructions. Sanctuary runs its own table and watch file (`DISC_TABLE`, `DISC_WATCH`), so its games never touch the user's.
 - Git: commit at natural checkpoints (work chunk done, tests green) with descriptive messages. Never push.
 
 ## Commands
