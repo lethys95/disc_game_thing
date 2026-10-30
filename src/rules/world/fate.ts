@@ -1,7 +1,7 @@
 import { CAMP_REGROWTH_TURNS } from "#rules/balance";
 import { hexDistance } from "#rules/hex";
 import type { Hex } from "#rules/hex";
-import { GUARDIAN_ID } from "#rules/units/index";
+import { isGuardian } from "#rules/units/index";
 import { freeTile, newcomer } from "#rules/world/economy";
 import { leadershipOf } from "#rules/world/leaders";
 import { alive, leaderUnit, playerOf } from "#rules/world/state";
@@ -16,7 +16,7 @@ import type { City, Fallen, Hanging, Lair, Leader, PlayerId, SquadMember, World,
 export function bury(world: World, player: PlayerId | null, dead: readonly SquadMember[], events: WorldEvent[]): void {
   if (player === null) return;
   for (const m of dead) {
-    if (m.defId === GUARDIAN_ID) continue;
+    if (isGuardian(m.defId)) continue;
     playerOf(world, player).graveyard.push({ defId: m.defId, fellOnTurn: world.turn, marks: m.marks, level: m.level });
     events.push({ type: "fell", player, defId: m.defId });
   }
@@ -27,7 +27,7 @@ export function bury(world: World, player: PlayerId | null, dead: readonly Squad
  * choose; with more, `picker` chooses (`hangProblem`), and the rest go to the owner's graveyard then.
  */
 export function hang(world: World, city: City, picker: PlayerId, owner: PlayerId, dead: readonly SquadMember[], events: WorldEvent[]): void {
-  const fallen = dead.filter((m) => m.defId !== GUARDIAN_ID).map((m): Fallen => ({ defId: m.defId, fellOnTurn: world.turn, marks: m.marks, level: m.level }));
+  const fallen = dead.filter((m) => !isGuardian(m.defId)).map((m): Fallen => ({ defId: m.defId, fellOnTurn: world.turn, marks: m.marks, level: m.level }));
   const [only] = fallen;
   if (!only) return;
   if (fallen.length === 1) {

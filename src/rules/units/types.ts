@@ -24,6 +24,8 @@ export interface Evolution {
  */
 export interface FactionUnits {
   readonly units: Readonly<Record<string, UnitDef>>;
+  /** Its Capitol Guardian: never recruited, never evolves, never leaves the Capitol. */
+  readonly guardian: UnitDef;
   /** Its tier-1 units: what it recruits (tier 1 only, as in D2; higher tiers come from evolution), each a line's root. */
   readonly roots: readonly string[];
   readonly recruitCost: Readonly<Record<string, number>>;

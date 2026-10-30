@@ -8,7 +8,7 @@ import { itemById, tallyOf, withTally } from "#rules/items";
 import { NODES } from "#rules/nodes";
 import { COLS, ROWS, sameTile } from "#rules/battle/grid";
 import { xpValue } from "#rules/progression";
-import { GUARDIAN_ID, UNITS } from "#rules/units/index";
+import { isGuardian, UNITS } from "#rules/units/index";
 import { TROPHY_GOLD_PER_TIER } from "#rules/balance";
 import { growSquad } from "#rules/world/economy";
 import type { Held } from "#rules/world/economy";
@@ -190,9 +190,9 @@ export function concludeBattle(world: World, battle: Battle): WorldStep {
     if (lair.guards.length === 0 && attacker.squad.length > 0) clearLair(draft, lair, attacker.player, attacker, events);
   } else {
     const city = cityById(draft, defender.cityId);
-    const guardianBefore = city.garrison.some((m) => m.defId === GUARDIAN_ID);
+    const guardianBefore = city.garrison.some((m) => isGuardian(m.defId));
     city.garrison = defenders;
-    const guardianFell = guardianBefore && !city.garrison.some((m) => m.defId === GUARDIAN_ID);
+    const guardianFell = guardianBefore && !city.garrison.some((m) => isGuardian(m.defId));
     if (guardianFell && defending.player !== null) eliminate(draft, defending.player, events);
     if (!draft.outcome && city.garrison.length === 0 && attacker.squad.length > 0 && !leaderAt(draft, city.hex)) {
       changeHands(draft, city, attacker.player);

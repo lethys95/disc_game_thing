@@ -2,7 +2,7 @@ import type { Placement } from "#rules/battle/engine";
 import { COLS } from "#rules/battle/grid";
 import { hexDistance, neighbors, sameHex } from "#rules/hex";
 import { stepCost } from "#rules/map";
-import { GUARDIAN_ID } from "#rules/units/index";
+import { GUARDIANS } from "#rules/units/index";
 import { applyWorldAction } from "#rules/world/actions";
 import { concludeBattle, playersIn } from "#rules/world/battles";
 import { createWorld } from "#rules/world/create";
@@ -34,7 +34,7 @@ describe("three players", () => {
     expect(w.map.radius).toBeGreaterThan(4);
     for (const id of [0, 1, 2]) {
       const capitol = capitolOf(w, id);
-      expect(capitol?.garrison.map((m) => m.defId)).toEqual([GUARDIAN_ID]);
+      expect(capitol?.garrison.map((m) => m.defId)).toEqual([GUARDIANS.jilliath]);
       expect(nodesOf(w, capitol ?? w.cities[0]!).some((n) => n.kind === "gold")).toBe(true);
       expect(w.leaders.filter((l) => l.player === id)).toHaveLength(1);
     }

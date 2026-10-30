@@ -1,5 +1,6 @@
 import { kit } from "#rules/units/kit";
 import type { UnitDef } from "#rules/battle/types";
+import { capitolGuardian } from "#rules/units/guardian";
 import type { FactionUnits } from "#rules/units/types";
 
 /**
@@ -81,6 +82,7 @@ const UNITS: Readonly<Record<string, UnitDef>> = {
 
 export const GROVE: FactionUnits = {
   units: UNITS,
+  guardian: capitolGuardian("grove_guardian", "grove"),
   roots: ["sproutling", "grove_support_1", "grove_mage_1"],
   recruitCost: { sproutling: 45, grove_support_1: 50, grove_mage_1: 60 },
   archetype: { sproutling: "melee", grove_support_1: "support", grove_mage_1: "mage" },

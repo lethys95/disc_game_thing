@@ -8,7 +8,7 @@ import { NODES } from "#rules/nodes";
 import { nextForm } from "#rules/progression";
 import { RESEARCH } from "#rules/research";
 import { hireCost, resalePrice, STRUCTURES } from "#rules/structures";
-import { FACTION_ROOTS, GUARDIAN_ID, UNITS } from "#rules/units/index";
+import { FACTION_ROOTS, isGuardian, UNITS } from "#rules/units/index";
 import { upgradesOf } from "#rules/upgrades";
 import { forecast } from "#rules/world/battles";
 import { waitingForks, chooseBranchProblem, cityUpgradeCost, elevateProblem, freeTile, investNodeProblem, learnSkillProblem, nodeInvestCost, recruitCost, recruitProblem, researchProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem, squadsOf, upgradeCityProblem, upgradeProblem } from "#rules/world/economy";
@@ -170,7 +170,7 @@ function cityOrders(world: World, seat: PlayerId): MapOption[] {
       }
     }
     for (const m of city.garrison) {
-      if (m.defId === GUARDIAN_ID || elevateProblem(world, city.id, m.tile)) continue;
+      if (isGuardian(m.defId) || elevateProblem(world, city.id, m.tile)) continue;
       options.push({ text: `Elevate the ${cityName(city)} garrison's ${unitName(m.defId)} [${tileName(m.tile)}] to lead a new warband.`, action: { type: "elevate", cityId: city.id, tile: m.tile } });
     }
     if (!upgradeCityProblem(world, city.id)) options.push({ text: `Raise ${cityName(city)}'s walls to tier ${city.tier + 1} (${cityUpgradeCost(world, city)} gold): more garrison room and armor.`, action: { type: "upgradeCity", cityId: city.id } });

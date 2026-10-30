@@ -1,7 +1,7 @@
 import { cityName, leaderName, unitName } from "#view/names";
 import { hexDistance, sameHex } from "#rules/hex";
 import { openForks } from "#rules/forks";
-import { GUARDIAN_ID } from "#rules/units/index";
+import { isGuardian } from "#rules/units/index";
 import { leadershipOf, movementOf, unspentPoints } from "#rules/world/leaders";
 import { playerOf } from "#rules/world/state";
 import type { Leader, PlayerId, World } from "#rules/world/state";
@@ -128,7 +128,7 @@ export class MapPanels {
     const forks = openForks(playerOf(world, player).faction, playerOf(world, player).commitment).length;
     cities.forEach((city, i) => {
       const visitor = world.leaders.find((l) => l.player === player && sameHex(l.hex, city.hex));
-      const facts = [`${city.garrison.filter((m) => m.defId !== GUARDIAN_ID).length} in the garrison`, visitor ? `${leaderName(visitor)}'s warband visiting` : ""];
+      const facts = [`${city.garrison.filter((m) => !isGuardian(m.defId)).length} in the garrison`, visitor ? `${leaderName(visitor)}'s warband visiting` : ""];
       if (city.kind === "capitol") facts.push(`${forks} open branch${forks === 1 ? "" : "es"}`);
       // The graveyard shows where the dead can be raised: the Capitol, or every city once researched.
       if (raisesDeadAt(world, player, city)) facts.push(`${playerOf(world, player).graveyard.length} in the graveyard`);

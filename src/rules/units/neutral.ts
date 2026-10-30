@@ -2,16 +2,10 @@ import { kit } from "#rules/units/kit";
 import type { UnitDef } from "#rules/battle/types";
 
 /**
- * Neutral units: the user's bandits (docs/design/units/neutrals-bandits.md; stats provisional), the tribes, and the Capitol
- * Guardian (canon: exists, never leaves the Capitol, its fall ends the game; stats provisional, tuned by simulation).
+ * Neutral units: the user's bandits (docs/design/units/neutrals-bandits.md; stats provisional), the tribes, and what
+ * items stand up on the field.
  */
 export const NEUTRAL_UNITS: Readonly<Record<string, UnitDef>> = {
-  capitol_guardian: {
-    id: "capitol_guardian", name: "Capitol Guardian", faction: "neutral", tier: 0,
-    // Provisional, tuned by simulation: beats early and most mid armies, falls to fully evolved ones.
-    stats: { maxHp: 1500, shield: 0, armor: 25, initiative: 60, abilityPower: 100 },
-    abilities: [{ id: "attack", params: { power: 80 } }, ...kit("defend", "wait")],
-  },
   // A Hollow plate's armor, standing on its own (the user, 2026-09-29: "Hollow plate | armor | stands in a free grid
   // tile as a unit (60 HP, 10 armor, weak attack, no XP)"). An item's, never recruited. Attack and initiative provisional (#83).
   hollow_plate: {

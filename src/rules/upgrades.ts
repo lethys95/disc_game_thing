@@ -1,6 +1,6 @@
 import { UPGRADE_PRICE_PER_TIER } from "#rules/balance";
 import type { EffectSeed } from "#rules/battle/types";
-import { GUARDIAN_ID, UNITS } from "#rules/units/index";
+import { isGuardian, UNITS } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
 
 /**
@@ -24,7 +24,7 @@ const PLACEHOLDER_DAMAGE = 5;
 
 export const UPGRADES: ReadonlyMap<string, UpgradeDef> = new Map(
   Object.entries(UNITS)
-    .filter(([defId, def]) => def.faction !== "neutral" && defId !== GUARDIAN_ID)
+    .filter(([defId, def]) => def.faction !== "neutral" && !isGuardian(defId))
     .map(([defId, def]): [string, UpgradeDef] => {
       const id = `${defId}_damage`;
       const label = `+${PLACEHOLDER_DAMAGE} damage`;

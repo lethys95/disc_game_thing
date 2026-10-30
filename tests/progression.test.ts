@@ -5,7 +5,7 @@ import type { Commitment } from "#rules/forks";
 import { COLS } from "#rules/battle/grid";
 import { grow, xpToLevel, xpValue } from "#rules/progression";
 import { LEVEL_BONUS_PERCENT, RESURRECTION_BASE } from "#rules/balance";
-import { GUARDIAN_ID } from "#rules/units/index";
+import { GUARDIANS } from "#rules/units/index";
 import { maxHpOf, recordOf } from "#rules/world/record";
 import { applyWorldAction } from "#rules/world/actions";
 import { concludeBattle } from "#rules/world/battles";
@@ -118,7 +118,7 @@ describe("levels past the end of a line (pillars.md, D2's rule)", () => {
     expect(xpToLevel("hedge_mage")).toBe(100);
     expect(xpToLevel("avatar_of_vengeance")).toBe(1000);
     expect(xpToLevel("congregant")).toBeNull();
-    expect(xpToLevel(GUARDIAN_ID)).toBeNull();
+    expect(xpToLevel(GUARDIANS.jilliath)).toBeNull();
     expect(grow("congregant", 0, 5000, uncommitted).levels).toBe(0);
   });
 

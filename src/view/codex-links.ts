@@ -40,7 +40,7 @@ export const GROUP_NAMES: Readonly<Record<Group, string>> = {
 
 const TRIBE_UNITS: ReadonlySet<string> = new Set(TRIBES.flatMap((tribe) => tribeUnits(tribe)));
 
-/** A unit's shelf: its faction, or the tribes (the Capitol's Guardian counts as neither). */
+/** A unit's shelf: its faction, or the tribes. */
 function unitGroup(def: UnitDef): Group | null {
   if (def.faction !== "neutral") return def.faction;
   return TRIBE_UNITS.has(def.id) ? "tribes" : null;

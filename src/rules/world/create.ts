@@ -6,7 +6,7 @@ import type { MapSize } from "#rules/map";
 import type { StructureSite, WorldMap } from "#rules/map";
 import { spellsOf } from "#rules/spells";
 import { mercenaryStock, MERCHANT_RESTOCK_TURNS, merchantWares } from "#rules/structures";
-import { GUARDIAN_ID } from "#rules/units/index";
+import { GUARDIANS } from "#rules/units/index";
 import type { Playable } from "#rules/units/index";
 import { hexDistance } from "#rules/hex";
 import type { Hex } from "#rules/hex";
@@ -52,6 +52,11 @@ export function createWorld(seed: number, setups: readonly PlayerSetup[], size: 
       leaderTile: first.tile,
     };
   });
+  const guardianOf = (player: number): string => {
+    const setup = setups[player];
+    if (!setup) throw new Error(`a Capitol for player ${player}, who isn't in the game`);
+    return GUARDIANS[setup.faction];
+  };
   const cities = map.sites.map((site): City => {
     const owner = site.kind === "capitol" ? site.start : null;
     return {
@@ -59,7 +64,7 @@ export function createWorld(seed: number, setups: readonly PlayerSetup[], size: 
       kind: site.kind,
       hex: site.hex,
       owner,
-      garrison: site.kind === "capitol" ? [member(GUARDIAN_ID, { row: 0, col: 1 })] : neutralGroup("bandits", strengthAt(map, site.hex, "medium")),
+      garrison: site.kind === "capitol" ? [member(guardianOf(site.start), { row: 0, col: 1 })] : neutralGroup("bandits", strengthAt(map, site.hex, "medium")),
       tier: 1,
       enchantments: [],
     };

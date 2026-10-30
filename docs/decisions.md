@@ -448,3 +448,11 @@ player's tarot cards there are the AI's picks, which both ends make alike, so no
 - **Music is lossless (2026-10-28):** the user's tracks go in as FLAC (`scripts/audio/music-take.sh`), after they heard
   the loss in Opus at 128 and at 256 kb/s; the game loads `.flac` beside `.ogg`. On the map the music is a rotation
   (the overworld tracks and the faction's map theme, drawn from a bucket), not one looping theme.
+
+## Each faction's Guardian lives in its faction's file (2026-10-30)
+The user (2026-10-26): "Each faction will have their own capitol guardian. They'll do largely the same." A faction's
+units now carry its Guardian beside its lines: a Capitol starts with its owner's Guardian, and the rules ask whether a
+unit is a Guardian rather than naming one id. The Guardians belong to their faction (its shelf in the codex, its
+accent; a Hunter's bonus against neutral units no longer hits them) but stand outside its lines: never recruited, never evolved,
+no retreat, no research. They share one stat line until the user sets them apart, so balance doesn't move. Saves made
+before name the old shared unit and are refused by name, the way any renamed unit is.

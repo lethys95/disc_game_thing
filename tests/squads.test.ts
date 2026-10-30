@@ -2,7 +2,7 @@ import type { Placement } from "#rules/battle/engine";
 import { COLS } from "#rules/battle/grid";
 import { hexDistance, neighbors, sameHex } from "#rules/hex";
 import { stepCost } from "#rules/map";
-import { GUARDIAN_ID } from "#rules/units/index";
+import { GUARDIANS } from "#rules/units/index";
 import { applyWorldAction } from "#rules/world/actions";
 import { createWorld } from "#rules/world/create";
 import { income, investNodeProblem, recruitProblem, resurrectionCost, resurrectProblem, upgradeCityProblem } from "#rules/world/economy";
@@ -30,7 +30,7 @@ describe("transfers", () => {
   test("a warband in its city trades with the garrison; moving onto a unit swaps them", () => {
     let w = move(world(), band, 1, garrison, 0, 0, 2);
     expect(leaderById(w, "leader0").squad.map((m) => m.tile.col)).toEqual([0, 2]);
-    expect(capitolOf(w, 0)?.garrison.map((m) => m.defId)).toEqual([GUARDIAN_ID, "congregant"]);
+    expect(capitolOf(w, 0)?.garrison.map((m) => m.defId)).toEqual([GUARDIANS.jilliath, "congregant"]);
     w = move(w, garrison, 0, band, 2, 2, 0);
     expect(leaderById(w, "leader0").squad.find((m) => m.tile.col === 2)?.defId).toBe("congregant");
   });

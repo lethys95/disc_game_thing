@@ -9,7 +9,7 @@ import type { Hex } from "#rules/hex";
 import { stepCost } from "#rules/map";
 import { nextForm, xpValue } from "#rules/progression";
 import { hangingFor } from "#rules/world/fate";
-import { FACTION_ROOTS, GUARDIAN_ID, RECRUIT_COST, UNITS } from "#rules/units/index";
+import { FACTION_ROOTS, isGuardian, RECRUIT_COST, UNITS } from "#rules/units/index";
 import { upgradesOf } from "#rules/upgrades";
 import { autoplay } from "#rules/ai";
 import type { Battle } from "#rules/battle/types";
@@ -441,7 +441,7 @@ const newWarband: Planner = ({ world, capitol, mine, home, underThreat, rich, go
   const canFill = gold >= cost * STARTING_LEADERSHIP;
   const warbandsFull = mine.every((l) => l.squad.length >= leadershipOf(l));
   if ((underThreat && !canFill) || !(mine.length === 0 || (rich && warbandsFull && mine.length < AI_MAX_WARBANDS))) return null;
-  const spare = capitol.garrison.find((m) => m.defId !== GUARDIAN_ID);
+  const spare = capitol.garrison.find((m) => !isGuardian(m.defId));
   if (spare && !elevateProblem(world, capitol.id, spare.tile)) return { type: "elevate", cityId: capitol.id, tile: spare.tile };
   const garrison: SquadRef = { kind: "garrison", cityId: capitol.id };
   const guard = pick(capitol.garrison);

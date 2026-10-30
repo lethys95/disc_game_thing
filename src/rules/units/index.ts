@@ -7,7 +7,7 @@ import type { Archetype, Evolution, FactionUnits } from "#rules/units/types";
 
 /**
  * Every faction unit can retreat (the user's design: surrender is a default action, and a unit that must not flee
- * simply lacks it). Neutrals and the Guardian don't.
+ * simply lacks it). Neutrals and the Guardians don't.
  */
 const canRetreat = (units: Readonly<Record<string, UnitDef>>): Record<string, UnitDef> =>
   Object.fromEntries(Object.entries(units).map(([id, def]) => [id, { ...def, abilities: [...def.abilities, { id: "retreat" }] }]));
@@ -31,9 +31,16 @@ function joined<T>(records: readonly Readonly<Record<string, T>>[]): Readonly<Re
 
 const factions = Object.values(FACTION_UNITS);
 
-export const UNITS: Readonly<Record<string, UnitDef>> = joined([...factions.map((f) => canRetreat(f.units)), NEUTRAL_UNITS]);
+export const UNITS: Readonly<Record<string, UnitDef>> = joined([
+  ...factions.map((f) => canRetreat(f.units)),
+  Object.fromEntries(factions.map((f) => [f.guardian.id, f.guardian])),
+  NEUTRAL_UNITS,
+]);
 
-export const GUARDIAN_ID = "capitol_guardian";
+/** Each faction's Capitol Guardian, the unit its Capitol starts with. */
+export const GUARDIANS: Readonly<Record<Playable, string>> = { jilliath: JILLIATH.guardian.id, nexus: NEXUS.guardian.id, grove: GROVE.guardian.id };
+const GUARDIAN_IDS: ReadonlySet<string> = new Set(Object.values(GUARDIANS));
+export const isGuardian = (defId: string): boolean => GUARDIAN_IDS.has(defId);
 
 export const FACTION_ROOTS: Readonly<Record<Playable, readonly string[]>> = { jilliath: JILLIATH.roots, nexus: NEXUS.roots, grove: GROVE.roots };
 export const LINE_ARCHETYPE: Readonly<Record<string, Archetype>> = joined(factions.map((f) => f.archetype));

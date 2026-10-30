@@ -1,5 +1,6 @@
 import { kit } from "#rules/units/kit";
 import type { UnitDef } from "#rules/battle/types";
+import { capitolGuardian } from "#rules/units/guardian";
 import type { FactionUnits } from "#rules/units/types";
 
 /** Ral-Vitahl (docs/design/units/nexus-tier1.md, docs/design/dichotomies.md). Mechanics are the user's; stats are provisional. */
@@ -73,6 +74,7 @@ const UNITS: Readonly<Record<string, UnitDef>> = {
 
 export const NEXUS: FactionUnits = {
   units: UNITS,
+  guardian: capitolGuardian("nexus_guardian", "nexus"),
   roots: ["custodian", "technician", "apprentice"],
   // Provisional: "costly", quality over quantity.
   recruitCost: { custodian: 60, technician: 50, apprentice: 60 },

@@ -319,7 +319,9 @@ export function buildFigure(defId: string, side: Side, owner: THREE.Color | null
       g.add(hood(top - 0.1, 0.18, m.body));
       g.add(staff(m.trim, m.glow));
       break;
-    case "capitol_guardian":
+    case "jilliath_guardian":
+    case "nexus_guardian":
+    case "grove_guardian":
       g.add(helm(top - 0.05, 0.2, m.trim));
       g.add(shield(m.trim));
       g.add(blade(0.9, m.trim, -0.2));

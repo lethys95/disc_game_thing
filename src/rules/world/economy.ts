@@ -9,7 +9,7 @@ import { biomeAt } from "#rules/map";
 import { NODES } from "#rules/nodes";
 import type { CityGifts } from "#rules/nodes";
 import { grow, xpToEvolve } from "#rules/progression";
-import { EVOLUTIONS, FACTION_ROOTS, GUARDIAN_ID, LINE_ARCHETYPE, RECRUIT_COST, UNITS } from "#rules/units/index";
+import { EVOLUTIONS, FACTION_ROOTS, isGuardian, LINE_ARCHETYPE, RECRUIT_COST, UNITS } from "#rules/units/index";
 import { freeRevival, giftOf, learnProblem, movementOf, squadHealingOf } from "#rules/world/leaders";
 import { maxHpOf } from "#rules/world/record";
 import { CITY_RESURRECTION_PREMIUM, RESEARCH } from "#rules/research";
@@ -247,7 +247,7 @@ export function elevateProblem(world: World, cityId: string, tile: Tile): string
   if (city.owner !== world.activePlayer) return "not your city";
   const unit = city.garrison.find((m) => sameTile(m.tile, tile));
   if (!unit) return "no unit there";
-  if (unit.defId === GUARDIAN_ID) return "the Guardian never leaves the Capitol";
+  if (isGuardian(unit.defId)) return "the Guardian never leaves the Capitol";
   if (leaderAt(world, city.hex)) return `a leader already stands in ${city.kind === "capitol" ? "the Capitol" : "the city"}`;
   return null;
 }
@@ -284,7 +284,7 @@ export function startTurn(world: World, events: WorldEvent[]): void {
   // A Training yard's garrison drills: a little XP a turn.
   for (const city of world.cities.filter((c) => c.owner === side)) {
     const drill = Math.max(0, ...giftsOf(world, city, "garrisonTraining"));
-    if (drill > 0) growSquad(world, { squad: city.garrison, leader: undefined }, drill, side, events, (m) => m.defId !== GUARDIAN_ID);
+    if (drill > 0) growSquad(world, { squad: city.garrison, leader: undefined }, drill, side, events, (m) => !isGuardian(m.defId));
   }
 
   events.push({ type: "turnStarted", player: side, turn: world.turn, income: earned });

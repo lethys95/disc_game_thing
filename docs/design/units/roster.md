@@ -85,7 +85,7 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 All thirteen looks have a picked concept (2026-10-28; `unit-looks.md`).
 | Unit | Faction · tier | What exists |
 |---|---|---|
-| Capitol Guardian | — | the canon role (the chess king), no look |
+| Capitol Guardian (one per faction: Jilliath's, Ral-Vitahl's, the Grove's) | — | the canon role (the chess king), no look |
 
 ## 4. Stubs: placeholder names or thin designs (identity waits on the design)
 | Unit | What's missing |

@@ -1,6 +1,6 @@
 import { cityName, unitName } from "#view/names";
 import type { Tile } from "#rules/battle/types";
-import { FACTION_ROOTS, GUARDIAN_ID } from "#rules/units/index";
+import { FACTION_ROOTS, isGuardian } from "#rules/units/index";
 import { CITY_HEALING_PER_TIER, CITY_MAX_TIER, CITY_SLOTS } from "#rules/balance";
 import { raisesDeadAt, cityUpgradeCost, elevateProblem, investNodeProblem, nodeInvestCost, recruitCost, recruitProblem, upgradeCityProblem, resurrectionCost, resurrectProblem, reviveCost, reviveProblem } from "#rules/world/economy";
 import { capacityOf, transferProblem } from "#rules/world/squads";
@@ -251,7 +251,7 @@ export class CityScreen implements KeyLayer {
             }
           : null,
       unitChoices: (ref: SquadRef, member: SquadMember): GridChoice[] =>
-        ref.kind === "garrison" && city && member.defId !== GUARDIAN_ID
+        ref.kind === "garrison" && city && !isGuardian(member.defId)
           ? [{ label: "Elevate to leader", problem: elevateProblem(world, city.id, member.tile), run: () => this.options.act({ type: "elevate", cityId: city.id, tile: member.tile }) }]
           : [],
     };

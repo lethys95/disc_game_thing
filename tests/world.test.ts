@@ -3,7 +3,7 @@ import type { Placement } from "#rules/battle/engine";
 import { hexagon, hexDistance, hexKey, neighbors } from "#rules/hex";
 import { biomeAt, NODE_POOLS, PATCH_BIOMES, SPECIALS_PER_CITY, findPath, generateMap, TERRAIN_COST } from "#rules/map";
 import type { Commitment } from "#rules/forks";
-import { GUARDIAN_ID } from "#rules/units/index";
+import { GUARDIANS } from "#rules/units/index";
 import { CITY_HEALING_PER_TIER, CAMP_REGROWTH_TURNS, CAMP_STRONG_FROM, CAPITOL_INCOME, MINE_INCOME, STARTING_GOLD } from "#rules/balance";
 import { applyWorldAction } from "#rules/world/actions";
 import { chooseWorldAction } from "#rules/world/ai";
@@ -115,11 +115,16 @@ describe("map", () => {
 describe("world", () => {
   test("each side starts with a Capitol guarded by its Guardian, and earns income at the start of its turn", () => {
     const world = createWorld(1, twoPlayers([squad, squad], both("preserve"), ["jilliath", "jilliath"]));
-    expect(capitolOf(world, 0)?.garrison.map((m) => m.defId)).toEqual([GUARDIAN_ID]);
+    expect(capitolOf(world, 0)?.garrison.map((m) => m.defId)).toEqual([GUARDIANS.jilliath]);
     // Each Capitol has a gold mine of its own.
     expect(world.players.map((p) => p.gold)).toEqual([STARTING_GOLD + CAPITOL_INCOME + MINE_INCOME, STARTING_GOLD]);
     const next = applyWorldAction(world, { type: "endTurn" }).world;
     expect(playerOf(next, 1).gold).toBe(STARTING_GOLD + CAPITOL_INCOME + MINE_INCOME);
+  });
+
+  test("each faction's Capitol holds that faction's own Guardian", () => {
+    const world = createWorld(1, twoPlayers([squad, squad], both("preserve"), ["nexus", "grove"]));
+    expect([0, 1].map((side) => capitolOf(world, side)?.garrison.map((m) => m.defId))).toEqual([[GUARDIANS.nexus], [GUARDIANS.grove]]);
   });
 
   test("neutral cities are guarded; once emptied, walking in captures the city and its gold mine", () => {
@@ -216,7 +221,7 @@ describe("world", () => {
     world = applyWorldAction(world, { type: "recruit", defId: "congregant", into: { kind: "garrison", cityId: "capitol0" } }).world;
     world = withLeader(world, "leader0", { hex: beside(world, startOf(world, 0)) });
     const recruit = capitolOf(world, 0)?.garrison.find((m) => m.defId === "congregant");
-    const guardian = capitolOf(world, 0)?.garrison.find((m) => m.defId === GUARDIAN_ID);
+    const guardian = capitolOf(world, 0)?.garrison.find((m) => m.defId === GUARDIANS.jilliath);
     if (!recruit || !guardian) throw new Error("garrison missing");
     expect(() => applyWorldAction(world, { type: "elevate", cityId: "capitol0", tile: guardian.tile })).toThrow(/Guardian/);
     const step = applyWorldAction(world, { type: "elevate", cityId: "capitol0", tile: recruit.tile });

@@ -1,5 +1,6 @@
 import { kit } from "#rules/units/kit";
 import type { UnitDef } from "#rules/battle/types";
+import { capitolGuardian } from "#rules/units/guardian";
 import type { FactionUnits } from "#rules/units/types";
 
 /** The Jilliath melee line (docs/design/units/jilliath-melee-line.md, canon; numbers first-pass). */
@@ -148,6 +149,7 @@ const UNITS: Readonly<Record<string, UnitDef>> = {
 
 export const JILLIATH: FactionUnits = {
   units: UNITS,
+  guardian: capitolGuardian("jilliath_guardian", "jilliath"),
   roots: ["congregant", "seraph", "acolyte"],
   // Canon: the Congregant costs 40 gold; the others provisional.
   recruitCost: { congregant: 40, seraph: 50, acolyte: 60 },

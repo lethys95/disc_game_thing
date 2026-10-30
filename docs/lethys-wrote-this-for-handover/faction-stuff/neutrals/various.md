@@ -40,5 +40,6 @@ game (provisional, questions.md #19).
 - **Intent:** powerful but immobile; the anti-rush mechanism. Strong but killable (no D2 90%-armor monstrosity).
 - **Stats (Claude):** health enormous · damage high · armor high (tier-1 units barely scratch it) · initiative high.
 - **One per faction (you, 2026-10-26):** "Each faction will have their own capitol guardian. They'll do largely the
-  same." Not built yet (`todo/capitol-guardians`).
-- **Status:** in game as `capitol_guardian`, one shared by every faction.
+  same."
+- **Status:** in game, one per faction (2026-10-30), each named "Capitol Guardian" for now and doing exactly the
+  same until you set them apart; no looks yet (`todo/capitol-guardians`).
