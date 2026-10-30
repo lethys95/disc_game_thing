@@ -10,3 +10,6 @@
 - **Built (2026-10-30):** each faction's units carry its own Guardian, all three "Capitol Guardian" for now with the
   old shared stat line, so nothing plays differently until the user sets them apart; a Capitol starts with its owner's
   (`decisions.md`). On each faction's codex shelf. Next: a look for each, in words, for the user.
+- **Looks drafted (2026-10-30):** `docs/design/units/unit-looks.md`, one thread through all three (each bound to its
+  Capitol its faction's way): Jilliath's angel in chains she put on herself, Ral-Vitahl's automaton built into its
+  throne, the Grove's antlered beast rooted from the ribs back. Waiting for the user's read before any concept.

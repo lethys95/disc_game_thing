@@ -167,6 +167,33 @@ Palettes so far: the Omen oxblood, the Soothsayer red and mustard stripes, the F
   filled with murky liquid that glows faintly. His face inquisitive, intelligent, confident and malicious; not crazed.
 - **Standout:** the two flasks held out, and the top hat.
 
+## Capitol Guardians (Claude's drafts, 2026-10-30)
+One per faction (the user, 2026-10-26: "Each faction will have their own capitol guardian. They'll do largely the
+same."). The canon role: the chess king, powerful but immobile, its fall ends the game. The thread through all three,
+so they read as one role: **each is bound to its Capitol in its faction's own way**, and that is why it never leaves.
+The shared draft the user cut (a statue grown into its plinth, one shape in three materials) gave them one body; these
+give each its own.
+
+### Jilliath's: bound by a vow
+- **Draft:** a towering angel, twice a man's height, in plate of white enamel and dark red, plate greaves to the feet,
+  a closed helm with one narrow slit; great white wings held half open. Heavy iron chains run from cuffs at her wrists
+  and ankles down into the floor. Nobody chained her: she did, and she fights within their reach, a long two-handed
+  sword in both hands.
+- **Standout:** the chains she wears by choice (sacrifice, the faction's core).
+
+### Ral-Vitahl's: built in place
+- **Draft:** an automaton enthroned. A colossal figure of black enamel and gold, seated, its legs one piece with the
+  throne and the throne one piece with the floor. Long jointed arms of black and gold, hands large enough to close
+  round a man; a serene gold face with no features but two teal glass eyes. Conductor spires rise from the throne's
+  back with teal lightning running between them. Immaculate, never worn.
+- **Standout:** a king piece that never stands up.
+
+### The Grove's: grown in place
+- **Draft:** a great antlered beast the size of a house, living from the head to the ribs; from there back its body
+  becomes a gnarled trunk whose roots run into the ground. Dark fur and moss over its shoulders, eyes like amber sap.
+  Its antlers are branches: one side in autumn leaf, the other bare and grey, furred with fungus.
+- **Standout:** a beast rooted from the ribs back, life and decay in its antlers.
+
 ## Concept round one (2026-10-26)
 
 The words above as they stood (the user: "first round on all, then we can edit afterwards"); prompts in
