@@ -758,6 +758,11 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "a towering automaton of an arcane noble house, not a person: its torso a tall furnace of black enamel and polished brass with gold filigree, a domed brass top with one large round sight-glass eye glowing teal, a rank of tall brass vent pipes rising from its back, pipes coiling down thick armoured arms to heavy brass hands, short thick legs in black enamel greaves",
     poses: ["it stands planted and heavy, its brass hands lowered, white steam pouring from the vent pipes on its back"],
     strengths: T_POSED,
+    // d90 cuts its pipes at the top edge; the pose model finds no face on it, so its crops are placed by hand.
+    picked: {
+      card: "cyclops-card-d75.png",
+      crops: { bust: { from: "card", size: 0.6, x: 0.44, y: 0.3 }, icon: { from: "card", size: 0.3, x: 0.405, y: 0.265 } },
+    },
   },
   mutant: {
     front: "shots/tripo/mutant/front.png",
@@ -765,6 +770,10 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "an organic hulk grown by an arcane noble house: a small bald head with pale grey skin and small furious eyes, a bare muscular torso, the right shoulder and arm swollen huge and grown over with ridged dark shell plates and spikes, ending in a massive fist of fused grey bone, the left arm still a man's, faint teal light in the veins, dark breeches and boots",
     poses: ["it stands hunched and lopsided, the huge right fist hanging to the ground"],
     strengths: T_POSED,
+    picked: {
+      card: "mutant-card-d90.png",
+      crops: { bust: { from: "card", size: 0.618, x: 0.582, y: 0.255 }, icon: { from: "card", size: 0.285, x: 0.618, y: 0.213 } },
+    },
   },
   technician: {
     front: "shots/tripo/technician/front.png",
@@ -772,6 +781,10 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "a golem-wright of an arcane noble house, a stocky older man with close-cropped grey hair, a short grey beard and a calm craftsman's face, brass goggles of stacked magnifying lenses over his eyes, a long black leather work apron over a high-collared black coat with teal piping, gauntlets of black steel and brass, tall boots, a jointed clockwork arm of black iron folded down his back from a brass mount between the shoulders",
     poses: ["he stands at work, one gauntleted palm held out with a short arc of teal lightning crackling across it"],
     strengths: T_POSED,
+    picked: {
+      card: "technician-card-d90.png",
+      crops: { bust: { from: "card", size: 0.682, x: 0.473, y: 0.202 }, icon: { from: "card", size: 0.341, x: 0.499, y: 0.130 } },
+    },
   },
   justiciar: {
     front: "shots/tripo/justiciar/front.png",
@@ -779,6 +792,10 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "a haughty noblewoman of an arcane noble house, a judge: a tall stiff collar rising behind her head, black outside and teal inside, edged in gold; a pale face, chin raised, cold grey eyes open, dark hair drawn up severely; long robes of heavy black silk falling straight to the floor, a teal panel down the front, teal lining in the wide sleeves, severe geometric gold embroidery at the hems, long black gloves",
     poses: ["she stands straight and still, looking down at the viewer, a short rod of office in white gold with a teal glass globe at its head held in one hand"],
     strengths: T_POSED,
+    picked: {
+      card: "justiciar-card-d90.png",
+      crops: { bust: { from: "card", size: 0.691, x: 0.502, y: 0.222 }, icon: { from: "card", size: 0.345, x: 0.508, y: 0.149 } },
+    },
   },
   thaumaturge: {
     front: "shots/tripo/thaumaturge/front.png",
@@ -786,6 +803,10 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "a lord of an arcane noble house whose whole head is hidden in a closed high-crested helm of black enamel and gold filigree with one narrow slit of teal glass across the eyes; tall and straight-backed, a long black silk coat with a stiff gold-edged standing collar, teal lining and a row of gold buttons, black breeches, polished boots, black gloves",
     poses: ["he stands with both gloved hands open and loose at his sides, teal lightning crawling between his fingers"],
     strengths: T_POSED,
+    picked: {
+      card: "thaumaturge-card-d90.png",
+      crops: { bust: { from: "card", size: 0.558, x: 0.516, y: 0.232 }, icon: { from: "card", size: 0.279, x: 0.503, y: 0.173 } },
+    },
   },
   backlasher: {
     front: "shots/tripo/backlasher/front.png",
@@ -793,6 +814,11 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "an inhuman female humanoid of an arcane noble house, arms and legs too long and too thin for a human, grey-violet skin, her whole body covered in a fullbody exoskeleton of black splinter glass like an insect's shell, a flame-shaped crest of glass shards on her head, no hair, a Venetian mask with little expression, in dark colours with stars, covering the face",
     poses: ["she stands with her long arms spread, a cloud of black glass shards turning around her hands, teal lightning jumping between them"],
     strengths: T_POSED,
+    // d90 gathered the shards round her legs into a skirt (no skirts, the user).
+    picked: {
+      card: "backlasher-card-d75.png",
+      crops: { bust: { from: "card", size: 0.446, x: 0.503, y: 0.306 }, icon: { from: "card", size: 0.206, x: 0.500, y: 0.264 } },
+    },
   },
   maelstrom: {
     front: "shots/tripo/maelstrom/front.png",
@@ -800,6 +826,10 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "a noble storm-caster of an arcane house, clean shaven, a calm absolute face, long silver hair; a long black silk robe with very wide sleeves, a gold-embroidered dragon coiling over the shoulders and down each sleeve, a stiff gold-edged black collar",
     poses: ["he hovers above the ground with fog pooling beneath him, teal sparks flickering in the fog, his hands open, his hair and robe floating slightly"],
     strengths: T_POSED,
+    picked: {
+      card: "maelstrom-card-d90.png",
+      crops: { bust: { from: "card", size: 0.527, x: 0.516, y: 0.204 }, icon: { from: "card", size: 0.263, x: 0.503, y: 0.148 } },
+    },
   },
   brigand: {
     front: "shots/tripo/brigand/front.png",
@@ -808,6 +838,10 @@ const UNITS: Readonly<Record<string, Unit>> = {
     // The user's note allows a mace or a club and the prop sheet has no pick; the club read better (Claude's, round one).
     poses: ["he stands squared and ready, a heavy studded wooden club bound with iron bands in his fist"],
     strengths: T_POSED,
+    picked: {
+      card: "brigand-card-d90.png",
+      crops: { bust: { from: "card", size: 0.751, x: 0.532, y: 0.213 }, icon: { from: "card", size: 0.375, x: 0.562, y: 0.134 } },
+    },
   },
   marauder: {
     front: "shots/tripo/marauder/front.png",
@@ -815,6 +849,10 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "a big broad marauder, his face hidden by a crude dark mask with two eye holes under a deep black wool hood; a studded dark leather brigandine over boiled-leather lamellar, thick leather bracers, a wide belt, heavy boots",
     poses: ["he stands with a long two-handed warhammer of dark iron, its spiked head resting on his shoulder"],
     strengths: T_POSED,
+    picked: {
+      card: "marauder-card-d90.png",
+      crops: { bust: { from: "card", size: 0.677, x: 0.540, y: 0.275 }, icon: { from: "card", size: 0.312, x: 0.524, y: 0.209 } },
+    },
   },
   bandit: {
     front: "shots/tripo/bandit/front.png",
@@ -822,6 +860,10 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "a bandit archer, a lean woman, two long kanzashi hairpins through a high knot of dark hair, a dark scarf over her lower face, sharp eyes; a fitted dark leather jerkin, long leather gloves flaring to wide cuffs at the elbow, tall leather boots flaring to wide cuffs above the knee, dark close-fitting trousers",
     poses: ["she stands drawing a tall plain longbow of dark yew, an arrow nocked"],
     strengths: T_POSED,
+    picked: {
+      card: "bandit-card-d90.png",
+      crops: { bust: { from: "card", size: 0.516, x: 0.468, y: 0.286 }, icon: { from: "card", size: 0.258, x: 0.476, y: 0.232 } },
+    },
   },
   hedge_mage: {
     front: "shots/tripo/hedge-mage/front.png",
@@ -829,6 +871,10 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "the bandits' firestarter, a wiry woman with the sides of her head shaved and the rest of her dark hair in a short braid, a hard amused face, tattooed runes on both bare forearms; a heavy sleeveless dark leather coat to the knees, a scarf at the neck, dark trousers, leather boots",
     poses: ["she stands with fire flaring in both open palms, the runes on her forearms glowing ember-orange"],
     strengths: T_POSED,
+    picked: {
+      card: "hedge_mage-card-d90.png",
+      crops: { bust: { from: "card", size: 0.679, x: 0.507, y: 0.227 }, icon: { from: "card", size: 0.339, x: 0.512, y: 0.155 } },
+    },
   },
   cutpurse: {
     front: "shots/tripo/cutpurse/front.png",
@@ -836,6 +882,10 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "a cutpurse of a nomadic swindlers' carnival, a slim woman, a dark bandana hiding her lower face, beautiful natural eyebrows over serious dark eyes, dark hair in a long ponytail; tight trousers in vertical stripes of black and dark purple, soft black boots, a long dark trench coat falling to the calves, its hem cut in long points, its lining oxblood silk with a faint harlequin diamond pattern",
     poses: ["she stands poised low, a slim curved steel knife in each hand"],
     strengths: T_POSED,
+    picked: {
+      card: "cutpurse-card-d90.png",
+      crops: { bust: { from: "card", size: 0.624, x: 0.500, y: 0.207 }, icon: { from: "card", size: 0.312, x: 0.490, y: 0.141 } },
+    },
   },
   snakeoiler: {
     front: "shots/tripo/snakeoiler/front.png",
@@ -843,6 +893,10 @@ const UNITS: Readonly<Record<string, Unit>> = {
       "a quack physician of a nomadic swindlers' carnival, a broad heavy man in a tall stovepipe hat, a full curly black beard and dark knowing eyes, his look inquisitive, confident and malicious, not crazed; a long patchwork greatcoat of dark wool and velvet patches, a brocade waistcoat, a high collar, dark trousers, heavy boots",
     poses: ["he stands holding out a large round-bottomed glass flask in each hand, filled with a murky dark green liquid that glows faintly"],
     strengths: T_POSED,
+    picked: {
+      card: "snakeoiler-card-d90.png",
+      crops: { bust: { from: "card", size: 0.743, x: 0.519, y: 0.245 }, icon: { from: "card", size: 0.343, x: 0.521, y: 0.173 } },
+    },
   },
 };
 

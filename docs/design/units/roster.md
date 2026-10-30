@@ -54,19 +54,19 @@ awaiting the user; cand. = candidates, none picked; — = none. **Portrait:** �
 | Soothsayer | carnival 2 | user, plus Claude's eye coat and coin veil; fully veiled, dark skin (user) | picked: `soothsayer-hooded-dark-turnaround-1000` | ✓ |
 | Omen | carnival 2 | user: twin flintlocks, blindfold, ragged trenchcoat with a pentagram; Claude's: top hat, gold grin | picked: `omen-grin-turnaround-1001`, pistols `omen-pistols-props-1000` | ✓ |
 | The five tribes (25 units) | the Wild, the Tuskclans, the Scaled, the Herd, the barbarian clans | Claude's (sheets in `faction-stuff/neutrals/`) | picked: in each sheet (`shots/tribes.html`) | ✓ |
-| Cyclops | Nexus 2 | Claude, on the user's steam vents and pipes (`unit-looks.md`) | picked: `cyclops-furnace-turnaround-1001` (user, 2026-10-28) | |
-| Mutant | Nexus 2 | Claude, on the user's organic hulk | picked: `mutant-overgrown-turnaround-1000` (user, round two) | |
-| Technician | Nexus 1 | Claude, on the user's note (a zoom monocle, a clockwork iron arm on the back) | picked: `technician-uncharged-turnaround-1001` (user, round three) | |
-| Justiciar | Nexus 2 | Claude, on the user's high collar | picked: `justiciar-open-turnaround-1000` (user, round three; the side view drawn twice) | |
-| Thaumaturge | Nexus 2 | Claude's (a closed helm, a long coat) | picked: `thaumaturge-helm-turnaround-1000` (user, round three) | |
-| Backlasher | Nexus 3 | the user's (an inhuman figure in a black splinter glass fullbody exoskeleton, a starred Venetian mask, no hair) | picked: `backlasher-creature-turnaround-1000` (user, round eight) | |
-| Maelstrom | Nexus 3 | the user's (hovering, black and gold, a Chinese dragon) | picked: `maelstrom-robe-1000-uncharged-d70` (user: the canisters repainted off `maelstrom-robe-turnaround-1000`) | |
-| Brigand | bandits 1 | the user's (red bandana, ponytail, scruffy) | picked: `brigand-longcoat-turnaround-1000` (user); stray arm cleared: `brigand-longcoat-1000-armless` | |
-| Marauder | bandits 1 | the user's (a big man, dark brigandine, black chainmail, a warhammer) | picked: `marauder-leather-turnaround-1000` (user) | |
-| Bandit | bandits 1 | the user's (kanzashi, wide cuffs) | picked: `bandit-cuffs-turnaround-1001` (user) | |
-| Hedge Mage | bandits 1 | Claude, on the user's note | picked: `hedge-mage-firestarter-turnaround-1000` (user) | |
-| Cutpurse | carnival 1 | the user's (stripes, long pointed coat) | picked: `cutpurse-pixie-turnaround-1001` (user) | |
-| Snakeoiler | carnival 1 | the user's (top hat, curly beard, patchwork) | picked: `snakeoiler-broad-turnaround-1000` (user) | |
+| Cyclops | Nexus 2 | Claude, on the user's steam vents and pipes (`unit-looks.md`) | picked: `cyclops-furnace-turnaround-1001` (user, 2026-10-28) | ✓ (Claude's picks, 2026-10-30) |
+| Mutant | Nexus 2 | Claude, on the user's organic hulk | picked: `mutant-overgrown-turnaround-1000` (user, round two) | ✓ (Claude's picks, 2026-10-30) |
+| Technician | Nexus 1 | Claude, on the user's note (a zoom monocle, a clockwork iron arm on the back) | picked: `technician-uncharged-turnaround-1001` (user, round three) | ✓ (Claude's picks, 2026-10-30) |
+| Justiciar | Nexus 2 | Claude, on the user's high collar | picked: `justiciar-open-turnaround-1000` (user, round three; the side view drawn twice) | ✓ (Claude's picks, 2026-10-30) |
+| Thaumaturge | Nexus 2 | Claude's (a closed helm, a long coat) | picked: `thaumaturge-helm-turnaround-1000` (user, round three) | ✓ (Claude's picks, 2026-10-30) |
+| Backlasher | Nexus 3 | the user's (an inhuman figure in a black splinter glass fullbody exoskeleton, a starred Venetian mask, no hair) | picked: `backlasher-creature-turnaround-1000` (user, round eight) | ✓ (Claude's picks, 2026-10-30) |
+| Maelstrom | Nexus 3 | the user's (hovering, black and gold, a Chinese dragon) | picked: `maelstrom-robe-1000-uncharged-d70` (user: the canisters repainted off `maelstrom-robe-turnaround-1000`) | ✓ (Claude's picks, 2026-10-30) |
+| Brigand | bandits 1 | the user's (red bandana, ponytail, scruffy) | picked: `brigand-longcoat-turnaround-1000` (user); stray arm cleared: `brigand-longcoat-1000-armless` | ✓ (Claude's picks, 2026-10-30) |
+| Marauder | bandits 1 | the user's (a big man, dark brigandine, black chainmail, a warhammer) | picked: `marauder-leather-turnaround-1000` (user) | ✓ (Claude's picks, 2026-10-30) |
+| Bandit | bandits 1 | the user's (kanzashi, wide cuffs) | picked: `bandit-cuffs-turnaround-1001` (user) | ✓ (Claude's picks, 2026-10-30) |
+| Hedge Mage | bandits 1 | Claude, on the user's note | picked: `hedge-mage-firestarter-turnaround-1000` (user) | ✓ (Claude's picks, 2026-10-30) |
+| Cutpurse | carnival 1 | the user's (stripes, long pointed coat) | picked: `cutpurse-pixie-turnaround-1001` (user) | ✓ (Claude's picks, 2026-10-30) |
+| Snakeoiler | carnival 1 | the user's (top hat, curly beard, patchwork) | picked: `snakeoiler-broad-turnaround-1000` (user) | ✓ (Claude's picks, 2026-10-30) |
 
 ## 2. Identity, but no picked concept: needs concept art
 | Unit | Faction · tier | Identity | Concept |

@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-28 (four overworld tracks from the user on the map, all the user's music lossless; looks: all thirteen picked; `shots/tripo/to-model.html` lists the 62 units still to model)
+**Updated:** 2026-10-30 (portraits for the thirteen looks installed, `shots/looks-portraits.html`; a Capitol Guardian per faction, their looks drafted in words)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): a first complete version, far off (the board's README
@@ -20,9 +20,9 @@ interface change.
 
 - **Rosters:** Jilliath's is built but for the joker line. Ral-Vitahl's mages reach tier 3; its melee and support
   stop at tier 2 and 1. The Grove's melee and support lines are in, its mage only at tier 1.
-- **Art:** 60 units have card, bust and icon, all accepted by the user (2026-10-26; `shots/portraits.html`,
-  `shots/tribe-portraits.html`); 33 don't
-  (`todo/concepts-and-portraits`). The HUD is box-out-then-paint-in (`hud-paint-in` skill); Jilliath's Capitol
+- **Art:** 73 units have card, bust and icon: 60 accepted by the user (2026-10-26; `shots/portraits.html`,
+  `shots/tribe-portraits.html`), the thirteen looks' new ones Claude's picks waiting for the user
+  (`shots/looks-portraits.html`); 22 don't (`todo/concepts-and-portraits`). The HUD is box-out-then-paint-in (`hud-paint-in` skill); Jilliath's Capitol
   column and garrison are painted. The HUD rests for now (the user, 2026-10-11).
 - **Mana is one kind** (the user's call, 2026-10-11). **Armor is a percentage** with diminishing returns.
 - **Items:** the sixteen the user took from the brainstorm are built (`testing/items`): bodyguards, double strikes,
@@ -45,16 +45,17 @@ interface change.
   user's pools, 2026-10-15); nine new nodes, the Oasis, Dog yard and the user's Waystone (Way portal recalls a warband to the city its leader was
   elevated in; any held city elevates now); outposts and mercenary camps hire the biome's tribe. Levels add a clause at the
   top (`testing/node-clauses`); merchants sell their biome's list; the Scriptorium gives each faction's casters their own gift.
+- **Capitol Guardians (`testing/capitol-guardians`):** one per faction, all on the old stat line until the user sets
+  them apart; Claude's look drafts in `design/units/unit-looks.md` (each bound to its Capitol its faction's way).
 - **Biome props:** the swamp, tundra and haunted woods have their own thirteen props each, on the map, accepted by
   the user (2026-10-26; some may become Tripo models later, `maybe/tripo-props`).
 
 ## Next (the board's todo, in rank order)
 1. **Design sessions with the user:** the Grove's mage line (begun 2026-10-28: Decay tier 2 is the corpse explosion; questions #10), Ral-Vitahl's missing tiers, the
    Spiritess tier 4, the joker lines, owners for Evasion, Explode and Soak.
-2. **Claude's own, meanwhile:** icons for abilities, effects and items (`icons`, the user's suggestion); the
-   thirteen looks (`done/unit-looks`): all thirteen concepts picked (2026-10-28; the Backlasher framed as a creature); no skirts on
-   female figures (the user); redone from words, not inpainted (the user); no children anywhere (`art.md`); then portraits for the nine; a Capitol Guardian per faction
-   (`todo/capitol-guardians`, the user 2026-10-26); the Fire Eater's concepts in rounds (`carnival-concepts.md`); then concepts and portraits.
+2. **Claude's own, meanwhile:** icons for abilities, effects and items (`icons`, the user's suggestion); the Fire
+   Eater's concepts in rounds (`carnival-concepts.md`); then concepts and portraits as looks get picked. No skirts on
+   female figures, no children anywhere (`art.md`).
 3. **The user's picks waiting:**
    everything in `testing/`.
 4. **The balance pass** once the factions' lines exist, with the user's worry that Jilliath's lines are too long.
