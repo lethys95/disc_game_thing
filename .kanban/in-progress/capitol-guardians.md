@@ -13,3 +13,6 @@
 - **Looks drafted (2026-10-30):** `docs/design/units/unit-looks.md`, one thread through all three (each bound to its
   Capitol its faction's way): Jilliath's angel in chains she put on herself, Ral-Vitahl's automaton built into its
   throne, the Grove's antlered beast rooted from the ribs back. Waiting for the user's read before any concept.
+- **The user (2026-10-30):** "yes, they sound good". Concept round one running (`scripts/art/concepts.ts`,
+  `GUARDIAN_JOBS`): two builds each, the binding leading every subject; the automaton and the beast framed as
+  creatures; the angel's sword on a prop sheet.

@@ -194,6 +194,8 @@ give each its own.
   Its antlers are branches: one side in autumn leaf, the other bare and grey, furred with fungus.
 - **Standout:** a beast rooted from the ribs back, life and decay in its antlers.
 
+**The user (2026-10-30):** "yes, they sound good". Concepts next.
+
 ## Concept round one (2026-10-26)
 
 The words above as they stood (the user: "first round on all, then we can edit afterwards"); prompts in

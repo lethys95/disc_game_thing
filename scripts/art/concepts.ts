@@ -1315,8 +1315,8 @@ const BACKLASHER_ARMOUR_3D = gothicLine("cracked black mirror glass, thin gold f
  * framing let the Backlasher's inhuman words through. Still three views in the T-pose (the user, 2026-10-28: "why front
  * only? I can't generate anything from it. Stop doing front only.").
  */
-const creatureTurnaround = (subject: string, materials: string) =>
-  turnaround(subject, materials).replace("A character turnaround sheet of a 3D game character model", "A creature turnaround sheet of a 3D game creature model");
+const creatureTurnaround = (subject: string, materials: string, pose = T_POSE) =>
+  turnaround(subject, materials, pose).replace("A character turnaround sheet of a 3D game character model", "A creature turnaround sheet of a 3D game creature model");
 // The words of `backlasher-full-front-1001` (round seven, the user's edits since round four; the rest in the manifest).
 const BACKLASHER_FULL = "An inhuman female humanoid like elongated limbs, of an arcane noble house: arms and legs too long and too thin for a human. A black splinter glass fullbody exoskeleton, an insectoid shell. A Venetian mask with little expression, in dark colors with stars, covers the face. No hair. No skirt. Hands empty and open.";
 const NEXUS_LOOKS_2_JOBS = [
@@ -1337,6 +1337,68 @@ const NEXUS_LOOKS_2_JOBS = [
   // Round eight (the user, 2026-10-28): "backlasher-full-front-1001.png I might've considered if you had actually
   // generated three images? […] Try again with proper turnaround t-pose".
   { id: "backlasher-creature-turnaround", prompt: creatureTurnaround(BACKLASHER_FULL, BACKLASHER_ARMOUR_3D) },
+];
+
+/**
+ * The Capitol Guardians, one per faction (the user, 2026-10-26), round one from Claude's drafts the user okayed
+ * (2026-10-30: "yes, they sound good"; `docs/design/units/unit-looks.md`). The thread through all three: each is bound
+ * to its Capitol its faction's way, which is why it never leaves. Two readings each, differing in build; what binds
+ * each one leads its subject. The automaton and the beast are framed as creatures, so the frame doesn't stand them up
+ * as men.
+ */
+const GUARDIAN_JILLIATH_3D = gothicLine("white enamel plate and dark red lacquer with gold filigree, heavy black iron chains, white feathers");
+const GUARDIAN_NEXUS_3D = gothicLine("black enamel, polished brass and gold filigree, teal glass, teal lightning", "immaculate");
+const GUARDIAN_GROVE_3D = gothicLine("dark shaggy fur, rough bark, wet moss, red and gold autumn leaves, pale fungus, roots");
+const VOW =
+  "Long heavy chains of black iron hang from iron cuffs at her wrists and ankles down to the ground: she chained herself. " +
+  "A towering armoured angel, a closed helm of white enamel with one narrow slit across the eyes, great white feathered wings. " +
+  "Plate of white enamel and dark red covers her from neck to feet, plate greaves down to armoured feet, no skirt, no cloth at the hips. Hands empty and open.";
+const ENTHRONED = "seated on its throne, its arms held straight out to the sides at shoulder height, every finger clear";
+const ROOTED = "its forelegs planted, its head raised, its rooted back half spread on the ground";
+const GUARDIAN_JOBS = [
+  { id: "guardian-jilliath-slender-turnaround", prompt: turnaround(`${VOW} Tall and slender, long-limbed.`, GUARDIAN_JILLIATH_3D, WINGED_T_POSE) },
+  { id: "guardian-jilliath-massive-turnaround", prompt: turnaround(`${VOW} Massive and broad-shouldered, heavy plate on a huge frame.`, GUARDIAN_JILLIATH_3D, WINGED_T_POSE) },
+  { id: "guardian-jilliath-sword-props", prompt: prop("a long two-handed sword: a straight broad blade of bright steel, a long grip wrapped in dark red leather, a cross-guard and pommel of white enamel and gold; drawn from the side and from the front.", GUARDIAN_JILLIATH_3D), width: 2048, height: 832 },
+  {
+    id: "guardian-nexus-throne-turnaround",
+    prompt: creatureTurnaround(
+      "An automaton built into its throne, not a person: a colossal seated figure whose legs are one solid piece with a tall throne of black enamel and brass. " +
+        "Long jointed arms of black enamel and gold, huge open hands. A serene smooth gold face with no features but two round teal glass eyes. " +
+        "A row of tall brass conductor spires rises from the back of the throne, teal lightning arcing between them.",
+      GUARDIAN_NEXUS_3D,
+      ENTHRONED,
+    ),
+  },
+  {
+    id: "guardian-nexus-engine-turnaround",
+    prompt: creatureTurnaround(
+      "An automaton that rises from its throne at the waist, not a person: it has no legs, its body grows out of a massive throne of black enamel and brass shaped like an engine, coils of teal glass glowing in its sides. " +
+        "A broad chest of black enamel and gold filigree, long jointed arms, huge open hands. A serene smooth gold face with no features but two round teal glass eyes. " +
+        "Two tall brass conductor spires rise behind its shoulders, teal lightning arcing between them.",
+      GUARDIAN_NEXUS_3D,
+      ENTHRONED,
+    ),
+  },
+  {
+    id: "guardian-grove-stag-turnaround",
+    prompt: creatureTurnaround(
+      "A great antlered beast rooted in place: from the ribs back its body becomes a gnarled trunk of dark bark whose thick roots spread over the ground, and it has no hind legs. " +
+        "The front of it is a living animal as tall as a house, lean and tall like a great stag: two long forelegs with dark hooves, shoulders of dark shaggy fur with moss grown into it, a long head with eyes of amber sap. " +
+        "Its antlers are branches: the left in red and gold autumn leaf, the right bare and grey, furred with pale fungus.",
+      GUARDIAN_GROVE_3D,
+      ROOTED,
+    ),
+  },
+  {
+    id: "guardian-grove-heavy-turnaround",
+    prompt: creatureTurnaround(
+      "A great antlered beast rooted in place: from the ribs back its body becomes a gnarled trunk of dark bark whose thick roots spread over the ground, and it has no hind legs. " +
+        "The front of it is a living animal as tall as a house, massive and heavy-shouldered: a humped back of dark shaggy fur and moss before the bark begins, thick forelegs with dark hooves, a long heavy muzzle, eyes of amber sap. " +
+        "Its antlers are branches: the left in red and gold autumn leaf, the right bare and grey, furred with pale fungus.",
+      GUARDIAN_GROVE_3D,
+      ROOTED,
+    ),
+  },
 ];
 
 /** Each group of jobs has its own folder, so one group's run doesn't mix into another's manifest. */
@@ -1371,6 +1433,7 @@ const GROUPS = [
   { dir: "art/candidates/units/neutrals/bandits", jobs: BANDIT_JOBS },
   { dir: "art/candidates/units/neutrals/carnival/looks", jobs: CARNIVAL_LOOKS_JOBS },
   { dir: "art/candidates/units/nexus/looks", jobs: NEXUS_LOOKS_2_JOBS },
+  { dir: "art/candidates/units/guardians", jobs: GUARDIAN_JOBS },
 ];
 
 const args = process.argv.slice(2);
