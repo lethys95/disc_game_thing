@@ -83,7 +83,7 @@ interface Unit {
 
 const UNITS: Readonly<Record<string, Unit>> = {
   punisher: {
-    front: "shots/tripo/punisher-front.png",
+    front: "shots/tripo/punisher/front.png",
     identity:
       "a hooded executioner of a militant faith: a tall pointed hood with only black inside it, no face; a long cassock and a hooded mantle of dark iron-grey cloth; dented iron bracers, a heavy chain belt",
     poses: ["he stands upright, a heavy multi-headed flail resting over his shoulder"],
@@ -94,7 +94,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   zealot: {
-    front: "shots/tripo/zealot-front.png",
+    front: "shots/tripo/zealot/front.png",
     identity:
       "a religious zealot, a tall gaunt man: his whole head covered by a smooth white mask with two wide round black eye holes and a small burning red handprint on its forehead; spiked, tattered armor scorched black, singed white robes in rags stained blood red, chains with small hooks at his belt",
     poses: ["he stands tense and leaning forward, a huge serrated two-handed greatsword of blackened steel held low"],
@@ -105,7 +105,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   psychopomp: {
-    front: "shots/tripo/psychopomp-earless-front.png",
+    front: "shots/tripo/psychopomp/front.png",
     identity:
       "a shamaness of a wild forest people: pale greenish skin, dark green and black tribal tattoos across her face and body, dark hair in cornrows, a hood of a wolf's head pelt with its upper teeth over her brow and its grey fur close around the sides of her face, pale ghostly teal eyes staring through everything, short fingerless ivory gloves, boots of matted grey wolf fur, knotted ivory rags, a ragged fur mantle, leather wraps and bronze bangles on her arms",
     // "Could really use a pose of some sort in the card… she just looks sort of bland" (the user). The first is the
@@ -135,7 +135,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   bonecracker: {
-    front: "shots/tripo/bonecracker-front.png",
+    front: "shots/tripo/bonecracker/front.png",
     identity:
       "a gnoll, a hyena-headed brute: heavy and broad with short legs, enormous forequarters and a thick neck, pale grey fur with dark stripes and a bristling dark mane, a massive jaw with iron-capped teeth, a heavy collar of bone plates and bronze rings, scarred bare arms, one fist in a spiked bronze gauntlet",
     poses: ["it stands hunched forward, its fists ready"],
@@ -146,7 +146,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   cackler: {
-    front: "shots/tripo/cackler-front.png",
+    front: "shots/tripo/cackler/front.png",
     identity:
       "a gnoll, a scrawny hunched hyena-headed creature with pale grey fur, dark spots and a bristling dark mane, its mouth stretched in a wide manic grin, a ragged cloak of tattered cloth strips like rotten jester's motley, bone rattles and small bronze bells hanging from it",
     poses: ["it stands hunched, holding a crooked staff topped with a hyena skull"],
@@ -157,7 +157,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   matriarch: {
-    front: "shots/tripo/matriarch-front.png",
+    front: "shots/tripo/matriarch/front.png",
     identity:
       "a gnoll matriarch, the largest of the pack: a tall, upright, broad-shouldered female hyena-headed warrior with pale grey fur, dark stripes, a great dark mane and a scarred muzzle, a mantle of bronze plates and trophy bones over her shoulders, a cloak of a great beast's hide, a crest of teeth and bronze on her brow",
     poses: ["she stands tall, holding a heavy bronze glaive"],
@@ -168,7 +168,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   sproutling: {
-    front: "shots/tripo/sproutling-front.png",
+    front: "shots/tripo/sproutling/front.png",
     identity:
       "a small treant, nothing human about it: a squat, gnarled young stump of dark bark on uneven root legs, one arm a long crooked branch and the other a short thick knot of wood, a face of knotholes with a ragged split in the bark for a mouth, pale new shoots and a few leaves sprouting from one side of its head",
     poses: ["it stands on its root legs"],
@@ -179,7 +179,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   moldling: {
-    front: "shots/tripo/moldling-front.png",
+    front: "shots/tripo/moldling/front.png",
     identity:
       "a skinny, hunched body of wet black rotting wood bound together by white threads of mycelium, leaning to one side, one arm longer and thinner than the other, a head like a split rotten log with a dark hollow face, small grey mushroom caps on one side, white mold furring one leg",
     poses: ["it stands hunched, leaning to one side"],
@@ -191,7 +191,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   deadwood: {
-    front: "shots/tripo/deadwood-front.png",
+    front: "shots/tripo/deadwood/front.png",
     identity:
       "an animated dead tree, nothing humanoid about it: a lightning-split, charred grey trunk, one side burned black and the other bleached and peeling, dead branches clawing up from its top on one side, two massive arms of thick dead stumps, short root legs, a faint smoky ghostly face in the split of the trunk with a faint moss green glow",
     poses: ["it stands leaning forward on its stump arms"],
@@ -205,7 +205,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
   // 0.3–0.4, the card turned to carved filigree at 0.5 and "bone-white" made the face a skull; round three: carved
   // roots even at 0.3. Round four: the plain style.
   bog_giant: {
-    front: "shots/tripo/bog-giant-front.png",
+    front: "shots/tripo/bog-giant/front.png",
     identity:
       "a massive hunched hulk with no human shape: a lump of black bark and sodden bog oak oozing swamp sludge, peat and mud, reeds, cattails and patches of moss; a small, pale grey-white sunken face low in the bark and a pale, cracked chest; its right arm an enormous club of bark, roots and mud, its left arm small and withered",
     poses: ["it stands hunched, its huge right arm dragging on the ground"],
@@ -220,7 +220,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   mulch_gorger: {
-    front: "shots/tripo/mulch-gorger-front.png",
+    front: "shots/tripo/mulch-gorger/front.png",
     identity:
       "a lurching heap of black rotting bark, mulch, bracket fungi, pale mold, wet leaves and roots with a human skull half sunk into its top, tipped back, its jaw gaping at the sky, moss and fungus growing from the skull's mouth and eye sockets; three uneven limbs of twisted roots, one a long grasping root",
     poses: ["it lurches forward"],
@@ -231,7 +231,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   omen: {
-    front: "shots/tripo/omen-front.png",
+    front: "shots/tripo/omen/front.png",
     identity:
       "a blind gunslinger-prophet of a nomadic swindlers' carnival, tall and gaunt: a red blindfold with two staring eyes painted on it in white, a wide crooked grin of gold teeth, a battered top hat with old tarot cards in its band, a long ragged oxblood-red trenchcoat with a black pentagram on its back, bandoliers of powder flasks",
     poses: ["he stands with a long ornate flintlock pistol of dark wood and brass in each hand, one raised and one low"],
@@ -242,7 +242,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   soothsayer: {
-    front: "shots/tripo/soothsayer-front.png",
+    front: "shots/tripo/soothsayer/front.png",
     identity:
       "a fortune teller of a nomadic swindlers' carnival, a tall woman with deep dark brown skin, her face completely hidden behind a veil of strung gold coins under a deep hood, a long coat of faded red and mustard striped tent canvas covered in painted staring eyes, over a dark wrapped dress",
     poses: ["she stands still, a glass orb with a living eye floating inside it hovering above one open hand, a fan of tarot cards in the other"],
@@ -253,7 +253,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   etherborn: {
-    front: "shots/tripo/etherborn-front.png",
+    front: "shots/tripo/etherborn/front.png",
     identity:
       "an arcane noblewoman whose skin is deep space, dark blue-black with swirling galaxies, violet nebulae and stars; a smooth featureless head with no face; a tall fan collar of black enamel and gold; an immaculate black silk gown with gold filigree and a long open overcoat lined with the same starfield; magenta-violet arcane energy wreathing her hands",
     poses: ["she stands tall and composed, her hands raised slightly at her sides, wreathed in magenta-violet arcane fire"],
@@ -264,7 +264,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   packstalker: {
-    front: "shots/tripo/packstalker-front.png",
+    front: "shots/tripo/packstalker/front.png",
     identity:
       "a gnoll, a lean long-legged hyena-headed hunter built to run, pale tawny-grey fur with dark spots, its head inside a helm made from a horned antelope skull, a brigandine harness of dark leather studded with bronze, strips of red-dyed cloth tied to its arms and hanging from its belt",
     poses: ["it crouches low and forward, a long barbed bronze hunting spear with a tuft of fur and a red cloth strip levelled in both hands"],
@@ -275,7 +275,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   hamstringer: {
-    front: "shots/tripo/hamstringer-front.png",
+    front: "shots/tripo/hamstringer/front.png",
     identity:
       "a gnoll, a small wiry hyena-headed skirmisher with pale grey fur and dark spots, wrapped almost head to toe in dusty layered strips of dark cloth, a dark cowl and scarf around its head and neck, a string of round bronze bolas weights across its chest, rawhide-wrapped legs",
     poses: ["it stands poised to throw, a short barbed bronze javelin drawn back in one hand, a bundle of javelins slung on its back"],
@@ -286,7 +286,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   dustwing: {
-    front: "shots/tripo/dustwing-front.png",
+    front: "shots/tripo/dustwing/front.png",
     identity:
       "a slender moth-folk creature: a thin pale grey body with a ruff of white fur at its throat, a small head with large black eyes and feathered antennae, thin clawed limbs, broad tattered dusty grey-brown moth wings with dark staring eyespots and long trailing tails",
     poses: ["it hovers just above the ground, its wings spread wide, its claws reaching forward, dust falling from its wings"],
@@ -297,7 +297,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   chrysalis: {
-    front: "shots/tripo/chrysalis-front.png",
+    front: "shots/tripo/chrysalis/front.png",
     identity:
       "a tall upright cocoon, an object with no limbs and no face: overlapping scales of grey silk and old wax bound in a spiral of tarnished silver wire with silver filigree, a dark split opening near its top",
     poses: ["it stands upright"],
@@ -310,7 +310,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   lightdrinker: {
-    front: "shots/tripo/lightdrinker-front.png",
+    front: "shots/tripo/lightdrinker/front.png",
     identity:
       "a moth-folk like a death's-head hawkmoth, gaunt and menacing, not cute: a heavy furred black body banded with pale cream stripes, a pale bony skull-like mask of a face with two dark insect eyes and small mandibles, feathered antennae, narrow mottled dark wings folded down its back like a coat, thin clawed arms, small vials of pale light on a cord at its waist",
     // Round one (one pose, a plain "skull-like face") came out round and owlish, one huge eye at 0.9.
@@ -325,7 +325,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   eyespot: {
-    front: "shots/tripo/eyespot-front.png",
+    front: "shots/tripo/eyespot/front.png",
     identity:
       "a moth-folk with four huge dark wine-red moth wings spread wide behind it like a fan, each set with a dark staring eyespot; a thin pale body in a long high-collared black velvet coat with black lace at its hem, its face hidden behind a black lace veil, feathered antennae",
     poses: ["it stands with its four wings raised and spread wide behind it"],
@@ -336,7 +336,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   pale_mother: {
-    front: "shots/tripo/pale-mother-front.png",
+    front: "shots/tripo/pale-mother/front.png",
     identity:
       "a moth-folk matriarch, tall and regal: pale ivory fur, a moth's face with two huge round black compound eyes and no nose, a crown of lit white candles between feathered antennae, tarnished silver chains and jewelry on her arms and waist, a dark gown, broad pale ivory moth wings with dark eyespots hanging around her like a cloak",
     // Round one ("large black eyes", the first pose alone) gave her a cat's face with a pink nose.
@@ -353,7 +353,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
   // Jilliath's picked concepts (2026-10-09, `docs/design/units/jilliath-identities.md`, `roster.md`). Their crops come
   // from `scripts/art/portrait-frames.py` (a pose model finds the head and shoulders), not from estimates.
   seraph: {
-    front: "shots/tripo/seraph-front.png",
+    front: "shots/tripo/seraph/front.png",
     identity: "a humble angel woman, her face hidden in the shadow of a deep black hood, long layered robes of black cloth over white silk, plain brown feathered wings",
     poses: ["she stands with her head bowed and her hands clasped in prayer before her, her wings folded behind her"],
     strengths: T_POSED,
@@ -363,7 +363,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   emissary: {
-    front: "shots/tripo/emissary-front.png",
+    front: "shots/tripo/emissary/front.png",
     identity: "a graceful angel woman, her calm face uncovered and long pale hair loose, long flowing robes of white and pale gold silk, large white feathered wings",
     poses: ["she stands serene, one hand raised in blessing, her wings half open"],
     strengths: T_POSED,
@@ -373,7 +373,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   shepherd: {
-    front: "shots/tripo/shepherd-front.png",
+    front: "shots/tripo/shepherd/front.png",
     identity: "an angel woman whose wings are stained glass, long feathers of red, gold and deep blue glass in black lead frames; her face a smooth oval pane of pale glass with no features; long robes of white and deep blue",
     poses: ["she stands tall, holding a long shepherd's crook, her stained-glass wings spread"],
     strengths: T_POSED,
@@ -383,7 +383,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   godkin: {
-    front: "shots/tripo/godkin-front.png",
+    front: "shots/tripo/godkin/front.png",
     identity: "a tall female figure that is only a smooth bare silhouette with no face and no features: her whole surface is a bright cloudy daytime sky, white clouds on blue, shafts of golden sunlight shining out of her",
     // The user (2026-10-09): the card should show the effects that flesh her out in game, not only the bare model:
     // "godrays, daybreak, sunlight".
@@ -405,7 +405,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   reclaimer: {
-    front: "shots/tripo/reclaimer-front.png",
+    front: "shots/tripo/reclaimer/front.png",
     identity: "an inhuman angel, feminine and powerfully built, her body a segmented shell of thick pale platinum-grey plates, her head a small smooth shell with no face and a gold diamond in the brow, her legs tapering into scaled points dark teal at the tips, huge stone-grey wings going teal at the tips",
     poses: ["she hovers above the ground, legs hanging, one hand reaching out"],
     strengths: T_POSED,
@@ -415,7 +415,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   paragon: {
-    front: "shots/tripo/paragon-front.png",
+    front: "shots/tripo/paragon/front.png",
     identity: "an angel woman with a calm face, blazing red hair falling over the right side of her face, light free-flowing armour of white and red cloth over a few fitted plates, a burning open hand emblem on her right pauldron, a book on a chain at her left hip, runic tattoos on her hands and forearms, white wings dipped in blood red at the tips",
     poses: ["she stands calm, one hand resting on the chained book at her hip, the other raised"],
     strengths: T_POSED,
@@ -425,7 +425,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   acolyte: {
-    front: "shots/tripo/acolyte-front.png",
+    front: "shots/tripo/acolyte/front.png",
     identity: "a young novice of a militant faith, thin and pale, his head shaved, his eyes bound with a strip of red cloth, his forearms bound in blood-red cloth, a coarse grey robe, a heavy iron chain around his neck",
     poses: ["he walks forward, holding up a lit iron lantern on its chain"],
     strengths: T_POSED,
@@ -435,7 +435,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   pontiff: {
-    front: "shots/tripo/pontiff-front.png",
+    front: "shots/tripo/pontiff/front.png",
     identity: "a high priest of a militant faith in heavy red and white vestments thick with gold embroidery, a tall crown of burning candles on his head, white wax running down over a black veil that hides his face",
     poses: ["he stands upright, a smoking censer swinging from its chain in one hand"],
     strengths: T_POSED,
@@ -445,7 +445,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   doomsayer: {
-    front: "shots/tripo/doomsayer-front.png",
+    front: "shots/tripo/doomsayer/front.png",
     identity: "a wild street prophet of doom, gaunt, long matted hair, his face whitened with ash, a ragged grey and red robe, a wooden yoke across his shoulders hung with small iron bells",
     poses: ["he stands proclaiming, holding up an enormous half-unrolled scroll of yellowed parchment in both hands"],
     strengths: T_POSED,
@@ -455,7 +455,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   templar: {
-    front: "shots/tripo/templar-front.png",
+    front: "shots/tripo/templar/front.png",
     identity: "a heavily armoured holy knight of a militant faith in white-lacquered plate armour with a red surcoat and a closed great helm",
     poses: ["he stands guard behind a tall white kite shield bearing a large raised silver rose"],
     strengths: T_POSED,
@@ -465,7 +465,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   immortal: {
-    front: "shots/tripo/immortal-front.png",
+    front: "shots/tripo/immortal/front.png",
     identity: "a towering holy knight in ornate plate of white marble mended with seams of gold, a tall crested helm, a golden halo behind his head, a long white cape torn at the hem",
     poses: ["he stands unmoving and unbowed, his fists at his sides"],
     strengths: T_POSED,
@@ -475,7 +475,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   chosen: {
-    front: "shots/tripo/chosen-front.png",
+    front: "shots/tripo/chosen/front.png",
     identity: "an inhuman juggernaut in a man's shape, faceless, his head a smooth rounded shell, his body thick battered shell plates of black, bone-white and blood-red enamel, one shoulder heavier than the other",
     poses: ["he stands braced, a massive two-handed greatsword of glowing heated metal resting on his shoulder"],
     strengths: T_POSED,
@@ -486,7 +486,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   avatar_of_vengeance: {
-    front: "shots/tripo/avatar-of-vengeance-front.png",
+    front: "shots/tripo/avatar-of-vengeance/front.png",
     identity: "a vengeance angel, a man in hooded white and red angelic armour with glowing edges, no face, only a glowing red void inside his hood, three pairs of enormous red wings of long loose feathers streaking away into light and smoke",
     poses: ["he stands with his enormous red wings spread wide behind him, embers drifting"],
     strengths: T_POSED,
@@ -497,7 +497,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
   },
   // The five tribes (2026-10-12): the user's picks and Claude's, at the user's word (`faction-stuff/neutrals/`).
   grey_wolf: {
-    front: "shots/tripo/grey-wolf-front.png",
+    front: "shots/tripo/grey-wolf/front.png",
     identity: "a grey timber wolf, a big wild wolf with a thick coat of grey, brown and cream fur, darker along the back, a pale throat, amber eyes and a long bushy tail",
     poses: ["it stands low and stalking, its head lowered, lips drawn back from its fangs"],
     strengths: T_POSED,
@@ -507,7 +507,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   boar: {
-    front: "shots/tripo/boar-front.png",
+    front: "shots/tripo/boar/front.png",
     identity: "a great wild boar with black bristles standing up along its humped back, two long yellowed curling tusks and small furious eyes",
     poses: ["it stands with its head lowered to charge, its tusks forward"],
     strengths: T_POSED,
@@ -517,7 +517,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   cave_bear: {
-    front: "shots/tripo/cave-bear-front.png",
+    front: "shots/tripo/cave-bear/front.png",
     identity: "a huge shaggy brown cave bear, old arrowheads lodged in its hide, a heavy scarred head and long curved claws",
     poses: ["it rears up on its hind legs, roaring, its claws raised"],
     strengths: T_POSED,
@@ -527,7 +527,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   carrion_murder: {
-    front: "shots/tripo/carrion-murder-front.png",
+    front: "shots/tripo/carrion-murder/front.png",
     identity: "a murder of ragged black carrion crows crowded on a gnarled dead tree, a torn strip of grey cloth caught in its branches",
     poses: ["the crows burst from the tree, wings spread, beaks open, black feathers falling"],
     strengths: T_POSED,
@@ -537,7 +537,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   old_grey: {
-    front: "shots/tripo/old-grey-front.png",
+    front: "shots/tripo/old-grey/front.png",
     identity: "Old Grey, a giant wolf of terrible size with a mane of frost-white fur, one torn ear, a muzzle scarred white and eyes pale as ice",
     poses: ["it stands with its head raised, howling, frost breath rising"],
     strengths: T_POSED,
@@ -547,7 +547,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   goblin_cutthroat: {
-    front: "shots/tripo/goblin-cutthroat-front.png",
+    front: "shots/tripo/goblin-cutthroat/front.png",
     identity: "a goblin cutthroat: small and wiry, long ears and a hooked nose under a deep ragged hood, grey-green skin, scraps of dark stolen armour strapped on",
     poses: ["it crouches, a throwing knife drawn back in one hand, more knives at its belt"],
     strengths: T_POSED,
@@ -557,7 +557,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   orc_ravager: {
-    front: "shots/tripo/orc-ravager-front.png",
+    front: "shots/tripo/orc-ravager/front.png",
     identity: "an orc ravager: tall and grey-green with broken yellowed tusks and long black hair, spiked iron shoulder plates, a belt of skulls and dark warpaint across the eyes",
     poses: ["he stands ready to strike, a heavy jagged iron cleaver in his hand"],
     strengths: T_POSED,
@@ -567,7 +567,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   troll: {
-    front: "shots/tripo/troll-front.png",
+    front: "shots/tripo/troll/front.png",
     identity: "a bog troll: hunched and huge, rubbery grey-green hide crusted with barnacle-like growths on its shoulders and back, a jutting underbite, long clawed hands",
     poses: ["it lurches forward, its long arms spread, a wound on its chest knitting closed"],
     strengths: T_POSED,
@@ -577,7 +577,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   goblin_hexer: {
-    front: "shots/tripo/goblin-hexer-front.png",
+    front: "shots/tripo/goblin-hexer/front.png",
     identity: "a goblin hexer: a scrawny goblin under a huge dried mushroom cap shedding pale glowing spores, a patched sackcloth robe and bone fetishes in its hair",
     poses: ["it holds one hand up, pale spores swirling from its fingers"],
     strengths: T_POSED,
@@ -587,7 +587,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   ogre_warchief: {
-    front: "shots/tripo/ogre-warchief-front.png",
+    front: "shots/tripo/ogre-warchief/front.png",
     identity: "an ogre warchief: a hulking grey brute in spiked dark iron, a clan totem of horned skulls rising above his head from his back, a belly plate of iron",
     poses: ["he stands wide, a huge iron-studded club over his shoulder"],
     strengths: T_POSED,
@@ -598,7 +598,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   scaleblade: {
-    front: "shots/tripo/scaleblade-front.png",
+    front: "shots/tripo/scaleblade/front.png",
     identity: "a lizardman warrior: tall and lean, a crested lizard head, dull green-brown scales, a long tail, armour of bronze scales over the chest, bone bracelets",
     poses: ["he stands ready, a bronze-headed spear held across his body"],
     strengths: T_POSED,
@@ -608,7 +608,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   spitter: {
-    front: "shots/tripo/spitter-front.png",
+    front: "shots/tripo/spitter/front.png",
     identity: "a lizardman spitter: thin and long-necked, mottled dark scales, yellow eyes, a cloak of woven reed mats, a belt of small bone darts",
     poses: ["it leans forward, mouth open, a spray of green venom spitting from its jaws"],
     strengths: T_POSED,
@@ -618,7 +618,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   naga_coiler: {
-    front: "shots/tripo/naga-coiler-front.png",
+    front: "shots/tripo/naga-coiler/front.png",
     identity: "a naga: a hooded serpent-headed torso in bronze scale armour rising from a long thick coiled serpent body of dark green scales",
     poses: ["it rears up from its coils, its clawed hands reaching forward to seize"],
     strengths: T_POSED,
@@ -628,7 +628,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   shedskin: {
-    front: "shots/tripo/shedskin-front.png",
+    front: "shots/tripo/shedskin/front.png",
     identity: "a lizardman scale-priest in a deep dark hood and a long tattered robe, green scales showing at its arms, a sash of dried herbs and shell talismans",
     poses: ["it raises one hand in blessing, pale shed skin curling away like smoke around it"],
     strengths: T_POSED,
@@ -638,7 +638,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   medusa: {
-    front: "shots/tripo/medusa-front.png",
+    front: "shots/tripo/medusa/front.png",
     identity: "a medusa: from the waist down a long coiled serpent tail of dark scales, from the waist up a woman with grey-green scaled skin, living snakes for hair, a tarnished gold breastplate",
     poses: ["she rises from her coils, her eyes glowing pale, her gaze turning the air to dust"],
     strengths: T_POSED,
@@ -648,7 +648,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   outrider: {
-    front: "shots/tripo/outrider-front.png",
+    front: "shots/tripo/outrider/front.png",
     identity: "a centaur outrider: a lean dun horse body with ochre stripes on its flanks, a wiry human torso in a leather vest, braided hair with bone beads, a quiver on the human back",
     poses: ["he draws a recurve bow at full stretch"],
     strengths: T_POSED,
@@ -658,7 +658,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   lancer: {
-    front: "shots/tripo/lancer-front.png",
+    front: "shots/tripo/lancer/front.png",
     identity: "a centaur lancer: a grey horse body painted with red handprints, a muscular human torso in a bone breastplate, long black braids, a horned helm",
     poses: ["he levels a long spear-lance, about to charge"],
     strengths: T_POSED,
@@ -668,7 +668,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   hoofbreaker: {
-    front: "shots/tripo/hoofbreaker-front.png",
+    front: "shots/tripo/hoofbreaker/front.png",
     identity: "a centaur, one creature with no rider: from the waist down the whole body of a massive dark draft horse with huge feathered hooves shod in iron, joined at the waist to a bald scarred man's torso with iron-studded bracers",
     poses: ["he stands on his four hooves, his fists clenched, ready to trample"],
     strengths: { card: [0.6, 0.7], bust: [] },
@@ -679,7 +679,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   starseer: {
-    front: "shots/tripo/starseer-front.png",
+    front: "shots/tripo/starseer/front.png",
     identity: "a centaur starseer: an old grey mare's body with star charts tattooed down its flanks, an old woman's torso, a cloth blindfold over her eyes, strings of bone beads",
     poses: ["she raises her hands to the sky, faint starlight gathering between them"],
     strengths: T_POSED,
@@ -689,7 +689,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   herd_khan: {
-    front: "shots/tripo/herd-khan-front.png",
+    front: "shots/tripo/herd-khan/front.png",
     identity: "a centaur, one creature with no rider: from the waist down the whole body of a huge black horse, joined at the waist to a broad bearded man's torso in bronze scales, a helm made from a horse skull, a red war cloak hanging from his human shoulders",
     poses: ["he stands on his four hooves, holding a long lance upright in his human hands"],
     strengths: { card: [0.6, 0.7], bust: [] },
@@ -700,7 +700,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   berserker: {
-    front: "shots/tripo/berserker-front.png",
+    front: "shots/tripo/berserker/front.png",
     identity: "a barbarian berserker: a huge red-bearded man under a bear pelt worn as a hood, the bear's head over his own, blue woad spirals on his bare arms, a belly scarred and bare",
     poses: ["he roars, a hand axe in each fist"],
     strengths: T_POSED,
@@ -710,7 +710,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   axe_maiden: {
-    front: "shots/tripo/axe-maiden-front.png",
+    front: "shots/tripo/axe-maiden/front.png",
     identity: "a barbarian axe-maiden: a tall woman with the sides of her head shaved and a long braid, her face and arms painted blue woad, a wolf-fur kilt and boots, iron rings on her arms",
     poses: ["she draws back a throwing axe, more axes at her belt"],
     strengths: T_POSED,
@@ -720,7 +720,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   hunter: {
-    front: "shots/tripo/hunter-front.png",
+    front: "shots/tripo/hunter/front.png",
     identity: "a barbarian hunter: wiry, wearing a deer skull with tall antlers as a hood, a brown fur cloak, a leather bracer on one forearm",
     poses: ["he draws a longbow, an arrow nocked"],
     strengths: T_POSED,
@@ -730,7 +730,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   shamaness: {
-    front: "shots/tripo/shamaness-front.png",
+    front: "shots/tripo/shamaness/front.png",
     identity: "a barbarian shamaness: an old woman with long grey braids, red handprints painted across her face, a cloak of raven feathers, bone charms and antlers at her belt",
     poses: ["she raises a hand marked in blood, red light curling from it"],
     strengths: T_POSED,
@@ -740,7 +740,7 @@ const UNITS: Readonly<Record<string, Unit>> = {
     },
   },
   warlord: {
-    front: "shots/tripo/warlord-front.png",
+    front: "shots/tripo/warlord/front.png",
     identity: "a barbarian warlord: a towering chieftain in scaled blackened iron under a white bear's hide, a horned iron helm, a heavy gold torc, a grey beard",
     poses: ["he stands with a great two-handed axe planted before him"],
     strengths: T_POSED,
@@ -748,6 +748,101 @@ const UNITS: Readonly<Record<string, Unit>> = {
       card: "warlord-card-d90.png",
       crops: { bust: { from: "card", size: 0.68, x: 0.506, y: 0.231 }, icon: { from: "card", size: 0.314, x: 0.503, y: 0.165 } },
     },
+  },
+  // The thirteen looks (`docs/design/units/unit-looks.md`), concepts picked by the user 2026-10-28. Each identity is the
+  // picked concept's words, corrected to what its picture shows; the effects the sheets left out (lightning, fog,
+  // glowing runes) go in the poses.
+  cyclops: {
+    front: "shots/tripo/cyclops/front.png",
+    identity:
+      "a towering automaton of an arcane noble house, not a person: its torso a tall furnace of black enamel and polished brass with gold filigree, a domed brass top with one large round sight-glass eye glowing teal, a rank of tall brass vent pipes rising from its back, pipes coiling down thick armoured arms to heavy brass hands, short thick legs in black enamel greaves",
+    poses: ["it stands planted and heavy, its brass hands lowered, white steam pouring from the vent pipes on its back"],
+    strengths: T_POSED,
+  },
+  mutant: {
+    front: "shots/tripo/mutant/front.png",
+    identity:
+      "an organic hulk grown by an arcane noble house: a small bald head with pale grey skin and small furious eyes, a bare muscular torso, the right shoulder and arm swollen huge and grown over with ridged dark shell plates and spikes, ending in a massive fist of fused grey bone, the left arm still a man's, faint teal light in the veins, dark breeches and boots",
+    poses: ["it stands hunched and lopsided, the huge right fist hanging to the ground"],
+    strengths: T_POSED,
+  },
+  technician: {
+    front: "shots/tripo/technician/front.png",
+    identity:
+      "a golem-wright of an arcane noble house, a stocky older man with close-cropped grey hair, a short grey beard and a calm craftsman's face, brass goggles of stacked magnifying lenses over his eyes, a long black leather work apron over a high-collared black coat with teal piping, gauntlets of black steel and brass, tall boots, a jointed clockwork arm of black iron folded down his back from a brass mount between the shoulders",
+    poses: ["he stands at work, one gauntleted palm held out with a short arc of teal lightning crackling across it"],
+    strengths: T_POSED,
+  },
+  justiciar: {
+    front: "shots/tripo/justiciar/front.png",
+    identity:
+      "a haughty noblewoman of an arcane noble house, a judge: a tall stiff collar rising behind her head, black outside and teal inside, edged in gold; a pale face, chin raised, cold grey eyes open, dark hair drawn up severely; long robes of heavy black silk falling straight to the floor, a teal panel down the front, teal lining in the wide sleeves, severe geometric gold embroidery at the hems, long black gloves",
+    poses: ["she stands straight and still, looking down at the viewer, a short rod of office in white gold with a teal glass globe at its head held in one hand"],
+    strengths: T_POSED,
+  },
+  thaumaturge: {
+    front: "shots/tripo/thaumaturge/front.png",
+    identity:
+      "a lord of an arcane noble house whose whole head is hidden in a closed high-crested helm of black enamel and gold filigree with one narrow slit of teal glass across the eyes; tall and straight-backed, a long black silk coat with a stiff gold-edged standing collar, teal lining and a row of gold buttons, black breeches, polished boots, black gloves",
+    poses: ["he stands with both gloved hands open and loose at his sides, teal lightning crawling between his fingers"],
+    strengths: T_POSED,
+  },
+  backlasher: {
+    front: "shots/tripo/backlasher/front.png",
+    identity:
+      "an inhuman female humanoid of an arcane noble house, arms and legs too long and too thin for a human, grey-violet skin, her whole body covered in a fullbody exoskeleton of black splinter glass like an insect's shell, a flame-shaped crest of glass shards on her head, no hair, a Venetian mask with little expression, in dark colours with stars, covering the face",
+    poses: ["she stands with her long arms spread, a cloud of black glass shards turning around her hands, teal lightning jumping between them"],
+    strengths: T_POSED,
+  },
+  maelstrom: {
+    front: "shots/tripo/maelstrom/front.png",
+    identity:
+      "a noble storm-caster of an arcane house, clean shaven, a calm absolute face, long silver hair; a long black silk robe with very wide sleeves, a gold-embroidered dragon coiling over the shoulders and down each sleeve, a stiff gold-edged black collar",
+    poses: ["he hovers above the ground with fog pooling beneath him, teal sparks flickering in the fog, his hands open, his hair and robe floating slightly"],
+    strengths: T_POSED,
+  },
+  brigand: {
+    front: "shots/tripo/brigand/front.png",
+    identity:
+      "a brigand, a heavy-set scruffy man with long dark hair in a ponytail, a red bandana over his mouth and nose, a long scuffed brown leather coat open over a quilted jerkin, leather bracers, a wide belt, heavy scuffed leather boots",
+    // The user's note allows a mace or a club and the prop sheet has no pick; the club read better (Claude's, round one).
+    poses: ["he stands squared and ready, a heavy studded wooden club bound with iron bands in his fist"],
+    strengths: T_POSED,
+  },
+  marauder: {
+    front: "shots/tripo/marauder/front.png",
+    identity:
+      "a big broad marauder, his face hidden by a crude dark mask with two eye holes under a deep black wool hood; a studded dark leather brigandine over boiled-leather lamellar, thick leather bracers, a wide belt, heavy boots",
+    poses: ["he stands with a long two-handed warhammer of dark iron, its spiked head resting on his shoulder"],
+    strengths: T_POSED,
+  },
+  bandit: {
+    front: "shots/tripo/bandit/front.png",
+    identity:
+      "a bandit archer, a lean woman, two long kanzashi hairpins through a high knot of dark hair, a dark scarf over her lower face, sharp eyes; a fitted dark leather jerkin, long leather gloves flaring to wide cuffs at the elbow, tall leather boots flaring to wide cuffs above the knee, dark close-fitting trousers",
+    poses: ["she stands drawing a tall plain longbow of dark yew, an arrow nocked"],
+    strengths: T_POSED,
+  },
+  hedge_mage: {
+    front: "shots/tripo/hedge-mage/front.png",
+    identity:
+      "the bandits' firestarter, a wiry woman with the sides of her head shaved and the rest of her dark hair in a short braid, a hard amused face, tattooed runes on both bare forearms; a heavy sleeveless dark leather coat to the knees, a scarf at the neck, dark trousers, leather boots",
+    poses: ["she stands with fire flaring in both open palms, the runes on her forearms glowing ember-orange"],
+    strengths: T_POSED,
+  },
+  cutpurse: {
+    front: "shots/tripo/cutpurse/front.png",
+    identity:
+      "a cutpurse of a nomadic swindlers' carnival, a slim woman, a dark bandana hiding her lower face, beautiful natural eyebrows over serious dark eyes, dark hair in a long ponytail; tight trousers in vertical stripes of black and dark purple, soft black boots, a long dark trench coat falling to the calves, its hem cut in long points, its lining oxblood silk with a faint harlequin diamond pattern",
+    poses: ["she stands poised low, a slim curved steel knife in each hand"],
+    strengths: T_POSED,
+  },
+  snakeoiler: {
+    front: "shots/tripo/snakeoiler/front.png",
+    identity:
+      "a quack physician of a nomadic swindlers' carnival, a broad heavy man in a tall stovepipe hat, a full curly black beard and dark knowing eyes, his look inquisitive, confident and malicious, not crazed; a long patchwork greatcoat of dark wool and velvet patches, a brocade waistcoat, a high collar, dark trousers, heavy boots",
+    poses: ["he stands holding out a large round-bottomed glass flask in each hand, filled with a murky dark green liquid that glows faintly"],
+    strengths: T_POSED,
   },
 };
 

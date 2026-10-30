@@ -13,3 +13,7 @@
 - **Why:** The alpha is painted.
 - **Done when:** Every alpha unit has card, bust and icon.
 - **Who:** Claude iterates; the user picks concepts. Needs ComfyUI.
+- **Portraits for the thirteen looks (2026-10-30, Claude on its own):** the Cyclops, Mutant, Technician, Justiciar,
+  Thaumaturge, Backlasher, Maelstrom, the four bandits, the Cutpurse and the Snakeoiler, each from the picked concept's
+  front view in `scripts/art/portraits.ts` (its sources moved to `shots/tripo/<unit>/front.png` with the to-model
+  page). Round one running: one pose each, at 0.75 and 0.9.
