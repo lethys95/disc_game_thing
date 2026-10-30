@@ -196,6 +196,33 @@ give each its own.
 
 **The user (2026-10-30):** "yes, they sound good". Concepts next.
 
+**Concept round one (2026-10-30)** (`GUARDIAN_JOBS` in `scripts/art/concepts.ts`, images in
+`art/candidates/units/guardians/`), Claude's read:
+- **Jilliath's:** the chains read in every sheet, hanging from her wrists (the ankles' never came). A red cloth panel
+  hangs between her legs front and back, though the words said no cloth at the hips; the slender build wears heels.
+  Otherwise a clean plate angel, the massive build the stronger (`massive-1002`). Round two names plate at the hips.
+- **Ral-Vitahl's:** both readings work. The *throne* reading's figure reads as a robed noble in a gold mask; the
+  *engine* reading's as an automaton, with coils of teal glass in the throne's sides and lightning between its spires.
+  Claude's pick: `engine-1001` (armoured, no robe). Its legs came back, seated, rather than the waist rising from the
+  throne.
+- **The Grove's:** the rooting reads at once: a stag in front, a trunk and roots behind, the antlers half in leaf. The
+  lean build beats the heavy one, whose face turned cow-like. The fungus on the bare antler never came, the decay half
+  of the idea. Round two puts the antlers first, the dead one leading.
+- **The sword:** the chains and feathers of her materials line climbed onto it; `sword-props-1001` is the cleanest.
+
+**Round two (2026-10-30)**, one change each:
+- **Jilliath's** (`tassets`): plate came at the hips, but the red cloth panel stayed in front and behind, in all three.
+  It comes with "dark red" said of her armour. Round three puts the red on the plates' edges as lacquer.
+- **The Grove's** (`fungus`): with the dead antler leading, pale bracket fungi grow along it, opposite the autumn
+  leaf. Claude's pick: `fungus-1002`.
+
+**Round three (2026-10-30), the angel** (`trim`): the red went onto the plates' edges as lacquer, a dark red rim on
+white plate, the best look of the three rounds; the panel came back black. Three wordings haven't moved it: the model
+treats a hanging panel as part of this armour, so the rewording stops here (left off the 3D model or painted out, if
+the user wants it gone). The ankle chains never came. Claude's pick: `trim-1001`.
+
+All three rounds, Claude's picks and every prompt: `shots/guardians.html`. Waiting for the user's picks.
+
 ## Concept round one (2026-10-26)
 
 The words above as they stood (the user: "first round on all, then we can edit afterwards"); prompts in

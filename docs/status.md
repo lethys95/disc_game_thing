@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-30 (portraits for the thirteen looks installed, `shots/looks-portraits.html`; a Capitol Guardian per faction, their looks drafted in words)
+**Updated:** 2026-10-30 (portraits for the thirteen looks installed, `shots/looks-portraits.html`; a Capitol Guardian per faction, concepts on `shots/guardians.html`)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): a first complete version, far off (the board's README
@@ -45,8 +45,9 @@ interface change.
   user's pools, 2026-10-15); nine new nodes, the Oasis, Dog yard and the user's Waystone (Way portal recalls a warband to the city its leader was
   elevated in; any held city elevates now); outposts and mercenary camps hire the biome's tribe. Levels add a clause at the
   top (`testing/node-clauses`); merchants sell their biome's list; the Scriptorium gives each faction's casters their own gift.
-- **Capitol Guardians (`testing/capitol-guardians`):** one per faction, all on the old stat line until the user sets
-  them apart; Claude's look drafts in `design/units/unit-looks.md` (each bound to its Capitol its faction's way).
+- **Capitol Guardians (`in-progress/capitol-guardians`):** one per faction, all on the old stat line until the user
+  sets them apart; looks okayed by the user (each bound to its Capitol its faction's way), concepts in three rounds
+  waiting for the user's picks (`shots/guardians.html`).
 - **Biome props:** the swamp, tundra and haunted woods have their own thirteen props each, on the map, accepted by
   the user (2026-10-26; some may become Tripo models later, `maybe/tripo-props`).
 

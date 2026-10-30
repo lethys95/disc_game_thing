@@ -16,3 +16,6 @@
 - **The user (2026-10-30):** "yes, they sound good". Concept round one running (`scripts/art/concepts.ts`,
   `GUARDIAN_JOBS`): two builds each, the binding leading every subject; the automaton and the beast framed as
   creatures; the angel's sword on a prop sheet.
+- **Concepts in (2026-10-30), three rounds:** `shots/guardians.html`. Claude's picks: Jilliath `trim-1001` (a cloth
+  panel between her legs survived three wordings), Ral-Vitahl `engine-1001`, the Grove `fungus-1002`; the angel's
+  sword `sword-props-1001`. Waiting for the user's picks; then the Tripo views and portraits.

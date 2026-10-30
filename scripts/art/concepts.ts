@@ -1401,6 +1401,47 @@ const GUARDIAN_JOBS = [
   },
 ];
 
+/**
+ * Round two (2026-10-30), one change each where round one missed. The angel: a red cloth panel hung between her legs
+ * front and back ("no cloth at the hips" named only what she lacks), so her hips get their own plate; the massive
+ * build, since the slender one grew heels. The beast: the fungus on the dead antler never came, so the antlers move up
+ * the subject, the dead one first. The automaton needed none (Claude: `guardian-nexus-engine-turnaround-1001`).
+ */
+const GUARDIAN_2_JOBS = [
+  {
+    id: "guardian-jilliath-tassets-turnaround",
+    prompt: turnaround(
+      "Long heavy chains of black iron hang from iron cuffs at her wrists and at her ankles down to the ground: she chained herself. " +
+        "A towering armoured angel, massive and broad-shouldered, a closed helm of white enamel with one narrow slit across the eyes, great white feathered wings. " +
+        "Plate of white enamel and dark red covers her from neck to feet: tassets of white enamel plate over the hips and thighs, plate greaves, flat armoured sabatons. No cloth hangs anywhere. Hands empty and open.",
+      GUARDIAN_JILLIATH_3D,
+      WINGED_T_POSE,
+    ),
+  },
+  {
+    id: "guardian-grove-fungus-turnaround",
+    prompt: creatureTurnaround(
+      "A great antlered beast rooted in place: from the ribs back its body becomes a gnarled trunk of dark bark whose thick roots spread over the ground, and it has no hind legs. " +
+        "Its antlers are branches, the two sides unlike: the right antler bare, grey and dead, crusted with pale bracket fungi and white mould; the left antler in red and gold autumn leaf. " +
+        "The front of it is a living animal as tall as a house, lean and tall like a great stag: two long forelegs with dark hooves, shoulders of dark shaggy fur with moss grown into it, a long head with eyes of amber sap.",
+      GUARDIAN_GROVE_3D,
+      ROOTED,
+    ),
+  },
+  // Round three for the angel: tassets at the hips didn't move the red cloth panel, which comes with "dark red" said of
+  // her armour; the red goes onto the plates' edges as lacquer, and the plates run on unbroken from the waist down.
+  {
+    id: "guardian-jilliath-trim-turnaround",
+    prompt: turnaround(
+      "Long heavy chains of black iron hang from iron cuffs at her wrists and at her ankles down to the ground: she chained herself. " +
+        "A towering armoured angel, massive and broad-shouldered, a closed helm of white enamel with one narrow slit across the eyes, great white feathered wings. " +
+        "Her armour is white enamel plate, its edges lacquered dark red, and it continues unbroken from the waist down: overlapping plates over the hips and thighs, plate greaves, flat armoured sabatons. Hands empty and open.",
+      GUARDIAN_JILLIATH_3D,
+      WINGED_T_POSE,
+    ),
+  },
+];
+
 /** Each group of jobs has its own folder, so one group's run doesn't mix into another's manifest. */
 const GROUPS = [
   { dir: "art/candidates/units/grove", jobs: GROVE_JOBS },
@@ -1433,7 +1474,7 @@ const GROUPS = [
   { dir: "art/candidates/units/neutrals/bandits", jobs: BANDIT_JOBS },
   { dir: "art/candidates/units/neutrals/carnival/looks", jobs: CARNIVAL_LOOKS_JOBS },
   { dir: "art/candidates/units/nexus/looks", jobs: NEXUS_LOOKS_2_JOBS },
-  { dir: "art/candidates/units/guardians", jobs: GUARDIAN_JOBS },
+  { dir: "art/candidates/units/guardians", jobs: [...GUARDIAN_JOBS, ...GUARDIAN_2_JOBS] },
 ];
 
 const args = process.argv.slice(2);
