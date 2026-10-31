@@ -2,7 +2,7 @@
 
 _Rewritten (not appended) with every commit. Keep under ~50 lines. Older detail: git history and the docs below._
 
-**Updated:** 2026-10-30 (icons: all but three accepted, the effects and items generating; the Grove's Decay mage is damage over time)
+**Updated:** 2026-10-31 (icons for every effect and item, `shots/icons-2.html`; the Storm capacitor a tesla coil)
 
 ## Where we're going
 The board (`.kanban/`, `pnpm board` → `shots/board.html`): a first complete version, far off (the board's README
@@ -54,8 +54,8 @@ interface change.
 ## Next (the board's todo, in rank order)
 1. **Design sessions with the user:** the Grove's mage line (its Decay side at tier 2 is damage over time, the user 2026-10-30; questions #10), Ral-Vitahl's missing tiers, the
    Spiritess tier 4, the joker lines, owners for Evasion, Explode and Soak.
-2. **Claude's own, meanwhile:** icons: the user accepted all but Curse, Prey and Storm capacitor (redone), and the 86 effects and
-   20 items are generating (`icons`); the Fire
+2. **Claude's own, meanwhile:** icons: every effect and item has one (`shots/icons-2.html`, waiting for the user's
+   look); the Fire
    Eater's concepts in rounds (`carnival-concepts.md`); then concepts and portraits as looks get picked. No skirts on
    female figures, no children anywhere (`art.md`).
 3. **The user's picks waiting:**

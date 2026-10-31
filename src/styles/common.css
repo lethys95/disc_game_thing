@@ -78,6 +78,8 @@ button.small:disabled, button.action.small:disabled { opacity: 0.4; cursor: not-
 /* A bust or icon fills its box; a bust standing in for a missing icon zooms toward the face. */
 .art.bust { background-size: cover; background-position: 50% 40%; }
 .art.icon { background-size: cover; background-position: 50% 50%; }
+/* Effect and item icons are squares painted on black: no pale ground beside them where their box runs wider. */
+.art.effect, .art.item { background-color: transparent; }
 .art.bust.tiny, .art.bust.small, .art.bust.thumb, .art.bust.queue, .art.bust.queue-now { background-size: 170%; background-position: 50% 45%; }
 .art.placeholder { display: inline-flex; align-items: center; justify-content: center; font: 700 0.6875rem var(--display); color: #f1eadb; background: #2a2522; border: 1px solid #4a3f36; }
 .art.placeholder.faction-jilliath { background: #5a1a14; border-color: #8e2a1e; }

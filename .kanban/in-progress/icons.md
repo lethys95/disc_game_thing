@@ -32,4 +32,9 @@
 - **Round two in (2026-10-31):** 19 of the 24 effects and Prey (a stag leaping inside a hyena's jaws) installed; 83 of
   88 effects have icons. Round three for five: Negated (a plain hourglass, like Wait), Gorged (a bare skull), Wet (no
   water), Seared (a clothes iron), Death ward (its heartbeat a modern monitor trace).
+- **Done but for the user's look (2026-10-31):** every effect (100, the 12 added since the list too) and every real
+  item (20) has an icon; round three fixed Negated, Gorged, Wet, Seared and Death ward, and Overflow plating was redone
+  onto a shield. The four placeholder items wait on the user (questions #8). In battle an effect's icon box runs wider
+  than the square icon and showed a pale ground at its sides: effect and item icons now sit on a transparent ground.
+  Review page `shots/icons-2.html`.
 

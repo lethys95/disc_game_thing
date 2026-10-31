@@ -234,7 +234,7 @@ const ICONS: readonly { readonly id: string; readonly faction: keyof typeof ACCE
   { id: "leader_aura", faction: "neutral", kind: "effect", subject: "a raised banner with rays of light behind it" },
   // Effects added since the first list (2026-10-31), each said through an object (round two's lesson: a wound turns into a cross).
   { id: "armor_piercing", faction: "neutral", kind: "effect", subject: "a narrow bodkin arrowhead punching through a steel breastplate" },
-  { id: "overflow_plating", faction: "neutral", kind: "effect", subject: "a chalice overflowing with glowing liquid that spills down and hardens into iron plates" },
+  { id: "overflow_plating", faction: "neutral", kind: "effect", subject: "a chalice spilling over, its overflow pouring down onto a round iron shield below it" },
   { id: "leech_feast", faction: "neutral", kind: "effect", subject: "a bloated dark red leech coiled around a skull" },
   { id: "rusted", faction: "neutral", kind: "effect", subject: "an iron gauntlet eaten through with orange rust, bog water dripping from it" },
   { id: "scriptorium_jilliath", faction: "jilliath", kind: "effect", subject: "an open illuminated prayer book with a blood-red ribbon across its pages" },
