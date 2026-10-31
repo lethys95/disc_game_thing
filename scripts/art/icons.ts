@@ -136,8 +136,9 @@ const ICONS: readonly { readonly id: string; readonly faction: keyof typeof ACCE
   { id: "piercing_shot", faction: "neutral", subject: "an arrow piercing straight through a breastplate" },
   { id: "blood_oath", faction: "neutral", subject: "two forearms bound together with a bloody cord" },
   { id: "war_cry", faction: "neutral", subject: "a horned war horn blowing, its sound like a gust" },
-  // The user (2026-10-30): the jar didn't signal it. What it does: stored lightning shields every ally.
-  { id: "storm_capacitor", faction: "nexus", subject: "a glass jar of stored lightning discharging an arching dome of lightning over three small shields huddled beneath it" },
+  // The user (2026-10-31), on a jar of lightning over shields: "Can't you just make a tesla coil? Like, what does a storm
+  // capacitor have to do with shields?" The thing itself, not what it does.
+  { id: "storm_capacitor", faction: "nexus", subject: "a tall brass tesla coil on an ornate black enamel base, teal lightning arcing from its crown" },
   { id: "hourglass", faction: "neutral", subject: "a cracked hourglass with its sand running upward" },
   // Effects and items: a first two of each (2026-10-13), to see whether the recipe holds before the rest.
   { id: "burning", faction: "neutral", kind: "effect", subject: "a small figure wreathed in licking flames" },
@@ -238,7 +239,7 @@ const ICONS: readonly { readonly id: string; readonly faction: keyof typeof ACCE
   { id: "crown_of_the_pretender", faction: "neutral", kind: "item", subject: "a crooked iron crown with one broken tine" },
   { id: "burial_wrappings", faction: "neutral", kind: "item", subject: "a bundle of yellowed linen burial wrappings" },
   { id: "banner_of_the_vanguard", faction: "neutral", kind: "item", subject: "a tall narrow battle banner on a spear-tipped pole" },
-  { id: "storm_capacitor", faction: "nexus", kind: "item", subject: "a brass-capped glass jar of stored lightning, a small shield emblem on its front, sparks arcing over its lid" },
+  { id: "storm_capacitor", faction: "nexus", kind: "item", subject: "a tall brass tesla coil on an ornate black enamel base, teal lightning arcing from its crown" },
   { id: "seedpod_reliquary", faction: "grove", kind: "item", subject: "a small reliquary with a living seed pod inside" },
   { id: "penitents_chains", faction: "jilliath", kind: "item", subject: "a heavy coil of iron chains with an open shackle" },
   { id: "reaching_spear", faction: "neutral", kind: "item", subject: "a long spear with a leaf-shaped head" },

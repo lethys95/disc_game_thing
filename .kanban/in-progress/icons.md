@@ -26,4 +26,7 @@
   installed; 62 of the 86 effects installed. The other 24 came out as generic emblems, mostly crosses: where the
   subject was a wound (a cut, a bite, a vein), the recipe's "rather than gory" turned it into an emblem. Round two
   says each through an object instead (a dagger dripping blood, fangs dripping venom, a broken tusk).
+- **The user (2026-10-31), on the jar over three shields:** "Can't you just make a tesla coil? Like, what does a storm
+  capacitor have to do with shields?" Icons show the thing, not its effect. A tesla coil, installed for the ability
+  (1000) and the item (the ability's 1001: the item seeds lost the coil's winding).
 

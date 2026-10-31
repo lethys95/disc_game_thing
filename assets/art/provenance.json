@@ -888,12 +888,12 @@
     "from": "art/candidates/icons/abilities/icon_war_cry-1000.png"
   },
   "ability/storm_capacitor": {
-    "file": "icon_storm_capacitor-1002.png",
+    "file": "icon_storm_capacitor-1000.png",
     "id": "icon_storm_capacitor",
-    "seed": 1002,
-    "prompt": "A single emblem for a game ability icon: a glass jar of stored lightning discharging an arching dome of lightning over three small shields huddled beneath it. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of electric teal where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "seed": 1000,
+    "prompt": "A single emblem for a game ability icon: a tall brass tesla coil on an ornate black enamel base, teal lightning arcing from its crown. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of electric teal where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
     "model": "krea2_turbo_fp8_scaled.safetensors",
-    "from": "art/candidates/icons/abilities/icon_storm_capacitor-1002.png"
+    "from": "art/candidates/icons/abilities/icon_storm_capacitor-1000.png"
   },
   "ability/hourglass": {
     "file": "icon_hourglass-1000.png",
@@ -1539,9 +1539,9 @@
     "file": "icon_storm_capacitor-1001.png",
     "id": "icon_storm_capacitor",
     "seed": 1001,
-    "prompt": "A single emblem for a game item icon: a brass-capped glass jar of stored lightning, a small shield emblem on its front, sparks arcing over its lid. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of electric teal where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "prompt": "A single emblem for a game ability icon: a tall brass tesla coil on an ornate black enamel base, teal lightning arcing from its crown. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of electric teal where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
     "model": "krea2_turbo_fp8_scaled.safetensors",
-    "from": "art/candidates/icons/items/icon_storm_capacitor-1001.png"
+    "from": "art/candidates/icons/abilities/icon_storm_capacitor-1001.png"
   },
   "item/seedpod_reliquary": {
     "file": "icon_seedpod_reliquary-1000.png",
