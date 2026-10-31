@@ -29,4 +29,7 @@
 - **The user (2026-10-31), on the jar over three shields:** "Can't you just make a tesla coil? Like, what does a storm
   capacitor have to do with shields?" Icons show the thing, not its effect. A tesla coil, installed for the ability
   (1000) and the item (the ability's 1001: the item seeds lost the coil's winding).
+- **Round two in (2026-10-31):** 19 of the 24 effects and Prey (a stag leaping inside a hyena's jaws) installed; 83 of
+  88 effects have icons. Round three for five: Negated (a plain hourglass, like Wait), Gorged (a bare skull), Wet (no
+  water), Seared (a clothes iron), Death ward (its heartbeat a modern monitor trace).
 

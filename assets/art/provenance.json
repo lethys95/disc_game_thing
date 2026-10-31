@@ -555,7 +555,7 @@
     "file": "icon_prey-1000.png",
     "id": "icon_prey",
     "seed": 1000,
-    "prompt": "A single emblem for a game ability icon: a hunting mark daubed in blood on a shield. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "prompt": "A single emblem for a game ability icon: the open jaws of a hyena closing on the hind leg of a wounded stag running for its life. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
     "model": "krea2_turbo_fp8_scaled.safetensors",
     "from": "art/candidates/icons/abilities/icon_prey-1000.png"
   },
@@ -1638,5 +1638,157 @@
     "prompt": "A single emblem for a game item icon: a tall vial of pale glowing liquid with a skull stopper. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
     "model": "krea2_turbo_fp8_scaled.safetensors",
     "from": "art/candidates/icons/items/icon_resurrection_potion-1000.png"
+  },
+  "effect/retreating": {
+    "file": "icon_retreating-1001.png",
+    "id": "icon_retreating",
+    "seed": 1001,
+    "prompt": "A single emblem for a game status-effect icon: a hooded figure seen from behind, walking away into the dark, its sword left lying on the ground. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/effects/icon_retreating-1001.png"
+  },
+  "effect/bleeding": {
+    "file": "icon_bleeding-1000.png",
+    "id": "icon_bleeding",
+    "seed": 1000,
+    "prompt": "A single emblem for a game status-effect icon: a dagger with dark red blood running down its blade and dripping from the tip. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/effects/icon_bleeding-1000.png"
+  },
+  "effect/deathward": {
+    "file": "icon_deathward-1001.png",
+    "id": "icon_deathward",
+    "seed": 1001,
+    "prompt": "A single emblem for a game status-effect icon: a reaper's scythe blade halted in mid-swing by a raised open palm. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of deep blood red where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/effects/icon_deathward-1001.png"
+  },
+  "effect/castigated": {
+    "file": "icon_castigated-1000.png",
+    "id": "icon_castigated",
+    "seed": 1000,
+    "prompt": "A single emblem for a game status-effect icon: a sword arm bound tight by a heavy chain glowing red hot, the sword sagging. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of deep blood red where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/effects/icon_castigated-1000.png"
+  },
+  "effect/gave_turn": {
+    "file": "icon_gave_turn-1000.png",
+    "id": "icon_gave_turn",
+    "seed": 1000,
+    "prompt": "A single emblem for a game status-effect icon: an hourglass handed from one gauntlet to another. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of deep blood red where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/effects/icon_gave_turn-1000.png"
+  },
+  "effect/countered": {
+    "file": "icon_countered-1000.png",
+    "id": "icon_countered",
+    "seed": 1000,
+    "prompt": "A single emblem for a game status-effect icon: a spell book slammed shut by an iron hand, sparks flying from its pages. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of electric teal where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/effects/icon_countered-1000.png"
+  },
+  "effect/absorbing_hit": {
+    "file": "icon_absorbing_hit-1000.png",
+    "id": "icon_absorbing_hit",
+    "seed": 1000,
+    "prompt": "A single emblem for a game status-effect icon: a sword blade gripped by a hand of teal light that drains its glow. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of electric teal where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/effects/icon_absorbing_hit-1000.png"
+  },
+  "effect/combusting": {
+    "file": "icon_combusting-1001.png",
+    "id": "icon_combusting",
+    "seed": 1001,
+    "prompt": "A single emblem for a game status-effect icon: a glass charge canister bursting open with teal lightning. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of electric teal where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/effects/icon_combusting-1001.png"
+  },
+  "effect/mutated": {
+    "file": "icon_mutated-1000.png",
+    "id": "icon_mutated",
+    "seed": 1000,
+    "prompt": "A single emblem for a game status-effect icon: a muscular arm swelling and bursting out of a torn iron bracer. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of electric teal where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/effects/icon_mutated-1000.png"
+  },
+  "effect/rotting": {
+    "file": "icon_rotting-1000.png",
+    "id": "icon_rotting",
+    "seed": 1000,
+    "prompt": "A single emblem for a game status-effect icon: a black rotting apple with pale mushrooms sprouting from it. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of deep moss green where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/effects/icon_rotting-1000.png"
+  },
+  "effect/infested": {
+    "file": "icon_infested-1001.png",
+    "id": "icon_infested",
+    "seed": 1001,
+    "prompt": "A single emblem for a game status-effect icon: a knight's helmet with pale mushrooms growing out of its eye slits. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of deep moss green where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/effects/icon_infested-1001.png"
+  },
+  "effect/healing_back": {
+    "file": "icon_healing_back-1000.png",
+    "id": "icon_healing_back",
+    "seed": 1000,
+    "prompt": "A single emblem for a game status-effect icon: a broken branch knitting itself back together with fresh green tendrils. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of deep moss green where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/effects/icon_healing_back-1000.png"
+  },
+  "effect/dusted": {
+    "file": "icon_dusted-1001.png",
+    "id": "icon_dusted",
+    "seed": 1001,
+    "prompt": "A single emblem for a game status-effect icon: a sword blade coated in pale powdery dust, a large grey moth resting on it. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/effects/icon_dusted-1001.png"
+  },
+  "effect/gored": {
+    "file": "icon_gored-1000.png",
+    "id": "icon_gored",
+    "seed": 1000,
+    "prompt": "A single emblem for a game status-effect icon: a broken boar tusk dripping blood. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/effects/icon_gored-1000.png"
+  },
+  "effect/envenomed": {
+    "file": "icon_envenomed-1000.png",
+    "id": "icon_envenomed",
+    "seed": 1000,
+    "prompt": "A single emblem for a game status-effect icon: a snake's open jaws, its fangs dripping green venom. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/effects/icon_envenomed-1000.png"
+  },
+  "effect/next_in_line": {
+    "file": "icon_next_in_line-1000.png",
+    "id": "icon_next_in_line",
+    "seed": 1000,
+    "prompt": "A single emblem for a game status-effect icon: a hyena with a crude crown of bones on its head, howling. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/effects/icon_next_in_line-1000.png"
+  },
+  "effect/foundry": {
+    "file": "icon_foundry-1001.png",
+    "id": "icon_foundry",
+    "seed": 1001,
+    "prompt": "A single emblem for a game status-effect icon: a glowing red-hot breastplate lying on an anvil, sparks flying. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of electric teal where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/effects/icon_foundry-1001.png"
+  },
+  "effect/leech": {
+    "file": "icon_leech-1000.png",
+    "id": "icon_leech",
+    "seed": 1000,
+    "prompt": "A single emblem for a game status-effect icon: a swollen dark red leech curled on a sword blade. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/effects/icon_leech-1000.png"
+  },
+  "effect/siege": {
+    "file": "icon_siege-1000.png",
+    "id": "icon_siege",
+    "seed": 1000,
+    "prompt": "A single emblem for a game status-effect icon: a heavy battering ram with an iron ram's head smashing through a wooden gate, splinters flying. One centered subject with a bold, readable silhouette that fills the frame, on a plain black background, with no border and no frame. Dark painterly fantasy illustration with a gothic reliquary mood: sacred things worn thin by use, tarnished metal, bone, old lacquer, cracked stone and heavy aged cloth. A desaturated palette of umber, ash, bone and oxidized iron, with a single saturated accent of dull ember orange where there is magic or devotion. Chiaroscuro lighting with deep shadows and a hard rim light. Solemn, tragic and oppressive rather than gory. No text, no letters, no watermark.",
+    "model": "krea2_turbo_fp8_scaled.safetensors",
+    "from": "art/candidates/icons/effects/icon_siege-1000.png"
   }
 }
