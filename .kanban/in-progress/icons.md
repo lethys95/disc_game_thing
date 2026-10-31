@@ -21,4 +21,9 @@
   New subjects from what each does (Curse: a pinned hex doll; Prey: a hyena's jaws on a fleeing stag; Storm capacitor:
   a jar of stored lightning arching over three shields), and the same fix for the not-yet-made Cursed and Prey effects
   and the Storm capacitor item. The test okayed, the other 86 effects and 20 items run as one batch.
+- **Batch in (2026-10-31):** Curse and Storm capacitor redone and installed (a pinned hex doll; a jar of lightning
+  arching over three shields); Prey's stag came without its hyena, so round two leads with the hunter. All 20 items
+  installed; 62 of the 86 effects installed. The other 24 came out as generic emblems, mostly crosses: where the
+  subject was a wound (a cut, a bite, a vein), the recipe's "rather than gory" turned it into an emblem. Round two
+  says each through an object instead (a dagger dripping blood, fangs dripping venom, a broken tusk).
 
